@@ -12,20 +12,34 @@
 
 ## 当前进度
 
-**做到哪**: Day 1 地基已完成（文档骨架 + 5 hooks + 3 scripts + QUICKSTART）
-**下一步**: Phase 0 Step 0 — 跑 `scripts/doctor.sh` 检查环境
-**playbook**: `playbook/phase-0-minimal.md`
+**做到哪**: Phase 0 Step 0 进行中 — baseline doctor.sh 已通过（17 ✅ / 3 ⚠ / 0 ❌）
+**下一步**: 等用户完成 Privy / Supabase / Alchemy 三个外部账号注册，把值填到 `.env.local`，然后再跑 doctor.sh 确认 + 演练 checkpoint.sh
+**playbook**: `playbook/phase-0-minimal.md` Step 0
+
+### 续做指南（下次会话第一件事读这段）
+
+用户上次离开时**正在注册 3 个外部账号**：
+1. **Privy**（https://dashboard.privy.io/）—— 创建 app，启用 Email 登录，启用 Embedded wallet "Create on login"，**Networks 加 OP Sepolia (11155420) + OP Mainnet (10)**，复制 App ID + App Secret
+2. **Supabase**（https://supabase.com/dashboard）—— 新建项目 nft-music-dev，Region 选 Tokyo/Singapore，Free 计划，复制 Project URL + anon key + service_role key
+3. **Alchemy**（https://dashboard.alchemy.com/）—— 新建 app，**Chain = Optimism, Network = Optimism Sepolia**（不要选错），复制 HTTPS RPC URL
+
+新会话开始时**先问用户**："上次注册的 3 个账号都搞定了吗？" 根据回答决定从哪一步继续：
+- 都好了 → 引导写 `.env.local`（10 个 key）+ 生成测试钱包 + 领 OP Sepolia faucet（https://app.optimism.io/faucet, ≥ 0.02 OP-ETH）
+- 卡在某个 → 帮用户排查那一个
+- 还没开始 → 引导从头开始（playbook Step 0 的"🤖 AI 执行指引"）
+
+完成 Step 0 全部后再演练 `bash scripts/checkpoint.sh "Phase 0 起点演练"`。
 
 ## 上次成功验证
 
-- 验证内容: 还未开始
-- 验证时间: —
-- 验证方式: —
-- 通过的 commit: —
+- 验证内容: 项目地基整修 + 全面切到 Optimism + 文档大压缩
+- 验证时间: 2026-04-08
+- 验证方式: `bash scripts/verify.sh` 全绿
+- 通过的 commit: `1f13aac`（docs/arch 大整修 + OP 切链）
 
 ## 当前阻塞
 
-- 无
+- 无（等用户注册账号是预期等待，不是阻塞）
 
 ## 备注（AI 写给下次会话的自己）
 
