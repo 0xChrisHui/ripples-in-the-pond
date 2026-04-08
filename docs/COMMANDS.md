@@ -182,7 +182,7 @@ forge test -vv
 # 编译
 forge build
 
-# 部署到 Sepolia（需要 .env 里有 RPC + 私钥）
+# 部署到 OP Sepolia（需要 .env 里有 OP Sepolia RPC + 私钥）
 forge script script/Deploy.s.sol --rpc-url $ALCHEMY_RPC_URL --private-key $OPERATOR_PRIVATE_KEY --broadcast
 
 # 回到项目根目录

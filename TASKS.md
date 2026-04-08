@@ -22,10 +22,10 @@
 ## 📅 Later（Phase 0 剩余）
 
 - **[Phase 0 Step 4]** Supabase 建 2 张表（users, mint_queue），用 Dashboard 手动
-- **[Phase 0 Step 5]** MaterialNFT 合约部署到 Sepolia
+- **[Phase 0 Step 5]** MaterialNFT 合约部署到 OP Sepolia（用 OZ 现成合约）
 - **[Phase 0 Step 6]** POST /api/mint/material（写队列 + 立即返回）
 - **[Phase 0 Step 7]** 手动触发 cron 端点
-- **[Phase 0 Step 8]** Etherscan 看到 tx → 🎉
+- **[Phase 0 Step 8]** OP Sepolia Etherscan 看到 tx → 🎉
 
 ---
 

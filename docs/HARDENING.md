@@ -100,12 +100,12 @@
 ### C2. 私钥环境隔离
 
 ```
-问题：Preview Deployment 也能访问主网私钥。
+问题：Preview Deployment 也能访问 OP 主网私钥。
 解法：
   - Vercel 按环境分别设置变量
-  - Production + Worker：主网热钱包
-  - Preview / Development：Sepolia 测试钱包
-  - 杜绝 console.log(process.env) 泄露
+  - Production + Worker：OP Mainnet 热钱包
+  - Preview / Development：OP Sepolia 测试钱包
+  - 杜绝把 process.env 整个打印到日志
 ```
 
 ### C3. 合约安全审计
@@ -164,14 +164,22 @@
   - allowlist 变更需要多签批准
 ```
 
-### D4. Base 链部署
+### D4. 多 L2 备选（OP 出问题时）
 
 ```
-问题：主网 Gas 成本长期不可承受。
+背景：项目主链已经是 OP Mainnet（决策 3，Phase 1 起就用），已经享受了 L2 的低成本红利。
+本节是"OP 自身出问题"时的应急方案，不是常规演进路径。
+
+可能触发的场景：
+  - OP Sequencer 长时间宕机
+  - OP 治理出现重大变更，与 EVM 兼容性产生分歧
+  - 出现明显更便宜或更安全的 L2 替代
+
 解法：
-  - 在 Base 上部署一套新合约（EVM 兼容，改 RPC + chainId 即可）
-  - 主网旧 NFT 保留（早期用户更珍贵）
-  - 新铸造走 Base，成本 $0.01-0.05/笔
+  - 在 Base / Arbitrum / 任意 EVM 等价 L2 上部署一套新合约
+  - 改 RPC + chainId，代码不变
+  - OP 上旧 NFT 保留（早期用户更珍贵）
+  - 新铸造走新链
   - 前端通过配置切换目标链
 ```
 

@@ -29,11 +29,11 @@
 
 ## 备注（AI 写给下次会话的自己）
 
-- 项目代号 `nft-music`，产品名 `108 Cyber Records`，文档用产品名
-- Next.js 版本是 16.1.6（不是 ARCHITECTURE.md 写的 14），React 19
+- 项目命名分 3 层：仓库 `NFT-Music-from-Ye` / 代号 `nft-music` / 产品名 `108 Cyber Records`，详见 AGENTS.md §1
+- **链：OP Mainnet（生产）/ OP Sepolia（测试）**——不用 ETH L1，详见 ARCHITECTURE.md 决策 3
+- Next.js 16.1.6 + React 19；ARCHITECTURE.md 已同步
 - Windows 环境，hooks 用 Git Bash 跑
 - 学习模式: slow mode（默认）
-- 学习机制 hooks 已就位：SessionStart 自动注入 STATUS/TASKS，Stop 在有未提交改动时打印自检清单
-- check-folder-size hook 已加项目根目录例外（含 package.json + .git 的层）
-- 工作目录就是 main 主目录，不再用 worktree
-- 决策日志见 `docs/JOURNAL.md`（追溯"为什么"）
+- 学习机制：SessionStart 注入 STATUS/TASKS，Stop 检查未提交改动，复述 1-3 行关键代码（AGENTS §4 第 4 步）
+- 文件硬线 220 行 / 目录 8 文件；route.ts 放宽 270；`src/app/api/**` 整棵子树豁免目录限制
+- 决策日志 `docs/JOURNAL.md` / 文档地图 `docs/INDEX.md`

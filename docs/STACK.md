@@ -20,6 +20,13 @@
 - `@privy-io/react-auth` — 前端登录 SDK
 - `@privy-io/server-auth` — 后端 JWT 验证
 
+### 链选择
+- **生产链**：Optimism Mainnet（chainId 10）— L2，EVM 等价
+- **测试链**：OP Sepolia（chainId 11155420）
+- 不部署 Ethereum L1 主网或 Sepolia（成本和环境一致性原因，见 ARCHITECTURE.md 决策 3 + JOURNAL.md 2026-04-08）
+- RPC：Alchemy 提供 OP Mainnet + OP Sepolia 端点
+- Etherscan 等价物：`optimistic.etherscan.io`（主网）/ `sepolia-optimism.etherscan.io`（测试网）
+
 ### 数据库
 - `@supabase/supabase-js` — Supabase 客户端
 - Supabase Free（PostgreSQL 托管）

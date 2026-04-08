@@ -32,16 +32,19 @@ npm run dev
 
 ## 文档导航
 
+**找文档的总入口：[`docs/INDEX.md`](./docs/INDEX.md)**（按需求查）
+
 ### 你（人类）需要读的
 
 | 文件 | 什么时候读 |
 |---|---|
 | `STATUS.md` | 每次开始工作前 |
 | `TASKS.md` | 每次开始工作前 |
-| `playbook/phase-0-minimal.md` | 跟着做 Phase 0 时 |
+| `playbook/phase-0-minimal.md` | 跟着做 Phase 0 时（📖 概念简报和 📝 复述问题段是给你的） |
 | `docs/LEARNING.md` | 空闲时间，看新增的概念 |
 | `docs/ERRORS.md` | 遇到报错时 |
 | `docs/COMMANDS.md` | 不知道怎么敲命令时 |
+| `docs/JOURNAL.md` | 想回看"为什么当时这么决定" |
 
 ### AI 自己会读的（你不用主动读）
 
@@ -51,7 +54,7 @@ npm run dev
 | `CLAUDE.md` | Claude Code 专用指针 |
 | `docs/CONVENTIONS.md` | 代码规范 + 坏味道清单 |
 | `docs/STACK.md` | 技术栈白名单 / 黑名单 |
-| `docs/ARCHITECTURE.md` | 完整技术架构 |
+| `docs/ARCHITECTURE.md` | 项目"形状和意图"（不是代码模板） |
 | `docs/HARDENING.md` | 安全加固路线 |
 
 ---
@@ -78,6 +81,6 @@ Claude Code (主实现)  →  每 3-5 步暂停  →  Codex (独立审查)  → 
 - **Phase 2**：合奏 + 乐谱
 - **Phase 3**：封面图 + 分享 + ScoreNFT
 - **Phase 4**：社区钱包 + 空投
-- **Phase 5**：主网上线
+- **Phase 5**：OP Mainnet 上线
 
-详见 `docs/ARCHITECTURE.md` §13。
+详见 `docs/ARCHITECTURE.md` §11。

@@ -1,782 +1,410 @@
-# 108 Cyber Records — 技术架构文档
+# 108 Cyber Records — 技术架构
 
-> 一位艺术家用两年时间，将 108 首音乐逐周刻进区块链。每位用户可与艺术家合奏，并将生成的音乐永久存储进自己的钱包。
+> **本文件是项目的"形状和意图"，不是代码模板。** AI 写代码时不要把这里的字段名或接口签名当成必须照抄的规范——那些细节由每个 step 现场决定。
+>
+> 如果你来读这份文件是为了"我现在该怎么写代码"，**走错了**——去读 `playbook/phase-0-minimal.md` 当前 step。
+>
+> 本文件存在的理由：让 AI 在做技术决策时知道**项目要去哪里**，不至于在 Phase 0 写出会被 Phase 3 推翻的代码。
+>
+> 实际版本以 `package.json` 为准。当前：Next.js 16 + React 19 + TypeScript 5 + Tailwind 4。
 
 ---
 
-## 一、产品概述
+## 一、产品定位
 
-### 核心体验
+一位艺术家用两年时间，将 108 首音乐逐周刻进区块链。每位用户可与艺术家合奏，并将生成的音乐永久存储进自己的钱包。
+
+### 核心体验路径
 
 ```
-首次访问 → 引导动画（"点击它"→音乐响起→"试试键盘"→音效+视觉爆炸）
-  → 浏览群岛（悬停预览、颜色暗示风格、铸造人数标记）
-  → 点击岛屿播放 → 底部播放条控制（进度/音量/静音）
-  → 合奏（键盘/触控 + Patatap 视觉反馈）
-  → 合奏结束 → 自动预览回放 → 重录 / 铸造 / 保存（24h）
-  → 铸造 → 即时成功🎉 → 分享卡片（封面图 + 一键复制链接）
-  → 个人页唱片架回放、24h 沉入水面倒计时、空投开箱
-
-用户全程不需要 ETH / AR / 签名。只需登录获得地址。
+首次访问 → 引导动画 → 浏览群岛 → 点击岛屿播放 → 底部播放条
+  → 合奏（键盘/触控 + 视觉反馈）
+  → 合奏结束 → 自动预览回放 → 重录 / 铸造 / 保存（24h TTL）
+  → 铸造 → 即时成功 → 分享卡片
+  → 个人页：唱片架 / 待铸造倒计时 / 空投开箱
 ```
+
+**用户全程不需要 ETH / AR / 签名。只需登录获得地址。**
 
 ### 三大模块
 
 | 模块 | 说明 |
-|------|------|
-| **聆听** | 108 首音乐 × 群岛结构，一键铸造 |
-| **共创** | 键盘/触控合奏 + 录制 → 乐谱 NFT（自带链上钱包） |
-| **重组** | 每 36 首 AI 再创作，空投参与者 |
+|---|---|
+| 聆听 | 108 首音乐 × 群岛结构，一键铸造素材 NFT |
+| 共创 | 键盘/触控合奏 + 录制 → 乐谱 NFT |
+| 重组 | 每 36 首 AI 再创作，空投参与者 |
 
 ---
 
 ## 二、技术栈
 
-### Launch（Phase 1-3）
-
-| 层级 | 技术 |
-|------|------|
-| 区块链 | Ethereum Mainnet |
-| 合约 | ERC-1155（素材）+ ERC-721 + ERC-6551（乐谱） |
-| 存储 | Arweave（Turbo SDK，信用卡支付） |
-| 前端 | Next.js 14 + TypeScript + Tailwind，Vercel Hobby/Pro |
-| 音频 | Web Audio API + Patatap（或自建简化版） |
-| 登录 | Privy SDK（邮箱 + 外部钱包） |
-| 铸造 | 乐观 UI + Vercel Cron 每分钟处理队列 |
-| 数据库 | Supabase Free |
-| 合约交互 | viem（仅后端） |
-
-### Future（Phase 4-5 按需引入）
-
-| 技术 | 引入时机 |
-|------|----------|
-| 社区钱包 API 登录 | Phase 4 |
-| 独立 Worker（Railway/Fly.io） | 用户量增长，Cron 1 分钟间隔不够时 |
-| Supabase Pro（Point-in-Time Recovery） | 有付费用户或数据量大时 |
-| Sentry | 生产环境稳定性需要时 |
-| Base 链部署 | 主网 Gas 成本不可承受时 |
-
-### 不使用
-
-wagmi / ethers.js / ERC-4337 / Paymaster / Pimlico / Privy Smart Account / Hardhat
+详见 `docs/STACK.md`（白名单 / 黑名单 / 灰名单 / Phase 演进）。本文件不重复。
 
 ---
 
-## 三、目录结构
+## 三、核心架构决策（"形状"）
+
+### 决策 1：用户零钱包负担 = 运营钱包代签 + 队列异步铸造
 
 ```
-108-cyber-records/
-├── ARCHITECTURE.md
-├── HARDENING.md                   # 安全加固 & 演进路线
-├── QUICKSTART.md                  # 快速上手
-├── CLAUDE.md                      # AI 编码规则
-├── .env.example
-│
-├── contracts/                     # Foundry
-│   ├── src/
-│   │   ├── MaterialNFT.sol            # ERC-1155（含 allowlist + 每日上限）
-│   │   ├── ScoreNFT.sol               # ERC-721
-│   │   └── MintOrchestrator.sol       # 编排合约
-│   ├── test/
-│   └── script/
-│
-├── scripts/
-│   ├── upload-track.ts                # 每周上架
-│   ├── upload-arweave.ts
-│   ├── airdrop.ts
-│   └── generate-covers.ts            # Phase 3：封面图生成+上传
-│
-├── covers/                        # Phase 3：封面图工作区
-│   ├── layers/                        # 艺术家图层素材
-│   ├── output/
-│   └── hashlips-config.js
-│
-├── supabase/
-│   └── migrations/                    # 版本化 schema 管理
-│       ├── 001_initial_schema.sql         # Phase 1：tracks, users, mint_queue, mint_events
-│       ├── 002_jam_and_scores.sql         # Phase 2：pending_scores, sounds
-│       ├── 003_covers_and_airdrops.sql    # Phase 3：score_covers, airdrop_events
-│       └── 004_community_auth.sql         # Phase 4：扩展 users 表
-│
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx                     # AuthProvider + BottomPlaybar
-│   │   ├── page.tsx                       # 群岛 + 播放 + 合奏
-│   │   ├── profile/page.tsx               # 唱片架 + 待铸造 + 空投
-│   │   ├── artist/page.tsx                # 动态（进度/统计/倒计时）
-│   │   ├── score/[tokenId]/page.tsx       # 公开回放页（OG tags）
-│   │   └── api/
-│   │       ├── tracks/route.ts                # GET（ISR 缓存）
-│   │       ├── score/
-│   │       │   ├── save/route.ts              # POST：暂存乐谱
-│   │       │   └── [tokenId]/route.ts         # GET：公开乐谱数据
-│   │       ├── mint/
-│   │       │   ├── material/route.ts          # POST：写队列，立即返回
-│   │       │   └── score/route.ts             # POST：写队列，立即返回
-│   │       ├── auth/community/route.ts        # Phase 4
-│   │       ├── user/nfts/route.ts             # GET：NFT + 乐谱回放
-│   │       ├── artist/stats/route.ts          # GET：艺术家统计
-│   │       ├── health/route.ts                # GET：健康检查
-│   │       └── cron/
-│   │           ├── process-mint-queue/route.ts    # 每分钟：串行铸造
-│   │           ├── sync-chain-events/route.ts     # 每 5 分钟
-│   │           └── check-balance/route.ts         # 每小时
-│   │
-│   ├── components/
-│   │   ├── providers/AuthProvider.tsx
-│   │   ├── onboarding/FirstVisitGuide.tsx
-│   │   ├── archipelago/
-│   │   │   ├── Archipelago.tsx                # 悬停预览 + 铸造标记 + 风格暗示
-│   │   │   ├── Island.tsx
-│   │   │   └── Ripple.tsx
-│   │   ├── player/
-│   │   │   ├── AudioPlayer.tsx
-│   │   │   ├── BottomPlaybar.tsx              # 全局底部（进度/音量/静音）
-│   │   │   ├── ScorePlayer.tsx                # 乐谱回放
-│   │   │   └── ScorePreview.tsx               # 合奏结束即时预览
-│   │   ├── jam/
-│   │   │   ├── KeyboardInstrument.tsx          # Patatap 键盘/触控 + 视觉
-│   │   │   ├── SoundBank.tsx
-│   │   │   └── ScoreRecorder.tsx
-│   │   ├── mint/
-│   │   │   ├── MintMaterialButton.tsx         # 乐观 UI
-│   │   │   ├── MintScoreButton.tsx            # 乐观 UI + ShareCard
-│   │   │   └── ShareCard.tsx                  # 封面图 + 一键复制链接
-│   │   ├── auth/
-│   │   │   ├── LoginModal.tsx
-│   │   │   └── CommunityLogin.tsx             # Phase 4
-│   │   └── profile/
-│   │       ├── RecordShelf.tsx                # 唱片架（非 NFT 网格）
-│   │       ├── PendingScores.tsx              # 沉入水面倒计时
-│   │       ├── AirdropUnbox.tsx               # 开箱体验
-│   │       └── ExpiredAnimation.tsx           # 沉入海底动画
-│   │
-│   ├── hooks/
-│   │   ├── useAuth.ts
-│   │   ├── useAudioPlayer.ts
-│   │   ├── useKeyboardJam.ts
-│   │   ├── useUserNFTs.ts
-│   │   └── useFirstVisit.ts
-│   │
-│   ├── lib/
-│   │   ├── contracts.ts
-│   │   ├── arweave.ts                         # 含多网关 fallback
-│   │   ├── supabase.ts
-│   │   ├── privy.ts
-│   │   ├── community-auth.ts                  # Phase 4
-│   │   ├── operator-wallet.ts                 # viem，仅后端
-│   │   └── alerts.ts                          # Telegram 告警
-│   │
-│   └── types/
-│       ├── track.ts
-│       ├── score.ts
-│       ├── nft.ts
-│       └── auth.ts
-│
-└── public/
-    ├── sounds/                                # 26 音效（mp3, <100KB）
-    └── tracks/                                # 音乐缓存
+用户点击 → API 写一条 mint_queue 记录 → 立即返回成功
+                                          ↓
+                                  Vercel Cron 每分钟取一条
+                                          ↓
+                                  运营钱包发交易付 Gas
+                                          ↓
+                                  写 mint_events
 ```
+
+**为什么**：
+- 用户无需持有 ETH，无需在弹窗里签名 — 像 web2 一样
+- API 不等链上确认 → 用户感觉极快（乐观 UI）
+- 串行处理 → nonce 不会冲突
+- 失败可重试 → 偶发 RPC 抖动不影响用户
+
+**约束**：API Route（除 `cron/` 外）禁止 `await waitForTransactionReceipt`。这条由 hook 强制。
+
+### 决策 2：合约权限用 allowlist，不用 onlyOwner
+
+热钱包私钥泄露时，攻击者最多 mint 没价值的 NFT，**不能改 allowlist 本身**。
+
+### 决策 3：合约部署在 OP（Optimism）+ 护栏简化
+
+**链选择**：OP Mainnet（生产）+ OP Sepolia（测试）。**不部署到 Ethereum L1 主网**。
+
+**为什么 OP**：
+- 单笔铸造成本约 ETH 主网的 1/8（~$0.10 vs ~$0.78）
+- gas 几乎不会突然飙升（OP L2 gas 极少波动）
+- EVM 等价：合约代码、Foundry / viem / Privy / OpenSea / ERC-6551 Registry 全部不变
+- 安全性等同 ETH 主网：OP 是 Optimistic Rollup，最终结算到 L1，不是侧链
+- ERC-6551 Registry 已部署到 OP（链上地址全网统一）
+
+**护栏简化**：
+- ❌ 删除"全局每日 mint 上限"：OP 上烧不出灾难，daily limit 失去防爆火意义。`MaterialNFT` 合约里**不写**这个机制
+- ❌ 删除"gas price guard"：OP gas 不飙
+- ✅ 保留 **allowlist**：与链无关的安全模型，热钱包泄露限制损失（决策 2）
+- ✅ 保留 **balance alert**：cron 每小时检查运营钱包余额，< 0.05 OP-ETH 时 Telegram 告警
+
+**未来扩展**：如果需要"产品意义上的限量发售"（每天 N 张创造稀缺感），可以在**应用层**（API Route 或 Supabase）实现，不要写进合约——应用层规则可改，合约规则不可改。
+
+### 决策 4：数据库按 Phase 递增建表
+
+不在 Phase 1 就建 12 张表。每个 Phase 只建那个 Phase 真正用到的表：
+
+- **Phase 1**：tracks / users / mint_queue / mint_events（4 张）
+- **Phase 2**：+ sounds / pending_scores
+- **Phase 3**：+ score_covers / airdrop_events / chain_events / system_kv
+- **Phase 4**：扩展 users 加社区登录字段
+
+字段约束的具体 SQL 由各 Phase 的 playbook step 现场决定。
+
+### 决策 5：Privy JWT 直接使用，不自建 JWT
+
+后端用 `@privy-io/server-auth` 验证 token。Phase 4 引入社区钱包时再加自签 JWT 双验证。
+
+### 决策 6：乐谱 NFT 数据自包含 + "母 NFT 装子 NFT"结构
+
+**结构**：
+- ScoreNFT (ERC-721) 是**母 NFT**。它的"脸"是封面图（metadata.image），它的"灵魂"是合奏数据（events.json，存在 metadata.animation_url 或 attributes 里）
+- ScoreNFT 配套一个 ERC-6551 TBA（智能合约账户）
+- TBA 里"装着"几个 MaterialNFT (ERC-1155)：1 份底曲 + N 份音效。这些是**子 NFT**
+- ScoreNFT 转手 → TBA 跟着转手 → 子 NFT 跟着转手
+
+**澄清两个常见误解**：
+1. **封面图不是单独的 NFT**——它是 ScoreNFT 的视觉外观（PNG 文件），不是一个独立 token
+2. **乐谱不是子 NFT**——乐谱是一段 events JSON，描述"哪个键在第几毫秒按下、用了哪个 sound"。它**就是**母 NFT 的内容，不是装在母 NFT 里的另一个 token
+
+**回放数据的 4 层冗余**：
+1. Arweave 主网关
+2. Arweave 多网关 fallback（决策 9）
+3. 我们的 Supabase `mint_events.score_data` 自包含拷贝
+4. OP 主网上的 tokenURI 字符串（永远在，但不可读取内容；OP 数据最终结算到 ETH L1，不灭）
+
+`pending_scores` 24h 过期不影响已铸造乐谱的回放——铸造时数据已被复制到 `mint_events.score_data`。
+
+### 决策 7：ERC-6551 设 fallback 开关
+
+ERC-6551 是未定稿标准，是最大技术赌注。代码中 TBA 逻辑隔离到可关闭模块。如果标准变更或实现有 bug，乐谱 NFT 退化为普通 ERC-721，核心体验不受影响。
+
+### 决策 8：所有"原料资源"预上传 Arweave + 复用
+
+**预上传一次，永远复用**：
+- 26 个音效 mp3（tokenId 109-134）
+- 108 首底曲 mp3（每周上架时一首）
+- 10,000+ 张封面图（HashLips 预生成 → Turbo SDK 批量 → score_covers 表，按 usage_count 升序分配）
+- score-decoder.html（见决策 13）
+
+**每次铸造真正"新增"的 Arweave 内容只有 2 个**：
+- `events.json`（~3 KB，这次合奏的按键时间序列）
+- `metadata.json`（~500 B，索引卡，指向 cover/events/decoder 的 ar:// 地址）
+
+每次铸造的 Arweave 增量成本 ≈ **$0.002**，不是 $15。
+
+### 决策 9：Arweave 多网关 fallback
+
+合约存 `ar://txid`（不绑定特定网关）。`src/lib/arweave.ts` 维护多个网关，主网关失败自动切换。
+
+### 决策 10：Vercel Cron 而非独立 Worker（Phase 1-3）
+
+一个人项目减少运维。用户量大了再迁移到 Railway/Fly.io（见 `docs/HARDENING.md` 里程碑 B1）。
+
+### 决策 11：ISR 缓存 tracks
+
+数据库故障时浏览仍可用。
+
+### 决策 12：合约升级 = allowlist 切换，不用代理模式
+
+部署新 Orchestrator → allowlist 加新地址 → 移除旧地址。简单、可审计、零状态迁移。
+
+### 决策 13：Score Decoder 是 Phase 3 核心组件，不是退出工具
+
+**它是什么**：一个**单文件 HTML 播放器**（约 50-100 KB），上传 Arweave 一次，所有 ScoreNFT 通过 URL 参数共用同一个 decoder 地址。
+
+**用户的比喻**："网页唱片机，每个人都可以带着自己的唱片去播放"。
+
+**机制**：
+```
+ScoreNFT #42 的 metadata.animation_url:
+  ar://Qm....decoder.html?events=ar://Qm....events-42.json&base=12
+
+OpenSea 看到 animation_url 是 HTML
+  → 自动用 iframe 嵌入这个 decoder
+  → decoder 读 query 参数里的 events.json + base track id
+  → 调用 26 个音效 mp3（也都在 Arweave 上）按时间序列播放
+  → 用户在 OpenSea 直接听到合奏
+```
+
+**为什么必须 Phase 3 就做**（不能拖到退出阶段）：
+- 没有 decoder = OpenSea 上的分享卡只有图无声 = 损失 50% 病毒传播力
+- 微信/Twitter 分享时 OG 卡片只能展示封面，无法预览内容
+- decoder 同时是"永久可复现"承诺的兑现：项目结束时把 HTML 开源到 GitHub，任何人能脱离 108cyber.xyz 独立播放
+
+**成本**：HTML 一次性上传 ~$0.05，之后无增量。比"每张唱片渲染一个 mp3 上传 Arweave"（每张 ~$15）便宜 7500 倍。
 
 ---
 
-## 四、数据库（按 Phase 递增）
+### ⚠️ AI 编码约定（不可绕过的硬约束）
 
-### Phase 1：4 张表
+上面 12 条决策是项目的**形状骨架**，AI 在写代码时不允许默默偏离：
 
-```sql
--- 001_initial_schema.sql
-
-CREATE TABLE tracks (
-  id SERIAL PRIMARY KEY,
-  token_id INTEGER UNIQUE NOT NULL,
-  title TEXT NOT NULL,
-  artist TEXT NOT NULL DEFAULT '艺术家名',
-  audio_url TEXT NOT NULL,
-  arweave_audio_tx TEXT,
-  arweave_metadata_tx TEXT,
-  track_type TEXT NOT NULL DEFAULT 'original',
-  is_published BOOLEAN NOT NULL DEFAULT FALSE,
-  published_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  auth_type TEXT NOT NULL DEFAULT 'privy',
-  privy_user_id TEXT UNIQUE,
-  community_user_id TEXT UNIQUE,               -- Phase 4 使用
-  evm_address TEXT NOT NULL,
-  handle TEXT,
-  email TEXT,
-  phone TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-CREATE UNIQUE INDEX idx_users_evm ON users(evm_address);
-
-CREATE TABLE mint_queue (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  idempotency_key UUID UNIQUE NOT NULL,
-  user_id UUID NOT NULL REFERENCES users(id),
-  mint_type TEXT NOT NULL,                     -- 'material' | 'score'
-  token_id INTEGER,                            -- material 时
-  score_id UUID,                               -- score 时（Phase 2 加外键）
-  status TEXT NOT NULL DEFAULT 'pending',       -- pending → minting_onchain → confirming → success | failed
-  error_message TEXT,
-  arweave_metadata_tx TEXT,
-  tx_hash TEXT,
-  gas_used BIGINT,
-  cover_id INTEGER,                            -- Phase 3 使用
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  retry_count INTEGER NOT NULL DEFAULT 0,
-  max_retries INTEGER NOT NULL DEFAULT 3
-);
-CREATE INDEX idx_queue_status ON mint_queue(status);
-
-CREATE TABLE mint_events (
-  id SERIAL PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id),
-  token_id INTEGER NOT NULL,
-  token_type TEXT NOT NULL,
-  tx_hash TEXT NOT NULL,
-  score_data JSONB,                            -- Phase 2：铸造时复制完整 events
-  cover_arweave_tx TEXT,                       -- Phase 3：封面图
-  operator_gas_used BIGINT,
-  minted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-CREATE INDEX idx_mint_user ON mint_events(user_id);
-```
-
-### Phase 2 追加
-
-```sql
--- 002_jam_and_scores.sql
-
-CREATE TABLE sounds (
-  id SERIAL PRIMARY KEY,
-  key CHAR(1) UNIQUE NOT NULL,
-  name TEXT NOT NULL,
-  audio_url TEXT NOT NULL,
-  arweave_audio_tx TEXT,
-  token_id INTEGER UNIQUE
-);
-
-CREATE TABLE pending_scores (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES users(id),
-  base_track_token_id INTEGER NOT NULL,
-  events JSONB NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending',       -- pending → minting → minted | expired
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '24 hours')
-);
-CREATE INDEX idx_pending_user ON pending_scores(user_id);
-CREATE INDEX idx_pending_status ON pending_scores(status);
-
--- mint_queue 加外键
-ALTER TABLE mint_queue ADD CONSTRAINT fk_queue_score FOREIGN KEY (score_id) REFERENCES pending_scores(id);
-
--- mint_queue 状态机扩展（score 需要先上传 Arweave）
--- pending → uploading_arweave → minting_onchain → confirming → success | failed
-
--- 定时任务
-SELECT cron.schedule('expire-scores', '0 * * * *',
-  $$UPDATE pending_scores SET status='expired' WHERE status='pending' AND expires_at < NOW()$$);
-SELECT cron.schedule('purge-expired', '0 3 * * *',
-  $$DELETE FROM pending_scores WHERE status='expired' AND expires_at < NOW() - INTERVAL '7 days'$$);
-SELECT cron.schedule('timeout-mints', '30 * * * *',
-  $$UPDATE mint_queue SET status='failed', error_message='timeout' WHERE status IN ('pending','uploading_arweave','minting_onchain') AND created_at < NOW() - INTERVAL '24 hours'$$);
-```
-
-### Phase 3 追加
-
-```sql
--- 003_covers_and_airdrops.sql
-
-CREATE TABLE score_covers (
-  id SERIAL PRIMARY KEY,
-  arweave_tx TEXT NOT NULL,
-  usage_count INTEGER NOT NULL DEFAULT 0,      -- 允许复用
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE airdrop_events (
-  id SERIAL PRIMARY KEY,
-  round INTEGER NOT NULL,
-  user_id UUID NOT NULL REFERENCES users(id),
-  token_id INTEGER NOT NULL,
-  tx_hash TEXT,
-  airdropped_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-ALTER TABLE mint_queue ADD CONSTRAINT fk_queue_cover FOREIGN KEY (cover_id) REFERENCES score_covers(id);
-
--- 链上事件同步
-CREATE TABLE chain_events (
-  id SERIAL PRIMARY KEY,
-  event_type TEXT NOT NULL,
-  contract_address TEXT NOT NULL,
-  from_address TEXT NOT NULL,
-  to_address TEXT NOT NULL,
-  token_id INTEGER NOT NULL,
-  tx_hash TEXT NOT NULL,
-  block_number BIGINT NOT NULL,
-  log_index INTEGER NOT NULL,
-  synced_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE(tx_hash, log_index)
-);
-CREATE INDEX idx_chain_to ON chain_events(to_address);
-
-CREATE TABLE system_kv (
-  key TEXT PRIMARY KEY,
-  value TEXT NOT NULL,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-INSERT INTO system_kv VALUES ('last_synced_block', '0', NOW());
-```
-
-### RLS 说明
-
-```
-API Routes 使用 SUPABASE_SERVICE_ROLE_KEY + 手动 WHERE user_id 过滤。
-不依赖 current_setting()，避免 connection pool 问题。
-RLS 保留作为防御层。
-```
+1. **不容妥协**：如果某条决策在当前 step 无法实现，**立刻停下来告诉用户**，不允许"绕一下"或"先这样以后再改"。
+2. **细节自由**：决策不规定字段名 / 函数签名 / SQL 列类型 / 目录布局。AI 现场按 PostgreSQL / Solidity / Next.js 标准写法决定，不需要找文档求证。
+3. **冲突上报**：如果决策之间出现矛盾（比如 Phase 1 的某个需求看起来必须 await 链上确认才能完成），**立刻停下来告诉用户**，让用户更新决策或调整需求。
+4. **决策即铁律**：本文件的 trade-off 速查表（第十二节）是争议解决依据。当用户和 AI 对某个实现方式有分歧时，先翻速查表看决策原始理由。
 
 ---
 
-## 五、智能合约
+## 四、合约（设计意图，不是代码）
 
-### 铸造模式
+### MaterialNFT — ERC-1155
+- tokenId 1–108 = 音乐，109–134 = 音效
+- allowlist 权限模型
+- **不写** daily mint limit（决策 3 已说明：OP 上没必要）
+- 函数签名由 Phase 1 / Phase 2 写代码时决定
 
-```
-用户点铸造 → API Route 写 mint_queue → 立即返回 → 前端显示成功
-Vercel Cron 每分钟取一条 pending 任务 → 运营钱包发交易 → 等确认 → 写 mint_events
-失败自动重试（max 3 次）→ 彻底失败时 Telegram 告警
-
-Phase 1 状态机（material）：  pending → minting_onchain → confirming → success | failed
-Phase 2 状态机（score）：    pending → uploading_arweave → minting_onchain → confirming → success | failed
-```
-
-### MaterialNFT（ERC-1155）
-
-```
-tokenId：1-108 音乐，109-134 音效
-
-权限：allowlist（非 onlyOwner）
-  mapping(address => bool) public minters;
-  只有 allowlist 地址可 mint → 热钱包泄露只能 mint 无价值 NFT
-
-链上保护：
-  全局每日 mint 上限（如 200 个/天）→ 防突然爆火烧光 Gas
-  达到上限时交易 revert → 前端提示"今日铸造已满，明天再来"
-
-函数：
-  mint(address to, uint256 tokenId, uint256 amount) onlyMinter
-  mintBatch(address to, uint256[] tokenIds, uint256[] amounts) onlyMinter
-```
-
-### ScoreNFT（ERC-721）
-
-```
-tokenId 自增。mint 仅 MintOrchestrator 可调用。
-
-Metadata（OpenSea 兼容）：
-  {
-    "name": "Cyber Score #001",
-    "description": "与艺术家共同完成的合奏唱片",
-    "image": "ar://...封面图.jpg",                  ← OpenSea 渲染
-    "animation_url": "ar://...主音乐.mp3",          ← OpenSea 播放
-    "external_url": "https://108cyber.xyz/score/1",  ← 公开回放页
-    "base_track": { "token_id": 12, "arweave_audio": "ar://..." },
-    "events": [{ "key": "A", "sound": "kick", "sound_token_id": 109, "arweave_audio": "ar://...", "timestamp_ms": 1200 }],
-    "attributes": [
-      { "trait_type": "base_track", "value": "Track #012" },
-      { "trait_type": "instruments_used", "value": 5 },
-      { "trait_type": "duration_seconds", "value": 180 }
-    ]
-  }
-```
+### ScoreNFT — ERC-721
+- tokenId 自增
+- 仅 MintOrchestrator 可调用 mint
+- Metadata 必须 OpenSea 兼容（`image` / `animation_url` / `external_url` 三件套）
+- `external_url` 指向公开回放页 `/score/[tokenId]`，分享时微信/Twitter 自动展示封面
 
 ### MintOrchestrator
-
-```
-mintScore(address user, string tokenURI, uint256 baseTrackTokenId, uint256[] soundTokenIds)
-  1. ScoreNFT.mint(user, tokenURI) → scoreTokenId
-  2. ERC-6551 Registry.createAccount → TBA
-  3. MaterialNFT.mint(TBA, baseTrackTokenId, 1)
-  4. MaterialNFT.mintBatch(TBA, soundTokenIds, [...])
-
-★ ERC-6551 fallback：
-  如果 ERC-6551 不可用（标准变更/实现有 bug），
-  乐谱 NFT 退化为普通 ERC-721（只含 Metadata，不创建 TBA）。
-  核心体验（合奏/录制/回放/永久存储）完全不受影响。
-  代码中 TBA 逻辑隔离到可开关的模块中。
-
-★ 合约升级 = allowlist 切换：
-  部署新 Orchestrator → allowlist 加新地址 → 移除旧地址。
-  不需要代理模式。
-```
+- 编排合约：一次调用完成 ScoreNFT.mint + ERC-6551 TBA 创建 + 素材 NFT 转入 TBA
+- ERC-6551 fallback：TBA 模块可一键关闭，退化为普通 ERC-721
 
 ---
 
-## 六、API 设计
+## 五、API 端点一览
+
+请求/响应字段、TS 类型、错误码 → 由各 Phase 写代码时现场决定。
 
 ### 公开
-
-| 端点 | 说明 |
-|------|------|
-| `GET /api/tracks` | 素材列表（ISR 缓存 1h，数据库故障时返回缓存） |
-| `GET /api/score/:tokenId` | 公开乐谱数据（ScorePlayer 回放用） |
-| `GET /api/artist/stats` | 发布进度 / 总铸造数 / 倒计时 |
-| `GET /api/health` | Supabase + RPC + 余额检查 |
+- `GET /api/tracks` — 素材列表（ISR 1h，DB 故障时返回缓存）
+- `GET /api/score/:tokenId` — 公开乐谱数据
+- `GET /api/artist/stats` — 发布进度 / 总铸造数
+- `GET /api/health` — Supabase + RPC + 余额检查
 
 ### 需鉴权（Bearer JWT）
+- `POST /api/mint/material` — 写队列 → 立即返回 `{ mintId }`
+- `POST /api/mint/score` — 写队列 → 返回 `{ mintId, coverUrl }`
+- `POST /api/score/save` — 暂存乐谱（24h TTL）
+- `GET /api/user/nfts` — 已铸造 + 待铸造 + 进行中
+- `POST /api/auth/community` — Phase 4
 
-| 端点 | 说明 |
-|------|------|
-| `POST /api/mint/material` | 写 mint_queue，立即返回 `{ mintId }` |
-| `POST /api/mint/score` | 写 mint_queue，立即返回 `{ mintId, coverUrl }` |
-| `POST /api/score/save` | 暂存乐谱（24h TTL） |
-| `GET /api/user/nfts` | 已铸造 NFT（含 score_data 回放）+ 待铸造 + 进行中 |
-| `POST /api/auth/community` | Phase 4：社区钱包登录代理（5s 超时降级） |
+### Cron（带 CRON_SECRET）
+- `process-mint-queue` — 每 1 分钟，串行铸造
+- `sync-chain-events` — 每 5 分钟，从 last_synced_block 拉日志
+- `check-balance` — 每小时，热钱包 < 0.1 ETH 或队列 > 50 时告警
 
-### Mint API 细节
+---
 
-```typescript
-// POST /api/mint/material
-// 请求：{ tokenId: 12, idempotencyKey: "uuid" }
-// 逻辑：验证 JWT → idempotency 去重 → 写 mint_queue → 返回
-// 响应：{ result: "ok", mintId: "uuid" }
-// 前端收到即显示成功（乐观 UI）
+## 六、前端体验关键点
 
-// POST /api/mint/score
-// 请求：{ scoreId: "uuid", idempotencyKey: "uuid" }
-// 逻辑：JWT → 去重 → pending_scores.status='minting' → 分配封面 → 写 mint_queue
-// 响应：{ result: "ok", mintId: "uuid", coverUrl: "ar://..." }
-// 前端显示成功 + 弹出 ShareCard
-```
+### 首次引导（声音+动画，不是文字教程）
+`useFirstVisit` (localStorage) → 岛屿脉冲 → "点击它" → 音乐响 → "试试键盘" → 音效+视觉
 
-### Cron（Vercel Cron，带 CRON_SECRET）
+### 群岛（渐进式生长）
+1首→孤岛 / 2-5→散落 / 6-36→岛群 / 37-72→双岛群 / 73-108→完整群岛
+颜色=情绪，大小=铸造热度，标记=已铸造，悬停=2-3秒预览。
 
-| 端点 | 频率 | 逻辑 |
-|------|------|------|
-| `process-mint-queue` | 每 1 分钟 | 取一条 pending → 发交易 → 等确认 → 写 mint_events |
-| `sync-chain-events` | 每 5 分钟 | Alchemy getLogs → chain_events（从 last_synced_block 开始） |
-| `check-balance` | 每小时 | 热钱包 < 0.1 ETH 或队列 > 50 → Telegram 告警 |
+### 合奏
+Patatap 风格键盘 + 视觉反馈。**Phase 2 开始前必须做 1 天 spike** 验证能否在 Next.js 集成。失败则自建简化版（Web Audio + Canvas，6-8 种基础动画随机分配 26 键）。
+
+### 铸造（乐观 UI）
+点击 → 立即"成功🎉" → ShareCard（封面 + 一键复制 `/score/:tokenId`）
+唱片架的新唱片有"确认中"呼吸动画 → 后台确认完停止
+**只有彻底失败才弹通知**（极低概率）
+
+### 24h TTL 可视化
+待铸造列表 = 岛屿沉入水面动画 + 倒计时
+最后 1 小时邮件提醒（有邮箱时）
+过期 = 沉入海底动画（不是静默删除）
+
+### 全局底部播放条
+固定底部，跨页不中断。曲目名 / ▶⏸ / 进度条 / 音量 / 静音。
+
+### 公开回放页 `/score/[tokenId]`
+任何人可访问。OG meta tags 三件套。数据来源 `mint_events.score_data`，灾备链路 = 链上 tokenURI → Arweave。
 
 ---
 
 ## 七、认证
 
-### Launch：Privy JWT 直接使用
+**Launch（Phase 1-3）**：Privy JWT 直接验证。后端 `privy.verifyAuthToken(token)` → userId + wallet.address。
 
-```
-Privy 登录的用户 → 直接使用 Privy JWT（Privy 服务端 SDK 验证）
-后端：privy.verifyAuthToken(token) → 获取 userId + wallet.address
-不需要自己签发 JWT，减少一半认证复杂度。
-```
-
-### Future（Phase 4）：社区钱包加自签 JWT
-
-```
-社区钱包用户 → 代理登录社区 API → 获取 evm_address → 签发本站 JWT
-后端验证时：先尝试 Privy 验证 → 失败再尝试自签 JWT 验证
-
-社区 API 5 秒超时，失败降级"请使用其他方式登录"。
-首次登录后 evm_address 存 users 表，后续只需 JWT 不再依赖社区 API。
-```
+**Future（Phase 4）**：社区钱包 → 代理登录 → 拿 evm_address → 签发本站 JWT。后端先 Privy 验证 → 失败再自签验证。社区 API 5 秒超时降级。首次后 evm_address 入库，后续不再依赖社区 API。
 
 ---
 
-## 八、前端体验
+## 八、Arweave + 封面 + 成本结构
 
-### 首次引导（声音+动画，不是文字教程）
+**Arweave**：用户无感，后端全包。Turbo SDK 信用卡支付，无需 AR 代币。`src/lib/arweave.ts` 多网关 fallback。
 
-```
-useFirstVisit（localStorage）→ 岛屿脉冲+"点击它" → 音乐响 → "试试键盘" → 音效+视觉 → 引导结束
-```
+**封面**：HashLips 预生成 10,000+ 张 → Arweave 上传 → score_covers 表。铸造时 `ORDER BY usage_count ASC LIMIT 1 FOR UPDATE SKIP LOCKED`，允许复用。
 
-### 群岛
+### 真实成本分布（按决策 8 复用机制后）
 
-```
-渐进式：1首→孤岛, 2-5→散落, 6-36→岛群, 37-72→双岛群, 73-108→完整群岛
-颜色=情绪, 大小=铸造热度, 标记=已铸造, 悬停=2-3秒预览+铸造人数
-Canvas 或 SVG，力导向图布局
-```
+**一次性投入**（项目启动前完成）：
 
-### 合奏
+| 资源 | 估算成本 | 复用次数 |
+|---|---:|---|
+| 26 个音效 mp3 上传 | ~$2-5 | 永久复用 |
+| 10,000 张封面图上传 | ~$20-30 | 复用直到用完 |
+| 108 首底曲 mp3 上传 | ~$15-20 | 一次性 + 每周新增 1 首 |
+| score-decoder.html 上传 | ~$0.05 | 永久复用 |
+| **一次性合计** | **~$40-55** | |
 
-```
-Patatap 键盘/触控 + 视觉反馈（原版内置移动端支持）
-★ 如果 Patatap 无法集成 Next.js，自建简化版：
-  Web Audio API + Canvas 2D，6-8 种基础动画随机分配 26 键
-  Phase 1 开始前做 spike（一天内在空项目中验证）
+**每张 ScoreNFT 增量成本**（部署在 OP Mainnet）：
 
-合奏结束 → ScorePreview 自动回放 → 三选一：重录 / 铸造 / 保存
-```
+| 项 | 成本 |
+|---|---:|
+| Arweave 新增（events.json + metadata.json）| ~$0.002 |
+| Gas（OP 典型，~561k gas，含 L2 execution + L1 data fee）| ~$0.10 |
+| **每张合计** | **~$0.10** |
 
-### 铸造（乐观 UI）
+> 范围：OP 上典型成本 $0.05-0.30，受 L1 拥堵程度影响。极端情况（L1 大爆发时）可能触及 $0.50。
 
-```
-点击 → 前端立即"成功🎉" → ShareCard 弹出（封面图 + 一键复制 /score/:tokenId）
-唱片架中新唱片有呼吸动画（"确认中"）→ 后台确认后停止动画
-只有彻底失败才通知（极低概率）
-```
-
-### 24h TTL 可视化
+### $500 预算能 mint 多少张
 
 ```
-待铸造列表：岛屿沉入水面动画 + 倒计时
-最后 1 小时：邮件提醒（有邮箱时）
-过期：沉入海底动画（不是静默删除）
+$500 - $50（一次性 Arweave 资产）= $450 动态预算
+$450 / $0.10 ≈ 4500 张（典型）
+$450 / $0.30 ≈ 1500 张（L1 拥堵时）
 ```
 
-### 全局底部播放条
-
-```
-BottomPlaybar：固定底部，跨页不中断
-  曲目名 | ▶/⏸ | 进度条 | 🔊音量 | 🔇静音
-```
-
-### 个人页：唱片架
-
-```
-RecordShelf：横向滚动封面 → 点击翻转（乐谱详情）→ 播放回放
-链上确认中的唱片有呼吸动画
-每张唱片有"分享"入口
-```
-
-### 公开回放页 `/score/[tokenId]`
-
-```
-任何人可访问 → 封面图 + ScorePlayer 回放 + 铸造者信息
-OG Meta Tags：og:title / og:image / og:description
-→ 微信/Twitter 分享自动显示封面图
-数据来源：mint_events.score_data（灾备：链上 tokenURI → Arweave）
-```
-
-### 艺术家页（动态）
-
-```
-GET /api/artist/stats → 进度条（N/108）+ 总铸造数 + 独立用户数 + 下一首倒计时
-```
-
-### 空投开箱
-
-```
-AirdropUnbox：群岛出现特殊岛屿 → 点击揭晓 → AI 再创作展示
-```
+**预算瓶颈消失**：OP 上 $500 够整个项目使用还有大量富余。这是 daily mint limit 和 gas price guard 都被降级为"可选"的根本原因（决策 3）。
 
 ---
 
-## 九、封面图
-
-```
-HashLips Art Engine：艺术家画 5-8 层 × 10-20 变体
-预生成 10,000+ 张，允许复用（永远不会用完）
-
-npx tsx scripts/generate-covers.ts
-  → HashLips 生成 → Turbo SDK 批量上传 Arweave → score_covers 表
-  → 支持中断续传
-
-铸造时分配：
-  SELECT id, arweave_tx FROM score_covers ORDER BY usage_count ASC LIMIT 1 FOR UPDATE SKIP LOCKED
-  UPDATE usage_count = usage_count + 1
-```
-
----
-
-## 十、Arweave
-
-```
-用户无感，后端全包。Turbo SDK 信用卡支付，无需 AR 代币。
-合约 URI 格式：ar://txid（不绑定特定网关）
-
-★ 多网关 fallback（src/lib/arweave.ts）：
-  arweave.net → ar-io.dev → g8way.io → 可配置扩展
-
-费用：音乐 ~$15 + 封面 ~$20 = ~$35 一次性
-```
-
----
-
-## 十一、运营
-
-### 每周上架
-
-```bash
-npx tsx scripts/upload-track.ts --track-number 12 --audio ./tracks/012.mp3 --title "曲名"
-```
-
-### 空投（第 36/72/108 首）
-
-```bash
-npx tsx scripts/airdrop.ts export-addresses --round 1
-npx tsx scripts/airdrop.ts dry-run --round 1 --network sepolia
-npx tsx scripts/airdrop.ts execute --round 1 --network mainnet
-```
-
-### 自动化
-
-| 任务 | 频率 | 方式 |
-|------|------|------|
-| 铸造队列 | 每 1 分钟 | Vercel Cron |
-| 链上同步 | 每 5 分钟 | Vercel Cron |
-| 余额检查 | 每小时 | Vercel Cron + Telegram |
-| 过期乐谱 | 每小时 | pg_cron |
-| 失败任务 | 每小时 | pg_cron |
-
-### 运营成本预算
+## 九、运营成本预算
 
 ```
 == 免费 ==
-Vercel Hobby:      $0（API Route 10s 超时，Phase 1 够用）
-Supabase Free:     $0（500MB，50k 行）
-Alchemy Free:      $0
-Privy Free:        $0（1,000 MAU）
+Vercel Hobby + Supabase Free + Alchemy Free + Privy Free   $0
 
 == 必须付费 ==
-域名:              ~$12/年
-香港服务器:         $5-20/月（国内反代）
-ETH Gas:           $50-200/月（取决于铸造量，合约每日上限控制）
-Arweave:           ~$35 一次性
+域名                $12/年
+香港反代服务器       $5-20/月（国内访问）
+ETH Gas             $50-200/月（合约每日上限控制上界）
+Arweave             ~$35 一次性
 
-== 月均成本（初期）==
+== 月均（初期）==
 $55-220/月
 
-== 用户增长后升级 ==
-Vercel Pro:        $20/月（60s 超时）
-Supabase Pro:      $25/月（备份）
-独立 Worker:       $5/月（队列延迟不够时）
+== 用户增长后升级路径 ==
+Vercel Pro $20/月 / Supabase Pro $25/月 / 独立 Worker $5/月
 ```
+
+详细演进路线见 `docs/HARDENING.md`。
 
 ---
 
-## 十二、项目退出策略
+## 十、退出策略
 
-```
-两年后 108 首全部完成：
+**低成本维持模式**（推荐）：
+1. 铸造切换为"用户自付 Gas"（前端连钱包签名，传统 dApp）
+2. 停掉运营钱包 / Worker / 付费服务
+3. 保留 Vercel Hobby + Supabase Free
+4. 运营成本 → $0
 
-★ 低成本维持模式（推荐）：
-  保留 Vercel Hobby + Supabase Free
-  铸造切换为"用户自付 Gas"模式（前端连钱包签名，传统 dApp）
-  停掉运营钱包、Worker、付费服务
-  运营成本 → $0
+**Score Decoder**（已在决策 13 提升为 Phase 3 核心组件，本节只是兑现"永久可复现"的最后一环）：
+- 项目结束时把 score-decoder.html 开源到 GitHub
+- 任何人可独立部署，输入 ScoreNFT tokenId → 从 Arweave 读 metadata → 用 Web Audio 回放
+- 即使 108cyber.xyz 关站，所有 ScoreNFT 仍可被任何人复现
 
-★ Score Decoder（项目运营期间开发）：
-  一个单文件 HTML，开源到 GitHub
-  输入 ScoreNFT tokenId → 从 Arweave 读 Metadata → Web Audio API 回放
-  即使网站关闭，任何人可以独立部署复现合奏
-  这是"永久可复现"承诺的兑现
-
-★ 数据永久性保证：
-  Arweave 上的音频+Metadata = 永久
-  以太坊主网合约 = 永久
-  Score Decoder 开源 = 永久可用
-  三者结合 = 完整复现，不依赖任何中心化服务
-```
+**数据永久性**：Arweave（音频+Metadata）+ OP Mainnet 合约（最终结算到 ETH L1）+ Score Decoder（开源）= 完整复现，不依赖任何中心化服务。
 
 ---
 
-## 十三、开发阶段
+## 十一、Phase 路线图
 
-### Phase 1：MVP（目标：1 首歌跑通全链路）
+### Phase 0 — Minimal Closed Loop（当前）
+1 笔 mint 上链。详见 `playbook/phase-0-minimal.md`。
 
-```
-数据库：001_initial_schema.sql（4 张表）
-合约：MaterialNFT 部署到 Sepolia
-服务：Vercel Hobby + Supabase Free
+### Phase 1 — MVP
+数据库 4 张表 / MaterialNFT 部署 **OP Sepolia** / 单岛屿 + 首次引导 / 单曲播放 + 底部播放条 / Privy 登录 / mint API + Cron / 个人页基础版 / 端到端测试
 
-- [ ] 项目初始化
-- [ ] 群岛单岛屿 + 呼吸动画
-- [ ] 首次引导（FirstVisitGuide）
-- [ ] 单曲播放 + 底部播放条
-- [ ] Privy 登录
-- [ ] MaterialNFT 合约（Sepolia，含 allowlist + 每日上限）
-- [ ] POST /api/mint/material → 写队列 → 立即返回
-- [ ] Vercel Cron process-mint-queue → 串行铸造
-- [ ] 乐观 UI：点击即成功
-- [ ] 个人页基础版（已铸造列表）
-- [ ] 端到端测试
-```
+### Phase 2 — 合奏 + 群岛完整版
+Patatap spike（1 天）/ 多岛屿 + 悬停预览 + 视觉暗示 / 合奏录制 + ScorePreview / pending_scores + 24h TTL 可视化 / pg_cron 定时任务
 
-### Phase 2：合奏 + 群岛完整版
+### Phase 3 — 乐谱 NFT + 封面 + 分享
+封面预生成 / ScoreNFT + MintOrchestrator / ERC-6551 TBA（含 fallback）/ mint_events.score_data 自包含 / **score-decoder.html 上传 Arweave**（决策 13）/ 公开回放页 + ShareCard / 唱片架 / 链上事件同步
 
-```
-数据库：002_jam_and_scores.sql
-★ 开始前先做 Patatap spike（1 天）
+### Phase 4 — 社区钱包 + 空投
+社区 API 封装 / 自签 JWT 双验证 / 艺术家页面动态化 / 空投开箱 / 余额告警 + 健康检查
 
-- [ ] Patatap 集成（或自建简化版）
-- [ ] 群岛多岛屿 + 悬停预览 + 铸造标记 + 视觉暗示
-- [ ] 合奏录制 + ScorePreview 自动预览
-- [ ] 乐谱暂存 + pending_scores 状态机
-- [ ] 24h TTL 可视化（沉入水面 + 过期海底动画）
-- [ ] 过期前邮件提醒
-- [ ] pg_cron 定时任务
-```
-
-### Phase 3：乐谱 NFT + 封面 + 分享
-
-```
-数据库：003_covers_and_airdrops.sql
-★ 艺术家提前准备图层素材
-
-- [ ] 封面图：图层 → HashLips → Arweave → score_covers
-- [ ] ScoreNFT + MintOrchestrator 部署（Sepolia）
-- [ ] ERC-6551 TBA（含 fallback 开关）
-- [ ] 队列支持 score mint（Arweave 上传 → 封面分配 → 合约铸造）
-- [ ] mint_events.score_data 自包含
-- [ ] ScorePlayer 回放 + 公开回放页 /score/[tokenId]（OG tags）
-- [ ] ShareCard + 一键复制链接
-- [ ] 唱片架（RecordShelf）
-- [ ] OpenSea Metadata 验证
-- [ ] 链上事件同步 Cron
-```
-
-### Phase 4：社区钱包 + 空投 + 完善
-
-```
-数据库：004_community_auth.sql
-
-- [ ] 社区 API 封装 + 5s 超时降级
-- [ ] 自签 JWT（仅社区用户）+ 后端双验证
-- [ ] LoginModal 社区入口
-- [ ] 艺术家页面动态化
-- [ ] 空投"开箱"体验
-- [ ] 余额检查 Cron + Telegram 告警
-- [ ] 健康检查端点
-```
-
-### Phase 5：主网 + 安全 + 退出准备
-
-```
-- [ ] 合约部署到主网（含 allowlist 配置）
-- [ ] 运营钱包冷热分离
-- [ ] 私钥环境隔离（Production vs Preview）
-- [ ] 香港 Nginx 反向代理
-- [ ] 安全审计
-- [ ] 响应式适配
-- [ ] Score Decoder 开源工具开发
-- [ ] 低成本维持模式准备（用户自付 Gas 切换开关）
-```
+### Phase 5 — OP 主网 + 安全 + 退出准备
+**OP Mainnet 部署** / 冷热钱包分离 / 私钥环境隔离 / 香港 Nginx 反代 / 安全审计 / Score Decoder 开源到 GitHub（Phase 3 已上 Arweave，这里只是开源代码）/ 低成本维持模式开关
 
 ---
 
-## 十四、关键决策
+## 十二、关键 trade-off 速查
 
-| 决策 | 理由 |
-|------|------|
-| Phase 1 用 Vercel Cron 而非独立 Worker | 一个人项目减少运维，用户量大了再迁移 |
-| Privy JWT 直接使用 | 不自建一套 JWT，减少一半认证复杂度 |
-| 数据库按 Phase 递增 | 不在 Phase 1 就建 12 张表 |
-| 合约全局每日 mint 上限 | 防突然爆火烧光 Gas |
-| 封面图允许复用 | 永远不会用完，封面不是核心价值 |
-| ERC-6551 设 fallback 开关 | 未定稿标准是最大技术赌注 |
-| 乐观 UI | 用户秒级反馈，后台异步上链 |
-| ISR 缓存 tracks | 数据库故障时浏览仍可用 |
-| mint_events.score_data 自包含 | 不依赖 pending_scores 外键 |
-| 低成本维持模式 | 两年后切换到用户自付 Gas，运营成本 → $0 |
-| Score Decoder 开源 | 兑现"永久可复现"承诺 |
-| Patatap spike 先行 | 2014 年库集成风险，Phase 2 前验证 |
+| 决策 | 选了 | 没选 | 理由 |
+|---|---|---|---|
+| 队列处理器 | Vercel Cron | 独立 Worker | 一个人项目，减少运维 |
+| 认证 | Privy JWT 直接 | 自建 JWT | 减少一半复杂度 |
+| 合约权限 | allowlist | onlyOwner | 私钥泄露损失更小 |
+| Mint 上限 | 全局每日 | 用户每日 | 防爆火烧 Gas |
+| 数据库 | 按 Phase 递增 | 一次建全 | 不背没用的字段 |
+| Mint UI | 乐观 UI | 等链上确认 | 用户秒级反馈 |
+| 封面 | HashLips 预生成 + 复用 | 每张独一无二 | 永远不会用完 |
+| 乐谱数据 | mint_events 自包含 | 外键依赖 pending_scores | 数据可永久回放 |
+| TBA | ERC-6551 + fallback 开关 | 强制使用 ERC-6551 | 标准未定稿的赌注隔离 |
+| 缓存 | ISR tracks | SSR | DB 故障时浏览可用 |
+| 退出 | 用户自付 Gas + Score Decoder | 关站 | 兑现永久可复现 |
+| Patatap | Phase 2 前 1 天 spike | 直接集成 | 2014 年库的集成风险隔离 |
+| Arweave 资源 | 26 音效 + 10000 封面 + 108 底曲全部预上传复用 | 每次铸造重新上传 | 单张成本 $15 → $0.002 |
+| 合奏播放 | score-decoder.html 一次性上传 + URL 参数 | 每张渲染独立 mp3 | 成本 $15/张 → $0.05 一次性 |
+| 部署链 | OP Mainnet（L2）| Ethereum L1 主网 | 单笔成本 $0.78 → $0.10；gas 不飙；安全性等同 |
+| 限量护栏 | 应用层（API/DB）软限制 | 合约硬编码 daily limit | 应用层可改，合约不可改 |
+
+---
+
+## 十三、AI 阅读须知
+
+**写代码时**：本文件给你"项目去哪里"的方向感，但**不要把字段名/接口签名当模板照抄**。具体代码以当前 playbook step 的 🤖 执行指引为准。
+
+**做技术决策时**：先看本文件第三节"核心架构决策"，再看 `docs/STACK.md`，再看 `docs/CONVENTIONS.md`。三者冲突时按 `AGENTS.md` §9 解决。
+
+**发现矛盾时**：立刻告诉用户，让用户决定改哪一份。**不要默默偏向某一份**。
