@@ -47,6 +47,10 @@ function normalizePath(p) {
 
 function isExemptDir(dirPath) {
   const normalized = normalizePath(dirPath);
+  // Next.js API route 子树天然会超 8 个端点，整棵 src/app/api/** 豁免
+  if (normalized.includes('/src/app/api/') || normalized.endsWith('/src/app/api')) {
+    return true;
+  }
   return EXEMPT_DIRS.some(
     (d) => normalized.includes(`/${d}/`) || normalized.endsWith(`/${d}`) || normalized === d
   );

@@ -92,8 +92,16 @@ fi
 
 # 5b. console.log(process.env)
 if grep -rn --include="*.ts" --include="*.tsx" "console\.log(process\.env" src/ 2>/dev/null; then
-  echo "$FAIL 发现 console.log(process.env) — 会泄露密钥"
+  echo "$FAIL 发现 console 打印 process.env — 会泄露密钥"
   DANGER_FOUND=1
+fi
+
+# 5c. .env.local 里有占位值未替换
+if [ -f ".env.local" ]; then
+  if grep -nE "=(0x0+$|your_value_here|placeholder|xxx)" .env.local 2>/dev/null; then
+    echo "$FAIL .env.local 里有占位值未替换（0x000.../your_value_here/placeholder/xxx）"
+    DANGER_FOUND=1
+  fi
 fi
 
 if [ "$DANGER_FOUND" -eq 0 ]; then

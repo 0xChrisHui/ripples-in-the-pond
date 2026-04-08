@@ -72,6 +72,40 @@ fi
 if [ -f ".env.local" ]; then
   echo "$OK .env.local 存在"
   PASS=$((PASS + 1))
+
+  # 检查关键 env var 是否有值（非空、非占位）
+  echo ""
+  echo "── .env.local 关键字段 ──"
+  REQUIRED_KEYS=(
+    "NEXT_PUBLIC_PRIVY_APP_ID"
+    "PRIVY_APP_SECRET"
+    "NEXT_PUBLIC_SUPABASE_URL"
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    "SUPABASE_SERVICE_ROLE_KEY"
+    "ALCHEMY_RPC_URL"
+    "OPERATOR_PRIVATE_KEY"
+    "CRON_SECRET"
+  )
+  for key in "${REQUIRED_KEYS[@]}"; do
+    line=$(grep -E "^${key}=" .env.local 2>/dev/null | head -1)
+    if [ -z "$line" ]; then
+      echo "$WARN $key 未设置（Phase 0 Step 3+ 才会用到）"
+      WARN_COUNT=$((WARN_COUNT + 1))
+    else
+      val="${line#*=}"
+      val="${val#\"}"; val="${val%\"}"
+      val="${val#\'}"; val="${val%\'}"
+      if [ -z "$val" ] || [ "$val" = "your_value_here" ] || [ "$val" = "xxx" ] || \
+         [ "$val" = "0x0000000000000000000000000000000000000000" ] || \
+         [ "$val" = "0x0000000000000000000000000000000000000000000000000000000000000000" ]; then
+        echo "$WARN $key 是占位值（'$val'），需要填真实值"
+        WARN_COUNT=$((WARN_COUNT + 1))
+      else
+        echo "$OK $key 已设置"
+        PASS=$((PASS + 1))
+      fi
+    fi
+  done
 else
   echo "$WARN .env.local 不存在 — Phase 0 Step 0 末尾创建"
   WARN_COUNT=$((WARN_COUNT + 1))
@@ -115,18 +149,19 @@ echo ""
 echo "================================================"
 echo "  汇总：$PASS 通过 / $WARN_COUNT 警告 / $FAIL_COUNT 失败"
 echo "================================================"
+echo ""
+echo "合格线：FAIL_COUNT == 0（警告不影响）"
+echo ""
 
 if [ "$FAIL_COUNT" -gt 0 ]; then
-  echo ""
   echo "$FAIL 有失败项，需要先处理才能开始工作。"
   exit 1
 fi
 
 if [ "$WARN_COUNT" -gt 0 ]; then
-  echo ""
   echo "$WARN 有警告项，但不影响开始工作。"
+  echo ""
 fi
 
-echo ""
 echo "$OK 环境就绪。"
 exit 0

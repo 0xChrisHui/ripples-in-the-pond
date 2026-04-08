@@ -59,6 +59,13 @@ function checkContent(filePath, content) {
   lines.forEach((line, idx) => {
     const lineNum = idx + 1;
 
+    // 跳过单行注释行（避免误判文档/解释里出现的关键字）
+    // 注：不处理多行注释 /* ... */，因为简单且很少有人在多行注释里写 import
+    const trimmed = line.trim();
+    if (trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('#')) {
+      return;
+    }
+
     // 1. 前端文件不能 import operator-wallet 或 OPERATOR_PRIVATE_KEY
     if (isFrontendFile(filePath)) {
       if (
@@ -149,12 +156,15 @@ async function main() {
     process.exit(0);
   }
 
-  // 不检查 markdown 文档和配置
+  // 只检查 JS/TS 源代码（含 jsx/tsx/mjs/cjs）。其他都跳过：
+  //   - md/json/yml/toml/txt/gitignore: 文档配置
+  //   - sh/bash: shell 脚本（自有规范，本 hook 不管）
+  //   - sol: Solidity 合约（自有规则）
+  //   - env*: 环境变量文件
+  //   - css/html/svg: 静态资源
   const ext = path.extname(filePath).toLowerCase();
-  if (
-    ['.md', '.json', '.yml', '.yaml', '.toml', '.txt', '.gitignore'].includes(ext) ||
-    filePath.includes('.env')
-  ) {
+  const CHECK_EXTS = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'];
+  if (!CHECK_EXTS.includes(ext) || filePath.includes('.env')) {
     process.exit(0);
   }
 

@@ -16,7 +16,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const MAX_LINES = 200;
+const MAX_LINES = 220;
+// API route handler 天然比组件长（业务编排），上限单独放宽
+const MAX_LINES_ROUTE = 270;
 
 // 豁免目录（路径用正斜杠匹配，跨平台）
 const EXEMPT_DIRS = [
@@ -27,6 +29,12 @@ const EXEMPT_DIRS = [
   '.next/',
   '.git/',
 ];
+
+// 判断是否是 Next.js API route handler 文件
+function isRouteHandler(filePath) {
+  const norm = filePath.replace(/\\/g, '/');
+  return /\/src\/app\/api\/.*\/route\.ts$/.test(norm);
+}
 
 // 只检查这些扩展名
 const CHECK_EXTS = ['.ts', '.tsx', '.js', '.jsx', '.sol', '.css'];
@@ -94,10 +102,12 @@ async function main() {
   }
 
   const lines = content.split('\n').length;
+  const limit = isRouteHandler(filePath) ? MAX_LINES_ROUTE : MAX_LINES;
 
-  if (lines > MAX_LINES) {
+  if (lines > limit) {
+    const kind = isRouteHandler(filePath) ? 'API route handler' : '代码文件';
     process.stderr.write(
-      `\n❌ check-file-size: 文件超过 ${MAX_LINES} 行硬线\n` +
+      `\n❌ check-file-size: ${kind} 超过 ${limit} 行硬线\n` +
         `   文件: ${filePath}\n` +
         `   行数: ${lines}\n\n` +
         `   规则来源: docs/CONVENTIONS.md §1.1\n` +

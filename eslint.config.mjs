@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // 项目工具链（不是 web 应用代码，用 Node.js CommonJS 写法）
+    ".claude/hooks/**",
+    "scripts/**",
   ]),
 ]);
 

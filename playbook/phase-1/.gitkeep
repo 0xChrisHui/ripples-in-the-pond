@@ -1,0 +1,2 @@
+# Phase 1 的 playbook 会在 Phase 0 跑通后写到这个目录
+# 拆分粒度：每个 step 一个 .md 文件

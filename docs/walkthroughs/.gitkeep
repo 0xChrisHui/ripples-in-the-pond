@@ -1,0 +1,3 @@
+# 这个文件夹将来放每个 step 的 diff 走读
+# 触发条件：Phase 0 跑通后启用（见 docs/CONVENTIONS.md §6.3）
+# 命名：step-N.md，每段代码 3-5 句话日常语言解释
