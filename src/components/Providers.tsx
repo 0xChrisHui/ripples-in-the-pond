@@ -2,6 +2,8 @@
 
 import { PrivyProvider } from '@privy-io/react-auth';
 import { privyConfig } from '@/src/lib/privy';
+import { PlayerProvider } from '@/src/components/player/PlayerProvider';
+import BottomPlayer from '@/src/components/player/BottomPlayer';
 
 /**
  * 全局 Provider 包装层
@@ -14,7 +16,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
       config={privyConfig}
     >
-      {children}
+      <PlayerProvider>
+        {children}
+        <BottomPlayer />
+      </PlayerProvider>
     </PrivyProvider>
   );
 }

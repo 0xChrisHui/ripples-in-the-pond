@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/src/hooks/useAuth';
 
 /**
@@ -35,12 +36,20 @@ export default function LoginButton() {
     : '已登录';
 
   return (
-    <button
-      type="button"
-      onClick={logout}
-      className="rounded-full border border-white/20 px-4 py-1.5 text-sm text-white transition-colors hover:bg-white/10"
-    >
-      {short}
-    </button>
+    <div className="flex items-center gap-3">
+      <Link
+        href="/me"
+        className="text-xs text-white/40 transition-colors hover:text-white/70"
+      >
+        我的收藏
+      </Link>
+      <button
+        type="button"
+        onClick={logout}
+        className="rounded-full border border-white/20 px-4 py-1.5 text-sm text-white transition-colors hover:bg-white/10"
+      >
+        {short}
+      </button>
+    </div>
   );
 }

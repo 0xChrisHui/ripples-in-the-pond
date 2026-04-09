@@ -1,26 +1,73 @@
 'use client';
 
-import { useAudioPlayer } from '@/src/hooks/useAudioPlayer';
+import type { Track } from '@/src/types/tracks';
+import { usePlayer } from '@/src/components/player/PlayerProvider';
+
+/** 颜色 → Tailwind class 映射 */
+const COLOR_MAP: Record<string, { bg: string; glow: string }> = {
+  blue: {
+    bg: 'bg-blue-500/30',
+    glow: 'hover:shadow-[0_0_40px_rgba(59,130,246,0.4)]',
+  },
+  emerald: {
+    bg: 'bg-emerald-500/30',
+    glow: 'hover:shadow-[0_0_40px_rgba(16,185,129,0.4)]',
+  },
+  violet: {
+    bg: 'bg-violet-500/30',
+    glow: 'hover:shadow-[0_0_40px_rgba(139,92,246,0.4)]',
+  },
+  amber: {
+    bg: 'bg-amber-500/30',
+    glow: 'hover:shadow-[0_0_40px_rgba(245,158,11,0.4)]',
+  },
+  rose: {
+    bg: 'bg-rose-500/30',
+    glow: 'hover:shadow-[0_0_40px_rgba(244,63,94,0.4)]',
+  },
+};
+
+const DEFAULT_COLOR = { bg: 'bg-white/20', glow: '' };
 
 /**
- * Island — 呼吸圆组件
- * 点击播放/停止音频，播放时呼吸动画加速
+ * Island — 单个岛屿
+ * 接收 Track 数据，点击播放/停止对应音频
  */
-export default function Island() {
-  const { playing, toggle } = useAudioPlayer();
+export default function Island({ track }: { track: Track }) {
+  const { playing, currentTrack, toggle } = usePlayer();
+  const isActive = playing && currentTrack?.id === track.id;
+  const colors = COLOR_MAP[track.cover] ?? DEFAULT_COLOR;
 
   return (
     <button
       type="button"
-      onClick={() => toggle('/tracks/001.mp3')}
+      onClick={() => toggle(track)}
       className={[
-        'h-40 w-40 rounded-full bg-blue-500/30 backdrop-blur-sm',
-        'transition-shadow duration-700',
-        'hover:shadow-[0_0_40px_rgba(59,130,246,0.4)]',
+        'flex flex-col items-center gap-3 group',
         'focus:outline-none',
-        playing ? 'animate-pulse' : 'animate-[pulse_4s_ease-in-out_infinite]',
       ].join(' ')}
-      aria-label={playing ? '停止播放' : '播放音乐'}
-    />
+      aria-label={isActive ? `停止播放 ${track.title}` : `播放 ${track.title}`}
+    >
+      <div
+        className={[
+          'h-28 w-28 rounded-full backdrop-blur-sm',
+          'transition-shadow duration-700',
+          colors.bg,
+          colors.glow,
+          isActive
+            ? 'animate-pulse shadow-lg'
+            : 'animate-[pulse_4s_ease-in-out_infinite]',
+        ].join(' ')}
+      />
+      <span
+        className={[
+          'text-xs tracking-wide transition-opacity duration-300',
+          isActive ? 'text-white opacity-100' : 'text-white/50 opacity-70',
+          'group-hover:opacity-100',
+        ].join(' ')}
+      >
+        {track.title}
+      </span>
+    </button>
   );
 }
