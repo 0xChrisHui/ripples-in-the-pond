@@ -20,7 +20,7 @@
 
 用户上次离开时**正在注册 3 个外部账号**：
 1. **Privy**（https://dashboard.privy.io/）—— 创建 app，启用 Email 登录，启用 Embedded wallet "Create on login"，**Networks 加 OP Sepolia (11155420) + OP Mainnet (10)**，复制 App ID + App Secret
-2. **Supabase**（https://supabase.com/dashboard）—— 新建项目 nft-music-dev，Region 选 Tokyo/Singapore，Free 计划，复制 Project URL + anon key + service_role key
+2. **Supabase**（https://supabase.com/dashboard）—— 新建项目 ripples-dev，Region 选 Tokyo/Singapore，Free 计划，复制 Project URL + anon key + service_role key
 3. **Alchemy**（https://dashboard.alchemy.com/）—— 新建 app，**Chain = Optimism, Network = Optimism Sepolia**（不要选错），复制 HTTPS RPC URL
 
 新会话开始时**先问用户**："上次注册的 3 个账号都搞定了吗？" 根据回答决定从哪一步继续：
@@ -43,7 +43,7 @@
 
 ## 备注（AI 写给下次会话的自己）
 
-- 项目命名分 3 层：仓库 `NFT-Music-from-Ye` / 代号 `nft-music` / 产品名 `108 Cyber Records`，详见 AGENTS.md §1
+- 项目命名：仓库 `ripples-in-the-pond` / 代号 `ripples-in-the-pond` / 产品名 `Ripples in the Pond`（本地文件夹仍是 `nft-music`，历史遗留）
 - **链：OP Mainnet（生产）/ OP Sepolia（测试）**——不用 ETH L1，详见 ARCHITECTURE.md 决策 3
 - Next.js 16.1.6 + React 19；ARCHITECTURE.md 已同步
 - Windows 环境，hooks 用 Git Bash 跑

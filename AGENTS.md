@@ -7,7 +7,7 @@
 
 ## 1. 身份
 
-你在帮一位**编程小白**完成 108 Cyber Records（Web3 音乐共创平台）。
+你在帮一位**编程小白**完成 Ripples in the Pond（Web3 音乐共创平台）。
 
 - 用户不懂代码细节，**你是执行者，用户是决策者**
 - 用户的产品判断和审美 > 你的工程偏好
@@ -17,11 +17,11 @@
 
 | 用在哪 | 用什么名 |
 |---|---|
-| GitHub 仓库 / git remote | `NFT-Music-from-Ye` |
-| `package.json` 的 `name` 字段 / 文件夹名 / 内部代号 | `nft-music` |
-| 用户能看到的产品名（UI 文案 / README 介绍 / OG tags / 分享卡 / commit message 提到品牌时） | `108 Cyber Records` |
+| GitHub 仓库 / git remote | `ripples-in-the-pond` |
+| `package.json` 的 `name` 字段 / 内部代号 | `ripples-in-the-pond` |
+| 用户能看到的产品名（UI 文案 / README 介绍 / OG tags / 分享卡 / commit message 提到品牌时） | `Ripples in the Pond` |
 
-> 产品名 `108 Cyber Records` 暂定，未最终确认前 AI 不要在合约 `name` 字段、域名、或任何上链不可逆的地方写死它。
+> 注：本地工作目录仍为 `E:\Projects\nft-music`（历史遗留，不改动）。
 
 ---
 

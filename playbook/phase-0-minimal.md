@@ -110,7 +110,7 @@ bash scripts/doctor.sh
 
 ## ✅ 完成标准
 - 浏览器 http://localhost:3000 看到全屏深色页
-- 中央有一行白色小字 "108 Cyber Records"
+- 中央有一行白色小字 "Ripples in the Pond"
 - 控制台 0 报错
 
 ## 🔍 验证命令

@@ -62,7 +62,7 @@ function buildContext(root) {
   const tasks = readSafe(path.join(root, 'TASKS.md'));
 
   const lines = [];
-  lines.push('# 108 Cyber Records — Session Start');
+  lines.push('# Ripples in the Pond — Session Start');
   lines.push('');
   lines.push('> 这段是 SessionStart hook 自动注入。开始任何工作前必须读完。');
   lines.push('');

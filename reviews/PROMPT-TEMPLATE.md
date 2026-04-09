@@ -9,7 +9,7 @@
 ## 复制下面这一整段给 Codex
 
 ```
-你是一个独立代码审查员。请审查 nft-music / 108 Cyber Records 项目的最近改动。
+你是一个独立代码审查员。请审查 Ripples in the Pond 项目的最近改动。
 
 ## 你需要先读的文件（按顺序）
 

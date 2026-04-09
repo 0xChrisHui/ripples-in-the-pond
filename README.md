@@ -1,10 +1,10 @@
-# 108 Cyber Records
+# Ripples in the Pond
 
 > 一位艺术家用两年时间，将 108 首音乐逐周刻进区块链。
 > 每位用户可与艺术家合奏，并将生成的音乐永久存储进自己的钱包。
 
-代号：`nft-music`
-产品名：`108 Cyber Records`
+代号：`ripples-in-the-pond`
+产品名：`Ripples in the Pond`
 
 ---
 
