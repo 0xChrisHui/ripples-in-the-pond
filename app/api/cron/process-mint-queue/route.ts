@@ -15,6 +15,10 @@ import {
  * 一次只处理一条（nonce 串行要求）
  */
 export async function GET(req: NextRequest) {
+  // job.id 存在外层，catch 里用同一个 id 回滚（修复：失败补偿绑定当前任务）
+  let claimedJobId: string | null = null;
+  let claimedRetryCount = 0;
+
   try {
     // 1. 验证 secret
     const secret = req.nextUrl.searchParams.get('secret');
@@ -22,26 +26,19 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: '无效的 secret' }, { status: 401 });
     }
 
-    // 2. 取一条 pending 记录（按创建时间排序，最早的优先）
-    const { data: job, error: fetchError } = await supabaseAdmin
-      .from('mint_queue')
-      .select('id, user_id, token_id, retry_count')
-      .eq('status', 'pending')
-      .order('created_at', { ascending: true })
-      .limit(1)
-      .single();
+    // 2. 原子抢单：查 pending + 标记 minting_onchain 一步完成（修复：防并发双 mint）
+    const { data: jobs, error: claimError } = await supabaseAdmin
+      .rpc('claim_pending_job');
 
-    if (fetchError || !job) {
+    if (claimError || !jobs || jobs.length === 0) {
       return NextResponse.json({ result: 'ok', processed: 0 });
     }
 
-    // 3. 标记为处理中（防止重复处理）
-    await supabaseAdmin
-      .from('mint_queue')
-      .update({ status: 'minting_onchain', updated_at: new Date().toISOString() })
-      .eq('id', job.id);
+    const job = jobs[0];
+    claimedJobId = job.id;
+    claimedRetryCount = job.retry_count;
 
-    // 4. 查用户的 evm_address
+    // 3. 查用户的 evm_address
     const { data: user } = await supabaseAdmin
       .from('users')
       .select('evm_address')
@@ -52,11 +49,11 @@ export async function GET(req: NextRequest) {
       await supabaseAdmin
         .from('mint_queue')
         .update({ status: 'failed', updated_at: new Date().toISOString() })
-        .eq('id', job.id);
+        .eq('id', claimedJobId);
       return NextResponse.json({ error: '找不到用户' }, { status: 500 });
     }
 
-    // 5. 调合约 mint（运营钱包代付 gas）
+    // 4. 调合约 mint（运营钱包代付 gas）
     const txHash = await operatorWalletClient.writeContract({
       address: MATERIAL_NFT_ADDRESS,
       abi: MATERIAL_NFT_ABI,
@@ -69,7 +66,7 @@ export async function GET(req: NextRequest) {
       ],
     });
 
-    // 6. 等交易确认
+    // 5. 等交易确认
     const receipt = await publicClient.waitForTransactionReceipt({
       hash: txHash,
     });
@@ -82,7 +79,7 @@ export async function GET(req: NextRequest) {
           tx_hash: txHash,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', job.id);
+        .eq('id', claimedJobId);
     } else {
       throw new Error('交易回滚');
     }
@@ -91,27 +88,17 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     console.error('cron process-mint-queue error:', err);
 
-    // 失败时 retry_count++，状态回到 pending（下次重试）
-    const secret = req.nextUrl.searchParams.get('secret');
-    if (secret === process.env.CRON_SECRET) {
-      const { data: job } = await supabaseAdmin
+    // 失败补偿：用 claimedJobId 精确回滚当前任务（修复：不再查任意 minting_onchain）
+    if (claimedJobId) {
+      const newStatus = claimedRetryCount >= 3 ? 'failed' : 'pending';
+      await supabaseAdmin
         .from('mint_queue')
-        .select('id, retry_count')
-        .eq('status', 'minting_onchain')
-        .limit(1)
-        .single();
-
-      if (job) {
-        const newStatus = job.retry_count >= 3 ? 'failed' : 'pending';
-        await supabaseAdmin
-          .from('mint_queue')
-          .update({
-            status: newStatus,
-            retry_count: job.retry_count + 1,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', job.id);
-      }
+        .update({
+          status: newStatus,
+          retry_count: claimedRetryCount + 1,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', claimedJobId);
     }
 
     return NextResponse.json(

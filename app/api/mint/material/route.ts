@@ -78,18 +78,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 4. 幂等检查：同一个 idempotencyKey 不重复入队
-    const { data: existing } = await supabaseAdmin
-      .from('mint_queue')
-      .select('id')
-      .eq('idempotency_key', idempotencyKey)
-      .single();
-
-    if (existing) {
-      return NextResponse.json({ result: 'ok', mintId: existing.id });
-    }
-
-    // 5. 插入 pending 记录
+    // 4. 直接插入，靠 unique(idempotency_key) 做幂等（修复：并发安全）
     const { data: mint, error: mintError } = await supabaseAdmin
       .from('mint_queue')
       .insert({
@@ -102,7 +91,20 @@ export async function POST(req: NextRequest) {
       .select('id')
       .single();
 
-    if (mintError) throw mintError;
+    if (mintError) {
+      // unique 冲突 = 重复请求，查出已有记录返回
+      if (mintError.code === '23505') {
+        const { data: existing } = await supabaseAdmin
+          .from('mint_queue')
+          .select('id')
+          .eq('idempotency_key', idempotencyKey)
+          .single();
+        if (existing) {
+          return NextResponse.json({ result: 'ok', mintId: existing.id });
+        }
+      }
+      throw mintError;
+    }
 
     return NextResponse.json({ result: 'ok', mintId: mint.id });
   } catch (err) {
