@@ -36,14 +36,17 @@ export interface KeyEvent {
   duration: number;
 }
 
-/** pending_scores 表的一行 — 合奏草稿 */
+/** pending_scores 表的一行 — 合奏草稿（状态机表，禁止 DELETE） */
 export interface PendingScore {
   id: string;
   user_id: string;
   track_id: string;
   /** 按键事件序列 */
   events_data: KeyEvent[];
+  /** draft = 有效草稿，expired = 已过期（不删除，标记状态） */
+  status: 'draft' | 'expired';
   created_at: string;
+  updated_at: string;
   /** 24h 后过期 */
   expires_at: string;
 }
