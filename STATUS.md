@@ -12,26 +12,25 @@
 
 ## 当前进度
 
-**做到哪**: Phase 0 Step 1 ✅ 完成 — 全屏黑底 + 中央白字 "Ripples in the Pond"，verify.sh 全绿，用户肉眼确认
-**下一步**: Phase 0 Step 2 — Island 组件（呼吸圆）+ 点击播放本地 mp3
-**playbook**: `playbook/phase-0-minimal.md` Step 2
+**做到哪**: Phase 0 Step 2 ✅ 完成 — 呼吸圆 + 点击播放/停止 mp3，用户肉眼确认
+**下一步**: Phase 0 Step 3 — Privy 登录（拿到 evm_address）
+**playbook**: `playbook/phase-0-minimal.md` Step 3
 
 ### 续做指南（下次会话第一件事读这段）
 
-Step 1 已收尾（commit `6523c60`）。下次会话直接读 `playbook/phase-0-minimal.md` 的 Step 2：
-- 目标：首页中央一个柔和蓝色呼吸圆，点击播放 `public/tracks/001.mp3`
-- 需要新建 `src/components/archipelago/Island.tsx` + `src/hooks/useAudioPlayer.ts`，改 `app/page.tsx`
-- 提醒用户先在 `public/tracks/` 放一个 `001.mp3`
-- 不引入任何音频库，用 Web Audio API
+Step 2 已收尾（commit `eb1d7fb`）。下次会话直接读 `playbook/phase-0-minimal.md` 的 Step 3：
+- 目标：右上角"登录"按钮，邮箱登录后 console 打印 evm_address
+- 需要装 `@privy-io/react-auth` + `@privy-io/server-auth`，新建 `src/lib/privy.ts` + `src/hooks/useAuth.ts` + `src/components/auth/LoginButton.tsx`，改 `app/layout.tsx` + `app/page.tsx`
+- tsconfig `@/*` 映射到项目根 `"./*"`，所以 src 下的文件 import 要写 `@/src/...`
 
 测试钱包地址：`0x306D3A445b1fc7a789639fa9115e308a34231633`（OP Sepolia 已领 faucet）
 
 ## 上次成功验证
 
-- 验证内容: Phase 0 Step 1 完成 — 深色首页 + 产品名
+- 验证内容: Phase 0 Step 2 完成 — 呼吸圆 + 点击播放 mp3
 - 验证时间: 2026-04-09
 - 验证方式: `verify.sh` 全绿 + `npm run dev` 肉眼确认
-- 通过的 commit: `6523c60`
+- 通过的 commit: `eb1d7fb`
 
 ## 当前阻塞
 
