@@ -45,3 +45,8 @@ next-env.d.ts
 .claude/settings.local.json
 # Claude Code 本地 worktree（隔离工作目录，不入仓）
 .claude/worktrees/
+
+# Foundry 构建产物和敏感数据
+contracts/out/
+contracts/cache/
+contracts/broadcast/

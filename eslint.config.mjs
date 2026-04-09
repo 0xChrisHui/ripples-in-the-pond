@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
     // 项目工具链（不是 web 应用代码，用 Node.js CommonJS 写法）
     ".claude/hooks/**",
     "scripts/**",
+    // Foundry 项目（Solidity + OZ 库自带的 JS 测试）
+    "contracts/**",
   ]),
 ]);
 
