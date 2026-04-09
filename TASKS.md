@@ -13,14 +13,14 @@
 
 ## ⏭ Next（接下来 1-3 件）
 
-- **[Phase 0 Step 7]** 手动触发 cron 端点
-- **[Phase 0 Step 8]** OP Sepolia Etherscan 看到 tx → 🎉
+- **[Codex Review]** Phase 0 完成后 review（按 playbook 末尾流程）
+- **[Phase 1]** 待规划
 
 ---
 
 ## 📅 Later（Phase 0 剩余）
 
-- （Phase 0 剩余步骤已提拔到 Next）
+- （Phase 0 全部完成）
 
 ---
 
@@ -51,6 +51,8 @@
 - **[Phase 0 Step 4]** ✅ 完成（2026-04-09）— Supabase 建 users + mint_queue 两张表，commit `e0105f5`
 - **[Phase 0 Step 5]** ✅ 完成（2026-04-09）— MaterialNFT 部署 OP Sepolia `0xdeC99da...1f02A`，commit `0a3ee93`
 - **[Phase 0 Step 6]** ✅ 完成（2026-04-09）— POST /api/mint/material 幂等写队列 + Supabase 确认，commit `b4fdc2a`
+- **[Phase 0 Step 7]** ✅ 完成（2026-04-09）— cron 处理器上链成功，tx `0xe4ae06a...ec9b1d`，commit `3c93a1c`
+- **[Phase 0 Step 8]** ✅ 完成（2026-04-09）— 全链路验证通过：登录 → API → 队列 → 链上 mint → Etherscan 确认
 
 ---
 
