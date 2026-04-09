@@ -78,7 +78,34 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 4. 直接插入，靠 unique(idempotency_key) 做幂等（修复：并发安全）
+    // 4. 同一用户 + 同一素材不重复铸造
+    const { data: alreadyMinted } = await supabaseAdmin
+      .from('mint_events')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('token_id', tokenId)
+      .limit(1)
+      .single();
+
+    if (alreadyMinted) {
+      return NextResponse.json({ error: '你已经铸造过这个素材', alreadyMinted: true }, { status: 409 });
+    }
+
+    // 也检查队列里是否已有 pending/minting 的请求
+    const { data: alreadyQueued } = await supabaseAdmin
+      .from('mint_queue')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('token_id', tokenId)
+      .in('status', ['pending', 'minting_onchain'])
+      .limit(1)
+      .single();
+
+    if (alreadyQueued) {
+      return NextResponse.json({ result: 'ok', mintId: alreadyQueued.id });
+    }
+
+    // 5. 直接插入，靠 unique(idempotency_key) 做幂等（修复：并发安全）
     const { data: mint, error: mintError } = await supabaseAdmin
       .from('mint_queue')
       .insert({

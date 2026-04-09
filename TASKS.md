@@ -11,29 +11,15 @@
 
 ---
 
-## ⏭ Next（Track A + Track B 并行）
+## ⏭ Next（接下来 1-3 件）
 
-**Track A — 后端**（`feat/phase1-backend`）
-- **[A0]** 建 tracks + mint_events 表 + 清理 Foundry 模板
-- **[A1]** 自定义 MaterialNFT 合约 + 部署
-- **[A2]** tracks 种子数据 + GET /api/tracks + GET /api/tracks/[id]
-- **[A3]** GET /api/me/nfts
-- **[A4]** GET /api/health（最小健康检查）
-
-**Track B — 前端**（`feat/phase1-frontend`，worktree）
-- **[B0]** 首页改版：岛屿列表 + 引导文字（假数据）
-- **[B1]** 底部播放条
-- **[B2]** 个人页 UI 骨架（假数据）
+- **[Phase 2]** 待规划（合奏 + Arweave）
 
 ---
 
-## 📅 Later（Track C — A+B 完成后集成）
+## 📅 Later
 
-- **[C0]** merge Track B + 解决冲突
-- **[C1]** 适配层切换：mock → 真实 API
-- **[C2]** 铸造按钮接入前端
-- **[C3]** 个人页接入真实数据
-- **[C4]** 端到端验证 + merge 回 main
+- 见 `reviews/phase-1-deferred.md` 延后项清单
 
 ---
 
@@ -68,6 +54,10 @@
 - **[Phase 0 Step 8]** ✅ 完成（2026-04-09）— 全链路验证通过：登录 → API → 队列 → 链上 mint → Etherscan 确认
 - **[Codex Review]** ✅ 完成（2026-04-09）— 两份 review 产出 + 延后清单
 - **[Phase 0 Review Fix]** ✅ 完成（2026-04-09）— 原子抢单 / 失败补偿绑 job.id / 并发幂等 / 登出恢复，commit `3906f1f`
+- **[Phase 1 Track A]** ✅ 完成（2026-04-09）— tracks + mint_events 表 / 自定义 MaterialNFT `0x99F808...b7C` / GET /api/tracks + [id] + /me/nfts + /health
+- **[Phase 1 Track B]** ✅ 完成（2026-04-09）— 首页岛屿列表 / 底部播放条 / 个人页骨架
+- **[Phase 1 Track C]** ✅ 完成（2026-04-09）— merge + 适配层切换 + 铸造按钮 + 个人页真实数据 + e2e
+- **[Phase 1 CTO Review]** ✅ 完成（2026-04-09）— review 产出 + P0 修复（铸造唯一性 / mint_events 约束 / 配色对齐）
 
 ---
 

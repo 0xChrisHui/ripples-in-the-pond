@@ -7,36 +7,35 @@
 
 ## 当前阶段
 
-**Phase**: Phase 1 — MVP（进行中）
-**目标**: 从"能跑的 demo"升级到"用户能体验并记住的 MVP"
+**Phase**: Phase 1 — MVP ✅ **完成** + review P0 修复完成
+**目标**: ~~从"能跑的 demo"升级到"用户能体验并记住的 MVP"~~ — **已达成**
 
 ## 当前进度
 
-**做到哪**: Phase 0 ✅ + review 修复 ✅ → Phase 1 开工
-**下一步**: Track A Step A0 + Track B Step B0 并行开发
-**playbook**: `playbook/phase-1/track-a-backend.md` + `playbook/phase-1/track-b-frontend.md`
+**做到哪**: Phase 1 全部完成 + CTO review P0 修复（唯一性/mint_events 约束/配色对齐）
+**下一步**: Phase 2 规划（合奏 + Arweave）
+**playbook**: `playbook/phase-1/` 全部完成
 
 ### 续做指南（下次会话第一件事读这段）
 
-Phase 0 全部完成 + review 4 个问题已修复（原子抢单/失败补偿/并发幂等/登出）。
-Phase 1 采用 A/B/C 三线方案：
-- **Track A**（后端）：`feat/phase1-backend` 分支，在 `E:\Projects\nft-music`
-- **Track B**（前端）：`feat/phase1-frontend` 分支，在 worktree `E:\Projects\nft-music-frontend`
-- **Track C**（集成）：A+B 完成后 merge，接真实数据 + 铸造按钮 + 个人页 + e2e
-- 冻结的 API 命名：`GET /api/tracks` / `GET /api/tracks/[id]` / `GET /api/me/nfts`
-- 合约地址（Phase 0）：`0xdeC99da00290d15f0742b0abd26e4Cd5d121f02A`
+Phase 1 已全部收尾，包括 CTO review P0 修复。下次会话：
+- 读 `reviews/phase-1-deferred.md` 了解延后项
+- 合约地址（Phase 1）：`0x99F808bdE8E92f167830E4b9C62f92b81c664b7C`
+- API 命名：`GET /api/tracks` / `GET /api/tracks/[id]` / `GET /api/me/nfts` / `GET /api/health`
 - API route 放在 `app/api/`（不是 `src/app/api/`）
 - npm 用 `--legacy-peer-deps`；tsconfig `@/*` 映射项目根，src 下 import 写 `@/src/...`
 - Foundry 在 `C:\foundry`
+- Track B worktree 在 `E:\Projects\nft-music-frontend`（可清理）
+- 配色用设计 token（blue/violet/rose/emerald/amber），不用十六进制
 
 测试钱包地址：`0x306D3A445b1fc7a789639fa9115e308a34231633`（OP Sepolia 已领 faucet）
 
 ## 上次成功验证
 
-- 验证内容: Phase 0 全链路 — 登录 → API 写队列 → cron 上链 → Etherscan 确认
+- 验证内容: Phase 1 全链路 — 登录 → 浏览 tracks → 播放 → 铸造 → cron 上链 → 个人页看到 NFT
 - 验证时间: 2026-04-09
-- 验证方式: OP Sepolia Etherscan tx `0xe4ae06a...ec9b1d` + Supabase status=success
-- 通过的 commit: `3c93a1c`
+- 验证方式: 浏览器完整流程 + Supabase 确认 mint_events
+- 通过的 commit: `bbb8ed9`（merge 回 main）
 
 ## 当前阻塞
 
