@@ -12,27 +12,28 @@
 
 ## 当前进度
 
-**做到哪**: Phase 0 Step 5 ✅ 完成 — MaterialNFT 部署 OP Sepolia，Etherscan 已确认
-**下一步**: Phase 0 Step 6 — POST /api/mint/material（写队列 + 立即返回）
-**playbook**: `playbook/phase-0-minimal.md` Step 6
+**做到哪**: Phase 0 Step 6 ✅ 完成 — POST /api/mint/material 幂等写队列，curl 验证通过
+**下一步**: Phase 0 Step 7 — 手动触发 cron 处理器（真正上链）
+**playbook**: `playbook/phase-0-minimal.md` Step 7
 
 ### 续做指南（下次会话第一件事读这段）
 
-Step 5 已收尾（commit `0a3ee93`）。下次会话直接读 `playbook/phase-0-minimal.md` 的 Step 6：
-- 目标：POST /api/mint/material 写一条 pending 记录到 mint_queue 并立即返回
-- 需要装 `@supabase/supabase-js`，新建 `src/lib/supabase.ts` + `src/app/api/mint/material/route.ts`
+Step 6 已收尾（commit `b4fdc2a`）。下次会话直接读 `playbook/phase-0-minimal.md` 的 Step 7：
+- 目标：cron 端点取 pending 记录 → 用运营钱包调合约 mint → 更新 status=success + tx_hash
+- 需要装 `viem`，新建 `src/lib/operator-wallet.ts` + `src/lib/contracts.ts` + `app/api/cron/process-mint-queue/route.ts`
 - 合约地址：`0xdeC99da00290d15f0742b0abd26e4Cd5d121f02A`
+- API route 放在 `app/api/`（不是 `src/app/api/`），Next.js 的 app 根在 `app/`
 - npm 用 `--legacy-peer-deps`；tsconfig `@/*` 映射项目根，src 下 import 写 `@/src/...`
-- Foundry 已装在 `C:\foundry`，PATH 已加
+- Foundry 在 `C:\foundry`；LoginButton 有临时 logToken 功能（Phase 1 删）
 
 测试钱包地址：`0x306D3A445b1fc7a789639fa9115e308a34231633`（OP Sepolia 已领 faucet）
 
 ## 上次成功验证
 
-- 验证内容: Phase 0 Step 5 完成 — MaterialNFT 部署 OP Sepolia
+- 验证内容: Phase 0 Step 6 完成 — mint API 幂等写队列
 - 验证时间: 2026-04-09
-- 验证方式: OP Sepolia Etherscan 确认合约存在
-- 通过的 commit: `0a3ee93`
+- 验证方式: curl 返回 `{ result: 'ok', mintId }` + Supabase 确认 pending 记录 + 幂等重复请求返回同一 mintId
+- 通过的 commit: `b4fdc2a`
 
 ## 当前阻塞
 
