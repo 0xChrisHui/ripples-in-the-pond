@@ -2,6 +2,7 @@
 
 import type { Track } from '@/src/types/tracks';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
+import MintButton from '@/src/components/MintButton';
 
 /** 颜色 → Tailwind class 映射 */
 const COLOR_MAP: Record<string, { bg: string; glow: string }> = {
@@ -39,26 +40,25 @@ export default function Island({ track }: { track: Track }) {
   const colors = COLOR_MAP[track.cover] ?? DEFAULT_COLOR;
 
   return (
-    <button
-      type="button"
-      onClick={() => toggle(track)}
-      className={[
-        'flex flex-col items-center gap-3 group',
-        'focus:outline-none',
-      ].join(' ')}
-      aria-label={isActive ? `停止播放 ${track.title}` : `播放 ${track.title}`}
-    >
-      <div
-        className={[
-          'h-28 w-28 rounded-full backdrop-blur-sm',
-          'transition-shadow duration-700',
-          colors.bg,
-          colors.glow,
-          isActive
-            ? 'animate-pulse shadow-lg'
-            : 'animate-[pulse_4s_ease-in-out_infinite]',
-        ].join(' ')}
-      />
+    <div className="flex flex-col items-center gap-3 group">
+      <button
+        type="button"
+        onClick={() => toggle(track)}
+        className="focus:outline-none"
+        aria-label={isActive ? `停止播放 ${track.title}` : `播放 ${track.title}`}
+      >
+        <div
+          className={[
+            'h-28 w-28 rounded-full backdrop-blur-sm',
+            'transition-shadow duration-700',
+            colors.bg,
+            colors.glow,
+            isActive
+              ? 'animate-pulse shadow-lg'
+              : 'animate-[pulse_4s_ease-in-out_infinite]',
+          ].join(' ')}
+        />
+      </button>
       <span
         className={[
           'text-xs tracking-wide transition-opacity duration-300',
@@ -68,6 +68,7 @@ export default function Island({ track }: { track: Track }) {
       >
         {track.title}
       </span>
-    </button>
+      <MintButton tokenId={track.week} />
+    </div>
   );
 }
