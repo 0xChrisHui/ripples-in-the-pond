@@ -7,24 +7,27 @@
 
 ## 当前阶段
 
-**Phase**: Phase 0 — Minimal Closed Loop ✅ **完成**
-**目标**: ~~1 天内~~跑通 "前端 → API → 队列 → 链上 1 笔 mint" — **已达成**
+**Phase**: Phase 1 — MVP（进行中）
+**目标**: 从"能跑的 demo"升级到"用户能体验并记住的 MVP"
 
 ## 当前进度
 
-**做到哪**: Phase 0 全部 8 步 ✅ 完成 — 首笔 NFT 已上链 OP Sepolia
-**下一步**: Codex review → 决定是否进入 Phase 1
-**playbook**: `playbook/phase-0-minimal.md` 全部完成
+**做到哪**: Phase 0 ✅ + review 修复 ✅ → Phase 1 开工
+**下一步**: Track A Step A0 + Track B Step B0 并行开发
+**playbook**: `playbook/phase-1/track-a-backend.md` + `playbook/phase-1/track-b-frontend.md`
 
 ### 续做指南（下次会话第一件事读这段）
 
-Phase 0 已全部收尾。下次会话：
-- 按 playbook 末尾的 Codex review 流程走，或直接开 Phase 1
-- 合约地址：`0xdeC99da00290d15f0742b0abd26e4Cd5d121f02A`
-- 首笔 mint tx: `0xe4ae06a8a03b781b7b37d047783d48945565caf3677e15e16b68c2cb5bec9b1d`
+Phase 0 全部完成 + review 4 个问题已修复（原子抢单/失败补偿/并发幂等/登出）。
+Phase 1 采用 A/B/C 三线方案：
+- **Track A**（后端）：`feat/phase1-backend` 分支，在 `E:\Projects\nft-music`
+- **Track B**（前端）：`feat/phase1-frontend` 分支，在 worktree `E:\Projects\nft-music-frontend`
+- **Track C**（集成）：A+B 完成后 merge，接真实数据 + 铸造按钮 + 个人页 + e2e
+- 冻结的 API 命名：`GET /api/tracks` / `GET /api/tracks/[id]` / `GET /api/me/nfts`
+- 合约地址（Phase 0）：`0xdeC99da00290d15f0742b0abd26e4Cd5d121f02A`
 - API route 放在 `app/api/`（不是 `src/app/api/`）
 - npm 用 `--legacy-peer-deps`；tsconfig `@/*` 映射项目根，src 下 import 写 `@/src/...`
-- Foundry 在 `C:\foundry`；LoginButton 有临时 logToken 功能（Phase 1 删）
+- Foundry 在 `C:\foundry`
 
 测试钱包地址：`0x306D3A445b1fc7a789639fa9115e308a34231633`（OP Sepolia 已领 faucet）
 

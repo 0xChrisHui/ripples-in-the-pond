@@ -1,6 +1,13 @@
 /**
- * 共享类型定义 — Track A / Track B 都用这套契约
- * 改这个文件前两条线必须对齐
+ * 共享类型定义 — Track A / Track B / Track C 都用这套契约
+ * 改这个文件前所有线必须对齐
+ *
+ * 冻结的 API 端点命名：
+ *   GET  /api/tracks          → TracksListResponse
+ *   GET  /api/tracks/[id]     → TrackDetailResponse
+ *   GET  /api/me/nfts         → MyNFTsResponse
+ *   POST /api/mint/material   → { result: 'ok', mintId: string }（Phase 0 已有）
+ *   GET  /api/health          → HealthResponse
  */
 
 /** tracks 表的一行 */
@@ -37,6 +44,11 @@ export interface OwnedNFT {
   minted_at: string;
 }
 
+/** API 响应：GET /api/tracks */
+export interface TracksListResponse {
+  tracks: Track[];
+}
+
 /** API 响应：GET /api/tracks/[id] */
 export interface TrackDetailResponse {
   track: Track;
@@ -49,4 +61,12 @@ export interface TrackDetailResponse {
 /** API 响应：GET /api/me/nfts */
 export interface MyNFTsResponse {
   nfts: OwnedNFT[];
+}
+
+/** API 响应：GET /api/health */
+export interface HealthResponse {
+  db: 'ok' | 'error';
+  wallet: 'ok' | 'low' | 'critical';
+  walletBalance: string;
+  pendingJobs: number;
 }

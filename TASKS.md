@@ -11,22 +11,29 @@
 
 ---
 
-## ⏭ Next（接下来 1-3 件）
+## ⏭ Next（Track A + Track B 并行）
 
-- **[Phase 1 Step 0]** 建 tracks + mint_events 表，清理 Foundry 模板文件
-- **[Phase 1 Step 1]** 自定义 MaterialNFT 合约（替换 OZ Preset）+ 重新部署
-- **[Phase 1 Step 2]** tracks 数据填充 + 单曲详情 API（GET /api/tracks/[id]）
+**Track A — 后端**（`feat/phase1-backend`）
+- **[A0]** 建 tracks + mint_events 表 + 清理 Foundry 模板
+- **[A1]** 自定义 MaterialNFT 合约 + 部署
+- **[A2]** tracks 种子数据 + GET /api/tracks + GET /api/tracks/[id]
+- **[A3]** GET /api/me/nfts
+- **[A4]** GET /api/health（最小健康检查）
+
+**Track B — 前端**（`feat/phase1-frontend`，worktree）
+- **[B0]** 首页改版：岛屿列表 + 引导文字（假数据）
+- **[B1]** 底部播放条
+- **[B2]** 个人页 UI 骨架（假数据）
 
 ---
 
-## 📅 Later（Phase 1 剩余）
+## 📅 Later（Track C — A+B 完成后集成）
 
-- **[Phase 1 Step 3]** 首页改版：岛屿列表（从 tracks 读取）+ 首次引导动画
-- **[Phase 1 Step 4]** 底部播放条（全局固定，切页不断）
-- **[Phase 1 Step 5]** 铸造按钮接入前端：Island 点击 → 调 mint API → 状态反馈
-- **[Phase 1 Step 6]** 个人页基础版：我的 NFT 列表 + pending 状态
-- **[Phase 1 Step 7]** 端到端验证：登录 → 浏览 → 播放 → 铸造 → 个人页看到 NFT
-- **[Phase 1 杂务]** 补齐 LEARNING.md / ERRORS.md，合约 URI 换真实地址
+- **[C0]** merge Track B + 解决冲突
+- **[C1]** 适配层切换：mock → 真实 API
+- **[C2]** 铸造按钮接入前端
+- **[C3]** 个人页接入真实数据
+- **[C4]** 端到端验证 + merge 回 main
 
 ---
 
