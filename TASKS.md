@@ -33,7 +33,7 @@
 - **[C1]** ✅ 适配层切换 mock → 真实 API
 - **[C2]** ✅ 爱心收藏 + 登录 → 草稿上传 → 铸造
 - **[C3]** ✅ 底部进度条 + 个人页草稿倒计时
-- **[C4]** 等用户浏览器验证 → merge 回 main
+- **[C4]** ✅ 浏览器验证通过 + bug 修复（commit `8fbc7ca`）→ 待 merge 回 main
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md`
 
