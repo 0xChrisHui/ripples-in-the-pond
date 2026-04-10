@@ -23,13 +23,13 @@
 
 ---
 
-# Step B0：首页接入键盘 + 音效播放
+# Step B0：HomeJam 组件 + 键盘音效播放
 
 ## 🎯 目标
-首页能按 A-Z 键触发音效（Web Audio），叠加在背景曲上。
+做一个 `HomeJam` 组件，能按 A-Z 键触发音效（Web Audio）。Track C 负责接入首页。
 
 ## 📦 范围
-- `app/page.tsx`（改造，接入键盘 hook）
+- `src/components/jam/HomeJam.tsx`（新建，合奏主组件）
 - `src/hooks/useKeyboard.ts`（从分支搬过来）
 - `src/hooks/useJam.ts`（新建，音效播放引擎）
 - `src/data/jam-source.ts`（从分支搬过来，mock 实现）
@@ -37,13 +37,13 @@
 - `public/sounds/` 下放音效文件
 
 ## 🚫 禁止
+- **不改 `app/page.tsx`**（Track C 负责接入）
 - 不改 `PlayerProvider.tsx`（本步只叠加音效，不绑定录制）
 - 不调后端 API
 
 ## ✅ 完成标准
-- 首页岛屿仍正常显示
+- `HomeJam` 组件独立可渲染
 - 按 A-Z → 听到对应音效
-- 点击岛屿播放背景曲 → 按键音效叠加在背景上
 - 多键同时按不冲突
 - 延迟 < 50ms
 
@@ -53,7 +53,7 @@
 
 ## 📦 范围
 - `src/components/jam/KeyVisual.tsx`（新建）
-- `app/page.tsx`（接入视觉组件）
+- `src/components/jam/HomeJam.tsx`（接入视觉组件）
 - CSS 动画
 
 ## 🚫 禁止
@@ -73,11 +73,11 @@
 ## 📦 范围
 - `src/hooks/useRecorder.ts`（新建）
 - `src/components/player/PlayerProvider.tsx`（暴露 onPlayStart / onPlayEnd 事件）
-- `app/page.tsx`（接入录制 hook）
+- `src/components/jam/HomeJam.tsx`（接入录制 hook）
 
 ## ✅ 完成标准
-- 点击岛屿播放 → 自动开始录制（console 显示 "recording started"）
-- 按键记录为 `KeyEvent`（key + time + duration），time 基于 `performance.now()`
+- PlayerProvider 播放开始 → 自动开始录制（console 显示 "recording started"）
+- 按键记录为 `KeyEvent`（key + time + duration），time 基于 `AudioContext.currentTime`（音频时钟）
 - 最长 60 秒自动停止，最多 500 事件自动停止
 - 曲子播完 / 点停止 → 录制结束（console 输出事件数组）
 - 没播放背景曲时按键 → 不录制
@@ -88,11 +88,12 @@
 
 ## 📦 范围
 - `src/lib/draft-store.ts`（新建，localStorage 草稿管理）
-- `app/page.tsx`（录制完成提示 UI）
+- `src/components/jam/HomeJam.tsx`（录制完成提示 UI）
 
 ## ✅ 完成标准
 - 录制结束 → 草稿自动存 localStorage（key: `ripples_drafts`）
-- 草稿格式：`{ trackId, events, createdAt, expiresAt }`
+- 草稿格式：`{ trackId, eventsData, createdAt }`（createdAt 为创作时间 ISO 字符串）
+- 24h TTL 从 createdAt 算起，前端过期的不展示
 - 页面显示提示："你的创作已记录，24h 内可收藏"
 - 提示 3-5 秒后自动淡出
 - 刷新页面后 localStorage 数据仍在
@@ -102,7 +103,7 @@
 # Step B4：mobile 提示 + UI 打磨
 
 ## 📦 范围
-- `app/page.tsx`（mobile 检测 + 提示）
+- `src/components/jam/HomeJam.tsx`（mobile 检测 + 提示）
 - 各组件 UI 微调
 
 ## ✅ 完成标准

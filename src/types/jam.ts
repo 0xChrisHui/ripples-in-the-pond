@@ -60,6 +60,8 @@ export interface SoundsListResponse {
 export interface SaveScoreRequest {
   trackId: string;
   eventsData: KeyEvent[];
+  /** 创作时间（ISO 字符串），服务端按此计算 24h TTL，超过 24h 拒绝 */
+  createdAt: string;
 }
 
 /** API 响应：POST /api/score/save */

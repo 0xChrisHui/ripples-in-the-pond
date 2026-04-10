@@ -61,13 +61,15 @@
 
 ## ✅ 完成标准
 - 必须登录
-- body: `SaveScoreRequest`
+- body: `SaveScoreRequest`（含 `createdAt` 字段）
 - **资源上限**：
   - eventsData 最大 500 条事件
   - 单条 time 必须 >= 0 且 <= 60000（60 秒）
   - 单条 duration 必须 >= 0 且 <= 5000
   - body 总大小 < 100KB
+  - **createdAt 不能超过 24h 前**（过期草稿拒绝，400）
   - 非法数据返回 400
+- 服务端按 `createdAt` 计算 `expires_at`（createdAt + 24h）
 - 同一 user+track 已有 draft → 旧的 status 改为 'expired'，插入新的
 - 返回 `SaveScoreResponse`
 

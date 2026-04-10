@@ -34,9 +34,11 @@ Track A 和 Track B 并行开发。B 用假数据，C 换真实 API。
 | 归属 | 文件 |
 |---|---|
 | 只有 A | `supabase/` `app/api/**` `src/lib/` `src/types/`（类型变更需对齐） |
-| 只有 B | `src/components/jam/**` `src/hooks/useJam.ts` `src/hooks/useRecorder.ts` `src/hooks/useKeyboard.ts` `src/data/jam-source.ts` `src/data/mock-sounds.ts` `src/lib/draft-store.ts` |
-| 只有 C | `app/page.tsx` `src/components/archipelago/Island.tsx`（爱心收藏）`app/me/page.tsx`（草稿区域）`src/components/player/BottomPlayer.tsx`（进度条）`src/data/jam-source.ts`（切换实现） |
+| 只有 B | `src/components/jam/**`（HomeJam + KeyVisual）`src/hooks/useJam.ts` `src/hooks/useRecorder.ts` `src/hooks/useKeyboard.ts` `src/data/jam-source.ts` `src/data/mock-sounds.ts` `src/lib/draft-store.ts` |
+| 只有 C | `app/page.tsx`（接入 HomeJam）`src/components/archipelago/Island.tsx`（爱心收藏）`app/me/page.tsx`（草稿区域）`src/components/player/BottomPlayer.tsx`（进度条）`src/data/jam-source.ts`（切换实现） |
 | 共享 | `src/components/player/PlayerProvider.tsx`（B 加录制生命周期，C 可调整） |
+
+**注意**：Track B **不碰** `app/page.tsx`。B 做 `src/components/jam/HomeJam.tsx` 组件，C 负责接入首页。
 
 ## 冻结的契约
 
@@ -44,3 +46,6 @@ Track A 和 Track B 并行开发。B 用假数据，C 换真实 API。
 - 数据适配层：`src/data/jam-source.ts`（函数签名冻结，内部实现 B 用 mock，C 换 fetch）
 - 草稿预览权限：私有（只有本人）
 - localStorage key：`ripples_drafts`（draft-store.ts 管理）
+- 24h TTL 从 `createdAt`（创作时间）算起，不是上传时间
+- 录制时间基准：`AudioContext.currentTime`（音频时钟，非 performance.now()）
+- 移动端策略：Phase 2 = 仅浏览不可演奏，触控合奏后移
