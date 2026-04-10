@@ -15,10 +15,11 @@
 
 **playbook**: `playbook/phase-2.5-hardening.md`
 
-- **[S0]** DB 加固 + server-only + TTL 文案对齐
+- **[S0]** DB 加固 + server-only + TTL 真理源统一
 - **[S1]** AudioContext 延迟加载
-- **[S2]** 录制时钟源迁移（performance.now → 音频时钟）
-- **[S3]** 合约 admin/minter 分离 + 统一 build 脚本
+- **[S2]** 录制时钟源统一（消除双语义，删 performance.now）
+- **[S3a]** 合约 admin/minter 分离
+- **[S3b]** 统一 build/verify
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md`
 
