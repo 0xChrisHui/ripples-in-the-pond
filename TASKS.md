@@ -11,14 +11,32 @@
 
 ---
 
-## ⏭ Next（Phase 2 — 重新规划）
+## ⏭ Next（Phase 2 — 首页融合合奏）
 
-- **[P2-PLAN]** 重新设计 Phase 2 playbook（Patatap 风格首页融合方案）
-  - 搬 Patatap 参考代码到 `references/patatap/`
-  - 更新架构决策
-  - 重写 playbook/phase-2/ 全套
+**Track A — 后端**（`feat/phase2-backend`）
+- **[A0]** ✅ sounds + pending_scores 表
+- **[A1]** sounds 种子数据 + GET /api/sounds
+- **[A2]** POST /api/score/save（草稿上传）
+- **[A3]** GET /api/scores/[id]/preview（私有预览）
+- **[A4]** GET /api/me/scores（草稿列表）
+- **[A5]** /me 展示 pending/failed 状态
 
-（原 Track A/B/C 步骤待重新设计后替换）
+**Track B — 前端**（`feat/phase2-frontend`）
+- **[B0]** 首页接入键盘 + 音效播放
+- **[B1]** 视觉反馈（按键动画）
+- **[B2]** 录制逻辑（播放即录制）
+- **[B3]** 草稿存 localStorage + 录制完成提示
+- **[B4]** mobile 提示 + UI 打磨
+
+---
+
+## 📅 Later（Track C — A+B 完成后集成）
+
+- **[C0]** merge Track B
+- **[C1]** 适配层切换 mock → 真实 API
+- **[C2]** 爱心收藏 + 登录 → 草稿上传 → 铸造
+- **[C3]** 底部进度条 + 个人页草稿倒计时
+- **[C4]** 端到端验证 + merge 回 main
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md`
 

@@ -1,11 +1,11 @@
-# Phase 2 Track B — 前端：合奏 UI + 录制 + 预览
+# Phase 2 Track B — 前端：首页融合乐器 + 录制 + 视觉
 
-> 🎯 **目标**：用户能在浏览器里用键盘和曲目合奏，看到视觉反馈，录制并回放
+> 🎯 **目标**：首页变成全屏乐器 + 岛屿共存，按键有音效+视觉，播放即录制，录完提示
 >
-> **分支**：`feat/phase2-frontend`（worktree）
+> **分支**：`feat/phase2-frontend`
 > **与 Track A 并行**，用假数据 / 本地音频开发
 >
-> **前置**：Step 0 spike 通过
+> **前置**：Step 0 spike 通过 ✅
 >
 > **适配层约定**：所有数据通过 `src/data/jam-source.ts` 获取，Track C 替换内部实现。
 
@@ -15,64 +15,45 @@
 
 | Step | 做什么 | 验证 |
 |---|---|---|
-| B0 | 合奏页骨架 + 键盘输入 + 数据适配层 | 按键有 console 输出 |
-| B1 | 音效播放 + 背景混音 | 按键听到音效叠在背景曲上 |
-| B2 | 视觉反馈（按键动画） | 按键看到彩色图形 |
-| B3 | 录制逻辑 + 预览回放 | 录完能回放，节奏一致 |
-| B4 | 完整 UI + 保存 + mobile 提示 | 完整合奏流程 |
+| B0 | 首页接入键盘 + 音效播放 | 按键听到音效 |
+| B1 | 视觉反馈（按键动画） | 按键看到彩色图形淡出 |
+| B2 | 录制逻辑（绑定播放生命周期） | 播放中按键被记录，停止后 console 输出事件 |
+| B3 | 草稿存储 + 录制完成提示 | 录完后 localStorage 有数据，页面显示提示 |
+| B4 | mobile 提示 + UI 打磨 | 390px 显示提示，整体体验流畅 |
 
 ---
 
-## 数据适配层
+# Step B0：首页接入键盘 + 音效播放
 
-```ts
-// src/data/jam-source.ts — Track B 用假数据，Track C 换真实 API
-export async function fetchSounds(): Promise<Sound[]> { ... }
-export async function saveScore(token: string, data: SaveScoreRequest): Promise<SaveScoreResponse> { ... }
-export async function fetchScorePreview(token: string, scoreId: string): Promise<ScorePreviewResponse | null> { ... }
-```
-
----
-
-# Step B0：合奏页骨架 + 键盘输入 + 适配层
+## 🎯 目标
+首页能按 A-Z 键触发音效（Web Audio），叠加在背景曲上。
 
 ## 📦 范围
-- `app/jam/[trackId]/page.tsx`（新建）
-- `src/hooks/useKeyboard.ts`（新建）
-- `src/data/jam-source.ts`（新建，假数据）
-- `src/data/mock-sounds.ts`（新建）
+- `app/page.tsx`（改造，接入键盘 hook）
+- `src/hooks/useKeyboard.ts`（从分支搬过来）
+- `src/hooks/useJam.ts`（新建，音效播放引擎）
+- `src/data/jam-source.ts`（从分支搬过来，mock 实现）
+- `src/data/mock-sounds.ts`（从分支搬过来）
+- `public/sounds/` 下放音效文件
 
 ## 🚫 禁止
+- 不改 `PlayerProvider.tsx`（本步只叠加音效，不绑定录制）
 - 不调后端 API
-- 不改 `app/page.tsx`（Track C 做）
 
 ## ✅ 完成标准
-- /jam/xxx 页面显示曲目信息
-- 按 A-Z 键 → console 输出按键
-- 390px 宽度显示"请使用电脑键盘体验合奏"
-- 深色背景
-
----
-
-# Step B1：音效播放 + 背景混音
-
-## 📦 范围
-- `src/hooks/useJam.ts`（新建）
-- 复用 `public/sounds/` 和 `public/tracks/001.mp3`
-
-## ✅ 完成标准
-- 进入合奏页 → 背景播放 track 原曲
-- 按 A-Z → 对应音效叠加在背景上
+- 首页岛屿仍正常显示
+- 按 A-Z → 听到对应音效
+- 点击岛屿播放背景曲 → 按键音效叠加在背景上
 - 多键同时按不冲突
 - 延迟 < 50ms
 
 ---
 
-# Step B2：视觉反馈
+# Step B1：视觉反馈
 
 ## 📦 范围
 - `src/components/jam/KeyVisual.tsx`（新建）
-- `src/components/jam/JamCanvas.tsx`（新建）
+- `app/page.tsx`（接入视觉组件）
 - CSS 动画
 
 ## 🚫 禁止
@@ -83,41 +64,57 @@ export async function fetchScorePreview(token: string, scoreId: string): Promise
 - 按键 → 屏幕出现彩色图形并 0.5-1s 淡出
 - 不同键不同颜色
 - 快速连按 10 次不卡
+- 视觉反馈不遮挡岛屿
 
 ---
 
-# Step B3：录制 + 回放
+# Step B2：录制逻辑
 
 ## 📦 范围
 - `src/hooks/useRecorder.ts`（新建）
-- 时间基准用 `performance.now()`
+- `src/components/player/PlayerProvider.tsx`（暴露 onPlayStart / onPlayEnd 事件）
+- `app/page.tsx`（接入录制 hook）
 
 ## ✅ 完成标准
-- 点击"开始" → 录制，显示计时（最长 60 秒自动停止）
-- 按键记录为 `KeyEvent`（key + time + duration）
-- 最多 500 个事件（超过自动停止）
-- 点击"停止" → 结束
-- 点击"回放" → 按时间戳重放音效 + 视觉，节奏一致
+- 点击岛屿播放 → 自动开始录制（console 显示 "recording started"）
+- 按键记录为 `KeyEvent`（key + time + duration），time 基于 `performance.now()`
+- 最长 60 秒自动停止，最多 500 事件自动停止
+- 曲子播完 / 点停止 → 录制结束（console 输出事件数组）
+- 没播放背景曲时按键 → 不录制
 
 ---
 
-# Step B4：完整 UI + 保存 + mobile 提示
+# Step B3：草稿存储 + 录制完成提示
 
 ## 📦 范围
-- `src/components/jam/JamControls.tsx`（新建）
-- `app/jam/[trackId]/page.tsx`（完善）
+- `src/lib/draft-store.ts`（新建，localStorage 草稿管理）
+- `app/page.tsx`（录制完成提示 UI）
 
 ## ✅ 完成标准
-- 完整流程：开始 → 演奏 → 停止 → 回放 → 保存/重录
-- 保存调适配层 `saveScore()`（假保存，显示"已保存"）
-- 未登录点保存 → 提示登录
-- mobile 宽度显示提示文字
-- UI 深色统一
+- 录制结束 → 草稿自动存 localStorage（key: `ripples_drafts`）
+- 草稿格式：`{ trackId, events, createdAt, expiresAt }`
+- 页面显示提示："你的创作已记录，24h 内可收藏"
+- 提示 3-5 秒后自动淡出
+- 刷新页面后 localStorage 数据仍在
+
+---
+
+# Step B4：mobile 提示 + UI 打磨
+
+## 📦 范围
+- `app/page.tsx`（mobile 检测 + 提示）
+- 各组件 UI 微调
+
+## ✅ 完成标准
+- 390px 宽度显示"请使用电脑键盘体验合奏"
+- 深色背景统一
+- 岛屿 + 键盘音效 + 视觉反馈 + 录制提示整体协调
+- 无 console 报错
 
 ---
 
 ## Track B 完成后
 
-1. `bash scripts/verify.sh` 全绿
+1. 类型检查通过
 2. 所有 step 已 commit
-3. 通知 Track A
+3. 通知 Track A → 进入 Track C

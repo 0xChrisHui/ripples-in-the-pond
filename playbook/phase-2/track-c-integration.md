@@ -1,6 +1,6 @@
 # Phase 2 Track C — 集成（纯接线，不新增后端 API）
 
-> 🎯 **目标**：把 A 的 API 和 B 的 UI 接在一起，加首页入口 + 草稿管理
+> 🎯 **目标**：把 A 的 API 和 B 的 UI 接在一起，加爱心收藏 + 草稿管理 + 进度条
 >
 > **前置**：Track A + Track B 都完成
 > **原则**：Track C 只做集成，不新增后端接口（所有 API 在 A 里完成）
@@ -12,9 +12,9 @@
 | Step | 做什么 | 验证 |
 |---|---|---|
 | C0 | merge Track B | verify 全绿 |
-| C1 | 适配层切换 mock → 真实 API | 合奏页从 DB 读 sounds |
-| C2 | 首页加"合奏"入口 | 岛屿能进合奏页 |
-| C3 | 个人页加草稿列表 + 倒计时 | /me 看到草稿 |
+| C1 | 适配层切换 mock → 真实 API | 首页从 DB 读 sounds |
+| C2 | 爱心收藏 + 登录流程 | 点爱心 → 登录 → localStorage 草稿上传 → 铸造 |
+| C3 | 底部播放条进度条 + 草稿管理 | 进度可视 + /me 显示草稿倒计时 |
 | C4 | e2e 验证 + merge 回 main | 完整流程跑通 |
 
 ---
@@ -22,8 +22,8 @@
 # Step C0：merge Track B
 
 ## ✅ 完成标准
-- merge 无报错（B 只新建文件，预期零冲突）
-- `bash scripts/verify.sh` 全绿
+- merge 无报错
+- 类型检查通过
 - `npm run dev` 正常
 
 ---
@@ -35,33 +35,38 @@
 - 可删除 `src/data/mock-sounds.ts`
 
 ## ✅ 完成标准
-- 合奏页 sounds 从 /api/sounds 读
+- 首页 sounds 从 /api/sounds 读
 - 保存调真实 POST /api/score/save
 - 预览从真实 GET /api/scores/[id]/preview 读
 
 ---
 
-# Step C2：首页加"合奏"入口
+# Step C2：爱心收藏 + 登录流程
 
 ## 📦 范围
-- `src/components/archipelago/Island.tsx`（加合奏链接）
+- `src/components/archipelago/Island.tsx`（加爱心按钮，去掉 MintButton）
+- `src/components/MintButton.tsx`（删除或重构为收藏逻辑）
 
 ## ✅ 完成标准
-- 每个岛屿有"合奏"链接，点击跳转 /jam/[trackId]
-- 未登录也能进合奏页（保存时才要求登录）
+- 岛屿上方显示爱心图标
+- 点击爱心 → 变红
+- 未登录 → 触发 Privy 登录
+- 登录成功 → 自动从 localStorage 取草稿 → 上传后端 → 触发铸造
+- 无草稿时点爱心 → 提示"先演奏一段再收藏"
 
 ---
 
-# Step C3：个人页草稿列表
+# Step C3：底部播放条进度条 + 草稿管理
 
 ## 📦 范围
-- `app/me/page.tsx`（修改，加草稿区域）
+- `src/components/player/BottomPlayer.tsx`（加进度条）
+- `app/me/page.tsx`（加草稿区域）
 - `src/components/me/DraftCard.tsx`（新建）
 
 ## ✅ 完成标准
+- 播放条显示进度条（当前时间 / 总时长）
 - /me 显示"我的草稿"区域
 - 每个草稿：曲目名 + 剩余时间倒计时
-- 点击草稿 → 跳转 /jam/[trackId]
 - 过期不显示
 
 ---
@@ -70,12 +75,13 @@
 
 ## ✅ 完成标准
 完整流程：
-1. 首页 → 点击岛屿播放
-2. 点"合奏" → /jam/[trackId]
-3. 背景音乐 + 键盘演奏 + 视觉反馈
-4. 录制 → 停止 → 回放
-5. 保存 → 个人页看到草稿 + 倒计时
-6. 铸造素材仍然正常工作
+1. 首页 → 按键有音效 + 视觉反馈
+2. 点击岛屿 → 背景音乐播放 + 自动录制
+3. 演奏中按键 → 音效叠加 + 视觉反馈
+4. 曲子播完 / 点停止 → 提示"已记录"
+5. 点爱心 → 登录 → 草稿上传 → 铸造成功
+6. /me 看到收藏 + 草稿倒计时
+7. Phase 1 素材铸造仍然正常工作
 
 - STATUS.md / TASKS.md 更新
-- `git checkout main && git merge feat/phase2-backend`
+- merge 回 main

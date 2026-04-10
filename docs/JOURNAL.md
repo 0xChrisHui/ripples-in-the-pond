@@ -50,3 +50,19 @@
   - **降级 / 删除的护栏**：daily mint limit + gas price guard 都从"必须"降级为"可选"——OP 上烧不出灾难
   - **保留的护栏**：allowlist（与链无关的安全模型）+ balance alert（< 0.05 OP-ETH 告警）
   - 损失：仅"on Ethereum mainnet"的旁观者炫耀价值；目标用户是音乐爱好者不是 NFT 交易员，损失约等于 0
+
+## 2026-04-10
+
+- Phase 2 Step 0 spike 通过（4/4 标准），Web Audio 键盘方案可行
+  - 途中修复 Tailwind v4 白名单 bug（`.claude/logs/` Windows 路径触发 Invalid code point）
+  - 发现 Cursor 会 `git checkout` 还原未提交文件，globals.css 修改后必须立即 commit
+- **推翻"单独合奏页 /jam/[trackId]"方案，改为首页融合**（决策 14-17）
+  - 起因：用户参考 Patatap 设计，认为合奏不应该是需要跳转的"功能"，而是首页本身的一部分
+  - 核心变化 4 条：
+    1. 首页 = 全屏乐器 + 岛屿群，不跳转（决策 14）
+    2. 播放背景曲 = 自动开始录制，用户无感（决策 15）
+    3. 铸造改叫"收藏"，岛屿上方爱心按钮（决策 16）
+    4. 草稿存 localStorage，登录后上传（决策 17）
+  - 推翻的内容：playbook/phase-2/ 中 Track B 的 `/jam/[trackId]` 路由方案、手动录制流程、Track C 的"首页加合奏入口"
+  - `feat/phase2-frontend` 分支旧 B0 代码保留但不再使用（useKeyboard/jam-source/mock-sounds 可复用）
+  - 影响：Phase 2 playbook 全套重写，ARCHITECTURE.md 新增决策 14-17

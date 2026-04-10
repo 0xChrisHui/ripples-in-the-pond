@@ -6,6 +6,8 @@
 > **与 Track B 并行**
 >
 > **Arweave 不在 Phase 2 主线**：本轮用本地音频，Arweave 预上传后移到 Phase 3
+>
+> **注意**：草稿在前端先存 localStorage（决策 17），用户点收藏/铸造并登录后才调 POST /api/score/save 上传到后端。
 
 ---
 
@@ -13,27 +15,18 @@
 
 | Step | 做什么 | 验证 |
 |---|---|---|
-| A0 | sounds + pending_scores（含 status）表 | Dashboard 看到表 |
+| A0 | sounds + pending_scores（含 status）表 | Dashboard 看到表（✅ 已完成） |
 | A1 | sounds 种子数据 + GET /api/sounds | curl 返回 26 条 |
-| A2 | POST /api/score/save（草稿保存 + 资源上限） | curl 返回 scoreId |
+| A2 | POST /api/score/save（草稿上传 + 资源上限） | curl 返回 scoreId |
 | A3 | GET /api/scores/[id]/preview（私有预览） | curl 返回草稿数据 |
 | A4 | GET /api/me/scores（我的草稿列表） | curl 返回列表 |
 | A5 | /me 展示 pending/failed 铸造状态（Phase 1 延后项） | 个人页有完整状态 |
 
 ---
 
-# Step A0：sounds + pending_scores 表
+# Step A0：sounds + pending_scores 表 ✅
 
-## 🎯 目标
-新增 2 张表。`pending_scores` 是状态机表（遵守 CONVENTIONS §3.1 禁止 DELETE 规则）。
-
-## 📦 范围
-- `supabase/migrations/005_sounds_and_pending_scores.sql`
-
-## ✅ 完成标准
-- `sounds` 表：token_id (109-134), name, audio_url, duration_ms, category, key
-- `pending_scores` 表：id, user_id, track_id, events_data (jsonb), **status** (draft/expired), created_at, **updated_at**, expires_at
-- `pending_scores` 有 unique 约束：同一 user_id + track_id + status='draft' 只允许一条
+已完成。commit `c13aa81`。
 
 ---
 
@@ -57,7 +50,7 @@
 # Step A2：POST /api/score/save
 
 ## 🎯 目标
-保存合奏草稿。同一用户对同一 track 只保留最新草稿（upsert）。
+接收前端上传的草稿（用户登录后从 localStorage 取出上传）。
 
 ## 📦 范围
 - `app/api/score/save/route.ts`（新建）
