@@ -66,3 +66,11 @@
   - 推翻的内容：playbook/phase-2/ 中 Track B 的 `/jam/[trackId]` 路由方案、手动录制流程、Track C 的"首页加合奏入口"
   - `feat/phase2-frontend` 分支旧 B0 代码保留但不再使用（useKeyboard/jam-source/mock-sounds 可复用）
   - 影响：Phase 2 playbook 全套重写，ARCHITECTURE.md 新增决策 14-17
+- **产品决策：收藏不要求先演奏**
+  - 起因：CTO review 问"没演奏也能收藏，是 bug 还是设计？"
+  - 决定：规则 A——允许纯收藏素材，创作只是附加价值。用户可以只听曲、收藏/mint 曲子，不参与共创。共创专辑是另一条线，不绑定收藏。
+  - 影响：Phase 3 做 ScoreNFT 时，Score 和 MaterialNFT 是独立资产，不互为前置条件
+- **产品决策：爱心失败不告诉用户**
+  - 起因：CTO review 指出乐观更新无回滚
+  - 决定：保持乐观更新（点击即红），后端失败不回退红心、不显示错误。开发者从日志排查，后端静默重试。与 A5 决策一致——用户只看到成功。
+  - 影响：需要完善铸造失败监控+告警（已记入 `reviews/phase-1-deferred.md`）

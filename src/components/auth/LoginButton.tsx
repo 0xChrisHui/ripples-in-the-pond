@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/src/hooks/useAuth';
 
@@ -8,14 +7,7 @@ import { useAuth } from '@/src/hooks/useAuth';
  * 登录按钮 — 未登录显示"登录"，已登录显示地址缩写，点击登出
  */
 export default function LoginButton() {
-  const { ready, authenticated, evmAddress, login, logout, getAccessToken } = useAuth();
-
-  // 登录后自动打印 token 到 console，方便 curl 测试（Phase 1 删掉）
-  useEffect(() => {
-    if (!authenticated) return;
-    if (evmAddress) console.log('evm_address:', evmAddress);
-    getAccessToken().then((t) => { if (t) console.log('privy_token:', t); });
-  }, [authenticated, evmAddress, getAccessToken]);
+  const { ready, authenticated, evmAddress, login, logout } = useAuth();
 
   if (!ready) return null;
 

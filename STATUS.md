@@ -7,14 +7,14 @@
 
 ## 当前阶段
 
-**Phase**: Phase 2 重新规划中
+**Phase**: Phase 2 执行中
 **目标**: Phase 2 — 合奏 + 草稿系统（方向调整：Patatap 风格首页融合）
 
 ## 当前进度
 
-**做到哪**: Step 0 spike ✅ + A0 表已建 + B0 骨架已写（但方向需调整）
-**下一步**: 重新设计 Phase 2 playbook（首页=全屏乐器+岛屿融合方案）
-**playbook**: `playbook/phase-2/` 待重写
+**做到哪**: Phase 2 全部完成（Track A + B + C ✅），C4 浏览器验证通过
+**下一步**: 先读 `reviews/2026-04-10-phase-2-cto.md`，决定是否插入 `Phase 2.5 — Flow Hardening Sprint` 再进入 Phase 3
+**playbook**: `playbook/phase-2/track-c-integration.md`
 
 ### 续做指南（下次会话第一件事读这段）
 
@@ -39,10 +39,10 @@
 
 ## 上次成功验证
 
-- 验证内容: Phase 2 Step 0 spike — 键盘音效 + 背景混音 + 录制回放 + 移动端提示
+- 验证内容: Phase 2 全流程 — 音效 + 录制 + 爱心收藏 + 铸造上链 + 草稿 + /me；CTO review 已完成
 - 验证时间: 2026-04-10
-- 验证方式: 浏览器 4 项标准全部通过
-- 通过的 commit: `da9210d`（globals.css 路径修正）
+- 验证方式: 浏览器 7 项清单全部通过 + cron 手动触发上链成功
+- 通过的 commit: `8fbc7ca`（C4 修复）
 
 ## 当前阻塞
 

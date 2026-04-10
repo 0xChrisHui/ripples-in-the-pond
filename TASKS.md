@@ -11,32 +11,29 @@
 
 ---
 
-## ⏭ Next（Phase 2 — 首页融合合奏）
+## ⏭ Next（Phase 2 — Track C 集成）
 
-**Track A — 后端**（`feat/phase2-backend`）
+**Track A — 后端** ✅（`feat/phase2-backend`）
 - **[A0]** ✅ sounds + pending_scores 表
-- **[A1]** sounds 种子数据 + GET /api/sounds
-- **[A2]** POST /api/score/save（草稿上传）
-- **[A3]** GET /api/scores/[id]/preview（私有预览）
-- **[A4]** GET /api/me/scores（草稿列表）
-- **[A5]** /me 展示 pending/failed 状态
+- **[A1]** ✅ sounds 种子数据 + GET /api/sounds
+- **[A2]** ✅ POST /api/score/save（草稿上传）
+- **[A3]** ✅ GET /api/scores/[id]/preview（私有预览）
+- **[A4]** ✅ GET /api/me/scores（草稿列表）
+- **[A5]** ⏭ 跳过（用户决定不展示 pending/failed，后端静默重试）
 
-**Track B — 前端**（`feat/phase2-frontend`）
-- **[B0]** 首页接入键盘 + 音效播放
-- **[B1]** 视觉反馈（按键动画）
-- **[B2]** 录制逻辑（播放即录制）
-- **[B3]** 草稿存 localStorage + 录制完成提示
-- **[B4]** mobile 提示 + UI 打磨
+**Track B — 前端** ✅（`feat/phase2-frontend`，commit `5dd2d95`）
+- **[B0]** ✅ 首页接入键盘 + 音效播放
+- **[B1]** ✅ 视觉反馈（按键动画）
+- **[B2]** ✅ 录制逻辑（播放即录制）
+- **[B3]** ✅ 草稿存 localStorage + 录制完成提示
+- **[B4]** ✅ mobile 提示 + UI 打磨
 
----
-
-## 📅 Later（Track C — A+B 完成后集成）
-
-- **[C0]** merge Track B
-- **[C1]** 适配层切换 mock → 真实 API
-- **[C2]** 爱心收藏 + 登录 → 草稿上传 → 铸造
-- **[C3]** 底部进度条 + 个人页草稿倒计时
-- **[C4]** 端到端验证 + merge 回 main
+**Track C — 集成** ✅（commit `c31524c`）
+- **[C0]** ✅ merge Track A（untracked → commit `ca1c67d`）
+- **[C1]** ✅ 适配层切换 mock → 真实 API
+- **[C2]** ✅ 爱心收藏 + 登录 → 草稿上传 → 铸造
+- **[C3]** ✅ 底部进度条 + 个人页草稿倒计时
+- **[C4]** ✅ 浏览器验证通过 + bug 修复（commit `8fbc7ca`）→ 待 merge 回 main
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md`
 

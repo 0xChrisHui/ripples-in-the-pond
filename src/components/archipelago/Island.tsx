@@ -2,7 +2,7 @@
 
 import type { Track } from '@/src/types/tracks';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
-import MintButton from '@/src/components/MintButton';
+import FavoriteButton from '@/src/components/FavoriteButton';
 
 /** 颜色 → Tailwind class 映射 */
 const COLOR_MAP: Record<string, { bg: string; glow: string }> = {
@@ -34,7 +34,7 @@ const DEFAULT_COLOR = { bg: 'bg-white/20', glow: '' };
  * Island — 单个岛屿
  * 接收 Track 数据，点击播放/停止对应音频
  */
-export default function Island({ track }: { track: Track }) {
+export default function Island({ track, alreadyMinted = false, onMinted }: { track: Track; alreadyMinted?: boolean; onMinted?: (tokenId: number) => void }) {
   const { playing, currentTrack, toggle } = usePlayer();
   const isActive = playing && currentTrack?.id === track.id;
   const colors = COLOR_MAP[track.cover] ?? DEFAULT_COLOR;
@@ -68,7 +68,7 @@ export default function Island({ track }: { track: Track }) {
       >
         {track.title}
       </span>
-      <MintButton tokenId={track.week} />
+      <FavoriteButton tokenId={track.week} trackId={track.id} alreadyMinted={alreadyMinted} onMinted={onMinted} />
     </div>
   );
 }

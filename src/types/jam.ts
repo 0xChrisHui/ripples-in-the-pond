@@ -85,6 +85,10 @@ export interface MyScoresResponse {
   scores: {
     id: string;
     trackTitle: string;
+    /** 该用户对同一曲目的第几次创作 */
+    seq: number;
+    /** 音符数量 */
+    eventCount: number;
     createdAt: string;
     expiresAt: string;
   }[];

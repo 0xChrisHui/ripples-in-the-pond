@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
     "scripts/**",
     // Foundry 项目（Solidity + OZ 库自带的 JS 测试）
     "contracts/**",
+    // 第三方参考代码（Patatap 等）
+    "references/**",
   ]),
 ]);
 

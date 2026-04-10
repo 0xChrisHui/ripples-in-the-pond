@@ -10,11 +10,25 @@ import {
 } from 'react';
 import type { Track } from '@/src/types/tracks';
 
+/** 播放生命周期回调（B2 录制用） */
+export interface PlayerLifecycle {
+  onPlayStart?: (track: Track) => void;
+  onPlayEnd?: () => void;
+}
+
 interface PlayerState {
   playing: boolean;
   currentTrack: Track | null;
+  /** 当前曲目总时长（秒） */
+  duration: number;
+  /** 播放开始的 AudioContext 时间（秒），用于算进度 */
+  startedAt: number;
   toggle: (track: Track) => Promise<void>;
   stop: () => void;
+  /** 注册播放生命周期回调，返回注销函数 */
+  subscribe: (lifecycle: PlayerLifecycle) => () => void;
+  /** 获取 AudioContext.currentTime（秒） */
+  getCurrentTime: () => number;
 }
 
 const PlayerContext = createContext<PlayerState | null>(null);
@@ -29,6 +43,22 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);
   const [playing, setPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
+  const [duration, setDuration] = useState(0);
+  const [startedAt, setStartedAt] = useState(0);
+  const listenersRef = useRef<Set<PlayerLifecycle>>(new Set());
+
+  const subscribe = useCallback((lifecycle: PlayerLifecycle) => {
+    listenersRef.current.add(lifecycle);
+    return () => { listenersRef.current.delete(lifecycle); };
+  }, []);
+
+  const notifyStart = useCallback((track: Track) => {
+    listenersRef.current.forEach((l) => l.onPlayStart?.(track));
+  }, []);
+
+  const notifyEnd = useCallback(() => {
+    listenersRef.current.forEach((l) => l.onPlayEnd?.());
+  }, []);
 
   const getContext = useCallback(() => {
     if (!ctxRef.current) {
@@ -40,10 +70,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const play = useCallback(async (track: Track) => {
     const ctx = getContext();
 
-    // 停掉上一首
     if (sourceRef.current) {
       sourceRef.current.stop();
       sourceRef.current = null;
+      notifyEnd();
     }
 
     const res = await fetch(track.audio_url);
@@ -55,13 +85,19 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     source.onended = () => {
       setPlaying(false);
       setCurrentTrack(null);
+      setDuration(0);
+      setStartedAt(0);
+      notifyEnd();
     };
     source.start();
 
     sourceRef.current = source;
     setCurrentTrack(track);
+    setDuration(buffer.duration);
+    setStartedAt(ctx.currentTime);
     setPlaying(true);
-  }, [getContext]);
+    notifyStart(track);
+  }, [getContext, notifyStart, notifyEnd]);
 
   const stop = useCallback(() => {
     if (sourceRef.current) {
@@ -70,7 +106,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
     setCurrentTrack(null);
     setPlaying(false);
-  }, []);
+    setDuration(0);
+    setStartedAt(0);
+    notifyEnd();
+  }, [notifyEnd]);
 
   const toggle = useCallback(async (track: Track) => {
     if (playing && currentTrack?.id === track.id) {
@@ -80,8 +119,15 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
   }, [playing, currentTrack, play, stop]);
 
+  const getCurrentTime = useCallback(() => {
+    return ctxRef.current?.currentTime ?? 0;
+  }, []);
+
   return (
-    <PlayerContext value={{ playing, currentTrack, toggle, stop }}>
+    <PlayerContext value={{
+      playing, currentTrack, duration, startedAt,
+      toggle, stop, subscribe, getCurrentTime,
+    }}>
       {children}
     </PlayerContext>
   );
