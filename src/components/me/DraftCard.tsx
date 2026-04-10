@@ -1,9 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { Draft } from '@/src/lib/draft-store';
-
-const TTL_MS = 24 * 60 * 60 * 1000;
 
 /** 剩余毫秒 → "Xh Ym" */
 function formatRemaining(ms: number): string {
@@ -14,27 +11,28 @@ function formatRemaining(ms: number): string {
 }
 
 /**
- * DraftCard — 单条草稿卡片
- * 显示曲目 trackId + 事件数 + 剩余倒计时
+ * DraftCard — 草稿卡片
+ * 格式：深渊 - #01 - 20 音符 | 23h 45m
  */
-export default function DraftCard({ draft }: { draft: Draft }) {
+export default function DraftCard({ title, expiresAt }: {
+  title: string;
+  expiresAt: string;
+}) {
   const [remaining, setRemaining] = useState(() =>
-    TTL_MS - (Date.now() - new Date(draft.createdAt).getTime()),
+    new Date(expiresAt).getTime() - Date.now(),
   );
 
   useEffect(() => {
     const id = setInterval(() => {
-      setRemaining(TTL_MS - (Date.now() - new Date(draft.createdAt).getTime()));
+      setRemaining(new Date(expiresAt).getTime() - Date.now());
     }, 60_000);
     return () => clearInterval(id);
-  }, [draft.createdAt]);
+  }, [expiresAt]);
 
   return (
     <div className="rounded-lg border border-white/10 bg-white/5 p-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-white/70">
-          {draft.eventsData.length} 个音符
-        </p>
+        <p className="text-sm text-white/70">{title}</p>
         <span
           className={[
             'text-xs',

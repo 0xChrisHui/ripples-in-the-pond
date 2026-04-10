@@ -14,13 +14,22 @@ type FavoriteStatus = 'idle' | 'loading' | 'success' | 'error';
  *   未登录 → 触发 Privy 登录 → 登录成功后自动完成收藏
  *   已登录 → 直接铸造 + 上传草稿
  */
-export function useFavorite(tokenId: number, trackId: string) {
+export function useFavorite(
+  tokenId: number,
+  trackId: string,
+  onMinted?: (tokenId: number) => void,
+) {
   const { authenticated, login, getAccessToken } = useAuth();
   const [status, setStatus] = useState<FavoriteStatus>('idle');
   const pendingRef = useRef(false);
+  const onMintedRef = useRef(onMinted);
+  useEffect(() => { onMintedRef.current = onMinted; }, [onMinted]);
 
   const doFavorite = useCallback(async () => {
-    setStatus('loading');
+    // 乐观更新：立刻变红心，失败再回退
+    setStatus('success');
+    onMintedRef.current?.(tokenId);
+
     try {
       const token = await getAccessToken();
       if (!token) throw new Error('无法获取 token');
@@ -38,7 +47,10 @@ export function useFavorite(tokenId: number, trackId: string) {
         }),
       });
 
-      if (!mintRes.ok) throw new Error('铸造请求失败');
+      // 409 = 已铸造过，视为成功
+      if (!mintRes.ok && mintRes.status !== 409) {
+        throw new Error('铸造请求失败');
+      }
 
       // 2. 尝试上传该 track 的草稿（如有）
       const drafts = getDrafts();
@@ -55,8 +67,6 @@ export function useFavorite(tokenId: number, trackId: string) {
           console.warn('[favorite] 草稿上传失败，保留在本地');
         }
       }
-
-      setStatus('success');
     } catch (err) {
       console.error('[favorite] error:', err);
       setStatus('error');

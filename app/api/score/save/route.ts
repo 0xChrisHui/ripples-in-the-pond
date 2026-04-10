@@ -139,7 +139,27 @@ export async function POST(req: NextRequest) {
       .select('id')
       .single();
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      // 23505 = 唯一约束冲突，说明已有同一 user+track 的 draft，视为成功
+      if (insertError.code === '23505') {
+        const { data: existing } = await supabaseAdmin
+          .from('pending_scores')
+          .select('id, expires_at')
+          .eq('user_id', user.id)
+          .eq('track_id', trackId)
+          .eq('status', 'draft')
+          .single();
+        if (existing) {
+          const res: SaveScoreResponse = {
+            result: 'ok',
+            scoreId: existing.id,
+            expiresAt: existing.expires_at,
+          };
+          return NextResponse.json(res);
+        }
+      }
+      throw insertError;
+    }
 
     const res: SaveScoreResponse = {
       result: 'ok',

@@ -34,7 +34,7 @@ const DEFAULT_COLOR = { bg: 'bg-white/20', glow: '' };
  * Island — 单个岛屿
  * 接收 Track 数据，点击播放/停止对应音频
  */
-export default function Island({ track }: { track: Track }) {
+export default function Island({ track, alreadyMinted = false, onMinted }: { track: Track; alreadyMinted?: boolean; onMinted?: (tokenId: number) => void }) {
   const { playing, currentTrack, toggle } = usePlayer();
   const isActive = playing && currentTrack?.id === track.id;
   const colors = COLOR_MAP[track.cover] ?? DEFAULT_COLOR;
@@ -68,7 +68,7 @@ export default function Island({ track }: { track: Track }) {
       >
         {track.title}
       </span>
-      <FavoriteButton tokenId={track.week} trackId={track.id} />
+      <FavoriteButton tokenId={track.week} trackId={track.id} alreadyMinted={alreadyMinted} onMinted={onMinted} />
     </div>
   );
 }

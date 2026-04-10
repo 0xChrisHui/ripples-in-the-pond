@@ -5,26 +5,30 @@ import { useFavorite } from '@/src/hooks/useFavorite';
 /**
  * 爱心收藏按钮 — 替代旧的 MintButton
  * 点击 → 未登录走登录 → 铸造 + 上传草稿
+ * alreadyMinted = true 时初始就显示红心
  */
 export default function FavoriteButton({
   tokenId,
   trackId,
+  alreadyMinted = false,
+  onMinted,
 }: {
   tokenId: number;
   trackId: string;
+  alreadyMinted?: boolean;
+  onMinted?: (tokenId: number) => void;
 }) {
-  const { status, favorite, reset } = useFavorite(tokenId, trackId);
+  const { status, favorite, reset } = useFavorite(tokenId, trackId, onMinted);
 
-  if (status === 'success') {
+  // 已铸造过或刚铸造成功 → 红心
+  if (alreadyMinted || status === 'success') {
     return (
-      <button
-        type="button"
-        className="text-xl leading-none text-rose-400 transition-transform hover:scale-110"
+      <span
+        className="text-xl leading-none text-rose-400"
         aria-label="已收藏"
-        disabled
       >
         &#9829;
-      </button>
+      </span>
     );
   }
 

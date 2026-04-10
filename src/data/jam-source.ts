@@ -4,6 +4,7 @@ import type {
   SaveScoreRequest,
   SaveScoreResponse,
   ScorePreviewResponse,
+  MyScoresResponse,
 } from '@/src/types/jam';
 
 /**
@@ -35,6 +36,15 @@ export async function saveScore(
     throw new Error(err.error ?? '保存失败');
   }
   return res.json();
+}
+
+export async function fetchMyScores(token: string): Promise<MyScoresResponse['scores']> {
+  const res = await fetch('/api/me/scores', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) return [];
+  const data: MyScoresResponse = await res.json();
+  return data.scores;
 }
 
 export async function fetchScorePreview(

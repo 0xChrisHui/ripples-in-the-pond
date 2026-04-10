@@ -52,12 +52,53 @@ export async function GET(req: NextRequest) {
 
     if (error) throw error;
 
-    const nfts: OwnedNFT[] = (events ?? []).map((e) => ({
-      track: e.tracks as unknown as OwnedNFT['track'],
-      token_id: e.token_id,
-      tx_hash: e.tx_hash,
-      minted_at: e.minted_at,
-    }));
+    // 同一 token_id 去重，只保留最新一条
+    const seen = new Set<number>();
+    const nfts: OwnedNFT[] = [];
+    for (const e of events ?? []) {
+      if (seen.has(e.token_id)) continue;
+      seen.add(e.token_id);
+      nfts.push({
+        track: e.tracks as unknown as OwnedNFT['track'],
+        token_id: e.token_id,
+        tx_hash: e.tx_hash,
+        minted_at: e.minted_at,
+      });
+    }
+
+    // 也查 mint_queue 里 pending 的，联表拿曲目名
+    const { data: queued } = await supabaseAdmin
+      .from('mint_queue')
+      .select('token_id, created_at')
+      .eq('user_id', user.id)
+      .in('status', ['pending', 'minting_onchain']);
+
+    // 批量查 pending token_id 对应的 track 信息
+    const pendingTokenIds = (queued ?? [])
+      .filter((q) => !seen.has(q.token_id))
+      .map((q) => q.token_id);
+
+    const tracksByWeek = new Map<number, OwnedNFT['track']>();
+    if (pendingTokenIds.length > 0) {
+      const { data: tracks } = await supabaseAdmin
+        .from('tracks')
+        .select('id, title, week, audio_url, cover, island, created_at')
+        .in('week', pendingTokenIds);
+      for (const t of tracks ?? []) {
+        tracksByWeek.set(t.week, t as OwnedNFT['track']);
+      }
+    }
+
+    for (const q of queued ?? []) {
+      if (seen.has(q.token_id)) continue;
+      seen.add(q.token_id);
+      nfts.push({
+        track: tracksByWeek.get(q.token_id) ?? null as unknown as OwnedNFT['track'],
+        token_id: q.token_id,
+        tx_hash: '',
+        minted_at: q.created_at,
+      });
+    }
 
     const res: MyNFTsResponse = { nfts };
     return NextResponse.json(res);

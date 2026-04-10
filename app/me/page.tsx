@@ -5,33 +5,48 @@ import Link from 'next/link';
 import type { OwnedNFT } from '@/src/types/tracks';
 import { useAuth } from '@/src/hooks/useAuth';
 import { fetchMyNFTs } from '@/src/data/nfts-source';
-import { getDrafts, removeDraft, type Draft } from '@/src/lib/draft-store';
-import { saveScore } from '@/src/data/jam-source';
+import { getDrafts, removeDraft } from '@/src/lib/draft-store';
+import { getCachedNFTs, setCachedNFTs } from '@/src/lib/nft-cache';
+import { saveScore, fetchMyScores } from '@/src/data/jam-source';
 import NFTCard from '@/src/components/me/NFTCard';
 import DraftCard from '@/src/components/me/DraftCard';
 import EmptyState from '@/src/components/me/EmptyState';
 
+const TTL_MS = 24 * 60 * 60 * 1000;
+
+interface DisplayDraft {
+  key: string;
+  title: string;
+  expiresAt: string;
+}
+
 /**
  * /me — 个人页
- * "我的收藏"（素材 NFT）+ "我的创作"（localStorage 草稿 + 倒计时）
- * 登录后自动把未过期草稿补上传到后端
+ * 先从 localStorage 缓存秒开，后台静默刷新
+ * 草稿来源：localStorage（未上传）+ 服务端（已上传）
  */
 export default function MePage() {
   const { ready, authenticated, login, getAccessToken } = useAuth();
-  const [nfts, setNfts] = useState<OwnedNFT[]>([]);
-  const [drafts, setDrafts] = useState<Draft[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [nfts, setNfts] = useState<OwnedNFT[]>(() => getCachedNFTs());
+  const [drafts, setDrafts] = useState<DisplayDraft[]>(() => {
+    return getDrafts().map((d, i) => ({
+      key: `local-${d.trackId}`,
+      title: `创作 - #${String(i + 1).padStart(2, '0')} - ${d.eventsData.length} 音符`,
+      expiresAt: new Date(new Date(d.createdAt).getTime() + TTL_MS).toISOString(),
+    }));
+  });
+  const [loaded, setLoaded] = useState(() => getCachedNFTs().length > 0);
 
-  // 加载 NFT + 草稿 + 自动上传
   useEffect(() => {
     if (!authenticated) return;
 
     getAccessToken().then(async (token) => {
       if (!token) return;
 
-      // 并行加载 NFT
+      // 并行：加载 NFT + 上传本地草稿 + 加载服务端草稿
       fetchMyNFTs(token).then((data) => {
         setNfts(data);
+        setCachedNFTs(data);
         setLoaded(true);
       });
 
@@ -46,18 +61,33 @@ export default function MePage() {
           });
           removeDraft(draft.trackId);
         } catch {
-          // 上传失败保留在本地，下次再试
+          // 上传失败保留在本地
         }
       }
 
-      // 刷新本地草稿列表
-      setDrafts(getDrafts());
+      // 从服务端拿已上传的草稿
+      const serverDrafts = await fetchMyScores(token);
+      const remaining = getDrafts();
+
+      const display: DisplayDraft[] = [
+        ...serverDrafts.map((s) => ({
+          key: `server-${s.id}`,
+          title: `${s.trackTitle} - #${String(s.seq).padStart(2, '0')} - ${s.eventCount} 音符`,
+          expiresAt: s.expiresAt,
+        })),
+        ...remaining.map((d, i) => ({
+          key: `local-${d.trackId}`,
+          title: `创作 - #${String(i + 1).padStart(2, '0')} - ${d.eventsData.length} 音符`,
+          expiresAt: new Date(new Date(d.createdAt).getTime() + TTL_MS).toISOString(),
+        })),
+      ];
+      setDrafts(display);
     });
   }, [authenticated, getAccessToken]);
 
-  if (!ready) return null;
+  if (!ready && nfts.length === 0) return null;
 
-  if (!authenticated) {
+  if (!authenticated && nfts.length === 0) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-black">
         <p className="text-white/50">请先登录查看你的收藏</p>
@@ -92,20 +122,19 @@ export default function MePage() {
         {nfts.length > 0 && (
           <div className="grid gap-4 sm:grid-cols-2">
             {nfts.map((nft) => (
-              <NFTCard key={nft.tx_hash} nft={nft} />
+              <NFTCard key={nft.tx_hash || `pending-${nft.token_id}`} nft={nft} />
             ))}
           </div>
         )}
 
-        {/* 草稿区域 */}
         {drafts.length > 0 && (
           <section className="mt-12">
             <h2 className="mb-4 text-sm font-light tracking-widest text-white/60">
               我的创作
             </h2>
             <div className="grid gap-3">
-              {drafts.map((draft) => (
-                <DraftCard key={draft.trackId} draft={draft} />
+              {drafts.map((d) => (
+                <DraftCard key={d.key} title={d.title} expiresAt={d.expiresAt} />
               ))}
             </div>
           </section>
