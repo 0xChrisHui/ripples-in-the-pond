@@ -26,7 +26,7 @@ export function useFavorite(
   useEffect(() => { onMintedRef.current = onMinted; }, [onMinted]);
 
   const doFavorite = useCallback(async () => {
-    // 乐观更新：立刻变红心，失败再回退
+    // 乐观更新：立刻变红心，失败不回退（后端静默重试）
     setStatus('success');
     onMintedRef.current?.(tokenId);
 
@@ -68,8 +68,8 @@ export function useFavorite(
         }
       }
     } catch (err) {
-      console.error('[favorite] error:', err);
-      setStatus('error');
+      // 不回退红心，不告诉用户——开发者从日志排查
+      console.error('[favorite] 后端失败，需排查:', err);
     }
   }, [getAccessToken, tokenId, trackId]);
 
