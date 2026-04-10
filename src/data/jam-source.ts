@@ -1,37 +1,50 @@
 import type {
   Sound,
+  SoundsListResponse,
   SaveScoreRequest,
   SaveScoreResponse,
   ScorePreviewResponse,
 } from '@/src/types/jam';
-import { MOCK_SOUNDS } from './mock-sounds';
 
 /**
  * 合奏数据适配层 — 函数签名冻结
- * Track B：返回假数据 / 假保存
- * Track C：替换内部实现为真实 API 调用
+ * Track C：真实 API 调用
  */
 
 export async function fetchSounds(): Promise<Sound[]> {
-  return MOCK_SOUNDS;
+  const res = await fetch('/api/sounds');
+  if (!res.ok) throw new Error('Failed to fetch sounds');
+  const data: SoundsListResponse = await res.json();
+  return data.sounds;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Track C 替换实现时会用到参数
 export async function saveScore(
-  _token: string,
-  _data: SaveScoreRequest,
+  token: string,
+  data: SaveScoreRequest,
 ): Promise<SaveScoreResponse> {
-  return {
-    result: 'ok',
-    scoreId: `draft-${Date.now()}`,
-    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-  };
+  const res = await fetch('/api/score/save', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: '保存失败' }));
+    throw new Error(err.error ?? '保存失败');
+  }
+  return res.json();
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Track C 替换实现时会用到参数
 export async function fetchScorePreview(
-  _token: string,
-  _scoreId: string,
+  token: string,
+  scoreId: string,
 ): Promise<ScorePreviewResponse | null> {
-  return null;
+  const res = await fetch(`/api/scores/${scoreId}/preview`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error('Failed to fetch preview');
+  return res.json();
 }

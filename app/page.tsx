@@ -1,5 +1,6 @@
 import Archipelago from '@/src/components/archipelago/Archipelago';
 import LoginButton from '@/src/components/auth/LoginButton';
+import HomeJam from '@/src/components/jam/HomeJam';
 
 export default function Home() {
   return (
@@ -14,7 +15,7 @@ export default function Home() {
 
       <Archipelago />
 
-      <p className="text-sm text-white/40">点击岛屿，聆听音乐</p>
+      <HomeJam />
     </main>
   );
 }

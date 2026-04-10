@@ -2,7 +2,7 @@
 
 import type { Track } from '@/src/types/tracks';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
-import MintButton from '@/src/components/MintButton';
+import FavoriteButton from '@/src/components/FavoriteButton';
 
 /** 颜色 → Tailwind class 映射 */
 const COLOR_MAP: Record<string, { bg: string; glow: string }> = {
@@ -68,7 +68,7 @@ export default function Island({ track }: { track: Track }) {
       >
         {track.title}
       </span>
-      <MintButton tokenId={track.week} />
+      <FavoriteButton tokenId={track.week} trackId={track.id} />
     </div>
   );
 }

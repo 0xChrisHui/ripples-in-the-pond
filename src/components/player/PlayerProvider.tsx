@@ -19,10 +19,16 @@ export interface PlayerLifecycle {
 interface PlayerState {
   playing: boolean;
   currentTrack: Track | null;
+  /** 当前曲目总时长（秒） */
+  duration: number;
+  /** 播放开始的 AudioContext 时间（秒），用于算进度 */
+  startedAt: number;
   toggle: (track: Track) => Promise<void>;
   stop: () => void;
   /** 注册播放生命周期回调，返回注销函数 */
   subscribe: (lifecycle: PlayerLifecycle) => () => void;
+  /** 获取 AudioContext.currentTime（秒） */
+  getCurrentTime: () => number;
 }
 
 const PlayerContext = createContext<PlayerState | null>(null);
@@ -37,6 +43,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);
   const [playing, setPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
+  const [duration, setDuration] = useState(0);
+  const [startedAt, setStartedAt] = useState(0);
   const listenersRef = useRef<Set<PlayerLifecycle>>(new Set());
 
   const subscribe = useCallback((lifecycle: PlayerLifecycle) => {
@@ -77,12 +85,16 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     source.onended = () => {
       setPlaying(false);
       setCurrentTrack(null);
+      setDuration(0);
+      setStartedAt(0);
       notifyEnd();
     };
     source.start();
 
     sourceRef.current = source;
     setCurrentTrack(track);
+    setDuration(buffer.duration);
+    setStartedAt(ctx.currentTime);
     setPlaying(true);
     notifyStart(track);
   }, [getContext, notifyStart, notifyEnd]);
@@ -94,6 +106,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
     setCurrentTrack(null);
     setPlaying(false);
+    setDuration(0);
+    setStartedAt(0);
     notifyEnd();
   }, [notifyEnd]);
 
@@ -105,8 +119,15 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
   }, [playing, currentTrack, play, stop]);
 
+  const getCurrentTime = useCallback(() => {
+    return ctxRef.current?.currentTime ?? 0;
+  }, []);
+
   return (
-    <PlayerContext value={{ playing, currentTrack, toggle, stop, subscribe }}>
+    <PlayerContext value={{
+      playing, currentTrack, duration, startedAt,
+      toggle, stop, subscribe, getCurrentTime,
+    }}>
       {children}
     </PlayerContext>
   );
