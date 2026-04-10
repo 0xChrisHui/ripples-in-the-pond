@@ -7,14 +7,14 @@
 
 ## 当前阶段
 
-**Phase**: Phase 2 执行中
-**目标**: Phase 2 — 合奏 + 草稿系统（方向调整：Patatap 风格首页融合）
+**Phase**: Phase 2.5 — Flow Hardening Sprint
+**目标**: 把 Phase 2 从"可玩的作品"升级成"可信的作品系统"
 
 ## 当前进度
 
-**做到哪**: Phase 2 全部完成（Track A + B + C ✅），C4 浏览器验证通过
-**下一步**: 先读 `reviews/2026-04-10-phase-2-cto.md`，决定是否插入 `Phase 2.5 — Flow Hardening Sprint` 再进入 Phase 3
-**playbook**: `playbook/phase-2/track-c-integration.md`
+**做到哪**: Phase 2 已 merge 回 main，Phase 2.5 playbook 已写好
+**下一步**: S0 — DB 加固 + server-only + TTL 文案对齐
+**playbook**: `playbook/phase-2.5-hardening.md`
 
 ### 续做指南（下次会话第一件事读这段）
 

@@ -11,29 +11,14 @@
 
 ---
 
-## ⏭ Next（Phase 2 — Track C 集成）
+## ⏭ Next（Phase 2.5 — Flow Hardening Sprint）
 
-**Track A — 后端** ✅（`feat/phase2-backend`）
-- **[A0]** ✅ sounds + pending_scores 表
-- **[A1]** ✅ sounds 种子数据 + GET /api/sounds
-- **[A2]** ✅ POST /api/score/save（草稿上传）
-- **[A3]** ✅ GET /api/scores/[id]/preview（私有预览）
-- **[A4]** ✅ GET /api/me/scores（草稿列表）
-- **[A5]** ⏭ 跳过（用户决定不展示 pending/failed，后端静默重试）
+**playbook**: `playbook/phase-2.5-hardening.md`
 
-**Track B — 前端** ✅（`feat/phase2-frontend`，commit `5dd2d95`）
-- **[B0]** ✅ 首页接入键盘 + 音效播放
-- **[B1]** ✅ 视觉反馈（按键动画）
-- **[B2]** ✅ 录制逻辑（播放即录制）
-- **[B3]** ✅ 草稿存 localStorage + 录制完成提示
-- **[B4]** ✅ mobile 提示 + UI 打磨
-
-**Track C — 集成** ✅（commit `c31524c`）
-- **[C0]** ✅ merge Track A（untracked → commit `ca1c67d`）
-- **[C1]** ✅ 适配层切换 mock → 真实 API
-- **[C2]** ✅ 爱心收藏 + 登录 → 草稿上传 → 铸造
-- **[C3]** ✅ 底部进度条 + 个人页草稿倒计时
-- **[C4]** ✅ 浏览器验证通过 + bug 修复（commit `8fbc7ca`）→ 待 merge 回 main
+- **[S0]** DB 加固 + server-only + TTL 文案对齐
+- **[S1]** AudioContext 延迟加载
+- **[S2]** 录制时钟源迁移（performance.now → 音频时钟）
+- **[S3]** 合约 admin/minter 分离 + 统一 build 脚本
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md`
 
@@ -47,6 +32,7 @@
 
 ## ✅ Done
 
+- **[Phase 2]** ✅ 完成（2026-04-10）— 首页合奏 + 草稿系统 + 爱心收藏，merged 回 main。Track A（后端 API）+ Track B（前端 Codex）+ Track C（集成+验证+CTO review 修复）
 - **[Day 1]** 文档骨架首版：13 markdown（含 1 个 phase-0 playbook）+ 3 hooks + 3 scripts
 - **[Day 1 续]** 学习机制补丁：SessionStart hook + Stop hook + QUICKSTART.md + check-folder-size 加项目根例外
 - **[Day 1 续 2]** 决策日志机制：新建 docs/JOURNAL.md + AGENTS §4 第 4 步追加规则
