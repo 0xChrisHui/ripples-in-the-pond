@@ -89,6 +89,7 @@
 - `arweave.ts` 导出上传 + 解析函数，加 `import 'server-only'`
 - 26 个音效 + 已有底曲全部有 `ar://` 地址
 - 通过多网关至少一个能访问到文件
+- **硬门槛**：fallback 网关列表里至少 2 个网关通过 CORS 实测（浏览器 fetch 能成功加载音频 blob，`Access-Control-Allow-Origin` 响应头正确）——Decoder 的多网关兜底依赖这个，不实测等于纸面能力
 - STACK.md 已登记 turbo-sdk
 - `verify.sh` 全绿
 
@@ -282,6 +283,8 @@ create table score_nft_queue (
 ```
 解决 Phase 2.5 延后的事务化问题，封面 `FOR UPDATE SKIP LOCKED` 在事务内才有意义。
 
+**封面分配语义（显式约束）**：RPC 内部查询必须写成 `SELECT ... FROM score_covers ORDER BY usage_count ASC LIMIT 1 FOR UPDATE SKIP LOCKED`——最少使用优先，分配后 `usage_count + 1`。这样封面池是**复用池**而不是耗材，S1 的 100 张限制是审美重复不是系统中断。如果实现时默认写成随机或按 id 顺序，池的效果会退化，100 张的审美风险会放大成稳定性风险。
+
 ### 3. POST /api/mint/score
 - 验证登录
 - 验证 pending_score 存在且是 draft 状态，属于当前用户
@@ -307,6 +310,19 @@ ALTER TABLE mint_events ADD COLUMN metadata_ar_tx_id text;
 ALTER TABLE mint_events ADD COLUMN score_queue_id uuid references score_nft_queue(id);
 ```
 
+### 6. 最小观测性（硬门槛）
+
+5 步状态机跑起来后如果没有观测手段，卡住的任务只能瞎猜。S5 收工前必须至少交付其中一项：
+
+**方案 A（最小成本）**：`docs/ops/score-queue-status.sql` 模板文件，包含：
+- 按 `status` 分组计数
+- 每个 `status` 最老任务的等待时间 `MAX(now() - updated_at)`
+- 最近 24h 内 `failed` 任务的 `last_error` top 10
+
+**方案 B（稍重但更好）**：只读端点 `GET /api/admin/queue-status`，用环境变量 `ADMIN_TOKEN` 保护，返回上述 SQL 的 JSON 结果。
+
+选 A 或 B 在实现时决定，但不能两个都不做——否则上线第一天遇到问题就是盲飞。
+
 ## ✅ 完成标准
 - POST /api/mint/score 返回 201，队列有记录
 - Cron 从 pending 一路跑到 success（5 步状态机）
@@ -314,6 +330,9 @@ ALTER TABLE mint_events ADD COLUMN score_queue_id uuid references score_nft_queu
 - metadata 包含 `image`（封面）+ `animation_url`（decoder + events）+ `external_url`
 - mint_events 有 score_data 自包含数据
 - 限流生效：同一用户短时间重复调用返回 429
+- **硬门槛**：`minting_onchain` 幂等恢复策略落地——进入该状态前先检查 `tx_hash IS NOT NULL`，已有则走 receipt 回查拿 tokenId，没有则发交易；cron 在任意子步骤崩溃重启后**不得重复 mint**（需要一条"进入 minting_onchain 后杀掉进程再重启"的失败注入测试证明幂等）
+- **硬门槛**：§6 最小观测性至少交付方案 A 或 B 其一
+- **硬门槛**：S5 收工时在 OP Sepolia 真铸造一条 ScoreNFT，放到 OpenSea testnet 页面**肉眼确认 image（封面）+ animation_url（decoder 回放）正确展示**——不能等到 S7 端到端验证才发现 metadata 结构或 URL 参数不被 OpenSea 接受
 - `verify.sh` 全绿
 
 ---
