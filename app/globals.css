@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/*
+ * Tailwind v4 默认扫整个项目寻找 className，遇到二进制/非法 UTF-8 文件
+ * 会炸 (Invalid code point)。历史上 .claude/logs/ 和 contracts/out/
+ * 都触发过同一个 bug。v4.1+ 提供 @source not 显式排除——比 .gitignore
+ * 更可靠，直接作用于 Tailwind 的扫描层。
+ */
+@source not "../contracts/**/*";
+@source not "../data/**/*";
+@source not "../.claude/**/*";
+@source not "../scripts/**/*";
+@source not "../supabase/**/*";
+@source not "../reviews/**/*";
+@source not "../playbook/**/*";
+@source not "../docs/**/*";
+
 :root {
   --background: #000000;
   --foreground: #ffffff;

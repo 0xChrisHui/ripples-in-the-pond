@@ -45,8 +45,8 @@ next-env.d.ts
 .claude/settings.local.json
 # Claude Code 本地 worktree（隔离工作目录，不入仓）
 .claude/worktrees/
-# Claude Code 日志（触发 Tailwind v4 扫描 bug）
-.claude/logs/
+# Claude Code 日志（**/ 通配匹配子目录如 contracts/.claude/logs/）
+**/.claude/logs/
 
 # Foundry 构建产物和敏感数据
 contracts/out/
