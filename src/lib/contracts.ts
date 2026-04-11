@@ -80,3 +80,50 @@ export const SCORE_NFT_ABI = [
     outputs: [{ name: '', type: 'bytes32' }],
   },
 ] as const;
+
+// ─────────────────────────────────────────────────
+// MintOrchestrator (Phase 3 S3) — ScoreNFT 的"前台"薄壳
+// S5 cron 走这个合约，不直接调 ScoreNFT
+// ─────────────────────────────────────────────────
+
+export const ORCHESTRATOR_ADDRESS = process.env
+  .NEXT_PUBLIC_ORCHESTRATOR_ADDRESS as `0x${string}`;
+
+export const ORCHESTRATOR_ABI = [
+  {
+    name: 'mintScore',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'to', type: 'address' }],
+    outputs: [{ name: 'tokenId', type: 'uint256' }],
+  },
+  {
+    name: 'tbaEnabled',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    name: 'setTbaEnabled',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'enabled', type: 'bool' }],
+    outputs: [],
+  },
+  {
+    name: 'scoreNft',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'address' }],
+  },
+  {
+    type: 'event',
+    name: 'ScoreMinted',
+    inputs: [
+      { indexed: true, name: 'to', type: 'address' },
+      { indexed: true, name: 'tokenId', type: 'uint256' },
+    ],
+  },
+] as const;
