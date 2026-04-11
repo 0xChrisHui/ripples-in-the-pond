@@ -52,3 +52,7 @@ next-env.d.ts
 contracts/out/
 contracts/cache/
 contracts/broadcast/
+
+# Phase 3 S1：封面 SVG 是脚本确定性重建的（generate-covers.ts seed 化）
+# 真正不可重建的是 cover-arweave-map.json（Arweave txid 永久记录），它要 commit
+data/covers/
