@@ -13,10 +13,14 @@
 
 ## ⏭ Next
 
-- Phase 3 规划（待定）
+- **Phase 3 Step S1** — 封面系统：生成 100 张测试封面 + `score_covers` 表 + 批量上 Arweave
+- 之后按 playbook 顺序：S2 ScoreNFT 合约 → S3 MintOrchestrator → S4 decoder.html → S5 API+cron → S6 公开回放页 → S7 收口
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md`
-主网前必做：Deploy 脚本 admin/minter 分离 + save draft 事务化（见 `reviews/2026-04-10-phase-2.5-completion-review.md`）
+
+**主网前必做**：
+- Deploy 脚本 admin/minter 分离 + save draft 事务化（见 `reviews/2026-04-10-phase-2.5-completion-review.md`）
+- **Turbo credits 监控**（2026-04-11 决定延后到 S5）：当前无提醒机制，credits 用完那天就是某次上传突然失败那天。S5 playbook 的"最小观测性"硬门槛里把 Turbo winc 余额一起监控，低于 10% 阈值告警。Phase 3 S0-S4 期间消耗可忽略，不紧急
 
 ---
 
@@ -28,6 +32,12 @@
 
 ## ✅ Done
 
+- **[Phase 3 Step S0]** ✅ 完成（2026-04-11）— Arweave 工具链上线：
+  - S0.a 骨架 commit `35aca7d`：`src/lib/arweave/` 子目录（index + core）+ CORS 实测脚本 + upload 骨架 + migration 007 + @ardrive/turbo-sdk 装包
+  - S0.b 实产 commit `60c96ec`：激活 Turbo 上传 + 26 音效全部上链 + 5 tracks 回写 `arweave_url` + ARWEAVE_GATEWAYS 4→2 缩减 + scripts 重组进 arweave/ 子目录 + `_env.ts` helper + 充值工具链（generate-eth-wallet / wait-for-base-eth / topup-turbo）
+  - S0.b 退役 commit `be4e07a`：`git rm` 一次性 generate-eth-wallet.ts
+  - Turbo 钱包 `0xdE788249...9Fba8`（Base），充值 0.00396 ETH → 3.3T winc
+  - 硬门槛 CORS smoke 2/2 通过（真验证推迟到 S6）
 - **[Phase 2.5]** ✅ 完成（2026-04-10）— Flow Hardening Sprint：DB 唯一索引 + server-only + TTL 统一 + AudioContext 延迟加载 + 录制时钟统一 + verify.sh 纳入 build + completion review 修复（useJam 状态机 + startedAt 清理）
 - **[Phase 2]** ✅ 完成（2026-04-10）— 首页合奏 + 草稿系统 + 爱心收藏，merged 回 main。Track A（后端 API）+ Track B（前端 Codex）+ Track C（集成+验证+CTO review 修复）
 - **[Day 1]** 文档骨架首版：13 markdown（含 1 个 phase-0 playbook）+ 3 hooks + 3 scripts
