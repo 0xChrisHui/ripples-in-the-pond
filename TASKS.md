@@ -7,13 +7,19 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- （空，Phase 3A 已完成，等用户决定下一阶段）
+- （空，等用户发起 Phase 4 S0）
 
 ---
 
 ## ⏭ Next
 
-- **Phase 4 规划** — 待定
+- **Phase 4 Step S0** — 自签 JWT 基础设施 + 双验证中间件
+- **Phase 4 Step S1** — Semi OAuth2 对接 + users 表扩展
+- **Phase 4 Step S2** — 前端登录按钮 + 个人页兼容
+- **Phase 4 Step S3** — 余额告警 cron + 健康检查增强
+- **Phase 4 Step S4** — 艺术家页面 /artist
+- **Phase 4 Step S5** — 空投系统骨架
+- **Phase 4 Step S6** — 收口验证
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md`
 

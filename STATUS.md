@@ -6,15 +6,15 @@
 
 ## 当前阶段
 
-**Phase**: Phase 3 — Score NFT（乐谱 NFT + 封面 + 分享）
-**进度**: **Phase 3 全部完成**（3A ✅ + 3B ✅ + 3.1 稳定性修复 ✅）
-**playbook**: `playbook/phase-3-score-nft.md`
+**Phase**: Phase 4 — 社区钱包 + 空投
+**进度**: **0/6 step 完成**（S0-S6 ⏳）
+**playbook**: `playbook/phase-4-community.md`
 
 ## 当前进度
 
-**做到哪**: Phase 3.1 稳定性修复完成 — 原子 claim + 幂等写入 + metadata 正确性 + 代码防御
-**下一步**: Phase 4 规划（或主网部署准备）
-**剩余**: Phase 3 全部完成，Sprint 3 F9（链上灾备）延后到主网前
+**做到哪**: Phase 4 playbook 完成，等待开工
+**下一步**: **S0** — 自签 JWT 基础设施 + 双验证中间件
+**剩余**: S0 → S1 → S2 → S3 → S4 → S5 → S6
 
 ### 续做指南（下次会话第一件事读这段）
 
