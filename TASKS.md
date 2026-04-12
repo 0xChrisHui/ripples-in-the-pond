@@ -13,7 +13,6 @@
 
 ## ⏭ Next
 
-- **Phase 3B** — sync-chain-events cron + 链上事件同步（详见 playbook Phase 3B 节）
 - **Phase 4 规划** — 待定
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md`
@@ -33,6 +32,12 @@
 
 ## ✅ Done
 
+- **[Phase 3B]** ✅ 完成（2026-04-12）— 链上事件同步 cron：
+  - `supabase/migrations/phase-3/013_system_kv.sql` — 系统 KV 表，存 last_synced_block
+  - `supabase/migrations/phase-3/014_chain_events.sql` — 链上事件表，UNIQUE(tx_hash, log_index)
+  - `app/api/cron/sync-chain-events/route.ts` — 分批循环拉 Transfer 事件（Alchemy Free 10 区块限制）
+  - `src/lib/contracts.ts` — ScoreNFT 加 Transfer 事件 ABI
+  - 实测：tokenId 2 Transfer 事件成功同步
 - **[Phase 3 Step S7]** ✅ 完成（2026-04-12）— 个人页升级 + 端到端验证 8/8：
   - `src/components/me/ScoreCard.tsx`（新建）— 乐谱 NFT 卡片（封面 + 标题 + 回放链接）
   - `app/api/me/score-nfts/route.ts`（新建）— 返回用户已铸造的 ScoreNFT

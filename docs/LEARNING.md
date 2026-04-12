@@ -88,6 +88,20 @@
 
 ---
 
+### 链上事件同步（Event Sync）
+- **是什么**：你的数据库只知道"自己铸造了什么"，但不知道用户在 OpenSea 把 NFT 转给了谁。定期从链上拉 `Transfer` 事件，把所有权变更记录到自己的 DB，让数据库和区块链保持一致。
+- **类比**：像银行对账——你自己的账本记了收支，但每月还要和银行流水核对一遍，确保没有漏记的转账。
+- **第一次出现**：`app/api/cron/sync-chain-events/route.ts`，Phase 3B
+
+---
+
+### 幂等同步（system_kv + UNIQUE 约束）
+- **是什么**：`system_kv.last_synced_block` 记录"上次扫到第几个区块"，下次从这里继续；`chain_events` 表用 `UNIQUE(tx_hash, log_index)` 保证同一个事件不会被写入两次。两层保险确保 cron 即使重复跑也不会产生脏数据。
+- **类比**：像看书时夹书签（last_synced_block = 书签位置），同时笔记本里用标号防止同一段话被抄两次（UNIQUE 约束）。
+- **第一次出现**：`supabase/migrations/phase-3/013_system_kv.sql` + `014_chain_events.sql`，Phase 3B
+
+---
+
 ### iframe 嵌入
 - **是什么**：`<iframe>` 是一个"页面中的页面"，可以加载另一个网址的内容。ScorePlayer 用 iframe 加载 Arweave 上的 Decoder HTML，让播放器代码和主站完全隔离。
 - **类比**：像在电视里看另一个频道的节目——电视机（主页面）提供框架，节目内容（decoder）来自别处。
