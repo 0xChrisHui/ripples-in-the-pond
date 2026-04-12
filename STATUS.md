@@ -7,14 +7,14 @@
 ## 当前阶段
 
 **Phase**: Phase 3 — Score NFT（乐谱 NFT + 封面 + 分享）
-**进度**: **6/8 step 完成**（S0-S5 ✅ / S6-S7 ⏳）
+**进度**: **7/8 step 完成**（S0-S6 ✅ / S7 ⏳）
 **playbook**: `playbook/phase-3-score-nft.md`
 
 ## 当前进度
 
-**做到哪**: S5 完成 — 铸造 API + cron 5 步状态机 + 观测性端点
-**下一步**: **S6** — `/score/[tokenId]` 公开回放页 + Next.js OG 分享卡
-**剩余**: S6 → S7（收口验证清单 + 个人页升级）
+**做到哪**: S6 完成 — `/score/[tokenId]` 公开回放页 + OG 分享卡 + 数据源
+**下一步**: **S7** — 收口验证清单 + 个人页升级
+**剩余**: S7
 
 ### 续做指南（下次会话第一件事读这段）
 
@@ -56,9 +56,9 @@
 
 ## 上次成功验证
 
-- 验证: Phase 3 S5 端到端 — RPC 入队 → cron 5 步状态机 → 链上 mint tokenId 2 → Arweave metadata viewer ✅
+- 验证: Phase 3 S6 — verify.sh 全绿（TypeScript + ESLint + Build）✅
 - 时间: 2026-04-12
-- commit: `8dc66c9`
+- commit: 待 commit
 
 ## 当前阻塞
 

@@ -74,6 +74,27 @@
 
 ---
 
+### 动态路由（Dynamic Route）
+- **是什么**：Next.js 用方括号命名文件夹（如 `[tokenId]`），表示这个路径段是一个变量。访问 `/score/2` 时，`tokenId` 自动变成 `2`，一个文件就能服务所有 ScoreNFT。
+- **类比**：像酒店房间号，走廊只有一个设计（页面文件），但每间房的号码（tokenId）不同，内容也不同。
+- **第一次出现**：`app/score/[tokenId]/page.tsx`，Phase 3 S6
+
+---
+
+### OG 分享卡（OpenGraph Image）
+- **是什么**：当你在微信/Twitter 分享一个链接时，平台会读取页面的 `og:image` 标签，自动生成一张预览卡片。Next.js 的 `opengraph-image.tsx` 可以在服务端用 JSX "画"出这张图。
+- **类比**：像书的封面——你把书推荐给朋友时，朋友先看到封面决定要不要翻开。OG 卡片就是链接的"封面"。
+- **第一次出现**：`app/score/[tokenId]/opengraph-image.tsx`，Phase 3 S6
+
+---
+
+### iframe 嵌入
+- **是什么**：`<iframe>` 是一个"页面中的页面"，可以加载另一个网址的内容。ScorePlayer 用 iframe 加载 Arweave 上的 Decoder HTML，让播放器代码和主站完全隔离。
+- **类比**：像在电视里看另一个频道的节目——电视机（主页面）提供框架，节目内容（decoder）来自别处。
+- **第一次出现**：`app/score/[tokenId]/ScorePlayer.tsx`，Phase 3 S6
+
+---
+
 ## 🗓 历史归档
 
 每个月末，AI 会把超过 30 天的条目归档到本文件末尾。

@@ -28,7 +28,7 @@ export interface Track {
 /** mint_events 表的一行 */
 export interface MintEvent {
   id: string;
-  mint_queue_id: string;
+  mint_queue_id: string | null;
   user_id: string;
   track_id: string;
   token_id: number;

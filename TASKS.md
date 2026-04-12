@@ -13,11 +13,6 @@
 
 ## ⏭ Next
 
-- **Phase 3 Step S6** — `/score/[tokenId]` 公开回放页 + Next.js 动态 OG 分享卡
-  - 数据主路径：`mint_events.score_data`（DB 自包含）
-  - 灾备路径：链上 `tokenURI` → Arweave metadata → events.json
-  - 复用 `src/score-decoder/` 的 Web Audio 回放逻辑（或 iframe embed）
-  - `app/score/[tokenId]/opengraph-image.tsx` 社交分享卡
 - **Phase 3 Step S7** — 收口：个人页"我的乐谱"区域 + 8 项 e2e 验证清单 + STATUS/TASKS 标 Phase 3A 完成
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md`
@@ -37,6 +32,13 @@
 
 ## ✅ Done
 
+- **[Phase 3 Step S6]** ✅ 完成（2026-04-12）— 公开回放页 + OG 分享卡：
+  - `app/score/[tokenId]/page.tsx`（Server Component，封面 + 标题 + 链上信息 + iframe 播放器）
+  - `app/score/[tokenId]/ScorePlayer.tsx`（Client Component，点击展开 iframe 嵌入 Arweave Decoder）
+  - `app/score/[tokenId]/opengraph-image.tsx`（动态 OG 图，预取封面 + 降级色块）
+  - `src/data/score-source.ts`（数据源，DB 主路径查 mint_events → queue → track → user）
+  - `supabase/migrations/phase-3/012_mint_events_nullable_queue_id.sql`（mint_queue_id 改可空）
+  - verify.sh 全绿（TypeScript + ESLint + Build）
 - **[Phase 3 Step S5]** ✅ 完成（2026-04-12）— 铸造 API + cron 5 步状态机 + 最小观测性：
   - S5.a commit `7af6c39`：3 个 migrations（score_nft_queue + mint_score_enqueue RPC + extend mint_events）+ `POST /api/mint/score` + jam.ts 扩展类型
   - S5.bc commit `8dc66c9`：cron 拆 3 文件（route / steps-upload / steps-chain）+ upload-sounds.ts 末尾追加 sounds map 上传 + `/api/cron/queue-status` 观测端点（放 cron/ 子目录避开 app/api/ 8 硬线）
