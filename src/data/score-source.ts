@@ -85,10 +85,9 @@ function buildDecoderUrl(
   const soundsMapTxId = process.env.SOUNDS_MAP_AR_TX_ID;
   if (!decoderTxId || !eventsArTxId || !soundsMapTxId) return '';
 
-  // 底曲 ar:// 地址：优先用 tracks 表的 arweave_url
-  const baseArUrl = trackArweaveUrl
-    ? trackArweaveUrl.replace(`${ARWEAVE_GATEWAYS[0]}/`, 'ar://')
-    : 'ar://qwL34NhT4fvuJHO9wLE2AcVwYrooXrkOSNRqiB1DSOE';
+  // 底曲 ar:// 地址：缺失时返回空（页面不渲染播放器）
+  if (!trackArweaveUrl) return '';
+  const baseArUrl = trackArweaveUrl.replace(`${ARWEAVE_GATEWAYS[0]}/`, 'ar://');
 
   return (
     `${ARWEAVE_GATEWAYS[0]}/${decoderTxId}` +

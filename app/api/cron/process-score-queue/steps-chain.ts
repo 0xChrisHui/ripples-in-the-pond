@@ -34,15 +34,19 @@ type ReceiptLog = {
 };
 
 function extractTokenIdFromLogs(logs: readonly ReceiptLog[]): number {
-  const log = logs.find(
+  const matches = logs.filter(
     (l) =>
+      l.topics.length >= 4 &&
       l.topics[0] === TRANSFER_TOPIC &&
       l.address.toLowerCase() === SCORE_NFT_ADDRESS.toLowerCase(),
   );
-  if (!log || !log.topics[3]) {
+  if (matches.length === 0) {
     throw new Error('Transfer event not found in receipt');
   }
-  return Number(BigInt(log.topics[3]));
+  if (matches.length > 1) {
+    console.warn(`[score-cron] multiple Transfer logs found, using first`);
+  }
+  return Number(BigInt(matches[0].topics[3]));
 }
 
 // ─────────────────────────────────────────────────
@@ -143,23 +147,31 @@ export async function stepSetTokenUri(
   }
 
   // 写 mint_events（S6 数据主路径：DB 自包含）
+  // upsert 以 score_queue_id 为幂等键，重试不会重复写入
   const { data: draft } = await supabaseAdmin
     .from('pending_scores')
     .select('events_data')
     .eq('id', row.pending_score_id)
     .single();
 
-  await supabaseAdmin.from('mint_events').insert({
-    mint_queue_id: null, // 这是 score_nft_queue，不是 mint_queue
-    user_id: row.user_id,
-    track_id: row.track_id,
-    token_id: row.token_id,
-    tx_hash: row.tx_hash,
-    score_data: draft?.events_data ?? null,
-    score_nft_token_id: row.token_id,
-    metadata_ar_tx_id: row.metadata_ar_tx_id,
-    score_queue_id: row.id,
-  });
+  if (!draft) {
+    throw new Error(`pending_score not found: ${row.pending_score_id}`);
+  }
+
+  await supabaseAdmin.from('mint_events').upsert(
+    {
+      mint_queue_id: null,
+      user_id: row.user_id,
+      track_id: row.track_id,
+      token_id: row.token_id,
+      tx_hash: row.tx_hash,
+      score_data: draft.events_data,
+      score_nft_token_id: row.token_id,
+      metadata_ar_tx_id: row.metadata_ar_tx_id,
+      score_queue_id: row.id,
+    },
+    { onConflict: 'score_queue_id' },
+  );
 
   console.log(`[score-cron] success, tokenId=${row.token_id}`);
   return 'success';

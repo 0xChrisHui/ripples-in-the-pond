@@ -37,12 +37,13 @@ export async function POST(req: NextRequest) {
     const claims = await privy.verifyAuthToken(token);
     const privyUserId = claims.userId;
 
-    // 2. 解析请求体
+    // 2. 解析请求体 + UUID 格式校验
     const body = (await req.json()) as MintScoreRequest;
     const { pendingScoreId } = body;
-    if (!pendingScoreId) {
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!pendingScoreId || !uuidRe.test(pendingScoreId)) {
       return NextResponse.json(
-        { error: '缺少 pendingScoreId' },
+        { error: '无效的 pendingScoreId' },
         { status: 400 },
       );
     }

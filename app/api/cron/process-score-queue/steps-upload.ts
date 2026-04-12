@@ -96,13 +96,19 @@ export async function stepUploadMetadata(
 
   const decoderTxId = process.env.SCORE_DECODER_AR_TX_ID;
   const soundsMapTxId = process.env.SOUNDS_MAP_AR_TX_ID;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
   if (!decoderTxId) throw new Error('SCORE_DECODER_AR_TX_ID not configured');
   if (!soundsMapTxId) throw new Error('SOUNDS_MAP_AR_TX_ID not configured');
+  if (!appUrl) throw new Error('NEXT_PUBLIC_APP_URL not configured');
 
-  // base 参数：优先用 tracks.arweave_url，否则 fallback 到第一首底曲 demo
-  const baseArUrl = track.arweave_url
-    ? (track.arweave_url as string).replace('https://arweave.net/', 'ar://')
-    : 'ar://qwL34NhT4fvuJHO9wLE2AcVwYrooXrkOSNRqiB1DSOE';
+  // base 参数：必须有 arweave_url，缺失时 fail fast 不铸造错误 metadata
+  if (!track.arweave_url) {
+    throw new Error(`track ${row.track_id} missing arweave_url, cannot mint`);
+  }
+  const baseArUrl = (track.arweave_url as string).replace(
+    'https://arweave.net/',
+    'ar://',
+  );
 
   const animationUrl =
     `https://arweave.net/${decoderTxId}` +
@@ -124,7 +130,7 @@ export async function stepUploadMetadata(
       `A live jam on "${track.title}" recorded and minted as an on-chain Score NFT. ` +
       `All audio permanently stored on Arweave. Playable in the network-native web player.`,
     image: resolveArUrl(row.cover_ar_tx_id),
-    external_url: `https://ripples.example/score/${row.token_id}`,
+    external_url: `${appUrl}/score/${row.token_id}`,
     animation_url: animationUrl,
     attributes: [
       { trait_type: 'Track', value: track.title },

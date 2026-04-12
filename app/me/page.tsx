@@ -46,7 +46,7 @@ export default function MePage() {
       if (!token) return;
 
       // 并行：加载 ScoreNFT + MaterialNFT + 上传本地草稿 + 加载服务端草稿
-      fetchMyScoreNFTs(token).then(setScoreNfts);
+      fetchMyScoreNFTs(token).then(setScoreNfts).catch(console.error);
       fetchMyNFTs(token).then((data) => {
         setNfts(data);
         setCachedNFTs(data);
@@ -63,8 +63,8 @@ export default function MePage() {
             createdAt: draft.createdAt,
           });
           removeDraft(draft.trackId);
-        } catch {
-          // 上传失败保留在本地
+        } catch (err) {
+          console.error('草稿上传失败，保留在本地:', err);
         }
       }
 

@@ -23,14 +23,6 @@ import { stepMintOnchain, stepSetTokenUri } from './steps-chain';
 
 const MAX_RETRY = 3;
 
-const CRON_ACTIONABLE_STATUSES: ScoreMintStatus[] = [
-  'pending',
-  'uploading_events',
-  'minting_onchain',
-  'uploading_metadata',
-  'setting_uri',
-];
-
 export async function GET(req: NextRequest) {
   let claimedId: string | null = null;
   let claimedRetry = 0;
@@ -42,13 +34,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: '无效的 secret' }, { status: 401 });
     }
 
-    // 2. 抢单：按 created_at ASC 拿最老的一条可处理任务
+    // 2. 原子抢单：FOR UPDATE SKIP LOCKED 保证并发安全
     const { data: rows, error: queryErr } = await supabaseAdmin
-      .from('score_nft_queue')
-      .select('*')
-      .in('status', CRON_ACTIONABLE_STATUSES)
-      .order('created_at', { ascending: true })
-      .limit(1);
+      .rpc('claim_score_queue_job');
 
     if (queryErr) throw queryErr;
     if (!rows || rows.length === 0) {
@@ -81,15 +69,21 @@ export async function GET(req: NextRequest) {
         throw new Error(`unexpected status: ${row.status}`);
     }
 
-    // 4. 推进 status
-    await supabaseAdmin
+    // 4. 推进 status（CAS：只有当前 status 未被其他 worker 改过才更新）
+    const { data: updated } = await supabaseAdmin
       .from('score_nft_queue')
       .update({
         status: newStatus,
         updated_at: new Date().toISOString(),
         last_error: null,
       })
-      .eq('id', claimedId);
+      .eq('id', claimedId)
+      .eq('status', row.status)
+      .select('id');
+
+    if (!updated || updated.length === 0) {
+      console.warn(`[score-cron] CAS failed: ${claimedId} status already changed`);
+    }
 
     return NextResponse.json({
       result: 'ok',
