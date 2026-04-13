@@ -451,8 +451,14 @@ Patatap spike ✅ / 首页 = 全屏乐器 + 岛屿群 / 无感录制（播放即
 ### Phase 4 — 社区钱包 + 空投
 社区 API 封装 / 自签 JWT 双验证 / 艺术家页面动态化 / 空投开箱 / 余额告警 + 健康检查
 
-### Phase 5 — OP 主网 + 安全 + 退出准备
-**OP Mainnet 部署** / 冷热钱包分离 / 私钥环境隔离 / 香港 Nginx 反代 / 安全审计 / Score Decoder 开源到 GitHub（Phase 3 已上 Arweave，这里只是开源代码）/ 低成本维持模式开关
+### Phase 5 — 测试网公开版（Vercel + 域名）
+**第一个可公开访问的版本**，仍在 OP Sepolia 测试网。Vercel 部署 + 域名绑定 / Vercel Cron 配置 / 环境变量迁移 / 基础安全（rate limiting、CORS、错误页面）/ Semi 前端（如果 OAuth 已出）/ 冒烟测试
+
+### Phase 6 — UI 重设计
+全套视觉升级 / 设计师协作 / 配色字体间距动效 / 落地页 / 响应式适配
+
+### Phase 7 — OP 主网 + 安全 + 退出准备
+**OP Mainnet 部署** / 冷热钱包分离 / 私钥环境隔离 / 安全审计 / Score Decoder 开源到 GitHub / 低成本维持模式开关
 
 ---
 

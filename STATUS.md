@@ -6,15 +6,15 @@
 
 ## 当前阶段
 
-**Phase**: Phase 4 — 社区钱包 + 空投
-**进度**: **6/7 step 完成**（S0-S2+S4-S6 ✅ / S3 挂起 / S7 ⏳）
+**Phase**: Phase 4 — 社区钱包 + 空投（Review 修复完成）
+**进度**: **S0-S2+S4-S7 ✅ / S3 挂起等 Semi OAuth**
 **playbook**: `playbook/phase-4-community.md`
 
 ## 当前进度
 
-**做到哪**: Phase 4 S6 完成 — AirdropNFT 合约 + 空投系统
-**下一步**: **S7** — 收口验证（10 项清单）
-**剩余**: S7 → S3(挂起)
+**做到哪**: Phase 4 完成（Review F1-F8 修复 + S7 收口 6/10 通过）
+**下一步**: **Phase 5** — 测试网公开版（Vercel + 域名）
+**剩余**: Phase 5 → 6（UI 重设计）→ 7（OP 主网）
 
 ### 续做指南（下次会话第一件事读这段）
 
