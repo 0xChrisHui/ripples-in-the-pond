@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrivyClient } from '@privy-io/server-auth';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { authenticateRequest } from '@/src/lib/auth/middleware';
 import { resolveArUrl } from '@/src/lib/arweave';
 import type { MintScoreRequest, MintScoreResponse } from '@/src/types/jam';
 
@@ -17,25 +17,16 @@ import type { MintScoreRequest, MintScoreResponse } from '@/src/types/jam';
  *   500  其他
  */
 
-const privy = new PrivyClient(
-  process.env.NEXT_PUBLIC_PRIVY_APP_ID!,
-  process.env.PRIVY_APP_SECRET!,
-);
-
 export async function POST(req: NextRequest) {
   try {
-    // 1. Privy 身份验证
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
+    // 1. 统一身份验证
+    const auth = await authenticateRequest(req);
+    if (!auth) {
       return NextResponse.json(
-        { error: '缺少 Authorization header' },
+        { error: '未登录' },
         { status: 401 },
       );
     }
-
-    const token = authHeader.slice(7);
-    const claims = await privy.verifyAuthToken(token);
-    const privyUserId = claims.userId;
 
     // 2. 解析请求体 + UUID 格式校验
     const body = (await req.json()) as MintScoreRequest;
@@ -48,26 +39,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. 查找本地 users.id（Privy 不直接等于 DB user_id）
-    const { data: user } = await supabaseAdmin
-      .from('users')
-      .select('id')
-      .eq('privy_user_id', privyUserId)
-      .single();
-
-    if (!user) {
-      // S5 阶段不创建用户（草稿已经属于某个已存在的用户）
-      return NextResponse.json(
-        { error: '用户不存在（先通过 material 铸造或草稿保存创建）' },
-        { status: 400 },
-      );
-    }
-
-    // 4. 调事务 RPC（封面分配 + 入队 + 草稿 expired 原子）
+    // 3. 调事务 RPC（封面分配 + 入队 + 草稿 expired 原子）
     const { data: rpcData, error: rpcError } = await supabaseAdmin.rpc(
       'mint_score_enqueue',
       {
-        p_user_id: user.id,
+        p_user_id: auth.userId,
         p_pending_score_id: pendingScoreId,
       },
     );

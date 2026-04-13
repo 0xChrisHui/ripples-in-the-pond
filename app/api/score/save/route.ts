@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrivyClient } from '@privy-io/server-auth';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { authenticateRequest } from '@/src/lib/auth/middleware';
 import type { SaveScoreRequest, SaveScoreResponse, KeyEvent } from '@/src/types/jam';
 import { DRAFT_TTL_MS } from '@/src/lib/constants';
 
@@ -10,11 +10,6 @@ import { DRAFT_TTL_MS } from '@/src/lib/constants';
  * - 资源上限：500 事件 / 60s / 100KB / 24h 内创作
  * - 同一 user+track 已有 draft → 旧的标记 expired，插入新的
  */
-
-const privy = new PrivyClient(
-  process.env.NEXT_PUBLIC_PRIVY_APP_ID!,
-  process.env.PRIVY_APP_SECRET!,
-);
 
 const MAX_EVENTS = 500;
 const MAX_TIME_MS = 60_000;
@@ -39,13 +34,11 @@ function isValidEvent(e: unknown): e is KeyEvent {
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. 验证登录
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: '缺少 Authorization header' }, { status: 401 });
+    // 1. 统一身份验证
+    const auth = await authenticateRequest(req);
+    if (!auth) {
+      return NextResponse.json({ error: '未登录' }, { status: 401 });
     }
-    const claims = await privy.verifyAuthToken(authHeader.slice(7));
-    const privyUserId = claims.userId;
 
     // 2. 检查 body 大小（Content-Length 或序列化后检查）
     const contentLength = req.headers.get('content-length');
@@ -94,18 +87,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '事件数据超过 100KB 限制' }, { status: 400 });
     }
 
-    // 7. 查找用户
-    const { data: user } = await supabaseAdmin
-      .from('users')
-      .select('id')
-      .eq('privy_user_id', privyUserId)
-      .single();
-
-    if (!user) {
-      return NextResponse.json({ error: '用户不存在，请先登录' }, { status: 401 });
-    }
-
-    // 8. 验证 trackId 存在
+    // 7. 验证 trackId 存在
     const { data: track } = await supabaseAdmin
       .from('tracks')
       .select('id')
@@ -120,7 +102,7 @@ export async function POST(req: NextRequest) {
     await supabaseAdmin
       .from('pending_scores')
       .update({ status: 'expired', updated_at: new Date().toISOString() })
-      .eq('user_id', user.id)
+      .eq('user_id', auth.userId)
       .eq('track_id', trackId)
       .eq('status', 'draft');
 
@@ -129,7 +111,7 @@ export async function POST(req: NextRequest) {
     const { data: score, error: insertError } = await supabaseAdmin
       .from('pending_scores')
       .insert({
-        user_id: user.id,
+        user_id: auth.userId,
         track_id: trackId,
         events_data: eventsData,
         status: 'draft',
@@ -145,7 +127,7 @@ export async function POST(req: NextRequest) {
         const { data: existing } = await supabaseAdmin
           .from('pending_scores')
           .select('id, expires_at')
-          .eq('user_id', user.id)
+          .eq('user_id', auth.userId)
           .eq('track_id', trackId)
           .eq('status', 'draft')
           .single();

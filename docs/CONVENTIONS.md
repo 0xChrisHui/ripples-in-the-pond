@@ -70,7 +70,7 @@
 
 ### 3.3 依赖
 - ❌ 安装 `wagmi` / `ethers` / `howler` / `tone` / `hardhat`（hook 强制）
-- ❌ 安装 `@privy-io/server-auth` 之外的 JWT 库（Phase 4 前）
+- ❌ 安装 `jsonwebtoken`（用 `jose` 替代，Phase 4 已引入）
 
 ### 3.4 文件 / 代码
 - ❌ 留 TODO 或占位符不实现
@@ -78,7 +78,7 @@
 - ❌ 单文件超过 220 行（hook 强制；route.ts 放宽到 270）
 - ❌ 单层目录超过 8 个文件（hook 强制；`src/app/api/**` 整棵子树豁免）
 - ❌ Phase 1 就建 12 张表（按 Phase 递增）
-- ❌ 自建 JWT 系统（Phase 4 前一律用 Privy）
+- ❌ 自建 JWT 系统绕过 `src/lib/jwt.ts`（Phase 4 起统一走 jwt.ts）
 
 ### 3.5 Git
 - ❌ `git reset --hard`（用 `scripts/checkpoint.sh` 的 stash + branch 替代）

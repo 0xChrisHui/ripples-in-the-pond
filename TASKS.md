@@ -7,18 +7,12 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- （空，等用户发起 Phase 4 S0）
+- （空，等用户发起 Phase 4 S6）
 
 ---
 
 ## ⏭ Next
 
-- **Phase 4A S0** — 自签 JWT + jti + 黑名单
-- **Phase 4A S1** — auth_identities 表 + 双验证中间件 + 6 个 API 迁移
-- **Phase 4A S2** — Semi 登录对接 + POST /api/auth/community
-- **Phase 4A S3** — 前端登录按钮 + useAuth 兼容 + 端到端验证
-- **Phase 4B S4** — 余额告警 cron + 健康检查增强
-- **Phase 4B S5** — 艺术家页面 /artist
 - **Phase 4C S6** — AirdropNFT 合约 + 空投系统
 - **Phase 4C S7** — 收口验证（10 项）
 
@@ -33,12 +27,45 @@
 
 ## 🚧 Blocked
 
-- 无
+- **Phase 4A S3** — 前端登录按钮 + useAuth 兼容 + 端到端验证
+  - **阻塞原因**：Semi 团队在设计 OAuth 开放登录，现有 API 不确定对外开放
+  - **已完成的前置**：S0 JWT 基础设施 ✅ / S1 双验证中间件 ✅ / S2 后端登录端点 ✅
+  - **续做时要改的**：`src/lib/semi-client.ts`（适配 OAuth 流程）+ 新建前端登录组件
+  - **解除条件**：Semi 团队提供 OAuth 文档或确认现有 API 可用
 
 ---
 
 ## ✅ Done
 
+- **[Phase 4B S5]** ✅ 完成（2026-04-13）— 艺术家页面：
+  - `app/artist/page.tsx`（Server Component，统计 + 108 首进度条 + 空投标记点）
+  - `app/api/artist/stats/route.ts`（公开统计 API）
+  - verify.sh 全绿
+- **[Phase 4B S4]** ✅ 完成（2026-04-13）— 余额告警 + 健康检查增强：
+  - `app/api/cron/check-balance/route.ts`（钱包余额 + 双队列积压 + system_kv 告警）
+  - `app/api/health/route.ts`（增强：score_nft_queue 状态分布 + jwt_blacklist 大小 + 最近告警）
+  - `src/types/tracks.ts`（HealthResponse 扩展字段）
+  - verify.sh 全绿
+- **[Phase 4A S2]** ✅ 完成（2026-04-13）— Semi 登录对接：
+  - `src/lib/semi-client.ts`（Semi API 客户端：发短信/验证码登录/拿用户）
+  - `app/api/auth/community/route.ts`（验证码 → JWT 交换）
+  - `app/api/auth/community/send-code/route.ts`（转发短信请求）
+  - evm_address 合并逻辑：Privy/Semi 同地址 → 同 user
+  - verify.sh 全绿
+- **[Phase 4A S1]** ✅ 完成（2026-04-13）— 身份模型 + 双验证中间件 + 6 API 迁移：
+  - `supabase/migrations/phase-4/016_auth_identities.sql`（多源身份表 + 现有用户迁移）
+  - `supabase/migrations/phase-4/017_users_privy_nullable.sql`（privy_user_id 改可空）
+  - `src/lib/auth/middleware.ts`（authenticateRequest：先 Privy 后 JWT）
+  - `src/lib/auth/jwt.ts`（从 src/lib/ 重组到 auth/ 子目录）
+  - 6 个 API 全部迁移：me/scores、me/score-nfts、me/nfts、mint/score、mint/material、score/save
+  - verify.sh 全绿
+- **[Phase 4A S0]** ✅ 完成（2026-04-13）— 自签 JWT 基础设施：
+  - `jose` 安装 + STACK.md 白名单登记
+  - `scripts/generate-jwt-keys.ts`（密钥生成脚本）
+  - `src/lib/jwt.ts`（signJwt / verifyJwt / revokeJwt + server-only）
+  - `supabase/migrations/phase-4/015_jwt_blacklist.sql`（撤销黑名单表）
+  - `tsconfig.json` 排除 references/ 目录
+  - verify.sh 全绿（TypeScript + ESLint + Build）
 - **[Phase 3.1]** ✅ 完成（2026-04-12）— 稳定性修复 Sprint 1+2（7 项）：
   - F1 原子 claim + F2 幂等写入 + F3 external_url 环境变量 + F4 底曲 fail fast
   - F5 promise catch + F6 防御性检查 + F7 UUID 校验

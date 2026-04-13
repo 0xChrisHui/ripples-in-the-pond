@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrivyClient } from '@privy-io/server-auth';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { authenticateRequest } from '@/src/lib/auth/middleware';
 import { resolveArUrl } from '@/src/lib/arweave';
 import type { MyScoreNFTsResponse, OwnedScoreNFT } from '@/src/types/jam';
 
@@ -9,35 +9,18 @@ import type { MyScoreNFTsResponse, OwnedScoreNFT } from '@/src/types/jam';
  * 返回当前用户已铸造成功的 ScoreNFT 列表，个人页"我的乐谱"消费
  */
 
-const privy = new PrivyClient(
-  process.env.NEXT_PUBLIC_PRIVY_APP_ID!,
-  process.env.PRIVY_APP_SECRET!,
-);
-
 export async function GET(req: NextRequest) {
   try {
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
+    const auth = await authenticateRequest(req);
+    if (!auth) {
       return NextResponse.json({ error: '未登录' }, { status: 401 });
-    }
-    const claims = await privy.verifyAuthToken(authHeader.slice(7));
-
-    const { data: user } = await supabaseAdmin
-      .from('users')
-      .select('id')
-      .eq('privy_user_id', claims.userId)
-      .single();
-
-    if (!user) {
-      const res: MyScoreNFTsResponse = { scoreNfts: [] };
-      return NextResponse.json(res);
     }
 
     // 查已铸造成功的 ScoreNFT，关联 track 拿曲目名
     const { data: rows, error } = await supabaseAdmin
       .from('score_nft_queue')
       .select('token_id, cover_ar_tx_id, tx_hash, created_at, track_id, pending_score_id, tracks(title)')
-      .eq('user_id', user.id)
+      .eq('user_id', auth.userId)
       .eq('status', 'success')
       .order('created_at', { ascending: false });
 

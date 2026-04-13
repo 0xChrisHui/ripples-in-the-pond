@@ -69,4 +69,7 @@ export interface HealthResponse {
   wallet: 'ok' | 'low' | 'critical';
   walletBalance: string;
   pendingJobs: number;
+  scoreQueue: Record<string, number>;
+  jwtBlacklistSize: number;
+  lastBalanceAlert: string | null;
 }

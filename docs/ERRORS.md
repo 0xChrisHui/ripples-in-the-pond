@@ -96,3 +96,19 @@
 
 ### Git / 工具链
 - （空）
+
+### JWT / 认证
+
+#### `CryptoKey is not extractable`
+- **报错原文**：`TypeError: CryptoKey is not extractable`
+- **为什么**：`jose` 的 `generateKeyPair()` 默认生成不可导出的密钥。想导出 PEM 就必须加 `extractable: true`
+- **怎么修**：`generateKeyPair("RS256", { modulusLength: 2048, extractable: true })`
+- **学到了什么**：Web Crypto API 默认保护密钥不可导出，这是安全设计——导出时要显式声明
+- **相关文件**：`scripts/generate-jwt-keys.ts`
+
+#### 构建期 `Cannot read properties of undefined (reading 'replace')`
+- **报错原文**：`TypeError: Cannot read properties of undefined (reading 'replace')` in jwt.ts
+- **为什么**：jwt.ts 在模块顶层就 `process.env.JWT_PRIVATE_KEY!.replace(...)` — 构建期这个环境变量还不存在
+- **怎么修**：把 PEM 读取从模块顶层移到函数内部（惰性读取），构建时不触发
+- **学到了什么**：Next.js 构建时会加载所有 server 模块做类型检查，环境变量可能未设置。服务端模块里的全局初始化要做成惰性的
+- **相关文件**：`src/lib/auth/jwt.ts`

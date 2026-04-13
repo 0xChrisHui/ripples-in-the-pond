@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrivyClient } from '@privy-io/server-auth';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { authenticateRequest } from '@/src/lib/auth/middleware';
 
 /**
  * POST /api/mint/material
@@ -8,22 +8,13 @@ import { supabaseAdmin } from '@/src/lib/supabase';
  * 不在这里调合约（由 cron 异步处理）
  */
 
-const privy = new PrivyClient(
-  process.env.NEXT_PUBLIC_PRIVY_APP_ID!,
-  process.env.PRIVY_APP_SECRET!,
-);
-
 export async function POST(req: NextRequest) {
   try {
-    // 1. 从 Authorization header 拿 token 并验证
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: '缺少 Authorization header' }, { status: 401 });
+    // 1. 统一身份验证（含自动创建用户）
+    const auth = await authenticateRequest(req);
+    if (!auth) {
+      return NextResponse.json({ error: '未登录' }, { status: 401 });
     }
-
-    const token = authHeader.slice(7);
-    const claims = await privy.verifyAuthToken(token);
-    const privyUserId = claims.userId;
 
     // 2. 解析请求体
     const body = await req.json();
@@ -36,49 +27,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '缺少 tokenId 或 idempotencyKey' }, { status: 400 });
     }
 
-    // 3. 查找或创建用户
-    const { data: existingUser } = await supabaseAdmin
-      .from('users')
-      .select('id, evm_address')
-      .eq('privy_user_id', privyUserId)
-      .single();
+    const userId = auth.userId;
 
-    let userId: string;
-    let evmAddress: string;
-
-    if (existingUser) {
-      userId = existingUser.id;
-      evmAddress = existingUser.evm_address;
-    } else {
-      // 首次铸造，从 Privy 拿用户信息并创建记录
-      const privyUser = await privy.getUser(privyUserId);
-      const wallet = privyUser.wallet;
-      if (!wallet) {
-        return NextResponse.json({ error: '用户没有钱包' }, { status: 400 });
-      }
-      evmAddress = wallet.address;
-
-      const { data: newUser, error: insertError } = await supabaseAdmin
-        .from('users')
-        .insert({ evm_address: evmAddress, privy_user_id: privyUserId })
-        .select('id')
-        .single();
-
-      if (insertError) {
-        // unique 冲突说明并发创建，重新查一次
-        const { data: retry } = await supabaseAdmin
-          .from('users')
-          .select('id')
-          .eq('privy_user_id', privyUserId)
-          .single();
-        if (!retry) throw insertError;
-        userId = retry.id;
-      } else {
-        userId = newUser.id;
-      }
-    }
-
-    // 4. 同一用户 + 同一素材不重复铸造
+    // 3. 同一用户 + 同一素材不重复铸造
     const { data: alreadyMinted } = await supabaseAdmin
       .from('mint_events')
       .select('id')

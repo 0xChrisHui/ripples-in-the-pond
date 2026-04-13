@@ -81,3 +81,13 @@
 - **产品决策：/me 展示"我铸造的"而非"我持有的"**：Codex 建议接 chain_events 做 owner 投影，讨论后决定当前语义就是 minter。链上转手是极少数场景，不值得增加复杂度。
 - **metadata external_url 必须用环境变量**：Arweave metadata 一旦上传不可修改。`NEXT_PUBLIC_APP_URL` 缺失时 cron 拒绝铸造，避免永久写入错误链接。
 - **F9 链上灾备延后**：/score/[tokenId] 的 Arweave fallback 路径（DB 丢数据时从链上恢复）技术上可行但当前不紧急，延后到主网前。
+
+### 2026-04-13 — Phase 4A 认证底座 + Semi 暂停
+
+- **Semi 登录暂停，等他们 OAuth 方案出来**
+  - 起因：Semi 团队回复"最近在设计 OAuth 开放登录机制"，现有 /send_sms + /signin 是内部 API，不确定是否开放给第三方
+  - 决定：S2 后端代码保留（已写完+全绿），S3 前端暂不做。等 Semi OAuth 方案出来后只需改 `src/lib/semi-client.ts` + 前端登录流程
+  - 影响：Phase 4A S3 挂起 → 先跳 S4-S5（与认证解耦）
+  - 已做完的部分 100% 可复用：JWT 基础设施 / 双验证中间件 / auth_identities / 6 个 API 迁移 / community 登录端点
+- **认证底座是通用的，不绑定 Semi**
+  - S0-S1 的 JWT + 双验证中间件 + auth_identities 表适用于任何第三方登录源（微信 / Google / 任何 OAuth），Semi 只是第一个接入方

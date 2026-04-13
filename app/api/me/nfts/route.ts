@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrivyClient } from '@privy-io/server-auth';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { authenticateRequest } from '@/src/lib/auth/middleware';
 import type { MyNFTsResponse, OwnedNFT } from '@/src/types/tracks';
 
 /**
@@ -9,32 +9,11 @@ import type { MyNFTsResponse, OwnedNFT } from '@/src/types/tracks';
  * 必须登录（Authorization header）
  */
 
-const privy = new PrivyClient(
-  process.env.NEXT_PUBLIC_PRIVY_APP_ID!,
-  process.env.PRIVY_APP_SECRET!,
-);
-
 export async function GET(req: NextRequest) {
   try {
-    // 1. 验证登录
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
+    const auth = await authenticateRequest(req);
+    if (!auth) {
       return NextResponse.json({ error: '未登录' }, { status: 401 });
-    }
-
-    const token = authHeader.slice(7);
-    const claims = await privy.verifyAuthToken(token);
-
-    // 2. 查用户
-    const { data: user } = await supabaseAdmin
-      .from('users')
-      .select('id')
-      .eq('privy_user_id', claims.userId)
-      .single();
-
-    if (!user) {
-      const res: MyNFTsResponse = { nfts: [] };
-      return NextResponse.json(res);
     }
 
     // 3. 查铸造记录，关联 track 信息
@@ -47,7 +26,7 @@ export async function GET(req: NextRequest) {
         minted_at,
         tracks (id, title, week, audio_url, cover, island, created_at)
       `)
-      .eq('user_id', user.id)
+      .eq('user_id', auth.userId)
       .order('minted_at', { ascending: false });
 
     if (error) throw error;
@@ -70,7 +49,7 @@ export async function GET(req: NextRequest) {
     const { data: queued } = await supabaseAdmin
       .from('mint_queue')
       .select('token_id, created_at')
-      .eq('user_id', user.id)
+      .eq('user_id', auth.userId)
       .in('status', ['pending', 'minting_onchain']);
 
     // 批量查 pending token_id 对应的 track 信息

@@ -7,14 +7,14 @@
 ## 当前阶段
 
 **Phase**: Phase 4 — 社区钱包 + 空投
-**进度**: **0/6 step 完成**（S0-S6 ⏳）
+**进度**: **5/7 step 完成**（S0-S2+S4-S5 ✅ / S3 挂起 / S6-S7 ⏳）
 **playbook**: `playbook/phase-4-community.md`
 
 ## 当前进度
 
-**做到哪**: Phase 4 playbook 完成，等待开工
-**下一步**: **S0** — 自签 JWT 基础设施 + 双验证中间件
-**剩余**: S0 → S1 → S2 → S3 → S4 → S5 → S6
+**做到哪**: Phase 4 S5 完成 — 艺术家页面 /artist
+**下一步**: **S6** — AirdropNFT 合约 + 空投系统
+**剩余**: S6 → S7 → S3(挂起)
 
 ### 续做指南（下次会话第一件事读这段）
 
@@ -59,6 +59,18 @@
 - F5-F7: promise catch + topics 防御检查 + UUID 校验
 - **延后项**：F8 不需要（/me = "我铸造的"）、F9 链上灾备延后到主网前
 
+**Phase 4A 认证底座（S0-S2 已完成，S3 挂起）**：
+- `src/lib/auth/jwt.ts` — signJwt / verifyJwt / revokeJwt（RS256 自签 JWT）
+- `src/lib/auth/middleware.ts` — authenticateRequest（先 Privy 后 JWT 双通道）
+- `src/lib/semi-client.ts` — Semi API 客户端（发短信/验证/拿用户），等 OAuth 方案后可能要改
+- `app/api/auth/community/route.ts` — 验证码 → JWT 交换 + evm_address 合并
+- `app/api/auth/community/send-code/route.ts` — 转发短信请求
+- `supabase/migrations/phase-4/` — 015 jwt_blacklist + 016 auth_identities + 017 privy_nullable
+- 6 个 API 已全部迁移到统一中间件（Privy 用户体验不变）
+- **.env.local 已配**：`JWT_PRIVATE_KEY` / `JWT_PUBLIC_KEY`
+- **.env.local 待配**：`SEMI_API_URL`（等 Semi OAuth 方案）
+- **S3 挂起原因**：Semi 团队在设计 OAuth 开放登录，现有 API 不确定是否对外开放。等他们方案出来后续做 S3（前端登录按钮 + useAuth 兼容）。续做时只需改 `semi-client.ts` + 新建前端组件。
+
 **长期生效的决策补丁（别忘）**：
 - ARWEAVE_GATEWAYS 缩到 2 个：`arweave.net` + `ario.permagate.io`
 - Tailwind v4 `globals.css` 用 `@source not` 显式排除非源码目录（contracts / data / scripts / ...）
@@ -69,9 +81,9 @@
 
 ## 上次成功验证
 
-- 验证: Phase 3.1 稳定性修复 — verify.sh 全绿 + Codex Review 7/9 修复完成 ✅
-- 时间: 2026-04-12
-- commit: `962a98f`
+- 验证: Phase 4 S5 艺术家页面 — verify.sh 全绿 ✅
+- 时间: 2026-04-13
+- commit: （待 commit）
 
 ## 当前阻塞
 
