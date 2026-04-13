@@ -106,6 +106,20 @@
 - **学到了什么**：Web Crypto API 默认保护密钥不可导出，这是安全设计——导出时要显式声明
 - **相关文件**：`scripts/generate-jwt-keys.ts`
 
+#### forge deploy 脚本 MINTER_ROLE 授给了错误地址
+- **报错原文**：`The contract function "mint" returned no data ("0x")` — 合约拒绝 mint
+- **为什么**：部署脚本里 `address minter = msg.sender` 在 `vm.startBroadcast()` 之前执行，拿到的是 Foundry 默认地址 `0x40d36fd4...`，不是 `--private-key` 对应的 operator 地址
+- **怎么修**：改用 `vm.envUint("OPERATOR_PRIVATE_KEY")` + `vm.addr(key)` 推导正确地址；已部署合约用 `cast send grantRole` 补授权
+- **学到了什么**：Foundry 脚本里 `msg.sender` 在 `startBroadcast()` 前是模拟地址。要拿真实 deployer 地址必须从私钥推导
+- **相关文件**：`contracts/script/DeployAirdropNFT.s.sol`
+
+#### 空投快照返回 0 个钱包（列名写错）
+- **报错原文**：快照返回 `recipientCount: 0`，无报错但数据为空
+- **为什么**：`chain_events` 表的列叫 `to_addr`，代码里写成了 `to_address`。Supabase 查不到列不报错，返回空
+- **怎么修**：`snapshotOwners()` 里 `to_address` → `to_addr`
+- **学到了什么**：Supabase select 未知列名会静默返回 null，不抛错。写 DB 查询时一定要对照 migration 文件确认列名
+- **相关文件**：`app/api/airdrop/trigger/route.ts` + `supabase/migrations/phase-3/014_chain_events.sql`
+
 #### 构建期 `Cannot read properties of undefined (reading 'replace')`
 - **报错原文**：`TypeError: Cannot read properties of undefined (reading 'replace')` in jwt.ts
 - **为什么**：jwt.ts 在模块顶层就 `process.env.JWT_PRIVATE_KEY!.replace(...)` — 构建期这个环境变量还不存在

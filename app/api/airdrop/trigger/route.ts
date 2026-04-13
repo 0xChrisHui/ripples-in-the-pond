@@ -99,21 +99,21 @@ export async function POST(req: NextRequest) {
 
 /**
  * 从 chain_events 的 Transfer 事件计算每个 tokenId 的当前 owner
- * 逻辑：每个 tokenId 最后一次 Transfer 的 to_address 就是当前 owner
+ * 逻辑：每个 tokenId 最后一次 Transfer 的 to_addr 就是当前 owner
  * 去重后返回唯一 wallet 列表
  */
 async function snapshotOwners(): Promise<string[]> {
   const { data: events } = await supabaseAdmin
     .from("chain_events")
-    .select("token_id, to_address, block_number, log_index")
+    .select("token_id, to_addr, block_number, log_index")
     .eq("event_name", "Transfer")
     .order("block_number", { ascending: true })
     .order("log_index", { ascending: true });
 
-  // 每个 tokenId 最后一次 Transfer 的 to_address = 当前 owner
+  // 每个 tokenId 最后一次 Transfer 的 to_addr = 当前 owner
   const ownerMap = new Map<number, string>();
   for (const e of events ?? []) {
-    ownerMap.set(e.token_id, e.to_address);
+    ownerMap.set(e.token_id, e.to_addr);
   }
 
   // 去掉 0x0 地址（burn）和去重

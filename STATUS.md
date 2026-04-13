@@ -69,6 +69,13 @@
 - 6 个 API 已全部迁移到统一中间件（Privy 用户体验不变）
 - **.env.local 已配**：`JWT_PRIVATE_KEY` / `JWT_PUBLIC_KEY`
 - **.env.local 待配**：`SEMI_API_URL`（等 Semi OAuth 方案）
+
+**Phase 4C 空投产物（OP Sepolia）**：
+- AirdropNFT `0xa6Aa896b222bB522bA5c8fcC6bD8e59e3f5de56B`
+  - name: `"Ripples in the Pond Airdrop (Testnet)"`，symbol: `RIPA`
+  - 部署 tx: `0xc8a0a0ad52ba7e3bbda24f22b8a5e6e12f5b14fdae24e8eca89e0e4e90188b3c`
+  - minter = operator `0x40d36fd4A855D5D23E0F04b7fD89285F2eDe116b`
+- DB 表：`airdrop_rounds` + `airdrop_recipients`（018-019 已执行）
 - **S3 挂起原因**：Semi 团队在设计 OAuth 开放登录，现有 API 不确定是否对外开放。等他们方案出来后续做 S3（前端登录按钮 + useAuth 兼容）。续做时只需改 `semi-client.ts` + 新建前端组件。
 
 **长期生效的决策补丁（别忘）**：

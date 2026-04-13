@@ -112,9 +112,10 @@ export async function GET(req: NextRequest) {
       tokenId,
     });
   } catch (err) {
-    console.error("[process-airdrop] error:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[process-airdrop] error:", msg, err);
     return NextResponse.json(
-      { error: "处理空投失败" },
+      { error: "处理空投失败", detail: msg },
       { status: 500 },
     );
   }

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/session-start-context.js"
+            "command": "node E:/Projects/nft-music/.claude/hooks/session-start-context.js"
           }
         ]
       }
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/stop-checklist.js"
+            "command": "node E:/Projects/nft-music/.claude/hooks/stop-checklist.js"
           }
         ]
       }
@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/check-forbidden-imports.js"
+            "command": "node E:/Projects/nft-music/.claude/hooks/check-forbidden-imports.js"
           }
         ]
       }
@@ -38,11 +38,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/check-file-size.js"
+            "command": "node E:/Projects/nft-music/.claude/hooks/check-file-size.js"
           },
           {
             "type": "command",
-            "command": "node .claude/hooks/check-folder-size.js"
+            "command": "node E:/Projects/nft-music/.claude/hooks/check-folder-size.js"
           }
         ]
       }

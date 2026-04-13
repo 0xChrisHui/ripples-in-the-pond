@@ -143,8 +143,12 @@ export const ORCHESTRATOR_ABI = [
 // 独立合约，不走 Orchestrator
 // ─────────────────────────────────────────────────
 
-export const AIRDROP_NFT_ADDRESS = process.env
-  .NEXT_PUBLIC_AIRDROP_NFT_ADDRESS as `0x${string}`;
+// getAddress 标准化 checksum，避免 viem 拒绝大小写不严格的地址
+import { getAddress } from 'viem';
+
+export const AIRDROP_NFT_ADDRESS = getAddress(
+  process.env.NEXT_PUBLIC_AIRDROP_NFT_ADDRESS as `0x${string}`,
+);
 
 export const AIRDROP_NFT_ABI = [
   {
