@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAddress } from "viem";
-import { verifySemiCode, getSemiUser } from "@/src/lib/semi-client";
+import { verifySemiCode, getSemiUser } from "@/src/lib/auth/semi-client";
 import { supabaseAdmin } from "@/src/lib/supabase";
 import { signJwt } from "@/src/lib/auth/jwt";
 

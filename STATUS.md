@@ -6,14 +6,14 @@
 
 ## 当前阶段
 
-**Phase**: Phase 4 — 社区钱包 + 空投（Review 修复完成）
-**进度**: **S0-S2+S4-S7 ✅ / S3 挂起等 Semi OAuth**
-**playbook**: `playbook/phase-4-community.md`
+**Phase**: Phase 5 — 测试网公开版（Privy-only，Semi 继续挂起）
+**进度**: **S0 开始**
+**playbook**: `playbook/phase-5-testnet-public.md`
 
 ## 当前进度
 
-**做到哪**: Phase 4 完成（Review F1-F8 修复 + S7 收口 6/10 通过）
-**下一步**: **Phase 5** — 测试网公开版（Vercel + 域名）
+**做到哪**: Phase 5 S3 完成（Cron 鉴权 + 拆步 + Turbo + ping/限流/错误页）
+**下一步**: S0 → S1（Cron 拆步）→ S2（Turbo 环境变量化）→ S3（ping + 限流 + 错误页）→ S4（部署）→ S5（冒烟测试）
 **剩余**: Phase 5 → 6（UI 重设计）→ 7（OP 主网）
 
 ### 续做指南（下次会话第一件事读这段）

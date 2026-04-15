@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyCronSecret } from '@/src/lib/auth/cron-auth';
 import { supabaseAdmin } from '@/src/lib/supabase';
-import { publicClient } from '@/src/lib/operator-wallet';
-import { SCORE_NFT_ADDRESS, SCORE_NFT_ABI } from '@/src/lib/contracts';
+import { publicClient } from '@/src/lib/chain/operator-wallet';
+import { SCORE_NFT_ADDRESS, SCORE_NFT_ABI } from '@/src/lib/chain/contracts';
 
 /**
  * GET /api/cron/sync-chain-events?secret=xxx
@@ -24,8 +25,7 @@ const transferEvent = SCORE_NFT_ABI.find(
 )!;
 
 export async function GET(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get('secret');
-  if (secret !== process.env.CRON_SECRET) {
+  if (!verifyCronSecret(req)) {
     return NextResponse.json({ error: '未授权' }, { status: 401 });
   }
 

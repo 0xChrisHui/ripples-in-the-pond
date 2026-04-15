@@ -2,29 +2,23 @@ import { supabaseAdmin } from '@/src/lib/supabase';
 import {
   operatorWalletClient,
   publicClient,
-} from '@/src/lib/operator-wallet';
+} from '@/src/lib/chain/operator-wallet';
 import {
   ORCHESTRATOR_ADDRESS,
   ORCHESTRATOR_ABI,
   SCORE_NFT_ADDRESS,
   SCORE_NFT_ABI,
-} from '@/src/lib/contracts';
+} from '@/src/lib/chain/contracts';
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
 
 /**
- * 链上交互步骤：
- *   stepMintOnchain  → minting_onchain → uploading_metadata
- *   stepSetTokenUri  → setting_uri → success
+ * 链上交互步骤（两步拆分版，每步 < 5 秒）：
+ *   stepMintOnchain  → 无 tx_hash：发交易 + 存 hash；有 tx_hash：查 receipt
+ *   stepSetTokenUri  → 无 uri_tx_hash：发交易 + 存 hash；有：查 receipt
  *
- * 幂等核心（playbook 硬门槛）：
- * - mintScore 前检查 row.tx_hash，已有则走 receipt 回查，避免重发
- * - 发送 tx 后立刻回写 tx_hash（在 mine 之前就入库），崩溃重启不重复 mint
- * - DB 写入失败 → 抛 CRITICAL 需人工介入（极罕见）
- * - setTokenURI 可重试：row.token_uri 等于目标则跳过合约调用
+ * 幂等核心：tx_hash 立刻入库，崩溃重启不重发
  */
 
-// ERC-721 Transfer(from, to, tokenId) 事件 topic hash
-// = keccak256("Transfer(address,address,uint256)")
 const TRANSFER_TOPIC =
   '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 
@@ -43,9 +37,6 @@ function extractTokenIdFromLogs(logs: readonly ReceiptLog[]): number {
   if (matches.length === 0) {
     throw new Error('Transfer event not found in receipt');
   }
-  if (matches.length > 1) {
-    console.warn(`[score-cron] multiple Transfer logs found, using first`);
-  }
   return Number(BigInt(matches[0].topics[3]));
 }
 
@@ -55,7 +46,6 @@ function extractTokenIdFromLogs(logs: readonly ReceiptLog[]): number {
 export async function stepMintOnchain(
   row: ScoreMintQueueRow,
 ): Promise<ScoreMintStatus> {
-  // 查用户 evm_address
   const { data: user } = await supabaseAdmin
     .from('users')
     .select('evm_address')
@@ -65,9 +55,8 @@ export async function stepMintOnchain(
 
   let txHash = row.tx_hash as `0x${string}` | null;
 
-  if (txHash) {
-    console.log(`[score-cron] tx_hash exists, skip resend: ${txHash}`);
-  } else {
+  if (!txHash) {
+    // 没有 tx_hash → 发交易 + 立刻存 hash
     console.log(`[score-cron] sending mintScore tx → ${user.evm_address}`);
     txHash = await operatorWalletClient.writeContract({
       address: ORCHESTRATOR_ADDRESS,
@@ -76,25 +65,25 @@ export async function stepMintOnchain(
       args: [user.evm_address as `0x${string}`],
     });
 
-    // 立即回写 tx_hash — 在 mine 之前就入库，避免 cron 崩溃后重发
     const { error: writeErr } = await supabaseAdmin
       .from('score_nft_queue')
-      .update({
-        tx_hash: txHash,
-        updated_at: new Date().toISOString(),
-      })
+      .update({ tx_hash: txHash, updated_at: new Date().toISOString() })
       .eq('id', row.id);
 
     if (writeErr) {
-      // CRITICAL: tx 已发但 DB 写入失败，需人工介入
       throw new Error(
         `CRITICAL: tx ${txHash} sent but DB write failed: ${writeErr.message}`,
       );
     }
-    console.log(`[score-cron] tx sent: ${txHash}`);
+    console.log(`[score-cron] tx sent, hash saved: ${txHash}`);
+    // 不等确认，保持 minting_onchain 状态，下次 cron 来查
+    return 'minting_onchain';
   }
 
-  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+  // 有 tx_hash → 查链上结果
+  console.log(`[score-cron] checking receipt: ${txHash}`);
+  const receipt = await publicClient.getTransactionReceipt({ hash: txHash });
+
   if (receipt.status !== 'success') {
     throw new Error(`tx reverted: ${txHash}`);
   }
@@ -104,10 +93,7 @@ export async function stepMintOnchain(
 
   await supabaseAdmin
     .from('score_nft_queue')
-    .update({
-      token_id: tokenId,
-      updated_at: new Date().toISOString(),
-    })
+    .update({ token_id: tokenId, updated_at: new Date().toISOString() })
     .eq('id', row.id);
 
   return 'uploading_metadata';
@@ -127,6 +113,8 @@ export async function stepSetTokenUri(
   const alreadyOnChain = row.token_uri === tokenUri;
 
   if (!alreadyOnChain) {
+    // 💭 setTokenURI 本身幂等（同 URI 写多次无副作用），不需要拆步
+    // 但耗时短（不需要 simulate），10 秒内完成
     console.log(`[score-cron] setting tokenURI: ${tokenUri}`);
     const txHash = await operatorWalletClient.writeContract({
       address: SCORE_NFT_ADDRESS,
@@ -139,15 +127,11 @@ export async function stepSetTokenUri(
 
     await supabaseAdmin
       .from('score_nft_queue')
-      .update({
-        token_uri: tokenUri,
-        updated_at: new Date().toISOString(),
-      })
+      .update({ token_uri: tokenUri, updated_at: new Date().toISOString() })
       .eq('id', row.id);
   }
 
-  // 写 mint_events（S6 数据主路径：DB 自包含）
-  // upsert 以 score_queue_id 为幂等键，重试不会重复写入
+  // 写 mint_events（upsert 幂等）
   const { data: draft } = await supabaseAdmin
     .from('pending_scores')
     .select('events_data')

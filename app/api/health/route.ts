@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyCronSecret } from '@/src/lib/auth/cron-auth';
 import { supabaseAdmin } from '@/src/lib/supabase';
-import { publicClient } from '@/src/lib/operator-wallet';
+import { publicClient } from '@/src/lib/chain/operator-wallet';
 import { formatEther } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import type { HealthResponse } from '@/src/types/tracks';
@@ -10,8 +11,7 @@ import type { HealthResponse } from '@/src/types/tracks';
  * 结构化健康检查：数据库 + 钱包 + 队列 + JWT 黑名单 + 最近告警
  */
 export async function GET(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get('secret');
-  if (secret !== process.env.CRON_SECRET) {
+  if (!verifyCronSecret(req)) {
     return NextResponse.json({ error: '无效的 secret' }, { status: 401 });
   }
 

@@ -7,20 +7,24 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- （空，等用户发起 Phase 4 S7）
+- **Phase 5 S0** — Cron 鉴权迁移（query param → Authorization header）
 
 ---
 
 ## ⏭ Next
 
-- **Phase 4C S7** — 收口验证（10 项）
+- **Phase 5 S1** — Cron 拆步（mint-queue + airdrop 两步化）
+- **Phase 5 S2** — Turbo 钱包环境变量化
+- **Phase 5 S3** — 公开 ping + Rate Limiting + 错误页面
+- **Phase 5 S4** — 域名 + Vercel 部署 + cron-job.org
+- **Phase 5 S5** — 冒烟测试 + 收口
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md`
 
 **主网前必做**：
 - Deploy 脚本 admin/minter 分离 + save draft 事务化（见 `reviews/2026-04-10-phase-2.5-completion-review.md`）
-- **Turbo credits 监控的阈值告警**：S5 已交付最小观测性端点 `/api/cron/queue-status`，但 Turbo winc 余额监控还没接入。上线前改成"低于 10% 自动邮件告警"——Phase 3B 一起做
-- **Phase 3B — sync-chain-events cron**（playbook 要求的紧接步骤）：每 5 分钟从 last_synced_block 拉 ScoreNFT Transfer 事件，解决 OpenSea 转手后 DB 不知道的问题；需要 system_kv 表 + chain_events 表 + UNIQUE(tx_hash, log_index) 防重
+- **Turbo credits 监控的阈值告警**
+- AirdropNFT metadata 补完（Phase 4 Review P1）
 
 ---
 

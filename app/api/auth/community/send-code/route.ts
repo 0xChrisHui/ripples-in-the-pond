@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendSemiCode } from "@/src/lib/semi-client";
+import { sendSemiCode } from "@/src/lib/auth/semi-client";
 
 /**
  * POST /api/auth/community/send-code

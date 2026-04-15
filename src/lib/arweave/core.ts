@@ -77,19 +77,27 @@ type WalletFile = {
 let cachedClient: TurboAuthenticatedClient | null = null;
 
 /**
- * 懒加载 Turbo 客户端。首次调用时读 TURBO_WALLET_PATH 指向的 JSON 文件，
- * 用里面的 privateKey + token 初始化。后续调用返回缓存。
- * 文件内容由 scripts/arweave/generate-eth-wallet.ts 生成。
+ * 懒加载 Turbo 客户端。两种读取方式（优先级从高到低）：
+ * 1. TURBO_WALLET_JWK 环境变量（JSON 字符串，Vercel 部署用）
+ * 2. TURBO_WALLET_PATH 文件路径（本地开发兼容）
  */
 function getTurboClient(): TurboAuthenticatedClient {
   if (cachedClient) return cachedClient;
-  const path = process.env.TURBO_WALLET_PATH;
-  if (!path) {
-    throw new Error(
-      'TURBO_WALLET_PATH 未配置。跑 scripts/arweave/generate-eth-wallet.ts 生成钱包',
-    );
+
+  let wallet: WalletFile;
+  const jwkEnv = process.env.TURBO_WALLET_JWK;
+  if (jwkEnv) {
+    wallet = JSON.parse(jwkEnv) as WalletFile;
+  } else {
+    const path = process.env.TURBO_WALLET_PATH;
+    if (!path) {
+      throw new Error(
+        'TURBO_WALLET_JWK 或 TURBO_WALLET_PATH 需至少配一个',
+      );
+    }
+    wallet = JSON.parse(readFileSync(path, 'utf-8')) as WalletFile;
   }
-  const wallet = JSON.parse(readFileSync(path, 'utf-8')) as WalletFile;
+
   cachedClient = TurboFactory.authenticated({
     privateKey: wallet.privateKey,
     token: wallet.token,

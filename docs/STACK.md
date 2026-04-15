@@ -30,6 +30,8 @@
 ### 安全
 - `server-only` — Next.js 编译期防护，阻止后端模块被前端 import
 - `jose` — 轻量 JWT 库，支持 RS256，Edge Runtime 兼容（Phase 4 自签 JWT 用）
+- `@upstash/redis` — Upstash Redis 客户端（Phase 5 rate limiting 用）
+- `@upstash/ratelimit` — Upstash 限流库，sliding window 算法（Phase 5 rate limiting 用）
 
 ### 数据库
 - `@supabase/supabase-js` — Supabase 客户端

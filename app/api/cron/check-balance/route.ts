@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyCronSecret } from "@/src/lib/auth/cron-auth";
 import { supabaseAdmin } from "@/src/lib/supabase";
-import { publicClient } from "@/src/lib/operator-wallet";
+import { publicClient } from "@/src/lib/chain/operator-wallet";
 import { formatEther } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
@@ -15,8 +16,7 @@ const LOW_BALANCE_ETH = 0.05;
 const QUEUE_BACKLOG_LIMIT = 50;
 
 export async function GET(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get("secret");
-  if (secret !== process.env.CRON_SECRET) {
+  if (!verifyCronSecret(req)) {
     return NextResponse.json({ error: "无效的 secret" }, { status: 401 });
   }
 

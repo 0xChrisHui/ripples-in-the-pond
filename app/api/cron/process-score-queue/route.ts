@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyCronSecret } from '@/src/lib/auth/cron-auth';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
 import { stepUploadEvents, stepUploadMetadata } from './steps-upload';
@@ -28,9 +29,8 @@ export async function GET(req: NextRequest) {
   let claimedRetry = 0;
 
   try {
-    // 1. 验证 secret
-    const secret = req.nextUrl.searchParams.get('secret');
-    if (secret !== process.env.CRON_SECRET) {
+    // 1. 验证 cron secret（header 优先，兼容 query param）
+    if (!verifyCronSecret(req)) {
       return NextResponse.json({ error: '无效的 secret' }, { status: 401 });
     }
 

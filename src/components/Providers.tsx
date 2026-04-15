@@ -1,7 +1,7 @@
 'use client';
 
 import { PrivyProvider } from '@privy-io/react-auth';
-import { privyConfig } from '@/src/lib/privy';
+import { privyConfig } from '@/src/lib/auth/privy';
 import { PlayerProvider } from '@/src/components/player/PlayerProvider';
 import BottomPlayer from '@/src/components/player/BottomPlayer';
 
