@@ -33,23 +33,24 @@ function shouldRateLimit(pathname: string): boolean {
   return RATE_LIMITED_PREFIXES.some((p) => pathname.startsWith(p));
 }
 
-// Upstash 未配置时跳过限流（本地开发 / 环境变量漏配时不阻塞）
-const redis =
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
-    ? new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN,
-      })
-    : null;
-
-const ratelimit = redis
-  ? new Ratelimit({
+// Upstash 未配置或初始化失败时跳过限流（不阻塞其他 API）
+let ratelimit: Ratelimit | null = null;
+try {
+  const url = process.env.UPSTASH_REDIS_REST_URL?.replace(/^["']+|["']+$/g, "").trim();
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.replace(/^["']+|["']+$/g, "").trim();
+  if (url && token) {
+    const redis = new Redis({ url, token });
+    ratelimit = new Ratelimit({
       redis,
       // sliding window：每 IP 每 10 秒 20 次请求
       limiter: Ratelimit.slidingWindow(20, "10 s"),
       analytics: true,
-    })
-  : null;
+    });
+  }
+} catch {
+  // 初始化失败 → fail open，不阻塞
+  console.error("[middleware] Upstash 初始化失败，限流已禁用");
+}
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
