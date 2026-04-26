@@ -3,11 +3,9 @@
 import { useFavorite } from '@/src/hooks/useFavorite';
 
 /**
- * 爱心收藏按钮 — 悲观更新
+ * 爱心收藏按钮 — 乐观更新（Phase 6 G0 用户决策：失败由 ops 兜底）
  *   idle    ♡ 空心（可点）
- *   loading ♡ 淡色 + 禁用（发请求中）
- *   success ♥ 红心（已入队）
- *   error   ♡ 红色边框 + "重试" 提示，3s 后回 idle
+ *   success ♥ 红心（点击立即变红，永远红，失败也不回退）
  */
 export default function FavoriteButton({
   tokenId,
@@ -27,31 +25,6 @@ export default function FavoriteButton({
       <span className="text-xl leading-none text-rose-400" aria-label="已收藏">
         &#9829;
       </span>
-    );
-  }
-
-  if (status === 'loading') {
-    return (
-      <span
-        className="animate-pulse text-xl leading-none text-white/40"
-        aria-label="收藏中"
-      >
-        &#9825;
-      </span>
-    );
-  }
-
-  if (status === 'error') {
-    return (
-      <button
-        type="button"
-        onClick={favorite}
-        className="text-xl leading-none text-rose-500/70 transition-all hover:scale-110"
-        aria-label="收藏失败，点击重试"
-        title="收藏失败，点击重试"
-      >
-        &#9825;
-      </button>
     );
   }
 
