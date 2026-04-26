@@ -51,8 +51,18 @@ export function useFavorite(
         body: JSON.stringify({ tokenId }),
       });
 
-      // 409 = 已铸造过，视为成功
-      if (!mintRes.ok && mintRes.status !== 409) {
+      // 409 含两种语义：alreadyMinted = 已铸造过 / needsReview = 上次失败需人工
+      // 两种 UI 都不回退（用户决策），但 needsReview 必须 console.error 让 ops 看到
+      if (mintRes.status === 409) {
+        try {
+          const body = await mintRes.json();
+          if (body.needsReview) {
+            console.error('[favorite] 后端拒绝：上次铸造未完成需人工核查', {
+              tokenId, trackId, ts: new Date().toISOString(),
+            });
+          }
+        } catch { /* body 解析失败也不影响 UI */ }
+      } else if (!mintRes.ok) {
         console.error('[favorite] 铸造请求失败', {
           tokenId, trackId, status: mintRes.status,
           ts: new Date().toISOString(),

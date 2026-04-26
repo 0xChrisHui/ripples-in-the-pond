@@ -56,16 +56,63 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (mintError) {
-      // unique 冲突 = 已有同 (user,token) 的 job — 查出返回（pending/minting/failed 都复用）
+      // unique 冲突 = 已有同 (user,token) 的 job — 按状态/失败类型分流
       if (mintError.code === '23505') {
         const { data: existing } = await supabaseAdmin
           .from('mint_queue')
-          .select('id, status')
+          .select('id, status, failure_kind')
           .eq('idempotency_key', idempotencyKey)
           .single();
-        if (existing) {
+        if (!existing) throw mintError;
+
+        // pending / minting_onchain / success 走原语义
+        if (existing.status === 'success') {
+          return NextResponse.json(
+            { error: '你已经铸造过这个素材', alreadyMinted: true },
+            { status: 409 },
+          );
+        }
+        if (existing.status === 'pending' || existing.status === 'minting_onchain') {
           return NextResponse.json({ result: 'ok', mintId: existing.id, status: existing.status });
         }
+
+        // status === 'failed' — 按 failure_kind 分流（Phase 6 A2）
+        if (existing.failure_kind === 'safe_retry') {
+          // CAS reset 防并发：只有还在 failed 才能 reset
+          const { data: reset } = await supabaseAdmin
+            .from('mint_queue')
+            .update({
+              status: 'pending',
+              tx_hash: null,
+              retry_count: 0,
+              failure_kind: null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', existing.id)
+            .eq('status', 'failed')
+            .select('id')
+            .maybeSingle();
+          if (reset) {
+            return NextResponse.json({
+              result: 'ok',
+              mintId: existing.id,
+              status: 'pending',
+              retried: true,
+            });
+          }
+          // 并发被别人抢先 reset；当作 ok 返回
+          return NextResponse.json({ result: 'ok', mintId: existing.id, status: 'pending' });
+        }
+
+        // failure_kind = 'manual_review' 或 NULL（旧数据保守视同 manual_review）
+        return NextResponse.json(
+          {
+            error: '上次铸造未完成，需人工核查',
+            alreadyMinted: false,
+            needsReview: true,
+          },
+          { status: 409 },
+        );
       }
       throw mintError;
     }

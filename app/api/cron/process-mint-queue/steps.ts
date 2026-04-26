@@ -14,17 +14,40 @@ import {
  *   trySendNew         — 抢 pending + 发 tx + 存 hash（严格区分链上 vs DB 失败）
  *   markSuccess        — 先写 mint_events 再 CAS 推进 status（防并发/丢资产）
  *   resetToPending     — 仅在"链上未发"或"链上 revert"这种安全场景下调用
+ *   markFailed         — Phase 6 A2：标 failed 时必须带 failure_kind（safe_retry / manual_review）
  */
 
 const MAX_RETRY = 3;
 // minting_onchain 无 tx_hash 超过 3 分钟视为卡住
 const STUCK_TIMEOUT_MS = 3 * 60 * 1000;
 
+type FailureKind = 'safe_retry' | 'manual_review';
+
+/**
+ * 标记 failed 必须显式给出 failure_kind：
+ * - safe_retry  → API 收到再次请求时可自动 reset 为 pending 重试
+ * - manual_review → API 返 409 needsReview，ops 介入
+ */
+async function markFailed(
+  jobId: string,
+  kind: FailureKind,
+  errorMsg: string,
+): Promise<void> {
+  await supabaseAdmin
+    .from('mint_queue')
+    .update({
+      status: 'failed',
+      failure_kind: kind,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', jobId);
+  console.error(`[mint-queue] markFailed ${kind} job=${jobId}: ${errorMsg}`);
+}
+
 /**
  * 查 minting_onchain 记录：
  * - 有 tx_hash → 查链上 receipt → 完成或回退
- * - 无 tx_hash + 超时 → 标记 failed 等人工核查（不能安全 reset，
- *   可能是链上已发但 DB 没存住 hash → reset 会导致重复 mint）
+ * - 无 tx_hash + 超时 → markFailed(manual_review)（链上状态未知，不能 reset）
  */
 export async function tryConfirmMinting() {
   const { data: job } = await supabaseAdmin
@@ -40,14 +63,11 @@ export async function tryConfirmMinting() {
   if (!job.tx_hash) {
     const age = Date.now() - new Date(job.updated_at).getTime();
     if (age > STUCK_TIMEOUT_MS) {
-      console.error(
-        `[mint-queue] CRITICAL: job ${job.id} 卡在 minting_onchain 无 tx_hash 已 ${age}ms — 链上状态未知，标记 failed 等人工核查 operator 钱包 tx 历史`,
+      await markFailed(
+        job.id,
+        'manual_review',
+        `stuck in minting_onchain without tx_hash for ${age}ms — chain state unknown, check operator wallet history`,
       );
-      await supabaseAdmin
-        .from('mint_queue')
-        .update({ status: 'failed', updated_at: new Date().toISOString() })
-        .eq('id', job.id)
-        .eq('status', 'minting_onchain');
       return { result: 'stuck_needs_review', jobId: job.id };
     }
     return null; // 正在发送中，等下次
@@ -86,14 +106,11 @@ export async function trySendNew() {
     .single();
 
   if (!user) {
-    await supabaseAdmin
-      .from('mint_queue')
-      .update({ status: 'failed', updated_at: new Date().toISOString() })
-      .eq('id', job.id);
+    await markFailed(job.id, 'manual_review', `user not found: ${job.user_id}`);
     return { result: 'no_user', jobId: job.id };
   }
 
-  // 严格区分：链上 send 失败（安全 reset）vs DB 写 tx_hash 失败（不能 reset 会重发）
+  // 严格区分：链上 send 失败（safe_retry）vs DB 写 tx_hash 失败（manual_review）
   let txHash: `0x${string}`;
   try {
     txHash = await operatorWalletClient.writeContract({
@@ -123,7 +140,7 @@ export async function trySendNew() {
     console.error(
       `[mint-queue] CRITICAL: tx ${txHash} 已上链但 DB 写 tx_hash 失败 job=${job.id}: ${dbErr.message}. 人工核查: UPDATE mint_queue SET tx_hash='${txHash}' WHERE id='${job.id}'`,
     );
-    // 保持 minting_onchain + tx_hash=null，STUCK_TIMEOUT_MS 后会标记 failed 而非 reset
+    // 保持 minting_onchain + tx_hash=null，STUCK_TIMEOUT_MS 后会被 markFailed(manual_review)
     return { result: 'db_write_failed', jobId: job.id, txHash };
   }
 
@@ -140,14 +157,11 @@ async function markSuccess(
     .single();
 
   if (!track) {
-    console.error(
-      `[mint-queue] track not found for week=${tokenId} job=${jobId} — 标记 failed 等人工补 track`,
+    await markFailed(
+      jobId,
+      'manual_review',
+      `track not found for week=${tokenId} — 需要补 track 数据`,
     );
-    await supabaseAdmin
-      .from('mint_queue')
-      .update({ status: 'failed', updated_at: new Date().toISOString() })
-      .eq('id', jobId)
-      .eq('status', 'minting_onchain');
     return;
   }
 
@@ -179,12 +193,20 @@ async function markSuccess(
     .eq('status', 'minting_onchain');
 }
 
+/** retry 未耗尽 → reset 为 pending；已耗尽 → markFailed(safe_retry) */
 async function resetToPending(jobId: string, retryCount: number) {
-  const newStatus = retryCount + 1 >= MAX_RETRY ? 'failed' : 'pending';
+  if (retryCount + 1 >= MAX_RETRY) {
+    await markFailed(
+      jobId,
+      'safe_retry',
+      `retry exhausted (${retryCount + 1}/${MAX_RETRY})`,
+    );
+    return;
+  }
   await supabaseAdmin
     .from('mint_queue')
     .update({
-      status: newStatus,
+      status: 'pending',
       tx_hash: null,
       retry_count: retryCount + 1,
       updated_at: new Date().toISOString(),
