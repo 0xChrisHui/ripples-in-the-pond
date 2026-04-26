@@ -1,39 +1,69 @@
 /**
  * NFT 本地缓存 — 秒开用
  * tokenId 列表给首页爱心，完整 NFT 列表给 /me 页
+ *
+ * Phase 6 B1：所有 key 按 userId 隔离，未登录用 _anon 后缀
+ * 切换账号时由 useAuth.logout 调 clearNftCache(prevUserId) 清当前用户缓存
  */
 
 import type { OwnedNFT } from '@/src/types/tracks';
 
-const IDS_KEY = 'ripples_minted_token_ids';
-const NFTS_KEY = 'ripples_cached_nfts';
+const IDS_PREFIX = 'ripples_minted_token_ids';
+const NFTS_PREFIX = 'ripples_cached_nfts';
 
-export function getCachedMintedIds(): number[] {
+type UserId = string | null | undefined;
+
+function idsKey(userId: UserId): string {
+  return userId ? `${IDS_PREFIX}_${userId}` : `${IDS_PREFIX}_anon`;
+}
+
+function nftsKey(userId: UserId): string {
+  return userId ? `${NFTS_PREFIX}_${userId}` : `${NFTS_PREFIX}_anon`;
+}
+
+export function getCachedMintedIds(userId: UserId): number[] {
   if (typeof window === 'undefined') return [];
-  const raw = localStorage.getItem(IDS_KEY);
+  const raw = localStorage.getItem(idsKey(userId));
   if (!raw) return [];
-  return JSON.parse(raw);
-}
-
-export function setCachedMintedIds(ids: number[]): void {
-  localStorage.setItem(IDS_KEY, JSON.stringify(ids));
-}
-
-export function addCachedMintedId(id: number): void {
-  const ids = getCachedMintedIds();
-  if (!ids.includes(id)) {
-    ids.push(id);
-    setCachedMintedIds(ids);
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
   }
 }
 
-export function getCachedNFTs(): OwnedNFT[] {
-  if (typeof window === 'undefined') return [];
-  const raw = localStorage.getItem(NFTS_KEY);
-  if (!raw) return [];
-  return JSON.parse(raw);
+export function setCachedMintedIds(userId: UserId, ids: number[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(idsKey(userId), JSON.stringify(ids));
 }
 
-export function setCachedNFTs(nfts: OwnedNFT[]): void {
-  localStorage.setItem(NFTS_KEY, JSON.stringify(nfts));
+export function addCachedMintedId(userId: UserId, id: number): void {
+  const ids = getCachedMintedIds(userId);
+  if (!ids.includes(id)) {
+    ids.push(id);
+    setCachedMintedIds(userId, ids);
+  }
+}
+
+export function getCachedNFTs(userId: UserId): OwnedNFT[] {
+  if (typeof window === 'undefined') return [];
+  const raw = localStorage.getItem(nftsKey(userId));
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+export function setCachedNFTs(userId: UserId, nfts: OwnedNFT[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(nftsKey(userId), JSON.stringify(nfts));
+}
+
+/// 登出时调用，清当前用户两个 cache key
+export function clearNftCache(userId: UserId): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(idsKey(userId));
+  localStorage.removeItem(nftsKey(userId));
 }

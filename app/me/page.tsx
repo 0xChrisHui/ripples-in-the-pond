@@ -27,9 +27,10 @@ interface DisplayDraft {
  * 草稿来源：localStorage（未上传）+ 服务端（已上传）
  */
 export default function MePage() {
-  const { ready, authenticated, login, getAccessToken } = useAuth();
+  const { ready, authenticated, login, getAccessToken, userId } = useAuth();
   const [scoreNfts, setScoreNfts] = useState<OwnedScoreNFT[]>([]);
-  const [nfts, setNfts] = useState<OwnedNFT[]>(() => getCachedNFTs());
+  // 初次渲染拿不到 userId（Privy hydrate 中），先用 anon key 兜底
+  const [nfts, setNfts] = useState<OwnedNFT[]>(() => getCachedNFTs(null));
   const [drafts, setDrafts] = useState<DisplayDraft[]>(() => {
     return getDrafts().map((d, i) => ({
       key: `local-${d.trackId}`,
@@ -37,10 +38,20 @@ export default function MePage() {
       expiresAt: new Date(new Date(d.createdAt).getTime() + DRAFT_TTL_MS).toISOString(),
     }));
   });
-  const [loaded, setLoaded] = useState(() => getCachedNFTs().length > 0);
+  const [loaded, setLoaded] = useState(false);
+
+  // userId 变化（登录 / 切号 / 登出）→ 重读对应 user 的本地缓存
+  // 推到 microtask 避免 React 19 react-hooks/set-state-in-effect 警告
+  useEffect(() => {
+    queueMicrotask(() => {
+      const cached = getCachedNFTs(userId);
+      setNfts(cached);
+      setLoaded(cached.length > 0);
+    });
+  }, [userId]);
 
   useEffect(() => {
-    if (!authenticated) return;
+    if (!authenticated || !userId) return;
 
     getAccessToken().then(async (token) => {
       if (!token) return;
@@ -49,7 +60,7 @@ export default function MePage() {
       fetchMyScoreNFTs(token).then(setScoreNfts).catch(console.error);
       fetchMyNFTs(token).then((data) => {
         setNfts(data);
-        setCachedNFTs(data);
+        setCachedNFTs(userId, data);
         setLoaded(true);
       });
 
@@ -86,7 +97,7 @@ export default function MePage() {
       ];
       setDrafts(display);
     });
-  }, [authenticated, getAccessToken]);
+  }, [authenticated, userId, getAccessToken]);
 
   if (!ready && nfts.length === 0) return null;
 
