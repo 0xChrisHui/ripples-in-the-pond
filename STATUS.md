@@ -6,19 +6,20 @@
 
 ## 当前阶段
 
-**Phase**: Phase 6 — 稳定性收口 + UI 重设计（playbook 就绪，开工中）
-**进度**: playbook 已写完（5 tracks + overview），待开始 Pre-tester gate 的 3 项
+**Phase**: Phase 6 — 稳定性收口 + UI 重设计（Track C 已收口，Pre-tester gate 待开工）
+**进度**: Track C 4 step 完结 + ScoreNFT/Orchestrator v2 已重部署 OP Sepolia；下一步 Pre-tester gate 的 4 项
 **playbook**: `playbook/phase-6/overview.md`（+ 5 个 track 子文档）
-**决策日志**：`docs/JOURNAL.md` 2026-04-25 段落（Phase 5 收口）+ 本轮 Phase 6 kickoff 条目
+**决策日志**：`docs/JOURNAL.md` 2026-04-25 段落（Phase 5 收口 + Phase 6 kickoff + Track C 收口）
 **tester 范围**（Phase 5 定）：素材收藏 + 个人页 + artist 页 + 已铸造乐谱回放；**不含草稿铸造**（bug #5，Phase 6 Track B3）**不含空投**（Phase 6 Track D1 决策）
 
 ## 当前进度
 
-**做到哪**: Phase 5 完全收口（`b0474f1`）+ Phase 6 playbook 就绪（5 track / 26 step / 覆盖 29 个 findings）
+**做到哪**: Phase 5 完全收口（`b0474f1`）+ Phase 6 playbook 就绪 + **Track C 合约 & 部署硬化收口**（commit `086167d` + ScoreNFT/Orchestrator v2 已上链）
 **下一步**:
-  1. **Pre-tester gate** — 修 A2（material failed 重试）+ B1（NFT cache 用户隔离）+ E1（material health 视图）→ 部署 → 限定范围 tester 放人
-  2. **并行开工** — 5 tracks 各自推进（B2 UI 重设计等 tester 反馈 1-2 周后再开工）
-  3. **Phase 6 完结** — 5 tracks 全绿 + completion review → Phase 7 OP 主网
+  1. **完成 Track C 收尾** — Vercel env 同步 + Redeploy + cron-job.org 5/5 在 v2 合约下 ≥ 5 分钟全绿
+  2. **Pre-tester gate** — G0 运营就绪检查 + A2 material failed 重试 + B1 NFT cache 用户隔离 + E1 health 暴露 mint_queue 状态 → 限定范围 tester 放人
+  3. **并行开工** — 5 tracks 各自推进（B2 UI 重设计等 tester 反馈 1-2 周后再开工）
+  4. **Phase 6 完结** — 5 tracks 全绿 + completion review → Phase 7 OP 主网
 **剩余**: Phase 6（5-6 周）→ Phase 7（OP 主网 + 监控 + 退出准备）
 
 ### Phase 5 交付物（2026-04-25 收口）
@@ -37,11 +38,11 @@
 
 ### 续做指南（下次会话第一件事读这段）
 
-**Phase 3 链上产物（OP Sepolia）**：
-- ScoreNFT `0xA65C9308635C8dd068A314c189e8d77941A7e99c`
-- Orchestrator `0xcBE4Ce6a9344e04f30D3f874098E8858d7184336`
-- 已铸造 2 张：tokenId 1（S3 部署测试）+ tokenId 2（"晨雾" 29 events，S5 端到端实测）
-- 实测 mint tx: `0x596b723038108ea58a051fb9450c917c4df394914dc9b6d1a86d9b09b4ac4f73`
+**Phase 3 链上产物（OP Sepolia，Phase 6 Track C 重部署后 v2）**：
+- ScoreNFT v2 `0x1C478F9F5b66302A35a0178e07df67BA343c832F`（setTokenURI 仅首写一次，2026-04-25 部署）
+- Orchestrator v2 `0x8A6Dd0Ecf108797358CC369bC6F263D2C89BC3a8`（删 TBA 开关，2026-04-25 部署）
+- v1 旧合约归档：`reviews/phase-6-deprecated-contracts.md`（前端不展示 v1 上的 tokenId 1/2）
+- v1 历史实测 mint tx 仍永久可查：`0x596b723038108ea58a051fb9450c917c4df394914dc9b6d1a86d9b09b4ac4f73`
 
 **Arweave 静态产物（上链一次永不变）**：
 - decoder (S4): `FWy1XA-B8MvRAgsNgMfDSUBiXXjHNpK1A_fHWjsUAXg`
@@ -107,10 +108,11 @@
 
 ## 上次成功验证
 
-- 验证: Phase 5 收口 — 代码侧所有 tester 前必修 bug 已修 + 部署
+- 验证: Phase 6 Track C 收口 — ScoreNFT/Orchestrator v2 部署 + grantRole 链上成功
 - 时间: 2026-04-25
-- commits: `1bb1b05`（第一轮 review 修复）→ `ddda82c`（bug #6 文档修订）→ `1019dcb`（第二轮严格 review 修复）
-- 详情: `reviews/2026-04-24-phase-5-s5-smoke-test.md` + `reviews/2026-04-24-phase-5-completion-review.md` + `reviews/2026-04-25-phase-5-strict-cto-review.md`
+- commit: `086167d` — feat(contracts): Track C 合约 & 部署硬化（C1-C4）
+- 链上记录: `contracts/broadcast/DeployScore.s.sol/11155420/run-latest.json` + `contracts/broadcast/DeployOrchestrator.s.sol/11155420/run-latest.json`
+- 23/23 forge test + verify.sh 全绿；归档 `reviews/phase-6-deprecated-contracts.md`
 
 ## 当前阻塞
 
