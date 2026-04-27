@@ -54,7 +54,14 @@ export default function Archipelago() {
     if (userId) addCachedMintedId(userId, tokenId);
   }, [userId]);
 
-  if (tracks.length === 0) return null;
+  // Phase 6 B5 #7：tracks 空时显示占位（加载中 / DB degraded 都走这条），不再 return null
+  if (tracks.length === 0) {
+    return (
+      <section className="flex items-center justify-center px-8 py-16">
+        <p className="text-sm text-white/30">正在唤醒群岛...</p>
+      </section>
+    );
+  }
 
   return (
     <section className="flex flex-wrap items-center justify-center gap-12 px-8">

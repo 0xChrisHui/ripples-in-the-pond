@@ -15,7 +15,8 @@ import { saveDraft } from '@/src/lib/draft-store';
  * 移动端（<640px）显示提示，不加载音效引擎。
  */
 export default function HomeJam() {
-  const [isMobile, setIsMobile] = useState(false);
+  // Phase 6 B5 #8：null 表示"还没探测"，避免移动端首帧加载 HomeJamDesktop（含 useJam 音效引擎）
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 640);
@@ -23,6 +24,15 @@ export default function HomeJam() {
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
+
+  if (isMobile === null) {
+    // 探测中：显示等高占位，避免布局跳动
+    return (
+      <section className="flex items-center justify-center px-6 py-16">
+        <p className="text-sm text-white/30">加载中...</p>
+      </section>
+    );
+  }
 
   if (isMobile) {
     return (

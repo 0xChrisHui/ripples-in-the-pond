@@ -1,12 +1,15 @@
 import 'server-only';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { ARWEAVE_GATEWAYS, resolveArUrl } from '@/src/lib/arweave';
+import { fallbackFromChain } from './score-fallback';
 import type { KeyEvent } from '@/src/types/jam';
 
 /**
  * /score/[tokenId] 页面数据源
  * 主路径：mint_events.score_data（DB 自包含）
- * 灾备路径：链上 tokenURI -> Arweave metadata -> events（S7 补充）
+ * 灾备路径（Phase 6 A5）：DB miss 时走链上 tokenURI → Arweave metadata → events
+ *   ARCH 决策 6 承诺"4 层冗余"，Phase 6 才把第 4 层（链上 + Arweave fallback）真接通
+ *   实施在 ./score-fallback.ts（拆出避免本文件超 200 行）
  */
 
 export interface ScorePageData {
@@ -33,7 +36,7 @@ export async function getScoreByTokenId(
     .eq('score_nft_token_id', tokenId)
     .single();
 
-  if (!mintEvent) return null;
+  if (!mintEvent) return fallbackFromChain(tokenId);
 
   // 并行查 queue（封面 + events txId）、track、user
   const [queueRes, trackRes, userRes] = await Promise.all([
@@ -96,3 +99,4 @@ function buildDecoderUrl(
     `&sounds=ar://${soundsMapTxId}`
   );
 }
+

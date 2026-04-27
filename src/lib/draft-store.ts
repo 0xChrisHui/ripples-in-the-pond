@@ -11,15 +11,47 @@ export interface Draft {
   createdAt: string;
 }
 
-/** 读取所有未过期草稿 */
+/**
+ * Phase 6 B5 #9：rune-time 验证 localStorage 里的 Draft，防损坏数据让 /me 崩
+ * 任一字段类型不对就视为无效条目，整个 raw 损坏（非 array / parse 失败）就清空
+ */
+function isValidDraft(d: unknown): d is Draft {
+  if (typeof d !== 'object' || d === null) return false;
+  const r = d as Record<string, unknown>;
+  return (
+    typeof r.trackId === 'string' &&
+    Array.isArray(r.eventsData) &&
+    typeof r.createdAt === 'string'
+  );
+}
+
+/** 读取所有未过期且字段合法的草稿；任何异常自动清空 localStorage */
 export function getDrafts(): Draft[] {
   if (typeof window === 'undefined') return [];
-  const raw = localStorage.getItem(STORAGE_KEY);
+
+  let raw: string | null;
+  try {
+    raw = localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return [];
+  }
   if (!raw) return [];
 
-  const all: Draft[] = JSON.parse(raw);
-  const now = Date.now();
-  return all.filter((d) => now - new Date(d.createdAt).getTime() < DRAFT_TTL_MS);
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) throw new Error('drafts not array');
+    const valid = parsed.filter(isValidDraft);
+    const now = Date.now();
+    return valid.filter((d) => now - new Date(d.createdAt).getTime() < DRAFT_TTL_MS);
+  } catch (err) {
+    console.warn('[draft-store] localStorage 损坏，已清空:', err);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    return [];
+  }
 }
 
 /** 保存一条草稿（同一 trackId 覆盖旧的） */

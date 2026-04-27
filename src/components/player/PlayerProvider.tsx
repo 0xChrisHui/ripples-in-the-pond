@@ -41,6 +41,13 @@ const PlayerContext = createContext<PlayerState | null>(null);
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const ctxRef = useRef<AudioContext | null>(null);
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);
+  /**
+   * Phase 6 B4: 拦"快速连点 / 切岛屿"导致的音频叠加
+   * - 同 trackId 第二次进入 play → 拒绝（已经在加载）
+   * - await 期间 loadingRef 被覆盖（用户切到别的）→ stale 那次 abort
+   * - stop() 把 loadingRef 设 null → 加载中的 play 也会被 abort
+   */
+  const loadingRef = useRef<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [duration, setDuration] = useState(0);
@@ -68,6 +75,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const play = useCallback(async (track: Track) => {
+    // Phase 6 B4: 同 trackId 重复点直接拒绝（避免双加载）
+    if (loadingRef.current === track.id) return;
+    loadingRef.current = track.id;
+
     const ctx = getContext();
 
     if (sourceRef.current) {
@@ -76,8 +87,19 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       notifyEnd();
     }
 
-    const res = await fetch(track.audio_url);
-    const buffer = await ctx.decodeAudioData(await res.arrayBuffer());
+    let buffer: AudioBuffer;
+    try {
+      const res = await fetch(track.audio_url);
+      buffer = await ctx.decodeAudioData(await res.arrayBuffer());
+    } catch (err) {
+      // 加载失败：仅在仍是自己持有 lock 时清，不覆盖后续调用
+      if (loadingRef.current === track.id) loadingRef.current = null;
+      console.error('[player] load failed', { trackId: track.id, err });
+      return;
+    }
+
+    // 加载期间用户切到别的（loadingRef 被覆盖）或 stop（loadingRef = null）→ 放弃 start
+    if (loadingRef.current !== track.id) return;
 
     const source = ctx.createBufferSource();
     source.buffer = buffer;
@@ -97,9 +119,14 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setStartedAt(ctx.currentTime);
     setPlaying(true);
     notifyStart(track);
+
+    // start 后释放 lock（仅在仍是自己时；保险起见，更晚的调用可能已覆盖）
+    if (loadingRef.current === track.id) loadingRef.current = null;
   }, [getContext, notifyStart, notifyEnd]);
 
   const stop = useCallback(() => {
+    // Phase 6 B4: 把 loadingRef 也清空，让加载中的 play 完成后 abort（不会还 start）
+    loadingRef.current = null;
     if (sourceRef.current) {
       sourceRef.current.stop();
       sourceRef.current = null;
