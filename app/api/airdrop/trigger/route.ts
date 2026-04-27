@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/src/lib/supabase";
+import { verifyAdminToken } from "@/src/lib/auth/admin-auth";
 import type { TriggerAirdropRequest } from "@/src/types/airdrop";
 
 /**
  * POST /api/airdrop/trigger
  * 管理员触发空投：创建轮次 → 快照参与者 → 标记 ready
  *
- * 鉴权：ADMIN_TOKEN（query string ?token=xxx）
+ * 鉴权（Phase 6 D2 改）：Authorization: Bearer <ADMIN_TOKEN>
+ *   旧 ?token=xxx 已弃用，runbook / 运维脚本需同步改。
+ *
  * 请求体：{ round: number, title: string }
  *
  * 参与者快照逻辑：
@@ -14,11 +17,8 @@ import type { TriggerAirdropRequest } from "@/src/types/airdrop";
  *   去重后得到唯一 wallet 列表（含站外地址）
  */
 export async function POST(req: NextRequest) {
-  // 鉴权
-  const token = req.nextUrl.searchParams.get("token");
-  const adminToken = process.env.ADMIN_TOKEN;
-  if (!adminToken || token !== adminToken) {
-    return NextResponse.json({ error: "未授权" }, { status: 401 });
+  if (!verifyAdminToken(req)) {
+    return NextResponse.json({ error: "无效的 admin token" }, { status: 401 });
   }
 
   try {

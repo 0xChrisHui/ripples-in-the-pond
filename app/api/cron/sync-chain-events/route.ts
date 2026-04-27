@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
       .single();
 
     let cursor = BigInt(kv?.value ?? '0');
+    const startCursor = cursor;
     const latestBlock = await publicClient.getBlockNumber();
 
     if (cursor >= latestBlock) {
@@ -48,6 +49,9 @@ export async function GET(req: NextRequest) {
     let iterations = 0;
 
     // 分批循环拉取
+    // Phase 6 A3：单条 upsert 失败立刻 return，不推进 cursor 越过失败 batch
+    //   已成功的前面 batch 持久化保留；失败 batch 下次 cron 全量重做
+    //   onConflict ignoreDuplicates 保证重做幂等
     while (cursor < latestBlock && iterations < MAX_ITERATIONS) {
       const from = cursor + 1n;
       const to = from + CHUNK_SIZE - 1n < latestBlock
@@ -82,14 +86,38 @@ export async function GET(req: NextRequest) {
           },
           { onConflict: 'tx_hash,log_index', ignoreDuplicates: true },
         );
-        if (!error) totalInserted++;
+        if (error) {
+          console.error(
+            `[sync] upsert failed at block ${Number(log.blockNumber)} tx=${log.transactionHash}:`,
+            error,
+          );
+          // 已成功的前面 batch 持久化（cursor 已推进过 startCursor）
+          if (cursor > startCursor) {
+            await supabaseAdmin
+              .from('system_kv')
+              .update({ value: String(cursor), updated_at: new Date().toISOString() })
+              .eq('key', 'last_synced_block');
+          }
+          return NextResponse.json(
+            {
+              result: 'partial',
+              synced: totalInserted,
+              stoppedAt: Number(log.blockNumber),
+              cursor: String(cursor),
+              error: error.message,
+            },
+            { status: 200 },
+          );
+        }
+        totalInserted++;
       }
 
+      // 整个 batch 全部 upsert 成功，cursor 推进到 to
       cursor = to;
       iterations++;
     }
 
-    // 更新 last_synced_block
+    // 全部 batch 成功 → 推进 cursor
     await supabaseAdmin
       .from('system_kv')
       .update({ value: String(cursor), updated_at: new Date().toISOString() })

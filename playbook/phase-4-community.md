@@ -1,5 +1,16 @@
 # Phase 4 — 社区钱包 + 空投 (v2)
 
+> ⚠️ **2026-04-13 起 S3（Semi 前端接入）挂起，2026-04-25 Phase 6 决策正式挂到 Phase 7**。
+> 本 playbook 里 S3 章节及"D1 Semi 是 Bearer token API"描述的 `/send_sms + /signin` 流程是**初版设计**，
+> Semi 团队后续转向 OAuth，至今 OAuth 文档未出。续做前请先读：
+> - `docs/JOURNAL.md` 2026-04-13 段落（S3 挂起原因）+ 2026-04-25 段落（Phase 6 E2 = 挂 Phase 7）
+> - `reviews/2026-04-13-phase-4-completion-review.md`
+> - `playbook/phase-6/track-e-auth-observability.md` E2 章节（解除条件 + 续做范围）
+>
+> **当前状态**：Phase 4A S0-S2 后端基础设施（JWT + 双验证中间件 + Semi API 客户端）已完成可复用；S3 前端登录按钮 + useAuth 兼容**未做**，等 Semi OAuth 文档出再改。
+>
+> ---
+>
 > 目标：接入 Semi Wallet 作为第二登录入口，建立空投基础设施，补齐运营可观测性
 >
 > 前置：Phase 3 全部完成（3A + 3B + 3.1）

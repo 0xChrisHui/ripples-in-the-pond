@@ -10,7 +10,7 @@
 **进度**: Track C 收口 + Pre-tester gate 4/4（G0 + B1 + E1 + A2）+ useFavorite 悲观→乐观回滚 + memory 拆子目录
 **playbook**: `playbook/phase-6/overview.md`（+ 5 个 track 子文档）
 **决策日志**：`docs/JOURNAL.md` 2026-04-25 段落（Phase 5 收口 + Phase 6 kickoff + Track C 收口 + Pre-tester gate 收口）
-**tester 范围**（Phase 5 定）：素材收藏 + 个人页 + artist 页 + 已铸造乐谱回放；**不含草稿铸造**（bug #5，Phase 6 Track B3）**不含空投**（Phase 6 Track D1 决策）
+**tester 范围**（Phase 5 定）：素材收藏 + 个人页 + artist 页 + 已铸造乐谱回放；**不含草稿铸造**（bug #5，Phase 6 Track B3 已接通，2026-04-26 后可纳入）**不含空投**（Phase 6 Track D1 决策）**不含 Semi 社区钱包登录**（Phase 6 E2 挂 Phase 7，等 Semi OAuth 文档）
 
 ## 当前进度
 

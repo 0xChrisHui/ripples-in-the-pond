@@ -103,7 +103,7 @@
 
 ### 决策 5：Privy JWT 直接使用，不自建 JWT
 
-后端用 `@privy-io/server-auth` 验证 token。Phase 4 引入社区钱包时再加自签 JWT 双验证。
+后端用 `@privy-io/server-auth` 验证 token。Phase 4 引入社区钱包时再加自签 JWT 双验证（**Phase 4A S0-S2 已完成；S3 前端因 Semi 转向 OAuth、文档未出而挂起；Phase 6 E2 决策挂到 Phase 7**）。
 
 ### 决策 6：乐谱 NFT 数据自包含 + "母 NFT 装子 NFT"结构
 
