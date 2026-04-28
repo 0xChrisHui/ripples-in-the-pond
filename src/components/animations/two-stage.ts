@@ -31,13 +31,6 @@ export function ensureStage(container: HTMLElement): Two {
   }
   rafId = requestAnimationFrame(loop);
 
-  // DEBUG: 左下角永远显示红方块 — 看到说明 stage + RAF + canvas 都在工作
-  const debugRect = stage.makeRectangle(50, stage.height - 50, 40, 40);
-  debugRect.fill = 'red';
-  debugRect.noStroke();
-
-  console.log('[animations] stage created', stage.width, 'x', stage.height);
-
   return stage;
 }
 

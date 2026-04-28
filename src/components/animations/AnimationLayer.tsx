@@ -29,10 +29,8 @@ export default function AnimationLayer() {
 
       if (!alive || !ref.current) return;
 
-      console.log('[animations] AnimationLayer mounting...');
       const stage = ensureStage(ref.current);
       initRegistry(stage);
-      console.log('[animations] registered keys:', getRegistered());
       setRegistered([...getRegistered()]);
 
       const onKey = (e: KeyboardEvent) => {
