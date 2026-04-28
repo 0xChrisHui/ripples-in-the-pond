@@ -129,14 +129,16 @@ export default function SphereCanvas({
     };
   }, [simNodes, simLinks]);
 
-  // d3.zoom 行为抽出（含日食层 transform 同步）
-  useSphereZoom(svgRef, zoomGRef, eclipseZoomGRef);
+  // d3.zoom 行为抽出（含日食层 transform 同步 + 放大停 jitter）
+  useSphereZoom(svgRef, zoomGRef, eclipseZoomGRef, simRef);
 
   return (
     <>
     <svg ref={svgRef} className="h-full w-full cursor-grab active:cursor-grabbing">
       <SphereGlowDefs />
-      <g ref={zoomGRef}>
+      {/* v19：zoomG 加 will-change: transform，让浏览器提前给 sphere group 分配 GPU layer
+          减少 zoom 时反复重 layer 化的开销，改善放大状态下的 ripple/glow 渲染稳定性 */}
+      <g ref={zoomGRef} style={{ willChange: 'transform' }}>
         {/* 连接线层（在节点下面；日食模式下整体淡出隐藏）*/}
         <g style={{ opacity: playingId !== null ? 0 : 1, transition: 'opacity 0.5s ease', pointerEvents: 'none' }}>
           {simLinks.map((l, i) => {

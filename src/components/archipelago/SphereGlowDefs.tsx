@@ -5,15 +5,16 @@
 export default function SphereGlowDefs() {
   return (
     <defs>
-      <filter id="glow-soft" x="-60%" y="-60%" width="220%" height="220%">
-        <feGaussianBlur stdDeviation={5} result="b" />
+      {/* v20 — stdDeviation 进一步降到 2/4（放大闪烁继续优化）*/}
+      <filter id="glow-soft" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation={2} result="b" />
         <feMerge>
           <feMergeNode in="b" />
           <feMergeNode in="SourceGraphic" />
         </feMerge>
       </filter>
-      <filter id="glow-strong" x="-80%" y="-80%" width="260%" height="260%">
-        <feGaussianBlur stdDeviation={10} result="b" />
+      <filter id="glow-strong" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation={4} result="b" />
         <feMerge>
           <feMergeNode in="b" />
           <feMergeNode in="SourceGraphic" />

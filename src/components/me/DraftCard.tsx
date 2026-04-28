@@ -41,6 +41,11 @@ export default function DraftCard({
 
   const expired = remaining <= 0;
   const canMint = !!pendingScoreId && !expired && state === 'idle';
+  const buttonLabel = expired
+    ? '已过期'
+    : !pendingScoreId
+      ? '上传中...'
+      : '铸造成唱片 NFT';
 
   return (
     <div className="rounded-lg border border-white/10 bg-white/5 p-4">
@@ -56,27 +61,26 @@ export default function DraftCard({
         </span>
       </div>
 
-      {pendingScoreId && (
-        <div className="mt-3 flex justify-end">
-          {state === 'queued' ? (
-            <span className="text-xs text-emerald-400/70">铸造中...</span>
-          ) : (
-            <button
-              type="button"
-              onClick={() => canMint && mint(pendingScoreId)}
-              disabled={!canMint}
-              className={[
-                'rounded-full border px-4 py-1 text-xs transition-all',
-                canMint
-                  ? 'border-rose-400/40 text-rose-400 hover:bg-rose-400/10'
-                  : 'cursor-not-allowed border-white/10 text-white/30',
-              ].join(' ')}
-            >
-              {expired ? '已过期' : '铸造成乐谱 NFT'}
-            </button>
-          )}
-        </div>
-      )}
+      {/* 铸造按钮 — 每个草稿都显示，本地未上传时 disabled */}
+      <div className="mt-3 flex justify-end">
+        {state === 'queued' ? (
+          <span className="text-xs text-white/80">铸造中...</span>
+        ) : (
+          <button
+            type="button"
+            onClick={() => canMint && pendingScoreId && mint(pendingScoreId)}
+            disabled={!canMint}
+            className={[
+              'rounded-full border px-4 py-1 text-xs transition-all',
+              canMint
+                ? 'border-white/40 text-white/90 hover:bg-white/10'
+                : 'cursor-not-allowed border-white/10 text-white/30',
+            ].join(' ')}
+          >
+            {buttonLabel}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

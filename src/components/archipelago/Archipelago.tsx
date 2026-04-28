@@ -136,8 +136,9 @@ export default function Archipelago({ fullscreen = false }: Props) {
   const sectionCls = fullscreen
     ? 'fixed inset-0 z-0'
     : 'flex h-[70vh] w-full max-w-6xl flex-col';
+  // v14：fullscreen 模式 nav 挪到左侧 vertical（top-24 让出顶栏 + LoginButton）
   const navCls = fullscreen
-    ? 'absolute left-1/2 top-16 z-30 flex -translate-x-1/2 items-center gap-2 px-4'
+    ? 'absolute left-6 top-24 z-30 flex flex-col items-start gap-2'
     : 'mb-2 flex items-center gap-2 px-4';
   const canvasCls = fullscreen ? 'absolute inset-0' : 'flex-1';
 

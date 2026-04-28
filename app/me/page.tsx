@@ -136,11 +136,11 @@ export default function MePage() {
 
         {loaded && nfts.length === 0 && drafts.length === 0 && scoreNfts.length === 0 && <EmptyState />}
 
-        {/* 我的乐谱（ScoreNFT） */}
+        {/* 我的唱片（ScoreNFT） */}
         {scoreNfts.length > 0 && (
           <section>
             <h2 className="mb-4 text-sm font-light tracking-widest text-white/60">
-              我的乐谱
+              我的唱片
             </h2>
             <div className="grid gap-3">
               {scoreNfts.map((s) => (
@@ -150,11 +150,11 @@ export default function MePage() {
           </section>
         )}
 
-        {/* 素材 NFT */}
+        {/* 音乐收藏（MaterialNFT） */}
         {nfts.length > 0 && (
           <section className={scoreNfts.length > 0 ? 'mt-10' : ''}>
             <h2 className="mb-4 text-sm font-light tracking-widest text-white/60">
-              素材收藏
+              音乐收藏
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {nfts.map((nft) => (

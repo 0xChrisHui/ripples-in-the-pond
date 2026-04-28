@@ -59,14 +59,16 @@ export default function SphereNode({
     isPlaying || (hovered && isAnyPlaying) ? '#ffffff' : color;
   // 日食模式下 ripple stroke 改白
   const rippleStroke = isAnyPlaying ? '#ffffff' : color;
-  // 每个 SphereNode 独立的 ripple 节奏（deterministic，避免 Math.random in render）
+  // 每个 SphereNode 独立的 ripple 节奏（deterministic）
+  // v20：ripple 5 圈 → 3 圈（频次降低），duration ×1.5 更慢
+  // 配合 strokeWidth 1.3 → 2.5（单圈宽度增加），视觉冲击不减
   const rippleTiming = useMemo(() => {
     let h = 0;
     for (let i = 0; i < track.id.length; i++) h = (h * 31 + track.id.charCodeAt(i)) >>> 0;
-    const duration = 2.4 + (h % 1800) / 1000; // 2.4-4.2s
+    const duration = 7.2 + (h % 5400) / 1000; // 7.2-12.6s
     return [0, 1, 2].map((i) => ({
       duration,
-      delay: -(((h >>> (i * 7 + 3)) % 4200) / 1000),
+      delay: -(((h >>> (i * 5 + 3)) % 12600) / 1000),
     }));
   }, [track.id]);
 
@@ -75,14 +77,14 @@ export default function SphereNode({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* 3 圈 ripple 涟漪（每节点独立随机节奏；日食模式 stroke 改白）*/}
+      {/* ripple 涟漪（v20：3 圈 + 宽 2.5，频次降低视觉冲击不减）*/}
       {rippleTiming.map((rt, i) => (
         <circle
           key={i}
           r={radius}
           fill="none"
           stroke={rippleStroke}
-          strokeWidth={1.3}
+          strokeWidth={2.5}
           className="ripple-c"
           style={{ animationDuration: `${rt.duration}s`, animationDelay: `${rt.delay}s` }}
         />

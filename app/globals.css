@@ -92,6 +92,34 @@ body::after {
   /* duration / delay 由 inline style 给（每节点独立随机节奏）*/
 }
 
+/* 草稿保存 toast 滑入动画（DraftSavedToast 用，从右侧朝 LoginButton 方向滑入）*/
+@keyframes jam-toast-slide {
+  0%   { opacity: 0; transform: translateX(28px) translateY(-6px); }
+  10%  { opacity: 1; transform: translateX(0) translateY(0); }
+  90%  { opacity: 1; transform: translateX(0) translateY(0); }
+  100% { opacity: 0; transform: translateX(0) translateY(-4px); }
+}
+.animate-jam-toast-slide {
+  animation: jam-toast-slide 5.5s ease-out;
+}
+
+/* 背景随机涟漪（BackgroundRipples 用）— v18 适中存在感 */
+@keyframes bg-ripple-out {
+  0%   { transform: scale(0.15); opacity: 0; }
+  16%  { opacity: 0.65; }
+  60%  { opacity: 0.35; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+.bg-ripple {
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: bg-ripple-out;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #07070f;

@@ -9,15 +9,18 @@ import type { Track } from '@/src/types/tracks';
  */
 
 // 3 group palette
-// A: Portra 暖橙系 8 色（保留）/ B: 海洋深邃系 6 色（v13 新）/ C: 森林大地系 8 色（v13 新）
+// A: Portra 暖橙系 8 色（保留）
+// B: 海洋深邃 6 色 — v14 把 #1F2933 深炭换 #5B7A95 雾蓝（黑底可见性更好）
+// C: 春日花园 6 色 — v14 重做（樱花/嫩柳/晴空/油菜花/紫薇/暖白）
 export const GROUP_PALETTES: string[][] = [
   // A — Portra 暖橙 / Fuji 青绿 / Cinestill 红 / Ektachrome 蓝 /
   //     高光奶油 / 阴影巧克力 / 紫调阴影 / CN16 草绿
   ['#D8A878','#7EA898','#A83A3A','#6A7898','#E8D8B8','#382828','#B8A8C8','#9AA878'],
-  // B — 海洋深邃：深蓝 / 海绿 / 银白 / 珊瑚 / 星辰金 / 深炭
-  ['#1F4D6B','#3A7B82','#C4D2D8','#E89682','#C4A55C','#1F2933'],
-  // C — 森林大地：苔绿 / 焦糖 / 橡木 / 米金 / 茶绿 / 土褐 / 烟青 / 麦黄
-  ['#4A6F4A','#A86E3D','#6B4F35','#C9A878','#5A7A5A','#6B4632','#4A5C5C','#BFA968'],
+  // B — 莓紫雾蓝 5 色：莓紫 / 雾蓝 / 杏色 / 钢灰 / 红粉
+  ['#9B6B8E','#7A8FA3','#D4C0B0','#4A5566','#C97B7B'],
+  // C — 莓紫绿粉 5 色（v19 回退 v15 + 把钢灰换成蜜蜡黄稍亮一点）
+  // 莓紫 / 鼠尾草绿 / 薰衣草紫 / 蜜蜡黄（稍亮）/ 红粉
+  ['#9B6B8E','#7A9B7D','#B5A0C5','#D8B888','#C97B7B'],
 ];
 
 export type GroupId = 'A' | 'B' | 'C';
@@ -55,7 +58,34 @@ export interface SimNode extends SimulationNodeDatum {
   _dragged?: boolean;
 }
 
-export const CLUSTER_COUNT = 5;
+export const CLUSTER_COUNT = 7;
+export const OUTLIER_PCT = 22;
+
+/** deterministic 字符串哈希（generateLinks 和 setupSimulation 共用，保证 cluster 归属一致）*/
+export function hashStr(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h * 31 + s.charCodeAt(i)) & 0xffffffff) >>> 0;
+  return h;
+}
+
+/** 节点 cluster 归属：-1 = outlier，否则 0..CLUSTER_COUNT-1 */
+export function getNodeCluster(node: SimNode): number {
+  const h = hashStr(node.id);
+  if (h % 100 < OUTLIER_PCT) return -1;
+  return h % CLUSTER_COUNT;
+}
+
+/** Halton 低差异序列（生成均匀分布的 anchor 位置）*/
+export function halton(i: number, base: number): number {
+  let f = 1;
+  let r = 0;
+  while (i > 0) {
+    f /= base;
+    r += f * (i % base);
+    i = Math.floor(i / base);
+  }
+  return r;
+}
 
 export interface SimLink extends SimulationLinkDatum<SimNode> {
   correlation: number;
@@ -121,68 +151,34 @@ export function computeNodeAttrs(
 }
 
 /**
- * v13 重写：聚落式 link 拓扑（不再全节点稠密 cross-link）
- * - 1 中心 hub 节点（importance 最高）连 7-9 个非 outlier 节点
- * - 35% 节点为 outlier 完全无连接（孤零零）
- * - 剩余分 4-6 个 size 4-7 的小集群，集群内全连，集群间不连（"机构洞"）
- * 整体边数从原 ~120 → ~50，视觉上呈现：1 hub + 散点 + 几个小聚落
+ * v15 — 聚落式 link 拓扑：仅同一 cluster 内的节点之间生成 link。
+ * link 拉力方向 = cluster anchor 拉力方向（一致），不会撕裂聚落。
+ * 用 getNodeCluster 算 cluster 归属（与 setupSimulation 共用），保证一致。
+ * Outlier 节点完全无 link（孤立散点）。
  */
 export function generateLinks(nodes: SimNode[]): SimLink[] {
   const links: SimLink[] = [];
-  const N = nodes.length;
-  if (N < 5) return links;
-
-  // 1. hub = importance 最高的节点
-  let hubIdx = 0;
-  for (let i = 1; i < N; i++) {
-    if (nodes[i].importance > nodes[hubIdx].importance) hubIdx = i;
-  }
-
-  // 2. 决定 outlier（35%，deterministic by week）
-  const isOutlier = new Set<number>();
-  for (let i = 0; i < N; i++) {
-    if (i === hubIdx) continue;
-    if ((nodes[i].track.week * 23) % 100 < 35) isOutlier.add(i);
-  }
-
-  // 3. hub 连 7-9 个非 outlier 节点
-  const hubTargets: number[] = [];
-  const hubLimit = 7 + (nodes[hubIdx].track.week % 3);
-  for (let i = 0; i < N && hubTargets.length < hubLimit; i++) {
-    if (i === hubIdx || isOutlier.has(i)) continue;
-    hubTargets.push(i);
-  }
-  hubTargets.forEach((j) => {
-    links.push({
-      source: nodes[hubIdx].id,
-      target: nodes[j].id,
-      correlation: 0.62,
-    });
+  const clusterMembers = new Map<number, number[]>();
+  nodes.forEach((n, i) => {
+    const c = getNodeCluster(n);
+    if (c < 0) return;
+    if (!clusterMembers.has(c)) clusterMembers.set(c, []);
+    clusterMembers.get(c)!.push(i);
   });
 
-  // 4. 剩余节点（非 hub / 非 hubTarget / 非 outlier）分小集群全连
-  const remaining: number[] = [];
-  const used = new Set([hubIdx, ...hubTargets, ...Array.from(isOutlier)]);
-  for (let i = 0; i < N; i++) if (!used.has(i)) remaining.push(i);
-
-  let p = 0;
-  let groupSeed = 0;
-  while (p < remaining.length) {
-    const size = 4 + (groupSeed % 4); // 集群大小 4-7
-    const cluster = remaining.slice(p, p + size);
-    for (let i = 0; i < cluster.length; i++) {
-      for (let j = i + 1; j < cluster.length; j++) {
-        const corr = 0.45 + ((cluster[i] + cluster[j] * 3) % 5) / 12;
+  clusterMembers.forEach((indices) => {
+    for (let a = 0; a < indices.length; a++) {
+      for (let b = a + 1; b < indices.length; b++) {
+        const seed = (indices[a] * 17 + indices[b] * 31) % 100;
+        const corr = 0.5 + (seed % 30) / 100;
         links.push({
-          source: nodes[cluster[i]].id,
-          target: nodes[cluster[j]].id,
+          source: nodes[indices[a]].id,
+          target: nodes[indices[b]].id,
           correlation: Math.min(0.85, corr),
         });
       }
     }
-    p += size;
-    groupSeed++;
-  }
+  });
 
   return links;
 }

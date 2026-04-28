@@ -45,8 +45,7 @@ export default function TestJam() {
 }
 
 function TestJamDesktop() {
-  const { sounds, ready, playSound } = useJam();
-  const [toast, setToast] = useState(false);
+  const { ready, playSound } = useJam();
 
   const handleRecordComplete = useCallback(
     (result: { trackId: string; events: { key: string; time: number; duration: number }[] }) => {
@@ -56,7 +55,7 @@ function TestJamDesktop() {
         eventsData: result.events,
         createdAt: new Date().toISOString(),
       });
-      setToast(true);
+      window.dispatchEvent(new CustomEvent('jam:draft-saved'));
     },
     [],
   );
@@ -64,12 +63,6 @@ function TestJamDesktop() {
   const { recording, recordKeyDown, recordKeyUp } = useRecorder({
     onComplete: handleRecordComplete,
   });
-
-  useEffect(() => {
-    if (!toast) return;
-    const timer = setTimeout(() => setToast(false), 4000);
-    return () => clearTimeout(timer);
-  }, [toast]);
 
   const { pressedKeys } = useKeyboard({
     enabled: ready,
@@ -90,28 +83,22 @@ function TestJamDesktop() {
   }
 
   return (
-    <section className="flex flex-col items-center gap-6 py-8">
-      <p className="text-sm tracking-wide text-white/40">
+    <section className="flex flex-col items-start gap-3">
+      <p className="text-[10px] uppercase tracking-[0.14em] text-white/40">
         按下键盘 A-Z 演奏
         {recording && <span className="ml-2 text-red-400/70">● 录制中</span>}
       </p>
 
-      <div className="flex min-h-[40px] flex-wrap items-center justify-center gap-2">
+      <div className="flex min-h-[28px] flex-wrap items-center gap-1.5">
         {Array.from(pressedKeys).map((key) => (
           <span
             key={key}
-            className="rounded-md bg-white/15 px-3 py-1 font-mono text-sm text-white/80"
+            className="rounded-md bg-white/15 px-2 py-0.5 font-mono text-xs text-white/80"
           >
             {key.toUpperCase()}
           </span>
         ))}
       </div>
-
-      {toast && (
-        <div className="animate-jam-toast rounded-lg bg-white/10 px-5 py-3 text-sm text-white/70 backdrop-blur-sm">
-          你的创作已记录，24h 内可收藏
-        </div>
-      )}
     </section>
   );
 }
