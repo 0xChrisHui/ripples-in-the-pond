@@ -12,6 +12,9 @@ import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 import { CFG, CLUSTER_COUNT, type SimNode, type SimLink } from './sphere-config';
 
+/** sim 持续漂浮的 baseline alpha — setupSimulation 和 drag end 共享 */
+const ALPHA_BASELINE = 0.015;
+
 /**
  * Phase 6 B2.1 — D3 force simulation + drag 的纯函数 setup
  * 从 SphereCanvas 抽出（220 行硬线）— 不是 hook，仅函数提取，行为完全不变
@@ -94,7 +97,7 @@ export function setupSimulation(
     .alphaDecay(0.016)
     .velocityDecay(0.5)
     // 持续保持流动 — 极弱的 alpha 让节点缓慢漂浮，不固化
-    .alphaTarget(0.015)
+    .alphaTarget(ALPHA_BASELINE)
     .on('tick', () => {
       // clamp x/y 到画布内（防极端 charge 把节点推飞）
       simNodes.forEach((n) => {
@@ -131,7 +134,8 @@ export function attachDrag(
       d.fy = e.y;
     })
     .on('end', (e, d) => {
-      if (!e.active) sim.alphaTarget(0);
+      // v7 修：drag end 回到 baseline 0.015 而不是 0，避免拖动一次后节点凝固
+      if (!e.active) sim.alphaTarget(ALPHA_BASELINE);
       d.fx = null;
       d.fy = null;
     });

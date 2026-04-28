@@ -8,11 +8,17 @@ import type { Track } from '@/src/types/tracks';
  * 用户决策（2026-04-27）：3 group A/B/C 各 36 首；不做跨 group 虚线圈
  */
 
-// 3 group × 8 shade palette（来自 sound-spheres line 371-376 的前 3 组：橙/蓝/紫）
+// 3 group palette（用户 v7 自定配色，2026-04-27）
+// A: Portra 暖橙系 8 色 / B: 复古印刷系 6 色 / C: 荧光实验系 8 色
+// shadeIdx 用 % palette.length 处理不等长
 export const GROUP_PALETTES: string[][] = [
-  ['#F0A050','#D97828','#F4BC6A','#C46018','#E8883A','#FAD080','#D06820','#F09840'], // A orange
-  ['#7AAEE8','#5A8ED8','#9ABEF6','#4A7EC8','#88B8F0','#3A6EB8','#A8CCFC','#6898D8'], // B blue
-  ['#B87AE8','#9A5ED4','#CCA0F8','#8448C0','#D0AAFE','#7038B0','#B888F0','#A068DC'], // C violet
+  // A — Portra 暖橙 / Fuji 青绿 / Cinestill 红 / Ektachrome 蓝 /
+  //     高光奶油 / 阴影巧克力 / 紫调阴影 / CN16 草绿
+  ['#D8A878','#7EA898','#A83A3A','#6A7898','#E8D8B8','#382828','#B8A8C8','#9AA878'],
+  // B — Warm Red / Yellow / Forest / Burgundy / Newsprint / Sienna
+  ['#A82A32','#E8C83A','#0A3A2E','#4A2A3C','#C8B8A0','#7A3A2A'],
+  // C — 伊红 / Cy5 荧光 / 黄金切片 / DAPI 紫 / 钴蓝盐 / GFP 绿 / 铬橙 / 盐结晶
+  ['#FF3A78','#3AFFE8','#FFE83A','#A83AFF','#3A8AFF','#48D878','#FF8A3A','#E8E8D8'],
 ];
 
 export type GroupId = 'A' | 'B' | 'C';
