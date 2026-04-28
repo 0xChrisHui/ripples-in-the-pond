@@ -2,12 +2,11 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 import { type Simulation } from 'd3-force';
-import { select } from 'd3-selection';
-import { zoom, zoomIdentity } from 'd3-zoom';
 import type { Track } from '@/src/types/tracks';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
 import SphereNode from './SphereNode';
 import SphereGlowDefs from './SphereGlowDefs';
+import EclipseLayer from './EclipseLayer';
 import {
   computeNodeAttrs,
   generateLinks,
@@ -18,6 +17,7 @@ import {
   type SimLink,
 } from './sphere-config';
 import { setupSimulation, attachDrag } from './sphere-sim-setup';
+import { useSphereZoom } from './use-sphere-zoom';
 
 /**
  * Phase 6 B2.1 — sound-spheres 完整复刻
@@ -66,6 +66,10 @@ export default function SphereCanvas({
   const lineRefs = useRef<(SVGLineElement | null)[]>([]);
   const simRef = useRef<Simulation<SimNode, SimLink> | null>(null);
 
+  // 日食覆盖层（独立 fixed z-[55] svg，不被按键动画 z-40 遮）
+  const eclipseZoomGRef = useRef<SVGGElement | null>(null);
+  const eclipseGRef = useRef<SVGGElement | null>(null);
+
   // ── D3 force simulation + drag + line tick（每次 currentGroupId 变化重建）──
   useEffect(() => {
     if (!svgRef.current || simNodes.length === 0) return;
@@ -93,6 +97,23 @@ export default function SphereCanvas({
           lineEl.setAttribute('y2', String(tgt.y));
         }
       });
+      // 日食位置同步（找当前播放圆，命令式更新 transform）
+      const eclipseEl = eclipseGRef.current;
+      if (eclipseEl) {
+        const playingNode = playingId
+          ? simNodes.find((n) => n.id === playingId)
+          : null;
+        if (playingNode && playingNode.x != null && playingNode.y != null) {
+          const s = playingNode.radius / 50; // EclipseLayer unit r=50
+          eclipseEl.setAttribute(
+            'transform',
+            `translate(${playingNode.x},${playingNode.y}) scale(${s})`,
+          );
+          eclipseEl.style.display = 'block';
+        } else {
+          eclipseEl.style.display = 'none';
+        }
+      }
     });
 
     simRef.current = sim;
@@ -101,37 +122,13 @@ export default function SphereCanvas({
     return () => {
       sim.stop();
     };
-  }, [simNodes, simLinks]);
+  }, [simNodes, simLinks, playingId]);
 
-  // ── d3.zoom（滚轮缩放 + 双击 reset + Escape reset）──
-  useEffect(() => {
-    if (!svgRef.current || !zoomGRef.current) return;
-    const svgSel = select(svgRef.current);
-    const zoomG = select(zoomGRef.current);
-
-    const zoomBehavior = zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.15, 5])
-      .on('zoom', (e) => {
-        zoomG.attr('transform', e.transform.toString());
-      });
-
-    svgSel.call(zoomBehavior);
-    svgSel.on('dblclick.zoom', null).on('dblclick', () => {
-      svgSel.call(zoomBehavior.transform, zoomIdentity);
-    });
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        svgSel.call(zoomBehavior.transform, zoomIdentity);
-      }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-    };
-  }, []);
+  // d3.zoom 行为抽出（含日食层 transform 同步）
+  useSphereZoom(svgRef, zoomGRef, eclipseZoomGRef);
 
   return (
+    <>
     <svg ref={svgRef} className="h-full w-full cursor-grab active:cursor-grabbing">
       <SphereGlowDefs />
       <g ref={zoomGRef}>
@@ -192,5 +189,7 @@ export default function SphereCanvas({
         </g>
       </g>
     </svg>
+    <EclipseLayer zoomGRef={eclipseZoomGRef} eclipseGRef={eclipseGRef} />
+    </>
   );
 }

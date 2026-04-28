@@ -21,9 +21,15 @@ import { GROUPS, type GroupId } from './sphere-config';
  * - 键盘 ←/→ 切 group
  * - fade 过渡（250ms opacity 0 → swap → 1）
  *
- * cache 用户隔离 / fetch 主路径 / handleMinted 全保留
+ * fullscreen prop（Phase 6 B2 /test 用）：
+ * - false (default)：原 70vh + max-w-6xl 居中布局，主页 / 用
+ * - true：fixed inset-0 占满屏幕，tabs 浮顶部
  */
-export default function Archipelago() {
+interface Props {
+  fullscreen?: boolean;
+}
+
+export default function Archipelago({ fullscreen = false }: Props) {
   const [tracks, setTracks] = useState<Track[]>([]);
   const { authenticated, getAccessToken, userId } = useAuth();
   const [mintedTokenIds, setMintedTokenIds] = useState<Set<number>>(
@@ -106,10 +112,18 @@ export default function Archipelago() {
     );
   }
 
+  const sectionCls = fullscreen
+    ? 'fixed inset-0 z-0'
+    : 'flex h-[70vh] w-full max-w-6xl flex-col';
+  const navCls = fullscreen
+    ? 'absolute left-1/2 top-16 z-30 flex -translate-x-1/2 items-center gap-2 px-4'
+    : 'mb-2 flex items-center gap-2 px-4';
+  const canvasCls = fullscreen ? 'absolute inset-0' : 'flex-1';
+
   return (
-    <section className="flex h-[70vh] w-full max-w-6xl flex-col">
+    <section className={sectionCls}>
       {/* Tabs nav（sound-spheres header 简化版）*/}
-      <nav className="mb-2 flex items-center gap-2 px-4">
+      <nav className={navCls}>
         {GROUPS.map((g) => {
           const active = g.id === currentGroupId;
           return (
@@ -133,14 +147,16 @@ export default function Archipelago() {
             </button>
           );
         })}
-        <span className="ml-auto text-[9px] tracking-[0.09em] text-white/30">
-          DRAG · SCROLL · ← →
-        </span>
+        {!fullscreen && (
+          <span className="ml-auto text-[9px] tracking-[0.09em] text-white/30">
+            DRAG · SCROLL · ← →
+          </span>
+        )}
       </nav>
 
       {/* Canvas（fade on group switch）*/}
       <div
-        className="flex-1"
+        className={canvasCls}
         style={{
           opacity: fading ? 0 : 1,
           transition: 'opacity 0.25s ease',
