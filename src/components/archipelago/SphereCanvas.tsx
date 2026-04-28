@@ -70,6 +70,12 @@ export default function SphereCanvas({
   const eclipseZoomGRef = useRef<SVGGElement | null>(null);
   const eclipseGRef = useRef<SVGGElement | null>(null);
 
+  // playingId 用 ref 让 tick 拿到最新值，避免 sim useEffect 因 playingId 重建（位置刷新）
+  const playingIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    playingIdRef.current = playingId;
+  }, [playingId]);
+
   // ── D3 force simulation + drag + line tick（每次 currentGroupId 变化重建）──
   useEffect(() => {
     if (!svgRef.current || simNodes.length === 0) return;
@@ -97,12 +103,11 @@ export default function SphereCanvas({
           lineEl.setAttribute('y2', String(tgt.y));
         }
       });
-      // 日食位置同步（找当前播放圆，命令式更新 transform）
+      // 日食位置同步（用 ref 读最新 playingId，sim 不会因 play/pause 重建）
       const eclipseEl = eclipseGRef.current;
       if (eclipseEl) {
-        const playingNode = playingId
-          ? simNodes.find((n) => n.id === playingId)
-          : null;
+        const pid = playingIdRef.current;
+        const playingNode = pid ? simNodes.find((n) => n.id === pid) : null;
         if (playingNode && playingNode.x != null && playingNode.y != null) {
           const s = playingNode.radius / 50; // EclipseLayer unit r=50
           eclipseEl.setAttribute(
@@ -122,7 +127,7 @@ export default function SphereCanvas({
     return () => {
       sim.stop();
     };
-  }, [simNodes, simLinks, playingId]);
+  }, [simNodes, simLinks]);
 
   // d3.zoom 行为抽出（含日食层 transform 同步）
   useSphereZoom(svgRef, zoomGRef, eclipseZoomGRef);
@@ -132,17 +137,11 @@ export default function SphereCanvas({
     <svg ref={svgRef} className="h-full w-full cursor-grab active:cursor-grabbing">
       <SphereGlowDefs />
       <g ref={zoomGRef}>
-        {/* 连接线层（在节点下面，避免遮挡；播放时整体淡出聚焦当前节点）*/}
-        <g
-          style={{
-            opacity: playingId !== null ? 0 : 1,
-            transition: 'opacity 0.5s ease',
-            pointerEvents: 'none',
-          }}
-        >
+        {/* 连接线层（在节点下面；日食模式下不消失，统一改白色）*/}
+        <g style={{ pointerEvents: 'none' }}>
           {simLinks.map((l, i) => {
             const src = simNodes.find((n) => n.id === (typeof l.source === 'string' ? l.source : (l.source as SimNode).id));
-            const strokeColor = src?.color ?? '#888';
+            const strokeColor = playingId !== null ? '#ffffff' : (src?.color ?? '#888');
             return (
               <line
                 key={i}
@@ -152,6 +151,7 @@ export default function SphereCanvas({
                 strokeOpacity={0.05 + l.correlation * 0.13}
                 strokeLinecap="round"
                 pointerEvents="none"
+                style={{ transition: 'stroke 0.4s ease' }}
               />
             );
           })}
@@ -176,6 +176,7 @@ export default function SphereCanvas({
                   radius={n.radius}
                   color={n.color}
                   isPlaying={isPlaying}
+                  isAnyPlaying={playingId !== null}
                   alreadyMinted={mintedIds.has(n.track.week)}
                   onMinted={onMinted}
                   onTogglePlay={() => {

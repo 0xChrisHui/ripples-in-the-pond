@@ -22,6 +22,8 @@ interface Props {
   radius: number;
   color: string;
   isPlaying: boolean;
+  /** 是否有任何圆正在播放（日食模式中），hover 加粗效果改白色 */
+  isAnyPlaying?: boolean;
   alreadyMinted: boolean;
   onMinted: (tokenId: number) => void;
   onTogglePlay: () => void;
@@ -38,6 +40,7 @@ export default function SphereNode({
   radius,
   color,
   isPlaying,
+  isAnyPlaying = false,
   alreadyMinted,
   onMinted,
   onTogglePlay,
@@ -51,6 +54,8 @@ export default function SphereNode({
   const showOverlay = hovered || isPlaying;
   const renderRadius = hovered ? radius * 1.09 : radius;
   const filterUrl = hovered ? 'url(#glow-strong)' : 'url(#glow-soft)';
+  // 日食模式下 hover 主圆 fill 改白色（而不是 group 色）
+  const renderFill = hovered && isAnyPlaying ? '#ffffff' : color;
 
   return (
     <g
@@ -62,15 +67,15 @@ export default function SphereNode({
       <circle r={radius} fill="none" stroke={color} strokeWidth={1.3} className="ripple-c ripple-r2" />
       <circle r={radius} fill="none" stroke={color} strokeWidth={1.3} className="ripple-c ripple-r3" />
 
-      {/* 主节点圆（glow filter + hover 放大）*/}
+      {/* 主节点圆（glow filter + hover 放大；日食时 hover 改白）*/}
       <circle
         r={renderRadius}
-        fill={color}
+        fill={renderFill}
         fillOpacity={isPlaying ? Math.min(0.95, baseOpacity + 0.2) : baseOpacity}
         filter={filterUrl}
         style={{
           cursor: 'pointer',
-          transition: 'r 0.22s ease, fill-opacity 0.3s',
+          transition: 'r 0.22s ease, fill-opacity 0.3s, fill 0.2s',
         }}
         onClick={(e) => {
           e.stopPropagation();
