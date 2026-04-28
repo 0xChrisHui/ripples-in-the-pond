@@ -5,25 +5,17 @@ import { useFavorite } from '@/src/hooks/useFavorite';
 
 /**
  * 单个球体节点的 React 内容（圆 + ripple + 标题 + 心形）
- * 每个节点独立 useFavorite 实例 — 108 个 hook 不算重
+ * 颜色 / 半径 / importance 由 SphereCanvas 计算后通过 props 传入
+ *   （Phase 6 B2.1 v2 完整复现 sound-spheres：每节点不同 size + 4 palette × 8 shade）
  *
- * 从 SphereCanvas 拆出（Phase 6 B2.1，220 行硬线）
+ * 每节点独立 useFavorite 实例 — 108 个 hook 不算重
  */
-
-// 5 种 cover 颜色映射 hex（替代 Tailwind class，SVG fill 用）
-const COLOR_HEX: Record<string, string> = {
-  blue: '#7AAEE8',
-  emerald: '#4EC8A0',
-  violet: '#B87AE8',
-  amber: '#F0A050',
-  rose: '#E96C8E',
-};
-const DEFAULT_HEX = '#888';
-
-export const NODE_R = 22;
 
 interface Props {
   track: Track;
+  importance: number;
+  radius: number;
+  color: string;
   isPlaying: boolean;
   alreadyMinted: boolean;
   onMinted: (tokenId: number) => void;
@@ -32,6 +24,9 @@ interface Props {
 
 export default function SphereNode({
   track,
+  importance,
+  radius,
+  color,
   isPlaying,
   alreadyMinted,
   onMinted,
@@ -39,20 +34,22 @@ export default function SphereNode({
 }: Props) {
   const { status, favorite } = useFavorite(track.week, track.id, onMinted);
   const isMinted = alreadyMinted || status === 'success';
-  const color = COLOR_HEX[track.cover] ?? DEFAULT_HEX;
+
+  // sound-spheres 的 fill-opacity 公式：0.52 + importance * 0.36
+  const baseOpacity = 0.52 + importance * 0.36;
 
   return (
     <>
       {/* 3 圈 ripple 涟漪（CSS 动画错峰，定义在 globals.css）*/}
-      <circle r={NODE_R} fill="none" stroke={color} strokeWidth={1.3} className="ripple-c ripple-r1" />
-      <circle r={NODE_R} fill="none" stroke={color} strokeWidth={1.3} className="ripple-c ripple-r2" />
-      <circle r={NODE_R} fill="none" stroke={color} strokeWidth={1.3} className="ripple-c ripple-r3" />
+      <circle r={radius} fill="none" stroke={color} strokeWidth={1.3} className="ripple-c ripple-r1" />
+      <circle r={radius} fill="none" stroke={color} strokeWidth={1.3} className="ripple-c ripple-r2" />
+      <circle r={radius} fill="none" stroke={color} strokeWidth={1.3} className="ripple-c ripple-r3" />
 
       {/* 主节点圆（点击播放）*/}
       <circle
-        r={NODE_R}
+        r={radius}
         fill={color}
-        fillOpacity={isPlaying ? 0.9 : 0.55}
+        fillOpacity={isPlaying ? Math.min(0.95, baseOpacity + 0.2) : baseOpacity}
         style={{ cursor: 'pointer', transition: 'fill-opacity 0.3s' }}
         onClick={(e) => {
           e.stopPropagation();
@@ -60,20 +57,20 @@ export default function SphereNode({
         }}
       />
 
-      {/* 标题 */}
+      {/* 标题（dy 跟随 radius 自适应）*/}
       <text
-        dy={NODE_R + 16}
+        dy={radius + 13}
         textAnchor="middle"
-        fontSize={10}
-        fill="rgba(255,255,255,0.65)"
+        fontSize={9}
+        fill="rgba(216,211,200,0.72)"
         pointerEvents="none"
       >
-        {track.title.length > 12 ? track.title.slice(0, 11) + '…' : track.title}
+        {track.title.length > 13 ? track.title.slice(0, 12) + '…' : track.title}
       </text>
 
       {/* 心形（右上角，点击 useFavorite）*/}
       <g
-        transform={`translate(${NODE_R - 4}, ${-NODE_R + 4})`}
+        transform={`translate(${radius - 4}, ${-radius + 4})`}
         style={{ cursor: 'pointer' }}
         onClick={(e) => {
           e.stopPropagation();
