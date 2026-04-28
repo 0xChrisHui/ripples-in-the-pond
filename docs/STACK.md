@@ -31,6 +31,7 @@
 - `server-only` — Next.js 编译期防护，阻止后端模块被前端 import
 - `jose` — 轻量 JWT 库，支持 RS256，Edge Runtime 兼容（Phase 4 自签 JWT 用）
 - `@upstash/redis` — Upstash Redis 客户端（Phase 5 rate limiting + Phase 6 A0 运营钱包全局串行锁）
+- `d3-force` / `d3-drag` / `d3-selection` — D3 子模块（Phase 6 B2.1 首页 sound-spheres 风格力导向布局；只装子模块约 30KB，不要全包 d3）
 - `@upstash/ratelimit` — Upstash 限流库，sliding window 算法（Phase 5 rate limiting 用）
 
 ### 数据库

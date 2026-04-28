@@ -10,7 +10,7 @@ import {
   setCachedMintedIds,
   addCachedMintedId,
 } from '@/src/lib/nft-cache';
-import Island from './Island';
+import SphereCanvas from './SphereCanvas';
 
 /**
  * Archipelago — 群岛容器
@@ -57,22 +57,20 @@ export default function Archipelago() {
   // Phase 6 B5 #7：tracks 空时显示占位（加载中 / DB degraded 都走这条），不再 return null
   if (tracks.length === 0) {
     return (
-      <section className="flex items-center justify-center px-8 py-16">
+      <section className="flex h-[60vh] w-full items-center justify-center">
         <p className="text-sm text-white/30">正在唤醒群岛...</p>
       </section>
     );
   }
 
+  // Phase 6 B2.1：sound-spheres 风格 force-directed canvas（替代原 Island grid）
   return (
-    <section className="flex flex-wrap items-center justify-center gap-12 px-8">
-      {tracks.map((track) => (
-        <Island
-          key={track.id}
-          track={track}
-          alreadyMinted={mintedTokenIds.has(track.week)}
-          onMinted={handleMinted}
-        />
-      ))}
+    <section className="h-[60vh] w-full max-w-6xl px-4">
+      <SphereCanvas
+        tracks={tracks}
+        mintedIds={mintedTokenIds}
+        onMinted={handleMinted}
+      />
     </section>
   );
 }

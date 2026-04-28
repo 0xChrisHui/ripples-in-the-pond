@@ -47,6 +47,25 @@
   }
 }
 
+/*
+ * Phase 6 B2.1 — sound-spheres 节点的涟漪动画
+ * 3 个 ripple 圈在每个节点上错峰播放，延迟 0s / -1s / -2s
+ * SVG circle 用 transform-origin: center 才能正确缩放
+ */
+@keyframes ripple-out {
+  0%   { transform: scale(1);    opacity: 0.44; }
+  100% { transform: scale(1.22); opacity: 0; }
+}
+.ripple-c {
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ripple-out 3s ease-out infinite;
+}
+.ripple-r1 { animation-delay:  0s; }
+.ripple-r2 { animation-delay: -1s; }
+.ripple-r3 { animation-delay: -2s; }
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #000000;
