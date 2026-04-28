@@ -5,6 +5,12 @@
 const NS = 'http://www.w3.org/2000/svg';
 export const TAU = Math.PI * 2;
 
+/**
+ * 米黄色 — 替代 palette.black 在黑底背景上做主轮廓色。
+ * 原 patatap 在浅底上用 rgb(0,0,0)，我们项目主页 bg-black 让黑色完全看不见，故统一改这色。
+ */
+export const CREAM = 'rgb(232,216,184)';
+
 export const rand = (a: number, b: number): number => a + Math.random() * (b - a);
 export const choice = <T>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)];
 

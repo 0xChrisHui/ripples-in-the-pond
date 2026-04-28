@@ -1,8 +1,8 @@
 import type { AnimFn } from '../types';
-import { TAU, choice, makeEl, animate, ease } from '../helpers';
+import { TAU, CREAM, choice, makeEl, animate, ease } from '../helpers';
 
 /** zigzag — 锯齿闪电折线，先描出再擦除 */
-export const zigzag: AnimFn = ({ svg, w, h, p }) => {
+export const zigzag: AnimFn = ({ svg, w, h }) => {
   const fromLeft = Math.random() > 0.5;
   const cx = fromLeft ? w * 0.15 : w * 0.85;
   const cy = h / 2;
@@ -30,7 +30,7 @@ export const zigzag: AnimFn = ({ svg, w, h, p }) => {
   const path = makeEl('path', {
     d,
     fill: 'none',
-    stroke: p.black,
+    stroke: CREAM,
     'stroke-width': Math.min(w, h) / 30,
     'stroke-linecap': 'butt',
     'stroke-linejoin': 'miter',

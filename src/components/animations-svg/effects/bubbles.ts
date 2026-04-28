@@ -1,8 +1,8 @@
 import type { AnimFn } from '../types';
-import { TAU, makeEl, animate } from '../helpers';
+import { TAU, CREAM, makeEl, animate } from '../helpers';
 
 /** bubbles — 圆周一个个亮起的小点 */
-export const bubbles: AnimFn = ({ svg, w, h, p }) => {
+export const bubbles: AnimFn = ({ svg, w, h }) => {
   const cx = w / 2;
   const cy = h / 2;
   const radius = Math.min(w, h) / 3;
@@ -19,7 +19,7 @@ export const bubbles: AnimFn = ({ svg, w, h, p }) => {
   for (let i = 0; i < amount; i++) {
     const c = makeEl<SVGCircleElement>('circle', {
       cx: radius, cy: 0, r: bubbleR,
-      fill: p.black, opacity: 0,
+      fill: CREAM, opacity: 0,
     });
     g.appendChild(c);
     circles.push(c);

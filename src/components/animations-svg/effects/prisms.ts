@@ -1,8 +1,8 @@
 import type { AnimFn } from '../types';
-import { TAU, choice, makeEl, animate, ease } from '../helpers';
+import { TAU, CREAM, choice, makeEl, animate, ease } from '../helpers';
 
 /** prisms — N 边形 + 顶点小圆，整体缩放扩散 */
-export const prisms: AnimFn = ({ svg, w, h, p }) => {
+export const prisms: AnimFn = ({ svg, w, h }) => {
   const cx = w / 2;
   const cy = h / 2;
   const sides = choice([3, 4, 5, 6]);
@@ -18,7 +18,7 @@ export const prisms: AnimFn = ({ svg, w, h, p }) => {
   const poly = makeEl('polygon', {
     points: pts.join(' '),
     fill: 'none',
-    stroke: p.black,
+    stroke: CREAM,
     'stroke-width': 0.8,
   });
 
@@ -29,7 +29,7 @@ export const prisms: AnimFn = ({ svg, w, h, p }) => {
       cx: cx + r * Math.cos(a),
       cy: cy + r * Math.sin(a),
       r: 3,
-      fill: p.black,
+      fill: CREAM,
     });
     dots.push(d);
   }
