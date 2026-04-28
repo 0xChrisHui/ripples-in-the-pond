@@ -1,11 +1,13 @@
 import type { AnimFn } from '../types';
 import { TAU, CREAM, choice, makeEl, animate, ease } from '../helpers';
 
-/** prisms — N 边形 + 顶点小圆，整体缩放扩散 */
-export const prisms: AnimFn = ({ svg, w, h }) => {
+/** prisms — N 边形 + 顶点小圆，整体缩放扩散
+ *  variant 0/1/2 → 3/4/6 边形（对齐 patatap 原版三变体）
+ */
+export const prisms: AnimFn = ({ svg, w, h, variant }) => {
   const cx = w / 2;
   const cy = h / 2;
-  const sides = choice([3, 4, 5, 6]);
+  const sides = variant !== undefined ? [3, 4, 6][variant % 3] : choice([3, 4, 5, 6]);
   const r = Math.min(w, h) * 0.05;
   const rot = Math.random() * TAU;
 
