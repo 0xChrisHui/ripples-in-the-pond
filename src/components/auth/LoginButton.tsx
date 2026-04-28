@@ -8,7 +8,7 @@ import { useAuth } from '@/src/hooks/useAuth';
  * 地址按钮点击跳 /me（用户的直觉期待），登出必须显式点"登出"链接
  */
 export default function LoginButton() {
-  const { ready, authenticated, evmAddress, login, logout } = useAuth();
+  const { ready, authenticated, login, logout } = useAuth();
 
   if (!ready) return null;
 
@@ -24,17 +24,13 @@ export default function LoginButton() {
     );
   }
 
-  const short = evmAddress
-    ? `${evmAddress.slice(0, 6)}...${evmAddress.slice(-4)}`
-    : '已登录';
-
   return (
     <div className="flex items-center gap-3">
       <Link
         href="/me"
         className="rounded-full border border-white/20 px-4 py-1.5 text-sm text-white transition-colors hover:bg-white/10"
       >
-        {short}
+        我的音乐
       </Link>
       <button
         type="button"

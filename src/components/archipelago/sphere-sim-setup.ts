@@ -149,11 +149,12 @@ export function setupSimulation(
 }
 
 /**
- * Drag 行为照抄 sound-spheres line 661-679：
- * - drag start 不重启 sim（避免单击触发抖动）
- * - 实际 mousemove 才标 _dragged + alphaTarget(0.08).restart()
- * - drag end alphaTarget(0) 让 sim 衰减回稳定（"永远可拖" 通过下次 drag 重启实现）
+ * Drag 行为：
+ * - drag start 记录起点
+ * - 实际位移 > DRAG_THRESHOLD (8px) 才标 _dragged + 重启 sim
+ * - 位移 < threshold 不算 drag，松手后 React onClick 仍触发 toggle 播放
  */
+const DRAG_THRESHOLD = 8;
 export function attachDrag(
   els: (SVGGElement | null)[],
   nodes: SimNode[],
@@ -162,11 +163,16 @@ export function attachDrag(
   const dragBehavior = drag<SVGGElement, SimNode>()
     .on('start', (e, d) => {
       d._dragged = false;
-      d.fx = d.x;
-      d.fy = d.y;
+      const dn = d as SimNode & { _dragStartX?: number; _dragStartY?: number };
+      dn._dragStartX = e.x;
+      dn._dragStartY = e.y;
     })
     .on('drag', (e, d) => {
+      const dn = d as SimNode & { _dragStartX?: number; _dragStartY?: number };
       if (!d._dragged) {
+        const dx = e.x - (dn._dragStartX ?? e.x);
+        const dy = e.y - (dn._dragStartY ?? e.y);
+        if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return; // 微位移不算拖动
         d._dragged = true;
         if (!e.active) sim.alphaTarget(0.08).restart();
       }

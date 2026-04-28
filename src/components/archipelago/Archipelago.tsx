@@ -11,7 +11,7 @@ import {
   addCachedMintedId,
 } from '@/src/lib/nft-cache';
 import SphereCanvas from './SphereCanvas';
-import { GROUPS, type GroupId } from './sphere-config';
+import { GROUPS, type GroupId, getGroupTracks, padTracksToTarget } from './sphere-config';
 
 /**
  * Archipelago — sound-spheres 风格群岛容器
@@ -41,6 +41,27 @@ export default function Archipelago({ fullscreen = false }: Props) {
   useEffect(() => {
     fetchTracks().then(setTracks);
   }, []);
+
+  // v13 — 预下载当前 group 36 首前 300KB（HTTP Range），加速点击播放的首字节响应
+  // 切组（A/B/C）时重新预热新 36 首
+  useEffect(() => {
+    if (tracks.length === 0) return;
+    const padded = padTracksToTarget(getGroupTracks(currentGroupId, tracks), 36);
+    let cancelled = false;
+    const queue = padded.filter((t) => t.audio_url);
+    const concurrency = 6;
+    const workers = Array.from({ length: concurrency }, async () => {
+      while (queue.length > 0 && !cancelled) {
+        const t = queue.shift();
+        if (!t?.audio_url) continue;
+        try {
+          await fetch(t.audio_url, { headers: { Range: 'bytes=0-307199' } });
+        } catch { /* ignore */ }
+      }
+    });
+    void Promise.all(workers);
+    return () => { cancelled = true; };
+  }, [tracks, currentGroupId]);
 
   // userId 变化 → 重读 cache（B1 隔离）
   useEffect(() => {

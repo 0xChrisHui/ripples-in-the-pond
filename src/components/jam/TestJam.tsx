@@ -92,7 +92,7 @@ function TestJamDesktop() {
   return (
     <section className="flex flex-col items-center gap-6 py-8">
       <p className="text-sm tracking-wide text-white/40">
-        按下键盘 A-Z 演奏 · {sounds.length} 个音效 · SVG 动画
+        按下键盘 A-Z 演奏
         {recording && <span className="ml-2 text-red-400/70">● 录制中</span>}
       </p>
 

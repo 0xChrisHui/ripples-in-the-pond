@@ -8,18 +8,16 @@ import type { Track } from '@/src/types/tracks';
  * 用户决策（2026-04-27）：3 group A/B/C 各 36 首；不做跨 group 虚线圈
  */
 
-// 3 group palette（用户 v7 自定配色，2026-04-27）
-// A: Portra 暖橙系 8 色 / B: 复古印刷系 6 色 / C: 荧光实验系 8 色
-// shadeIdx 用 % palette.length 处理不等长
+// 3 group palette
+// A: Portra 暖橙系 8 色（保留）/ B: 海洋深邃系 6 色（v13 新）/ C: 森林大地系 8 色（v13 新）
 export const GROUP_PALETTES: string[][] = [
   // A — Portra 暖橙 / Fuji 青绿 / Cinestill 红 / Ektachrome 蓝 /
   //     高光奶油 / 阴影巧克力 / 紫调阴影 / CN16 草绿
   ['#D8A878','#7EA898','#A83A3A','#6A7898','#E8D8B8','#382828','#B8A8C8','#9AA878'],
-  // B — Warm Red / Yellow / Forest / Burgundy / Newsprint / Sienna
-  ['#A82A32','#E8C83A','#0A3A2E','#4A2A3C','#C8B8A0','#7A3A2A'],
-  // C — 工业金属系（v8 用户改）：铜绿 / 铁锈橙 / 铅灰 / 黄铜苔 /
-  //                              不锈钢 / 褪金 / 深锌 / 熔铁
-  ['#5A8A78','#A8542A','#3A3A3A','#7A8A4A','#4A5A6A','#C8A060','#2A3A4A','#8A3A2A'],
+  // B — 海洋深邃：深蓝 / 海绿 / 银白 / 珊瑚 / 星辰金 / 深炭
+  ['#1F4D6B','#3A7B82','#C4D2D8','#E89682','#C4A55C','#1F2933'],
+  // C — 森林大地：苔绿 / 焦糖 / 橡木 / 米金 / 茶绿 / 土褐 / 烟青 / 麦黄
+  ['#4A6F4A','#A86E3D','#6B4F35','#C9A878','#5A7A5A','#6B4632','#4A5C5C','#BFA968'],
 ];
 
 export type GroupId = 'A' | 'B' | 'C';
@@ -123,23 +121,68 @@ export function computeNodeAttrs(
 }
 
 /**
- * 节点间 link（作 force 稳定力，不渲染 line）
- * 按 sound-spheres line 482-497 的 deterministic seed
- * 36 节点 / group（接近原版 47），密度系数恢复到原版 0.56
+ * v13 重写：聚落式 link 拓扑（不再全节点稠密 cross-link）
+ * - 1 中心 hub 节点（importance 最高）连 7-9 个非 outlier 节点
+ * - 35% 节点为 outlier 完全无连接（孤零零）
+ * - 剩余分 4-6 个 size 4-7 的小集群，集群内全连，集群间不连（"机构洞"）
+ * 整体边数从原 ~120 → ~50，视觉上呈现：1 hub + 散点 + 几个小聚落
  */
 export function generateLinks(nodes: SimNode[]): SimLink[] {
   const links: SimLink[] = [];
-  for (let i = 0; i < nodes.length; i++) {
-    for (let j = i + 1; j < nodes.length; j++) {
-      const a = nodes[i];
-      const b = nodes[j];
-      const seed = ((a.track.week * 17 + b.track.week * 31 + a.track.week * b.track.week) % 97) / 97;
-      const avgImp = (a.importance + b.importance) / 2;
-      if (seed < avgImp * 0.56) {
-        const corr = 0.18 + ((a.track.week * 3 + b.track.week * 7) % 10) / 13;
-        links.push({ source: a.id, target: b.id, correlation: Math.min(0.95, corr) });
+  const N = nodes.length;
+  if (N < 5) return links;
+
+  // 1. hub = importance 最高的节点
+  let hubIdx = 0;
+  for (let i = 1; i < N; i++) {
+    if (nodes[i].importance > nodes[hubIdx].importance) hubIdx = i;
+  }
+
+  // 2. 决定 outlier（35%，deterministic by week）
+  const isOutlier = new Set<number>();
+  for (let i = 0; i < N; i++) {
+    if (i === hubIdx) continue;
+    if ((nodes[i].track.week * 23) % 100 < 35) isOutlier.add(i);
+  }
+
+  // 3. hub 连 7-9 个非 outlier 节点
+  const hubTargets: number[] = [];
+  const hubLimit = 7 + (nodes[hubIdx].track.week % 3);
+  for (let i = 0; i < N && hubTargets.length < hubLimit; i++) {
+    if (i === hubIdx || isOutlier.has(i)) continue;
+    hubTargets.push(i);
+  }
+  hubTargets.forEach((j) => {
+    links.push({
+      source: nodes[hubIdx].id,
+      target: nodes[j].id,
+      correlation: 0.62,
+    });
+  });
+
+  // 4. 剩余节点（非 hub / 非 hubTarget / 非 outlier）分小集群全连
+  const remaining: number[] = [];
+  const used = new Set([hubIdx, ...hubTargets, ...Array.from(isOutlier)]);
+  for (let i = 0; i < N; i++) if (!used.has(i)) remaining.push(i);
+
+  let p = 0;
+  let groupSeed = 0;
+  while (p < remaining.length) {
+    const size = 4 + (groupSeed % 4); // 集群大小 4-7
+    const cluster = remaining.slice(p, p + size);
+    for (let i = 0; i < cluster.length; i++) {
+      for (let j = i + 1; j < cluster.length; j++) {
+        const corr = 0.45 + ((cluster[i] + cluster[j] * 3) % 5) / 12;
+        links.push({
+          source: nodes[cluster[i]].id,
+          target: nodes[cluster[j]].id,
+          correlation: Math.min(0.85, corr),
+        });
       }
     }
+    p += size;
+    groupSeed++;
   }
+
   return links;
 }

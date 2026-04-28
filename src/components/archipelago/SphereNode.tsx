@@ -54,8 +54,9 @@ export default function SphereNode({
   const showOverlay = hovered || isPlaying;
   const renderRadius = hovered ? radius * 1.09 : radius;
   const filterUrl = hovered ? 'url(#glow-strong)' : 'url(#glow-soft)';
-  // 日食模式下 hover 主圆 fill 改白色（而不是 group 色）
-  const renderFill = hovered && isAnyPlaying ? '#ffffff' : color;
+  // 日食模式下：playing 圆 + hover 圆 fill 改白（消除彩色 glow 雾带）
+  const renderFill =
+    isPlaying || (hovered && isAnyPlaying) ? '#ffffff' : color;
   // 日食模式下 ripple stroke 改白
   const rippleStroke = isAnyPlaying ? '#ffffff' : color;
   // 每个 SphereNode 独立的 ripple 节奏（deterministic，避免 Math.random in render）
