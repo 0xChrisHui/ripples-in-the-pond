@@ -22,21 +22,21 @@ interface Props {
 export default function EclipseLayer({ zoomGRef, eclipseGRef }: Props) {
   return (
     <svg
-      className="pointer-events-none fixed inset-0 z-[55] h-full w-full"
+      className="pointer-events-none fixed inset-0 h-full w-full"
+      style={{ zIndex: 200 }}
       aria-hidden="true"
     >
       <defs>
         <radialGradient id="eclipse-halo">
-          {/* 黑圆内透明（避免光晕灼穿月亮）*/}
+          {/* v3 柔化：opacity peak 0.95 → 0.55，整体降低让光晕更柔和 */}
           <stop offset="0%" stopColor="white" stopOpacity="0" />
           <stop offset="22%" stopColor="white" stopOpacity="0" />
-          {/* 紧贴黑圆边缘（unit r=50 处）— 内核最亮，与 ripple 起点重叠 */}
-          <stop offset="24%" stopColor="white" stopOpacity="0.95" />
-          {/* ripple 边缘（unit r=80 ~ 36%）— 仍较亮 */}
-          <stop offset="36%" stopColor="white" stopOpacity="0.65" />
+          {/* 紧贴黑圆边缘 — 柔和起亮 */}
+          <stop offset="24%" stopColor="white" stopOpacity="0.55" />
+          {/* ripple 边缘 */}
+          <stop offset="36%" stopColor="white" stopOpacity="0.32" />
           {/* 中段过渡 */}
-          <stop offset="60%" stopColor="white" stopOpacity="0.25" />
-          {/* 外缘渐没（unit r=220 = 4.4x 黑圆）*/}
+          <stop offset="60%" stopColor="white" stopOpacity="0.1" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </radialGradient>
       </defs>

@@ -48,13 +48,29 @@ export function setupSimulation(
     { x: cx,                y: cy },
   ];
 
-  // 初始位置：每个节点初始化在所属 cluster anchor 附近（小范围散开）
+  // v11 — 给每个节点分配独立 anchor + strength：
+  // 30% 概率作为 outlier（屏幕随机散点 + 弱拉力），70% 在 cluster 内（强拉 + 微 jitter）。
+  // 实现"散点 + 聚落"格局，分布更随机。
+  const anchorMap = new Map<string, { x: number; y: number; strength: number }>();
   simNodes.forEach((n) => {
-    const anchor = clusterAnchors[n.cluster % CLUSTER_COUNT];
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 30 + Math.random() * 80;
-    n.x = anchor.x + Math.cos(angle) * dist;
-    n.y = anchor.y + Math.sin(angle) * dist;
+    const isOutlier = Math.random() < 0.3;
+    let ax: number;
+    let ay: number;
+    let strength: number;
+    if (isOutlier) {
+      ax = PAD + Math.random() * (width - PAD * 2);
+      ay = PAD + Math.random() * (height - PAD * 2);
+      strength = 0.025; // 极弱拉力，自由漂
+    } else {
+      const a = clusterAnchors[n.cluster % CLUSTER_COUNT];
+      ax = a.x + (Math.random() - 0.5) * 90;
+      ay = a.y + (Math.random() - 0.5) * 90;
+      strength = 0.14;
+    }
+    anchorMap.set(n.id, { x: ax, y: ay, strength });
+
+    n.x = ax + (Math.random() - 0.5) * 30;
+    n.y = ay + (Math.random() - 0.5) * 30;
     n.vx = 0;
     n.vy = 0;
     delete n.fx;
@@ -84,14 +100,18 @@ export function setupSimulation(
         .strength(0.85)
         .iterations(4),
     )
-    // v9 cluster forceX/Y 0.20 → 0.12（弱化拉力，让节点能在 cluster 内松散散开）
+    // v11 — forceX/Y 用每节点独立 anchor + strength（cluster 内强拉，outlier 弱拉）
     .force(
       'cluster-x',
-      forceX<SimNode>((d) => clusterAnchors[d.cluster % CLUSTER_COUNT].x).strength(0.12),
+      forceX<SimNode>((d) => anchorMap.get(d.id)?.x ?? cx).strength(
+        (d) => anchorMap.get(d.id)?.strength ?? 0.1,
+      ),
     )
     .force(
       'cluster-y',
-      forceY<SimNode>((d) => clusterAnchors[d.cluster % CLUSTER_COUNT].y).strength(0.12),
+      forceY<SimNode>((d) => anchorMap.get(d.id)?.y ?? cy).strength(
+        (d) => anchorMap.get(d.id)?.strength ?? 0.1,
+      ),
     )
     // 弱的全局 center 兜底（防整体偏移屏幕）
     .force('center', forceCenter(cx, cy).strength(0.02))
@@ -138,10 +158,10 @@ export function attachDrag(
       d.fy = e.y;
     })
     .on('end', (e, d) => {
-      // v7 修：drag end 回到 baseline 0.015 而不是 0，避免拖动一次后节点凝固
+      // v11：保留 fx/fy 不释放 — 节点固定在拖到位置，可脱离聚落不回弹
+      // 其他未拖节点仍受 alphaTarget baseline 微漂浮
       if (!e.active) sim.alphaTarget(ALPHA_BASELINE);
-      d.fx = null;
-      d.fy = null;
+      void d;
     });
 
   els.forEach((el, i) => {

@@ -137,11 +137,11 @@ export default function SphereCanvas({
     <svg ref={svgRef} className="h-full w-full cursor-grab active:cursor-grabbing">
       <SphereGlowDefs />
       <g ref={zoomGRef}>
-        {/* 连接线层（在节点下面；日食模式下不消失，统一改白色）*/}
-        <g style={{ pointerEvents: 'none' }}>
+        {/* 连接线层（在节点下面；日食模式下整体淡出隐藏）*/}
+        <g style={{ opacity: playingId !== null ? 0 : 1, transition: 'opacity 0.5s ease', pointerEvents: 'none' }}>
           {simLinks.map((l, i) => {
             const src = simNodes.find((n) => n.id === (typeof l.source === 'string' ? l.source : (l.source as SimNode).id));
-            const strokeColor = playingId !== null ? '#ffffff' : (src?.color ?? '#888');
+            const strokeColor = src?.color ?? '#888';
             return (
               <line
                 key={i}
@@ -151,7 +151,6 @@ export default function SphereCanvas({
                 strokeOpacity={0.05 + l.correlation * 0.13}
                 strokeLinecap="round"
                 pointerEvents="none"
-                style={{ transition: 'stroke 0.4s ease' }}
               />
             );
           })}
