@@ -35,6 +35,15 @@
   --animate-jam-toast: jam-toast 4s ease-in-out forwards;
 }
 
+/* Phase 6 B2.1 v6 — 隐藏滚动条（视觉上不显示，仍可滚） */
+html, body {
+  scrollbar-width: none; /* Firefox */
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome / Safari / Edge */
+}
+
 /* Phase 6 B2.1 — 全局 noise grain 颗粒（sound-spheres line 35-42 复刻） */
 body::after {
   content: '';

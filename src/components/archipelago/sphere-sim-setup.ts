@@ -10,7 +10,7 @@ import {
 } from 'd3-force';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
-import { CFG, type SimNode, type SimLink } from './sphere-config';
+import { CFG, CLUSTER_COUNT, type SimNode, type SimLink } from './sphere-config';
 
 /**
  * Phase 6 B2.1 — D3 force simulation + drag 的纯函数 setup
@@ -35,12 +35,23 @@ export function setupSimulation(
   const cx = width / 2;
   const cy = height / 2;
 
-  // 初始位置：圆心附近更大范围扩散（避免开局拥挤剧烈抖动）
+  // Phase 6 B2.1 v6 — 5 个 cluster anchor 让节点形成聚落（非均匀分布）
+  // 不规则放置（不是网格），让视觉看起来"自然有机"
+  const clusterAnchors: { x: number; y: number }[] = [
+    { x: cx - width * 0.22, y: cy - height * 0.18 },
+    { x: cx + width * 0.24, y: cy - height * 0.22 },
+    { x: cx - width * 0.18, y: cy + height * 0.22 },
+    { x: cx + width * 0.20, y: cy + height * 0.16 },
+    { x: cx,                y: cy },
+  ];
+
+  // 初始位置：每个节点初始化在所属 cluster anchor 附近（小范围散开）
   simNodes.forEach((n) => {
+    const anchor = clusterAnchors[n.cluster % CLUSTER_COUNT];
     const angle = Math.random() * Math.PI * 2;
-    const dist = 60 + Math.random() * 200;
-    n.x = cx + Math.cos(angle) * dist;
-    n.y = cy + Math.sin(angle) * dist;
+    const dist = 30 + Math.random() * 80;
+    n.x = anchor.x + Math.cos(angle) * dist;
+    n.y = anchor.y + Math.sin(angle) * dist;
     n.vx = 0;
     n.vy = 0;
     delete n.fx;
@@ -57,9 +68,9 @@ export function setupSimulation(
     )
     .force(
       'charge',
-      // charge 280 → 180（减弱排斥力，进入时不那么剧烈）
+      // v6 charge 进一步降到 110（避免开局抖动）
       forceManyBody<SimNode>().strength(
-        (d) => -(180 * (0.6 + d.importance * 0.8)),
+        (d) => -(110 * (0.6 + d.importance * 0.8)),
       ),
     )
     .force(
@@ -69,13 +80,21 @@ export function setupSimulation(
         .strength(0.85)
         .iterations(4),
     )
-    .force('center', forceCenter(cx, cy).strength(0.1))
-    .force('x', forceX(cx).strength(0.06))
-    .force('y', forceY(cy).strength(0.06))
+    // v6 朝 cluster anchor 拉（替代单一 forceCenter），让节点形成聚落
+    .force(
+      'cluster-x',
+      forceX<SimNode>((d) => clusterAnchors[d.cluster % CLUSTER_COUNT].x).strength(0.07),
+    )
+    .force(
+      'cluster-y',
+      forceY<SimNode>((d) => clusterAnchors[d.cluster % CLUSTER_COUNT].y).strength(0.07),
+    )
+    // 弱的全局 center 兜底（防整体偏移屏幕）
+    .force('center', forceCenter(cx, cy).strength(0.02))
     .alphaDecay(0.016)
-    .velocityDecay(0.4)
+    .velocityDecay(0.5)
     // 持续保持流动 — 极弱的 alpha 让节点缓慢漂浮，不固化
-    .alphaTarget(0.02)
+    .alphaTarget(0.015)
     .on('tick', () => {
       // clamp x/y 到画布内（防极端 charge 把节点推飞）
       simNodes.forEach((n) => {

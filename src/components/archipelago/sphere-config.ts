@@ -45,8 +45,12 @@ export interface SimNode extends SimulationNodeDatum {
   importance: number;
   radius: number;
   color: string;
+  /** Phase 6 B2.1 v6 — 0..N 之间的 cluster 索引，让节点形成几个聚落而非平均分布 */
+  cluster: number;
   _dragged?: boolean;
 }
+
+export const CLUSTER_COUNT = 5;
 
 export interface SimLink extends SimulationLinkDatum<SimNode> {
   correlation: number;
@@ -93,17 +97,21 @@ export function computeNodeAttrs(
   importance: number;
   radius: number;
   color: string;
+  cluster: number;
 } {
   const importance = 0.30 + ((track.week * 13) % 65) / 100;
   const radius = CFG.minR + importance * (CFG.maxR - CFG.minR);
   const groupIdx = GROUPS.findIndex((g) => g.id === groupId);
   const palette = GROUP_PALETTES[groupIdx];
   const shadeIdx = (track.week - 1) % palette.length;
+  // cluster 用 week 派生但跟 group 不同模数，让聚落分布看起来不像规则切片
+  const cluster = ((track.week * 7) % CLUSTER_COUNT + CLUSTER_COUNT) % CLUSTER_COUNT;
   return {
     groupId,
     importance,
     radius,
     color: palette[shadeIdx],
+    cluster,
   };
 }
 

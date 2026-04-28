@@ -19,39 +19,29 @@ export interface PlayerLifecycle {
 interface PlayerState {
   playing: boolean;
   currentTrack: Track | null;
-  /** 当前曲目总时长（秒） */
   duration: number;
-  /** 播放开始的 AudioContext 时间（秒），用于算进度 */
+  /** 播放开始时的 audio.currentTime（一般为 0；中途 resume 不为 0） */
   startedAt: number;
   toggle: (track: Track) => Promise<void>;
   stop: () => void;
-  /** 注册播放生命周期回调，返回注销函数 */
   subscribe: (lifecycle: PlayerLifecycle) => () => void;
-  /** 获取 AudioContext.currentTime（秒） */
+  /** 当前 audio.currentTime（秒） */
   getCurrentTime: () => number;
 }
 
 const PlayerContext = createContext<PlayerState | null>(null);
 
 /**
- * PlayerProvider — 全局音频状态
- * 包在 Providers 里，任何组件都能通过 usePlayer() 共享同一个播放状态
- * 💭 为什么不直接用 useAudioPlayer：多个 Island 各自调用会创建独立状态，无法共享
+ * PlayerProvider — 全局播放器（Phase 6 B2.1 v6 改用 HTMLAudio 实现首次秒开）
+ *
+ * vs 旧版（Web Audio + decode）的区别：
+ * - HTMLAudio.play() 几乎瞬时（streaming 边加载边播）→ 解决"首次 0.8s 延迟"
+ * - getCurrentTime / startedAt / duration 接口保持兼容（BottomPlayer + useRecorder 在用）
+ * - HomeJam 的 useJam 仍用 Web Audio（精确合奏不受影响）
  */
 export function PlayerProvider({ children }: { children: ReactNode }) {
-  const ctxRef = useRef<AudioContext | null>(null);
-  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
-  /**
-   * Phase 6 B4: 拦"快速连点 / 切岛屿"导致的音频叠加
-   * - 同 trackId 第二次进入 play → 拒绝（已经在加载）
-   * - await 期间 loadingRef 被覆盖（用户切到别的）→ stale 那次 abort
-   * - stop() 把 loadingRef 设 null → 加载中的 play 也会被 abort
-   */
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadingRef = useRef<string | null>(null);
-  /**
-   * Phase 6 B2.1 v5: AudioBuffer 缓存，重复点同一首立即播放（首次仍需 fetch+decode）
-   */
-  const buffersRef = useRef<Map<string, AudioBuffer>>(new Map());
   const [playing, setPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [duration, setDuration] = useState(0);
@@ -71,71 +61,64 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     listenersRef.current.forEach((l) => l.onPlayEnd?.());
   }, []);
 
-  const getContext = useCallback(() => {
-    if (!ctxRef.current) {
-      ctxRef.current = new AudioContext();
+  // lazy 创建 + 绑事件（loadedmetadata 拿 duration / ended reset state）
+  const getAudio = useCallback(() => {
+    if (!audioRef.current) {
+      const audio = new Audio();
+      audio.preload = 'auto';
+      audio.addEventListener('loadedmetadata', () => {
+        if (audioRef.current === audio) setDuration(audio.duration || 0);
+      });
+      audio.addEventListener('ended', () => {
+        if (audioRef.current === audio) {
+          setPlaying(false);
+          setCurrentTrack(null);
+          setDuration(0);
+          setStartedAt(0);
+          notifyEnd();
+        }
+      });
+      audioRef.current = audio;
     }
-    return ctxRef.current;
-  }, []);
+    return audioRef.current;
+  }, [notifyEnd]);
 
   const play = useCallback(async (track: Track) => {
-    // Phase 6 B4: 同 trackId 重复点直接拒绝（避免双加载）
     if (loadingRef.current === track.id) return;
     loadingRef.current = track.id;
 
-    const ctx = getContext();
+    const audio = getAudio();
+    audio.pause();
+    audio.src = track.audio_url;
 
-    if (sourceRef.current) {
-      sourceRef.current.stop();
-      sourceRef.current = null;
-      notifyEnd();
-    }
-
-    let buffer = buffersRef.current.get(track.id);
-    if (!buffer) {
-      try {
-        const res = await fetch(track.audio_url);
-        buffer = await ctx.decodeAudioData(await res.arrayBuffer());
-        buffersRef.current.set(track.id, buffer);
-      } catch (err) {
-        if (loadingRef.current === track.id) loadingRef.current = null;
-        console.error('[player] load failed', { trackId: track.id, err });
-        return;
-      }
-    }
-
-    // 加载期间用户切到别的（loadingRef 被覆盖）或 stop（loadingRef = null）→ 放弃 start
-    if (loadingRef.current !== track.id) return;
-
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(ctx.destination);
-    source.onended = () => {
-      setPlaying(false);
-      setCurrentTrack(null);
-      setDuration(0);
-      setStartedAt(0);
-      notifyEnd();
-    };
-    source.start();
-
-    sourceRef.current = source;
+    // 乐观 UI：立即变 playing（HTMLAudio 真正出声 < 100ms 通常体感即时）
     setCurrentTrack(track);
-    setDuration(buffer.duration);
-    setStartedAt(ctx.currentTime);
     setPlaying(true);
+    setStartedAt(audio.currentTime || 0);
+    setDuration(audio.duration || 0);
     notifyStart(track);
 
-    // start 后释放 lock（仅在仍是自己时；保险起见，更晚的调用可能已覆盖）
+    try {
+      await audio.play();
+    } catch (err) {
+      if (loadingRef.current === track.id) loadingRef.current = null;
+      console.error('[player] play failed', { trackId: track.id, err });
+      setPlaying(false);
+      setCurrentTrack(null);
+      return;
+    }
+
+    // 加载期间用户切到别的（loadingRef 被覆盖）→ 当前 audio 已被新 src 覆盖，无需手动停
+    if (loadingRef.current !== track.id) return;
     if (loadingRef.current === track.id) loadingRef.current = null;
-  }, [getContext, notifyStart, notifyEnd]);
+  }, [getAudio, notifyStart]);
 
   const stop = useCallback(() => {
-    // Phase 6 B4: 把 loadingRef 也清空，让加载中的 play 完成后 abort（不会还 start）
     loadingRef.current = null;
-    if (sourceRef.current) {
-      sourceRef.current.stop();
-      sourceRef.current = null;
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
     }
     setCurrentTrack(null);
     setPlaying(false);
@@ -153,7 +136,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, [playing, currentTrack, play, stop]);
 
   const getCurrentTime = useCallback(() => {
-    return ctxRef.current?.currentTime ?? 0;
+    return audioRef.current?.currentTime ?? 0;
   }, []);
 
   return (
@@ -166,7 +149,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   );
 }
 
-/** 消费全局播放状态的 hook */
 export function usePlayer(): PlayerState {
   const ctx = useContext(PlayerContext);
   if (!ctx) {
