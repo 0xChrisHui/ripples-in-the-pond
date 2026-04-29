@@ -40,6 +40,9 @@
 ### 我想回看"为什么当时这么决定"
 → `docs/JOURNAL.md`（决策日志）+ git log
 
+### 我想回看 Phase 6 B2 前端 25 轮优化历程
+→ `docs/PHASE-6-B2-FRONTEND-25-ITERATIONS.md`（完整叙述 + 经验教训 + 审美原则）
+
 ### 我想做安全加固
 → `docs/HARDENING.md`（按里程碑分级，不要在 Phase 1 就做）
 
