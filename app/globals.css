@@ -116,6 +116,41 @@ body::after {
   100% { transform: scale(1.4); opacity: 0; }
 }
 
+/* 手动点击涟漪 — v25：transform 单调 ease-out 不卡顿，前 2s（≈12%）
+   stroke-width / stroke-opacity 从 strong 平滑渐变到普通值，之后跟普通涟漪完全一样 */
+@keyframes bg-ripple-manual {
+  0%   {
+    transform: scale(0.05);
+    opacity: 1.0;
+    stroke-width: 2.6;
+    stroke-opacity: 0.95;
+  }
+  12%  {
+    opacity: 0.7;
+    stroke-width: 1.4;
+    stroke-opacity: 0.27;
+  }
+  50%  { opacity: 0.42; stroke-width: 1.4; stroke-opacity: 0.27; }
+  70%  { opacity: 0.28; stroke-width: 1.4; stroke-opacity: 0.27; }
+  82%  { opacity: 0.16; stroke-width: 1.4; stroke-opacity: 0.27; }
+  92%  { opacity: 0.07; stroke-width: 1.4; stroke-opacity: 0.27; }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+    stroke-width: 1.4;
+    stroke-opacity: 0.27;
+  }
+}
+.bg-ripple-manual {
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: bg-ripple-manual;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
 /* zoom > 1.5 时暂停 sphere ripple 动画（放大状态下省 36×3=108 个无限动画 GPU 占用）*/
 .zoom-large .ripple-c {
   animation-play-state: paused;

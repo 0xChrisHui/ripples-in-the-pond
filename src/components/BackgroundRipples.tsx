@@ -39,9 +39,16 @@ export default function BackgroundRipples() {
       c.setAttribute('cy', String(y));
       c.setAttribute('r', String(size));
       c.setAttribute('fill', 'none');
-      c.setAttribute('stroke', 'rgba(255,255,255,0.27)');
-      c.setAttribute('stroke-width', '1.4');
-      c.setAttribute('class', 'bg-ripple');
+      // v25：手动 stroke 用 white + CSS keyframe 控 stroke-width/opacity 平滑渐变
+      // 前 12%（≈2s）从 strong 渐到普通值，之后曲线和自动涟漪完全一致
+      if (manual) {
+        c.setAttribute('stroke', 'white');
+        c.setAttribute('class', 'bg-ripple-manual');
+      } else {
+        c.setAttribute('stroke', 'rgba(255,255,255,0.27)');
+        c.setAttribute('stroke-width', '1.4');
+        c.setAttribute('class', 'bg-ripple');
+      }
       c.style.animationDuration = `${duration}s`;
       svg.appendChild(c);
       window.dispatchEvent(
