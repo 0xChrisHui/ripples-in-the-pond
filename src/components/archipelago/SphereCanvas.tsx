@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { type Simulation } from 'd3-force';
 import type { Track } from '@/src/types/tracks';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
@@ -8,6 +8,7 @@ import SphereNode from './SphereNode';
 import SphereGlowDefs from './SphereGlowDefs';
 import EclipseLayer from './EclipseLayer';
 import {
+  buildClusterAssignment,
   computeNodeAttrs,
   generateLinks,
   getGroupTracks,
@@ -48,17 +49,27 @@ export default function SphereCanvas({
     [tracks, currentGroupId],
   );
 
-  const simNodes = useMemo<SimNode[]>(
-    () =>
-      tracksToShow.map((t) => ({
-        id: t.id,
-        track: t,
-        ...computeNodeAttrs(t, currentGroupId),
-      })),
-    [tracksToShow, currentGroupId],
-  );
+  // v32 — buildClusterAssignment 用 Math.random，不能在 useMemo body（react-hooks/purity）。
+  // 改用 useState + useEffect：每次 tracksToShow/currentGroupId 变化重新生成 random cluster 划分。
+  const [simData, setSimData] = useState<{
+    nodes: SimNode[];
+    links: SimLink[];
+    assignment: Map<string, number>;
+    clusterCount: number;
+  }>({ nodes: [], links: [], assignment: new Map(), clusterCount: 0 });
 
-  const simLinks = useMemo<SimLink[]>(() => generateLinks(simNodes), [simNodes]);
+  useEffect(() => {
+    const nodes: SimNode[] = tracksToShow.map((t) => ({
+      id: t.id,
+      track: t,
+      ...computeNodeAttrs(t, currentGroupId),
+    }));
+    const { assignment, clusterCount } = buildClusterAssignment(nodes.map((n) => n.id));
+    const links = generateLinks(nodes, assignment);
+    setSimData({ nodes, links, assignment, clusterCount });
+  }, [tracksToShow, currentGroupId]);
+
+  const { nodes: simNodes, links: simLinks, assignment, clusterCount } = simData;
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   const zoomGRef = useRef<SVGGElement | null>(null);
@@ -98,10 +109,15 @@ export default function SphereCanvas({
   useEffect(() => {
     if (!svgRef.current || simNodes.length === 0) return;
 
+    // v34 — 重建 sim 时通知 BackgroundRipples 清屏 + 暂停 2s（避免旧涟漪推新球）
+    // 同时清自己的推球数据，让球以 0 vx/vy 平稳启动
+    window.dispatchEvent(new Event('archipelago:reset'));
+    wavesRef.current = [];
+
     const W = svgRef.current.clientWidth || 800;
     const H = svgRef.current.clientHeight || 600;
 
-    const sim = setupSimulation(simNodes, simLinks, W, H, () => {
+    const sim = setupSimulation(simNodes, simLinks, W, H, assignment, clusterCount, () => {
       // 节点 transform
       simNodes.forEach((n, i) => {
         const el = nodeRefs.current[i];

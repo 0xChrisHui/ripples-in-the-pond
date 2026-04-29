@@ -12,10 +12,8 @@ import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 import {
   CFG,
-  CLUSTER_COUNT,
   hashStr,
   halton,
-  getNodeCluster,
   type SimNode,
   type SimLink,
 } from './sphere-config';
@@ -29,40 +27,41 @@ export function setupSimulation(
   links: SimLink[],
   width: number,
   height: number,
+  assignment: Map<string, number>,
+  clusterCount: number,
   onTick: () => void,
 ): Simulation<SimNode, SimLink> {
   const cx = width / 2;
   const cy = height / 2;
 
-  // v15 — deterministic cluster：与 generateLinks 共用 getNodeCluster。
-  // link 仅在同 cluster 内生成 → link 拉力方向 = cluster 拉力方向（一致），聚落不被撕裂。
-  // Anchor 位置用 Halton 序列（均匀分布的 7 个点），确保 cluster 之间彼此远离。
-  const clusterAnchors = Array.from({ length: CLUSTER_COUNT }, (_, i) => ({
-    x: width * (0.15 + halton(i + 1, 2) * 0.70),
-    y: height * (0.15 + halton(i + 1, 3) * 0.70),
-  }));
+  // v32 — clusterCount 动态（buildClusterAssignment 决定，每次 sim 重建即变）。
+  // 每个 cluster 一个 halton anchor，cluster 内节点共享 anchor + jitter。
+  // v33 — size<=2 的小 cluster 有 30% 概率落在外圈 0.20-0.80（60% 屏宽），
+  //       让 ~2 个小聚落漂远但不到边缘；其他 cluster 仍在中心 0.32-0.68（36%）。
+  const clusterSizes = Array.from({ length: clusterCount }, () => 0);
+  assignment.forEach((cid) => {
+    if (cid >= 0 && cid < clusterCount) clusterSizes[cid]++;
+  });
+  const clusterAnchors = Array.from({ length: Math.max(clusterCount, 1) }, (_, i) => {
+    const isOuter = (clusterSizes[i] ?? 0) <= 2 && Math.random() < 0.30;
+    const range = isOuter ? 0.60 : 0.36;
+    const offset = isOuter ? 0.20 : 0.32;
+    return {
+      x: width * (offset + halton(i + 1, 2) * range),
+      y: height * (offset + halton(i + 1, 3) * range),
+    };
+  });
 
   const anchorMap = new Map<string, { x: number; y: number; strength: number }>();
   simNodes.forEach((n) => {
-    const c = getNodeCluster(n);
+    const c = assignment.get(n.id) ?? 0;
+    const a = clusterAnchors[c] ?? { x: cx, y: cy };
     const h = hashStr(n.id);
-    let ax: number;
-    let ay: number;
-    let strength: number;
-    if (c < 0) {
-      // outlier：屏幕上 deterministic 散点位置
-      ax = PAD + ((h % 1000) / 1000) * (width - 2 * PAD);
-      ay = PAD + (((h >>> 10) % 1000) / 1000) * (height - 2 * PAD);
-      strength = 0.018;
-    } else {
-      const a = clusterAnchors[c];
-      const jx = ((h >>> 5) % 80) - 40; // ±40 jitter
-      const jy = ((h >>> 13) % 80) - 40;
-      ax = a.x + jx;
-      ay = a.y + jy;
-      strength = 0.22;
-    }
-    anchorMap.set(n.id, { x: ax, y: ay, strength });
+    const jx = ((h >>> 5) % 30) - 15;
+    const jy = ((h >>> 13) % 30) - 15;
+    const ax = a.x + jx;
+    const ay = a.y + jy;
+    anchorMap.set(n.id, { x: ax, y: ay, strength: 0.18 });
     n.x = ax;
     n.y = ay;
     n.vx = 0;
@@ -83,10 +82,11 @@ export function setupSimulation(
       .strength((d) => d.correlation * 0.30))
     .force('charge', forceManyBody<SimNode>().strength((d) => -(70 * (0.6 + d.importance * 0.8))))
     .force('collide', forceCollide<SimNode>()
-      .radius((d) => d.radius * 1.4 + 14).strength(0.85).iterations(4))
+      // v32 — r*1.0+4（v31 太挤）→ r*1.1+8，介于 v30/v31 之间
+      .radius((d) => d.radius * 1.1 + 8).strength(0.85).iterations(4))
     .force('cluster-x', forceX<SimNode>((d) => anchorMap.get(d.id)?.x ?? cx).strength(strengthOf))
     .force('cluster-y', forceY<SimNode>((d) => anchorMap.get(d.id)?.y ?? cy).strength(strengthOf))
-    .force('center', forceCenter(cx, cy).strength(0.02))
+    .force('center', forceCenter(cx, cy).strength(0.03))
     .alphaDecay(0.016)
     .velocityDecay(0.5)
     .alphaTarget(ALPHA_BASELINE)

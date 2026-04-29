@@ -13,7 +13,6 @@
     "@privy-io/react-auth": "^3.20.0",
     "@privy-io/server-auth": "^1.32.5",
     "@supabase/supabase-js": "^2.103.0",
-    "@tweenjs/tween.js": "^25.0.0",
     "@types/d3-zoom": "^3.0.8",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.37.0",
@@ -26,7 +25,6 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "server-only": "^0.0.1",
-    "two.js": "^0.8.23",
     "viem": "^2.47.11"
   },
   "devDependencies": {

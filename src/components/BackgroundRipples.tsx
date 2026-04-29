@@ -103,10 +103,23 @@ export default function BackgroundRipples() {
     };
     window.addEventListener('click', onClick);
 
+    // v34 — 切 group / 重建 sim 时清屏 + 暂停 2s 等球稳定后再 spawn
+    const onReset = () => {
+      if (cancelled || !svg) return;
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      timers.forEach((t) => window.clearTimeout(t));
+      timers.length = 0;
+      lastPosRef.current = null;
+      const id = window.setTimeout(tick, 2000);
+      timers.push(id);
+    };
+    window.addEventListener('archipelago:reset', onReset);
+
     return () => {
       cancelled = true;
       timers.forEach((t) => window.clearTimeout(t));
       window.removeEventListener('click', onClick);
+      window.removeEventListener('archipelago:reset', onReset);
       if (svg) while (svg.firstChild) svg.removeChild(svg.firstChild);
     };
   }, []);

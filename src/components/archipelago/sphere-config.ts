@@ -8,19 +8,20 @@ import type { Track } from '@/src/types/tracks';
  * 用户决策（2026-04-27）：3 group A/B/C 各 36 首；不做跨 group 虚线圈
  */
 
-// 3 group palette
-// A: Portra 暖橙系 8 色（保留）
-// B: 海洋深邃 6 色 — v14 把 #1F2933 深炭换 #5B7A95 雾蓝（黑底可见性更好）
-// C: 春日花园 6 色 — v14 重做（樱花/嫩柳/晴空/油菜花/紫薇/暖白）
+// 3 group palette（v26 — B/C 改为 A 删 2 + 加 2 同风格变体，皆 8 色）
+// A: Portra 暖橙系 8 色（基底）
+// B: Cinestill 800T 夜景 8 色 — A 删暖橙/奶油，加深夜蓝/霓虹红
+// C: Ektar 100 鲜艳 8 色 — A 删巧克力/紫调阴影，加鲜橙/翡翠绿
 export const GROUP_PALETTES: string[][] = [
   // A — Portra 暖橙 / Fuji 青绿 / Cinestill 红 / Ektachrome 蓝 /
   //     高光奶油 / 阴影巧克力 / 紫调阴影 / CN16 草绿
   ['#D8A878','#7EA898','#A83A3A','#6A7898','#E8D8B8','#382828','#B8A8C8','#9AA878'],
-  // B — 莓紫雾蓝 5 色：莓紫 / 雾蓝 / 杏色 / 钢灰 / 红粉
-  ['#9B6B8E','#7A8FA3','#D4C0B0','#4A5566','#C97B7B'],
-  // C — 莓紫绿粉 5 色（v19 回退 v15 + 把钢灰换成蜜蜡黄稍亮一点）
-  // 莓紫 / 鼠尾草绿 / 薰衣草紫 / 蜜蜡黄（稍亮）/ 红粉
-  ['#9B6B8E','#7A9B7D','#B5A0C5','#D8B888','#C97B7B'],
+  // B — Vintage Slide + 霓虹红（v29 替换 #A88068 红棕）：Portra 暖橙 / Fuji 青绿 /
+  //     高光奶油 / 阴影巧克力 / 紫调阴影 / CN16 草绿 / 霓虹红 / 橄榄
+  ['#D8A878','#7EA898','#E8D8B8','#382828','#B8A8C8','#9AA878','#C8504A','#888858'],
+  // C — Ektar 100 鲜艳：Portra 暖橙 / Fuji 青绿 / Cinestill 红 / Ektachrome 蓝 /
+  //     高光奶油 / CN16 草绿 / 鲜橙 / 翡翠绿
+  ['#D8A878','#7EA898','#A83A3A','#6A7898','#E8D8B8','#9AA878','#D88A4A','#5A8868'],
 ];
 
 export type GroupId = 'A' | 'B' | 'C';
@@ -32,17 +33,18 @@ export interface GroupDef {
 }
 
 export const GROUPS: GroupDef[] = [
-  { id: 'A', label: 'A', color: GROUP_PALETTES[0][0] },
-  { id: 'B', label: 'B', color: GROUP_PALETTES[1][0] },
-  { id: 'C', label: 'C', color: GROUP_PALETTES[2][0] },
+  { id: 'A', label: '1', color: GROUP_PALETTES[0][0] },
+  { id: 'B', label: '2', color: GROUP_PALETTES[1][0] },
+  { id: 'C', label: '3', color: GROUP_PALETTES[2][0] },
 ];
 
+// v31 — 球大小恢复到 v29（9/30），靠减 collide 斥力 + 提 outlier 拉力压总占地
 export const CFG = {
-  minR: 13,
-  maxR: 50,
+  minR: 9,
+  maxR: 30,
   charge: 280,
-  linkBaseDist: 90,
-  linkVariance: 110,
+  linkBaseDist: 50,
+  linkVariance: 50,
   slideMs: 420,
 };
 
@@ -53,26 +55,48 @@ export interface SimNode extends SimulationNodeDatum {
   importance: number;
   radius: number;
   color: string;
-  /** Phase 6 B2.1 v6 — 0..N 之间的 cluster 索引，让节点形成几个聚落而非平均分布 */
-  cluster: number;
   _dragged?: boolean;
 }
 
-export const CLUSTER_COUNT = 7;
-export const OUTLIER_PCT = 22;
-
-/** deterministic 字符串哈希（generateLinks 和 setupSimulation 共用，保证 cluster 归属一致）*/
+/** deterministic 字符串哈希（节点 jitter 用，保证位置稳定）*/
 export function hashStr(s: string): number {
   let h = 0;
   for (let i = 0; i < s.length; i++) h = ((h * 31 + s.charCodeAt(i)) & 0xffffffff) >>> 0;
   return h;
 }
 
-/** 节点 cluster 归属：-1 = outlier，否则 0..CLUSTER_COUNT-1 */
-export function getNodeCluster(node: SimNode): number {
-  const h = hashStr(node.id);
-  if (h % 100 < OUTLIER_PCT) return -1;
-  return h % CLUSTER_COUNT;
+/**
+ * v32 — 随机 cluster 划分：每次调用结果不同（用 Math.random，必须在 useEffect 内调用，
+ * 不能在 useMemo body 内调用以避免触发 react-hooks/purity）。
+ *
+ * 大小池 power-law：单球 / 对儿 / 三球 / 大聚落混合，每次刷新组合都不同。
+ * 36 球用此池约生成 12 个 cluster，size 1-5 不等。
+ *
+ * 所有节点都被分到某个 cluster（不再有"outlier"概念）；size=1 的 cluster 自然就是孤立球。
+ */
+export function buildClusterAssignment(nodeIds: string[]): {
+  assignment: Map<string, number>;
+  clusterCount: number;
+} {
+  const shuffled = [...nodeIds];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  const assignment = new Map<string, number>();
+  const sizePool = [1, 2, 2, 3, 3, 4, 4, 5];
+  let i = 0;
+  let cid = 0;
+  while (i < shuffled.length) {
+    const remain = shuffled.length - i;
+    const size = Math.min(remain, sizePool[Math.floor(Math.random() * sizePool.length)]);
+    for (let j = 0; j < size; j++) {
+      assignment.set(shuffled[i + j], cid);
+    }
+    i += size;
+    cid++;
+  }
+  return { assignment, clusterCount: cid };
 }
 
 /** Halton 低差异序列（生成均匀分布的 anchor 位置）*/
@@ -132,36 +156,35 @@ export function computeNodeAttrs(
   importance: number;
   radius: number;
   color: string;
-  cluster: number;
 } {
   const importance = 0.30 + ((track.week * 13) % 65) / 100;
   const radius = CFG.minR + importance * (CFG.maxR - CFG.minR);
   const groupIdx = GROUPS.findIndex((g) => g.id === groupId);
   const palette = GROUP_PALETTES[groupIdx];
   const shadeIdx = (track.week - 1) % palette.length;
-  // cluster 用 week 派生但跟 group 不同模数，让聚落分布看起来不像规则切片
-  const cluster = ((track.week * 7) % CLUSTER_COUNT + CLUSTER_COUNT) % CLUSTER_COUNT;
   return {
     groupId,
     importance,
     radius,
     color: palette[shadeIdx],
-    cluster,
   };
 }
 
 /**
- * v15 — 聚落式 link 拓扑：仅同一 cluster 内的节点之间生成 link。
+ * v32 — 聚落式 link 拓扑：仅同一 cluster 内的节点之间生成 link。
  * link 拉力方向 = cluster anchor 拉力方向（一致），不会撕裂聚落。
- * 用 getNodeCluster 算 cluster 归属（与 setupSimulation 共用），保证一致。
- * Outlier 节点完全无 link（孤立散点）。
+ * 接收 buildClusterAssignment 生成的 assignment（与 setupSimulation 共用，保证一致）。
+ * size=1 的 cluster 自然无 link；size=2 形成"对儿"互连；更大 cluster 全连接。
  */
-export function generateLinks(nodes: SimNode[]): SimLink[] {
+export function generateLinks(
+  nodes: SimNode[],
+  assignment: Map<string, number>,
+): SimLink[] {
   const links: SimLink[] = [];
   const clusterMembers = new Map<number, number[]>();
   nodes.forEach((n, i) => {
-    const c = getNodeCluster(n);
-    if (c < 0) return;
+    const c = assignment.get(n.id);
+    if (c == null) return;
     if (!clusterMembers.has(c)) clusterMembers.set(c, []);
     clusterMembers.get(c)!.push(i);
   });
