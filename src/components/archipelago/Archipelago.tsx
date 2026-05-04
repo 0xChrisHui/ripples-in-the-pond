@@ -11,7 +11,7 @@ import {
   addCachedMintedId,
 } from '@/src/lib/nft-cache';
 import SphereCanvas from './SphereCanvas';
-import { GROUPS, type GroupId, getGroupTracks, padTracksToTarget } from './sphere-config';
+import { GROUPS, type GroupId, getGroupTargetCount, getGroupTracks, padTracksToTarget } from './sphere-config';
 import { DEFAULT_EFFECTS, type EffectsConfig } from './effects-config';
 import AuroraBackground from './effects/ambient/aurora-background';
 import StarsBackground from './effects/ambient/stars-background';
@@ -51,7 +51,7 @@ export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFE
   // 切组（A/B/C）时重新预热新 36 首
   useEffect(() => {
     if (tracks.length === 0) return;
-    const padded = padTracksToTarget(getGroupTracks(currentGroupId, tracks), 36);
+    const padded = padTracksToTarget(getGroupTracks(currentGroupId, tracks), getGroupTargetCount(currentGroupId));
     let cancelled = false;
     const queue = padded.filter((t) => t.audio_url);
     const concurrency = 6;
@@ -175,7 +175,7 @@ export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFE
                 style={{ background: g.color }}
               />
               {g.label}
-              <span className="text-[8.5px] text-white/30">36</span>
+              <span className="text-[8.5px] text-white/30">{getGroupTargetCount(g.id)}</span>
             </button>
           );
         })}

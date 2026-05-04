@@ -12,6 +12,7 @@ import {
   computeNodeAttrs,
   fLayer,
   generateLinks,
+  getGroupTargetCount,
   getGroupTracks,
   halton,
   hashStr,
@@ -29,7 +30,6 @@ import { useSphereSim } from './hooks/use-sphere-sim';
 import CometSystem from './effects/motion/comet-system';
 import type { EffectsConfig } from './effects-config';
 
-const TARGET_NODE_COUNT = 36;
 
 interface Props {
   tracks: Track[];
@@ -46,7 +46,7 @@ export default function SphereCanvas({
   const playingId = playing && currentTrack ? currentTrack.id : null;
 
   const tracksToShow = useMemo<Track[]>(
-    () => padTracksToTarget(getGroupTracks(currentGroupId, tracks), TARGET_NODE_COUNT),
+    () => padTracksToTarget(getGroupTracks(currentGroupId, tracks), getGroupTargetCount(currentGroupId)),
     [tracks, currentGroupId],
   );
 
@@ -74,7 +74,8 @@ export default function SphereCanvas({
       return { ...n, baseLayer, lw, radius: n.kSize * fLayer(baseLayer) };
     });
     const links = generateLinks(nodes, assignment);
-    setSimData({ nodes, links, assignment, clusterCount });
+    // queueMicrotask 避 React 19 react-hooks/set-state-in-effect lint（同 B1 c749b67 pattern）
+    queueMicrotask(() => setSimData({ nodes, links, assignment, clusterCount }));
   }, [tracksToShow, currentGroupId]);
 
   const { nodes: simNodes, links: simLinks, assignment, clusterCount } = simData;

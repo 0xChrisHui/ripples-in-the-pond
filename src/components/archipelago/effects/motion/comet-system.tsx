@@ -37,7 +37,9 @@ export default function CometSystem({
   const mousePosRef = useRef<{ x: number; y: number } | null>(null);
   const lastTickRef = useRef(0);
   const cfgRef = useRef({ perspective, anyEclipse, focus });
-  cfgRef.current = { perspective, anyEclipse, focus };
+  useEffect(() => {
+    cfgRef.current = { perspective, anyEclipse, focus };
+  }, [perspective, anyEclipse, focus]);
 
   useEffect(() => {
     if (playingId) return;

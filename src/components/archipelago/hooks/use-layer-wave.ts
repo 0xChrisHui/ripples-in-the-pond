@@ -34,7 +34,9 @@ export function useLayerWave(
 ): RefObject<Map<string, LayerWaveEvent>> {
   const mapRef = useRef<Map<string, LayerWaveEvent>>(new Map());
   const enabledRef = useRef(enabled);
-  enabledRef.current = enabled;
+  useEffect(() => {
+    enabledRef.current = enabled;
+  }, [enabled]);
 
   useEffect(() => {
     mapRef.current.clear();

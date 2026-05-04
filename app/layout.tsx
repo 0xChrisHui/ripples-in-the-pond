@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Cormorant_Garamond, Azeret_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Cormorant_Garamond, Azeret_Mono, Modak } from "next/font/google";
 import Providers from "@/src/components/Providers";
 import "./globals.css";
 
@@ -27,6 +27,13 @@ const azeretMono = Azeret_Mono({
   subsets: ["latin"],
 });
 
+// Phase 6 B6 — 球内嵌数字 badge 用气球字 Modak（艺术家 demo 5 球数字代号）
+const modak = Modak({
+  variable: "--font-modak",
+  weight: "400",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Ripples in the Pond",
   description: "音乐 NFT 铸造平台",
@@ -40,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} ${azeretMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} ${azeretMono.variable} ${modak.variable} antialiased`}
       >
         <Providers>{children}</Providers>
       </body>

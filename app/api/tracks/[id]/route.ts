@@ -19,7 +19,7 @@ export async function GET(
     // 1. 查 track
     const { data: track, error } = await supabaseAdmin
       .from('tracks')
-      .select('id, title, week, audio_url, cover, island, created_at')
+      .select('id, title, week, audio_url, cover, island, created_at, published')
       .eq('id', id)
       .single();
 

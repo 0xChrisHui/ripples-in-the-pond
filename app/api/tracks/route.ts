@@ -18,7 +18,7 @@ export async function GET() {
   try {
     const { data: tracks, error } = await supabaseAdmin
       .from('tracks')
-      .select('id, title, week, audio_url, cover, island, created_at')
+      .select('id, title, week, audio_url, cover, island, created_at, published')
       .order('week', { ascending: true });
 
     if (error) throw error;

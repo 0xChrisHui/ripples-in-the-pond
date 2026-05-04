@@ -106,9 +106,16 @@ export interface SimLink extends SimulationLinkDatum<SimNode> {
   correlation: number;
 }
 
-// 用户测试模式（2026-04-27）：3 group 共用前 36 首，对比 palette 效果
-export function getGroupTracks(_gid: GroupId, allTracks: Track[]): Track[] {
+// Phase 6 B6（2026-05-04）：A 组只显 published=true 的 5 球（艺术家 demo）；
+// B/C 组保持原 36 球行为（音频 SQL 层循环到 No.1-5）
+export function getGroupTracks(gid: GroupId, allTracks: Track[]): Track[] {
+  if (gid === 'A') return allTracks.filter((t) => t.published);
   return allTracks.filter((t) => t.week >= 1 && t.week <= 36);
+}
+
+// A 组 5 球（demo）/ B/C 组 36 球；SphereCanvas 和 Archipelago 预热都用这个常量
+export function getGroupTargetCount(gid: GroupId): number {
+  return gid === 'A' ? 5 : 36;
 }
 
 // DB < target 时循环 padding；改 week 1..target 让颜色/size 各异；id 加后缀避 React key 冲突

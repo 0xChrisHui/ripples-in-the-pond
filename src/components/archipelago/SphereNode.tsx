@@ -99,15 +99,22 @@ export default function SphereNode({
         }}
       />
 
+      {/* B6 — Modak 气球字内嵌数字 badge：球内右下九宫格中心向球心收 30%
+           fill-opacity hover 微亮（0.32 → 0.55）；字号 *3 后所有球都能看清，无需 radius 阈值 */}
       <text
-        dy={radius + 13}
+        x={radius * 0.55}
+        y={radius * 0.55}
         textAnchor="middle"
-        fontSize={9}
-        fill="rgba(216,211,200,0.72)"
+        dominantBaseline="central"
+        fontSize={radius * 1.26}
+        fontFamily="var(--font-modak), sans-serif"
+        fontWeight={400}
+        fill="#ffffff"
+        fillOpacity={hovered ? 0.55 : 0.32}
         pointerEvents="none"
-        fontFamily="var(--font-azeret), monospace"
+        style={{ transition: 'fill-opacity 0.25s ease' }}
       >
-        {track.title.length > 13 ? track.title.slice(0, 12) + '…' : track.title}
+        {track.title}
       </text>
 
       <circle
