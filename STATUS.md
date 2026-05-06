@@ -7,16 +7,16 @@
 ## 当前阶段
 
 **Phase**: Phase 6 v2 — 稳定性收口 + 端到端跑通（**v2 缩减：UI 重设计深度版迁 P7**，2026-05-03 决策）
-**进度**: Track C 收口 + Pre-tester gate 4/4（G0 + B1 + E1 + A2）+ useFavorite 悲观→乐观回滚 + memory 拆子目录 + **playbook v2 缩减** + **B6 完成**（A 5 球 + B/C 36 球 demo + Modak 数字 badge）
+**进度**: Track C 收口 + Pre-tester gate 4/4（G0 + B1 + E1 + A2）+ useFavorite 悲观→乐观回滚 + memory 拆子目录 + **playbook v2 缩减** + **B6 完成**（A 5 球 + B/C 36 球 demo + Modak 数字 badge）+ **B2 Bug C 主链路修复**（5/6 双根因 wallet purpose 中文乱码 + env var typo）
 **playbook**: `playbook/phase-6/overview.md`（+ 5 个 track 子文档；Track B 13→7 step）
 **决策日志**：`docs/JOURNAL.md` 2026-04-25 段（Phase 5/6 kickoff/Track C/Pre-tester）+ 2026-05-03 段（v2 缩减 + 艺术家反馈）
 **stakeholder 反馈**（取代原 tester 反馈窗口）：艺术家 5 条反馈已收到（视觉 / 动态 / 音阶 / 名字 / 按键动画）；投资人只看链上技术不看 UI
 
 ## 当前进度
 
-**做到哪**: Phase 5 完全收口 + Track C v2 合约上链 + **Pre-tester gate 4/4 全完成** + **Phase 6 playbook v2 缩减**（2026-05-03）+ **B6 实施完成**（2026-05-04，migration 027/028 + Modak 字体 + SphereNode 数字 badge + getGroupTargetCount 抽象）
+**做到哪**: Phase 5 完全收口 + Track C v2 合约上链 + **Pre-tester gate 4/4 全完成** + **Phase 6 playbook v2 缩减**（2026-05-03）+ **B6 实施完成**（2026-05-04，migration 027/028 + Modak 字体 + SphereNode 数字 badge + getGroupTargetCount 抽象）+ **B2 Bug C 主链路修复**（2026-05-06，wallet purpose 中文乱码 + Vercel env var typo 双根因）
 **下一步**（B7 改放最后，2026-05-04 调整）:
-  1. **B2 修 /me /score /artist 紧急 bug** — 含已知 2 个 /me bug（录制"上传中" / 铸造不更新）；前置：用户答 Q2（复现路径 + mint_id/token_id）
+  1. **B2 P1 前端三件套**（启动中，2026-05-06）— Bug A 服务端权威 mintingState / Bug B /me 骨架屏 / polling
   2. **B4 / B5 并行**（独立可做：音频叠加修复 + 前端韧性三件套）
   3. **B3 草稿铸造** — 前置 A0+A1 完成
   4. **Track A 剩余**（A0/A1/A3/A4/A5）+ D2 + E4 / E5 收口
@@ -127,18 +127,19 @@
 
 ## 上次成功验证
 
+- 验证: B2 Bug C 主链路双根因修复（cron 4-28~5-6 全 fail 修通到 minting_onchain 上链）
+- 时间: 2026-05-06
+- 改动: 本地 turbo-wallet.json 删 purpose 中文行（编码错误致 JSON.parse 崩 position 256）/ Vercel 加 NEXT_PUBLIC_SCORE_NFT_ADDRESS 删拼错版 / DELETE 8 条 failed row
+- 验证证据: 新铸造 row 走完前 3 步 token_id=2 上链（events_ar_tx_id + tx_hash 都有），第 4 步业务 throw（D 组无 arweave_url 是独立 P7 问题）
+- 副产品: 发现 D 组 No.1~No.5 完全无法铸造 ScoreNFT（arweave_url=NULL）→ P7 任务
+
+### 上一轮成功验证（保留）
+
 - 验证: B6 实施完成（A 组 5 球 + B/C 36 球 demo 上线）
 - 时间: 2026-05-04
 - 改动: migration 027/028（tracks 加 published + 5 行循环到 No.1-5 + 安全清旧 mint）/ Modak 字体引入 / SphereNode 删下方 label 加内嵌数字 badge / getGroupTargetCount 抽象 / mock-tracks 5 行补 published
 - 验证证据: TS 0 errors / npm run build 通过 / 浏览器实测 5 球 36 球数字稳定显示
 - 决策推翻: B7 改放最后（避免"测-修-重测"循环）
-
-### 上一轮成功验证（保留）
-
-- 验证: Phase 6 playbook v2 缩减 doc 改写完成（不动代码，准备启动 B6 实施）
-- 时间: 2026-05-03
-- 改动: track-b 13→7 step / overview 时间线 5-6 周→3-5 天 / STATUS / JOURNAL 同步
-- 决策依据: 艺术家 5 条反馈到位 + 投资人只看链上不看 UI
 
 ### 上上轮成功验证（保留）
 
@@ -198,6 +199,18 @@
 - **跨浏览器截图验收**（原 B2.5）
 - **24 张跨浏览器 / 断点截图归档**（原 B2.5）
 
+### 来自 5/6 B2 Bug C 修复副产品
+
+- **换 Turbo wallet**（旧钱包私钥 5/6 调试时泄露在聊天 jsonl，余额极小；P7 主网前必须换）
+  - 流程：`scripts/arweave/generate-eth-wallet.ts` → 充 Base ETH → `topup-turbo.ts` → 替换 .env.local + Vercel TURBO_WALLET_JWK
+  - 旧地址 `0xdE788249e747FB54c19e7B7F9baE85B631B9Fba8` 弃用 + Turbo credits 重新购买
+- **D 组 No.1~No.5 上传 Arweave**（解锁草稿铸造）
+  - 现状：`tracks.arweave_url=NULL` 导致 cron stepUploadMetadata 必崩 → D 组（含 B/C 前 5 球）完全无法铸造 ScoreNFT
+  - 跑 `scripts/arweave/upload-tracks.ts`（已存在）+ UPDATE 5 行 arweave_url = ar://xxx
+- **加 vercel-env-sync 脚本**（防 NEXT_PUBLIC_ env var typo）
+  - 起因：5/6 Bug C 第二层根因 = `NEXT_PUBLIC_SCORE_NFT_ADDRES` 少一个 S
+  - 脚本对比 `.env.local` 与 Vercel API（vercel CLI 或 Management API）的 key 差集，CI/手动跑都能
+
 ### 投资人 demo 范围（不变）
 
 投资人只看链上技术 → P7 demo 重点：
@@ -214,7 +227,6 @@
   - 来源：033 log 用户原话 "曲名的话，我要找艺术家的强化一下"
 - **Vercel ISR 缓存等待**：生产部署后 /api/tracks 仍返旧数据最多 5 分钟（revalidate=300），等自然刷新或手动 redeploy
 - **B7 Q3 答案**（启动 B7 时回答）：smoke test 清单来源（沿用 P5 / 新建 P6）
-- **B2 Q2 答案**（启动 B2 时回答）：/me 2 个 bug 复现路径（mint_id / token_id）
 - **Pre-existing lint 错误 2 处**（`comet-system.tsx:40` + `use-layer-wave.ts:37` ref-during-render）
   - 来源 commit `cd882aa` v82 archipelago refactor，与 B6 无关
   - verify.sh 会失败但 build 通过；视后续工作中是否顺手修
