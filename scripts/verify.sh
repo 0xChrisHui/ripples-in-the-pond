@@ -45,20 +45,27 @@ fi
 echo ""
 
 # 3. 文件大小检查（额外保险，hook 也会查）
-echo "── 3. 代码文件大小（≤200 行）──"
+# 硬线与 .claude/hooks/check-file-size.js + docs/CONVENTIONS.md §1.1 同步：
+#   - 普通代码文件 ≤220 行
+#   - API route handler（src/app/api/**/route.ts）≤270 行
+echo "── 3. 代码文件大小（≤220 行 / API route ≤270 行）──"
 LARGE_FILES=$(find src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" \) 2>/dev/null | while read -r f; do
   lines=$(wc -l < "$f")
-  if [ "$lines" -gt 200 ]; then
-    echo "  $f: $lines 行"
+  case "$f" in
+    src/app/api/*/route.ts) limit=270 ;;
+    *) limit=220 ;;
+  esac
+  if [ "$lines" -gt "$limit" ]; then
+    echo "  $f: $lines 行 (上限 $limit)"
   fi
 done)
 
 if [ -n "$LARGE_FILES" ]; then
-  echo "$FAIL 以下文件超过 200 行："
+  echo "$FAIL 以下文件超过行数硬线："
   echo "$LARGE_FILES"
   EXIT_CODE=1
 else
-  echo "$OK 没有超过 200 行的代码文件"
+  echo "$OK 没有超过行数硬线的代码文件"
 fi
 echo ""
 
