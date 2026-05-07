@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { OwnedNFT } from '@/src/types/tracks';
-import type { OwnedScoreNFT } from '@/src/types/jam';
+import type { OwnedScoreNFT, MintingState } from '@/src/types/jam';
 import { useAuth } from '@/src/hooks/useAuth';
 import { fetchMyNFTs } from '@/src/data/nfts-source';
 import { getDrafts, removeDraft } from '@/src/lib/draft-store';
 import { getCachedNFTs, setCachedNFTs } from '@/src/lib/nft-cache';
 import { saveScore, fetchMyScores, fetchMyScoreNFTs } from '@/src/data/jam-source';
 import NFTCard from '@/src/components/me/NFTCard';
-import ScoreCard from '@/src/components/me/ScoreCard';
-import DraftCard from '@/src/components/me/DraftCard';
+import ScoreNftSection from '@/src/components/me/ScoreNftSection';
+import DraftSection from '@/src/components/me/DraftSection';
 import EmptyState from '@/src/components/me/EmptyState';
 import { DRAFT_TTL_MS } from '@/src/lib/constants';
 
@@ -21,6 +21,34 @@ interface DisplayDraft {
   expiresAt: string;
   /** Phase 6 B3: server 草稿带 pendingScoreId，DraftCard 据此显示铸造按钮；本地草稿不带 */
   pendingScoreId?: string;
+  /** B2 P1 5/6: 服务端权威 mintingState（来自 score_nft_queue 联表），本地草稿无 */
+  mintingState?: MintingState;
+}
+
+type ServerDraft = Awaited<ReturnType<typeof fetchMyScores>>[number];
+type LocalDraft = ReturnType<typeof getDrafts>[number];
+
+/** Server + local 合并成 UI 用的 DisplayDraft 数组（B2 P1 5/6 抽出避免重复） */
+function buildDisplayDrafts(
+  serverDrafts: ServerDraft[],
+  localDrafts: LocalDraft[],
+): DisplayDraft[] {
+  return [
+    ...serverDrafts.map((s) => ({
+      key: `server-${s.id}`,
+      title: `${s.trackTitle} - #${String(s.seq).padStart(2, '0')} - ${s.eventCount} 音符`,
+      expiresAt: s.expiresAt,
+      pendingScoreId: s.id,
+      mintingState: s.mintingState,
+    })),
+    ...localDrafts.map((d, i) => ({
+      key: `local-${d.trackId}`,
+      title: `创作 - #${String(i + 1).padStart(2, '0')} - ${d.eventsData.length} 音符`,
+      expiresAt: new Date(
+        new Date(d.createdAt).getTime() + DRAFT_TTL_MS,
+      ).toISOString(),
+    })),
+  ];
 }
 
 /**
@@ -41,6 +69,16 @@ export default function MePage() {
     }));
   });
   const [loaded, setLoaded] = useState(false);
+  // B2 P1 review: server fetch 是否回来过 — 控制骨架屏占位（消除"先空再有"闪烁）
+  const [serverDraftsLoaded, setServerDraftsLoaded] = useState(false);
+  const [scoreNftsLoaded, setScoreNftsLoaded] = useState(false);
+
+  // 稳定 getAccessToken 引用 — Privy 不保证 useCallback 稳定性，
+  // 直接放到 effect deps 会让 polling setInterval 频繁重建（永远到不了 5s tick）
+  const getAccessTokenRef = useRef(getAccessToken);
+  useEffect(() => {
+    getAccessTokenRef.current = getAccessToken;
+  });
 
   // userId 变化（登录 / 切号 / 登出）→ 重读对应 user 的本地缓存
   // 推到 microtask 避免 React 19 react-hooks/set-state-in-effect 警告
@@ -59,7 +97,15 @@ export default function MePage() {
       if (!token) return;
 
       // 并行：加载 ScoreNFT + MaterialNFT + 上传本地草稿 + 加载服务端草稿
-      fetchMyScoreNFTs(token).then(setScoreNfts).catch(console.error);
+      fetchMyScoreNFTs(token)
+        .then((data) => {
+          setScoreNfts(data);
+          setScoreNftsLoaded(true);
+        })
+        .catch((err) => {
+          console.error(err);
+          setScoreNftsLoaded(true);
+        });
       fetchMyNFTs(token).then((data) => {
         setNfts(data);
         setCachedNFTs(userId, data);
@@ -81,26 +127,32 @@ export default function MePage() {
         }
       }
 
-      // 从服务端拿已上传的草稿
+      // 从服务端拿已上传的草稿（含 mintingState 联表 score_nft_queue）
       const serverDrafts = await fetchMyScores(token);
-      const remaining = getDrafts();
-
-      const display: DisplayDraft[] = [
-        ...serverDrafts.map((s) => ({
-          key: `server-${s.id}`,
-          title: `${s.trackTitle} - #${String(s.seq).padStart(2, '0')} - ${s.eventCount} 音符`,
-          expiresAt: s.expiresAt,
-          pendingScoreId: s.id,
-        })),
-        ...remaining.map((d, i) => ({
-          key: `local-${d.trackId}`,
-          title: `创作 - #${String(i + 1).padStart(2, '0')} - ${d.eventsData.length} 音符`,
-          expiresAt: new Date(new Date(d.createdAt).getTime() + DRAFT_TTL_MS).toISOString(),
-        })),
-      ];
-      setDrafts(display);
+      setDrafts(buildDisplayDrafts(serverDrafts, getDrafts()));
+      setServerDraftsLoaded(true);
     });
   }, [authenticated, userId, getAccessToken]);
+
+  // B2 P1 5/6 polling：任意 draft 在 minting/queued 时每 5s 刷新；解决 Bug C 唱片不更新
+  const hasMintingInFlight = drafts.some(
+    (d) => d.mintingState === 'minting' || d.mintingState === 'queued',
+  );
+  useEffect(() => {
+    if (!hasMintingInFlight || !authenticated || !userId) return;
+    const tick = async () => {
+      const token = await getAccessToken();
+      if (!token) return;
+      const [serverDrafts, scoreNftsNew] = await Promise.all([
+        fetchMyScores(token),
+        fetchMyScoreNFTs(token),
+      ]);
+      setScoreNfts(scoreNftsNew);
+      setDrafts(buildDisplayDrafts(serverDrafts, getDrafts()));
+    };
+    const id = setInterval(tick, 5000);
+    return () => clearInterval(id);
+  }, [hasMintingInFlight, authenticated, userId, getAccessToken]);
 
   if (!ready && nfts.length === 0) return null;
 
@@ -136,23 +188,13 @@ export default function MePage() {
 
         {loaded && nfts.length === 0 && drafts.length === 0 && scoreNfts.length === 0 && <EmptyState />}
 
-        {/* 我的唱片（ScoreNFT） */}
-        {scoreNfts.length > 0 && (
-          <section>
-            <h2 className="mb-4 text-sm font-light tracking-widest text-white/60">
-              我的唱片
-            </h2>
-            <div className="grid gap-3">
-              {scoreNfts.map((s) => (
-                <ScoreCard key={s.tokenId} score={s} />
-              ))}
-            </div>
-          </section>
-        )}
+        <ScoreNftSection
+          scoreNfts={scoreNfts}
+          showSkeleton={authenticated && !scoreNftsLoaded}
+        />
 
-        {/* 音乐收藏（MaterialNFT） */}
         {nfts.length > 0 && (
-          <section className={scoreNfts.length > 0 ? 'mt-10' : ''}>
+          <section className={scoreNfts.length > 0 || (authenticated && !scoreNftsLoaded) ? 'mt-10' : ''}>
             <h2 className="mb-4 text-sm font-light tracking-widest text-white/60">
               音乐收藏
             </h2>
@@ -164,23 +206,10 @@ export default function MePage() {
           </section>
         )}
 
-        {drafts.length > 0 && (
-          <section className="mt-12">
-            <h2 className="mb-4 text-sm font-light tracking-widest text-white/60">
-              我的创作
-            </h2>
-            <div className="grid gap-3">
-              {drafts.map((d) => (
-                <DraftCard
-                  key={d.key}
-                  title={d.title}
-                  expiresAt={d.expiresAt}
-                  pendingScoreId={d.pendingScoreId}
-                />
-              ))}
-            </div>
-          </section>
-        )}
+        <DraftSection
+          drafts={drafts}
+          showSkeleton={authenticated && !serverDraftsLoaded}
+        />
       </div>
     </main>
   );
