@@ -29,8 +29,10 @@ function buildDisplayDrafts(
   return [
     ...serverDrafts.map((s) => ({
       key: `server-${s.id}`,
-      title: `${s.trackTitle} - #${String(s.seq).padStart(2, '0')} - ${s.eventCount} 音符`,
+      title: `${s.track.title} - #${String(s.seq).padStart(2, '0')} - ${s.eventCount} 音符`,
       pendingScoreId: s.id,
+      track: s.track,
+      events: s.events,
     })),
     ...localDrafts.map((d, i) => ({
       key: `local-${d.trackId}`,

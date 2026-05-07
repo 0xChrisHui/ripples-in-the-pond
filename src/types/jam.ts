@@ -9,6 +9,8 @@
  *   GET  /api/me/scores             → MyScoresResponse
  */
 
+import type { Track } from './tracks';
+
 /** sounds 表的一行 — 26 个键盘音效之一 */
 export interface Sound {
   id: string;
@@ -83,16 +85,20 @@ export interface ScorePreviewResponse {
 /** API 响应：GET /api/me/scores
  *
  *  B8 简化（2026-05-07）：草稿入队后立刻从此端点消失（route.ts 用 NOT IN queue 过滤），
- *  转去"我的唱片"显示。所以本响应里的草稿都是"未铸造的活草稿"，不需要 mintingState 字段。
- *  前端用 useMintScore 的本地 state（5s 乐观成功）显示"铸造中/成功"瞬态。
+ *  转去"我的唱片"显示。所以本响应里的草稿都是"未铸造的活草稿"。
+ *  Phase 2 加 track + events 让"我的创作"里的草稿可以前端 inline 播放
+ *  （PlayerProvider 播底曲 + useEventsPlayback 按 events.time 触发音效）。
  */
 export interface MyScoresResponse {
   scores: {
     id: string;
-    trackTitle: string;
+    /** 草稿绑定的底曲（DraftCard ▶ 按钮 toggle 用） */
+    track: Track;
+    /** 按键事件序列（useEventsPlayback 按时间触发音效用） */
+    events: KeyEvent[];
     /** 该用户对同一曲目的第几次创作 */
     seq: number;
-    /** 音符数量 */
+    /** 音符数量（= events.length，前端方便用） */
     eventCount: number;
     createdAt: string;
     expiresAt: string;
@@ -163,13 +169,25 @@ export interface ScoreMetadata {
   }>;
 }
 
-/** 个人页用：用户铸造的 ScoreNFT 概要 */
+/**
+ * 个人页用：用户的 ScoreNFT（B8 重设：包含未上链的中间态草稿）
+ *
+ * 用户感知"我的唱片" = 数据库中所有 queue row，与链上完成度脱钩。
+ * 链上字段（tokenId / txHash）是 progressive enhancement：
+ *   - 已上链 → 字段补齐，详情页可显示 Etherscan / OpenSea link，可点击进详情页
+ *   - 未上链 → 字段为 undefined，卡片显示"上链中"，暂不可点击（Phase 3 路由双兼容后启用）
+ */
 export interface OwnedScoreNFT {
-  tokenId: number;
+  /** 路由用 ID — 已上链=tokenId 字符串，未上链=queue row UUID */
+  id: string;
+  /** 链上 tokenId — 已上链才有 */
+  tokenId?: number;
   trackTitle: string;
   coverUrl: string;
   eventCount: number;
-  txHash: string;
+  /** 链上 tx hash — 已上链才有 */
+  txHash?: string;
+  /** 入队时间（已上链时近似铸造时间）*/
   mintedAt: string;
 }
 

@@ -2,11 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 import { resolveArUrl } from '@/src/lib/arweave';
-import type { MyScoreNFTsResponse, OwnedScoreNFT } from '@/src/types/jam';
+import type { MyScoreNFTsResponse, OwnedScoreNFT, KeyEvent } from '@/src/types/jam';
 
 /**
  * GET /api/me/score-nfts
- * 返回当前用户已铸造成功的 ScoreNFT 列表，个人页"我的乐谱"消费
+ * 返回当前用户的"我的唱片"列表 — B8 重设（2026-05-08）
+ *
+ * 数据源 = score_nft_queue 全部 row（**不再** filter status='success'）。
+ * 用户感知"我的唱片"与链上完成度脱钩；token_id / tx_hash 是 progressive enhancement，
+ * 未上链时为 null，前端显示"上链中"，cron 跑完后字段补齐。
+ *
+ * eventCount 来源：联表 pending_scores.events_data（即使草稿被覆盖 status='expired'
+ * 也保留 events_data，所以总能拿到）。
  */
 
 export async function GET(req: NextRequest) {
@@ -16,46 +23,32 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: '未登录' }, { status: 401 });
     }
 
-    // 查已铸造成功的 ScoreNFT，关联 track 拿曲目名
     const { data: rows, error } = await supabaseAdmin
       .from('score_nft_queue')
-      .select('token_id, cover_ar_tx_id, tx_hash, created_at, track_id, pending_score_id, tracks(title)')
+      .select(`
+        id, token_id, cover_ar_tx_id, tx_hash, created_at,
+        tracks(title),
+        pending_scores(events_data)
+      `)
       .eq('user_id', auth.userId)
-      .eq('status', 'success')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
 
-    // 查 events 数量：从 mint_events.score_data 取
-    const tokenIds = (rows ?? []).map((r) => r.token_id).filter(Boolean);
-    const eventCounts = new Map<number, number>();
-    if (tokenIds.length > 0) {
-      const { data: events } = await supabaseAdmin
-        .from('mint_events')
-        .select('score_nft_token_id, score_data')
-        .in('score_nft_token_id', tokenIds);
-      for (const e of events ?? []) {
-        const data = e.score_data as unknown[];
-        eventCounts.set(
-          e.score_nft_token_id,
-          Array.isArray(data) ? data.length : 0,
-        );
-      }
-    }
-
-    const scoreNfts: OwnedScoreNFT[] = (rows ?? [])
-      .filter((r) => r.token_id != null)
-      .map((r) => {
-        const trackData = r.tracks as unknown as { title: string } | null;
-        return {
-          tokenId: r.token_id!,
-          trackTitle: trackData?.title ?? '未知曲目',
-          coverUrl: resolveArUrl(r.cover_ar_tx_id),
-          eventCount: eventCounts.get(r.token_id!) ?? 0,
-          txHash: r.tx_hash ?? '',
-          mintedAt: r.created_at,
-        };
-      });
+    const scoreNfts: OwnedScoreNFT[] = (rows ?? []).map((r) => {
+      const trackData = r.tracks as unknown as { title: string } | null;
+      const ps = r.pending_scores as unknown as { events_data: unknown } | null;
+      const events = (Array.isArray(ps?.events_data) ? ps?.events_data : []) as KeyEvent[];
+      return {
+        id: r.token_id != null ? String(r.token_id) : r.id,
+        tokenId: r.token_id ?? undefined,
+        trackTitle: trackData?.title ?? '未知曲目',
+        coverUrl: resolveArUrl(r.cover_ar_tx_id),
+        eventCount: events.length,
+        txHash: r.tx_hash ?? undefined,
+        mintedAt: r.created_at,
+      };
+    });
 
     const res: MyScoreNFTsResponse = { scoreNfts };
     return NextResponse.json(res);

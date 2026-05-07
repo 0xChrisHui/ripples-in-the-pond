@@ -2,12 +2,18 @@
 
 import DraftCard from './DraftCard';
 import SkeletonRows from './SkeletonRows';
+import type { Track } from '@/src/types/tracks';
+import type { KeyEvent } from '@/src/types/jam';
 
 /** 「我的创作」UI 行的显示数据（跟 me/page 共用） */
 export interface DisplayDraft {
   key: string;
   title: string;
   pendingScoreId?: string;
+  /** server 草稿才有（▶ 播放用，PlayerProvider.toggle）*/
+  track?: Track;
+  /** server 草稿才有（useEventsPlayback 按时间触发音效）*/
+  events?: KeyEvent[];
 }
 
 /**
@@ -36,6 +42,8 @@ export default function DraftSection({
             key={d.key}
             title={d.title}
             pendingScoreId={d.pendingScoreId}
+            track={d.track}
+            events={d.events}
           />
         ))}
         {showSkeleton && drafts.length === 0 && <SkeletonRows count={3} />}

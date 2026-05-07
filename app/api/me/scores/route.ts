@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
-import type { MyScoresResponse } from '@/src/types/jam';
+import type { KeyEvent, MyScoresResponse } from '@/src/types/jam';
+import type { Track } from '@/src/types/tracks';
 
 /**
  * GET /api/me/scores
@@ -32,9 +33,10 @@ export async function GET(req: NextRequest) {
     const enqueuedIds = (queueRows ?? []).map((q) => q.pending_score_id);
 
     // 活草稿 + 未过期 + NOT IN 已入队
+    // tracks(*) 返回完整 Track 给前端 PlayerProvider.toggle / events_data 给 useEventsPlayback
     let query = supabaseAdmin
       .from('pending_scores')
-      .select('id, created_at, expires_at, track_id, events_data, tracks(title)')
+      .select('id, created_at, expires_at, track_id, events_data, tracks(*)')
       .eq('user_id', auth.userId)
       .eq('status', 'draft')
       .gt('expires_at', new Date().toISOString());
@@ -62,17 +64,19 @@ export async function GET(req: NextRequest) {
     }
 
     const res: MyScoresResponse = {
-      scores: (scores ?? []).map((s) => {
-        const trackData = s.tracks as unknown as { title: string } | null;
-        const events = s.events_data as unknown[];
-        return {
+      scores: (scores ?? []).flatMap((s) => {
+        const track = s.tracks as unknown as Track | null;
+        if (!track) return []; // 联表异常 → 跳过该行
+        const events = (Array.isArray(s.events_data) ? s.events_data : []) as KeyEvent[];
+        return [{
           id: s.id,
-          trackTitle: trackData?.title ?? '未知曲目',
+          track,
+          events,
           seq: trackCounts.get(s.track_id) ?? 1,
-          eventCount: Array.isArray(events) ? events.length : 0,
+          eventCount: events.length,
           createdAt: s.created_at,
           expiresAt: s.expires_at,
-        };
+        }];
       }),
     };
     return NextResponse.json(res);
