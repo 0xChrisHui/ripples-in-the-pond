@@ -7,13 +7,13 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- （空，B6 收口 2026-05-04，等用户回答 Q2 启动 B2 修 /me 2 个已知 bug）
+- （空，B8 P3 端到端实测通过 2026-05-08，等用户决定下一刀做 B5 / B3 / Track A 任一）
 
 ---
 
-## ⏭ Next — Phase 6 v2 推进序列（B7 改放最后，2026-05-04）
+## ⏭ Next — Phase 6 v2 推进序列（B7 改最后 2026-05-04 / B4 删 2026-05-08）
 
-Phase 6 v2 playbook：`playbook/phase-6/overview.md`（缩减后 Track B 13→7 step；UI 重设计深度版迁 P7）
+Phase 6 v2 playbook：`playbook/phase-6/overview.md`（v2 缩减后 Track B 7→6 step，删 B4 因 PlayerProvider 早已实施 loadingRef）
 
 ### 步骤 0：v2 缩减 doc 改写 ✅ 完成（2026-05-03）
 
@@ -34,15 +34,18 @@ Phase 6 v2 playbook：`playbook/phase-6/overview.md`（缩减后 Track B 13→7 
 - [x] /api/tracks + /api/tracks/[id] SELECT 加 published
 - [x] 浏览器验证：5 球 / 36 球 + 数字 badge 稳定显示
 
-### 步骤 2：B2 修 /me /score /artist（下一步，待 Q2 答案）
+### 步骤 2：B2 修 /me /score /artist ✅ 实质收口（2026-05-08）
 
-- [ ] **Q2 待答**：/me 2 个已知 bug 复现路径（录制"上传中" / 铸造不更新 → 给 mint_id / token_id 让我去 Supabase 查日志）
-- [ ] 加 debug 日志定位根因
-- [ ] 端到端验证修复
+Bug A/B 由 B8 数据流重设解决（不是单点修补，是整体重设）：
+- [x] **Bug A** "录制铸造不更新" → B8 P1 5s 乐观成功 + P2 唱片对齐 DB（commit 63c807a / 38f7f37）
+- [x] **Bug B** "录制上传中卡住" → B8 P1 mint_score_enqueue RPC 不再标 expired + P2 草稿入队即消失（commit 397defe / 63c807a）
+- [x] **Bug C** 主链路 5/6 双根因修复（wallet purpose 中文 / Vercel env typo）
+- [x] **B8 P3** 路由双兼容 + ScorePlayer 前端 inline + 端到端实测 token_id=12（2026-05-08）
 
-### 步骤 3：B4 + B5 并行（独立可做，无前置）
+剩余在 B7 端到端冒烟时若发现新 bug 再起新 step。
 
-- [ ] B4 音频叠加修复（loadingRef 拦快速连点）
+### 步骤 3：B5 前端韧性（独立可做，无前置）
+
 - [ ] B5 前端韧性三件套（tracks ISR + 移动端首帧 + localStorage 恢复）
 
 ### 步骤 4：B3 草稿铸造（前置 A0+A1 完成）
@@ -98,7 +101,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 | Track | 主题 | 依赖 | 详细 playbook |
 |---|---|---|---|
 | **A** | 铸造链路稳定性（ScoreNFT cron 四连 + sync cursor + 草稿原子 + /score 灾备 + owner 投影）| 无 | `playbook/phase-6/track-a-mint-stability.md` |
-| **B** | UI 收口 + 端到端验证（v2 缩减：B1 已完成 / B2 小修 + bug 清扫 / B3 草稿铸造 / B4 / B5 韧性 / B6 5 球 demo / B7 端到端冒烟）| B3 依赖 A0+A1；B7 依赖 B6 | `playbook/phase-6/track-b-ui-redesign.md` |
+| **B** | UI 收口 + 端到端验证（v2 缩减：B1 已完成 / B2 小修 + bug 清扫 / B3 草稿铸造 / B5 韧性 / B6 5 球 demo / B7 端到端冒烟）| B3 依赖 A0+A1；B7 依赖 B6 | `playbook/phase-6/track-b-ui-redesign.md` |
 | **C** | 合约 & 部署硬化（setTokenURI 防覆盖 / 权限最小化 / Deploy 清洁 / TBA 决策）| 无 | `playbook/phase-6/track-c-contracts.md` |
 | **D** | 空投闭环（条件性，D1 = 主网是否做空投）| D1 产品决策 | `playbook/phase-6/track-d-airdrop.md` |
 | **E** | 认证 & 观测收口（material health / Semi OAuth / Semi 探针 / Decoder fallback / 文档对齐）| E2 依赖 Semi OAuth | `playbook/phase-6/track-e-auth-observability.md` |
@@ -131,6 +134,14 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 ---
 
 ## ✅ Done
+
+- **[Phase 6 B8 /me 数据流重设]** ✅ 完成（2026-05-07 → 2026-05-08，3 个阶段 + 实测 + agent review 13 finding）：
+  - **Phase 1**（commit `397defe` + `63c807a`）：5s 乐观成功 + 草稿入队即消失 + mint_score_enqueue RPC 不再标 pending_score expired
+  - **Phase 2**（commit `38f7f37`）：草稿可播放（▶ 按钮 + useEventsPlayback hook）+ 唱片对齐 DB（删 mint_events 依赖 / queue 单一数据源）
+  - **Phase 3**（本次 commit）：路由 `[tokenId]` → `[id]` 双兼容（数字 token_id / UUID queue.id）+ ScorePlayer 改前端 inline（PlayerProvider.toggle + useEventsPlayback 替代 Arweave decoder iframe）+ score-fallback.ts 删除（noop 残留）+ score-source.ts 多项防御（isSafeInteger / order().limit() / Promise.allSettled / cover try-catch / pendingRes error log）+ ScorePlayer 文案 "无事件数据" + useEventsPlayback seek 假设注释
+  - **副产品**：B6 demo 5 球 arweave_url 上链回写（5 个 mp3 上 Arweave + UPDATE tracks，原 P7 task 提前消化）+ B4 删除（PlayerProvider loadingRef 早已实施）
+  - **端到端验证**：queue 778a2904 走完 5 步状态机 → token_id=12 上链（tx_hash 0xea5b... + uri_tx_hash 0x5ddb... + metadata Arweave bJeCGDtZ...）+ 详情页前端 inline 播放正常
+  - **Agent review 13 finding**：5 项本次合入修（P0×3 + P1×2）+ 8 项挂 P7（已加 STATUS 悬空 TODO）
 
 - **[Phase 6 B6 实施]** ✅ 完成（2026-05-04）— A 组 5 球 + B/C 36 球 demo 上线：
   - migration `027_tracks_add_published.sql`（tracks 加 published BOOLEAN + 部分索引）

@@ -13,6 +13,10 @@ import type { KeyEvent } from '@/src/types/jam';
  * 跟 useRecorder 录制时的时间基准一致。
  *
  * 仅在 currentTrack.id === trackId 时才触发（防多个 DraftCard 实例互相干扰）。
+ *
+ * **不变量**：events 按 time 单调递增 + indexRef 单调递增；不响应 audio.seek-back。
+ * 当前 ScorePlayer/BottomPlayer 都没有 seek 控件，假设安全；未来若加 seek，需改用
+ * binary-search 重算 indexRef（找首个 events[i].time > elapsedMs 的位置）。
  */
 export function useEventsPlayback({
   events,

@@ -7,22 +7,24 @@
 ## 当前阶段
 
 **Phase**: Phase 6 v2 — 稳定性收口 + 端到端跑通（**v2 缩减：UI 重设计深度版迁 P7**，2026-05-03 决策）
-**进度**: Track C 收口 + Pre-tester gate 4/4（G0 + B1 + E1 + A2）+ useFavorite 悲观→乐观回滚 + memory 拆子目录 + **playbook v2 缩减** + **B6 完成**（A 5 球 + B/C 36 球 demo + Modak 数字 badge）+ **B2 Bug C 主链路修复**（5/6 双根因 wallet purpose 中文乱码 + env var typo）
-**playbook**: `playbook/phase-6/overview.md`（+ 5 个 track 子文档；Track B 13→7 step）
-**决策日志**：`docs/JOURNAL.md` 2026-04-25 段（Phase 5/6 kickoff/Track C/Pre-tester）+ 2026-05-03 段（v2 缩减 + 艺术家反馈）
+**进度**: Track C 收口 + Pre-tester gate 4/4 + B6 demo + B2 Bug C 主链路修复 + **B8 /me 数据流重设完整 3 阶段**（Phase 1+2 已 commit / Phase 3 本次 commit + 端到端实测 token_id=12 上链）+ **B4 删除**（`PlayerProvider.tsx:86-114` loadingRef 早已实施）
+**playbook**: `playbook/phase-6/overview.md`（+ 5 个 track 子文档；Track B 7→6 step，B4 删）
+**决策日志**：`docs/JOURNAL.md` 2026-04-25 段（Phase 5/6 kickoff/Track C/Pre-tester）+ 2026-05-03 段（v2 缩减 + 艺术家反馈）+ 2026-05-08 段（B8 P3 + arweave_url 上链 + B4 删 + agent review 13 finding）
 **stakeholder 反馈**（取代原 tester 反馈窗口）：艺术家 5 条反馈已收到（视觉 / 动态 / 音阶 / 名字 / 按键动画）；投资人只看链上技术不看 UI
 
 ## 当前进度
 
-**做到哪**: Phase 5 完全收口 + Track C v2 合约上链 + **Pre-tester gate 4/4 全完成** + **Phase 6 playbook v2 缩减**（2026-05-03）+ **B6 实施完成**（2026-05-04，migration 027/028 + Modak 字体 + SphereNode 数字 badge + getGroupTargetCount 抽象）+ **B2 Bug C 主链路修复**（2026-05-06，wallet purpose 中文乱码 + Vercel env var typo 双根因）
-**下一步**（B7 改放最后，2026-05-04 调整）:
-  1. **B2 P1 前端三件套**（启动中，2026-05-06）— Bug A 服务端权威 mintingState / Bug B /me 骨架屏 / polling
-  2. **B4 / B5 并行**（独立可做：音频叠加修复 + 前端韧性三件套）
-  3. **B3 草稿铸造** — 前置 A0+A1 完成
-  4. **Track A 剩余**（A0/A1/A3/A4/A5）+ D2 + E4 / E5 收口
-  5. **B7 端到端冒烟**（最后一次性覆盖所有功能 + 产 bug 清单 → 直接进 completion review）
-  6. **Phase 6 completion review** → Phase 7 OP 主网
-**剩余**: Phase 6 v2（3-5 天）→ Phase 7（OP 主网 + UI 深度重设计 + 音阶系统 + 监控 + 退出准备）
+**做到哪**: Phase 5 完全收口 + Track C v2 合约上链 + **Pre-tester gate 4/4** + **Phase 6 playbook v2 缩减**（2026-05-03）+ **B6 实施完成**（2026-05-04，migration 027/028 + Modak 字体 + SphereNode 数字 badge）+ **B2 Bug C 主链路修复**（2026-05-06，wallet purpose 中文乱码 + Vercel env var typo 双根因）+ **B8 /me 数据流重设 3 阶段全完**（2026-05-07 P1+P2 / 2026-05-08 P3）+ **B6 demo 5 球 arweave_url 上链回写**（P7 task 提前消化）+ **B4 删除**
+**下一步**（B7 改放最后，2026-05-04 调整 / B4 删 2026-05-08 调整）:
+  1. **B5 前端韧性三件套**（独立可做：tracks ISR + 移动端首帧 + localStorage 恢复）
+  2. **B3 草稿铸造** — 前置 A0+A1 完成（B8 P3 已接通核心铸造 + 实测，B3 步骤剩余文档对齐）
+  3. **Track A 剩余**（A0/A1/A3/A4/A5）+ D2 + E4 / E5 收口
+  4. **B7 端到端冒烟**（最后一次性覆盖所有功能 + 产 bug 清单 → 直接进 completion review）
+  5. **Phase 6 completion review** → Phase 7 OP 主网
+
+**B2 状态**：Bug C 主网链路已修（5/6） + Bug A/B 由 B8 数据流重设实质收口（B8 P1 5s 乐观 / P2 唱片对齐 DB / P3 路由双兼容 + 前端 inline 播放）；剩余只剩 B7 冒烟可能产出的小 bug。
+
+**剩余**: Phase 6 v2（2-3 天）→ Phase 7（OP 主网 + UI 深度重设计 + 音阶系统 + 监控 + 退出准备）
 
 ### Pre-tester gate 完成清单（2026-04-26）
 
@@ -127,27 +129,34 @@
 
 ## 上次成功验证
 
+- 验证: **B8 P3 端到端实测 + B6 demo 5 球 arweave_url 上链回写**（草稿铸造主链路全通）
+- 时间: 2026-05-08
+- 改动:
+  - **B8 P3** 路由 `[tokenId]` → `[id]` 双兼容（数字按 token_id / UUID 按 queue.id）+ ScorePlayer 改前端 inline（PlayerProvider.toggle + useEventsPlayback 替代 Arweave decoder iframe）+ score-fallback.ts 删除（noop 残留）+ score-source.ts allSettled / cover try-catch / token_id .order().limit(1) 防御
+  - **B6 demo arweave_url** 跑 `scripts/arweave/upload-tracks.ts` 上 5 个 mp3 到 Arweave + 回写 tracks.arweave_url（解锁草稿铸造，原 P7 task 提前消化）
+  - **B4 删除** PlayerProvider loadingRef 早已实施（commit 38f7f37 前），playbook + STATUS + TASKS 同步清掉
+- 验证证据: queue 778a2904 走完 5 步状态机 → token_id=12 上链 + tx_hash 0xea5b... + uri_tx_hash 0x5ddb... + metadata Arweave bJeCGDtZ... + ScoreNFT 详情页前端 inline 播放正常（底曲 + events 时序触发音效）
+- 副产品 / 待办:
+  - cron lease 5 分钟 × 5 步 = 25 分钟问题（线上 cron 实际节奏 vs STATUS 文案不一致）
+  - /api/me/score-nfts 35s 慢（events_data 联表）→ 悬空 TODO
+  - /score/[id] 返回链接应回 /me 而非 /（用户提需求）
+  - Resend 邮件告警 P3 commit 提了未做 → 主网前必做
+  - Agent review 13 finding：5 项本次合入修，8 项挂 P7
+
+### 上一轮成功验证（保留）
+
 - 验证: B2 Bug C 主链路双根因修复（cron 4-28~5-6 全 fail 修通到 minting_onchain 上链）
 - 时间: 2026-05-06
 - 改动: 本地 turbo-wallet.json 删 purpose 中文行（编码错误致 JSON.parse 崩 position 256）/ Vercel 加 NEXT_PUBLIC_SCORE_NFT_ADDRESS 删拼错版 / DELETE 8 条 failed row
-- 验证证据: 新铸造 row 走完前 3 步 token_id=2 上链（events_ar_tx_id + tx_hash 都有），第 4 步业务 throw（D 组无 arweave_url 是独立 P7 问题）
-- 副产品: 发现 D 组 No.1~No.5 完全无法铸造 ScoreNFT（arweave_url=NULL）→ P7 任务
+- 验证证据: 新铸造 row 走完前 3 步 token_id=2 上链（events_ar_tx_id + tx_hash 都有），第 4 步业务 throw（D 组无 arweave_url 是独立 P7 问题，**已在 5/8 解锁**）
 
-### 上一轮成功验证（保留）
+### 上上轮成功验证（保留）
 
 - 验证: B6 实施完成（A 组 5 球 + B/C 36 球 demo 上线）
 - 时间: 2026-05-04
 - 改动: migration 027/028（tracks 加 published + 5 行循环到 No.1-5 + 安全清旧 mint）/ Modak 字体引入 / SphereNode 删下方 label 加内嵌数字 badge / getGroupTargetCount 抽象 / mock-tracks 5 行补 published
 - 验证证据: TS 0 errors / npm run build 通过 / 浏览器实测 5 球 36 球数字稳定显示
 - 决策推翻: B7 改放最后（避免"测-修-重测"循环）
-
-### 上上轮成功验证（保留）
-
-- 验证: Phase 6 Pre-tester gate 4/4 收口 — health 端点线上返回 mintQueue 字段 + 收藏立即变红 + 跨账号 cache 隔离
-- 时间: 2026-04-26
-- commits（4 个一起 push）: `931f45f` useFavorite 乐观 / `c749b67` B1 cache 隔离 / `f0725df` E1 health mintQueue / `8074d18` A2 failure_kind
-- migration: `supabase/migrations/phase-6/021_mint_queue_failure_kind.sql` 已在 Supabase 执行
-- 验证证据: `https://pond-ripple.xyz/api/health` 返回 `{"mintQueue":{"failed":0,"stuck":0,"oldestAgeSeconds":null},...}`
 
 ## 当前阻塞
 
@@ -230,6 +239,40 @@
 - **Pre-existing lint 错误 2 处**（`comet-system.tsx:40` + `use-layer-wave.ts:37` ref-during-render）
   - 来源 commit `cd882aa` v82 archipelago refactor，与 B6 无关
   - verify.sh 会失败但 build 通过；视后续工作中是否顺手修
+- **/score/[id] 返回链接改 /me**（2026-05-08 B8 实测发现）
+  - 现状：`app/score/[id]/page.tsx` 的 ← Ripples in the Pond 链接到 `/`
+  - 期望：从唱片详情页返回应回到 /me（用户的"我的唱片"列表）
+  - 一行修改，B7 端到端冒烟前顺手改
+- **/api/me/score-nfts 性能问题**（2026-05-08 B8 实测发现，35 秒）
+  - 根因：B8 Phase 2 联表 `pending_scores(events_data)` 算 eventCount，events_data 是大 JSON 数组
+  - 优化：改 SELECT `jsonb_array_length(events_data)` 而不是 select 整个 events_data
+  - 同样问题应用到 /api/me/scores（也联了 events_data 给草稿播放用，但那个是必要的）
+- **.env.local 有重复 CRON_SECRET 定义**（2026-05-08 B8 实测发现）
+  - 第二行 `CRON_SECRET=RIPStheworld` 覆盖第一行 hex value
+  - 顺手清理（保留第二行或选其一），不影响线上 vercel
+- **cron lease 5 分钟 × 5 步 = 25 分钟问题**（2026-05-08 B8 实测发现）
+  - 设计：Phase 6 A1 durable lease 防 cron timeout race
+  - 副作用：每条 row 走完 5 步 ≈ 25 分钟（远超 STATUS.md 文案"约 5 分钟"）
+  - 选项：① 终态外推进步骤时一并清 lease ② cron 频率 1min → 30s ③ 保留设计但更新文档
+  - B7 端到端冒烟前需决策（影响实测耗时）
+- **score_nft_queue.token_id 缺 unique index**（2026-05-08 B8 P3 review 发现）
+  - 根因：B8 后 token_id 路径成为兼容入口（getScoreByTokenId），但表没 partial unique index
+  - 已加代码侧防御：`.order().limit(1)` 取最新行（避免双行命中 PGRST116 静默 404）
+  - 主网前补 migration：`CREATE UNIQUE INDEX uq_score_queue_token_id ON score_nft_queue(token_id) WHERE token_id IS NOT NULL`
+  - 前置：先确认现有数据无 token_id 重复
+- **OwnedScoreNFT.id 双语义可考虑拆 brand type**（P7 候选，2026-05-08 B8 P3 review 发现）
+  - 现状：id 字段已上链 = `String(tokenId)`，未上链 = queue.id UUID
+  - 风险：caller 误用（当 DB 主键传入 RPC 会 invalid uuid 错；语义判断 `id === '123'` 不可靠）
+  - 拆法：`tokenId?: number` + `queueId: string`（永远 UUID）；或 brand type `ScoreRouteId`
+  - 当前 caller 仅 ScoreCard 一处，影响小，可观察后再拆
+- **Resend 邮件告警延后 → 主网前必做**（2026-05-08 B8 P3 commit message 提了但未实施）
+  - 测试网 + 当前用户量靠人工巡查 supabase 队列 + /api/health mintQueue 字段兜底
+  - 主网前必做（生产环境失败必须有 alert 通道）
+  - 触发场景：cron 失败 retry 耗尽 / Turbo 钱包余额低 / queue stuck > 阈值
+- **score-source events 大 JSON 加载体验**（2026-05-08 B8 P3 review 发现）
+  - 现状：/score/[id] SSR 拉完整 events_data（几十/几百音符 × 大 JSON），首屏慢
+  - 远期：events 拆 client fetch（page.tsx 先出基础信息，events 单独 endpoint），仿 B8 P2 split
+  - 当前 ScorePlayer 已用 Promise.allSettled + cover 降级保护，单页崩溃概率低
 
 ## 备注
 
