@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { OwnedNFT } from '@/src/types/tracks';
-import type { OwnedScoreNFT, MintingState } from '@/src/types/jam';
+import type { OwnedScoreNFT } from '@/src/types/jam';
 import { useAuth } from '@/src/hooks/useAuth';
 import { fetchMyNFTs } from '@/src/data/nfts-source';
 import { getDrafts, removeDraft } from '@/src/lib/draft-store';
@@ -11,24 +11,17 @@ import { getCachedNFTs, setCachedNFTs } from '@/src/lib/nft-cache';
 import { saveScore, fetchMyScores, fetchMyScoreNFTs } from '@/src/data/jam-source';
 import NFTCard from '@/src/components/me/NFTCard';
 import ScoreNftSection from '@/src/components/me/ScoreNftSection';
-import DraftSection from '@/src/components/me/DraftSection';
+import DraftSection, { type DisplayDraft } from '@/src/components/me/DraftSection';
 import EmptyState from '@/src/components/me/EmptyState';
-import { DRAFT_TTL_MS } from '@/src/lib/constants';
-
-interface DisplayDraft {
-  key: string;
-  title: string;
-  expiresAt: string;
-  /** Phase 6 B3: server 草稿带 pendingScoreId，DraftCard 据此显示铸造按钮；本地草稿不带 */
-  pendingScoreId?: string;
-  /** B2 P1 5/6: 服务端权威 mintingState（来自 score_nft_queue 联表），本地草稿无 */
-  mintingState?: MintingState;
-}
 
 type ServerDraft = Awaited<ReturnType<typeof fetchMyScores>>[number];
 type LocalDraft = ReturnType<typeof getDrafts>[number];
 
-/** Server + local 合并成 UI 用的 DisplayDraft 数组（B2 P1 5/6 抽出避免重复） */
+/**
+ * Server + local 合并成 UI 用的 DisplayDraft 数组。
+ * 过期草稿由数据源 filter：服务端 GET /api/me/scores 已 filter，
+ * 本地 draft-store.getDrafts() 也已 filter（24h TTL）。
+ */
 function buildDisplayDrafts(
   serverDrafts: ServerDraft[],
   localDrafts: LocalDraft[],
@@ -37,16 +30,11 @@ function buildDisplayDrafts(
     ...serverDrafts.map((s) => ({
       key: `server-${s.id}`,
       title: `${s.trackTitle} - #${String(s.seq).padStart(2, '0')} - ${s.eventCount} 音符`,
-      expiresAt: s.expiresAt,
       pendingScoreId: s.id,
-      mintingState: s.mintingState,
     })),
     ...localDrafts.map((d, i) => ({
       key: `local-${d.trackId}`,
       title: `创作 - #${String(i + 1).padStart(2, '0')} - ${d.eventsData.length} 音符`,
-      expiresAt: new Date(
-        new Date(d.createdAt).getTime() + DRAFT_TTL_MS,
-      ).toISOString(),
     })),
   ];
 }
@@ -54,34 +42,26 @@ function buildDisplayDrafts(
 /**
  * /me — 个人页
  * 先从 localStorage 缓存秒开，后台静默刷新
- * 草稿来源：localStorage（未上传）+ 服务端（已上传）
+ * 草稿来源：localStorage（未上传）+ 服务端（已上传未入队）
  */
 export default function MePage() {
   const { ready, authenticated, login, getAccessToken, userId } = useAuth();
   const [scoreNfts, setScoreNfts] = useState<OwnedScoreNFT[]>([]);
-  // 初次渲染拿不到 userId（Privy hydrate 中），先用 anon key 兜底
   const [nfts, setNfts] = useState<OwnedNFT[]>(() => getCachedNFTs(null));
-  const [drafts, setDrafts] = useState<DisplayDraft[]>(() => {
-    return getDrafts().map((d, i) => ({
-      key: `local-${d.trackId}`,
-      title: `创作 - #${String(i + 1).padStart(2, '0')} - ${d.eventsData.length} 音符`,
-      expiresAt: new Date(new Date(d.createdAt).getTime() + DRAFT_TTL_MS).toISOString(),
-    }));
-  });
+  const [drafts, setDrafts] = useState<DisplayDraft[]>(() =>
+    buildDisplayDrafts([], getDrafts()),
+  );
   const [loaded, setLoaded] = useState(false);
-  // B2 P1 review: server fetch 是否回来过 — 控制骨架屏占位（消除"先空再有"闪烁）
   const [serverDraftsLoaded, setServerDraftsLoaded] = useState(false);
   const [scoreNftsLoaded, setScoreNftsLoaded] = useState(false);
 
-  // 稳定 getAccessToken 引用 — Privy 不保证 useCallback 稳定性，
-  // 直接放到 effect deps 会让 polling setInterval 频繁重建（永远到不了 5s tick）
+  // 稳定 getAccessToken 引用：Privy 不保证 useCallback 稳定，
+  // 直接放进 effect deps 会导致 fetch / saveScore loop 因父 rerender 重复触发
   const getAccessTokenRef = useRef(getAccessToken);
   useEffect(() => {
     getAccessTokenRef.current = getAccessToken;
   });
 
-  // userId 变化（登录 / 切号 / 登出）→ 重读对应 user 的本地缓存
-  // 推到 microtask 避免 React 19 react-hooks/set-state-in-effect 警告
   useEffect(() => {
     queueMicrotask(() => {
       const cached = getCachedNFTs(userId);
@@ -93,10 +73,9 @@ export default function MePage() {
   useEffect(() => {
     if (!authenticated || !userId) return;
 
-    getAccessToken().then(async (token) => {
+    getAccessTokenRef.current().then(async (token) => {
       if (!token) return;
 
-      // 并行：加载 ScoreNFT + MaterialNFT + 上传本地草稿 + 加载服务端草稿
       fetchMyScoreNFTs(token)
         .then((data) => {
           setScoreNfts(data);
@@ -112,7 +91,6 @@ export default function MePage() {
         setLoaded(true);
       });
 
-      // 自动上传 localStorage 草稿
       const localDrafts = getDrafts();
       for (const draft of localDrafts) {
         try {
@@ -127,32 +105,11 @@ export default function MePage() {
         }
       }
 
-      // 从服务端拿已上传的草稿（含 mintingState 联表 score_nft_queue）
       const serverDrafts = await fetchMyScores(token);
       setDrafts(buildDisplayDrafts(serverDrafts, getDrafts()));
       setServerDraftsLoaded(true);
     });
-  }, [authenticated, userId, getAccessToken]);
-
-  // B2 P1 5/6 polling：任意 draft 在 minting/queued 时每 5s 刷新；解决 Bug C 唱片不更新
-  const hasMintingInFlight = drafts.some(
-    (d) => d.mintingState === 'minting' || d.mintingState === 'queued',
-  );
-  useEffect(() => {
-    if (!hasMintingInFlight || !authenticated || !userId) return;
-    const tick = async () => {
-      const token = await getAccessToken();
-      if (!token) return;
-      const [serverDrafts, scoreNftsNew] = await Promise.all([
-        fetchMyScores(token),
-        fetchMyScoreNFTs(token),
-      ]);
-      setScoreNfts(scoreNftsNew);
-      setDrafts(buildDisplayDrafts(serverDrafts, getDrafts()));
-    };
-    const id = setInterval(tick, 5000);
-    return () => clearInterval(id);
-  }, [hasMintingInFlight, authenticated, userId, getAccessToken]);
+  }, [authenticated, userId]);
 
   if (!ready && nfts.length === 0) return null;
 

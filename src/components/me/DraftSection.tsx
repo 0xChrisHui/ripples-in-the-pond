@@ -2,27 +2,25 @@
 
 import DraftCard from './DraftCard';
 import SkeletonRows from './SkeletonRows';
-import type { MintingState } from '@/src/types/jam';
 
-interface DraftItem {
+/** 「我的创作」UI 行的显示数据（跟 me/page 共用） */
+export interface DisplayDraft {
   key: string;
   title: string;
-  expiresAt: string;
   pendingScoreId?: string;
-  mintingState?: MintingState;
 }
 
 /**
- * "我的创作"段（B2 P1 5/6 从 me/page 抽出）
+ * "我的创作"段（B8 简化）
  *
  * showSkeleton：authenticated 但服务端 drafts 还没回来时显示 3 张占位卡，
- * 消除"先空再有"3-5s 闪烁（Bug B 修复）。
+ * 消除"先空再有"3-5s 闪烁。
  */
 export default function DraftSection({
   drafts,
   showSkeleton,
 }: {
-  drafts: DraftItem[];
+  drafts: DisplayDraft[];
   showSkeleton: boolean;
 }) {
   if (drafts.length === 0 && !showSkeleton) return null;
@@ -37,9 +35,7 @@ export default function DraftSection({
           <DraftCard
             key={d.key}
             title={d.title}
-            expiresAt={d.expiresAt}
             pendingScoreId={d.pendingScoreId}
-            mintingState={d.mintingState}
           />
         ))}
         {showSkeleton && drafts.length === 0 && <SkeletonRows count={3} />}

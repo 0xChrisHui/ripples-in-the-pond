@@ -1,30 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
-import type { MyScoresResponse, MintingState } from '@/src/types/jam';
+import type { MyScoresResponse } from '@/src/types/jam';
 
 /**
  * GET /api/me/scores
- * 返回当前用户的"活草稿 + 铸造中草稿"列表 + 服务端权威 mintingState
+ * 返回当前用户的"未铸造活草稿"列表（"我的创作"section 用）
  *
- * 双路查询合并（Phase 6 B2 P1 — migration 029 后）：
- *   路径 1：活草稿  pending_scores.status='draft' AND expires_at > now
- *   路径 2：铸造中  score_nft_queue.user_id=me AND status != 'success'
- *           联回 pending_scores 拿 events_data 等元数据（status 不限，可能仍是 'draft'）
+ * B8 设计（2026-05-07）：草稿一旦入队（点击铸造）就立刻从这里消失，
+ * 转去"我的唱片"显示。SQL 条件：
+ *   1. status='draft' AND expires_at > now（活草稿）
+ *   2. id NOT IN (user 的 score_nft_queue.pending_score_id 集合)
  *
- * 合并去重：029 后入队不再标 expired，活草稿和铸造中在 ID 层面会重叠，
- *   用 Map<id, row> 自然去重，最后用 queue.status 决定 mintingState。
- *
- * mintingState 映射：
- *   queue 无 row → idle / failed → failed / 中间态 → minting
- *   （'success' 不会出现在结果里，已被路径 2 过滤掉）
+ * 不再返回 mintingState —— 前端 useMintScore 用 5s 本地 timer 做乐观显示。
  */
-
-function mapMintingState(queueStatus: string | null | undefined): MintingState {
-  if (!queueStatus) return 'idle';
-  if (queueStatus === 'failed') return 'failed';
-  return 'minting';
-}
 
 export async function GET(req: NextRequest) {
   try {
@@ -33,55 +22,35 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: '未登录' }, { status: 401 });
     }
 
-    // 路径 1：活草稿
-    const { data: activeDrafts, error: e1 } = await supabaseAdmin
+    // 拿 user 已入队的 pending_score_id 集合（用于 SQL NOT IN 排除）
+    const { data: queueRows, error: qErr } = await supabaseAdmin
+      .from('score_nft_queue')
+      .select('pending_score_id')
+      .eq('user_id', auth.userId);
+    if (qErr) throw qErr;
+
+    const enqueuedIds = (queueRows ?? []).map((q) => q.pending_score_id);
+
+    // 活草稿 + 未过期 + NOT IN 已入队
+    let query = supabaseAdmin
       .from('pending_scores')
       .select('id, created_at, expires_at, track_id, events_data, tracks(title)')
       .eq('user_id', auth.userId)
       .eq('status', 'draft')
-      .gt('expires_at', new Date().toISOString())
-      .order('created_at', { ascending: false });
+      .gt('expires_at', new Date().toISOString());
 
-    if (e1) throw e1;
-
-    // 路径 2：铸造中 queue rows（含中间态 + failed，排除 success）
-    const { data: queueRows, error: e2 } = await supabaseAdmin
-      .from('score_nft_queue')
-      .select('pending_score_id, status')
-      .eq('user_id', auth.userId)
-      .neq('status', 'success');
-
-    if (e2) throw e2;
-
-    const queueByPendingId = new Map<string, string>();
-    const queuePendingIds: string[] = [];
-    for (const q of queueRows ?? []) {
-      queueByPendingId.set(q.pending_score_id, q.status);
-      queuePendingIds.push(q.pending_score_id);
+    if (enqueuedIds.length > 0) {
+      // PostgREST 语法：not.in.(uuid1,uuid2)；UUID 字面量不需要引号
+      query = query.not('id', 'in', `(${enqueuedIds.join(',')})`);
     }
 
-    type DraftRow = NonNullable<typeof activeDrafts>[number];
-    let inflightDrafts: DraftRow[] = [];
-    if (queuePendingIds.length > 0) {
-      const { data: rows, error: e3 } = await supabaseAdmin
-        .from('pending_scores')
-        .select('id, created_at, expires_at, track_id, events_data, tracks(title)')
-        .in('id', queuePendingIds);
+    const { data: scores, error } = await query.order('created_at', {
+      ascending: false,
+    });
 
-      if (e3) throw e3;
-      inflightDrafts = rows ?? [];
-    }
+    if (error) throw error;
 
-    // 合并 + 按 created_at 倒序
-    const merged = new Map<string, DraftRow>();
-    for (const s of activeDrafts ?? []) merged.set(s.id, s);
-    for (const s of inflightDrafts) merged.set(s.id, s);
-    const allDrafts = Array.from(merged.values()).sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    );
-
-    // 序号：按用户该 track 的所有历史草稿数（含 expired），保持原语义
+    // 序号：按用户该 track 的所有历史草稿数（含 expired）
     const { data: allScores } = await supabaseAdmin
       .from('pending_scores')
       .select('track_id')
@@ -93,7 +62,7 @@ export async function GET(req: NextRequest) {
     }
 
     const res: MyScoresResponse = {
-      scores: allDrafts.map((s) => {
+      scores: (scores ?? []).map((s) => {
         const trackData = s.tracks as unknown as { title: string } | null;
         const events = s.events_data as unknown[];
         return {
@@ -103,7 +72,6 @@ export async function GET(req: NextRequest) {
           eventCount: Array.isArray(events) ? events.length : 0,
           createdAt: s.created_at,
           expiresAt: s.expires_at,
-          mintingState: mapMintingState(queueByPendingId.get(s.id)),
         };
       }),
     };

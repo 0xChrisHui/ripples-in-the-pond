@@ -80,16 +80,12 @@ export interface ScorePreviewResponse {
   };
 }
 
-/**
- * 草稿铸造态（B2 P1 2026-05-06 新增）— 前端权威源
+/** API 响应：GET /api/me/scores
  *
- * 服务端可能返：idle / minting / success / failed
- * 'queued' 仅前端乐观瞬态（点击 → API 返回前），服务端不会返
- * 'success' 罕见出现（success 后 pending_scores 通常已 expired 从 /api/me/scores 消失）
+ *  B8 简化（2026-05-07）：草稿入队后立刻从此端点消失（route.ts 用 NOT IN queue 过滤），
+ *  转去"我的唱片"显示。所以本响应里的草稿都是"未铸造的活草稿"，不需要 mintingState 字段。
+ *  前端用 useMintScore 的本地 state（5s 乐观成功）显示"铸造中/成功"瞬态。
  */
-export type MintingState = 'idle' | 'queued' | 'minting' | 'success' | 'failed';
-
-/** API 响应：GET /api/me/scores */
 export interface MyScoresResponse {
   scores: {
     id: string;
@@ -100,8 +96,6 @@ export interface MyScoresResponse {
     eventCount: number;
     createdAt: string;
     expiresAt: string;
-    /** 联表 score_nft_queue 拿的服务端权威铸造态 */
-    mintingState: MintingState;
   }[];
 }
 
