@@ -172,6 +172,10 @@ E2 完成或 Semi 配置已定。E2 挂起期间这一步可以只支持 `not_co
 
 ## Step E4 — Score Decoder 多网关入口 fallback
 
+> **状态**：❌ 废弃（2026-05-08 B8 P3 决策）
+> **理由**：B8 P3 把 `/score/[id]` ScorePlayer 改成前端 inline 播放（PlayerProvider.toggle + useEventsPlayback），不再用 iframe 嵌入 Arweave decoder HTML。E4 的设计目标（详情页 iframe 不可达时的 fallback）已不存在。
+> **OpenSea 端 metadata animation_url**：仍指向 `arweave.net/{decoder_tx}`（metadata 一旦上链不可改），主网用 `ario.permagate.io` 单网关风险接受；P7 重新评估时若需要再做。
+
 ### 概念简报
 `animation_url` 和 `/score/[id]` iframe 指向 `https://arweave.net/{decoder_tx}`。Decoder HTML 内部有多网关 fallback 拉 events.json，但如果 `arweave.net` 本身不可达，HTML 都加载不到，内部 fallback 没机会跑。
 
@@ -221,6 +225,10 @@ return <iframe src={`${gateway}/${decoderTxId}#events=${eventsTxId}`} />;
 ---
 
 ## Step E5 — 文档口径对齐
+
+> **状态**：✅ 已实施（2026-05-08 本次 commit 落地）
+> **改动**：phase-4-community.md S3 顶部加挂起前言 + ARCHITECTURE.md `/score/[tokenId]` → `/score/[id]` + decoder 退役注释 + mint_events 降级注释 + 5 个 track 文件全部加 ✅ 完成标记
+> **JOURNAL**：2026-05-08 段记录本次 audit 结论 + E4 废弃决策
 
 ### 概念简报
 `playbook/phase-4-community.md` 还把 Semi 描述成 `/send_sms + /signin` Bearer API 的前端登录流程，但 `STATUS.md` 和 `JOURNAL.md` 2026-04-13 已说 Semi OAuth 挂起。下一位协作者只看 playbook 可能接一条已冻结路线。

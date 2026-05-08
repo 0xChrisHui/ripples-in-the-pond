@@ -145,6 +145,10 @@ P6 范围内对 /me /score /artist 三个页面只做"小修 + bug 清扫"，不
 
 ## Step B3 — 接通草稿铸造按钮
 
+> **状态**：✅ 已实施（2026-05-08 audit + 5/8 端到端实测验证 token_id=12）
+> **位置**：`src/data/jam-source.ts` mintScore 函数 + `src/hooks/useMintScore.ts` hook + `src/components/me/DraftCard.tsx` 按钮 4 态
+> **commit**：`7e98696` 初版接通 / `40cf61d` B8 P3 整合实测
+
 ### 概念简报
 
 后端 `/api/mint/score` 和 score_nft_queue 从 Phase 3 就 ready，但前端 UI 没按钮。Phase 3 遗留至今。
@@ -197,24 +201,15 @@ export async function mintScore(token: string, pendingScoreId: string): Promise<
 
 ## Step B5 — 前端韧性（3 项打包）
 
+> **状态**：✅ #7 + #9 已实施 / ❌ #8 废弃（2026-05-08 audit 确认）
+> **#7 位置**：`app/api/tracks/route.ts:15` ISR 5min + degraded header / `Archipelago.tsx:133` "正在唤醒群岛..." 占位
+> **#9 位置**：`src/lib/draft-store.ts` isValidDraft + try/catch 自愈
+> **#8 废弃**：HomeJam.tsx 已移到 `references/dead-code/`（Phase 6 B2 重构后主页改用 Archipelago）；移动端体验改进挂 P7 UI 重设计
+
 ### 📦 范围
 - `app/api/tracks/route.ts` + `src/components/archipelago/Archipelago.tsx`（#7）
-- `src/components/jam/HomeJam.tsx`（#8）
+- ~~`src/components/jam/HomeJam.tsx`（#8）~~ 已废弃
 - `src/lib/draft-store.ts`（#9）
-
-### 做什么
-
-**#7 tracks 韧性**：`export const revalidate = 300; // ISR 5 分钟` + DB 失败返 empty 数组 + 错误 header 而非 500；Archipelago 在 tracks 空时显示占位态而非 null。
-
-**#8 移动端首帧**：useState 默认 null + useEffect 探测 → 加载完才决定渲染哪个组件。
-
-**#9 草稿恢复**：localStorage 损坏 try/catch 自愈，清掉非数组 / 非 JSON 的脏数据。
-
-### 验证标准
-- [ ] 手动模拟 Supabase 错 → /api/tracks 返空 + header，Archipelago 占位
-- [ ] UA 伪装移动端首帧 → 直接移动提示，不加载 HomeJamDesktop
-- [ ] `ripples_drafts` 改成 `"not json"` → /me 正常（drafts 空）
-- [ ] `scripts/verify.sh` 通过
 
 ---
 

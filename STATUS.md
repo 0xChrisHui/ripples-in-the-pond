@@ -6,25 +6,28 @@
 
 ## 当前阶段
 
-**Phase**: Phase 6 v2 — 稳定性收口 + 端到端跑通（**v2 缩减：UI 重设计深度版迁 P7**，2026-05-03 决策）
-**进度**: Track C 收口 + Pre-tester gate 4/4 + B6 demo + B2 Bug C 主链路修复 + **B8 /me 数据流重设完整 3 阶段**（Phase 1+2 已 commit / Phase 3 本次 commit + 端到端实测 token_id=12 上链）+ **B4 删除**（`PlayerProvider.tsx:86-114` loadingRef 早已实施）
-**playbook**: `playbook/phase-6/overview.md`（+ 5 个 track 子文档；Track B 7→6 step，B4 删）
-**决策日志**：`docs/JOURNAL.md` 2026-04-25 段（Phase 5/6 kickoff/Track C/Pre-tester）+ 2026-05-03 段（v2 缩减 + 艺术家反馈）+ 2026-05-08 段（B8 P3 + arweave_url 上链 + B4 删 + agent review 13 finding）
+**Phase**: Phase 6 v2 — **代码侧实质完成**（剩 B7 端到端冒烟 + completion review 即可进 Phase 7）
+**进度**: Track A 5/6 step ✅（A0/A1/A2/A3/A4 实施 + A5 P7 + A6 决策冻结）/ Track B 6/7 step ✅（B1/B2/B3/B5/B6 实施 + B4 删 + B7 待）/ Track C 4/4 ✅ / Track D D1 决策不做 + D2 ✅ / Track E E1 ✅ + E2/E3 P7 + E4 废弃 + E5 待
+**playbook**: `playbook/phase-6/overview.md`（5 个 track 子文档全部加完成标记 / 状态对齐真实代码 @ 2026-05-08 audit）
+**决策日志**：`docs/JOURNAL.md` 2026-04-25 段（Phase 5/6 kickoff/Track C/Pre-tester）+ 2026-05-03 段（v2 缩减 + 艺术家反馈）+ 2026-05-08 段（B8 P3 + arweave_url 上链 + B4 删 + agent review 13 finding + audit 整体收口 + E4 废弃决策）
 **stakeholder 反馈**（取代原 tester 反馈窗口）：艺术家 5 条反馈已收到（视觉 / 动态 / 音阶 / 名字 / 按键动画）；投资人只看链上技术不看 UI
 
 ## 当前进度
 
-**做到哪**: Phase 5 完全收口 + Track C v2 合约上链 + **Pre-tester gate 4/4** + **Phase 6 playbook v2 缩减**（2026-05-03）+ **B6 实施完成**（2026-05-04，migration 027/028 + Modak 字体 + SphereNode 数字 badge）+ **B2 Bug C 主链路修复**（2026-05-06，wallet purpose 中文乱码 + Vercel env var typo 双根因）+ **B8 /me 数据流重设 3 阶段全完**（2026-05-07 P1+P2 / 2026-05-08 P3）+ **B6 demo 5 球 arweave_url 上链回写**（P7 task 提前消化）+ **B4 删除**
-**下一步**（B7 改放最后，2026-05-04 调整 / B4 删 2026-05-08 调整）:
-  1. **B5 前端韧性三件套**（独立可做：tracks ISR + 移动端首帧 + localStorage 恢复）
-  2. **B3 草稿铸造** — 前置 A0+A1 完成（B8 P3 已接通核心铸造 + 实测，B3 步骤剩余文档对齐）
-  3. **Track A 剩余**（A0/A1/A3/A4/A5）+ D2 + E4 / E5 收口
-  4. **B7 端到端冒烟**（最后一次性覆盖所有功能 + 产 bug 清单 → 直接进 completion review）
-  5. **Phase 6 completion review** → Phase 7 OP 主网
+**做到哪**: Phase 5 完全收口 + Track C v2 合约上链 + Pre-tester gate 4/4 + B6 + B2 Bug C 主链路 + B8 P1/P2/P3 + B6 demo 5 球 arweave_url 上链 + B4 删 + **2026-05-08 audit：A0/A1/A3/A4/B3/B5(#7+#9)/D2 全部已实施**（之前 playbook 列"待做"但代码早已完成，仅文档未对齐）+ **E5 文档对齐本次落地**
 
-**B2 状态**：Bug C 主网链路已修（5/6） + Bug A/B 由 B8 数据流重设实质收口（B8 P1 5s 乐观 / P2 唱片对齐 DB / P3 路由双兼容 + 前端 inline 播放）；剩余只剩 B7 冒烟可能产出的小 bug。
+**下一步**（极简）:
+  1. **B7 端到端冒烟**（覆盖所有功能 + 产 bug 清单）
+  2. **Phase 6 completion review** → Phase 7 OP 主网
 
-**剩余**: Phase 6 v2（2-3 天）→ Phase 7（OP 主网 + UI 深度重设计 + 音阶系统 + 监控 + 退出准备）
+**已实质完成的步骤**：
+- Track A：A0 operator 锁 ✅ / A1 ScoreNFT cron durable lease ✅ / A2 failure_kind ✅ / A3 sync cursor 事务性 ✅ / A4 草稿原子化 ✅ / A5 P7 / A6 决策冻结
+- Track B：B1 cache 隔离 ✅ / B2 Bug A/B 由 B8 数据流重设实质收口 + Bug C 5/6 修 ✅ / B3 草稿铸造 + 5/8 实测 ✅ / B5 #7 ✅ #9 ✅ #8 废弃（HomeJam 已 dead-code）/ B6 ✅ / B7 待 / B4 删
+- Track C：C1/C2/C3/C4 ✅
+- Track D：D1 决策不做 / D2 admin Bearer ✅ / D3-D5 挂起（D1=不做）
+- Track E：E1 health mintQueue ✅ / E2 Semi P7 / E3 依赖 E2 P7 / E4 废弃（B8 P3 删 decoder iframe）/ E5 本次 ✅
+
+**剩余**: Phase 6 v2（B7 冒烟半天 + completion review 半天 = **1 天**）→ Phase 7（OP 主网 + UI 深度重设计 + 音阶系统 + 监控 + 退出准备）
 
 ### Pre-tester gate 完成清单（2026-04-26）
 

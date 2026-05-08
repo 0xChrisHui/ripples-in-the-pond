@@ -121,13 +121,15 @@
 1. **封面图不是单独的 NFT**——它是 ScoreNFT 的视觉外观（PNG 文件），不是一个独立 token
 2. **乐谱不是子 NFT**——乐谱是一段 events JSON，描述"哪个键在第几毫秒按下、用了哪个 sound"。它**就是**母 NFT 的内容，不是装在母 NFT 里的另一个 token
 
-**回放数据的 4 层冗余**：
+**回放数据的 4 层冗余**（Phase 6 B8 P3 修订）：
 1. Arweave 主网关
 2. Arweave 多网关 fallback（决策 9）
-3. 我们的 Supabase `mint_events.score_data` 自包含拷贝
+3. 我们的 Supabase `score_nft_queue` 联表 `pending_scores.events_data`（B8 P3 起新主路径）
+   - 历史：原第 3 层是 `mint_events.score_data` 自包含拷贝，B8 后此表降级为链上事件账本（cron 仍写但 UI 不读）
 4. OP 主网上的 tokenURI 字符串（永远在，但不可读取内容；OP 数据最终结算到 ETH L1，不灭）
+   - **第 4 层"链上灾备"在 B8 P3 后挂 P7 重新设计**：B8 inline 播放需 `track.audio_url`，链上 metadata 拿不到完整 Track 对象（只有 ar:// 字符串）
 
-`pending_scores` 24h 过期不影响已铸造乐谱的回放——铸造时数据已被复制到 `mint_events.score_data`。
+`pending_scores` 24h **不再过期已被铸造的草稿**（B8 P2 起入队后 status='draft' 不变，events_data 永久保留供详情页前端 inline 播放使用）。
 
 ### 决策 7：ERC-6551 TBA 当前未实装（Phase 6 D-C3 修订）
 
@@ -278,7 +280,7 @@ idle → [点击爱心]
 - tokenId 自增
 - 仅 MintOrchestrator 可调用 mint
 - Metadata 必须 OpenSea 兼容（`image` / `animation_url` / `external_url` 三件套）
-- `external_url` 指向公开回放页 `/score/[tokenId]`，分享时微信/Twitter 自动展示封面
+- `external_url` 指向公开回放页 `/score/[id]`（B8 P3 后路由双兼容：纯数字按 tokenId / UUID 按 score_nft_queue.id），分享时微信/Twitter 自动展示封面
 
 ### MintOrchestrator
 - 编排合约：薄壳，唯一职责是 `mintScore` → `ScoreNFT.mint`
@@ -351,8 +353,15 @@ Phase 2 spike 已验证 Web Audio 可行（commit `da9210d`）。
 固定底部，显示当前曲目 + 进度条 + 停止按钮。
 播放中 = 录制中（用户无感）。
 
-### 公开回放页 `/score/[tokenId]`
-任何人可访问。OG meta tags 三件套。数据来源 `mint_events.score_data`，灾备链路 = 链上 tokenURI → Arweave。
+### 公开回放页 `/score/[id]`（Phase 6 B8 P3 重设）
+
+**路由双兼容**：纯数字 → `getScoreByTokenId`（兼容旧分享卡 / 链上 external_url）/ UUID → `getScoreByQueueId`（B8 主路径，含未上链中间态"上链中"灰卡）。
+
+**数据源**：`score_nft_queue` 单一来源（联表 `pending_scores.events_data` 拿事件 + `tracks(*)` 拿底曲）。`mint_events` 表 B8 后**降级为链上事件账本**（cron 仍写，UI 不读，留给监控 / 1% 链上追踪用户）。
+
+**播放方案**：前端 inline（PlayerProvider.toggle 播底曲 + useEventsPlayback 按 events.time 触发音效）。删除原 Arweave decoder iframe 调用。OpenSea 端 metadata `animation_url` 仍指向 decoder（链上不可改），但项目主路径不依赖。
+
+**任何人可访问，OG meta tags 三件套**。灾备链路（决策 6 第 4 层"链上 tokenURI → Arweave fallback"）在 B8 P3 后**降为 P7 重新设计**：原 score-fallback.ts noop 残留已删除，链上 metadata 拿不到完整 Track 对象不能复用 inline 播放方案。
 
 ---
 

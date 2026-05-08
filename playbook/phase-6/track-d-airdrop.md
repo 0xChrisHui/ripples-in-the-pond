@@ -106,6 +106,9 @@ Phase 6 kickoff 阶段用户必须显式决策：**主网是否做空投？**
 
 ## Step D2 — admin header 鉴权【无条件做】
 
+> **状态**：✅ 已实施（2026-05-08 audit 确认）
+> **位置**：`src/lib/auth/admin-auth.ts` verifyAdminToken（仿 cron-auth 模式 Bearer-only）+ `app/api/airdrop/trigger/route.ts:20` 入口包装（注释明确"Phase 6 D2 改"）
+
 ### 概念简报
 `app/api/airdrop/trigger/route.ts:9, 18-20` 用 `?token=` 读 `ADMIN_TOKEN`。query token 进浏览器历史、Vercel/代理日志、截图和复制链接，泄露面大。即使空投不启用，也不能留这个点。
 
