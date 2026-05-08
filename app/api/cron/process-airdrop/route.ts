@@ -23,6 +23,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "无效的 secret" }, { status: 401 });
   }
 
+  // Phase 6 P0-3 hard kill switch（2026-05-08 strict CTO review）：
+  // D1 决策"主网不做空投"原本只靠 cron-job.org 不配 + admin Bearer 不暴露两层文档约束。
+  // 这里加代码层硬开关 — 主网 Vercel 不设 AIRDROP_ENABLED，即使 CRON_SECRET 泄露 +
+  // 任何人 GET 此端点也只会拿到 disabled 响应。测试网想跑空投显式设 'true'。
+  if (process.env.AIRDROP_ENABLED !== "true") {
+    return NextResponse.json({ result: "disabled" });
+  }
+
   // Phase 6 A0：入口拿运营钱包全局锁，避免和 mint / score cron nonce race
   const holder = `airdrop-${randomUUID()}`;
   if (!(await acquireOpLock(holder))) {

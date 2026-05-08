@@ -136,6 +136,23 @@
 
 ## 上次成功验证
 
+- 验证: **strict CTO review "现在就修" 6 项落地**（测试网立即修补，避免等 Phase 7）
+- 时间: 2026-05-08
+- 改动:
+  - **P0-3** AirdropNFT cron 入口加 `AIRDROP_ENABLED` env 硬开关（`process-airdrop/route.ts`）— 主网 Vercel 不设此 env，CRON_SECRET 即使泄露也只返 disabled
+  - **P1-3** OwnedScoreNFT 加 `queueId: string` 字段（`src/types/jam.ts` + `score-nfts/route.ts` + `ScoreNftSection.tsx`）— React key 用 queueId 永不冲突
+  - **P1-8** score_nft_queue catch 路径补 `failure_kind`（migration 030 加列 + `process-score-queue/route.ts` failed 时按 isCritical 分流 manual_review / safe_retry，与 mint_queue 对称）
+  - **P1-9** /api/health oldestAgeSeconds 改用 `created_at`（`health/route.ts`）— 入队时刻不被 cron retry 重写，告警可信
+  - **P1-10** /api/cron/queue-status 改 Bearer-only（`queue-status/route.ts` 复用 `verifyAdminToken`）— query token 进浏览器历史风险消除，runbook / 运维脚本需同步改 curl -H 'Authorization: Bearer …'
+  - **P1-19** /api/me/score-nfts 35s → ms 级（migration 031 pending_scores 加 `event_count` generated column + `score-nfts/route.ts` SELECT 改用 event_count，不再拉整个 jsonb 算 length）
+- 验证证据: TS 0 errors / ESLint 通过（仅 3 项 pre-existing warning）/ npm run build 全 27 路由生成完成（含 process-airdrop / queue-status / score-nfts / health 4 个改动 endpoint）
+- 待办（用户线下做）:
+  - 在 Supabase Dashboard 执行 migration 030 + 031（顺序执行，建表 + 加列）
+  - 测试网 Vercel 加环境变量 `AIRDROP_ENABLED=true`（保持现有空投行为）；主网部署时**不设**此 env
+  - 运维脚本 / runbook 把 `/api/cron/queue-status?token=…` 改成 `curl -H 'Authorization: Bearer $ADMIN_TOKEN'`
+
+### 上一轮成功验证（保留）
+
 - 验证: **B8 P3 端到端实测 + B6 demo 5 球 arweave_url 上链回写**（草稿铸造主链路全通）
 - 时间: 2026-05-08
 - 改动:
@@ -145,19 +162,18 @@
 - 验证证据: queue 778a2904 走完 5 步状态机 → token_id=12 上链 + tx_hash 0xea5b... + uri_tx_hash 0x5ddb... + metadata Arweave bJeCGDtZ... + ScoreNFT 详情页前端 inline 播放正常（底曲 + events 时序触发音效）
 - 副产品 / 待办:
   - cron lease 5 分钟 × 5 步 = 25 分钟问题（线上 cron 实际节奏 vs STATUS 文案不一致）
-  - /api/me/score-nfts 35s 慢（events_data 联表）→ 悬空 TODO
   - /score/[id] 返回链接应回 /me 而非 /（用户提需求）
   - Resend 邮件告警 P3 commit 提了未做 → 主网前必做
   - Agent review 13 finding：5 项本次合入修，8 项挂 P7
 
-### 上一轮成功验证（保留）
+### 上上轮成功验证（保留）
 
 - 验证: B2 Bug C 主链路双根因修复（cron 4-28~5-6 全 fail 修通到 minting_onchain 上链）
 - 时间: 2026-05-06
 - 改动: 本地 turbo-wallet.json 删 purpose 中文行（编码错误致 JSON.parse 崩 position 256）/ Vercel 加 NEXT_PUBLIC_SCORE_NFT_ADDRESS 删拼错版 / DELETE 8 条 failed row
 - 验证证据: 新铸造 row 走完前 3 步 token_id=2 上链（events_ar_tx_id + tx_hash 都有），第 4 步业务 throw（D 组无 arweave_url 是独立 P7 问题，**已在 5/8 解锁**）
 
-### 上上轮成功验证（保留）
+### 上上上轮成功验证（保留）
 
 - 验证: B6 实施完成（A 组 5 球 + B/C 36 球 demo 上线）
 - 时间: 2026-05-04
@@ -250,10 +266,10 @@
   - 现状：`app/score/[id]/page.tsx` 的 ← Ripples in the Pond 链接到 `/`
   - 期望：从唱片详情页返回应回到 /me（用户的"我的唱片"列表）
   - 一行修改，B7 端到端冒烟前顺手改
-- **/api/me/score-nfts 性能问题**（2026-05-08 B8 实测发现，35 秒）
-  - 根因：B8 Phase 2 联表 `pending_scores(events_data)` 算 eventCount，events_data 是大 JSON 数组
-  - 优化：改 SELECT `jsonb_array_length(events_data)` 而不是 select 整个 events_data
-  - 同样问题应用到 /api/me/scores（也联了 events_data 给草稿播放用，但那个是必要的）
+- **/api/me/scores 仍联 events_data**（2026-05-08 B8 实测，约 35s 慢；/api/me/score-nfts 已在本轮 P1-19 修）
+  - 现状：/api/me/scores 联 `events_data` 给草稿前端 inline 播放用（DraftCard ▶ 按钮按 events.time 触发音效）
+  - events_data 是必要数据不可省，但首屏可拆：先返主信息（id / track / seq / event_count）+ 草稿播放时单独 fetch events
+  - 影响：草稿数 100+ 时 /me 首屏慢；P7 优化（仿 B8 P2 split）
 - **.env.local 有重复 CRON_SECRET 定义**（2026-05-08 B8 实测发现）
   - 第二行 `CRON_SECRET=RIPStheworld` 覆盖第一行 hex value
   - 顺手清理（保留第二行或选其一），不影响线上 vercel
@@ -267,11 +283,10 @@
   - 已加代码侧防御：`.order().limit(1)` 取最新行（避免双行命中 PGRST116 静默 404）
   - 主网前补 migration：`CREATE UNIQUE INDEX uq_score_queue_token_id ON score_nft_queue(token_id) WHERE token_id IS NOT NULL`
   - 前置：先确认现有数据无 token_id 重复
-- **OwnedScoreNFT.id 双语义可考虑拆 brand type**（P7 候选，2026-05-08 B8 P3 review 发现）
-  - 现状：id 字段已上链 = `String(tokenId)`，未上链 = queue.id UUID
-  - 风险：caller 误用（当 DB 主键传入 RPC 会 invalid uuid 错；语义判断 `id === '123'` 不可靠）
-  - 拆法：`tokenId?: number` + `queueId: string`（永远 UUID）；或 brand type `ScoreRouteId`
-  - 当前 caller 仅 ScoreCard 一处，影响小，可观察后再拆
+- **OwnedScoreNFT.id 仍是双语义路由 ID**（P7 brand type 候选）
+  - 现状：本轮 P1-3 已加 `queueId: string` 给 React key 用；但 `id` 字段仍承担"路由用"职责（已上链=token 数字字符串，未上链=queue UUID）
+  - 余下风险：caller 把 `id` 当 UUID 传 RPC 会 invalid uuid（已上链时）；语义判断 `id === '123'` 不可靠
+  - P7 拆法：brand type `ScoreRouteId` 或拆 `route: { kind: 'token', tokenId } | { kind: 'queue', queueId }`
 - **Resend 邮件告警延后 → 主网前必做**（2026-05-08 B8 P3 commit message 提了但未实施）
   - 测试网 + 当前用户量靠人工巡查 supabase 队列 + /api/health mintQueue 字段兜底
   - 主网前必做（生产环境失败必须有 alert 通道）

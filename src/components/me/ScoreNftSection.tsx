@@ -26,7 +26,7 @@ export default function ScoreNftSection({
       </h2>
       <div className="grid gap-3">
         {scoreNfts.length > 0 ? (
-          scoreNfts.map((s) => <ScoreCard key={s.tokenId} score={s} />)
+          scoreNfts.map((s) => <ScoreCard key={s.queueId} score={s} />)
         ) : (
           <SkeletonRows count={3} />
         )}

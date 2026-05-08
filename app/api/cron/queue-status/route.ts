@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { verifyAdminToken } from '@/src/lib/auth/admin-auth';
 
 /**
- * GET /api/cron/queue-status?token=<ADMIN_TOKEN>
+ * GET /api/cron/queue-status
  *
  * Phase 3 S5.c — 最小观测性（playbook 硬门槛）
  * cron 5 步状态机的配套观测 endpoint，给运营方看：
@@ -12,8 +13,9 @@ import { supabaseAdmin } from '@/src/lib/supabase';
  *
  * 没有这个 endpoint，5 步状态机如果卡住就是盲飞——playbook 冻结决策。
  *
- * 保护：ADMIN_TOKEN 环境变量，query string 传 ?token=xxx
- * 生产环境记得把 ADMIN_TOKEN 设成强随机字符串（openssl rand -hex 32）
+ * 鉴权（P1-10 修复，2026-05-08 strict CTO review）：Authorization: Bearer <ADMIN_TOKEN>
+ *   原 ?token=xxx 已弃用 — query string 会进浏览器历史 / 代理日志 / 截图，泄露面大。
+ *   运维脚本 / runbook 需同步改为 curl -H 'Authorization: Bearer ...'。
  */
 
 type StatusCount = {
@@ -30,17 +32,8 @@ type RecentFailure = {
 };
 
 export async function GET(req: NextRequest) {
-  const token = req.nextUrl.searchParams.get('token');
-  const expected = process.env.ADMIN_TOKEN;
-
-  if (!expected) {
-    return NextResponse.json(
-      { error: 'ADMIN_TOKEN 未配置（检查 .env.local）' },
-      { status: 500 },
-    );
-  }
-  if (token !== expected) {
-    return NextResponse.json({ error: '无效的 token' }, { status: 401 });
+  if (!verifyAdminToken(req)) {
+    return NextResponse.json({ error: '无效的 admin token' }, { status: 401 });
   }
 
   try {

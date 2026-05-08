@@ -77,6 +77,9 @@ export async function GET(req: NextRequest) {
 
     // 7. mint_queue 失败/卡住聚合（Phase 6 E1，Pre-tester gate 必备）
     //    stuck = minting_onchain 状态 + tx_hash 为空 + 已超 3 分钟没动 → 怀疑 cron 死锁
+    //    P1-9 修复（2026-05-08 strict CTO review）：oldestAgeSeconds 改用 created_at（入队时刻）。
+    //    原用 updated_at，cron 每次尝试都会刷 updated_at 即使没推进状态，age 永远 < cron 频率，
+    //    告警系统无法区分"队列堆积"vs"cron 在循环重试同一行"。
     const threeMinAgo = new Date(Date.now() - 3 * 60 * 1000).toISOString();
     const [failedRes, stuckRes, oldestRes] = await Promise.all([
       supabaseAdmin
@@ -91,18 +94,18 @@ export async function GET(req: NextRequest) {
         .lt('updated_at', threeMinAgo),
       supabaseAdmin
         .from('mint_queue')
-        .select('updated_at')
+        .select('created_at')
         .in('status', ['pending', 'minting_onchain'])
-        .order('updated_at', { ascending: true })
+        .order('created_at', { ascending: true })
         .limit(1)
         .maybeSingle(),
     ]);
-    const oldestUpdated = oldestRes.data?.updated_at;
+    const oldestCreated = oldestRes.data?.created_at;
     result.mintQueue = {
       failed: failedRes.count ?? 0,
       stuck: stuckRes.count ?? 0,
-      oldestAgeSeconds: oldestUpdated
-        ? Math.floor((Date.now() - new Date(oldestUpdated).getTime()) / 1000)
+      oldestAgeSeconds: oldestCreated
+        ? Math.floor((Date.now() - new Date(oldestCreated).getTime()) / 1000)
         : null,
     };
 

@@ -116,14 +116,22 @@ export async function GET(req: NextRequest) {
 
     // 失败处理：CRITICAL 直接 failed 不 retry（chain 已发但 DB 失败的场景）
     // 普通错误 retry_count++，耗尽后 failed；不论何种都释放 lease
+    // P1-8 修复（2026-05-08 strict CTO review）：failed 时必须给 failure_kind，
+    //   CRITICAL → manual_review（链上状态未知，ops 介入）
+    //   retry 耗尽 → safe_retry（已确认链上未发或已 revert，可自动重试）
     if (claimedId) {
       const isCritical = msg.startsWith('CRITICAL');
       const shouldFail = isCritical || claimedRetry + 1 >= MAX_RETRY;
+      const failureKind: 'manual_review' | 'safe_retry' | null = shouldFail
+        ? (isCritical ? 'manual_review' : 'safe_retry')
+        : null;
 
       await supabaseAdmin
         .from('score_nft_queue')
         .update({
-          ...(shouldFail ? { status: 'failed' as const } : {}),
+          ...(shouldFail
+            ? { status: 'failed' as const, failure_kind: failureKind }
+            : {}),
           retry_count: isCritical ? claimedRetry : claimedRetry + 1,
           last_error: msg.slice(0, 500),
           locked_by: null,

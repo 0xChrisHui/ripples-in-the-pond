@@ -180,6 +180,8 @@ export interface ScoreMetadata {
 export interface OwnedScoreNFT {
   /** 路由用 ID — 已上链=tokenId 字符串，未上链=queue row UUID */
   id: string;
+  /** queue row UUID — React key 必用此字段（始终非空，与 tokenId 是否回写无关）*/
+  queueId: string;
   /** 链上 tokenId — 已上链才有 */
   tokenId?: number;
   trackTitle: string;
