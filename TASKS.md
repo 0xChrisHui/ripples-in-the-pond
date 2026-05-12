@@ -124,16 +124,20 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 
 ---
 
-## ⏭⏭⏭ 之后
+## ⏭⏭⏭ 之后（2026-05-08 拆分）
 
-- **Phase 7** — OP 主网（部署 runbook + 监控告警 + 退出策略）
+- **Phase 7** — UI 翻修 + 体验细节优化（含 A5 / P1-17 / P1-18 三个顺手 P1）
+  - playbook 骨架：`playbook/phase-7/overview.md`（故意开放，启动时头脑风暴 + Claude Design 接入）
+- **Phase 8** — 按键动画 + 音效系统扩展 26 → 50（含 P1-21 useEventsPlayback decode 时序）
+- **Phase 9** — 修 bug + 上主网（10 项硬阻塞 + 换 CRON_SECRET + OP Mainnet 部署 + 首周救火）
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md` + `reviews/2026-04-24-phase-5-s5-smoke-test.md`
 
-**主网前必做**：
+**主网前必做**（统一进 Phase 9 起点清单）：
 - Deploy 脚本 admin/minter 分离 + save draft 事务化（见 `reviews/2026-04-10-phase-2.5-completion-review.md`）
 - **Turbo credits 监控的阈值告警**
 - AirdropNFT metadata 补完（Phase 4 Review P1）
+- 换 CRON_SECRET（本轮 strict review 调试时 5/8 在聊天泄露）
 
 ---
 

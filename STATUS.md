@@ -6,7 +6,9 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 6 v2 已完结**（2026-05-08）→ Phase 7 OP 主网启动条件具备，待用户决定 push + 主网部署节奏
+**Phase**: **Phase 6 v2 已完结**（2026-05-08）+ "现在就修" 6 项 strict CTO review 落地（commit `0d75a93` 已 push + 5 项冒烟全绿）→ **Phase 7 待用户启动**（UI 翻修 + 体验细节，含 A5 / P1-17 / P1-18 三个顺手 P1）
+**Phase 拆分（2026-05-08 决策）**：Phase 7 = UI 翻修 / Phase 8 = 按键动画 + 音效扩展到 50 个 / Phase 9 = 修 bug + 主网部署
+**playbook 7 骨架**: `playbook/phase-7/overview.md`（故意写得开放，启动时先头脑风暴 + Claude Design 接入再做具体计划）
 **Completion Review**: `reviews/2026-05-08-phase-6-completion-review.md`（含 Phase 7 起点 10 项硬阻塞清单 + 风险评估）
 **Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`（16/19 通过 + 0 P0 + 0 P1）
 **进度**: Track A 5/6 step ✅（A0/A1/A2/A3/A4 实施 + A5 P7 + A6 决策冻结）/ Track B 6/7 step ✅（B1/B2/B3/B5/B6 实施 + B4 删 + B7 待）/ Track C 4/4 ✅ / Track D D1 决策不做 + D2 ✅ / Track E E1 ✅ + E2/E3 P7 + E4 废弃 + E5 待
@@ -18,11 +20,14 @@
 
 **做到哪**: Phase 5 完全收口 + Track C v2 合约上链 + Pre-tester gate 4/4 + B6 + B2 Bug C 主链路 + B8 P1/P2/P3 + B6 demo 5 球 arweave_url 上链 + B4 删 + **2026-05-08 audit：A0/A1/A3/A4/B3/B5(#7+#9)/D2 全部已实施**（之前 playbook 列"待做"但代码早已完成，仅文档未对齐）+ **E5 文档对齐本次落地**
 
-**下一步**（Phase 7 起点）:
-  1. **用户 push 24 commits 到 origin/main** + Vercel 自动部署观察（cron-job.org 5 个 job 全绿 5 分钟）
-  2. **硬阻塞清单 5 项**（详见 completion review §五）：换 Turbo wallet / 108 曲 arweave_url 全量上链 / Operator wallet 主网 ETH 充值 / Resend 邮件告警 / vercel-env-sync 脚本
-  3. **OP Mainnet 部署** ScoreNFT + Orchestrator + MaterialNFT（走 `docs/MAINNET-RUNBOOK.md`）
-  4. **Phase 7 主线**：UI 重设计深度版 / 监控告警 / 退出准备 / 艺术家反馈 5 条
+**下一步**（Phase 7 启动）:
+  1. **用户说"开始 Phase 7"** → AI 按 `playbook/phase-7/overview.md` 头脑风暴清单 4 层逐层问，沉淀到 `phase-7/brainstorm.md`
+  2. **讨论清楚再写代码**：艺术家反馈 5 条优先级 / Claude Design 接入方式 / 流畅度具体场景 / 改页顺序 + 节奏
+  3. **顺手 3 个 P1 在 Phase 7 期间一起做**：A5 链上灾备 / P1-17 上链中诚实文案 / P1-18 useMintScore 失败回滚
+
+**Phase 8 / 9 计划**（已锁，不 Phase 7 期间动）:
+  - Phase 8 = 按键动画 + 音效系统扩展 26 → 50（含 P1-21 useEventsPlayback decode 时序）
+  - Phase 9 = 主网部署门槛（5 已知硬阻塞 + 5 strict review 后端类 P0/P1 + 换 CRON_SECRET + 部署 + 首周救火）
 
 **已实质完成的步骤**：
 - Track A：A0 operator 锁 ✅ / A1 ScoreNFT cron durable lease ✅ / A2 failure_kind ✅ / A3 sync cursor 事务性 ✅ / A4 草稿原子化 ✅ / A5 P7 / A6 决策冻结

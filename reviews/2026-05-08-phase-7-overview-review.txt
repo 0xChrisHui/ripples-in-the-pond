@@ -1,0 +1,1294 @@
+Reading additional input from stdin...
+OpenAI Codex v0.128.0 (research preview)
+--------
+workdir: E:\Projects\nft-music
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, C:\Users\Hui\.codex\memories]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019e0815-bfe9-7a33-b59c-1818bbf52ab5
+--------
+user
+请审阅 playbook/phase-7/overview.md 这份 Phase 7 计划骨架。
+
+背景:
+- 项目 Ripples in the Pond, Web3 音乐共创平台, 测试网公开版已稳定运行
+- Phase 6 v2 已完结(2026-05-08), 含 strict CTO review 6 项现在就修(P0-3 / P1-3 / P1-8 / P1-9 / P1-10 / P1-19)已 push 上线
+- 用户决策 Phase 7/8/9 拆分: P7 = UI 翻修 + 体验细节 / P8 = 按键动画 + 音效 26→50 / P9 = 修 bug + 上主网
+- 用户明确要求 'playbook 写得很简单, 不要把要改什么写得太具体, 而是写一个头脑风暴环节, 跟我充分讨论梳理 UI 改进需求, 我会引入 Claude Design 设计结果, 留足够开放度再 P7 中做具体计划'
+- 用户身份: 编程小白 + 产品决策者, AI = 执行者
+- 项目硬线: 220 行 / 8 文件 / 中文沟通 / verify.sh 必跑
+- 投资人只看链上技术不看 UI(用户原话, 已记 STATUS.md stakeholder 反馈)
+
+请从 5 个维度审视这份 overview:
+
+1. 是否过度展开或过度收紧 — 用户要的是开放, 这份够开放吗?
+2. 头脑风暴清单 4 层 13 个问题 — 是否漏了关键讨论维度? 哪些问题是伪问题(用户已经隐式回答)?
+3. 顺手 3 个 P1 (A5 / P1-17 / P1-18) 在 Phase 7 做的判断 — 真的属于 UI 体验吗? 是否拖延 P9 主网部署?
+4. Claude Design 接入 — 用户说会引入设计结果, 现在文档说会接入但没明确接入工作流(谁出图, 谁翻译, 设计稿 vs 现有约束的冲突仲裁), 这块够吗?
+5. Phase 8 / Phase 9 边界 — Phase 7 期间用户改 UI 时新发现的问题(比如发现某交互需要后端改动), 该收去 P8 还是 P9?
+
+输出格式:
+- 顶部 1 段总评: 整体水平(满分 10), 关键优点 1-2 条, 关键问题 1-2 条
+- 然后按 5 个维度逐项, 每项给: 现状描述 / 问题(如有) / 建议改法
+- 最后 1 段: 如果只能改 1 处, 改哪里
+
+字数 600-1000 中文字, 不超过 1500 字
+codex
+我先按项目规则读当前状态和约束，再打开 Phase 7 overview 做审阅。这里只做文档评审，不改文件。
+exec
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw STATUS.md' in E:\Projects\nft-music
+ succeeded in 768ms:
+# STATUS 鈥?椤圭洰褰撳墠鐘舵€?
+> 缁?浜?+ AI"鍏辩敤鐨勭姸鎬侀潰鏉裤€傛瘡瀹屾垚涓€涓皬闂幆閮借鏇存柊銆?
+---
+
+## 褰撳墠闃舵
+
+**Phase**: **Phase 6 v2 宸插畬缁?*锛?026-05-08锛? "鐜板湪灏变慨" 6 椤?strict CTO review 钀藉湴锛坈ommit `0d75a93` 宸?push + 5 椤瑰啋鐑熷叏缁匡級鈫?**Phase 7 寰呯敤鎴峰惎鍔?*锛圲I 缈讳慨 + 浣撻獙缁嗚妭锛屽惈 A5 / P1-17 / P1-18 涓変釜椤烘墜 P1锛?**Phase 鎷嗗垎锛?026-05-08 鍐崇瓥锛?*锛歅hase 7 = UI 缈讳慨 / Phase 8 = 鎸夐敭鍔ㄧ敾 + 闊虫晥鎵╁睍鍒?50 涓?/ Phase 9 = 淇?bug + 涓荤綉閮ㄧ讲
+**playbook 7 楠ㄦ灦**: `playbook/phase-7/overview.md`锛堟晠鎰忓啓寰楀紑鏀撅紝鍚姩鏃跺厛澶磋剳椋庢毚 + Claude Design 鎺ュ叆鍐嶅仛鍏蜂綋璁″垝锛?**Completion Review**: `reviews/2026-05-08-phase-6-completion-review.md`锛堝惈 Phase 7 璧风偣 10 椤圭‖闃诲娓呭崟 + 椋庨櫓璇勪及锛?**Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`锛?6/19 閫氳繃 + 0 P0 + 0 P1锛?**杩涘害**: Track A 5/6 step 鉁咃紙A0/A1/A2/A3/A4 瀹炴柦 + A5 P7 + A6 鍐崇瓥鍐荤粨锛? Track B 6/7 step 鉁咃紙B1/B2/B3/B5/B6 瀹炴柦 + B4 鍒?+ B7 寰咃級/ Track C 4/4 鉁?/ Track D D1 鍐崇瓥涓嶅仛 + D2 鉁?/ Track E E1 鉁?+ E2/E3 P7 + E4 搴熷純 + E5 寰?**playbook**: `playbook/phase-6/overview.md`锛? 涓?track 瀛愭枃妗ｅ叏閮ㄥ姞瀹屾垚鏍囪 / 鐘舵€佸榻愮湡瀹炰唬鐮?@ 2026-05-08 audit锛?**鍐崇瓥鏃ュ織**锛歚docs/JOURNAL.md` 2026-04-25 娈碉紙Phase 5/6 kickoff/Track C/Pre-tester锛? 2026-05-03 娈碉紙v2 缂╁噺 + 鑹烘湳瀹跺弽棣堬級+ 2026-05-08 娈碉紙B8 P3 + arweave_url 涓婇摼 + B4 鍒?+ agent review 13 finding + audit 鏁翠綋鏀跺彛 + E4 搴熷純鍐崇瓥锛?**stakeholder 鍙嶉**锛堝彇浠ｅ師 tester 鍙嶉绐楀彛锛夛細鑹烘湳瀹?5 鏉″弽棣堝凡鏀跺埌锛堣瑙?/ 鍔ㄦ€?/ 闊抽樁 / 鍚嶅瓧 / 鎸夐敭鍔ㄧ敾锛夛紱鎶曡祫浜哄彧鐪嬮摼涓婃妧鏈笉鐪?UI
+
+## 褰撳墠杩涘害
+
+**鍋氬埌鍝?*: Phase 5 瀹屽叏鏀跺彛 + Track C v2 鍚堢害涓婇摼 + Pre-tester gate 4/4 + B6 + B2 Bug C 涓婚摼璺?+ B8 P1/P2/P3 + B6 demo 5 鐞?arweave_url 涓婇摼 + B4 鍒?+ **2026-05-08 audit锛欰0/A1/A3/A4/B3/B5(#7+#9)/D2 鍏ㄩ儴宸插疄鏂?*锛堜箣鍓?playbook 鍒?寰呭仛"浣嗕唬鐮佹棭宸插畬鎴愶紝浠呮枃妗ｆ湭瀵归綈锛? **E5 鏂囨。瀵归綈鏈钀藉湴**
+
+**涓嬩竴姝?*锛圥hase 7 鍚姩锛?
+  1. **鐢ㄦ埛璇?寮€濮?Phase 7"** 鈫?AI 鎸?`playbook/phase-7/overview.md` 澶磋剳椋庢毚娓呭崟 4 灞傞€愬眰闂紝娌夋穩鍒?`phase-7/brainstorm.md`
+  2. **璁ㄨ娓呮鍐嶅啓浠ｇ爜**锛氳壓鏈鍙嶉 5 鏉′紭鍏堢骇 / Claude Design 鎺ュ叆鏂瑰紡 / 娴佺晠搴﹀叿浣撳満鏅?/ 鏀归〉椤哄簭 + 鑺傚
+  3. **椤烘墜 3 涓?P1 鍦?Phase 7 鏈熼棿涓€璧峰仛**锛欰5 閾句笂鐏惧 / P1-17 涓婇摼涓瘹瀹炴枃妗?/ P1-18 useMintScore 澶辫触鍥炴粴
+
+**Phase 8 / 9 璁″垝**锛堝凡閿侊紝涓?Phase 7 鏈熼棿鍔級:
+  - Phase 8 = 鎸夐敭鍔ㄧ敾 + 闊虫晥绯荤粺鎵╁睍 26 鈫?50锛堝惈 P1-21 useEventsPlayback decode 鏃跺簭锛?  - Phase 9 = 涓荤綉閮ㄧ讲闂ㄦ锛? 宸茬煡纭樆濉?+ 5 strict review 鍚庣绫?P0/P1 + 鎹?CRON_SECRET + 閮ㄧ讲 + 棣栧懆鏁戠伀锛?
+**宸插疄璐ㄥ畬鎴愮殑姝ラ**锛?- Track A锛欰0 operator 閿?鉁?/ A1 ScoreNFT cron durable lease 鉁?/ A2 failure_kind 鉁?/ A3 sync cursor 浜嬪姟鎬?鉁?/ A4 鑽夌鍘熷瓙鍖?鉁?/ A5 P7 / A6 鍐崇瓥鍐荤粨
+- Track B锛欱1 cache 闅旂 鉁?/ B2 Bug A/B 鐢?B8 鏁版嵁娴侀噸璁惧疄璐ㄦ敹鍙?+ Bug C 5/6 淇?鉁?/ B3 鑽夌閾搁€?+ 5/8 瀹炴祴 鉁?/ B5 #7 鉁?#9 鉁?#8 搴熷純锛圚omeJam 宸?dead-code锛? B6 鉁?/ B7 寰?/ B4 鍒?- Track C锛欳1/C2/C3/C4 鉁?- Track D锛欴1 鍐崇瓥涓嶅仛 / D2 admin Bearer 鉁?/ D3-D5 鎸傝捣锛圖1=涓嶅仛锛?- Track E锛欵1 health mintQueue 鉁?/ E2 Semi P7 / E3 渚濊禆 E2 P7 / E4 搴熷純锛圔8 P3 鍒?decoder iframe锛? E5 鏈 鉁?
+**鍓╀綑**: Phase 6 v2锛圔7 鍐掔儫鍗婂ぉ + completion review 鍗婂ぉ = **1 澶?*锛夆啋 Phase 7锛圤P 涓荤綉 + UI 娣卞害閲嶈璁?+ 闊抽樁绯荤粺 + 鐩戞帶 + 閫€鍑哄噯澶囷級
+
+### Pre-tester gate 瀹屾垚娓呭崟锛?026-04-26锛?
+- 鉁?**G0** 杩愯惀灏辩华 鈥?/api/ping + /api/health + cron 5/5 + Vercel env 14 椤?+ 鐪熷疄璐﹀彿鏀惰棌 smoke
+- 鉁?**B1** NFT localStorage 鎸?userId 闅旂锛坈ommit `c749b67`锛?- 鉁?**E1** /api/health 鏆撮湶 mintQueue 澶辫触/鍗′綇鑱氬悎锛坈ommit `f0725df`锛?- 鉁?**A2** mint_queue failure_kind 鍒嗙被閲嶈瘯锛坈ommit `8074d18`锛宮igration 021锛?- 鉁?**G0 闃诲淇** useFavorite 鏀瑰洖涔愯 UI锛坈ommit `931f45f`锛岄儴鍒嗗弽杞?Phase 5 涓ユ牸 review 1019dcb锛?- 鉁?memory/ 鎷?feedback/ + project/ 瀛愮洰褰曪紙root 9 鈫?3 entries 瑙?8 鏂囦欢纭嚎锛?
+### 涓荤綉鎵胯杈圭晫锛圥hase 6 D5 鈫?Phase 7 鐢級
+
+**涓荤綉棣栫増鍖呭惈**锛歅rivy 閭鐧诲綍 / 娴忚 + 鎾斁 108 鏇?/ 绱犳潗鏀惰棌 鈫?MaterialNFT / 鍚堝褰曞埗 + 鑽夌 / 鑽夌 鈫?ScoreNFT锛圔3 鎺ラ€氬悗锛? 宸查摳閫犱箰璋卞洖鏀?+ 鍒嗕韩鍗?/ 涓汉椤碉紙"鎴戦摳閫犵殑"璇箟锛? 鑹烘湳瀹堕〉
+
+**涓荤綉棣栫増涓嶅寘鍚?*锛氱┖鎶曪紙D1 = 涓嶅仛锛? Semi 绀惧尯閽卞寘鐧诲綍锛圗2 鎸?Phase 7锛?
+**涓荤綉棣栫増涓嶅厑璁?*锛歛irdrop cron 瀹氭椂杩愯 / airdrop trigger 绔偣瀵瑰鏆撮湶
+
+### Phase 5 浜や粯鐗╋紙2026-04-25 鏀跺彛锛?
+- 鍩熷悕锛歚pond-ripple.xyz`锛圴ercel 浠ｇ锛?- 閮ㄧ讲锛歏ercel Hobby锛堝厤璐癸級+ cron-job.org锛堝厤璐瑰閮ㄨЕ鍙戯紝5 涓?job锛?- API锛?api/ping 鍏紑 / /api/health 閴存潈 / 404 + error 椤?/ cron 閴存潈杩佺Щ鍒?Authorization header
+- Arweave锛歍urbo 閽卞寘鐜鍙橀噺鍖栵紙TURBO_WALLET_JWK锛?- 闄愭祦锛歮iddleware + Upstash Redis 鉁?绾夸笂楠岃瘉 20/30 骞跺彂 鈫?20 娆?429锛?026-04-25 纭姝ｅ父宸ヤ綔锛?- Review 淇 commit `1bb1b05`锛歱ost-send rollback 脳 2 + markSuccess 鏀瑰簭 + 骞跺彂 CAS + 鏃ュ織瑙傛祴 + LoginButton + check-balance 鐘舵€佹灇涓?- 绗簩杞弗鏍?CTO review 淇锛堟湰娆?commit锛夛細material mint 绋冲畾 idempotencyKey 闃插苟鍙?+ useFavorite 鏀规偛瑙傚洖閫€ UI
+- 鍐掔儫娴嬭瘯鏂囨。锛歚reviews/2026-04-24-phase-5-s5-smoke-test.md`锛坆ug #6 閮ㄥ垎宸蹭慨璁负璇垽锛?- 瀹屾垚 review锛歚reviews/2026-04-24-phase-5-completion-review.md`锛圕odex 鍑猴級
+- 涓ユ牸 CTO review锛歚reviews/2026-04-25-phase-5-strict-cto-review.md`锛圕odex 绗簩杞紝鍚?Phase 6 鍓嶇疆 bug 娓呭崟锛?- Phase 1-4 鍥炵湅 CTO review锛歚reviews/2026-04-25-phase-1-4-strict-cto-review.md`锛堟柊澧?tester 鍓?P1 椋庨櫓 + Phase 6 鍓嶇疆 P0 娓呭崟锛?
+### 缁仛鎸囧崡锛堜笅娆′細璇濈涓€浠朵簨璇昏繖娈碉級
+
+**Phase 3 閾句笂浜х墿锛圤P Sepolia锛孭hase 6 Track C 閲嶉儴缃插悗 v2锛?*锛?- ScoreNFT v2 `0x1C478F9F5b66302A35a0178e07df67BA343c832F`锛坰etTokenURI 浠呴鍐欎竴娆★紝2026-04-25 閮ㄧ讲锛?- Orchestrator v2 `0x8A6Dd0Ecf108797358CC369bC6F263D2C89BC3a8`锛堝垹 TBA 寮€鍏筹紝2026-04-25 閮ㄧ讲锛?- v1 鏃у悎绾﹀綊妗ｏ細`reviews/phase-6-deprecated-contracts.md`锛堝墠绔笉灞曠ず v1 涓婄殑 tokenId 1/2锛?- v1 鍘嗗彶瀹炴祴 mint tx 浠嶆案涔呭彲鏌ワ細`0x596b723038108ea58a051fb9450c917c4df394914dc9b6d1a86d9b09b4ac4f73`
+
+**Arweave 闈欐€佷骇鐗╋紙涓婇摼涓€娆℃案涓嶅彉锛?*锛?- decoder (S4): `FWy1XA-B8MvRAgsNgMfDSUBiXXjHNpK1A_fHWjsUAXg`
+- sounds map (S5.b): `fVpKvspVhusgUdn1FQr8j61jreFRZGKmiK3CyR0WO_8`
+- 26 闊虫晥绱㈠紩: `data/sounds-ar-map.json`
+- 100 灏侀潰绱㈠紩: `data/cover-arweave-map.json`
+- decoder record: `data/decoder-ar.json`
+
+**瀹炴祴 Ripples #2 鐨勫畬鏁?metadata** 锛圫6 鍙互鍙傝€冿級锛?- metadata JSON: `https://ario.permagate.io/pXWRtrzzJeYdAXeMVVPm_X0GstBe_NPQIErwwlzrs60`
+- image锛堝皝闈?001锛? `https://ario.permagate.io/K0NAVlE00l6RhefjO7lZKqrG_HTSM9DglDhCC7UnhIo`
+- animation_url锛坉ecoder + events锛夋牸寮忛獙璇侀€氳繃
+
+**.env.local Phase 3 鏂板瀛楁锛? 涓紝宸查厤锛屾敞閲婅鏂囦欢鍐咃級**锛?`NEXT_PUBLIC_SCORE_NFT_ADDRESS` / `NEXT_PUBLIC_ORCHESTRATOR_ADDRESS` /
+`SCORE_DECODER_AR_TX_ID` / `SOUNDS_MAP_AR_TX_ID` / `TURBO_WALLET_PATH`
+锛堝彲閫夛細`ADMIN_TOKEN` 鐢ㄤ簬 `/api/cron/queue-status`锛屾湭鏉ユ祴瑙傛祴鎬х鐐规椂鍔狅級
+
+**Turbo 閽卞寘**: `0xdE788249e747FB54c19e7B7F9baE85B631B9Fba8`锛圔ase锛夛紝浣欓绾?3.3T winc銆?琛?credits 娴佺▼瑙?`.env.local` 閲?`TURBO_WALLET_PATH` 涓婃柟鐨勬敞閲娿€?
+**DB schema**: `supabase/migrations/phase-0-2/` (001-006) + `supabase/migrations/phase-3/` (007-011) 鍏ㄩ儴鍦?Supabase 鎵ц瀹屾瘯銆俶igrations 鎸?Phase 瀛愮洰褰曠粍缁囷紝鎵ц椤哄簭瑙?`supabase/migrations/README.md`銆?
+**Phase 3B 浜х墿**锛?- `system_kv` 琛細瀛?`last_synced_block`锛屽綋鍓?cursor 鈮?42091300
+- `chain_events` 琛細宸插悓姝?tokenId 2 鐨?Transfer
+- `sync-chain-events` cron锛欰lchemy Free 闄?10 鍖哄潡/璇锋眰锛屽垎鎵瑰惊鐜紙50 鎵?脳 10 = 500 鍖哄潡/娆★級
+
+**Phase 3.1 绋冲畾鎬т慨澶嶏紙Codex Review 椹卞姩锛?*锛?- F1: 鍘熷瓙 claim锛圧PC `claim_score_queue_job` + FOR UPDATE SKIP LOCKED + CAS 鎺ㄨ繘锛?- F2: mint_events 骞傜瓑锛圲NIQUE score_queue_id + upsert锛?- F3: metadata external_url 鐢?`NEXT_PUBLIC_APP_URL` 鐜鍙橀噺
+- F4: 搴曟洸缂哄け fail fast锛堝幓鎺?demo fallback锛?- F5-F7: promise catch + topics 闃插尽妫€鏌?+ UUID 鏍￠獙
+- **寤跺悗椤?*锛欶8 涓嶉渶瑕侊紙/me = "鎴戦摳閫犵殑"锛夈€丗9 閾句笂鐏惧寤跺悗鍒颁富缃戝墠
+
+**Phase 4A 璁よ瘉搴曞骇锛圫0-S2 宸插畬鎴愶紝S3 鎸傝捣锛?*锛?- `src/lib/auth/jwt.ts` 鈥?signJwt / verifyJwt / revokeJwt锛圧S256 鑷 JWT锛?- `src/lib/auth/middleware.ts` 鈥?authenticateRequest锛堝厛 Privy 鍚?JWT 鍙岄€氶亾锛?- `src/lib/semi-client.ts` 鈥?Semi API 瀹㈡埛绔紙鍙戠煭淇?楠岃瘉/鎷跨敤鎴凤級锛岀瓑 OAuth 鏂规鍚庡彲鑳借鏀?- `app/api/auth/community/route.ts` 鈥?楠岃瘉鐮?鈫?JWT 浜ゆ崲 + evm_address 鍚堝苟
+- `app/api/auth/community/send-code/route.ts` 鈥?杞彂鐭俊璇锋眰
+- `supabase/migrations/phase-4/` 鈥?015 jwt_blacklist + 016 auth_identities + 017 privy_nullable
+- 6 涓?API 宸插叏閮ㄨ縼绉诲埌缁熶竴涓棿浠讹紙Privy 鐢ㄦ埛浣撻獙涓嶅彉锛?- **.env.local 宸查厤**锛歚JWT_PRIVATE_KEY` / `JWT_PUBLIC_KEY`
+- **.env.local 寰呴厤**锛歚SEMI_API_URL`锛堢瓑 Semi OAuth 鏂规锛?
+**Phase 4C 绌烘姇浜х墿锛圤P Sepolia锛?*锛?- AirdropNFT `0xa6Aa896b222bB522bA5c8fcC6bD8e59e3f5de56B`
+  - name: `"Ripples in the Pond Airdrop (Testnet)"`锛宻ymbol: `RIPA`
+  - 閮ㄧ讲 tx: `0xc8a0a0ad52ba7e3bbda24f22b8a5e6e12f5b14fdae24e8eca89e0e4e90188b3c`
+  - minter = operator `0x40d36fd4A855D5D23E0F04b7fD89285F2eDe116b`
+- DB 琛細`airdrop_rounds` + `airdrop_recipients`锛?18-019 宸叉墽琛岋級
+- **S3 鎸傝捣鍘熷洜**锛歋emi 鍥㈤槦鍦ㄨ璁?OAuth 寮€鏀剧櫥褰曪紝鐜版湁 API 涓嶇‘瀹氭槸鍚﹀澶栧紑鏀俱€傜瓑浠栦滑鏂规鍑烘潵鍚庣画鍋?S3锛堝墠绔櫥褰曟寜閽?+ useAuth 鍏煎锛夈€傜画鍋氭椂鍙渶鏀?`semi-client.ts` + 鏂板缓鍓嶇缁勪欢銆?
+**闀挎湡鐢熸晥鐨勫喅绛栬ˉ涓侊紙鍒繕锛?*锛?- ARWEAVE_GATEWAYS 缂╁埌 2 涓細`arweave.net` + `ario.permagate.io`
+- Tailwind v4 `globals.css` 鐢?`@source not` 鏄惧紡鎺掗櫎闈炴簮鐮佺洰褰曪紙contracts / data / scripts / ...锛?- ESET 鎷﹂儴鍒?Web3 鍩熷悕锛屾湰鏈?CORS 娴嬭瘯鍙槸 smoke锛岀湡楠岃瘉寤跺埌 S7
+- **OpenSea 宸叉案涔呭仠 testnet**锛岀‖闂ㄦ鏀圭敤 Etherscan + 鐩存帴 fetch Arweave 鏇夸唬鏂规
+- 鐢ㄦ埛榛樿 **PowerShell**锛屽懡浠や紭鍏?鍔犺繘 `.env.local` + 鐩存帴璺?妯″紡
+- `app/api/` 纭嚎璞佸厤缂哄け锛歨ook 鍙 `src/app/api/`锛屽綋鍓?app/api/ 鎺ヨ繎 8 涓婇檺锛屾柊 route 鑰冭檻澶嶇敤鐜版湁瀛愮洰褰曪紙瑙?S5.c 鏀?`cron/queue-status/`锛?
+## 涓婃鎴愬姛楠岃瘉
+
+- 楠岃瘉: **strict CTO review "鐜板湪灏变慨" 6 椤硅惤鍦?*锛堟祴璇曠綉绔嬪嵆淇ˉ锛岄伩鍏嶇瓑 Phase 7锛?- 鏃堕棿: 2026-05-08
+- 鏀瑰姩:
+  - **P0-3** AirdropNFT cron 鍏ュ彛鍔?`AIRDROP_ENABLED` env 纭紑鍏筹紙`process-airdrop/route.ts`锛夆€?涓荤綉 Vercel 涓嶈姝?env锛孋RON_SECRET 鍗充娇娉勯湶涔熷彧杩?disabled
+  - **P1-3** OwnedScoreNFT 鍔?`queueId: string` 瀛楁锛坄src/types/jam.ts` + `score-nfts/route.ts` + `ScoreNftSection.tsx`锛夆€?React key 鐢?queueId 姘镐笉鍐茬獊
+  - **P1-8** score_nft_queue catch 璺緞琛?`failure_kind`锛坢igration 030 鍔犲垪 + `process-score-queue/route.ts` failed 鏃舵寜 isCritical 鍒嗘祦 manual_review / safe_retry锛屼笌 mint_queue 瀵圭О锛?  - **P1-9** /api/health oldestAgeSeconds 鏀圭敤 `created_at`锛坄health/route.ts`锛夆€?鍏ラ槦鏃跺埢涓嶈 cron retry 閲嶅啓锛屽憡璀﹀彲淇?  - **P1-10** /api/cron/queue-status 鏀?Bearer-only锛坄queue-status/route.ts` 澶嶇敤 `verifyAdminToken`锛夆€?query token 杩涙祻瑙堝櫒鍘嗗彶椋庨櫓娑堥櫎锛宺unbook / 杩愮淮鑴氭湰闇€鍚屾鏀?curl -H 'Authorization: Bearer 鈥?
+  - **P1-19** /api/me/score-nfts 35s 鈫?ms 绾э紙migration 031 pending_scores 鍔?`event_count` generated column + `score-nfts/route.ts` SELECT 鏀圭敤 event_count锛屼笉鍐嶆媺鏁翠釜 jsonb 绠?length锛?- 楠岃瘉璇佹嵁: TS 0 errors / ESLint 閫氳繃锛堜粎 3 椤?pre-existing warning锛? npm run build 鍏?27 璺敱鐢熸垚瀹屾垚锛堝惈 process-airdrop / queue-status / score-nfts / health 4 涓敼鍔?endpoint锛?- 寰呭姙锛堢敤鎴风嚎涓嬪仛锛?
+  - 鍦?Supabase Dashboard 鎵ц migration 030 + 031锛堥『搴忔墽琛岋紝寤鸿〃 + 鍔犲垪锛?  - 娴嬭瘯缃?Vercel 鍔犵幆澧冨彉閲?`AIRDROP_ENABLED=true`锛堜繚鎸佺幇鏈夌┖鎶曡涓猴級锛涗富缃戦儴缃叉椂**涓嶈**姝?env
+  - 杩愮淮鑴氭湰 / runbook 鎶?`/api/cron/queue-status?token=鈥 鏀规垚 `curl -H 'Authorization: Bearer $ADMIN_TOKEN'`
+
+### 涓婁竴杞垚鍔熼獙璇侊紙淇濈暀锛?
+- 楠岃瘉: **B8 P3 绔埌绔疄娴?+ B6 demo 5 鐞?arweave_url 涓婇摼鍥炲啓**锛堣崏绋块摳閫犱富閾捐矾鍏ㄩ€氾級
+- 鏃堕棿: 2026-05-08
+- 鏀瑰姩:
+  - **B8 P3** 璺敱 `[tokenId]` 鈫?`[id]` 鍙屽吋瀹癸紙鏁板瓧鎸?token_id / UUID 鎸?queue.id锛? ScorePlayer 鏀瑰墠绔?inline锛圥layerProvider.toggle + useEventsPlayback 鏇夸唬 Arweave decoder iframe锛? score-fallback.ts 鍒犻櫎锛坣oop 娈嬬暀锛? score-source.ts allSettled / cover try-catch / token_id .order().limit(1) 闃插尽
+  - **B6 demo arweave_url** 璺?`scripts/arweave/upload-tracks.ts` 涓?5 涓?mp3 鍒?Arweave + 鍥炲啓 tracks.arweave_url锛堣В閿佽崏绋块摳閫狅紝鍘?P7 task 鎻愬墠娑堝寲锛?  - **B4 鍒犻櫎** PlayerProvider loadingRef 鏃╁凡瀹炴柦锛坈ommit 38f7f37 鍓嶏級锛宲laybook + STATUS + TASKS 鍚屾娓呮帀
+- 楠岃瘉璇佹嵁: queue 778a2904 璧板畬 5 姝ョ姸鎬佹満 鈫?token_id=12 涓婇摼 + tx_hash 0xea5b... + uri_tx_hash 0x5ddb... + metadata Arweave bJeCGDtZ... + ScoreNFT 璇︽儏椤靛墠绔?inline 鎾斁姝ｅ父锛堝簳鏇?+ events 鏃跺簭瑙﹀彂闊虫晥锛?- 鍓骇鍝?/ 寰呭姙:
+  - cron lease 5 鍒嗛挓 脳 5 姝?= 25 鍒嗛挓闂锛堢嚎涓?cron 瀹為檯鑺傚 vs STATUS 鏂囨涓嶄竴鑷达級
+  - /score/[id] 杩斿洖閾炬帴搴斿洖 /me 鑰岄潪 /锛堢敤鎴锋彁闇€姹傦級
+  - Resend 閭欢鍛婅 P3 commit 鎻愪簡鏈仛 鈫?涓荤綉鍓嶅繀鍋?  - Agent review 13 finding锛? 椤规湰娆″悎鍏ヤ慨锛? 椤规寕 P7
+
+### 涓婁笂杞垚鍔熼獙璇侊紙淇濈暀锛?
+- 楠岃瘉: B2 Bug C 涓婚摼璺弻鏍瑰洜淇锛坈ron 4-28~5-6 鍏?fail 淇€氬埌 minting_onchain 涓婇摼锛?- 鏃堕棿: 2026-05-06
+- 鏀瑰姩: 鏈湴 turbo-wallet.json 鍒?purpose 涓枃琛岋紙缂栫爜閿欒鑷?JSON.parse 宕?position 256锛? Vercel 鍔?NEXT_PUBLIC_SCORE_NFT_ADDRESS 鍒犳嫾閿欑増 / DELETE 8 鏉?failed row
+- 楠岃瘉璇佹嵁: 鏂伴摳閫?row 璧板畬鍓?3 姝?token_id=2 涓婇摼锛坋vents_ar_tx_id + tx_hash 閮芥湁锛夛紝绗?4 姝ヤ笟鍔?throw锛圖 缁勬棤 arweave_url 鏄嫭绔?P7 闂锛?*宸插湪 5/8 瑙ｉ攣**锛?
+### 涓婁笂涓婅疆鎴愬姛楠岃瘉锛堜繚鐣欙級
+
+- 楠岃瘉: B6 瀹炴柦瀹屾垚锛圓 缁?5 鐞?+ B/C 36 鐞?demo 涓婄嚎锛?- 鏃堕棿: 2026-05-04
+- 鏀瑰姩: migration 027/028锛坱racks 鍔?published + 5 琛屽惊鐜埌 No.1-5 + 瀹夊叏娓呮棫 mint锛? Modak 瀛椾綋寮曞叆 / SphereNode 鍒犱笅鏂?label 鍔犲唴宓屾暟瀛?badge / getGroupTargetCount 鎶借薄 / mock-tracks 5 琛岃ˉ published
+- 楠岃瘉璇佹嵁: TS 0 errors / npm run build 閫氳繃 / 娴忚鍣ㄥ疄娴?5 鐞?36 鐞冩暟瀛楃ǔ瀹氭樉绀?- 鍐崇瓥鎺ㄧ炕: B7 鏀规斁鏈€鍚庯紙閬垮厤"娴?淇?閲嶆祴"寰幆锛?
+## 褰撳墠闃诲
+
+- 鏃狅紙Phase 4A S3 Semi 鍓嶇鎸傝捣涓嶇畻闃诲锛孭hase 5 璧?Privy-only 宸茬粫杩囷級
+- tester 閭€璇锋枃妗?+ 鍙嶉鏀堕泦娓犻亾锛堝井淇＄兢 / 琛ㄥ崟锛夌敱鐢ㄦ埛涓诲鍑嗗锛屼笉绠椾唬鐮侀樆濉?
+## 馃幆 涓荤綉鎵胯杈圭晫锛圥hase 6 浜у搧鍐崇瓥鍐荤粨 @ 2026-04-25锛?
+**涓荤綉棣栫増鍖呭惈**锛?- Privy 閭鐧诲綍锛圥hase 0-1 灏辩华锛?- 娴忚 + 鎾斁 108 棣栨洸鐩紙Phase 1锛?- 绱犳潗鏀惰棌 鈫?MaterialNFT 閾搁€狅紙Phase 0-1锛?- 鍚堝褰曞埗 + 鑽夌淇濆瓨锛圥hase 2锛?- 鑽夌 鈫?ScoreNFT 閾搁€狅紙Phase 6 B3 鎺ラ€氾級
+- 宸查摳閫犱箰璋卞叕寮€鍥炴斁 + 鍒嗕韩鍗★紙Phase 3锛?- 涓汉椤碉紙"鎴戦摳閫犵殑"璇箟锛孭hase 6 A6 鍐荤粨锛?- 鑹烘湳瀹堕〉锛圥hase 4B锛?
+**涓荤綉棣栫増涓嶅寘鍚?*锛圥hase 6 D1/E2 鍐崇瓥锛夛細
+- **绌烘姇 NFT**锛圖1=涓嶅仛锛夆€?cron-job.org 鍋滅敤 process-airdrop 瀹氭椂锛屽悎绾︿繚鐣欎笉瑙﹀彂
+- **Semi 绀惧尯閽卞寘鐧诲綍**锛圗2=鎸?Phase 7锛夆€?Phase 4A S0-S2 鍚庣鍙鐢紝鍓嶇鏈帴
+
+**涓荤綉棣栫増涓嶅厑璁?*锛?- airdrop cron 瀹氭椂杩愯锛堜唬鐮佷繚鐣欙紝璋冨害鍣ㄤ笉閰嶇疆锛?- airdrop trigger 绠＄悊绔偣瀵瑰鏆撮湶锛坄/api/airdrop/trigger` 鍙帴鍙?Bearer token锛?
+**鍓嶇鍏抽棴鐨勫叆鍙?*锛?- /artist 椤典笉鏄剧ず绌烘姇杩涘害鏍囪锛堟垨鏄剧ず涓?杩愯惀鍐呴儴"锛?- /me 鏃犺崏绋夸笂閾炬寜閽箣鍓嶈矾寰勫叧闂紙Phase 6 B3 鎺ラ€氬墠锛?
+## 馃殌 Phase 7 鍊欓€夋竻鍗曪紙v2 缂╁噺鏃惰縼鍑猴紝2026-05-03锛?
+鏉ユ簮锛歅hase 6 v2 playbook 缂╁噺鏃舵寕璧风殑宸ヤ綔 + 鑹烘湳瀹?5 鏉″弽棣堛€侾hase 6 瀹岀粨鏃惰繖浠芥竻鍗曡繘 Phase 7 plan銆?
+### 鏉ヨ嚜鑹烘湳瀹跺弽棣?
+| # | 鍙嶉 | P7 step 鍊欓€?|
+|---|---|---|
+| 1 | 瑙嗚锛氭紓娴恫鎬佹劅锛堜笉瑕?鏄熺悆"瑕?娑叉€佺粏鑳?锛岃皟閫忔槑搴︼級| P7 涓婚〉瑙嗚閲嶅仛 |
+| 2 | 鍔ㄦ€侊細娴佸姩 + 鏇村闅忔満鎵板姩浜嬩欢 | P7 涓婚〉鍔ㄦ€佹墿灞?|
+| 3 | 闊抽樁锛氶敭鐩樿Е鍙戦煶闃讹紙A=閽㈢惔 1-0 / Q=鎻愮惔锛墊 P7 閿洏闊抽樁绯荤粺锛?*鏂板姛鑳?*锛岄潪閲嶈璁★級|
+| 4 | 闊充箰鍦嗗湀涓嶉渶瑕佸悕瀛楋紝鏁板瓧浠ｅ彿 | **P6 B6 澶勭悊**锛堜笉杩?P7锛墊
+| 5 | 鎸夐敭鍔ㄧ敾鑷畾涔?+ 涓庡矝灞?鏃ラ鍘熺敓缁勪欢浜や簰 | P7 鑷畾涔夊姩鐢诲眰 |
+
+### 鏉ヨ嚜 v2 缂╁噺
+
+- **/me /score /artist 娣卞害閲嶈璁?*锛坴2 鍐崇瓥 1锛?- **Claude Design 鎺ュ叆**锛堝師 B2.0.7锛屾潯浠惰瘎浼帮級
+- **璺ㄦ祻瑙堝櫒鎴浘楠屾敹**锛堝師 B2.5锛?- **24 寮犺法娴忚鍣?/ 鏂偣鎴浘褰掓。**锛堝師 B2.5锛?
+### 鏉ヨ嚜 5/6 B2 Bug C 淇鍓骇鍝?
+- **鎹?Turbo wallet**锛堟棫閽卞寘绉侀挜 5/6 璋冭瘯鏃舵硠闇插湪鑱婂ぉ jsonl锛屼綑棰濇瀬灏忥紱P7 涓荤綉鍓嶅繀椤绘崲锛?  - 娴佺▼锛歚scripts/arweave/generate-eth-wallet.ts` 鈫?鍏?Base ETH 鈫?`topup-turbo.ts` 鈫?鏇挎崲 .env.local + Vercel TURBO_WALLET_JWK
+  - 鏃у湴鍧€ `0xdE788249e747FB54c19e7B7F9baE85B631B9Fba8` 寮冪敤 + Turbo credits 閲嶆柊璐拱
+- **D 缁?No.1~No.5 涓婁紶 Arweave**锛堣В閿佽崏绋块摳閫狅級
+  - 鐜扮姸锛歚tracks.arweave_url=NULL` 瀵艰嚧 cron stepUploadMetadata 蹇呭穿 鈫?D 缁勶紙鍚?B/C 鍓?5 鐞冿級瀹屽叏鏃犳硶閾搁€?ScoreNFT
+  - 璺?`scripts/arweave/upload-tracks.ts`锛堝凡瀛樺湪锛? UPDATE 5 琛?arweave_url = ar://xxx
+- **鍔?vercel-env-sync 鑴氭湰**锛堥槻 NEXT_PUBLIC_ env var typo锛?  - 璧峰洜锛?/6 Bug C 绗簩灞傛牴鍥?= `NEXT_PUBLIC_SCORE_NFT_ADDRES` 灏戜竴涓?S
+  - 鑴氭湰瀵规瘮 `.env.local` 涓?Vercel API锛坴ercel CLI 鎴?Management API锛夌殑 key 宸泦锛孋I/鎵嬪姩璺戦兘鑳?
+### 鎶曡祫浜?demo 鑼冨洿锛堜笉鍙橈級
+
+鎶曡祫浜哄彧鐪嬮摼涓婃妧鏈?鈫?P7 demo 閲嶇偣锛?- 涓荤綉閮ㄧ讲锛圤P Mainnet锛?- 绔埌绔摳閫?/ 褰曞埗 / 鍥炴斁璺戦€?- 鐩戞帶 + 鍛婅灏辩华
+
+## 馃搶 鎮┖ TODO锛堜笉鍦?step 鍐呬絾瑕佽拷韪級
+
+- **5 棣栨寮忔洸鍚嶄笂鏋?*锛堣壓鏈鏈粰锛?  - B6 宸茬敤绾暟瀛?`1~5` 鍗犱綅锛圡odak 姘旂悆瀛?badge 鍐呭祵鍙充笅瑙掞級
+  - 绛夎壓鏈缁欐寮忔洸鍚嶅悗璺?`UPDATE tracks SET title='<姝ｅ紡鍚?' WHERE week=N`锛堟瘡棣栦竴琛?SQL锛?  - 娉ㄦ剰锛氶摼涓婂凡閾搁€犵殑 NFT metadata 涓嶅彲鏀癸紝姝ｅ紡鏇插悕鍙奖鍝?UPDATE 涔嬪悗鏂伴摳鐨?  - 鏉ユ簮锛?33 log 鐢ㄦ埛鍘熻瘽 "鏇插悕鐨勮瘽锛屾垜瑕佹壘鑹烘湳瀹剁殑寮哄寲涓€涓?
+- **Vercel ISR 缂撳瓨绛夊緟**锛氱敓浜ч儴缃插悗 /api/tracks 浠嶈繑鏃ф暟鎹渶澶?5 鍒嗛挓锛坮evalidate=300锛夛紝绛夎嚜鐒跺埛鏂版垨鎵嬪姩 redeploy
+- **B7 Q3 绛旀**锛堝惎鍔?B7 鏃跺洖绛旓級锛歴moke test 娓呭崟鏉ユ簮锛堟部鐢?P5 / 鏂板缓 P6锛?- **Pre-existing lint 閿欒 2 澶?*锛坄comet-system.tsx:40` + `use-layer-wave.ts:37` ref-during-render锛?  - 鏉ユ簮 commit `cd882aa` v82 archipelago refactor锛屼笌 B6 鏃犲叧
+  - verify.sh 浼氬け璐ヤ絾 build 閫氳繃锛涜鍚庣画宸ヤ綔涓槸鍚﹂『鎵嬩慨
+- **/score/[id] 杩斿洖閾炬帴鏀?/me**锛?026-05-08 B8 瀹炴祴鍙戠幇锛?  - 鐜扮姸锛歚app/score/[id]/page.tsx` 鐨?鈫?Ripples in the Pond 閾炬帴鍒?`/`
+  - 鏈熸湜锛氫粠鍞辩墖璇︽儏椤佃繑鍥炲簲鍥炲埌 /me锛堢敤鎴风殑"鎴戠殑鍞辩墖"鍒楄〃锛?  - 涓€琛屼慨鏀癸紝B7 绔埌绔啋鐑熷墠椤烘墜鏀?- **/api/me/scores 浠嶈仈 events_data**锛?026-05-08 B8 瀹炴祴锛岀害 35s 鎱紱/api/me/score-nfts 宸插湪鏈疆 P1-19 淇級
+  - 鐜扮姸锛?api/me/scores 鑱?`events_data` 缁欒崏绋垮墠绔?inline 鎾斁鐢紙DraftCard 鈻?鎸夐挳鎸?events.time 瑙﹀彂闊虫晥锛?  - events_data 鏄繀瑕佹暟鎹笉鍙渷锛屼絾棣栧睆鍙媶锛氬厛杩斾富淇℃伅锛坕d / track / seq / event_count锛? 鑽夌鎾斁鏃跺崟鐙?fetch events
+  - 褰卞搷锛氳崏绋挎暟 100+ 鏃?/me 棣栧睆鎱紱P7 浼樺寲锛堜豢 B8 P2 split锛?- **.env.local 鏈夐噸澶?CRON_SECRET 瀹氫箟**锛?026-05-08 B8 瀹炴祴鍙戠幇锛?  - 绗簩琛?`CRON_SECRET=<已脱敏>` 瑕嗙洊绗竴琛?hex value
+  - 椤烘墜娓呯悊锛堜繚鐣欑浜岃鎴栭€夊叾涓€锛夛紝涓嶅奖鍝嶇嚎涓?vercel
+- **cron lease 5 鍒嗛挓 脳 5 姝?= 25 鍒嗛挓闂**锛?026-05-08 B8 瀹炴祴鍙戠幇锛?  - 璁捐锛歅hase 6 A1 durable lease 闃?cron timeout race
+  - 鍓綔鐢細姣忔潯 row 璧板畬 5 姝?鈮?25 鍒嗛挓锛堣繙瓒?STATUS.md 鏂囨"绾?5 鍒嗛挓"锛?  - 閫夐」锛氣憼 缁堟€佸鎺ㄨ繘姝ラ鏃朵竴骞舵竻 lease 鈶?cron 棰戠巼 1min 鈫?30s 鈶?淇濈暀璁捐浣嗘洿鏂版枃妗?  - B7 绔埌绔啋鐑熷墠闇€鍐崇瓥锛堝奖鍝嶅疄娴嬭€楁椂锛?- **score_nft_queue.token_id 缂?unique index**锛?026-05-08 B8 P3 review 鍙戠幇锛?  - 鏍瑰洜锛欱8 鍚?token_id 璺緞鎴愪负鍏煎鍏ュ彛锛坓etScoreByTokenId锛夛紝浣嗚〃娌?partial unique index
+  - 宸插姞浠ｇ爜渚ч槻寰★細`.order().limit(1)` 鍙栨渶鏂拌锛堥伩鍏嶅弻琛屽懡涓?PGRST116 闈欓粯 404锛?  - 涓荤綉鍓嶈ˉ migration锛歚CREATE UNIQUE INDEX uq_score_queue_token_id ON score_nft_queue(token_id) WHERE token_id IS NOT NULL`
+  - 鍓嶇疆锛氬厛纭鐜版湁鏁版嵁鏃?token_id 閲嶅
+- **OwnedScoreNFT.id 浠嶆槸鍙岃涔夎矾鐢?ID**锛圥7 brand type 鍊欓€夛級
+  - 鐜扮姸锛氭湰杞?P1-3 宸插姞 `queueId: string` 缁?React key 鐢紱浣?`id` 瀛楁浠嶆壙鎷?璺敱鐢?鑱岃矗锛堝凡涓婇摼=token 鏁板瓧瀛楃涓诧紝鏈笂閾?queue UUID锛?  - 浣欎笅椋庨櫓锛歝aller 鎶?`id` 褰?UUID 浼?RPC 浼?invalid uuid锛堝凡涓婇摼鏃讹級锛涜涔夊垽鏂?`id === '123'` 涓嶅彲闈?  - P7 鎷嗘硶锛歜rand type `ScoreRouteId` 鎴栨媶 `route: { kind: 'token', tokenId } | { kind: 'queue', queueId }`
+- **Resend 閭欢鍛婅寤跺悗 鈫?涓荤綉鍓嶅繀鍋?*锛?026-05-08 B8 P3 commit message 鎻愪簡浣嗘湭瀹炴柦锛?  - 娴嬭瘯缃?+ 褰撳墠鐢ㄦ埛閲忛潬浜哄伐宸℃煡 supabase 闃熷垪 + /api/health mintQueue 瀛楁鍏滃簳
+  - 涓荤綉鍓嶅繀鍋氾紙鐢熶骇鐜澶辫触蹇呴』鏈?alert 閫氶亾锛?  - 瑙﹀彂鍦烘櫙锛歝ron 澶辫触 retry 鑰楀敖 / Turbo 閽卞寘浣欓浣?/ queue stuck > 闃堝€?- **score-source events 澶?JSON 鍔犺浇浣撻獙**锛?026-05-08 B8 P3 review 鍙戠幇锛?  - 鐜扮姸锛?score/[id] SSR 鎷夊畬鏁?events_data锛堝嚑鍗?鍑犵櫨闊崇 脳 澶?JSON锛夛紝棣栧睆鎱?  - 杩滄湡锛歟vents 鎷?client fetch锛坧age.tsx 鍏堝嚭鍩虹淇℃伅锛宔vents 鍗曠嫭 endpoint锛夛紝浠?B8 P2 split
+  - 褰撳墠 ScorePlayer 宸茬敤 Promise.allSettled + cover 闄嶇骇淇濇姢锛屽崟椤靛穿婧冩鐜囦綆
+
+## 澶囨敞
+
+- 浠撳簱/浠ｅ彿 `ripples-in-the-pond`锛堟湰鍦版枃浠跺す浠嶆槸 `nft-music`锛?- 閾撅細OP Mainnet锛堢敓浜э級/ OP Sepolia锛堟祴璇曪級锛汚rweave credits 璧?Base L2
+- Next.js 16.1.6 + React 19锛沇indows + PowerShell 涓?+ Git Bash 杈咃紙Claude 鐢級
+- 瀛︿範妯″紡 slow mode锛涚敤鎴疯嚜绉板皬鐧斤紝鍛戒护蹇呴』缁欏畬鏁磋矾寰?- 鏂囦欢纭嚎 220 琛?/ 鐩綍 8 鏂囦欢
+- 鍐崇瓥鏃ュ織 `docs/JOURNAL.md` / 鏂囨。鍦板浘 `docs/INDEX.md`
+- memory 绯荤粺: `C:\Users\Hui\.claude\projects\E--Projects-nft-music\memory\` 宸茬Н绱?7 鏉￠暱鏈熷亸濂?绾︽潫
+
+
+codex
+STATUS 读到了，但终端输出编码有乱码；核心状态和用户背景一致：Phase 7 待启动，overview 是开放骨架，Phase 8/9 边界已初步锁定。接下来读 TASKS、约定和目标文档。
+exec
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw -Encoding UTF8 TASKS.md' in E:\Projects\nft-music
+ succeeded in 728ms:
+# TASKS — 任务看板
+
+> Now / Next / Later / Done / Blocked
+> 一次只允许 1 件事在 Now，AI 完成一件就移到 Done 并提拔下一件到 Now。
+
+---
+
+## 🎯 Now（最多 1 件，AI 正在做的）
+
+- （空，B8 P3 端到端实测通过 2026-05-08，等用户决定下一刀做 B5 / B3 / Track A 任一）
+
+---
+
+## ⏭ Next — Phase 6 v2 推进序列（B7 改最后 2026-05-04 / B4 删 2026-05-08）
+
+Phase 6 v2 playbook：`playbook/phase-6/overview.md`（v2 缩减后 Track B 7→6 step，删 B4 因 PlayerProvider 早已实施 loadingRef）
+
+### 步骤 0：v2 缩减 doc 改写 ✅ 完成（2026-05-03）
+
+- [x] track-b-ui-redesign.md 重写（13→7 step，删 B2.0-B2.5 流水线，加 B6+B7）
+- [x] overview.md 时间线 5-6 周→3-5 天 + 完结标准加 B7 / P7 候选
+- [x] STATUS.md 当前阶段 + 进度 + Phase 7 候选清单 + 悬空 TODO
+- [x] JOURNAL.md 加 2026-05-03 段（v2 缩减决策 + 艺术家反馈 5 条）
+- [x] ARCHITECTURE.md §11 Phase 6/7 描述同步
+
+### 步骤 1：B6 实施 ✅ 完成（2026-05-04）
+
+- [x] migration 027（tracks 加 published）+ migration 028（5 行循环 + 安全 DELETE 加 score_queue_id IS NULL 过滤）
+- [x] 用户复制 5 个 mp3 → `public/tracks/No.1.mp3 ~ No.5.mp3`
+- [x] Modak 气球字引入 layout.tsx + body className
+- [x] SphereNode 删下方 label，加内嵌数字 badge（位置 0.55r,0.55r / 字号 1.26r / fill rgba 白 0.32→hover 0.55）
+- [x] sphere-config 加 getGroupTargetCount 抽象（A=5 / B=C=36），SphereCanvas + Archipelago + nav 都用
+- [x] mock-tracks 5 行补 published（TS 类型完整性）
+- [x] /api/tracks + /api/tracks/[id] SELECT 加 published
+- [x] 浏览器验证：5 球 / 36 球 + 数字 badge 稳定显示
+
+### 步骤 2：B2 修 /me /score /artist ✅ 实质收口（2026-05-08）
+
+Bug A/B 由 B8 数据流重设解决（不是单点修补，是整体重设）：
+- [x] **Bug A** "录制铸造不更新" → B8 P1 5s 乐观成功 + P2 唱片对齐 DB（commit 63c807a / 38f7f37）
+- [x] **Bug B** "录制上传中卡住" → B8 P1 mint_score_enqueue RPC 不再标 expired + P2 草稿入队即消失（commit 397defe / 63c807a）
+- [x] **Bug C** 主链路 5/6 双根因修复（wallet purpose 中文 / Vercel env typo）
+- [x] **B8 P3** 路由双兼容 + ScorePlayer 前端 inline + 端到端实测 token_id=12（2026-05-08）
+
+剩余在 B7 端到端冒烟时若发现新 bug 再起新 step。
+
+### 步骤 3：B5 前端韧性 ✅ 实质完成（2026-05-08 audit 发现）
+
+- [x] **#7** tracks ISR + degraded header + Archipelago 占位（`app/api/tracks/route.ts:15` + `Archipelago.tsx:133`）
+- [x] **#9** localStorage 损坏自愈（`src/lib/draft-store.ts` isValidDraft + try/catch）
+- [废弃] **#8** 移动端首帧 — HomeJam 已 dead-code（references/dead-code/jam/HomeJam.tsx），主页改用 Archipelago，原 step 失效；移动端体验挂 P7 UI 重设计
+
+### 步骤 4：B3 草稿铸造 ✅ 实质完成（2026-05-08 audit + 5/8 实测验证）
+
+- [x] `src/data/jam-source.ts` mintScore 函数已实施
+- [x] `src/hooks/useMintScore.ts` hook 已实施
+- [x] `src/components/me/DraftCard.tsx` 铸造按钮 + 4 态显示（idle/queued/success/上传中）
+- [x] 端到端实测：queue 778a2904 → token_id=12（commit `40cf61d` JOURNAL 5/8 段）
+
+### 步骤 5：Track A 剩余 + D2 + E4 + E5 ✅ 实质完成（2026-05-08 audit）
+
+- [x] **A0** operator 锁（`src/lib/chain/operator-lock.ts`，3 个 cron 入口都包装）
+- [x] **A1** ScoreNFT cron durable lease + uri_tx_hash 拆步（migration 024 + steps-set-uri.ts）
+- [x] **A3** sync-chain-events cursor 事务性（`sync-chain-events/route.ts:55+`，注释明确"Phase 6 A3"）
+- [x] **A4** 草稿保存原子化（migration 025 `save_score_atomic` RPC + score/save/route.ts:101）
+- [挂 P7] **A5** /score/[id] 链上灾备 — B8 P3 删 score-fallback.ts noop 残留，灾备方案待 P7 重新设计
+- [x] **D2** admin Bearer 鉴权（`/api/airdrop/trigger` `verifyAdminToken`，注释"Phase 6 D2 改"）
+- [废弃] **E4** Decoder 多网关 fallback — B8 P3 删 decoder iframe，详情页改前端 inline 播放，E4 设计目标已不存在；OpenSea 端单网关风险接受（主网用 ario.permagate.io）
+- [x] **E5** 文档口径对齐（本次 commit）
+
+### 步骤 6：B7 端到端冒烟（**唯一剩余**，2026-05-04 决策放最后）
+
+- [ ] **Q3 待答**：smoke test 清单来源（沿用 P5 / 新建 P6 版本，推荐 P6）
+- [ ] 跑核心场景 10+ 条（登录/收藏/录制/铸造/分享/移动端/未登录 + B6 5 球 + B3 草稿铸造）
+- [ ] 产出 bug 清单 → `reviews/2026-05-XX-phase-6-completion-smoke-test.md`
+- [ ] 直接进 Phase 6 completion review → Phase 7
+
+### 历史完成（v1 阶段，保留追溯）
+
+#### 历史步骤 0：产品决策冻结 ✅ 完成（2026-04-25）
+
+- [x] **A6** — `/me` 语义 = **"我铸造的"（保持现状）**
+- [x] **D1** — 主网**不做空投**（D2 admin header 仍做，D3-D5 挂起）
+- [x] **E2** — Semi 登录**挂 Phase 7**（主网首版 Privy-only）
+
+决策详情：`docs/JOURNAL.md` 2026-04-25 收尾段落
+findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-justified/downgraded-accepted）
+
+#### 历史步骤 1：Track C 合约重部署 ✅ 完成（2026-04-25）
+
+- [x] C1 ScoreNFT setTokenURI 防覆盖 + 重部署 → ScoreNFT v2 `0x1C47...832F`
+- [x] C2 Deploy 脚本参数化 admin/minter + `docs/MAINNET-RUNBOOK.md`
+- [x] C3 DeployOrchestrator 去测试 mint + 新建 `TestMintOrchestrator.s.sol`
+- [x] C4 TBA 开关删除 + 重部署 Orchestrator → Orchestrator v2 `0x8A6D...C3a8`
+- 代码 commit `086167d` + 链上 broadcast 记录 + 归档 `reviews/phase-6-deprecated-contracts.md`
+- **待办**：Vercel env 同步 + Redeploy + cron-job.org 5/5 在 v2 下 ≥ 5 分钟全绿（task #7）
+
+#### 历史步骤 2：Pre-tester Gate ✅ 完成（2026-04-26）
+
+- [x] **G0** 运营就绪检查 — /api/ping + /api/health + cron 5/5 + 14 项 env + 真实 smoke
+- [x] **A2** material failed 分类重试（`failure_kind: safe_retry / manual_review`，commit `8074d18` + migration 021）
+- [x] **B1** NFT localStorage 按 userId 隔离（commit `c749b67`）
+- [x] **E1** `/api/health` 暴露 mintQueue { failed / stuck / oldestAgeSeconds }（commit `f0725df`）
+- 附加修复：useFavorite 改回乐观 UI（commit `931f45f`，G0 第 5 项暴露的体验问题）
+- 附加：memory 拆 feedback/ + project/ 子目录（解 8 文件硬线）
+
+✅ 限定范围 tester 可以放人
+
+---
+
+## ⏭⏭ Phase 6 并行 tracks（Pre-tester gate 后开工）
+
+| Track | 主题 | 依赖 | 详细 playbook |
+|---|---|---|---|
+| **A** | 铸造链路稳定性（ScoreNFT cron 四连 + sync cursor + 草稿原子 + /score 灾备 + owner 投影）| 无 | `playbook/phase-6/track-a-mint-stability.md` |
+| **B** | UI 收口 + 端到端验证（v2 缩减：B1 已完成 / B2 小修 + bug 清扫 / B3 草稿铸造 / B5 韧性 / B6 5 球 demo / B7 端到端冒烟）| B3 依赖 A0+A1；B7 依赖 B6 | `playbook/phase-6/track-b-ui-redesign.md` |
+| **C** | 合约 & 部署硬化（setTokenURI 防覆盖 / 权限最小化 / Deploy 清洁 / TBA 决策）| 无 | `playbook/phase-6/track-c-contracts.md` |
+| **D** | 空投闭环（条件性，D1 = 主网是否做空投）| D1 产品决策 | `playbook/phase-6/track-d-airdrop.md` |
+| **E** | 认证 & 观测收口（material health / Semi OAuth / Semi 探针 / Decoder fallback / 文档对齐）| E2 依赖 Semi OAuth | `playbook/phase-6/track-e-auth-observability.md` |
+
+**v2 缩减后：~20 step / 覆盖 29 个 findings**（Track B 13→7→6 删 B4 / 其他 4 track 不变；见 `reviews/2026-04-25-phase-1-4-strict-cto-review.md` + `reviews/2026-04-25-phase-5-strict-cto-review.md`）
+
+**2026-05-08 audit 结论**：除 B7 + completion review 外**全部实质完成**。playbook 各 step 顶部已加 ✅ 完成标记 / 实施位置 / commit 引用。
+
+---
+
+## ⏭⏭⏭ 之后（2026-05-08 拆分）
+
+- **Phase 7** — UI 翻修 + 体验细节优化（含 A5 / P1-17 / P1-18 三个顺手 P1）
+  - playbook 骨架：`playbook/phase-7/overview.md`（故意开放，启动时头脑风暴 + Claude Design 接入）
+- **Phase 8** — 按键动画 + 音效系统扩展 26 → 50（含 P1-21 useEventsPlayback decode 时序）
+- **Phase 9** — 修 bug + 上主网（10 项硬阻塞 + 换 CRON_SECRET + OP Mainnet 部署 + 首周救火）
+
+延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md` + `reviews/2026-04-24-phase-5-s5-smoke-test.md`
+
+**主网前必做**（统一进 Phase 9 起点清单）：
+- Deploy 脚本 admin/minter 分离 + save draft 事务化（见 `reviews/2026-04-10-phase-2.5-completion-review.md`）
+- **Turbo credits 监控的阈值告警**
+- AirdropNFT metadata 补完（Phase 4 Review P1）
+- 换 CRON_SECRET（本轮 strict review 调试时 5/8 在聊天泄露）
+
+---
+
+## 🚧 Blocked
+
+- **Phase 4A S3** — 前端登录按钮 + useAuth 兼容 + 端到端验证
+  - **阻塞原因**：Semi 团队在设计 OAuth 开放登录，现有 API 不确定对外开放
+  - **已完成的前置**：S0 JWT 基础设施 ✅ / S1 双验证中间件 ✅ / S2 后端登录端点 ✅
+  - **续做时要改的**：`src/lib/semi-client.ts`（适配 OAuth 流程）+ 新建前端登录组件
+  - **解除条件**：Semi 团队提供 OAuth 文档或确认现有 API 可用
+
+---
+
+## ✅ Done
+
+- **[Phase 6 B8 /me 数据流重设]** ✅ 完成（2026-05-07 → 2026-05-08，3 个阶段 + 实测 + agent review 13 finding）：
+  - **Phase 1**（commit `397defe` + `63c807a`）：5s 乐观成功 + 草稿入队即消失 + mint_score_enqueue RPC 不再标 pending_score expired
+  - **Phase 2**（commit `38f7f37`）：草稿可播放（▶ 按钮 + useEventsPlayback hook）+ 唱片对齐 DB（删 mint_events 依赖 / queue 单一数据源）
+  - **Phase 3**（本次 commit）：路由 `[tokenId]` → `[id]` 双兼容（数字 token_id / UUID queue.id）+ ScorePlayer 改前端 inline（PlayerProvider.toggle + useEventsPlayback 替代 Arweave decoder iframe）+ score-fallback.ts 删除（noop 残留）+ score-source.ts 多项防御（isSafeInteger / order().limit() / Promise.allSettled / cover try-catch / pendingRes error log）+ ScorePlayer 文案 "无事件数据" + useEventsPlayback seek 假设注释
+  - **副产品**：B6 demo 5 球 arweave_url 上链回写（5 个 mp3 上 Arweave + UPDATE tracks，原 P7 task 提前消化）+ B4 删除（PlayerProvider loadingRef 早已实施）
+  - **端到端验证**：queue 778a2904 走完 5 步状态机 → token_id=12 上链（tx_hash 0xea5b... + uri_tx_hash 0x5ddb... + metadata Arweave bJeCGDtZ...）+ 详情页前端 inline 播放正常
+  - **Agent review 13 finding**：5 项本次合入修（P0×3 + P1×2）+ 8 项挂 P7（已加 STATUS 悬空 TODO）
+
+- **[Phase 6 B6 实施]** ✅ 完成（2026-05-04）— A 组 5 球 + B/C 36 球 demo 上线：
+  - migration `027_tracks_add_published.sql`（tracks 加 published BOOLEAN + 部分索引）
+  - migration `028_b6_seed_data.sql`（week 1-5 标 published / 36 行循环 audio_url 到 No.1-5 / 安全清旧 mint 加 score_queue_id IS NULL 过滤避免误伤 ScoreNFT）
+  - Modak 气球字（next/font/google）引入 layout.tsx + body className 挂 --font-modak variable
+  - SphereNode：删球下方原 azeret label / 加内嵌 SVG text 数字 badge（位置 0.55r,0.55r 偏右下九宫格中心向球心收 30% / 字号 1.26r / fill #ffffff fillOpacity hover 0.32→0.55 / pointerEvents none / transition fill-opacity 0.25s）
+  - sphere-config 抽 `getGroupTargetCount(gid)` 函数（A=5/B=C=36），SphereCanvas 删 TARGET_NODE_COUNT 常量 / Archipelago 预热 + nav badge 都用 getGroupTargetCount
+  - mock-tracks 5 行补 published: false（TS 类型完整性）
+  - /api/tracks + /api/tracks/[id] SELECT 加 published
+  - 验证：TS 0 errors / npm run build 通过 / 浏览器实测 5 球 36 球数字稳定显示
+  - 调试历史：先字号 0.42r 太小 → *3 改 1.26r → radius >= 14 阈值导致 20-30% 球随机分到深层时数字消失 → 移除阈值
+
+- **[Phase 6 Pre-tester gate 收口]** ✅ 完成（2026-04-26，4 commits）— 4/4 全绿 + 1 项体验回滚 + memory 重组：
+  - **G0** 运营就绪验证全过（health 返 db=ok / wallet=low-but-ok / cron 5/5 / env 14 项齐 / 收藏 smoke 通）
+  - **B1** `c749b67` — NFT localStorage 按 userId 隔离（nft-cache 5 函数全加 userId 参数 + useAuth.logout 清当前用户 cache + Archipelago/me 监听 userId 变化重读，queueMicrotask 避 React 19 set-state-in-effect lint）
+  - **E1** `f0725df` — `/api/health` 加 mintQueue { failed / stuck / oldestAgeSeconds }（3 query Promise.all 并行，无 migration）
+  - **A2** `8074d18` — mint_queue failure_kind 字段 + 4 处 markFailed 分类（migration 021）+ /api/mint/material 23505 按 status/failure_kind 分流 + useFavorite 处理 409 needsReview
+  - **附加** `931f45f` — useFavorite 改回乐观 UI（部分反转 Phase 5 严格 review 1019dcb）：用户在 G0 验证暴露 3-10 秒等待，确认 Phase 2 原始要求"乐观 + 失败 ops 兜底"，存 memory `feedback/optimistic_ui_with_rollback`
+  - **附加** memory/ 9 文件超 8 硬线 → 拆 feedback/ + project/ 子目录（root 减到 3 entries）
+
+- **[Phase 6 Track C 收口]** ✅ 完成（2026-04-25，commit `086167d`）— 合约 & 部署硬化：
+  - C1 ScoreNFT `_uriSet` mapping + setTokenURI 仅首写一次（防 MINTER_ROLE 私钥被盗后改 metadata）
+  - C2 4 个 Deploy 脚本参数化 ADMIN/MINTER/DEPLOYER（`vm.envOr` 测试网零配置回退）
+  - C3 DeployOrchestrator 删测试 mint，新建 `TestMintOrchestrator.s.sol`
+  - C4 MintOrchestrator 删 `tbaEnabled` + `_maybeCreateTba` 空钩子（D-C3 决策）
+  - ARCH 决策 6 / 7 / MintOrchestrator 描述 / 决策表 4 处 TBA 语义同步
+  - 新建 `docs/MAINNET-RUNBOOK.md` + `scripts/load-env.ps1`（PowerShell 加载 `.env.local` for forge）
+  - 重部署：ScoreNFT v2 `0x1C478F9F5b66302A35a0178e07df67BA343c832F` + Orchestrator v2 `0x8A6Dd0Ecf108797358CC369bC6F263D2C89BC3a8`
+  - 23/23 forge test + verify.sh 全绿
+  - 归档 `reviews/phase-6-deprecated-contracts.md`
+
+- **[Phase 5 收口]** ✅ 完成（2026-04-25）— 测试网公开版部署 + 两轮 review 修复：
+  - commits: `1bb1b05`（第一轮 review P0 修复）/ `ddda82c`（bug #6 文档修订）/ `1019dcb`（严格 CTO review 修复）
+  - 线上地址：`https://pond-ripple.xyz`（Vercel Hobby + cron-job.org 5 个 job）
+  - 代码侧所有 tester 前 blocker 已修（11 项 bug）
+  - 三份 review：`reviews/2026-04-24-phase-5-s5-smoke-test.md` + `reviews/2026-04-24-phase-5-completion-review.md` + `reviews/2026-04-25-phase-5-strict-cto-review.md`
+  - 决策日志：`docs/JOURNAL.md` 2026-04-25 段落
+  - 限定 tester 范围：素材收藏 + 个人页 + artist + 已铸造乐谱回放（不含草稿铸造 + 空投）
+- **[Phase 5 S5]** ✅ 完成（2026-04-24）— 冒烟测试 10/12：
+  - 12 项清单：基础可达 A1-A4 全绿 / 核心业务 B5-B8+B10 全绿（B9 乐谱铸造 UI 按钮未实现，延后 Phase 6）/ 安全 C11 全绿（C12 rate limit 失效，bug #6 待修）
+  - 详细 review：`reviews/2026-04-24-phase-5-s5-smoke-test.md`
+  - 6 个 bug 已分类：3 个测试前必修（#2 #3 #6）+ 2 个 Phase 6 一起做（#1 #5）+ 1 个忽略（#4）
+- **[Phase 5 S4]** ✅ 完成（2026-04-15 → 2026-04-24）— 域名 + Vercel + cron-job.org：
+  - 域名 `pond-ripple.xyz` 已绑（Vercel 代管）
+  - Vercel 部署 `4d35e80` + `daf73c1`（middleware Upstash 初始化容错修复）
+  - cron-job.org 5 个 job 运行中：process-mint-queue / process-score-queue（1min）/ process-airdrop（2min）/ sync-chain-events（5min）/ check-balance（1hour）
+  - 5/5 cron 绿灯（process-score-queue 曾 308 被用户发现并自行修正 URL）
+  - 环境变量全量迁移到 Vercel（含 TURBO_WALLET_JWK / UPSTASH_*）
+- **[Phase 5 S0-S3]** ✅ 完成（2026-04-15）— 代码准备（commit `4d35e80`）：
+  - S0 Cron 鉴权迁移（query param → Authorization header，`src/lib/auth/cron-auth.ts` 新建 + 6 个 cron 路由迁移）
+  - S1 Cron 拆步（process-mint-queue + process-airdrop 两步状态机，每步 < 5 秒）
+  - S2 Turbo 钱包环境变量化（TURBO_WALLET_PATH → TURBO_WALLET_JWK，修 `src/lib/arweave/core.ts`）
+  - S3 公开 ping + Upstash rate limit + 404/error 页（`app/api/ping/route.ts` + `middleware.ts` + `app/not-found.tsx` + `app/error.tsx`）
+  - src/lib 目录重组：contracts.ts / operator-wallet.ts → chain/ 子目录，privy.ts / semi-client.ts → auth/ 子目录
+- **[Phase 4C S6]** ✅ 完成（2026-04-13）— AirdropNFT + 空投系统：
+  - `contracts/src/AirdropNFT.sol`（ERC-721，独立部署，symbol RIPA）
+  - `contracts/test/AirdropNFT.t.sol`（6/6 测试通过）
+  - `supabase/migrations/phase-4/018_airdrop_rounds.sql` + `019_airdrop_recipients.sql`
+  - `src/types/airdrop.ts`（类型定义）
+  - `src/lib/contracts.ts`（新增 AIRDROP_NFT ABI）
+  - `app/api/airdrop/trigger/route.ts`（管理员触发 + chain_events owner 快照）
+  - `app/api/cron/process-airdrop/route.ts`（逐个铸造 + 幂等 + 超时回退）
+  - verify.sh 全绿
+- **[Phase 4B S5]** ✅ 完成（2026-04-13）— 艺术家页面：
+  - `app/artist/page.tsx`（Server Component，统计 + 108 首进度条 + 空投标记点）
+  - `app/api/artist/stats/route.ts`（公开统计 API）
+  - verify.sh 全绿
+- **[Phase 4B S4]** ✅ 完成（2026-04-13）— 余额告警 + 健康检查增强：
+  - `app/api/cron/check-balance/route.ts`（钱包余额 + 双队列积压 + system_kv 告警）
+  - `app/api/health/route.ts`（增强：score_nft_queue 状态分布 + jwt_blacklist 大小 + 最近告警）
+  - `src/types/tracks.ts`（HealthResponse 扩展字段）
+  - verify.sh 全绿
+- **[Phase 4A S2]** ✅ 完成（2026-04-13）— Semi 登录对接：
+  - `src/lib/semi-client.ts`（Semi API 客户端：发短信/验证码登录/拿用户）
+  - `app/api/auth/community/route.ts`（验证码 → JWT 交换）
+  - `app/api/auth/community/send-code/route.ts`（转发短信请求）
+  - evm_address 合并逻辑：Privy/Semi 同地址 → 同 user
+  - verify.sh 全绿
+- **[Phase 4A S1]** ✅ 完成（2026-04-13）— 身份模型 + 双验证中间件 + 6 API 迁移：
+  - `supabase/migrations/phase-4/016_auth_identities.sql`（多源身份表 + 现有用户迁移）
+  - `supabase/migrations/phase-4/017_users_privy_nullable.sql`（privy_user_id 改可空）
+  - `src/lib/auth/middleware.ts`（authenticateRequest：先 Privy 后 JWT）
+  - `src/lib/auth/jwt.ts`（从 src/lib/ 重组到 auth/ 子目录）
+  - 6 个 API 全部迁移：me/scores、me/score-nfts、me/nfts、mint/score、mint/material、score/save
+  - verify.sh 全绿
+- **[Phase 4A S0]** ✅ 完成（2026-04-13）— 自签 JWT 基础设施：
+  - `jose` 安装 + STACK.md 白名单登记
+  - `scripts/generate-jwt-keys.ts`（密钥生成脚本）
+  - `src/lib/jwt.ts`（signJwt / verifyJwt / revokeJwt + server-only）
+  - `supabase/migrations/phase-4/015_jwt_blacklist.sql`（撤销黑名单表）
+  - `tsconfig.json` 排除 references/ 目录
+  - verify.sh 全绿（TypeScript + ESLint + Build）
+- **[Phase 3.1]** ✅ 完成（2026-04-12）— 稳定性修复 Sprint 1+2（7 项）：
+  - F1 原子 claim + F2 幂等写入 + F3 external_url 环境变量 + F4 底曲 fail fast
+  - F5 promise catch + F6 防御性检查 + F7 UUID 校验
+  - F8 不需要（/me = "我铸造的"）、F9 延后
+  - 来源：Codex CTO Review + Claude Code 自检 → `reviews/2026-04-12-phase-3.1-fix-plan.md`
+- **[Phase 3B]** ✅ 完成（2026-04-12）— 链上事件同步 cron：
+  - `supabase/migrations/phase-3/013_system_kv.sql` — 系统 KV 表，存 last_synced_block
+  - `supabase/migrations/phase-3/014_chain_events.sql` — 链上事件表，UNIQUE(tx_hash, log_index)
+  - `app/api/cron/sync-chain-events/route.ts` — 分批循环拉 Transfer 事件（Alchemy Free 10 区块限制）
+  - `src/lib/contracts.ts` — ScoreNFT 加 Transfer 事件 ABI
+  - 实测：tokenId 2 Transfer 事件成功同步
+- **[Phase 3 Step S7]** ✅ 完成（2026-04-12）— 个人页升级 + 端到端验证 8/8：
+  - `src/components/me/ScoreCard.tsx`（新建）— 乐谱 NFT 卡片（封面 + 标题 + 回放链接）
+  - `app/api/me/score-nfts/route.ts`（新建）— 返回用户已铸造的 ScoreNFT
+  - `app/me/page.tsx`（修改）— 三区排列：乐谱 → 素材 → 草稿
+  - 端到端验证：8/8 全通过（1-4 手动验证 + 5-6 S5 已实测 + 7-8 手动验证）
+  - Phase 3A 标记完成
+- **[Phase 3 Step S6]** ✅ 完成（2026-04-12）— 公开回放页 + OG 分享卡：
+  - `app/score/[tokenId]/page.tsx`（Server Component，封面 + 标题 + 链上信息 + iframe 播放器）
+  - `app/score/[tokenId]/ScorePlayer.tsx`（Client Component，点击展开 iframe 嵌入 Arweave Decoder）
+  - `app/score/[tokenId]/opengraph-image.tsx`（动态 OG 图，预取封面 + 降级色块）
+  - `src/data/score-source.ts`（数据源，DB 主路径查 mint_events → queue → track → user）
+  - `supabase/migrations/phase-3/012_mint_events_nullable_queue_id.sql`（mint_queue_id 改可空）
+  - verify.sh 全绿（TypeScript + ESLint + Build）
+- **[Phase 3 Step S5]** ✅ 完成（2026-04-12）— 铸造 API + cron 5 步状态机 + 最小观测性：
+  - S5.a commit `7af6c39`：3 个 migrations（score_nft_queue + mint_score_enqueue RPC + extend mint_events）+ `POST /api/mint/score` + jam.ts 扩展类型
+  - S5.bc commit `8dc66c9`：cron 拆 3 文件（route / steps-upload / steps-chain）+ upload-sounds.ts 末尾追加 sounds map 上传 + `/api/cron/queue-status` 观测端点（放 cron/ 子目录避开 app/api/ 8 硬线）
+  - Migrations 按 Phase 重组到 `supabase/migrations/phase-0-2/` + `supabase/migrations/phase-3/` 子目录
+  - 端到端实测：pending_score "晨雾" (29 events) → RPC 入队 → 4 次 cron → 链上 ScoreNFT tokenId 2 → metadata Arweave `pXWRtrzz...s60`
+  - 硬门槛 4 条：CORS smoke ✓ / minting_onchain 幂等 ✓ / 观测端点 ✓ / OpenSea testnet 替代方案 ✓（Etherscan + 直接 fetch Arweave）
+  - OpenSea 已永久停 testnet 发现 + memory 记录
+- **[Phase 3 Step S4]** ✅ 完成（2026-04-11）— Score Decoder "网页唱片机"：
+  - commit `1713b5f`：`src/score-decoder/index.html`（12.63 KB，零依赖 vanilla JS + Web Audio）+ `scripts/arweave/upload-decoder.ts`
+  - decoder txId `FWy1XA-B8MvRAgsNgMfDSUBiXXjHNpK1A_fHWjsUAXg`（所有 ScoreNFT 共用一份）
+  - 本地双击 file:// 测试 1-2s 加载 + 播放 OK
+- **[Phase 3 Step S3]** ✅ 完成（2026-04-11）— MintOrchestrator + 权限授权 + 端到端 mint：
+  - commit `f018343`：`contracts/src/MintOrchestrator.sol` + test (12/12 pass) + deploy script 三步一 broadcast
+  - 部署地址 `0xcBE4Ce6a9344e04f30D3f874098E8858d7184336`
+  - 部署时 ScoreNFT.grantRole(MINTER_ROLE, orchestrator) + mintScore(deployer) → tokenId 1
+  - TBA 极薄开关保留（tbaEnabled 默认 false + 空 `_maybeCreateTba` 钩子）
+- **[Phase 3 Step S2]** ✅ 完成（2026-04-11）— ScoreNFT 合约 + Tailwind v4 根治：
+  - commit `a9a4847`：`contracts/src/ScoreNFT.sol`（ERC721URIStorage + AccessControl）+ test (10/10 pass) + deploy script
+  - 部署地址 `0xA65C9308635C8dd068A314c189e8d77941A7e99c`，name `"Ripples in the Pond Score (Testnet)"`，symbol `RIPS`
+  - tokenId 从 1 自增，mint / setTokenURI 两步分离（playbook D2 冻结决策）
+  - Tailwind v4 根治：`globals.css` 用 `@source not` 显式排除非源码目录，解决 `Invalid code point` bug（历史踩过 2 次）
+- **[Phase 3 Step S1]** ✅ 完成（2026-04-11）— 封面系统：
+  - commit `627fb9d`：`scripts/arweave/generate-covers.ts` seed 化 SVG 生成器 + `upload-covers.ts` 批量上链 + migration 008_score_covers
+  - 100 张 SVG 封面（1000x1000 深色渐变 + 6 条 sine 波形 + 编号），`data/covers/` 走 gitignore
+  - `data/cover-arweave-map.json` commit（100 个 Arweave txid）
+  - `score_covers` 表 100 条记录，支撑 S5 FOR UPDATE SKIP LOCKED 最少使用优先复用池
+- **[Phase 3 Step S0]** ✅ 完成（2026-04-11）— Arweave 工具链上线：
+  - S0.a 骨架 commit `35aca7d`：`src/lib/arweave/` 子目录（index + core）+ CORS 实测脚本 + upload 骨架 + migration 007 + @ardrive/turbo-sdk 装包
+  - S0.b 实产 commit `60c96ec`：激活 Turbo 上传 + 26 音效全部上链 + 5 tracks 回写 `arweave_url` + ARWEAVE_GATEWAYS 4→2 缩减 + scripts 重组进 arweave/ 子目录 + `_env.ts` helper + 充值工具链（generate-eth-wallet / wait-for-base-eth / topup-turbo）
+  - S0.b 退役 commit `be4e07a`：`git rm` 一次性 generate-eth-wallet.ts
+  - Turbo 钱包 `0xdE788249...9Fba8`（Base），充值 0.00396 ETH → 3.3T winc
+  - 硬门槛 CORS smoke 2/2 通过（真验证推迟到 S6）
+- **[Phase 2.5]** ✅ 完成（2026-04-10）— Flow Hardening Sprint：DB 唯一索引 + server-only + TTL 统一 + AudioContext 延迟加载 + 录制时钟统一 + verify.sh 纳入 build + completion review 修复（useJam 状态机 + startedAt 清理）
+- **[Phase 2]** ✅ 完成（2026-04-10）— 首页合奏 + 草稿系统 + 爱心收藏，merged 回 main。Track A（后端 API）+ Track B（前端 Codex）+ Track C（集成+验证+CTO review 修复）
+- **[Day 1]** 文档骨架首版：13 markdown（含 1 个 phase-0 playbook）+ 3 hooks + 3 scripts
+- **[Day 1 续]** 学习机制补丁：SessionStart hook + Stop hook + QUICKSTART.md + check-folder-size 加项目根例外
+- **[Day 1 续 2]** 决策日志机制：新建 docs/JOURNAL.md + AGENTS §4 第 4 步追加规则
+- **[Day 2 大整修]**（commit `e6da1b1` / `0576d81` / `1f13aac`）
+  - ARCH 从 782 行压缩到 410 行 + 12 条核心架构决策 + AI 编码约定安全网
+  - 新增决策 13：Score Decoder 是 Phase 3 核心组件（用户原话"网页唱片机"已抄进 ARCH）
+  - **全面切到 Optimism**：链 11155111 (Sepolia) → 11155420 (OP Sepolia)，单笔成本 ~$0.78 → < $0.01（用户实测），$500 预算从 ~577 张提升到 50000+ 张
+  - 删 daily mint limit + gas price guard（OP 上不需要），保留 allowlist + balance alert
+  - playbook 从 768 行压缩到 496 行 + Step 5 改用 OZ 现成合约 + 中场休息点
+  - hook 修 grep 误判 + ESLint 隐藏地雷 + 220 行硬线 + route.ts 270 + api/** 子树豁免
+  - AGENTS 加 3 名映射 + 越界停 + 复述代码规则
+  - 新增 INDEX.md / PROMPT-TEMPLATE.md / learn.sh
+- **[Phase 0 Step 0]** ✅ 完成（2026-04-09）— 项目改名 Ripples in the Pond + GitHub rename + 3 外部账号注册 + .env.local 10 key 填齐 + 测试钱包生成并领 OP Sepolia faucet + doctor.sh 26 ✅ / 2 ⚠（Foundry）/ 0 ❌ + checkpoint `checkpoint/2026-04-09-1226`
+- **[Phase 0 Step 1]** ✅ 完成（2026-04-09）— 全屏黑底 + 中央白字 "Ripples in the Pond"，commit `6523c60`
+- **[Phase 0 Step 2]** ✅ 完成（2026-04-09）— 呼吸圆 Island + useAudioPlayer hook + 点击播放/停止 mp3，commit `eb1d7fb`
+- **[Phase 0 Step 3]** ✅ 完成（2026-04-09）— Privy 邮箱登录 + LoginButton + console 打印 evm_address，commit `8ac1eaf`
+- **[Phase 0 Step 4]** ✅ 完成（2026-04-09）— Supabase 建 users + mint_queue 两张表，commit `e0105f5`
+- **[Phase 0 Step 5]** ✅ 完成（2026-04-09）— MaterialNFT 部署 OP Sepolia `0xdeC99da...1f02A`，commit `0a3ee93`
+- **[Phase 0 Step 6]** ✅ 完成（2026-04-09）— POST /api/mint/material 幂等写队列 + Supabase 确认，commit `b4fdc2a`
+- **[Phase 0 Step 7]** ✅ 完成（2026-04-09）— cron 处理器上链成功，tx `0xe4ae06a...ec9b1d`，commit `3c93a1c`
+- **[Phase 0 Step 8]** ✅ 完成（2026-04-09）— 全链路验证通过：登录 → API → 队列 → 链上 mint → Etherscan 确认
+- **[Codex Review]** ✅ 完成（2026-04-09）— 两份 review 产出 + 延后清单
+- **[Phase 0 Review Fix]** ✅ 完成（2026-04-09）— 原子抢单 / 失败补偿绑 job.id / 并发幂等 / 登出恢复，commit `3906f1f`
+- **[Phase 1 Track A]** ✅ 完成（2026-04-09）— tracks + mint_events 表 / 自定义 MaterialNFT `0x99F808...b7C` / GET /api/tracks + [id] + /me/nfts + /health
+- **[Phase 1 Track B]** ✅ 完成（2026-04-09）— 首页岛屿列表 / 底部播放条 / 个人页骨架
+- **[Phase 1 Track C]** ✅ 完成（2026-04-09）— merge + 适配层切换 + 铸造按钮 + 个人页真实数据 + e2e
+- **[Phase 1 CTO Review]** ✅ 完成（2026-04-09）— review 产出 + P0 修复（铸造唯一性 / mint_events 约束 / 配色对齐）
+- **[Phase 2 Step 0]** ✅ 完成（2026-04-10）— Web Audio spike 4/4 标准通过 + Tailwind v4 白名单修复 + globals.css 回写根因定位（Cursor git checkout）
+
+---
+
+## 📝 任务格式说明
+
+每个任务理想格式（参考 `playbook/phase-0-minimal.md` 里完整版）：
+
+```
+[Phase X Step N] 一句话目标
+- 范围: 允许改的文件
+- 禁止: 不能碰的文件
+- 完成标准: 看到什么算成功
+- 验证命令: 怎么验证
+- 回滚点: 失败时回到哪
+```
+
+简短任务可以只写一行目标。
+
+
+exec
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw -Encoding UTF8 docs/CONVENTIONS.md' in E:\Projects\nft-music
+exec
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw -Encoding UTF8 docs/STACK.md' in E:\Projects\nft-music
+ succeeded in 684ms:
+# STACK — 技术栈白名单 / 黑名单
+
+> AI 安装任何依赖前必须查这份。不在白名单的需要先问用户。
+
+---
+
+## ✅ 白名单（Phase 1-3 使用）
+
+### 框架 & 语言
+- `next` 16.x（App Router） — Phase 0 已安装
+- `react` 19.x — Phase 0 已安装
+- `typescript` 5.x — Phase 0 已安装
+- `tailwindcss` 4.x — Phase 0 已安装
+
+> ⚠️ 注意：原 ARCHITECTURE.md 写的是 Next.js 14。本项目实际用 16。
+> 若遇到 16 的 breaking change（如 Server Actions 默认配置变化），按 16 文档处理。
+
+### 区块链（仅后端）
+- `viem` — 替代 ethers/wagmi，类型友好，更轻量
+- `@privy-io/react-auth` — 前端登录 SDK
+- `@privy-io/server-auth` — 后端 JWT 验证
+
+### 链选择
+- **生产链**：Optimism Mainnet（chainId 10）— L2，EVM 等价
+- **测试链**：OP Sepolia（chainId 11155420）
+- 不部署 Ethereum L1 主网或 Sepolia（成本和环境一致性原因，见 ARCHITECTURE.md 决策 3 + JOURNAL.md 2026-04-08）
+- RPC：Alchemy 提供 OP Mainnet + OP Sepolia 端点
+- Etherscan 等价物：`optimistic.etherscan.io`（主网）/ `sepolia-optimism.etherscan.io`（测试网）
+
+### 安全
+- `server-only` — Next.js 编译期防护，阻止后端模块被前端 import
+- `jose` — 轻量 JWT 库，支持 RS256，Edge Runtime 兼容（Phase 4 自签 JWT 用）
+- `@upstash/redis` — Upstash Redis 客户端（Phase 5 rate limiting + Phase 6 A0 运营钱包全局串行锁）
+- `d3-force` / `d3-drag` / `d3-selection` — D3 子模块（Phase 6 B2.1 首页 sound-spheres 风格力导向布局；只装子模块约 30KB，不要全包 d3）
+- `@upstash/ratelimit` — Upstash 限流库，sliding window 算法（Phase 5 rate limiting 用）
+
+### 数据库
+- `@supabase/supabase-js` — Supabase 客户端
+- Supabase Free（PostgreSQL 托管）
+- Supabase Dashboard 手动管理 schema（Phase 0-1）
+
+### 音频
+- Web Audio API（浏览器原生，无依赖）
+- 自建简化版 Patatap（Phase 2 spike）
+
+### 视觉动画
+- `two.js`（0.8.x）— 轻量 2D 引擎（13KB gzip），canvas overlay 渲染（Phase 6 B2 patatap 视觉移植用）
+- `@tweenjs/tween.js`（25.x）— 补间动画库，patatap 原项目用（Phase 6 B2 移植配套）
+- 仅在 `'use client'` 组件用，禁止 SSR import（Two.js 依赖 DOM）
+
+### 合约开发
+- Foundry（`forge` / `cast` / `anvil`）
+- OpenZeppelin Contracts（`forge install`）
+
+### Arweave
+- `@ardrive/turbo-sdk` — 信用卡支付，无需 AR 代币
+
+### 开发工具（devDependencies，不进生产）
+- `tsx` — 一次性脚本的 TS 运行器（Phase 3 `scripts/upload-*.ts` / `verify-arweave-cors.ts` 用）。仅 devDependency，不进 Next.js 生产 bundle，生产运行时对它零依赖。
+
+### 部署
+- Vercel Hobby（Phase 0-1 免费）
+- Vercel Cron（每分钟最快）
+
+---
+
+## ❌ 黑名单（hooks 强制阻止）
+
+### 区块链
+- `ethers` — 用 viem 替代
+- `wagmi` — 我们前端不调合约，不需要 React 钱包 hooks
+- `@account-abstraction/*` — ERC-4337 复杂度过高
+- `@pimlicolabs/*` — 不用 Paymaster
+- `@privy-io/server-auth` 的 Smart Account 模式 — 我们用普通 EOA
+
+### 音频
+- `howler` / `howler.js` — 用 Web Audio API
+- `tone` / `tone.js` — 同上
+
+### 合约开发
+- `hardhat` — 用 Foundry
+
+### 状态管理
+- `redux` / `@reduxjs/toolkit` — 项目规模不需要
+- `mobx` / `zustand` / `jotai` — Phase 1 用 React Context 就够，Phase 2+ 需要再讨论
+
+### JWT
+- `jsonwebtoken` — 用 jose 替代（更轻量、Edge Runtime 兼容）
+
+---
+
+## ⚠️ 灰名单（需要用户批准才能装）
+
+| 包 | 何时可考虑 | 替代方案 |
+|---|---|---|
+| `framer-motion` | Phase 2+ 复杂动画时 | 先用 Tailwind animate-* + CSS transition |
+| `react-hook-form` | 复杂表单（Phase 3+） | 简单表单用原生 + useState |
+| `zod` | 需要运行时校验时 | TypeScript 静态类型先 |
+| `swr` / `@tanstack/react-query` | API 调用模式复杂时 | Phase 1 用 fetch + useState 够了 |
+| `@radix-ui/*` | 需要无障碍组件时 | 优先看能否手写简单版 |
+| `lucide-react` / `react-icons` | 任何时候都可装 | 但优先复用已有 |
+| `@sentry/nextjs` | HARDENING A2 阶段 | 见 HARDENING.md |
+
+---
+
+## 📦 Phase 演进
+
+### Phase 0
+当前已有：next, react, typescript, tailwindcss
+**Phase 0 不装新包**（用 Next.js 默认 + Web Audio API）
+
+### Phase 0 → Phase 1（最小闭环→ MVP）
+新增：`viem`, `@privy-io/react-auth`, `@privy-io/server-auth`, `@supabase/supabase-js`
+
+### Phase 1 → Phase 2（合奏）
+新增：`@ardrive/turbo-sdk`（Arweave）
+
+### Phase 3+
+按需，每次新加都要在本文件登记。
+
+---
+
+## 🔧 工具版本
+
+| 工具 | 最低版本 | 说明 |
+|---|---|---|
+| Node.js | 18+ | 推荐 20 LTS |
+| npm | 10+ | 与 Node 一起 |
+| Git | 2.40+ | Windows 用 Git for Windows |
+| Foundry | 最新 | `foundryup` 升级 |
+
+---
+
+## 🚫 永远不要做的事
+
+- 不要在没看本文件的情况下 `npm install <something>`
+- 不要因为 Stack Overflow 答案要你装某个包就装
+- 不要把灰名单的包当白名单用
+
+
+ succeeded in 718ms:
+# CONVENTIONS — 代码规范 & 坏味道清单
+
+> AI 每次写代码前必须读这一份。
+> hooks 会强制执行最关键的几条，违反时直接阻止 Edit/Write。
+
+---
+
+## 1. 文件 & 目录硬性指标
+
+### 1.1 文件大小
+- **每个代码文件 ≤ 220 行**（hard limit，由 `.claude/hooks/check-file-size.js` 强制）
+- **API route handler（`src/app/api/**/route.ts`）放宽到 ≤ 270 行**：业务编排天然比组件长
+- 例外：`docs/`、`playbook/`、`reviews/` 下的 markdown 不受限
+- 超过时必须**先告诉用户拆分计划**，得到批准再拆
+- 注释和空行算入总行数 — 但如果你接近上限只是因为注释多，先和用户讨论而不是删注释
+
+### 1.2 目录规模
+- **每层目录 ≤ 8 个文件**（由 `.claude/hooks/check-folder-size.js` 强制）
+- 命名例外：`docs/`、`playbook/`、`reviews/`、`node_modules/`、`.next/`、`.git/`、`public/`、`contracts/`
+- **`src/app/api/**` 整棵子树豁免**：Next.js API route 子树天然会超 8 个端点
+- 项目根目录例外：含 `package.json` + `.git` 的那一层自动豁免（`next.config.ts`、`tsconfig.json`、`package.json`、`AGENTS.md` 等工具链/约定文件必须在根，搬不走）
+- 超过时必须**先告诉用户子目录规划**，得到批准再建
+
+### 1.3 命名
+- 组件文件用 `PascalCase.tsx`（如 `Island.tsx`）
+- hooks 用 `useXxx.ts`（如 `useAudioPlayer.ts`）
+- API Route 用 `route.ts`（Next.js App Router 约定）
+- 工具函数文件用 `kebab-case.ts`（如 `operator-wallet.ts`）
+- 类型定义放 `src/types/`，文件名 `kebab-case.ts`
+
+---
+
+## 2. 7 类坏味道（必须主动监测）
+
+发现任何一类，立刻按以下格式告警，**不要默默修复**：
+
+```
+⚠️ 代码坏味道：[类型]
+位置：[文件名:行号]
+问题：[描述]
+建议：[修复方案]
+是否需要我修复？
+```
+
+### 类型清单
+
+1. **僵化**：改一处要连带改很多地方 → 抽取公共模块
+2. **冗余**：同样的逻辑出现在多处 → 提取共享函数/组件
+3. **循环依赖**：A→B 且 B→A → 重新组织模块边界
+4. **脆弱性**：改 A 文件导致看似无关的 B 文件坏 → 解耦
+5. **晦涩性**：代码意图不清楚 → 加注释或重命名
+6. **数据泥团**：多个参数总是一起出现 → 组合成对象/类型
+7. **不必要的复杂性**：用了复杂方案解决简单问题 → 简化
+
+---
+
+## 3. 必须避免的具体动作（hooks 强制 + AI 自觉）
+
+### 3.1 后端 / 区块链相关
+- ❌ 在 API Route 中 `await ...waitForTransactionReceipt`（除 `src/app/api/cron/` 外）
+- ❌ 同时发两笔运营钱包交易（必须串行 + 队列）
+- ❌ 用 `onlyOwner` 做 mint 权限（必须用 `allowlist`）
+- ❌ 直接 `DELETE` `pending_scores`（必须 `UPDATE status='expired'`）
+- ❌ 硬编码 Arweave 网关地址（必须用 `lib/arweave.ts` 的多网关 fallback）
+
+### 3.2 前端
+- ❌ 前端文件 import `operator-wallet.ts` 或 `OPERATOR_PRIVATE_KEY`（hook 强制）
+- ❌ 前端调合约（所有合约调用走 API Route）
+- ❌ 页面加载时 `new AudioContext()`（必须在用户手势后）
+
+### 3.3 依赖
+- ❌ 安装 `wagmi` / `ethers` / `howler` / `tone` / `hardhat`（hook 强制）
+- ❌ 安装 `jsonwebtoken`（用 `jose` 替代，Phase 4 已引入）
+
+### 3.4 文件 / 代码
+- ❌ 留 TODO 或占位符不实现
+- ❌ 写 `// implement later` / `// TODO: handle error`
+- ❌ 单文件超过 220 行（hook 强制；route.ts 放宽到 270）
+- ❌ 单层目录超过 8 个文件（hook 强制；`src/app/api/**` 整棵子树豁免）
+- ❌ Phase 1 就建 12 张表（按 Phase 递增）
+- ❌ 自建 JWT 系统绕过 `src/lib/jwt.ts`（Phase 4 起统一走 jwt.ts）
+
+### 3.5 Git
+- ❌ `git reset --hard`（用 `scripts/checkpoint.sh` 的 stash + branch 替代）
+- ❌ `git push --force`（任何情况都先问用户）
+- ❌ `git checkout .`（会丢工作）
+- ❌ `--no-verify` 跳过 hook（除非用户明确要求）
+
+---
+
+## 4. 代码风格
+
+### 4.1 TypeScript
+- 严格模式：`tsconfig.json` 必须开 `strict: true`
+- 不用 `any`，用 `unknown` + 类型守卫
+- 复用类型放 `src/types/`，不要在组件里就地写 interface
+
+### 4.2 React
+- 函数组件 + hooks，不写 class component
+- 副作用必须在 `useEffect` 里，不能在渲染期间
+- 不用 `useMemo`/`useCallback` 做"预防性优化"，只在 profiler 证明必要时用
+
+### 4.3 注释
+- 注释用**中文**
+- 解释 **why** 而不是 **what**（代码本身说明 what）
+- API Route / 复杂函数顶部加 1-3 行用途说明
+
+### 4.4 错误处理
+- API Route 必须 try/catch + 返回结构化 error
+- 前端 fetch 必须处理 error 状态，不能白屏
+- 不吞错误：`catch (e) {}` 是禁止的，至少 `console.error`
+
+---
+
+## 5. 提交规范
+
+### 5.1 commit message
+```
+<type>(<scope>): <summary>
+
+[body 可选]
+
+[concepts: tag1, tag2, tag3]
+```
+
+- type：`feat` / `fix` / `docs` / `refactor` / `test` / `chore`
+- scope：`api` / `ui` / `contracts` / `db` / `hooks` 等
+- summary：用中文，不超过 50 字
+- **concepts 标签**：列出本次涉及的概念，方便用 `git log --grep="jwt"` 学习回看
+
+### 5.2 commit 频率
+- 每完成一个 playbook step 至少 1 个 commit
+- 每 3-5 个 step 一个 Checkpoint commit（用 `scripts/checkpoint.sh`）
+- 不要把 10 个文件的改动堆成 1 个 commit
+
+---
+
+## 6. 学习设计相关的代码层规范
+
+### 6.1 LEARNING.md 维护（slow mode）
+- 每当代码里第一次出现一个新概念（hook / JWT / idempotency / 状态机 / 等），AI 必须追加到 `docs/LEARNING.md`
+- 格式：3 行（是什么 / 类比 / 第一次出现位置）
+
+### 6.2 ERRORS.md 维护
+- 每当遇到报错并修复，AI 必须追加到 `docs/ERRORS.md`
+- 格式：报错原文 / 为什么 / 怎么修 / 学到了什么 / 相关文件
+
+### 6.3 Diff 走读（Phase 0 跑通后启用）
+- 每个 step 的 commit 之后，AI 写一份 `docs/walkthroughs/step-N.md`
+- 用日常语言走读 diff，每段代码 3-5 句话解释
+
+### 6.4 "为什么不 X" 脚注（Phase 1 启用）
+- 任何**非显而易见**的设计决策，代码里加 1 行注释：`// 💭 为什么不用 X：...`
+
+---
+
+## 7. 例外申请
+
+如果你（AI）认为某条规则在当前情境下不合适：
+
+1. **不要默默违反**
+2. **告诉用户**："这一步如果遵守 [规则名]，会导致 [问题]。建议例外，理由是 [理由]"
+3. **等用户批准**，且在本次 commit 的 message 里注明例外
+4. 如果是反复出现的例外，建议用户更新本文件
+
+
+codex
+约束已读：文档评审不触发代码硬线，但 Phase 7 的计划需要继续尊重 220 行、8 文件、依赖白名单和主网边界。现在打开 overview 本体，并补看和 Phase 7 入口强相关的 completion review。
+exec
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw -Encoding UTF8 reviews/2026-05-08-phase-6-completion-review.md' in E:\Projects\nft-music
+exec
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw -Encoding UTF8 playbook/phase-7/overview.md' in E:\Projects\nft-music
+ succeeded in 662ms:
+# Phase 7 — UI 翻修 + 体验细节
+
+> **故意写得开放**：不锁死方案、不锁死改哪些文件、不锁死交付标准。
+>
+> Phase 7 启动 = 一段头脑风暴 + 反复讨论 + Claude Design 接入。
+> 写死的方案在 Phase 7 进行中产出（追加到本文档或子文档），不在启动前。
+
+---
+
+## Phase 7 是什么
+
+UI 翻修 + 体验细节优化。**只动视觉层和用户感知层**，不动数据流 / 合约 / 后端架构。
+
+把 Phase 6 测试网验证过的"功能正确但视觉粗糙"的产品，翻新成"艺术家满意 + 投资人不挑刺"的版本。
+
+## Phase 7 不是什么
+
+- ❌ 不做按键动画扩展 / 50 音效系统（→ Phase 8）
+- ❌ 不修后端 bug / 不做主网部署门槛（→ Phase 9）
+- ❌ 不接 Semi 社区钱包 OAuth（解阻塞后再说）
+
+---
+
+## 唯一已经定的决策
+
+### 顺手做的 3 个 P1（来自 strict CTO review）
+
+UI 翻修必碰这三块代码，顺手把 P1 修了，不算"修 bug Phase"越界：
+
+| # | 项 | 在哪页 | 为什么算 UI 体验 |
+|---|---|---|---|
+| A5 | /score/[id] 链上灾备 | 详情页 | Supabase 宕机时用户看到 404 vs 看到链上数据降级，是体验差异 |
+| P1-17 | 5s 乐观成功 → "上链中（5-30 分钟）" 诚实文案 + auto-polling | /me + 铸造按钮 | 用户当前以为铸造完成实际还在跑，文案和实际严重错位 |
+| P1-18 | useMintScore 失败回滚（草稿不消失 + 重试按钮） | /me 草稿卡片 | 失败态当前没设计，用户看到草稿消失但又没铸造成功 |
+
+P1-21（useEventsPlayback decode 时序首播音效）**挪到 Phase 8**（音效相关，跟扩 50 音效一起做更聚焦）。
+
+### 边界外的事
+
+- 全部 P0（chain config / stepMintOnchain 双 mint / AirdropNFT _uriSet / Deploy 脚本主网强制 / RUNBOOK 验收）→ Phase 9
+- 全部其他 P1（lease 25 分钟根因 / save_score_atomic null check / mint_events upsert / operator-lock TTL / load-env.ps1 / airdrop lazy validate / mint_score_enqueue ON CONFLICT 等）→ Phase 9
+- 16 条 score_nft_queue 历史 failed row → 不管（主网换库）
+
+---
+
+## 头脑风暴清单（Phase 7 启动时按这个聊）
+
+启动 Phase 7 第一件事不是写代码，是坐下来一起想。下面是讨论入口，不是答案：
+
+### 第一层：你想达到什么
+
+- 艺术家反馈 5 条里哪几条是"必须做"，哪几条是"可以先放"？
+- 投资人 demo 看 UI 时最在意什么？（架构？流畅度？审美？）
+- 你自己看现在的产品，最想先改的是哪一页？为什么？
+
+### 第二层：Claude Design 怎么进来
+
+- 你计划把哪些页面给 Claude Design 出方案？/me /score /artist /首页 全部还是部分？
+- Claude Design 出的设计稿你打算怎么交付给我？（图 + 描述？Figma 链接？还是直接文字？）
+- 设计稿和现有代码冲突时（比如 Claude Design 用了我们没装的库），优先级谁高？
+
+### 第三层：体验细节口径
+
+- "整体反应流畅度"具体指哪些场景慢？（加载？切页？播放启动？录制时延？）
+- 跨浏览器 / 跨设备覆盖范围？（v2 缩减时挂了一条 24 张跨断点截图归档）
+- 错误态 / 空态 / 加载态当前缺哪些？
+
+### 第四层：节奏
+
+- 一次改一页（线性）vs 多页同时改（并行）？
+- 每页改完是否需要"用户/艺术家/Claude Design 验收"才进下一页？
+- Phase 7 总时长心理预期？（1 周？3 周？6 周？）
+
+---
+
+## 工作模式（Phase 7 进行时遵守）
+
+1. **不要一次改太多**：单文件改完先停，让用户看效果再决定下一刀
+2. **不要默认推翻现有视觉**：现在的视觉是艺术家 + tester + 25+ 轮迭代下来的，先理解再改
+3. **Claude Design 输入要"翻译"**：设计稿不是 spec，是方向；具体落地由我和用户讨论
+4. **220 行硬线 / 8 文件硬线照常**：UI 翻修最容易吹胀单文件，注意拆分
+5. **每个小闭环后跑 verify.sh**：UI 改容易撞到类型 / lint / build
+
+---
+
+## 预期产出（Phase 7 结束时）
+
+不预设格式，但**至少**包含：
+- 改完的 UI 在线（Vercel 测试网）
+- 艺术家反馈 5 条里至少 3 条有明确回应（做了 / 改方向 / 决策不做）
+- 体验细节列表（启动时讨论出来 + 进行中陆续补充）每条有处理结论
+- 顺手 3 个 P1（A5 / P1-17 / P1-18）已合入
+
+**不预设**：
+- 改了多少个文件
+- 几个 step
+- 多久完成
+- 是否需要 sub-track
+
+这些在头脑风暴和 Phase 7 进行中决定。
+
+---
+
+## 启动信号
+
+用户说"开始 Phase 7" → 我做的第一件事：
+
+把"头脑风暴清单"的 4 层挨个问你（不是一次问完，每层 2-4 个问题逐层推进），把答案沉淀到这份 overview 或新建的 `phase-7/brainstorm.md`。**讨论清楚之前不写代码**。
+
+
+ succeeded in 713ms:
+# Phase 6 Completion Review
+
+日期：2026-05-08
+范围：Phase 6 v2 全部范围（5 个 track ~20 step）+ 收尾对齐
+HEAD：`d06a274`（docs phase-6 audit 收口对齐）
+基线：Phase 5 完结 commit `1019dcb`（2026-04-25）
+
+---
+
+## 一、Phase 6 v2 范围 vs 实际产出
+
+### 原范围（5 track ~ 20 step）
+覆盖 29 个 review findings（来源：`reviews/2026-04-25-phase-1-4-strict-cto-review.md` + `reviews/2026-04-25-phase-5-strict-cto-review.md`）：
+- **Track A** 铸造链路稳定性（A0-A6）
+- **Track B** UI 收口 + 端到端验证（B1-B7，2026-05-08 删 B4 7→6）
+- **Track C** 合约 & 部署硬化（C1-C4）
+- **Track D** 空投闭环（D1 决策不做 + D2 admin Bearer + D3-D5 挂起）
+- **Track E** 认证 & 观测收口（E1-E5）
+
+### 关键决策点
+- **2026-05-03 v2 缩减**：UI 重设计深度版（Claude Design 接入 + 6 周 4 阶段）整体迁 Phase 7；Phase 6 收缩到"稳定性收口 + 端到端跑通"；3-5 天目标
+- **2026-05-04 B7 改放最后**：避免"测-修-重测"循环（中间 B7 出的 bug 清单会被后续修复过期）
+- **2026-05-04 B6 加入**：艺术家反馈"音乐圆圈用数字代号" → A 组 5 球 demo + B/C 36 球循环音轨 + Modak 字体数字 badge
+- **2026-05-07 B8 启动**：B2 Bug A/B（"录制上传中卡住" / "铸造不更新"）单点修补不够 → 整体重设 /me 数据流（5s 乐观 + 草稿入队即消失 + 唱片对齐 DB + 路由双兼容）
+- **2026-05-08 B4 删除 + audit 收口**：B4 内容（PlayerProvider loadingRef）早已实施；audit 发现 8 个 playbook 列"待做"的 step 实际都已实施仅文档未对齐
+- **2026-05-08 E4 废弃**：B8 P3 删 decoder iframe 后 E4（多网关 fallback）设计目标不存在；OpenSea 端 metadata 用 ario.permagate.io 单网关风险接受
+
+---
+
+## 二、所有 step 完成状态
+
+| Track | Step | 状态 | 实施位置 / commit |
+|---|---|---|---|
+| **A** | A0 operator 锁 | ✅ | `src/lib/chain/operator-lock.ts` Upstash SETNX + 3 cron 入口包装 |
+| | A1 ScoreNFT cron durable lease | ✅ | migration 024 + steps-set-uri.ts uri_tx_hash 拆步 |
+| | A2 material failure_kind | ✅ | commit `8074d18` + migration 021 |
+| | A3 sync cursor 事务性 | ✅ | sync-chain-events/route.ts:55+ |
+| | A4 草稿原子化 | ✅ | migration 025 `save_score_atomic` RPC + score/save/route.ts:101 |
+| | A5 链上灾备 | ⏸ P7 | B8 P3 删 score-fallback.ts noop 残留，待重新设计 |
+| | A6 我的乐谱语义 | ✅ | 决策冻结 = "我铸造的"（0 代码） |
+| **B** | B1 NFT cache 隔离 | ✅ | commit `c749b67` |
+| | B2 /me /score 小修 | ✅ | Bug A/B 由 B8 实质收口 + Bug C 5/6 commit `faf73a4` 修 |
+| | B3 草稿铸造按钮 | ✅ | commit `7e98696` 接通 + `40cf61d` B8 P3 整合 + 5/8 实测 token_id=12 |
+| | ~~B4 音频叠加~~ | 删 | PlayerProvider:86-114 早已实施 loadingRef，2026-05-08 删 step |
+| | B5 #7 tracks 韧性 | ✅ | route.ts:15 ISR + degraded header + Archipelago:133 占位 |
+| | B5 #8 移动端首帧 | ❌ 废弃 | HomeJam 已 dead-code，移动端体验挂 P7 |
+| | B5 #9 草稿自愈 | ✅ | draft-store.ts isValidDraft + try/catch |
+| | B6 5 球 demo | ✅ | commit `a2ea22c` migration 027/028 + Modak 字体 |
+| | B7 端到端冒烟 | ✅ | 本次 review 16/19 通过 |
+| | B8 /me 数据流重设 | ✅ | P1 `63c807a` + P2 `38f7f37` + P3 `40cf61d` |
+| **C** | C1-C4 全部 | ✅ | commit `086167d` ScoreNFT v2 `0x1C47...832F` + Orchestrator v2 `0x8A6D...C3a8` |
+| **D** | D1 主网空投决策 | ✅ | 决策冻结 = 不做（cron 不调度 + trigger 不暴露） |
+| | D2 admin Bearer | ✅ | admin-auth.ts + airdrop/trigger/route.ts |
+| | D3-D5 | ⏸ | D1=不做，挂起（Phase 7 若启用空投再做） |
+| **E** | E1 health mintQueue | ✅ | commit `f0725df` |
+| | E2 Semi OAuth | ⏸ P7 | Semi 团队 OAuth 文档未出 |
+| | E3 Semi 探针 | ⏸ P7 | 依赖 E2 |
+| | ~~E4 decoder 多网关~~ | ❌ 废弃 | B8 P3 删 iframe，原设计目标不存在 |
+| | E5 文档对齐 | ✅ | commit `d06a274` 本次落地 |
+
+**汇总**：有效 step 22 项 → 实施 18 / 决策冻结 2 / 删除 1 / 废弃 2 / P7 挂起 4（与 22 略有重叠，B5 拆 3 子项算 1 step）
+
+---
+
+## 三、Phase 6 关键 commit 清单（基线后 24 commits）
+
+### 收口主线
+- `8074d18` A2 material failure_kind
+- `c749b67` B1 NFT cache 隔离
+- `f0725df` E1 health mintQueue
+- `931f45f` G0 useFavorite 乐观回滚
+- `086167d` Track C v2 合约重部署
+- `7e98696` B3 草稿铸造接通
+- `c7340d4` 后端小石头 4 项（B4 音频叠加 / A5 / B5 / E4 早期）
+- `a2ea22c` B6 A 组 5 球 + B/C 36 球 demo
+- `397defe` B8 准备 — mint_score_enqueue RPC 不再标 expired
+- `74d8edc` B2 P1 服务端权威 mintingState
+- `63c807a` B8 P1 5s 乐观 + 草稿入队即消失
+- `38f7f37` B8 P2 草稿可播 + 唱片对齐 DB
+- `40cf61d` B8 P3 路由 [tokenId]→[id] 双兼容 + ScorePlayer inline + 实测
+- `d06a274` audit 收口对齐 + E5 文档对齐
+
+### 文档支线
+- `085e7b9` Phase 6 v2 缩减
+- `faf73a4` B2 Bug C 主链路修复 5/6 实录
+- `82ed620` migrations 拆 track-a/track-b 子目录
+- `1a67978` 文件大小硬线 200→220
+
+### Phase 6 B2 前端 25+ 轮迭代（v36-v87 visual 优化，独立技术栈）
+`6eae4b1` / `b4698de` / `b315eaa` / `bf8e860` / `fb771df` / `9eab147` / `cd882aa` / `dde2058` / `d4f1aa2` 等 — 视觉系统（archipelago + sphere）打磨，与稳定性主线并行
+
+---
+
+## 四、Phase 6 质量评估
+
+### 测试覆盖
+- **Smoke test 16/19 通过**（详 `reviews/2026-05-08-phase-6-completion-smoke-test.md`）
+  - A 基础 4/4 ✅ / B 业务 8/8 ✅ / C 韧性 2/3（C1 audit 验证）/ D 安全 2/2 ✅ / E 移动 0/2（挂 P7）
+- **B8 P3 端到端实测**：queue 778a2904 走完 5 步状态机 → token_id=12 链上确认（mint tx + uri tx + metadata Arweave 三件套齐全）
+- **Agent review 13 finding**：5 项合入修（P0×3 + P1×2）+ 8 项挂 P7
+
+### 静态质量
+- ✅ npx tsc --noEmit 0 errors
+- ✅ npx eslint 0 errors（3 pre-existing warnings 来自 commit `cd882aa` v82，与 Phase 6 无关）
+- ✅ npm run build 27 路由全过
+
+### 主网承诺边界冻结（2026-04-25）
+**包含**：Privy 邮箱登录 / 浏览 + 播放 108 曲 / 素材收藏 → MaterialNFT / 合奏录制 + 草稿 / 草稿 → ScoreNFT / 已铸造乐谱回放 + 分享卡 / 个人页（"我铸造的"）/ 艺术家页
+**不包含**：空投（D1=不做）/ Semi 社区钱包登录（E2 挂 Phase 7）
+
+---
+
+## 五、主网前必做（Phase 7 起点清单）
+
+### 硬阻塞（不修不能上主网）
+1. **换 Turbo wallet** — 旧钱包私钥 5/6 调试时泄露在聊天 jsonl，余额极小；P7 主网前必须换新 EOA + 充 Base ETH 充 Turbo credits
+2. **108 首底曲 arweave_url 全量上链** — 当前仅 5/108（B6 demo 5 球已上）；剩 103 曲跑 `scripts/arweave/upload-tracks.ts` 一次性补
+3. **Operator wallet 主网 ETH 充值** — 当前测试网 0.009 ETH，主网前 faucet 不存在，需真金白银充
+4. **Resend 邮件告警** — B8 P3 commit message 提了未做；主网生产环境失败必须有 alert 通道
+5. **vercel-env-sync 脚本** — 防 NEXT_PUBLIC_* env var typo（5/6 Bug C 第二层根因 = `NEXT_PUBLIC_SCORE_NFT_ADDRES` 少一个 S）
+
+### 性能优化（影响 UX）
+6. **/api/me/score-nfts 35 秒慢** — events_data 联表大 JSON；改 generated column 或 RPC `jsonb_array_length`
+7. **cron lease 5 分钟 × 5 步 = 25 分钟问题** — 选 ① 终态外推进步骤时一并清 lease ② cron 频率 1min → 30s ③ 保留设计但更新文档
+
+### 数据 / 合约
+8. **score_nft_queue.token_id partial unique index** — `CREATE UNIQUE INDEX uq_score_queue_token_id ON score_nft_queue(token_id) WHERE token_id IS NOT NULL`（B8 P3 已加 .order().limit(1) 代码侧防御，但 DB 约束更彻底）
+9. **OP Mainnet 部署 ScoreNFT + Orchestrator + MaterialNFT** — 走 `docs/MAINNET-RUNBOOK.md`（Phase 6 C2 已建）
+10. **AirdropNFT 主网不部署或不调度**（D1 决策）
+
+### Phase 7 候选（已挂 STATUS.md）
+- A5 链上灾备路径重设
+- B5 #8 + E1/E2 移动端体验（UI 重设计深度版）
+- E2 Semi OAuth（等 Semi 团队文档）
+- E4 OpenSea 端 metadata 多网关（如真有问题）
+- 慢网占位加 spinner / 重试按钮 UX
+- 5 首正式曲名上架（艺术家未给）
+- score-fallback / OwnedScoreNFT.id 双语义重构
+- 艺术家反馈 5 条（视觉液态感 / 流动 + 扰动 / 键盘音阶 / 按键动画自定义）
+
+---
+
+## 六、风险评估
+
+### 已识别风险
+| 风险 | 严重度 | 缓解措施 | 主网前必做 |
+|---|---|---|---|
+| 新铸造 token_id race（理论） | 低 | 代码 .order().limit(1) + DB unique index | ✅ #8 |
+| Vercel cron 超时杀进程（lease 25 分钟问题） | 中 | durable lease + uri_tx_hash 拆步 | 改 ② 30s 频率 |
+| Arweave 网关单点（OpenSea 端） | 低 | 项目主路径不依赖（前端 inline）| 接受 |
+| Operator wallet 私钥泄露 | 中 | 测试网余额极小可控 | ✅ #1 换钱包 |
+| Resend / 监控缺失 | 中 | 当前靠 /api/health 人工巡查 | ✅ #4 |
+
+### 未识别风险（Phase 7 监控）
+- OP Mainnet gas spike 时铸造排队可控性
+- Arweave 网关全部不可达时的全局降级
+- Privy 邮箱登录服务可用性
+- Supabase Free tier 用量上限
+
+---
+
+## 七、Phase 7 进入判定
+
+### 满足条件 ✅
+- [x] Phase 6 v2 所有有效 step 实施 / 决策冻结 / 挂 P7 显式标注
+- [x] B7 端到端冒烟 ≥14/19 通过 + 0 P0 + 0 P1 bug
+- [x] 24 commits 全部 push-ready（本地领先 origin/main，待用户 push 决定）
+- [x] STATUS.md / TASKS.md / playbook 文档对齐真实代码
+- [x] JOURNAL.md 决策日志连续（4-25 / 5-3 / 5-4 / 5-6 / 5-8 关键决策都有记录）
+
+### Phase 7 启动建议
+1. **Day 0**：用户 push 24 commits 到 origin/main + Vercel 自动部署观察 5 分钟（cron-job.org 5 个 job 全绿）
+2. **Day 1**：硬阻塞清单 #1-#5 修完（换 wallet + 108 曲上链 + Resend + env-sync 脚本）
+3. **Day 2-3**：OP Mainnet 部署 + 端到端再冒烟一遍（Phase 7 baseline）
+4. **Day 4+**：UI 重设计深度版 / Semi OAuth（条件） / 监控告警 / 退出准备
+
+---
+
+## 八、决策记录引用
+
+完整决策日志见 `docs/JOURNAL.md`：
+- 2026-04-25 段 — Phase 5 收口 / Track C v2 重部署 / Pre-tester gate / 产品决策冻结（A6/D1/E2）
+- 2026-04-29~30 段 — Phase 6 B2 前端 25 轮优化历程 + 经验教训 13-17
+- 2026-05-03 段 — v2 缩减决策（UI 重设计深度版迁 P7）+ 艺术家反馈 5 条
+- 2026-05-04 段 — B6 实施完成 + B7 改放最后
+- 2026-05-06 段 — B2 Bug C 主链路修复（双根因 wallet purpose 中文 + env var typo）
+- 2026-05-08 段 — B8 P3 + arweave_url 上链 + B4 删 + agent review 13 finding + audit 收口对齐 + E4 废弃决策
+
+## 九、感谢
+
+Phase 6 跨度 14 天（4-25 → 5-8），完成原计划 5-6 周的核心稳定性工作 + 视觉迭代 + B8 数据流重设。**Phase 6 完结。Phase 7 OP 主网启动条件具备。**
+
+
+codex
+整体 8/10。优点是方向对：足够强调“先聊清楚，不先写死方案”，也把 Phase 8/9 大边界先挡住。主要问题是“顺手 3 个 P1”写得太确定，和“只动视觉层”有内在冲突；Claude Design 接入也还停在“会接入”，缺少可执行的翻译和仲裁流程。
+
+**1. 开放度**
+现状：整体开放，明确不锁文件、不锁 step、不锁时长。
+
+问题：`唯一已经定的决策`太硬，等于 Phase 7 还没头脑风暴就锁了 3 个工程项；同时“只动视觉层”又容不下 A5 / polling / 回滚这些状态逻辑。
+
+建议：把 3 个 P1 从“已定”改成“默认纳入讨论的候选顺手项”，并补一句：若实现需要改后端、DB、cron 或合约，立刻分流到 Phase 9。
+
+**2. 头脑风暴清单**
+现状：4 层结构清楚，适合小白逐层讨论。
+
+问题：漏了“核心用户路径优先级”：首页浏览 → 播放 → 录制 → 铸造 → /me → /score 分享，Phase 7 应先决定改页面还是改完整路径。也漏了品牌气质、移动端优先级、状态文案、验收截图口径。伪问题包括“投资人 demo 看 UI 最在意什么”，因为用户已说投资人只看链上技术；“多页同时改”也基本不符合一次一闭环。
+
+建议：加一层“第五层：先改哪条用户路径”，并把投资人问题改成“UI 不要妨碍链上 demo 的地方有哪些”。
+
+**3. 顺手 3 个 P1**
+现状：P1-17、P1-18确实属于用户体验；A5属于详情页韧性体验，但不是纯 UI。
+
+问题：A5最容易滑向灾备数据源设计，拖进 Phase 9 主网可靠性范围。P1-17 的 auto-polling 也可能变成后端状态补丁。
+
+建议：保留 P1-17 / P1-18，但限定为“前端文案、状态、重试体验”。A5建议先做“设计方案 + UI 降级壳”，真正链上灾备若要新数据路径，放 Phase 9。
+
+**4. Claude Design 接入**
+现状：知道要接入，但流程不够。
+
+问题：没说谁给输入、Claude Design 输出什么格式、AI 如何翻译、冲突谁裁决。
+
+建议：补一个很短工作流：用户/AI 准备当前页面截图和约束 → Claude Design 出图或文字方向 → AI 翻译成可执行清单 → 用户裁决审美和取舍 → 技术冲突按 STACK/ARCH/硬线优先，新增依赖必须单独批准。
+
+**5. Phase 8 / Phase 9 边界**
+现状：大边界正确。
+
+问题：缺“发现新问题时怎么分流”。
+
+建议：加三条规则：视觉、文案、布局、加载/空态/错误态留 P7；按键动画、音效数量、播放时序留 P8；后端、DB、合约、cron、安全、主网部署、监控告警留 P9。若某个 UI 需求必须改后端，停下来让用户决定降级、延期或改 Phase 边界。
+
+如果只能改 1 处，我会改 `唯一已经定的决策`：把它改成“Phase 7 分流规则 + 3 个候选顺手项”。这一下能同时解决开放度、P1 是否越界、以及 Phase 8/9 边界不清的问题。
+tokens used
+47,908
+整体 8/10。优点是方向对：足够强调“先聊清楚，不先写死方案”，也把 Phase 8/9 大边界先挡住。主要问题是“顺手 3 个 P1”写得太确定，和“只动视觉层”有内在冲突；Claude Design 接入也还停在“会接入”，缺少可执行的翻译和仲裁流程。
+
+**1. 开放度**
+现状：整体开放，明确不锁文件、不锁 step、不锁时长。
+
+问题：`唯一已经定的决策`太硬，等于 Phase 7 还没头脑风暴就锁了 3 个工程项；同时“只动视觉层”又容不下 A5 / polling / 回滚这些状态逻辑。
+
+建议：把 3 个 P1 从“已定”改成“默认纳入讨论的候选顺手项”，并补一句：若实现需要改后端、DB、cron 或合约，立刻分流到 Phase 9。
+
+**2. 头脑风暴清单**
+现状：4 层结构清楚，适合小白逐层讨论。
+
+问题：漏了“核心用户路径优先级”：首页浏览 → 播放 → 录制 → 铸造 → /me → /score 分享，Phase 7 应先决定改页面还是改完整路径。也漏了品牌气质、移动端优先级、状态文案、验收截图口径。伪问题包括“投资人 demo 看 UI 最在意什么”，因为用户已说投资人只看链上技术；“多页同时改”也基本不符合一次一闭环。
+
+建议：加一层“第五层：先改哪条用户路径”，并把投资人问题改成“UI 不要妨碍链上 demo 的地方有哪些”。
+
+**3. 顺手 3 个 P1**
+现状：P1-17、P1-18确实属于用户体验；A5属于详情页韧性体验，但不是纯 UI。
+
+问题：A5最容易滑向灾备数据源设计，拖进 Phase 9 主网可靠性范围。P1-17 的 auto-polling 也可能变成后端状态补丁。
+
+建议：保留 P1-17 / P1-18，但限定为“前端文案、状态、重试体验”。A5建议先做“设计方案 + UI 降级壳”，真正链上灾备若要新数据路径，放 Phase 9。
+
+**4. Claude Design 接入**
+现状：知道要接入，但流程不够。
+
+问题：没说谁给输入、Claude Design 输出什么格式、AI 如何翻译、冲突谁裁决。
+
+建议：补一个很短工作流：用户/AI 准备当前页面截图和约束 → Claude Design 出图或文字方向 → AI 翻译成可执行清单 → 用户裁决审美和取舍 → 技术冲突按 STACK/ARCH/硬线优先，新增依赖必须单独批准。
+
+**5. Phase 8 / Phase 9 边界**
+现状：大边界正确。
+
+问题：缺“发现新问题时怎么分流”。
+
+建议：加三条规则：视觉、文案、布局、加载/空态/错误态留 P7；按键动画、音效数量、播放时序留 P8；后端、DB、合约、cron、安全、主网部署、监控告警留 P9。若某个 UI 需求必须改后端，停下来让用户决定降级、延期或改 Phase 边界。
+
+如果只能改 1 处，我会改 `唯一已经定的决策`：把它改成“Phase 7 分流规则 + 3 个候选顺手项”。这一下能同时解决开放度、P1 是否越界、以及 Phase 8/9 边界不清的问题。

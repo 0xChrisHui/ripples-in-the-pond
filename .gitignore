@@ -47,6 +47,8 @@ next-env.d.ts
 .claude/worktrees/
 # Claude Code 日志（**/ 通配匹配子目录如 contracts/.claude/logs/）
 **/.claude/logs/
+# Claude Code 调度器锁文件（运行时临时）
+.claude/scheduled_tasks.lock
 
 # Foundry 构建产物和敏感数据
 contracts/out/
