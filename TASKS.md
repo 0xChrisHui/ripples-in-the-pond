@@ -7,7 +7,59 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- （空，B8 P3 端到端实测通过 2026-05-08，等用户决定下一刀做 B5 / B3 / Track A 任一）
+- （空，等用户从 P7 4 个并行起点中选第一刀：A1 / A3+A12 / B1 / C3）
+
+---
+
+## ⏭ Phase 7 启动序列（2026-05-13 重定）
+
+Phase 7 playbook：`playbook/phase-7/overview.md` + 3 个 track 子文档（覆盖重写，三方 review 整合）
+
+### Track A — 修严重 BUG（10-11 天 / 14 有效 step）
+- [ ] A1 chain 配置抽单一来源（🔥 MEGA P0，B4a 前置）
+- [ ] A2 AirdropNFT 加 `_uriSet` 防覆盖 + 重新部署（原子流程）
+- [ ] A3+A12 score queue 状态机修复包（双 mint 防御 + lease 25min 根因，C1 前置）
+- [ ] A4 MAINNET-RUNBOOK grantRole 验收命令
+- [ ] A5 换 Turbo wallet（恢复 generate-eth-wallet.ts + 新 EOA + 充值）
+- [ ] A6 108 曲 arweave_url 全量上链（先资产盘点，缺 102 曲等用户补）
+- [ ] A9 vercel-env-sync 脚本（仅 key + NEXT_PUBLIC_* 比对）
+- [ ] A10 /score 链上灾备 UI 降级壳
+- [ ] A13 useEventsPlayback 首播 decode 时序
+- [ ] A14 5s 乐观成功诚实文案 + auto-polling（C3 后做）
+- [ ] A15 useMintScore 失败回滚（C3 后做）
+- [ ] A16 operator-lock TTL + Lua 心跳 + fail-closed
+- [ ] A17 mint_events upsert 失败检查
+- [audit] A11 ✅ 已修 commit `0d75a93`（仅 curl audit）
+- [audit] A18 ✅ 已修 commit `0d75a93`（仅 grep audit）
+- [挂 P10] A7 operator wallet 主网 ETH 充值
+- [挂 P10] A8 Resend 告警（避占位）
+
+### Track B — Semi 社区钱包前端接入（2-3 天 / 5 step，PoC-only）
+- [ ] B1 SEMI_API_URL env 同步（local + Vercel）
+- [ ] B2 SemiLogin 组件 + LoginModal 两 tab
+- [ ] B3 useAuth hook 双源化（Privy / JWT）
+- [ ] B4a 端到端技术冒烟（需 A1 完成）
+- [ ] B4b 投资人 demo 协调
+
+### Track C — 全站提速（4-5 天 / 7 step）
+- [ ] C1 Lighthouse baseline（需 A3+A12 完成）
+- [ ] C2 目标值讨论
+- [ ] C3 /api/me/scores 拆 split（A14/A15 前置）
+- [ ] C5 首页慢网占位 + spinner + 重试
+- [ ] C6 字体加载优化
+- [ ] C7 路由 transition + loading.tsx 骨架
+- [ ] C8 Lighthouse 对比报告 + 重测 buffer
+
+### Track 依赖图
+
+```
+A1 ─────────┐
+            └─► B4a
+A3+A12 ─────► C1
+C3 ─────────► A14 ─► A15
+```
+
+A1 / A3+A12 / B1 / C3 是 4 个并行起点。
 
 ---
 
@@ -124,20 +176,24 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 
 ---
 
-## ⏭⏭⏭ 之后（2026-05-08 拆分）
+## ⏭⏭⏭ 之后（2026-05-13 重定，四段拆分）
 
-- **Phase 7** — UI 翻修 + 体验细节优化（含 A5 / P1-17 / P1-18 三个顺手 P1）
-  - playbook 骨架：`playbook/phase-7/overview.md`（故意开放，启动时头脑风暴 + Claude Design 接入）
-- **Phase 8** — 按键动画 + 音效系统扩展 26 → 50（含 P1-21 useEventsPlayback decode 时序）
-- **Phase 9** — 修 bug + 上主网（10 项硬阻塞 + 换 CRON_SECRET + OP Mainnet 部署 + 首周救火）
+- **Phase 7（当前）** — 修严重 BUG + Semi 社区钱包 + 全站提速（详上面 Phase 7 启动序列）
+- **Phase 8** — UI 大升级（艺术家反馈 5 条 + Claude Design 接入 + /me /score /artist 深度重设计）
+- **Phase 9** — 按键动画 + 音效系统扩展 26 → 50（含 P1-21 useEventsPlayback decode 时序）
+- **Phase 10** — 性能深度优化 + 上线检查 + OP Mainnet 部署 + 首周救火
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md` + `reviews/2026-04-24-phase-5-s5-smoke-test.md`
 
-**主网前必做**（统一进 Phase 9 起点清单）：
+**主网前必做**（统一进 Phase 10 起点清单）：
 - Deploy 脚本 admin/minter 分离 + save draft 事务化（见 `reviews/2026-04-10-phase-2.5-completion-review.md`）
 - **Turbo credits 监控的阈值告警**
 - AirdropNFT metadata 补完（Phase 4 Review P1）
-- 换 CRON_SECRET（本轮 strict review 调试时 5/8 在聊天泄露）
+- 换 CRON_SECRET（5/8 strict review 调试时在聊天泄露）
+- A7 operator wallet 主网 ETH 充值
+- A8 Resend 告警真接 cron + 基础设施
+- 9 项 strict review P1（详 `reviews/2026-05-13-phase-7-playbook-review.md` 末尾"不在 P7 范围"段）
+- A3 长期方案：idempotency key + simulateContract（替换 P7 短期防重发方案）
 
 ---
 

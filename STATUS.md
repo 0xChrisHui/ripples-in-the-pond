@@ -6,28 +6,39 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 6 v2 已完结**（2026-05-08）+ "现在就修" 6 项 strict CTO review 落地（commit `0d75a93` 已 push + 5 项冒烟全绿）→ **Phase 7 待用户启动**（UI 翻修 + 体验细节，含 A5 / P1-17 / P1-18 三个顺手 P1）
-**Phase 拆分（2026-05-08 决策）**：Phase 7 = UI 翻修 / Phase 8 = 按键动画 + 音效扩展到 50 个 / Phase 9 = 修 bug + 主网部署
-**playbook 7 骨架**: `playbook/phase-7/overview.md`（故意写得开放，启动时先头脑风暴 + Claude Design 接入再做具体计划）
-**Completion Review**: `reviews/2026-05-08-phase-6-completion-review.md`（含 Phase 7 起点 10 项硬阻塞清单 + 风险评估）
-**Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`（16/19 通过 + 0 P0 + 0 P1）
-**进度**: Track A 5/6 step ✅（A0/A1/A2/A3/A4 实施 + A5 P7 + A6 决策冻结）/ Track B 6/7 step ✅（B1/B2/B3/B5/B6 实施 + B4 删 + B7 待）/ Track C 4/4 ✅ / Track D D1 决策不做 + D2 ✅ / Track E E1 ✅ + E2/E3 P7 + E4 废弃 + E5 待
-**playbook**: `playbook/phase-6/overview.md`（5 个 track 子文档全部加完成标记 / 状态对齐真实代码 @ 2026-05-08 audit）
-**决策日志**：`docs/JOURNAL.md` 2026-04-25 段（Phase 5/6 kickoff/Track C/Pre-tester）+ 2026-05-03 段（v2 缩减 + 艺术家反馈）+ 2026-05-08 段（B8 P3 + arweave_url 上链 + B4 删 + agent review 13 finding + audit 整体收口 + E4 废弃决策）
-**stakeholder 反馈**（取代原 tester 反馈窗口）：艺术家 5 条反馈已收到（视觉 / 动态 / 音阶 / 名字 / 按键动画）；投资人只看链上技术不看 UI
+**Phase**: **Phase 6 v2 已完结**（2026-05-08）→ **Phase 7 范围重定 @ 2026-05-13**：修严重 BUG + Semi 社区钱包前端接入 + 全站提速（14-18 天）
+**Phase 拆分（2026-05-13 决策，旧 5/8 三段作废）**：
+  - **Phase 7**（当前）= 修严重 BUG + Semi + 提速
+  - **Phase 8** = UI 大升级（艺术家反馈 5 条 + Claude Design 接入）
+  - **Phase 9** = 按键动画 + 音效系统扩展 26 → 50
+  - **Phase 10** = 性能深度优化 + 上线检查 + OP Mainnet 部署 + 首周救火
+**playbook 7**: `playbook/phase-7/overview.md` + 3 个 track 子文档（track-a-bugs / track-b-semi / track-c-perf），三方 review 整合后版本（commit 待 push）
+**P7 三方 review**：`reviews/2026-05-13-phase-7-playbook-review.md`（Claude 自审 + 2 个 Codex review，16 项必修已全部落地）
+**Phase 6 Completion**: `reviews/2026-05-08-phase-6-completion-review.md`（含旧 10 项硬阻塞清单，已在 P7 Track A 里重新拆分归宿）
+**P6 Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`（16/19 通过 + 0 P0 + 0 P1）
+**stakeholder 反馈**：艺术家 5 条反馈已收到（→ Phase 8）；投资人催 Semi demo（→ P7 Track B PoC-only）
 
 ## 当前进度
 
-**做到哪**: Phase 5 完全收口 + Track C v2 合约上链 + Pre-tester gate 4/4 + B6 + B2 Bug C 主链路 + B8 P1/P2/P3 + B6 demo 5 球 arweave_url 上链 + B4 删 + **2026-05-08 audit：A0/A1/A3/A4/B3/B5(#7+#9)/D2 全部已实施**（之前 playbook 列"待做"但代码早已完成，仅文档未对齐）+ **E5 文档对齐本次落地**
+**做到哪**：Phase 6 v2 完结 + commit `0d75a93` 6 项"现在就修"落地 + commit `e7030a8` Phase 7 启动准备 push（旧 P7=UI 翻修开放骨架）。**2026-05-13 P7 重定**：3 个 Track playbook + 三方 review + 16 项必修整合完成，待 commit 推 origin。
 
-**下一步**（Phase 7 启动）:
-  1. **用户说"开始 Phase 7"** → AI 按 `playbook/phase-7/overview.md` 头脑风暴清单 4 层逐层问，沉淀到 `phase-7/brainstorm.md`
-  2. **讨论清楚再写代码**：艺术家反馈 5 条优先级 / Claude Design 接入方式 / 流畅度具体场景 / 改页顺序 + 节奏
-  3. **顺手 3 个 P1 在 Phase 7 期间一起做**：A5 链上灾备 / P1-17 上链中诚实文案 / P1-18 useMintScore 失败回滚
+**下一步**（Phase 7 启动）—— 按 Track 依赖图，4 个并行起点：
+  1. **A1 chain 配置抽单一来源**（🔥 MEGA P0，B4a 前置）
+  2. **A3+A12 score queue 状态机修复包**（C1 baseline 前置）
+  3. **B1 SEMI_API_URL env 同步**（B4a 前置）
+  4. **C3 /api/me/scores 拆 split**（A14/A15 polling 契约前置）
 
-**Phase 8 / 9 计划**（已锁，不 Phase 7 期间动）:
-  - Phase 8 = 按键动画 + 音效系统扩展 26 → 50（含 P1-21 useEventsPlayback decode 时序）
-  - Phase 9 = 主网部署门槛（5 已知硬阻塞 + 5 strict review 后端类 P0/P1 + 换 CRON_SECRET + 部署 + 首周救火）
+**Track 依赖图**：
+- A1 → 阻塞 B4a Semi 端到端冒烟
+- A3+A12 → 阻塞 C1 baseline（25min lease 会污染数据）
+- C3 → 必须先于 A14/A15（polling 契约）
+
+**用户说"开始 Track A"** → AI 进 A1 概念简报 → slow mode 实施。
+
+**Phase 8 / 9 / 10 计划**（已锁，不 P7 期间动）:
+  - Phase 8 = UI 大升级（艺术家反馈 5 条 + Claude Design + /me /score /artist 深度重设计）
+  - Phase 9 = 按键动画 + 音效系统扩展 26 → 50（含 P1-21 useEventsPlayback decode 时序）
+  - Phase 10 = 性能深度优化 + 上线检查 + 换 CRON_SECRET + OP Mainnet 部署 + 9 项 P1 挂 P10 清单 + 首周救火
 
 **已实质完成的步骤**：
 - Track A：A0 operator 锁 ✅ / A1 ScoreNFT cron durable lease ✅ / A2 failure_kind ✅ / A3 sync cursor 事务性 ✅ / A4 草稿原子化 ✅ / A5 P7 / A6 决策冻结

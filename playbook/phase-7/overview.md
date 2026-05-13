@@ -1,186 +1,272 @@
-# Phase 7 — UI 翻修 + 体验细节
+# Phase 7 — 修严重 BUG + Semi 社区钱包 + 全站提速
 
-> **故意写得开放**：不锁死方案、不锁死改哪些文件、不锁死交付标准。
+> **2026-05-13 覆盖重写**：原 5/8 版"UI 翻修开放骨架"作废（git 可查 commit `e7030a8`）。
+> Phase 7 重新定义为"上 P8 UI 大升级之前的工程清场 + 投资人 Semi demo 准备"。
 >
-> Phase 7 启动 = 一段头脑风暴 + 反复讨论 + Claude Design 接入。
-> 写死的方案在 Phase 7 进行中产出（追加到本文档或子文档），不在启动前。
+> **决策来源**：2026-05-13 与用户对话整合 5/8 strict CTO review 发现的 6 P0 / 24 P1 +
+> 投资人催 Semi 接入 + 用户提"全站启动提速"诉求。
+>
+> **前置**：Phase 6 v2 完结 (commit `0d75a93`) + strict review "现在就修"6 项已合
+> + 24 commits 已 push 到 origin/main
+>
+> **核心交付物**：
+> - 9 项 Day 0 必修 BUG 全部修完 → OP Mainnet 部署门槛工程债清零
+> - Semi 社区钱包前端接入 → 投资人可看 demo
+> - 首屏 / 切页 / 关键 API 性能优化 → 用户感知"打开就快"
+> - Phase 7 进 Phase 8 时 STATUS 明确"主网门槛工程债已清"
 
 ---
 
-## Phase 7 是什么
+## Phase 7 是什么 / 不是什么
 
-UI 翻修 + 体验细节优化。重点动**视觉层 + 用户感知层 + 前端状态/文案/错误态**，尽量不动数据流 / 合约 / 后端架构。
+### 是
+- **修严重 BUG**：strict CTO review (`reviews/2026-05-08-phase-6-strict-cto-review.md`) 抓到的 9 项 Day 0 必修 + 9 项 Day 1-3 必修
+- **接 Semi 社区钱包前端**：后端 (S0-S2) 100% 复用，前端两个 input + 一段 useAuth 兼容（约 1 天）
+- **全站提速**：用户"打开一个新页面需要多久才能加载出来"诉求 → 首屏 LCP / 切页 transition / 关键 API（/me 35s）
 
-把 Phase 6 测试网验证过的"功能正确但视觉粗糙"的产品，翻新成"艺术家满意 + 不挡投资人看链上 demo"的版本。
-
-## Phase 7 不是什么
-
-- ❌ 不做按键动画扩展 / 50 音效系统（→ Phase 8）
-- ❌ 不修后端 bug / 不做主网部署门槛（→ Phase 9）
-- ❌ 不接 Semi 社区钱包 OAuth（解阻塞后再说）
-
----
-
-## Phase 7 / 8 / 9 分流规则（最重要的一节）
-
-UI 翻修过程中**一定**会发现新需求或新 bug。按这张表分流，停下来让用户裁决：
-
-| 类别 | 归属 |
-|---|---|
-| 视觉 / 布局 / 文案 / 品牌气质 | P7 |
-| 加载态 / 空态 / 错误态 / 重试体验 | P7 |
-| 前端状态机 / hook / localStorage 行为 | P7 |
-| 跨设备适配（含移动端 viewport / 触屏交互） | P7 |
-| 按键动画细节 / 视觉反馈 | **P8**（虽然是视觉，但和按键音效系统强耦合） |
-| 音效数量扩展 / 播放时序 | P8 |
-| 后端 API 返回结构改动 / 新增字段 | **取决于**：纯加字段不破坏现有 caller → P7 顺手；改语义 → P9 |
-| DB schema 改 / migration / RPC 改 | P9 |
-| 合约改 / 重新部署 | P9 |
-| Cron / 队列 / 状态机 | P9 |
-| 安全 / 鉴权 / 钱包 | P9 |
-| 监控告警 / Resend / 主网部署 | P9 |
-
-**触发分流的信号**：UI 改到一半我说"这事需要改 [migration / 合约 / cron]，超出 P7 边界，去 P9 还是降级实现？" → 用户裁决。
+### 不是
+- ❌ UI 翻修 / 艺术家反馈 5 条（→ **Phase 8**）
+- ❌ 按键动画 / 音效扩展到 50（→ **Phase 9**）
+- ❌ 主网部署 / Resend 告警 / 换 CRON_SECRET / 换 Turbo wallet 等纯运营动作（→ **Phase 10**）
 
 ---
 
-## Phase 7 候选顺手项（启动时讨论是否纳入，不是已定）
+## Phase 拆分（2026-05-13 重定）
 
-下面 4 项都是"UI 翻修过程中可能必碰"的工程项。**启动头脑风暴时一起决定哪些纳入 P7、哪些挪走**：
+| Phase | 内容 | 工时估 |
+|---|---|---|
+| **Phase 7（当前）** | 修严重 BUG + Semi 社区钱包接入 + 全站提速 | 9-12 天 |
+| **Phase 8** | UI 大升级（艺术家反馈 5 条 / Claude Design 接入 / /me /score /artist 深度重设计） | 2-4 周 |
+| **Phase 9** | 按键动画 + 音效系统扩展 26 → 50 | 1-2 周 |
+| **Phase 10** | 性能优化（深度）+ 上线检查 + OP Mainnet 部署 + 首周救火 | 1-2 周 |
 
-| # | 项 | 默认建议 | 风险 |
+---
+
+## 三个 Track 并行（2026-05-13 用户决策 + 5/13 review 修订）
+
+**用户原话**："P7.1 修 BUG + P7.2 Semi + P7.3 性能 三件事同时启动，实际你一次只推动一件，但不锁顺序，哪项准备好了做哪项。"
+
+| Track | 主题 | Step 数 | 工时估 | 依赖 |
+|---|---|---|---|---|
+| **[A](./track-a-bugs.md)** | 修严重 BUG | 14 有效 step | 10-11 天 | 无 |
+| **[B](./track-b-semi.md)** | Semi 社区钱包前端接入（PoC-only）| 5（B1/B2/B3/B4a/B4b）| 2-3 天 | B4a 必须等 A1 完成 |
+| **[C](./track-c-perf.md)** | 全站提速 | 7（C1/C2/C3/C5/C6/C7/C8）| 4-5 天 | C1 必须等 A3+A12 完成 |
+
+**总工时**：14-18 天（三 track 有依赖 + 部分串行；review 修订后比原 9-12 天乐观估更真实）
+
+### 关键依赖图
+
+- **A1 (chain 配置)** → 阻塞 B4a 端到端冒烟（涉及 operator-wallet）
+- **A3+A12 (cron 修复包)** → 阻塞 C1 baseline（避免 25min lease 污染数据）
+- **C3 (/api/me/scores 拆 split)** → 必须先于 A14 / A15（polling 契约依赖）
+- A1 / A3+A12 / B1 / C3 可并行启动（互相无依赖）
+
+### 并行执行规则（关键）
+
+按 AGENTS.md 铁律"一次只做一件事"，并行**不是同时改三个文件**，而是：
+
+1. 任一 step 进 in-progress 后必须做完小闭环再切下一个
+2. 切下一刀时**用户决定**从哪个 track 抽下一步
+3. 每个 track 独立维护自己的"剩余 step"看板
+4. 三 track 各自有 completion 标准，但全部完成才能进 Phase 8
+
+---
+
+## Track A — 修严重 BUG（详见 `track-a-bugs.md`）
+
+### Day 0 必修（9 项，上主网前必清）
+
+| ID | 严重 | 内容 | 工时 |
 |---|---|---|---|
-| **P1-17** | 5s 乐观成功 → "上链中（5-30 分钟）" 诚实文案 + auto-polling | ✅ P7（纯前端文案 + setInterval polling）| 若 polling 需要新 API 端点 → 转 P9 |
-| **P1-18** | useMintScore 失败回滚（草稿不消失 + 重试按钮） | ✅ P7（纯前端 hook + 错误态 UI）| 无 |
-| **A5** | /score/[id] 链上灾备 | ⚠️ **拆两半**：UI 降级壳（404 vs 灾备占位）放 P7 / 真正链上读 fallback 数据路径放 P9 | 不拆容易滑成"重设计 score-source 数据层"，吃掉 P7 时间 |
-| **悬空 TODO** | /score/[id] 返回链接改 /me 而非 / | ✅ P7（一行 `<Link href>`）| 无 |
+| **A1** | 🔥 MEGA P0 | chain 配置硬编码 sepolia → 抽 `src/lib/chain/chain-config.ts` 单一来源 | 0.5 天 |
+| **A2** | P0 | AirdropNFT 加 `_uriSet` 防覆盖 + 重新部署 | 0.3 天 |
+| **A3** | P0 | stepMintOnchain sigkill 双 mint 防御（拆三步 + idempotency） | 1 天 |
+| **A4** | P0 | MAINNET-RUNBOOK grantRole 验收命令补充 | 0.2 天 |
+| **A5** | P0 | 换 Turbo wallet（旧私钥泄露过）| 0.5 天 |
+| **A6** | P0 | 108 曲 arweave_url 全量上链（当前 5/108）| 0.5 天 |
+| **A7** | 运营 | Operator wallet 主网 ETH 充值 → 挂 Phase 10 起点 | 0.1 天 |
+| **A8** | P1 | Resend 邮件告警 → 挂 Phase 10 起点（**修订**：P7 只搭基础设施 + 不接 cron 触发） | 0.5 天 |
+| **A9** | P1 | vercel-env-sync 脚本（防 NEXT_PUBLIC_ typo）| 0.5 天 |
 
-启动 Phase 7 头脑风暴第一件事就是**把这张表逐项过一遍**，定每项归属。
+**Day 0 小计**：4.1 天
 
----
+### Day 1-3 必修（9 项，影响 UX / 主网首周）
 
-## 头脑风暴清单（Phase 7 启动时按这个聊）
+| ID | 严重 | 内容 | 工时 |
+|---|---|---|---|
+| **A10** | P1 | A5 链上灾备 /score/[id] 无 fallback → Supabase 抖动就 404 | 1 天 |
+| **A11** | P1 | /api/me/score-nfts 35s → ms 级（generated column 已加 migration 031，前端用上）| 0.3 天 |
+| **A12** | P1 | cron lease 25min 根因（step 内状态推进 vs route CAS 冲突）| 0.5 天 |
+| **A13** | P1 | useEventsPlayback 首播音效 decode 时序（前几秒事件爆发）| 0.5 天 |
+| **A14** | P1 | 5s 乐观成功假成功窗口文案 + auto-polling（P1-17）| 0.5 天 |
+| **A15** | P1 | useMintScore 失败回滚（草稿不消失 + 重试，P1-18）| 0.5 天 |
+| **A16** | P1 | operator-lock TTL 30s → 120s + 续期 + 生产 fail-closed | 0.5 天 |
+| **A17** | P1 | mint_events upsert 失败被忽略 → 补 error 检查 | 0.3 天 |
+| **A18** | P1 | score-queue failure_kind catch 默认值 → 补分流逻辑 | 0.3 天 |
 
-5 层逐层推进，不是一次问完。下面是讨论入口，不是答案：
+**Day 1-3 小计**：4.4 天
 
-### 第一层：核心目标
+**Track A 工时**：8.5 天（含验证 + verify.sh 跑通）
 
-- 艺术家反馈 5 条里哪几条"必须做"，哪几条"可以先放"？
-  - 1 视觉液态感 / 2 流动 + 随机扰动 / 3 键盘音阶（→ P8）/ 4 圆圈数字代号（B6 已做）/ 5 按键动画 + 岛屿/日食交互（→ P8）
-- 你看现在的产品，最想先改的是哪一页？为什么？
-- 投资人**不看 UI 但在演示链上 demo 时**，UI 不能挡他什么？（比如 /me 加载慢 5s 会让 demo 节奏断）
+### 不在 P7 范围（明确挪走）
 
-### 第二层：用户路径 vs 单页（codex 抓到的关键维度）
-
-- Phase 7 是改"完整用户路径"还是"独立改某些页"？
-  - **路径例**：首页浏览 → 点曲目 → 播放 → 录制 → 草稿 → 铸造 → /me 看唱片 → /score 分享
-  - **单页例**：先把 /me 翻新到完美，再 /score，再 /artist
-- 如果走"路径"，整路径的视觉/状态文案要保持一致风格（一次性投入大）
-- 如果走"单页"，每页可以独立交付（小步快跑），但跨页一致性弱
-
-### 第三层：Claude Design 怎么进来
-
-**这一层独立成节见下面"Claude Design 接入工作流"，启动头脑风暴时直接走那一节。**
-
-### 第四层：体验细节口径
-
-- "整体反应流畅度"具体指哪些场景慢？挑几个最痛的：
-  - [ ] 首页加载（Archipelago 首屏）
-  - [ ] 切页（路由 transition）
-  - [ ] 播放启动（点曲目到出声）
-  - [ ] 录制启动（按键到音效响）
-  - [ ] 铸造按钮反应（点到反馈）
-  - [ ] /me 列表加载
-- 错误态 / 空态 / 加载态当前缺哪些？（启动时一起列）
-- 跨浏览器 / 跨设备覆盖范围？
-  - 主目标：哪个浏览器（Chrome / Safari / 微信内置）/ 桌面 vs 移动？
-  - 投资人 demo 用什么设备？
-
-### 第五层：节奏 + 兜底
-
-- 一次改一页（线性）vs 多页同时改（并行）？— **默认线性**（一次只一件事是项目铁律）
-- 每页改完是否需要"用户/艺术家验收"才进下一页？
-- Phase 7 总时长心理预期？1 周 / 3 周 / 6 周？
-- **如果时间溢出（比如做到一半发现复杂度超预期）**：
-  - 砍什么留什么？
-  - 优先保留"投资人 demo 不被挡"的部分？还是优先保留"艺术家最关心的视觉"？
+- 6 个 P0/P1（chain 已硬编码外的合约 + RPC 主网级问题）→ **Phase 10 起点**
+- 全部 P2 / P3 → Phase 10 主网前清扫一轮
 
 ---
 
-## Claude Design 接入工作流（启动前必答）
+## Track B — Semi 社区钱包前端接入（详见 `track-b-semi.md`）
 
-用户原话："我会引入一部分 Claude Design 的设计结果"。**这部分必须先把工作流定下来再谈具体页面**，不然落地时会反复扯皮。
+### 投资人诉求边界
 
-### 必答 4 件事
+**做**：Semi 用户用手机号 + 验证码登录 → 后端拿 evm_address → 用户收到的所有 NFT 进入 Semi 钱包
+**不做**：Semi OAuth（Semi 团队方案未出，等了 1 个月不能再等）
+**不做**：用户主动签名授权（铸造仍是 operator 后台空投，与 Privy 路径一致）
 
-**1. 谁出输入？**
-- 默认：用户准备"当前页截图 + 约束清单（220 行 / Tailwind v4 / Next 16 / 无 wagmi/ethers/howler/tone）"
-- AI 协助：我帮抓当前页截图（如果用户点头）+ 列已有视觉约束
+### 后端复用情况（Phase 4A S0-S2 已就绪）
 
-**2. Claude Design 出什么格式？**
-- 选项 A：图（Figma / 截图）+ 一段中文描述方向
-- 选项 B：纯文字描述（"做成液态、半透明、缓慢呼吸"这种）
-- 选项 C：组件级 spec（具体到颜色 hex / 字号 / 间距）— 不推荐，太死板
+- ✅ `src/lib/auth/semi-client.ts`（sendSemiCode / verifySemiCode / getSemiUser）
+- ✅ `app/api/auth/community/send-code/route.ts`（转发短信）
+- ✅ `app/api/auth/community/route.ts`（验证码 → JWT 交换 + evm_address 合并）
+- ✅ `src/lib/auth/jwt.ts`（RS256 自签 JWT）
+- ✅ `src/lib/auth/middleware.ts`（Privy / JWT 双通道）
+- ✅ `supabase/migrations/phase-4/`（015 jwt_blacklist + 016 auth_identities + 017 privy_nullable）
 
-**3. AI 怎么翻译成可执行清单？**
-- 收到 Claude Design 输出后，AI 做一份"实施计划"：
-  - 涉及哪些文件
-  - 估计每个文件改动量（行数 / 风险）
-  - 是否触发分流规则（要改后端就停下来）
-  - 是否需要新依赖（必须单独批准，参考 STACK.md 白名单）
-- 用户审计划 → 同意后才动代码
+### Step 总览
 
-**4. 冲突仲裁优先级**
-| 冲突 | 谁赢 |
-|---|---|
-| Claude Design 设计稿 vs 220 行硬线 | 硬线赢（拆组件） |
-| Claude Design vs STACK.md（要装新库） | STACK 赢（找现有方案） |
-| Claude Design vs 现有视觉迭代成果 | **用户裁决**（不默认推翻 25+ 轮迭代） |
-| Claude Design 审美 vs 我的工程偏好 | Claude Design 赢（用户产品判断 > AI 工程偏好） |
-| Claude Design 实施成本 vs Phase 7 时间 | 用户裁决（砍 / 简化 / 转 P8/P9） |
+| ID | 内容 | 工时 |
+|---|---|---|
+| **B1** | 配 `SEMI_API_URL=https://semi-production.fly.dev` 到 .env.local + Vercel + .env.example 加占位 | 30 分 |
+| **B2** | 前端登录组件（手机号 input + 验证码 input + 60s 倒计时）| 半天 |
+| **B3** | useAuth hook 兼容 Privy / JWT 双通道（已有中间件直接用）| 半天 |
+| **B4** | 端到端实测：发码 → 验证 → 拿到 evm_address → 铸造一次 MaterialNFT 进 Semi 钱包确认 | 半天 |
 
----
+**Track B 工时**：1.5-2 天
 
-## 工作模式（Phase 7 进行时遵守）
+### 不在 P7 范围
 
-1. **不要一次改太多**：单文件改完先停，让用户看效果再决定下一刀
-2. **不要默认推翻现有视觉**：现在的视觉是艺术家 + tester + 25+ 轮迭代下来的，先理解再改
-3. **触发分流规则立刻停**：UI 改撞到 migration / 合约 / cron → 停下问用户
-4. **220 行硬线 / 8 文件硬线照常**：UI 翻修最容易吹胀单文件，注意拆分
-5. **每个小闭环后跑 verify.sh**：UI 改容易撞到类型 / lint / build
-6. **何时从讨论切执行**（小白用户怕"光讨论无产出"）：
-   - 头脑风暴 5 层全过一遍 → 切执行
-   - 或：头脑风暴某层卡住超过 30 分钟 → 切到"先做一个最简版本看效果"
+- 主网 Semi 接入（测试网先跑通，主网 Semi 配置进 Phase 10）
+- Semi 与 Privy 同地址合并 UX（已自动合并，无需 UI 提示）
 
 ---
 
-## 预期产出（Phase 7 结束时）
+## Track C — 全站提速（详见 `track-c-perf.md`）
 
-不预设格式，但**至少**包含：
-- 改完的 UI 在线（Vercel 测试网）
-- 艺术家反馈 5 条里至少 2 条（视觉液态感 / 流动扰动）有明确回应（做了 / 改方向 / 决策不做）
-- 体验细节列表（启动时讨论出来 + 进行中陆续补充）每条有处理结论
-- 候选顺手项（P1-17 / P1-18 / A5 拆 / 返回链接）按头脑风暴决议合入或挪走
-- Phase 7 进入 Phase 8 前的 completion review（仿 Phase 6 体例）
+### 用户原话拆解
 
-**不预设**：
-- 改了多少个文件
-- 几个 step
-- 多久完成
-- 是否需要 sub-track
+> "主要是就打开一个新页面时，需要多久才能加载出来。我需要加载的快一些，具体怎么实现可以讨论，可以开放讨论。"
 
-这些在头脑风暴和 Phase 7 进行中决定。
+→ 用户在意 **"页面打开速度"**，对应工程指标：
+- **首屏 LCP**（Largest Contentful Paint）：用户看到主要内容多久
+- **TTI**（Time to Interactive）：用户能操作多久
+- **关键 API p95 延迟**：/me 当前 35s 是 LCP 的主因之一
+
+### Step 总览
+
+| ID | 内容 | 工时 |
+|---|---|---|
+| **C1** | Lighthouse + Vercel Analytics baseline（首页 / /me / /score/N / /artist 四页）| 半天 |
+| **C2** | 用户拍板目标值（建议：首页 LCP < 2.5s / /me LCP < 3s）| 讨论 30 分 |
+| **C3** | /api/me/scores 拆 split（首屏只返 id/track/seq/event_count，events 单独 fetch）| 半天 |
+| **C4** | /api/me/score-nfts 改用 generated event_count（重叠 A11，做完算重叠）| 共用 |
+| **C5** | 首页 Archipelago 慢网占位加 spinner + 重试按钮 | 半天 |
+| **C6** | next/font + 字体预加载（Modak / Azeret 重复检查）| 30 分 |
+| **C7** | 路由 transition smooth（loading.tsx 分页骨架）| 1 天 |
+| **C8** | 再跑 Lighthouse 对比 baseline 出报告 | 半天 |
+
+**Track C 工时**：3-4 天
+
+### 重叠工作（提前声明）
+
+- **C4 = A11**（/api/me/score-nfts 改 event_count）→ 实施时算一次
+- **C5 部分依赖 A10**（A5 链上灾备 UI 降级壳 = 慢网占位的失败态变种）→ A10 做完后 C5 复用同套占位组件
+- **A12 cron lease 25min** → 影响"上链中"灰卡的等待时间，间接影响用户感知性能
+
+---
+
+## 工作流（Phase 7 进行时遵守）
+
+### Track 优先级（默认）
+
+如果用户没指定从哪 track 抽，AI 默认按这个顺序：
+
+1. **A1（chain 配置硬编码）** 是 MEGA P0，**第一刀必做**（不做这个 Phase 10 主网部署直接灾难）
+2. **A2 + A3 + A4**（合约 + cron 防御 + runbook）继续 A track
+3. **B1-B4 Semi** 整个 1.5-2 天可以一口气做完（投资人 demo 可见）
+4. **C1-C2 baseline + 目标** 拿到数据后用户拍板优化范围
+5. 剩下的按 dependence 顺序 + 用户裁决
+
+### 触发停下问用户
+
+按 AGENTS.md，以下情况立刻停：
+
+- 改撞到 STACK.md 没有的依赖
+- 改撞到 ARCHITECTURE.md 写过的决策（如 ARWEAVE_GATEWAYS 缩到 2 个 / 220 行硬线 / Tailwind v4 等）
+- 单文件改超过 220 行
+- 触发 phase 分流规则（如：发现 A 类改动需要修 migration → 评估是 P10 还是降级实现）
+- 同一文件改超过 3 次还在改
+
+### 测试网安全网
+
+- 每个 step 完成后跑 `bash scripts/verify.sh`
+- 涉及合约 / cron / DB 的改动必须有 forge test / 端到端 smoke 通过
+- 部署前最后跑一次完整冒烟（仿 P6 B7 smoke test 体例）
+
+---
+
+## Phase 7 完结标准（进 Phase 8 的 gate）
+
+- [ ] **Track A**：18 项 step 状态 ∈ {fixed, downgraded-accepted}；剩余 P0/P1 明确挪 Phase 10
+- [ ] **Track B**：Semi 端到端 smoke 通过（发码 → 登录 → 拿 evm → 铸造 1 个 MaterialNFT 进 Semi 钱包）+ 投资人可看 demo
+- [ ] **Track C**：4 个核心页面 LCP 达标（建议 < 3s）+ 对比 baseline 报告
+- [ ] `bash scripts/verify.sh` 全绿
+- [ ] `forge test` 全绿（涉及合约变更时）
+- [ ] STATUS.md 更新："Phase 7 完结" + Phase 8 / 9 / 10 计划 + Phase 10 主网起点清单
+- [ ] `reviews/2026-05-XX-phase-7-completion-review.md` 出（独立 review agent）
+- [ ] JOURNAL 决策日志连续
+
+---
+
+## 启动前必做（Step 0 / Step 0.5）
+
+**P0-A 修订**：AGENTS.md §3 规定 STATUS "下一步" 是唯一权威。当前 STATUS / TASKS / JOURNAL 仍写"P7=UI 翻修"老叙事，与本 playbook 冲突。**任何 Track step 启动前必须先做**：
+
+### Step 0 — STATUS / TASKS 同步（10 分）
+- STATUS.md "当前阶段"字段：Phase 7 = 修严重 BUG + Semi + 提速
+- STATUS.md "Phase 拆分"：P7/P8/P9/P10 四段（P8=UI / P9=按键音效扩展 / P10=主网）
+- STATUS.md "下一步"字段：按 Track 依赖图，3 个并行起点（A1 / A3+A12 / B1 / C3）
+- TASKS.md "之后"段：Phase 7/8/9 改 Phase 7/8/9/10 四段
+
+### Step 0.5 — JOURNAL 决策段（10 分）
+- 加 2026-05-13 段：
+  - Phase 重定决策（P7=BUG+Semi+Perf，旧 5/8 拆分作废）
+  - Semi 现有 API 先用着决策（D-B1）
+  - A3 修订（不承诺等 receipt，改防重发 + manual_review）
+  - 9 项 P1 挂 P10 决策清单
+  - 三方 review 整合（`reviews/2026-05-13-phase-7-playbook-review.md`）
+
+### Step 0.9 — commit（5 分）
+- 一次 commit 含 STATUS/TASKS/JOURNAL 更新 + playbook iteration
 
 ---
 
 ## 启动信号
 
-用户说"开始 Phase 7" → 我做的第一件事：
+用户说"开始 Track A"（或 B / C） → AI 做的第一件事：
 
-1. **先过"候选顺手项"那张表**（4 项逐项裁决）
-2. **再过 Claude Design 接入工作流 4 件事**
-3. **再走头脑风暴 5 层**（每层 2-4 个问题逐层推进，不一次问完）
-4. 答案沉淀到本文档（追加章节）或新建 `phase-7/brainstorm.md`
-5. **讨论清楚之前不写代码**
+1. **先确认 Step 0 / 0.5 / 0.9 已完成**（如未做先做）
+2. 读对应 track 子文档（`track-a-bugs.md` / `track-b-semi.md` / `track-c-perf.md`）
+3. 跟用户对齐"从哪个 step 起"
+4. 进 Step 概念简报（slow mode）→ 实施 → verify.sh → 6 行汇报
+5. 等用户"继续 / 下一步 / commit"
 
-讨论卡住超过 30 分钟 → 切执行（做一个最简版本，看效果再继续）。
+---
+
+## 参考文档
+
+- [Phase 6 完结 review](../../reviews/2026-05-08-phase-6-completion-review.md)
+- [**Phase 6 strict CTO review**](../../reviews/2026-05-08-phase-6-strict-cto-review.md)（Track A 18 项来源）
+- [Phase 6 codex CTO review](../../reviews/2026-05-08-phase-6-codex-cto-review.md)（独立第二意见）
+- [JOURNAL 2026-05-08 段](../../docs/JOURNAL.md)
+- [Phase 6 findings tracker](../../reviews/phase-6-findings-tracker.md)
+- [MAINNET-RUNBOOK](../../docs/MAINNET-RUNBOOK.md)
