@@ -22,18 +22,19 @@
 
 **做到哪**：Phase 6 v2 完结 + commit `0d75a93` 6 项"现在就修"落地 + commit `e7030a8` Phase 7 启动准备 push（旧 P7=UI 翻修开放骨架）。**2026-05-13 P7 重定**：3 个 Track playbook + 三方 review + 16 项必修整合完成，待 commit 推 origin。
 
-**下一步**（Phase 7 启动）—— 按 Track 依赖图，4 个并行起点：
-  1. **A1 chain 配置抽单一来源**（🔥 MEGA P0，B4a 前置）
-  2. **A3+A12 score queue 状态机修复包**（C1 baseline 前置）
-  3. **B1 SEMI_API_URL env 同步**（B4a 前置）
-  4. **C3 /api/me/scores 拆 split**（A14/A15 polling 契约前置）
+**下一步**（Phase 7 启动）—— 3 个 Track 各一个起点（用户 2026-05-13 决策"起点简单清晰"）：
+  1. **A1 chain 配置抽单一来源**（🔥 MEGA P0，Track A 起点）
+  2. **B1 SEMI_API_URL env 同步**（Track B 起点，PoC-only）
+  3. **C1 Lighthouse baseline**（Track C 起点，两次跑：修前 baseline + 修后对照）
 
-**Track 依赖图**：
-- A1 → 阻塞 B4a Semi 端到端冒烟
-- A3+A12 → 阻塞 C1 baseline（25min lease 会污染数据）
+**Track 依赖图（修订）**：
+- A3+A12 → 阻塞 A14/A15（cron 状态机改完才能稳定 polling）；不再阻塞 C1
 - C3 → 必须先于 A14/A15（polling 契约）
+- B4a 不再硬等 A1（接受临时硬编码 chain 配置做冒烟，A1 完成后重测 10 分钟）
 
-**用户说"开始 Track A"** → AI 进 A1 概念简报 → slow mode 实施。
+**A6 范围缩水（2026-05-13）**：A6 = "20 曲 arweave_url 全量上链"（不是 108）。含 B6.1 子任务（A 组 5 球→20 球 / B+C 36 球 21-36 循环 1-16 / SphereNode badge 双位数）。剩余 88 曲挪 Phase 10 / 运营长期。
+
+**用户说"开始 A1"** → AI 进 A1 概念简报 → slow mode 实施。
 
 **Phase 8 / 9 / 10 计划**（已锁，不 P7 期间动）:
   - Phase 8 = UI 大升级（艺术家反馈 5 条 + Claude Design + /me /score /artist 深度重设计）

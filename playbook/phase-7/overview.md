@@ -49,17 +49,27 @@
 | Track | 主题 | Step 数 | 工时估 | 依赖 |
 |---|---|---|---|---|
 | **[A](./track-a-bugs.md)** | 修严重 BUG | 14 有效 step | 10-11 天 | 无 |
-| **[B](./track-b-semi.md)** | Semi 社区钱包前端接入（PoC-only）| 5（B1/B2/B3/B4a/B4b）| 2-3 天 | B4a 必须等 A1 完成 |
-| **[C](./track-c-perf.md)** | 全站提速 | 7（C1/C2/C3/C5/C6/C7/C8）| 4-5 天 | C1 必须等 A3+A12 完成 |
+| **[B](./track-b-semi.md)** | Semi 社区钱包前端接入（PoC-only）| 5（B1/B2/B3/B4a/B4b）| 2-3 天 | B4a 临时硬编码 chain，A1 完成后重测 10min |
+| **[C](./track-c-perf.md)** | 全站提速 | 7（C1/C2/C3/C5/C6/C7/C8）| 4-5 天 | C1 修前 baseline + C8 修后对照（不再卡 A3+A12）|
 
 **总工时**：14-18 天（三 track 有依赖 + 部分串行；review 修订后比原 9-12 天乐观估更真实）
 
-### 关键依赖图
+### 关键依赖图（2026-05-13 修订：起点改 A1 / B1 / C1）
 
-- **A1 (chain 配置)** → 阻塞 B4a 端到端冒烟（涉及 operator-wallet）
-- **A3+A12 (cron 修复包)** → 阻塞 C1 baseline（避免 25min lease 污染数据）
+- **A1 (chain 配置)** → Track A 内部起点。B4a 不再硬等 A1（接受临时硬编码）
+- **A3+A12 (cron 修复包)** → 阻塞 A14 / A15（cron 状态机稳定后才能稳定 polling）；**不再阻塞 C1**
 - **C3 (/api/me/scores 拆 split)** → 必须先于 A14 / A15（polling 契约依赖）
-- A1 / A3+A12 / B1 / C3 可并行启动（互相无依赖）
+- **C1 跑两次**：修前作为 baseline（不等任何前置）+ C8 作为修后对照
+- **A1 / B1 / C1 = 3 个 Track 各一个起点**，相互完全独立可并行（用户 2026-05-13 决策"起点简单清晰，不易出错"）
+
+### A6 范围缩水（2026-05-13）
+
+A6 从"108 曲全量上链"缩成"**20 曲全量上链**"（艺术家承诺先给 20 首）。A6 含 B6.1 子任务：
+- A6.0 资产盘点 audit-tracks.ts
+- A6.1 数据扩容 migration 030（A 组 published 扩到 1-20 + B+C 36 球后 16 个循环到 No.1-16）+ sphere-config `getGroupTargetCount` `'A' ? 5 : 36` → `'A' ? 20 : 36` + SphereNode badge 双位数视觉调试
+- A6.2 上传 15 首新 mp3 到 Arweave + UPDATE tracks.arweave_url
+
+剩余 88 曲挪 Phase 10 / 艺术家长期补曲，不阻塞 P7 完结。
 
 ### 并行执行规则（关键）
 
@@ -83,7 +93,7 @@
 | **A3** | P0 | stepMintOnchain sigkill 双 mint 防御（拆三步 + idempotency） | 1 天 |
 | **A4** | P0 | MAINNET-RUNBOOK grantRole 验收命令补充 | 0.2 天 |
 | **A5** | P0 | 换 Turbo wallet（旧私钥泄露过）| 0.5 天 |
-| **A6** | P0 | 108 曲 arweave_url 全量上链（当前 5/108）| 0.5 天 |
+| **A6** | P0 | **20 曲** arweave_url 全量上链（含 B6.1 数据扩容；当前 5/20，等艺术家给 15 首）| 1-1.5 天 |
 | **A7** | 运营 | Operator wallet 主网 ETH 充值 → 挂 Phase 10 起点 | 0.1 天 |
 | **A8** | P1 | Resend 邮件告警 → 挂 Phase 10 起点（**修订**：P7 只搭基础设施 + 不接 cron 触发） | 0.5 天 |
 | **A9** | P1 | vercel-env-sync 脚本（防 NEXT_PUBLIC_ typo）| 0.5 天 |
@@ -186,15 +196,14 @@
 
 ## 工作流（Phase 7 进行时遵守）
 
-### Track 优先级（默认）
+### Track 优先级（默认，2026-05-13 修订）
 
-如果用户没指定从哪 track 抽，AI 默认按这个顺序：
+3 个 Track 起点 **A1 / B1 / C1** 完全独立，用户裁决从哪个起手。如果用户没指定，AI 默认按这个顺序建议：
 
-1. **A1（chain 配置硬编码）** 是 MEGA P0，**第一刀必做**（不做这个 Phase 10 主网部署直接灾难）
-2. **A2 + A3 + A4**（合约 + cron 防御 + runbook）继续 A track
-3. **B1-B4 Semi** 整个 1.5-2 天可以一口气做完（投资人 demo 可见）
-4. **C1-C2 baseline + 目标** 拿到数据后用户拍板优化范围
-5. 剩下的按 dependence 顺序 + 用户裁决
+1. **A1（chain 配置硬编码）** 是 MEGA P0，建议**第一刀**（不做这个 Phase 10 主网部署直接灾难）
+2. **B1（SEMI_API_URL env）** 30 分钟轻量收口，可以与 A1 同日做完（不同环境改 .env / Vercel）
+3. **C1（Lighthouse baseline）** 半天独立工作，作为修前对照基准
+4. 三起点收口后按用户裁决推进 Track 内部 step
 
 ### 触发停下问用户
 
@@ -234,7 +243,7 @@
 ### Step 0 — STATUS / TASKS 同步（10 分）
 - STATUS.md "当前阶段"字段：Phase 7 = 修严重 BUG + Semi + 提速
 - STATUS.md "Phase 拆分"：P7/P8/P9/P10 四段（P8=UI / P9=按键音效扩展 / P10=主网）
-- STATUS.md "下一步"字段：按 Track 依赖图，3 个并行起点（A1 / A3+A12 / B1 / C3）
+- STATUS.md "下一步"字段：3 个 Track 各一个起点（A1 / B1 / C1，2026-05-13 修订）
 - TASKS.md "之后"段：Phase 7/8/9 改 Phase 7/8/9/10 四段
 
 ### Step 0.5 — JOURNAL 决策段（10 分）
