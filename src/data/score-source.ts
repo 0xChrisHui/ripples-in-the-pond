@@ -1,6 +1,7 @@
 import 'server-only';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { resolveArUrl } from '@/src/lib/arweave';
+import { explorerTxUrl } from '@/src/lib/chain/chain-config';
 import type { KeyEvent } from '@/src/types/jam';
 import type { Track } from '@/src/types/tracks';
 
@@ -34,7 +35,6 @@ export interface ScorePageData {
   eventCount: number;
 }
 
-const ETHERSCAN_BASE = 'https://sepolia-optimism.etherscan.io/tx';
 
 /** 路由入口：纯数字 → tokenId 路径，否则按 UUID → queue.id 路径 */
 export async function getScoreById(id: string): Promise<ScorePageData | null> {
@@ -167,9 +167,7 @@ async function getScoreByQueueId(
     track,
     coverUrl,
     txHash: queue.tx_hash ?? undefined,
-    etherscanUrl: queue.tx_hash
-      ? `${ETHERSCAN_BASE}/${queue.tx_hash}`
-      : undefined,
+    etherscanUrl: queue.tx_hash ? explorerTxUrl(queue.tx_hash) : undefined,
     mintedAt: queue.created_at,
     eventCount: events.length,
   };

@@ -3,7 +3,7 @@ import 'server-only';
 
 import { createWalletClient, createPublicClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { optimismSepolia } from 'viem/chains';
+import { CURRENT_CHAIN } from './chain-config';
 
 const account = privateKeyToAccount(
   process.env.OPERATOR_PRIVATE_KEY as `0x${string}`,
@@ -11,11 +11,11 @@ const account = privateKeyToAccount(
 
 export const operatorWalletClient = createWalletClient({
   account,
-  chain: optimismSepolia,
+  chain: CURRENT_CHAIN,
   transport: http(process.env.ALCHEMY_RPC_URL),
 });
 
 export const publicClient = createPublicClient({
-  chain: optimismSepolia,
+  chain: CURRENT_CHAIN,
   transport: http(process.env.ALCHEMY_RPC_URL),
 });

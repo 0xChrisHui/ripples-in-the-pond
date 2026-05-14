@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- （空，等用户从 P7 3 个 Track 起点中选第一刀：A1 / B1 / C1）
+- [Phase 7 A1] chain 配置抽单一来源（验证已过，待用户复述 / commit）
 
 ---
 
@@ -16,7 +16,7 @@
 Phase 7 playbook：`playbook/phase-7/overview.md` + 3 个 track 子文档（覆盖重写，三方 review 整合）
 
 ### Track A — 修严重 BUG（10-11 天 / 14 有效 step）
-- [ ] A1 chain 配置抽单一来源（🔥 MEGA P0，Track A 起点）
+- [x] A1 chain 配置抽单一来源（🔥 MEGA P0，Track A 起点）
 - [ ] A2 AirdropNFT 加 `_uriSet` 防覆盖 + 重新部署（原子流程）
 - [ ] A3+A12 score queue 状态机修复包（双 mint 防御 + lease 25min 根因；A14/A15 前置）
 - [ ] A4 MAINNET-RUNBOOK grantRole 验收命令

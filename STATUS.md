@@ -20,12 +20,12 @@
 
 ## 当前进度
 
-**做到哪**：Phase 6 v2 完结 + commit `0d75a93` 6 项"现在就修"落地 + commit `e7030a8` Phase 7 启动准备 push（旧 P7=UI 翻修开放骨架）。**2026-05-13 P7 重定**：3 个 Track playbook + 三方 review + 16 项必修整合完成，待 commit 推 origin。
+**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已实施并验证**：chain 配置抽到 `src/lib/chain/chain-config.ts` 单一来源，operator wallet / score tx link / score contract link 均不再写死 OP Sepolia，待用户复述后 commit。
 
-**下一步**（Phase 7 启动）—— 3 个 Track 各一个起点（用户 2026-05-13 决策"起点简单清晰"）：
-  1. **A1 chain 配置抽单一来源**（🔥 MEGA P0，Track A 起点）
-  2. **B1 SEMI_API_URL env 同步**（Track B 起点，PoC-only）
-  3. **C1 Lighthouse baseline**（Track C 起点，两次跑：修前 baseline + 修后对照）
+**下一步**（A1 收口后继续 Phase 7）—— 用户从剩余起点中选第一刀：
+  1. **B1 SEMI_API_URL env 同步**（Track B 起点，PoC-only）
+  2. **C1 Lighthouse baseline**（Track C 起点，两次跑：修前 baseline + 修后对照）
+  3. **A2 AirdropNFT 加 `_uriSet` 防覆盖 + 重新部署**（Track A 下一步，涉及 OP Sepolia + Vercel 原子流程）
 
 **Track 依赖图（修订）**：
 - A3+A12 → 阻塞 A14/A15（cron 状态机改完才能稳定 polling）；不再阻塞 C1

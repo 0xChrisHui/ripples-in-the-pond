@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getScoreById } from '@/src/data/score-source';
+import { explorerAddressUrl } from '@/src/lib/chain/chain-config';
 import ScorePlayer from './ScorePlayer';
 
 /**
@@ -106,7 +107,7 @@ export default async function ScorePage({ params }: Props) {
             <div className="flex justify-between">
               <span>Contract</span>
               <a
-                href={`https://sepolia-optimism.etherscan.io/address/${contractAddr}`}
+                href={explorerAddressUrl(contractAddr)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="truncate pl-4 text-white/50 hover:text-white/70"
