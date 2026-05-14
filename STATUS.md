@@ -20,12 +20,12 @@
 
 ## 当前进度
 
-**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已实施并验证**：chain 配置抽到 `src/lib/chain/chain-config.ts` 单一来源，operator wallet / score tx link / score contract link 均不再写死 OP Sepolia，待用户复述后 commit。
+**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1-local 已实施**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`；B1-vercel 待用户在 Vercel 三环境线下添加。
 
-**下一步**（A1 收口后继续 Phase 7）—— 用户从剩余起点中选第一刀：
-  1. **B1 SEMI_API_URL env 同步**（Track B 起点，PoC-only）
-  2. **C1 Lighthouse baseline**（Track C 起点，两次跑：修前 baseline + 修后对照）
-  3. **A2 AirdropNFT 加 `_uriSet` 防覆盖 + 重新部署**（Track A 下一步，涉及 OP Sepolia + Vercel 原子流程）
+**下一步**（B1 收口后继续 Phase 7）—— 用户从剩余起点中选第一刀：
+  1. **C1 Lighthouse baseline**（Track C 起点，两次跑：修前 baseline + 修后对照）
+  2. **A2 AirdropNFT 加 `_uriSet` 防覆盖 + 重新部署**（Track A 下一步，涉及 OP Sepolia + Vercel 原子流程）
+  3. **B2 SemiLogin 组件 + LoginModal 两 tab**（Track B 下一步，等 B1-local 即可开工）
 
 **Track 依赖图（修订）**：
 - A3+A12 → 阻塞 A14/A15（cron 状态机改完才能稳定 polling）；不再阻塞 C1
