@@ -227,45 +227,14 @@
 - /artist 页不显示空投进度标记（或显示为"运营内部"）
 - /me 无草稿上链按钮之前路径关闭（Phase 6 B3 接通前）
 
-## 🚀 Phase 7 候选清单（v2 缩减时迁出，2026-05-03）
+## 🚀 Phase 7 当前执行范围（2026-05-13 重定）
 
-来源：Phase 6 v2 playbook 缩减时挂起的工作 + 艺术家 5 条反馈。Phase 6 完结时这份清单进 Phase 7 plan。
+Phase 7 不再是 UI 翻修候选清单，而是三 Track 并行：
+- **Track A**：修严重 BUG（A1 起点，含 A6 20 曲 arweave_url 全量上链）
+- **Track B**：Semi 社区钱包前端接入 PoC-only（B1 起点）
+- **Track C**：全站提速（C1 Lighthouse baseline 起点）
 
-### 来自艺术家反馈
-
-| # | 反馈 | P7 step 候选 |
-|---|---|---|
-| 1 | 视觉：漂浮液态感（不要"星球"要"液态细胞"，调透明度）| P7 主页视觉重做 |
-| 2 | 动态：流动 + 更多随机扰动事件 | P7 主页动态扩展 |
-| 3 | 音阶：键盘触发音阶（A=钢琴 1-0 / Q=提琴）| P7 键盘音阶系统（**新功能**，非重设计）|
-| 4 | 音乐圆圈不需要名字，数字代号 | **P6 B6 处理**（不进 P7）|
-| 5 | 按键动画自定义 + 与岛屿/日食原生组件交互 | P7 自定义动画层 |
-
-### 来自 v2 缩减
-
-- **/me /score /artist 深度重设计**（v2 决策 1）
-- **Claude Design 接入**（原 B2.0.7，条件评估）
-- **跨浏览器截图验收**（原 B2.5）
-- **24 张跨浏览器 / 断点截图归档**（原 B2.5）
-
-### 来自 5/6 B2 Bug C 修复副产品
-
-- **换 Turbo wallet**（旧钱包私钥 5/6 调试时泄露在聊天 jsonl，余额极小；P7 主网前必须换）
-  - 流程：`scripts/arweave/generate-eth-wallet.ts` → 充 Base ETH → `topup-turbo.ts` → 替换 .env.local + Vercel TURBO_WALLET_JWK
-  - 旧地址 `0xdE788249e747FB54c19e7B7F9baE85B631B9Fba8` 弃用 + Turbo credits 重新购买
-- **D 组 No.1~No.5 上传 Arweave**（解锁草稿铸造）
-  - 现状：`tracks.arweave_url=NULL` 导致 cron stepUploadMetadata 必崩 → D 组（含 B/C 前 5 球）完全无法铸造 ScoreNFT
-  - 跑 `scripts/arweave/upload-tracks.ts`（已存在）+ UPDATE 5 行 arweave_url = ar://xxx
-- **加 vercel-env-sync 脚本**（防 NEXT_PUBLIC_ env var typo）
-  - 起因：5/6 Bug C 第二层根因 = `NEXT_PUBLIC_SCORE_NFT_ADDRES` 少一个 S
-  - 脚本对比 `.env.local` 与 Vercel API（vercel CLI 或 Management API）的 key 差集，CI/手动跑都能
-
-### 投资人 demo 范围（不变）
-
-投资人只看链上技术 → P7 demo 重点：
-- 主网部署（OP Mainnet）
-- 端到端铸造 / 录制 / 回放跑通
-- 监控 + 告警就绪
+旧 Phase 7 UI 翻修候选已分流：艺术家反馈 5 条 + Claude Design + /me /score /artist 深度重设计 → Phase 8；按键动画 + 音效系统扩展 26→50 → Phase 9；主网部署 / Resend / CRON_SECRET / operator 主网 ETH → Phase 10。
 
 ## 📌 悬空 TODO（不在 step 内但要追踪）
 
