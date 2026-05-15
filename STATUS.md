@@ -22,9 +22,9 @@
 
 **做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1 已完整完成**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`（commit `65516d0`）；**B1-vercel 用户 2026-05-15 已在 Vercel 三环境添加完成**。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**Track C 全套（C1-C9）已收口**（详见上一轮验证）。**2026-05-15 A2 已上链 + Vercel + 归档**：AirdropNFT v2 部署 OP Sepolia `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`。**2026-05-15 B2/B3 已完成本地实施**：新建 SemiLogin + LoginModal 两 tab + useAuth 双源化（Privy / Semi JWT），4 个 caller（LoginButton / MintButton / useFavorite / me/page.tsx）从 `login` 改 `openLoginModal`；client-jwt.ts store 用 useSyncExternalStore + storage event 跨 tab 同步，60s 兜底 exp 检查。verify.sh 全绿。**Track B 剩余**：B4a 端到端实测（用户线下走 7 步）+ B4b 投资人 demo 协调；演示话术 + 实测脚本已草拟在 `docs/SEMI-DEMO-SCRIPT.md`。
 
-**下一步** —— Track B 端到端实测（用户线下做）：
-  1. **B4a 用户线下走 7 步流程**：`docs/SEMI-DEMO-SCRIPT.md §一` — 退 Privy → 切 Semi tab → 手机号 + 验证码 → /me → 收藏铸造 → Etherscan + Semi APP 确认；问题反馈后再迭代
-  2. **A3+A12 score queue 状态机修复包**（Track A 下一刀，独立于 B4a 实测）
+**下一步** —— Track A 继续推进：
+  1. **A3+A12 score queue 状态机修复包**（双 mint 防御 + lease 25min 根因；A14/A15 前置）
+  2. **A4 MAINNET-RUNBOOK grantRole 验收命令**（小步快跑）
 
 **Track 依赖图（修订）**：
 - A3+A12 → 阻塞 A14/A15（cron 状态机改完才能稳定 polling）；不再阻塞 C1
@@ -43,7 +43,7 @@
 
 **已实质完成的步骤**：
 - Phase 7 Track A：A1 chain-config 抽单一来源 ✅（commit `e0084db`）/ A2 AirdropNFT v2 加 `_uriSet` + 重新部署 ✅（2026-05-15）
-- Phase 7 Track B：B1 SEMI_API_URL env 三环境同步 ✅（local + Vercel）/ B2 SemiLogin + LoginModal 两 tab ✅（2026-05-15）/ B3 useAuth 双源化 + 4 caller 改 openLoginModal ✅（2026-05-15）/ B4a 待用户线下实测 / B4b 待投资人 demo 协调
+- Phase 7 Track B（**全部 ✅** 2026-05-15）：B1 SEMI_API_URL env 三环境同步 ✅ / B2 SemiLogin + LoginModal 两 tab ✅ / B3 useAuth 双源化 + 4 caller 改 openLoginModal ✅ / B4a 用户线下 7 步实测 ✅ / B4b 投资人 demo 协调 ✅ / review 整合 ✅（claude 自审 + codex 2 条 P1 落地：useAuth ready 双源 + SEMI-DEMO-SCRIPT 步骤 6 校验方式）
 - Phase 6 Track A：A0 operator 锁 ✅ / A1 ScoreNFT cron durable lease ✅ / A2 failure_kind ✅ / A3 sync cursor 事务性 ✅ / A4 草稿原子化 ✅ / A5 P7 / A6 决策冻结
 - Track B（Phase 6）：B1 cache 隔离 ✅ / B2 Bug A/B 由 B8 数据流重设实质收口 + Bug C 5/6 修 ✅ / B3 草稿铸造 + 5/8 实测 ✅ / B5 #7 ✅ #9 ✅ #8 废弃（HomeJam 已 dead-code）/ B6 ✅ / B7 待 / B4 删
 - Phase 7 Track C：C1 Lighthouse baseline ✅（修前）/ C2 四个体感目标 + ROI 准则 ✅ / C3 split ✅ / C5 loading UI ✅ / C6 font swap/preload ✅ / C7 loading.tsx ✅ / C8 对比报告 ✅（downgraded-accepted）/ C9a /me 并行 + section error ✅ / C9b /score events 按需 fetch + cache() ✅

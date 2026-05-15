@@ -71,6 +71,20 @@
 
 ---
 
+### E004 — `useSyncExternalStore` 引用不稳致 Maximum update depth exceeded
+
+- 📅 2026-05-15 / Phase 7 Track B B3
+
+- 😱 `The result of getSnapshot should be cached to avoid an infinite loop` + `Maximum update depth exceeded` —— useAuth 改双源化后，dev server 首屏即报，整页崩。
+
+- 🧠 `readSemiJwt()`（= `useSyncExternalStore` 的 `getSnapshot`）每次调用都 `new` 一个 `{ jwt, payload }` 对象。React 用 `Object.is` 比对快照，引用不同 → 触发 rerender → 又调 getSnapshot → 又是新对象 → 死循环。jose 的 atob 解码 / Date.now() 比较都是"看似 pure 实际每次返回新对象"的典型陷阱。
+
+- 🔧 模块级 `cachedState` 变量缓存上一份；`refresh()` 计算新值后做等值检查（jwt 字符串 + payload.sub + payload.exp），相同就保持旧引用、否则替换 + 通知 listeners。`ensureSnapshot()` 第一次 getSnapshot 时同步初始化（pure，无副作用）；`ensureSubscribers()` 第一次 subscribe 时挂全局 setInterval(60s) + storage listener，全程只挂一次。
+
+- 💡 `useSyncExternalStore` 的 `getSnapshot` 必须 referentially stable —— "同一份底层数据每次返回必须 === 上次"。模块级 store 用 cachedState + 等值检查复用引用是标准模式；副作用（定时器 / 事件监听）必须挂在 `subscribe` 而非 `getSnapshot`，否则 React 严格模式下也会报。
+
+---
+
 ## 🏷 错误索引（按类型）
 
 随着错误积累，AI 会在这里维护一份按类型分类的索引：
@@ -81,6 +95,7 @@
 ### Next.js / React
 - E001 Tailwind v4 扫描 `.claude/logs/` 导致 Invalid code point
 - E002 Cursor autoSave 覆盖外部修改
+- E004 useSyncExternalStore getSnapshot 引用不稳致死循环
 
 ### TypeScript
 - （空）

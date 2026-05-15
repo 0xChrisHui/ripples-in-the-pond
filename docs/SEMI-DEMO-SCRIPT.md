@@ -23,7 +23,9 @@
 3. **切到 Semi tab**：点击"社区钱包" tab → 看到手机号输入框 + 发送验证码按钮
 4. **输手机号 + 发码**：输 Semi APP 注册的手机号（默认 +86，不带 country code 选择器）→ 点发送验证码 → button 变 loading → 成功后切到验证码输入页 + 60s 倒计时
 5. **输验证码 + 登录**：输入 6 位短信验证码 → 点"登录" → 成功后 modal 关闭 + 右上角显示"我的音乐"（已登录态）
-6. **校验地址**：进入 `/me` 页 → 顶部右侧地址缩写应当是 Semi 钱包 APP 内的 EVM 地址（与 Semi APP 一致）
+6. **校验地址**（**不靠 UI 显示**——当前 LoginButton 已登录态显示"我的音乐 / 登出"按钮，不显示 EVM 地址）：
+   - 打开 DevTools → Application → Local Storage → `ripples_auth_jwt` → 复制 token → 在 https://jwt.io 粘贴 → 看 payload 里 `evm` 字段 = Semi APP 内地址
+   - **或**等步骤 7 链上 mint tx 出来后，在 `sepolia-optimism.etherscan.io` 看 ERC-721 Transfer 的 `to` 地址 = Semi APP 内地址
 7. **铸造 + 链上确认**：回首页 → 选一个 sphere → 点收藏 → /me 看到 MaterialNFT 卡片（先灰 pending，后绿 minted）→ 等 1-3 分钟 cron 跑完 → tx hash 出现 → 在 `sepolia-optimism.etherscan.io` 搜地址确认 ERC-721 Transfer 到 Semi 钱包地址 → 在 Semi 钱包 APP 内查"我的 NFT"应当能看到这枚
 
 ### 边界场景验证

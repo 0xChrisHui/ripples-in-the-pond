@@ -12,6 +12,9 @@ import SemiLogin from './SemiLogin';
  * Semi tab 走 SemiLogin 组件。
  */
 
+// 模块级 store + React useSyncExternalStore 标准三件套（subscribe / getSnapshot / getServerSnapshot）。
+// 选模块级而非 Context：① modal 是全站单例 ② 任意非 React 代码也能调 openLoginModal ③ 避免新增
+// Context Provider 占用 components/auth/ 目录文件位。布尔值天然引用稳定，无需 cachedState。
 let isOpen = false;
 const listeners = new Set<() => void>();
 

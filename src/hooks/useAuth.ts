@@ -28,10 +28,14 @@ function getServerSnapshot(): JwtState {
  * Phase 6 B1：logout 前清当前用户的 NFT cache，防共享浏览器/换号串数据
  */
 export function useAuth() {
-  const { ready, authenticated: privyAuth, user, login: privyLogin, logout: privyLogout, getAccessToken: privyToken } = usePrivy();
+  const { ready: privyReady, authenticated: privyAuth, user, login: privyLogin, logout: privyLogout, getAccessToken: privyToken } = usePrivy();
   const jwtState = useSyncExternalStore(subscribeSemiJwt, readSemiJwt, getServerSnapshot);
 
   const semiAuth = jwtState.jwt !== null && jwtState.payload !== null;
+
+  // ready 双源：Privy SDK 初始化慢 / 失败时，已有 Semi JWT 的回访用户不应该看到 UI 空白
+  // （LoginButton / /me 都在 ready=false 时返 null）。codex review 2026-05-15 P1。
+  const ready = privyReady || semiAuth;
 
   let authSource: 'privy' | 'semi' | null = null;
   let userId: string | null = null;
@@ -69,8 +73,10 @@ export function useAuth() {
     authSource,
     userId,
     evmAddress,
-    login: privyLogin, // 旧 caller 兼容（直接弹 Privy，不经 modal）
-    openLoginModal,    // 新 caller 推荐：弹两 tab modal
+    // ⚠️ login 仅作 D-B3 兼容字段保留（直接弹 Privy 原生 modal、绕过两 tab 选择）。
+    // 新代码请用 openLoginModal —— 否则 Semi 用户没机会进 Semi tab 登录。
+    login: privyLogin,
+    openLoginModal,
     logout,
     getAccessToken,
   };

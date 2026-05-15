@@ -15,6 +15,12 @@
 
 export const SEMI_JWT_KEY = 'ripples_auth_jwt';
 
+/**
+ * JWT payload 前端切片 —— jose 的 setSubject / 自定义字段 / setExpirationTime 标准产物。
+ * playbook D-B5 写"{ userId, evmAddress, iat, exp }"是契约抽象描述；jose 标准字段名是
+ * `sub` / `evm`（自定义）/ `iat` / `exp`：sub 即 userId，evm 即 evmAddress。
+ * 后端 jwt.ts:51-60 用 jose.SignJWT().setSubject(userId) 写 sub；前端 atob 直接读 sub/evm 即可。
+ */
 export interface SemiJwtPayload {
   sub: string; // userId
   evm: string; // evmAddress
