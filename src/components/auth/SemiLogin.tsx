@@ -2,17 +2,19 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { setSemiJwt } from '@/src/lib/auth/client-jwt';
+import PinInput from './PinInput';
 
 const COUNTDOWN_SECONDS = 60;
+
+function maskPhone(phone: string): string {
+  if (phone.length <= 7) return phone;
+  return `${phone.slice(0, 3)}...${phone.slice(-4)}`;
+}
 
 type Phase = 'phone' | 'code';
 
 /**
- * Phase 7 Track B B2 — Semi 社区钱包登录组件
- *
- * 状态机：phone（输手机号 → 发码）→ code（输验证码 + 60s 倒计时 → 登录）→ onSuccess
- * 后端走 /api/auth/community/send-code + /api/auth/community（Phase 4A S2 已就绪）
- * D-B4 错误分类：手机格式不对 / 60s 内重发禁用 / 验证码错（401）/ 网络错
+ * Phase 7 Track D D2 — Semi 社区钱包登录，两阶段深色布局。
  */
 export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
   const [phone, setPhone] = useState('');
@@ -60,8 +62,8 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
 
   const submit = useCallback(async () => {
     const trimmedCode = code.trim();
-    if (!trimmedCode) {
-      setError('请输入验证码');
+    if (trimmedCode.length !== 6) {
+      setError('请输入 6 位验证码');
       return;
     }
     setError(null);
@@ -91,69 +93,68 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
     }
   }, [code, normalizedPhone, onSuccess]);
 
-  return (
-    <div className="flex flex-col gap-3">
-      <label className="text-xs text-white/50">
-        手机号
+  if (phase === 'phone') {
+    return (
+      <div className="flex flex-col gap-5 text-center">
+        <div>
+          <h2 className="text-2xl font-light tracking-[0.35em] text-white">登 录</h2>
+          <p className="mt-3 text-sm text-white/50">输入你登录用的手机号</p>
+        </div>
+
         <input
           type="tel"
           inputMode="tel"
           autoComplete="tel"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          disabled={phase === 'code' || loading}
+          disabled={loading}
           placeholder="例如 13800000000"
-          className="mt-1 w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white outline-none transition-colors focus:border-white/30 disabled:opacity-50"
+          className="w-full rounded-full border border-white/10 bg-black/40 px-5 py-3 text-center text-sm text-white outline-none transition-colors placeholder:text-white/25 focus:border-white/30 disabled:opacity-50"
         />
-      </label>
 
-      {phase === 'code' && (
-        <label className="text-xs text-white/50">
-          验证码
-          <input
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="6 位短信验证码"
-            disabled={loading}
-            className="mt-1 w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white outline-none transition-colors focus:border-white/30 disabled:opacity-50"
-          />
-        </label>
-      )}
-
-      {error && <p className="text-xs text-red-400">{error}</p>}
-
-      {phase === 'phone' ? (
         <button
           type="button"
           onClick={sendCode}
           disabled={loading || !phoneValid}
-          className="rounded-full border border-white/20 px-4 py-2 text-sm text-white transition-colors hover:bg-white/10 disabled:opacity-40"
+          className="w-full rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm tracking-[0.2em] text-white transition-colors hover:bg-white/20 disabled:opacity-40"
         >
-          {loading ? '发送中…' : '发送验证码'}
+          {loading ? '发送中…' : '下 一 步'}
         </button>
-      ) : (
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={submit}
-            disabled={loading || !code.trim()}
-            className="flex-1 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white transition-colors hover:bg-white/20 disabled:opacity-40"
-          >
-            {loading ? '登录中…' : '登录'}
-          </button>
-          <button
-            type="button"
-            onClick={sendCode}
-            disabled={countdown > 0 || loading}
-            className="rounded-full border border-white/20 px-3 py-2 text-xs text-white/70 transition-colors hover:bg-white/10 disabled:opacity-40"
-          >
-            {countdown > 0 ? `${countdown}s 后重发` : '重发'}
-          </button>
-        </div>
-      )}
+
+        {error && <p className="text-xs text-red-400">{error}</p>}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-5 text-center">
+      <div>
+        <h2 className="text-2xl font-light tracking-[0.35em] text-white">验 证 码</h2>
+        <p className="mt-3 text-sm text-white/50">请输入收到的 6 位验证码</p>
+        <p className="mt-1 text-xs text-white/35">发往 {maskPhone(normalizedPhone)}</p>
+      </div>
+
+      <PinInput value={code} onChange={setCode} disabled={loading} />
+
+      <button
+        type="button"
+        onClick={sendCode}
+        disabled={countdown > 0 || loading}
+        className="text-xs text-white/45 transition-colors hover:text-white/70 disabled:cursor-not-allowed disabled:hover:text-white/45"
+      >
+        {countdown > 0 ? `${countdown}s 后重发` : '重发'}
+      </button>
+
+      <button
+        type="button"
+        onClick={submit}
+        disabled={loading || code.length !== 6}
+        className="w-full rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm tracking-[0.2em] text-white transition-colors hover:bg-white/20 disabled:opacity-40"
+      >
+        {loading ? '登录中…' : '验  证'}
+      </button>
+
+      {error && <p className="text-xs text-red-400">{error}</p>}
     </div>
   );
 }

@@ -48,7 +48,7 @@ function buildDisplayDrafts(
  * 草稿来源：localStorage（未上传）+ 服务端（已上传未入队）
  */
 export default function MePage() {
-  const { ready, authenticated, openLoginModal, getAccessToken, userId } = useAuth();
+  const { ready, authenticated, openLoginModal, getAccessToken, userId, authSource } = useAuth();
   const [scoreNfts, setScoreNfts] = useState<OwnedScoreNFT[]>([]);
   const [nfts, setNfts] = useState<OwnedNFT[]>(() => getCachedNFTs(null));
   const [drafts, setDrafts] = useState<DisplayDraft[]>(() =>
@@ -168,9 +168,20 @@ export default function MePage() {
           <h1 className="text-lg font-light tracking-widest text-white/80">
             我的收藏
           </h1>
-          <Link href="/" className="text-xs text-white/30 hover:text-white/50">
-            ← 首页
-          </Link>
+          {authSource === 'semi' ? (
+            <a
+              href="https://app.ntdao.xyz/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-white/30 hover:text-white/50"
+            >
+              ↗ 社区钱包
+            </a>
+          ) : (
+            <Link href="/" className="text-xs text-white/30 hover:text-white/50">
+              ← 首页
+            </Link>
+          )}
         </div>
 
         {loaded && nfts.length === 0 && drafts.length === 0 && scoreNfts.length === 0 && !scoreNftsError && !draftsError && <EmptyState />}
