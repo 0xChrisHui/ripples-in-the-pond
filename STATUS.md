@@ -20,9 +20,9 @@
 
 ## 当前进度
 
-**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1-local 已提交 `65516d0`**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`；B1-vercel 待用户在 Vercel 三环境线下添加。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**2026-05-15 C3 已完成本地验证**：`/api/me/scores?light=1` 不再拉 `events_data`，DraftCard 点击播放时按需拉 events endpoint。**C5 已完成本地验证**：首页空数据/慢网态改为 spinner + 慢网提示 + 手动重试。**C6 已完成本地验证**：5 个 next/font 都显式 `display: "swap"` + `preload: true`，未做激进字体裁剪。**C7 已完成本地验证**：`/me`、`/artist`、`/score/[id]` 增加 loading.tsx 骨架；verify 通过。**C8 已产出对比报告**：`reviews/2026-05-15-phase-7-perf-completion.md`，Track C 按 downgraded-accepted 收口，剩余深度性能 / `/score/12` 500 稳定性归 A10/P8/P10。
+**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1-local 已提交 `65516d0`**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`；B1-vercel 待用户在 Vercel 三环境线下添加。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**2026-05-15 C3 已完成本地验证**：`/api/me/scores?light=1` 不再拉 `events_data`，DraftCard 点击播放时按需拉 events endpoint。**C5 已完成本地验证**：首页空数据/慢网态改为 spinner + 慢网提示 + 手动重试。**C6 已完成本地验证**：5 个 next/font 都显式 `display: "swap"` + `preload: true`，未做激进字体裁剪。**C7 已完成本地验证**：`/me`、`/artist`、`/score/[id]` 增加 loading.tsx 骨架；verify 通过。**C8 已产出对比报告**：`reviews/2026-05-15-phase-7-perf-completion.md`，Track C 按 downgraded-accepted 收口。**2026-05-15 C9a 已完成本地实测**：`/me` 三个 fetch（score-nfts / nfts / scores）改并行触发；唱片区/草稿区独立 skeleton + error 态，单 section 失败不阻塞其他。**C9b 已完成本地实测**：`getScoreById` 加 React `cache()` per-request dedupe；首屏不再 SELECT `events_data`，改用 `pending_scores.event_count`；新增公开 endpoint `/api/scores/[id]/events` + ScorePlayer 改为挂载时 fetch events（loading / error / ready 三态）。Track C 全套（C1-C9）收口。
 
-**下一步**（C8 后继续 Phase 7）—— 建议第一刀：
+**下一步**（C9a + C9b 后继续 Phase 7）—— 建议第一刀：
   1. **A2 AirdropNFT 加 `_uriSet` 防覆盖 + 重新部署**（Track A 下一步，涉及 OP Sepolia + Vercel 原子流程）
   2. **B2 SemiLogin 组件 + LoginModal 两 tab**（Track B 下一步，等 B1-local 即可开工；B4a 仍等 B1-vercel）
 
@@ -44,7 +44,7 @@
 **已实质完成的步骤**：
 - Track A：A0 operator 锁 ✅ / A1 ScoreNFT cron durable lease ✅ / A2 failure_kind ✅ / A3 sync cursor 事务性 ✅ / A4 草稿原子化 ✅ / A5 P7 / A6 决策冻结
 - Track B：B1 cache 隔离 ✅ / B2 Bug A/B 由 B8 数据流重设实质收口 + Bug C 5/6 修 ✅ / B3 草稿铸造 + 5/8 实测 ✅ / B5 #7 ✅ #9 ✅ #8 废弃（HomeJam 已 dead-code）/ B6 ✅ / B7 待 / B4 删
-- Phase 7 Track C：C1 Lighthouse baseline ✅（修前）/ C2 四个体感目标 + ROI 准则 ✅ / C3 split ✅ / C5 loading UI ✅ / C6 font swap/preload ✅ / C7 loading.tsx ✅ / C8 对比报告 ✅（downgraded-accepted）
+- Phase 7 Track C：C1 Lighthouse baseline ✅（修前）/ C2 四个体感目标 + ROI 准则 ✅ / C3 split ✅ / C5 loading UI ✅ / C6 font swap/preload ✅ / C7 loading.tsx ✅ / C8 对比报告 ✅（downgraded-accepted）/ C9a /me 并行 + section error ✅ / C9b /score events 按需 fetch + cache() ✅
 - Track C（Phase 6 历史）：C1/C2/C3/C4 ✅
 - Track D：D1 决策不做 / D2 admin Bearer ✅ / D3-D5 挂起（D1=不做）
 - Track E：E1 health mintQueue ✅ / E2 Semi P7 / E3 依赖 E2 P7 / E4 废弃（B8 P3 删 decoder iframe）/ E5 本次 ✅
@@ -154,6 +154,19 @@
 
 ## 上次成功验证
 
+- 验证: **Phase 7 Track C C9a + C9b 落地**（`/me` 内容区 + `/score/[id]` 详情页首屏轻量化）
+- 时间: 2026-05-15
+- 改动:
+  - **C9a `/me` 内容区**：`app/me/page.tsx` 三个 fetch（`fetchMyScoreNFTs` / `fetchMyNFTs` / `fetchMyScores`）改并行触发（之前 scores 串在 saveScore loop 后 await，最坏 N×saveScore 叠加）；每个 fetch catch + finally，单失败不阻塞其他；ScoreNftSection / DraftSection 加 `error?: boolean` prop，失败显示红色错误条；EmptyState 在错误态下不显示
+  - **C9b R1** `src/data/score-source.ts` `getScoreById` 加 React `cache()` 包装：metadata + page 同 request 内只跑一次 DB 链路（8 → 4 个 roundtrip）
+  - **C9b R2** `score-source.ts` `pending_scores` 改 SELECT `event_count`（migration 031 generated column）替代 `events_data.length`；删 `ScorePageData.events` 字段，首屏 HTML 不再阻塞大 JSON
+  - **C9b R3** 新建 `src/data/score-events-source.ts`（双兼容路由解析 + 拉 events_data）+ 公开 endpoint `app/api/scores/[id]/events/route.ts`（middleware 已注释 `/api/scores/*` 公开只读）；`ScorePlayer.tsx` 改为挂载时 fetch events，三态：loading（按钮 disabled + "加载中…"）/ error（红条 + "请稍后刷新"）/ ready
+- 验证证据: TS 0 errors / ESLint 通过（仅 3 项 pre-existing warning）/ npm run build 全 28 路由生成完成（新增 `/api/scores/[id]/events`）；用户本地浏览器实测 `/me` 进入体感 + `/score/[id]` 首屏速度 + ScorePlayer 三态切换 + 双兼容路由（数字 tokenId / queue.id UUID）通过
+- 待办（用户线下做）:
+  - 后续若做 Vercel preview 实跑 Lighthouse 修后对照，可对齐 C8 报告口径
+
+### 上一轮成功验证（保留）
+
 - 验证: **strict CTO review "现在就修" 6 项落地**（测试网立即修补，避免等 Phase 7）
 - 时间: 2026-05-08
 - 改动:
@@ -169,7 +182,7 @@
   - 测试网 Vercel 加环境变量 `AIRDROP_ENABLED=true`（保持现有空投行为）；主网部署时**不设**此 env
   - 运维脚本 / runbook 把 `/api/cron/queue-status?token=…` 改成 `curl -H 'Authorization: Bearer $ADMIN_TOKEN'`
 
-### 上一轮成功验证（保留）
+### 上上轮成功验证（保留）
 
 - 验证: **B8 P3 端到端实测 + B6 demo 5 球 arweave_url 上链回写**（草稿铸造主链路全通）
 - 时间: 2026-05-08
@@ -184,20 +197,12 @@
   - Resend 邮件告警 P3 commit 提了未做 → 主网前必做
   - Agent review 13 finding：5 项本次合入修，8 项挂 P7
 
-### 上上轮成功验证（保留）
+### 上上上轮成功验证（保留）
 
 - 验证: B2 Bug C 主链路双根因修复（cron 4-28~5-6 全 fail 修通到 minting_onchain 上链）
 - 时间: 2026-05-06
 - 改动: 本地 turbo-wallet.json 删 purpose 中文行（编码错误致 JSON.parse 崩 position 256）/ Vercel 加 NEXT_PUBLIC_SCORE_NFT_ADDRESS 删拼错版 / DELETE 8 条 failed row
 - 验证证据: 新铸造 row 走完前 3 步 token_id=2 上链（events_ar_tx_id + tx_hash 都有），第 4 步业务 throw（D 组无 arweave_url 是独立 P7 问题，**已在 5/8 解锁**）
-
-### 上上上轮成功验证（保留）
-
-- 验证: B6 实施完成（A 组 5 球 + B/C 36 球 demo 上线）
-- 时间: 2026-05-04
-- 改动: migration 027/028（tracks 加 published + 5 行循环到 No.1-5 + 安全清旧 mint）/ Modak 字体引入 / SphereNode 删下方 label 加内嵌数字 badge / getGroupTargetCount 抽象 / mock-tracks 5 行补 published
-- 验证证据: TS 0 errors / npm run build 通过 / 浏览器实测 5 球 36 球数字稳定显示
-- 决策推翻: B7 改放最后（避免"测-修-重测"循环）
 
 ## 当前阻塞
 

@@ -57,6 +57,8 @@ export default function MePage() {
   const [loaded, setLoaded] = useState(false);
   const [serverDraftsLoaded, setServerDraftsLoaded] = useState(false);
   const [scoreNftsLoaded, setScoreNftsLoaded] = useState(false);
+  const [scoreNftsError, setScoreNftsError] = useState(false);
+  const [draftsError, setDraftsError] = useState(false);
 
   // 稳定 getAccessToken 引用：Privy 不保证 useCallback 稳定，
   // 直接放进 effect deps 会导致 fetch / saveScore loop 因父 rerender 重复触发
@@ -82,19 +84,42 @@ export default function MePage() {
       fetchMyScoreNFTs(token)
         .then((data) => {
           setScoreNfts(data);
-          setScoreNftsLoaded(true);
+          setScoreNftsError(false);
         })
         .catch((err) => {
           console.error(err);
+          setScoreNftsError(true);
+        })
+        .finally(() => {
           setScoreNftsLoaded(true);
         });
-      fetchMyNFTs(token).then((data) => {
-        setNfts(data);
-        setCachedNFTs(userId, data);
-        setLoaded(true);
-      });
+      fetchMyNFTs(token)
+        .then((data) => {
+          setNfts(data);
+          setCachedNFTs(userId, data);
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setLoaded(true);
+        });
+
+      fetchMyScores(token)
+        .then((serverDrafts) => {
+          setDrafts(buildDisplayDrafts(serverDrafts, getDrafts()));
+          setDraftsError(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setDraftsError(true);
+        })
+        .finally(() => {
+          setServerDraftsLoaded(true);
+        });
 
       const localDrafts = getDrafts();
+      let uploadedLocalDraft = false;
       for (const draft of localDrafts) {
         try {
           await saveScore(token, {
@@ -103,14 +128,16 @@ export default function MePage() {
             createdAt: draft.createdAt,
           });
           removeDraft(draft.trackId);
+          uploadedLocalDraft = true;
         } catch (err) {
           console.error('草稿上传失败，保留在本地:', err);
         }
       }
 
-      const serverDrafts = await fetchMyScores(token);
-      setDrafts(buildDisplayDrafts(serverDrafts, getDrafts()));
-      setServerDraftsLoaded(true);
+      if (uploadedLocalDraft) {
+        const serverDrafts = await fetchMyScores(token);
+        setDrafts(buildDisplayDrafts(serverDrafts, getDrafts()));
+      }
     });
   }, [authenticated, userId]);
 
@@ -146,15 +173,16 @@ export default function MePage() {
           </Link>
         </div>
 
-        {loaded && nfts.length === 0 && drafts.length === 0 && scoreNfts.length === 0 && <EmptyState />}
+        {loaded && nfts.length === 0 && drafts.length === 0 && scoreNfts.length === 0 && !scoreNftsError && !draftsError && <EmptyState />}
 
         <ScoreNftSection
           scoreNfts={scoreNfts}
           showSkeleton={authenticated && !scoreNftsLoaded}
+          error={scoreNftsError}
         />
 
         {nfts.length > 0 && (
-          <section className={scoreNfts.length > 0 || (authenticated && !scoreNftsLoaded) ? 'mt-10' : ''}>
+          <section className={scoreNfts.length > 0 || (authenticated && !scoreNftsLoaded) || scoreNftsError ? 'mt-10' : ''}>
             <h2 className="mb-4 text-sm font-light tracking-widest text-white/60">
               音乐收藏
             </h2>
@@ -169,6 +197,7 @@ export default function MePage() {
         <DraftSection
           drafts={drafts}
           showSkeleton={authenticated && !serverDraftsLoaded}
+          error={draftsError}
         />
       </div>
     </main>

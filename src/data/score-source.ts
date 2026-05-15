@@ -1,8 +1,8 @@
 import 'server-only';
+import { cache } from 'react';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { resolveArUrl } from '@/src/lib/arweave';
 import { explorerTxUrl } from '@/src/lib/chain/chain-config';
-import type { KeyEvent } from '@/src/types/jam';
 import type { Track } from '@/src/types/tracks';
 
 /**
@@ -12,7 +12,12 @@ import type { Track } from '@/src/types/tracks';
  * UUID 按 queue.id 查（B8 主路径，含未上链的中间态）。
  *
  * Phase 6 A5 链上灾备路径在 B8 后已删除（score-fallback.ts noop 残留 2026-05-08 清掉）。
- * 主路径 DB miss 直接 notFound；灾备方案待 P7 重新设计（链上 metadata 拿不到完整 Track）。
+ * 主路径 DB miss 直接 notFound；灾备方案待 P7 重新设计。
+ *
+ * C9b（2026-05-15）：首屏不再 SELECT events_data（大 JSON 阻塞 SSR），改拉
+ * pending_scores.event_count generated column。events 走独立 endpoint
+ * /api/scores/[id]/events 由 ScorePlayer 挂载时按需 fetch（score-events-source.ts）。
+ * getScoreById 用 React cache() 包装：同 request 内 generateMetadata + page 只跑一次。
  */
 
 export interface ScorePageData {
@@ -22,8 +27,6 @@ export interface ScorePageData {
   tokenId?: number;
   trackTitle: string;
   creatorAddress: string;
-  /** 按键事件序列（前端 inline 播放用）*/
-  events: KeyEvent[];
   /** 底曲信息（PlayerProvider.toggle + useEventsPlayback 用）*/
   track: Track;
   coverUrl: string;
@@ -36,24 +39,23 @@ export interface ScorePageData {
 }
 
 
-/** 路由入口：纯数字 → tokenId 路径，否则按 UUID → queue.id 路径 */
-export async function getScoreById(id: string): Promise<ScorePageData | null> {
-  if (/^\d+$/.test(id)) {
-    const n = Number(id);
-    // 防御：> 2^53 数字会丢精度；DB token_id 是 int4（~2.1B 上限）远在安全范围内，
-    // 所以超出 = 非法路由，直接 null（避免 .eq() 收到失真值进而误中或类型错）
-    if (!Number.isSafeInteger(n)) return null;
-    return getScoreByTokenId(n);
-  }
-  return getScoreByQueueId(id);
-}
+/** 路由入口：纯数字 → tokenId 路径，否则按 UUID → queue.id 路径
+ *  cache(): per-request dedupe（generateMetadata + page 共享同一 request 时只跑一次）。
+ */
+export const getScoreById = cache(
+  async (id: string): Promise<ScorePageData | null> => {
+    if (/^\d+$/.test(id)) {
+      const n = Number(id);
+      // 防御：> 2^53 数字会丢精度；DB token_id 是 int4（~2.1B 上限）远在安全范围内。
+      if (!Number.isSafeInteger(n)) return null;
+      return getScoreByTokenId(n);
+    }
+    return getScoreByQueueId(id);
+  },
+);
 
-/**
- * 已上链历史路径（兼容 /score/123 旧链接 + 分享卡）— B8 后转发到 queue 主路径
- *
- * 取 created_at 最新行（非 .maybeSingle）：5/6 Bug C 之类异常历史可能让 token_id
- * 命中多个 queue row（race 或运营手补），此时 .maybeSingle() 会抛 PGRST116
- * 让旧分享卡静默 404；用 order/limit 取最新那条避免误伤。
+/** 已上链历史路径（兼容 /score/123 旧链接 + 分享卡）— B8 后转发到 queue 主路径
+ *  order/limit 取最新（非 maybeSingle）：避免历史 race 留下双行时静默 404。
  */
 async function getScoreByTokenId(
   tokenId: number,
@@ -76,8 +78,8 @@ async function getScoreByTokenId(
 }
 
 /** B8 主路径：queue.id 直接查（含未上链中间态 / 失败态）
- *  分独立 query 而不是嵌套 select — supabase 联表对多外键关系偶尔报歧义错。
- *  Promise.allSettled：track/user 必需，pending_scores 是 nice-to-have（缺失降级 events=[]）。
+ *  分独立 query — supabase 联表对多外键关系偶尔报歧义错。
+ *  C9b：pending_scores 改拉 event_count（generated column），不拉 events_data。
  */
 async function getScoreByQueueId(
   queueId: string,
@@ -99,7 +101,7 @@ async function getScoreByQueueId(
   const [pendingRes, trackRes, userRes] = await Promise.allSettled([
     supabaseAdmin
       .from('pending_scores')
-      .select('events_data')
+      .select('event_count')
       .eq('id', queue.pending_score_id)
       .maybeSingle(),
     supabaseAdmin
@@ -134,19 +136,17 @@ async function getScoreByQueueId(
     return null;
   }
 
-  // pending_scores 缺失/报错时降级 events=[]，但都 log 出来便于排查（B8 后此表是
-  // events 唯一来源；silent failure 会让用户看到"0 个音符"误以为是空草稿）
-  let events: KeyEvent[] = [];
+  // pending_scores 缺失/报错降级 eventCount=0，但都 log（"0 个音符"会被误以为空草稿）
+  let eventCount = 0;
   if (pendingRes.status === 'rejected') {
     console.error('[score-source] pending_scores query rejected:', pendingRes.reason);
   } else if (pendingRes.value.error) {
     console.error('[score-source] pending_scores query error:', pendingRes.value.error);
-  } else if (Array.isArray(pendingRes.value.data?.events_data)) {
-    events = pendingRes.value.data.events_data as KeyEvent[];
+  } else if (typeof pendingRes.value.data?.event_count === 'number') {
+    eventCount = pendingRes.value.data.event_count;
   }
 
-  // cover_ar_tx_id 非法时降级 coverUrl=''：OG 走"无封面"色块，详情页 <img> 显示 broken
-  // image 但不会整页崩；相比直接抛错让 OG 500，UX 更稳
+  // cover_ar_tx_id 非法降级 coverUrl=''：OG 走色块，详情页 <img> broken 但不整页崩
   let coverUrl = '';
   try {
     coverUrl = resolveArUrl(queue.cover_ar_tx_id);
@@ -163,12 +163,11 @@ async function getScoreByQueueId(
     tokenId: queue.token_id ?? undefined,
     trackTitle: track.title,
     creatorAddress: user.evm_address,
-    events,
     track,
     coverUrl,
     txHash: queue.tx_hash ?? undefined,
     etherscanUrl: queue.tx_hash ? explorerTxUrl(queue.tx_hash) : undefined,
     mintedAt: queue.created_at,
-    eventCount: events.length,
+    eventCount,
   };
 }

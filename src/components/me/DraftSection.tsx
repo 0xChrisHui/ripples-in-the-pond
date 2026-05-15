@@ -27,11 +27,13 @@ export interface DisplayDraft {
 export default function DraftSection({
   drafts,
   showSkeleton,
+  error,
 }: {
   drafts: DisplayDraft[];
   showSkeleton: boolean;
+  error?: boolean;
 }) {
-  if (drafts.length === 0 && !showSkeleton) return null;
+  if (drafts.length === 0 && !showSkeleton && !error) return null;
 
   return (
     <section className="mt-12">
@@ -50,6 +52,11 @@ export default function DraftSection({
           />
         ))}
         {showSkeleton && drafts.length === 0 && <SkeletonRows count={3} />}
+        {error && drafts.length === 0 && (
+          <div className="rounded-lg border border-red-400/20 bg-red-400/5 p-4 text-sm text-red-200/80">
+            我的创作加载失败，请稍后刷新重试。
+          </div>
+        )}
       </div>
     </section>
   );

@@ -76,8 +76,8 @@ export default async function ScorePage({ params }: Props) {
         </div>
 
         <ScorePlayer
+          scoreId={score.id}
           track={score.track}
-          events={score.events}
           eventCount={score.eventCount}
         />
 
