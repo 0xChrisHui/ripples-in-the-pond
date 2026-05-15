@@ -33,6 +33,7 @@ function buildDisplayDrafts(
       pendingScoreId: s.id,
       track: s.track,
       events: s.events,
+      eventCount: s.eventCount,
     })),
     ...localDrafts.map((d, i) => ({
       key: `local-${d.trackId}`,

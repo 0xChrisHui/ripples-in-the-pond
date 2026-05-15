@@ -8,6 +8,7 @@ import type {
   OwnedScoreNFT,
   MyScoreNFTsResponse,
   MintScoreResponse,
+  KeyEvent,
 } from '@/src/types/jam';
 
 /**
@@ -42,12 +43,24 @@ export async function saveScore(
 }
 
 export async function fetchMyScores(token: string): Promise<MyScoresResponse['scores']> {
-  const res = await fetch('/api/me/scores', {
+  const res = await fetch('/api/me/scores?light=1', {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) return [];
   const data: MyScoresResponse = await res.json();
   return data.scores;
+}
+
+export async function fetchMyScoreEvents(
+  token: string,
+  pendingScoreId: string,
+): Promise<KeyEvent[]> {
+  const res = await fetch(`/api/me/scores/${pendingScoreId}/events`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('草稿事件加载失败');
+  const data = (await res.json()) as { events: KeyEvent[] };
+  return data.events;
 }
 
 export async function fetchMyScoreNFTs(token: string): Promise<OwnedScoreNFT[]> {

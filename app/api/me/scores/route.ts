@@ -32,11 +32,15 @@ export async function GET(req: NextRequest) {
 
     const enqueuedIds = (queueRows ?? []).map((q) => q.pending_score_id);
 
+    const light = req.nextUrl.searchParams.get('light') === '1';
+
     // 活草稿 + 未过期 + NOT IN 已入队
-    // tracks(*) 返回完整 Track 给前端 PlayerProvider.toggle / events_data 给 useEventsPlayback
+    const selectColumns = light
+      ? 'id, created_at, expires_at, track_id, event_count, tracks(*)'
+      : 'id, created_at, expires_at, track_id, events_data, tracks(*)';
     let query = supabaseAdmin
       .from('pending_scores')
-      .select('id, created_at, expires_at, track_id, events_data, tracks(*)')
+      .select(selectColumns)
       .eq('user_id', auth.userId)
       .eq('status', 'draft')
       .gt('expires_at', new Date().toISOString());
@@ -67,13 +71,18 @@ export async function GET(req: NextRequest) {
       scores: (scores ?? []).flatMap((s) => {
         const track = s.tracks as unknown as Track | null;
         if (!track) return []; // 联表异常 → 跳过该行
-        const events = (Array.isArray(s.events_data) ? s.events_data : []) as KeyEvent[];
+        const row = s as {
+          events_data?: unknown;
+          event_count?: number | null;
+        };
+        const events = (Array.isArray(row.events_data) ? row.events_data : []) as KeyEvent[];
+        const eventCount = light ? (row.event_count ?? 0) : events.length;
         return [{
           id: s.id,
           track,
-          events,
+          ...(light ? {} : { events }),
           seq: trackCounts.get(s.track_id) ?? 1,
-          eventCount: events.length,
+          eventCount,
           createdAt: s.created_at,
           expiresAt: s.expires_at,
         }];

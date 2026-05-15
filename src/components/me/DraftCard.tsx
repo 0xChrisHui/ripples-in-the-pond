@@ -1,8 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { useMintScore } from '@/src/hooks/useMintScore';
 import { useEventsPlayback } from '@/src/hooks/useEventsPlayback';
+import { useAuth } from '@/src/hooks/useAuth';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
+import { fetchMyScoreEvents } from '@/src/data/jam-source';
 import type { Track } from '@/src/types/tracks';
 import type { KeyEvent } from '@/src/types/jam';
 
@@ -24,20 +27,50 @@ export default function DraftCard({
   pendingScoreId,
   track,
   events,
+  eventCount,
 }: {
   title: string;
   pendingScoreId?: string;
   track?: Track;
   events?: KeyEvent[];
+  eventCount?: number;
 }) {
+  const { getAccessToken } = useAuth();
   const { state: clientState, mint } = useMintScore();
   const { toggle, playing, currentTrack } = usePlayer();
+  const [playEvents, setPlayEvents] = useState<KeyEvent[] | null>(events ?? null);
+  const [eventsLoading, setEventsLoading] = useState(false);
+  const [eventsError, setEventsError] = useState(false);
 
   // hook 必须无条件调用 — track 缺失时传 '' 让 useEventsPlayback 内部 noop
-  useEventsPlayback({ events: events ?? [], trackId: track?.id ?? '' });
+  useEventsPlayback({ events: playEvents ?? [], trackId: track?.id ?? '' });
 
-  const canPlay = !!track && !!events && events.length > 0;
+  const hasEvents = playEvents ? playEvents.length > 0 : (eventCount ?? 0) > 0;
+  const canPlay = !!track && !!pendingScoreId && hasEvents;
   const isPlayingThis = playing && !!track && currentTrack?.id === track.id;
+
+  async function handlePlay() {
+    if (!track || !pendingScoreId || eventsLoading) return;
+    if (playEvents) {
+      toggle(track);
+      return;
+    }
+
+    setEventsLoading(true);
+    setEventsError(false);
+    try {
+      const token = await getAccessToken();
+      if (!token) throw new Error('未登录');
+      const loadedEvents = await fetchMyScoreEvents(token, pendingScoreId);
+      setPlayEvents(loadedEvents);
+      toggle(track);
+    } catch (err) {
+      console.error('草稿事件加载失败:', err);
+      setEventsError(true);
+    } finally {
+      setEventsLoading(false);
+    }
+  }
 
   return (
     <div className="rounded-lg border border-white/10 bg-white/5 p-4">
@@ -47,14 +80,19 @@ export default function DraftCard({
         {canPlay ? (
           <button
             type="button"
-            onClick={() => toggle(track)}
-            className="text-base text-white/60 transition-colors hover:text-white"
+            onClick={handlePlay}
+            disabled={eventsLoading}
+            className="text-base text-white/60 transition-colors hover:text-white disabled:text-white/20"
             aria-label={isPlayingThis ? '暂停' : '播放'}
           >
-            {isPlayingThis ? '⏸' : '▶'}
+            {eventsLoading ? '…' : isPlayingThis ? '⏸' : '▶'}
           </button>
         ) : (
           <span aria-hidden="true" />
+        )}
+
+        {eventsError && (
+          <span className="text-xs text-red-300/80">播放加载失败</span>
         )}
 
         {!pendingScoreId ? (

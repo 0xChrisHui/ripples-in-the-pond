@@ -196,6 +196,22 @@
 
 ---
 
+### 按需加载（Lazy Fetch）
+
+- **是什么**：页面首屏只请求必要的小数据，用户真的点击某个功能时再请求大数据。
+- **类比**：像餐厅先给菜单，不会把所有菜一次端上桌；你点哪道菜，厨房再做哪道。
+- **第一次出现**：`src/components/me/DraftCard.tsx` + `app/api/me/scores/[id]/events/route.ts`，Phase 7 C3。
+
+---
+
+### 慢网反馈（Loading Feedback）
+
+- **是什么**：数据还没回来时，先显示 spinner、提示文案和重试按钮，让用户知道页面没有卡死。
+- **类比**：像外卖 App 显示“骑手正在路上”和“联系骑手”，比空白页面更让人安心。
+- **第一次出现**：`src/components/common/LoadingState.tsx` + `src/components/archipelago/Archipelago.tsx`，Phase 7 C5。
+
+---
+
 ## 🗓 历史归档
 
 每个月末，AI 会把超过 30 天的条目归档到本文件末尾。

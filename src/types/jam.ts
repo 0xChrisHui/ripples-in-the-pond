@@ -94,8 +94,8 @@ export interface MyScoresResponse {
     id: string;
     /** 草稿绑定的底曲（DraftCard ▶ 按钮 toggle 用） */
     track: Track;
-    /** 按键事件序列（useEventsPlayback 按时间触发音效用） */
-    events: KeyEvent[];
+    /** 按键事件序列；light 模式不返回，DraftCard 点击播放时再拉 */
+    events?: KeyEvent[];
     /** 该用户对同一曲目的第几次创作 */
     seq: number;
     /** 音符数量（= events.length，前端方便用） */

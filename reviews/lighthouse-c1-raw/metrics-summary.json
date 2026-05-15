@@ -1,0 +1,98 @@
+[
+  {
+    "page": "artist",
+    "device": "desktop",
+    "runs": "1,2",
+    "score": 59,
+    "fcp": 0.39,
+    "lcp": 7.275,
+    "tti": 19.68,
+    "tbt": 275,
+    "cls": 0,
+    "speed": 4.83
+  },
+  {
+    "page": "artist",
+    "device": "mobile",
+    "runs": "1,2",
+    "score": 43,
+    "fcp": 1.53,
+    "lcp": 43.335,
+    "tti": 119.34,
+    "tbt": 2664,
+    "cls": 0,
+    "speed": 4.635
+  },
+  {
+    "page": "home",
+    "device": "desktop",
+    "runs": "1,2",
+    "score": 60,
+    "fcp": 0.365,
+    "lcp": 5.355,
+    "tti": 19.55,
+    "tbt": 227,
+    "cls": 0,
+    "speed": 7.65
+  },
+  {
+    "page": "home",
+    "device": "mobile",
+    "runs": "1,2",
+    "score": 36,
+    "fcp": 1.38,
+    "lcp": 26.85,
+    "tti": 133.645,
+    "tbt": 2328,
+    "cls": 0,
+    "speed": 21.16
+  },
+  {
+    "page": "me",
+    "device": "desktop",
+    "runs": "1,2",
+    "score": 71,
+    "fcp": 0.34,
+    "lcp": 15.84,
+    "tti": 16,
+    "tbt": 163,
+    "cls": 0,
+    "speed": 1.255
+  },
+  {
+    "page": "me",
+    "device": "mobile",
+    "runs": "1,2",
+    "score": 44,
+    "fcp": 1.38,
+    "lcp": 102.085,
+    "tti": 118.885,
+    "tbt": 2738,
+    "cls": 0,
+    "speed": 4.09
+  },
+  {
+    "page": "score-12",
+    "device": "desktop",
+    "runs": "1,2",
+    "score": 27,
+    "fcp": 0.2,
+    "lcp": 7.825,
+    "tti": 10.36,
+    "tbt": 138,
+    "cls": 0,
+    "speed": 2.895
+  },
+  {
+    "page": "score-12",
+    "device": "mobile",
+    "runs": "1,2",
+    "score": 0,
+    "fcp": 0,
+    "lcp": 0,
+    "tti": 0,
+    "tbt": 0,
+    "cls": 0,
+    "speed": 0
+  }
+]

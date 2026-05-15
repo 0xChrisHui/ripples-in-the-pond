@@ -1,15 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import type { Track } from '@/src/types/tracks';
-import { fetchTracks } from '@/src/data/tracks-source';
+import { useCallback, useEffect, useState } from 'react';
+import type { Track, TracksListResponse } from '@/src/types/tracks';
+import LoadingState from '@/src/components/common/LoadingState';
 import { useAuth } from '@/src/hooks/useAuth';
 import { fetchMyNFTs } from '@/src/data/nfts-source';
-import {
-  getCachedMintedIds,
-  setCachedMintedIds,
-  addCachedMintedId,
-} from '@/src/lib/nft-cache';
+import { addCachedMintedId, getCachedMintedIds, setCachedMintedIds } from '@/src/lib/nft-cache';
 import SphereCanvas from './SphereCanvas';
 import { GROUPS, type GroupId, getGroupTargetCount, getGroupTracks, padTracksToTarget } from './sphere-config';
 import { DEFAULT_EFFECTS, type EffectsConfig } from './effects-config';
@@ -17,18 +13,6 @@ import AuroraBackground from './effects/ambient/aurora-background';
 import StarsBackground from './effects/ambient/stars-background';
 import FogLayer from './effects/ambient/fog-layer';
 
-/**
- * Archipelago — sound-spheres 风格群岛容器
- *
- * Phase 6 B2.1 v3：
- * - 3 group A/B/C 切换 tab
- * - 键盘 ←/→ 切 group
- * - fade 过渡（250ms opacity 0 → swap → 1）
- *
- * fullscreen prop（Phase 6 B2 /test 用）：
- * - false (default)：原 70vh + max-w-6xl 居中布局，主页 / 用
- * - true：fixed inset-0 占满屏幕，tabs 浮顶部
- */
 interface Props {
   fullscreen?: boolean;
   effects?: EffectsConfig;
@@ -36,6 +20,10 @@ interface Props {
 
 export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFECTS }: Props) {
   const [tracks, setTracks] = useState<Track[]>([]);
+  const [tracksLoading, setTracksLoading] = useState(true);
+  const [tracksError, setTracksError] = useState(false);
+  const [showSlowHint, setShowSlowHint] = useState(false);
+  const [showRetry, setShowRetry] = useState(false);
   const { authenticated, getAccessToken, userId } = useAuth();
   const [mintedTokenIds, setMintedTokenIds] = useState<Set<number>>(
     () => new Set(getCachedMintedIds(null)),
@@ -43,37 +31,65 @@ export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFE
   const [currentGroupId, setCurrentGroupId] = useState<GroupId>('A');
   const [fading, setFading] = useState(false);
 
-  useEffect(() => {
-    fetchTracks().then(setTracks);
+  const loadTracks = useCallback(async () => {
+    setTracksLoading(true);
+    setTracksError(false);
+    setShowSlowHint(false);
+    setShowRetry(false);
+    try {
+      const res = await fetch('/api/tracks');
+      if (!res.ok) throw new Error('tracks fetch failed');
+      const data = (await res.json()) as TracksListResponse;
+      setTracks(data.tracks);
+    } catch (err) {
+      console.error('首页曲目加载失败:', err);
+      setTracksError(true);
+      setTracks([]);
+    } finally {
+      setTracksLoading(false);
+    }
   }, []);
 
-  // v13 — 预下载当前 group 36 首前 300KB（HTTP Range），加速点击播放的首字节响应
-  // 切组（A/B/C）时重新预热新 36 首
+  useEffect(() => {
+    void loadTracks();
+  }, [loadTracks]);
+
+  useEffect(() => {
+    if (!tracksLoading || tracks.length > 0) return;
+    const slowTimer = window.setTimeout(() => setShowSlowHint(true), 3000);
+    const retryTimer = window.setTimeout(() => setShowRetry(true), 8000);
+    return () => {
+      window.clearTimeout(slowTimer);
+      window.clearTimeout(retryTimer);
+    };
+  }, [tracksLoading, tracks.length]);
+
   useEffect(() => {
     if (tracks.length === 0) return;
     const padded = padTracksToTarget(getGroupTracks(currentGroupId, tracks), getGroupTargetCount(currentGroupId));
     let cancelled = false;
     const queue = padded.filter((t) => t.audio_url);
-    const concurrency = 6;
-    const workers = Array.from({ length: concurrency }, async () => {
+    const workers = Array.from({ length: 6 }, async () => {
       while (queue.length > 0 && !cancelled) {
         const t = queue.shift();
         if (!t?.audio_url) continue;
         try {
           await fetch(t.audio_url, { headers: { Range: 'bytes=0-307199' } });
-        } catch { /* ignore */ }
+        } catch {
+          // 预热失败不影响主流程。
+        }
       }
     });
     void Promise.all(workers);
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [tracks, currentGroupId]);
 
-  // userId 变化 → 重读 cache（B1 隔离）
   useEffect(() => {
     queueMicrotask(() => setMintedTokenIds(new Set(getCachedMintedIds(userId))));
   }, [userId]);
 
-  // 登录后后台拉真数据
   useEffect(() => {
     if (!authenticated || !userId) return;
     getAccessToken().then((token) => {
@@ -86,45 +102,31 @@ export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFE
     });
   }, [authenticated, userId, getAccessToken]);
 
-  const handleMinted = useCallback(
-    (tokenId: number) => {
-      setMintedTokenIds((prev) => new Set([...prev, tokenId]));
-      if (userId) addCachedMintedId(userId, tokenId);
-    },
-    [userId],
-  );
+  const handleMinted = useCallback((tokenId: number) => {
+    setMintedTokenIds((prev) => new Set([...prev, tokenId]));
+    if (userId) addCachedMintedId(userId, tokenId);
+  }, [userId]);
 
-  const handleGroupChange = useCallback(
-    (newGid: GroupId) => {
-      if (newGid === currentGroupId || fading) return;
-      setFading(true);
-      // 250ms fade out → swap group → 50ms 让 sim 启动 → fade in
-      setTimeout(() => {
-        setCurrentGroupId(newGid);
-        setTimeout(() => setFading(false), 30);
-      }, 250);
-    },
-    [currentGroupId, fading],
-  );
+  const handleGroupChange = useCallback((newGid: GroupId) => {
+    if (newGid === currentGroupId || fading) return;
+    setFading(true);
+    setTimeout(() => {
+      setCurrentGroupId(newGid);
+      setTimeout(() => setFading(false), 30);
+    }, 250);
+  }, [currentGroupId, fading]);
 
-  // 键盘：← / → 切 group；空格不绑业务但拦截浏览器默认翻页滚动
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // 空格在 input/textarea 外都拦默认翻页行为（用户决定空格暂不赋功能）
       if (e.key === ' ' || e.code === 'Space') {
         const t = e.target as HTMLElement | null;
         const tag = t?.tagName;
-        if (tag !== 'INPUT' && tag !== 'TEXTAREA' && !t?.isContentEditable) {
-          e.preventDefault();
-        }
+        if (tag !== 'INPUT' && tag !== 'TEXTAREA' && !t?.isContentEditable) e.preventDefault();
         return;
       }
       const idx = GROUPS.findIndex((g) => g.id === currentGroupId);
-      if (e.key === 'ArrowRight') {
-        handleGroupChange(GROUPS[(idx + 1) % GROUPS.length].id);
-      } else if (e.key === 'ArrowLeft') {
-        handleGroupChange(GROUPS[(idx - 1 + GROUPS.length) % GROUPS.length].id);
-      }
+      if (e.key === 'ArrowRight') handleGroupChange(GROUPS[(idx + 1) % GROUPS.length].id);
+      if (e.key === 'ArrowLeft') handleGroupChange(GROUPS[(idx - 1 + GROUPS.length) % GROUPS.length].id);
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -133,28 +135,28 @@ export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFE
   if (tracks.length === 0) {
     return (
       <section className="flex h-[60vh] w-full items-center justify-center">
-        <p className="text-sm text-white/30">正在唤醒群岛...</p>
+        <LoadingState
+          title="正在唤醒群岛..."
+          slowHint="网络较慢，正在重试连接..."
+          showSlowHint={showSlowHint}
+          showRetry={showRetry}
+          error={tracksError}
+          retrying={tracksLoading}
+          onRetry={loadTracks}
+        />
       </section>
     );
   }
 
-  const sectionCls = fullscreen
-    ? 'fixed inset-0 z-0'
-    : 'flex h-[70vh] w-full max-w-6xl flex-col';
-  // v14：fullscreen 模式 nav 挪到左侧 vertical（top-24 让出顶栏 + LoginButton）
-  const navCls = fullscreen
-    ? 'absolute left-6 top-24 z-30 flex flex-col items-start gap-2'
-    : 'mb-2 flex items-center gap-2 px-4';
+  const sectionCls = fullscreen ? 'fixed inset-0 z-0' : 'flex h-[70vh] w-full max-w-6xl flex-col';
+  const navCls = fullscreen ? 'absolute left-6 top-24 z-30 flex flex-col items-start gap-2' : 'mb-2 flex items-center gap-2 px-4';
   const canvasCls = fullscreen ? 'absolute inset-0' : 'flex-1';
 
   return (
     <section className={sectionCls}>
-      {/* v39 ambient effects — 最底层，z 默认 0 */}
       {effects.aurora && <AuroraBackground />}
       {effects.stars && <StarsBackground />}
       {effects.fog && <FogLayer />}
-
-      {/* Tabs nav（sound-spheres header 简化版）*/}
       <nav className={navCls}>
         {GROUPS.map((g) => {
           const active = g.id === currentGroupId;
@@ -165,35 +167,18 @@ export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFE
               onClick={() => handleGroupChange(g.id)}
               className={[
                 'flex items-center gap-2 rounded px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] transition',
-                active
-                  ? 'border border-white/10 bg-white/5 text-white/80'
-                  : 'border border-transparent text-white/30 hover:text-white/60',
+                active ? 'border border-white/10 bg-white/5 text-white/80' : 'border border-transparent text-white/30 hover:text-white/60',
               ].join(' ')}
             >
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ background: g.color }}
-              />
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: g.color }} />
               {g.label}
               <span className="text-[8.5px] text-white/30">{getGroupTargetCount(g.id)}</span>
             </button>
           );
         })}
-        {!fullscreen && (
-          <span className="ml-auto text-[9px] tracking-[0.09em] text-white/30">
-            DRAG · SCROLL · ← →
-          </span>
-        )}
+        {!fullscreen && <span className="ml-auto text-[9px] tracking-[0.09em] text-white/30">DRAG · SCROLL · ← →</span>}
       </nav>
-
-      {/* Canvas（fade on group switch）*/}
-      <div
-        className={canvasCls}
-        style={{
-          opacity: fading ? 0 : 1,
-          transition: 'opacity 0.25s ease',
-        }}
-      >
+      <div className={canvasCls} style={{ opacity: fading ? 0 : 1, transition: 'opacity 0.25s ease' }}>
         <SphereCanvas
           tracks={tracks}
           currentGroupId={currentGroupId}

@@ -14,6 +14,8 @@ export interface DisplayDraft {
   track?: Track;
   /** server 草稿才有（useEventsPlayback 按时间触发音效）*/
   events?: KeyEvent[];
+  /** light 模式用它判断是否显示播放按钮 */
+  eventCount?: number;
 }
 
 /**
@@ -44,6 +46,7 @@ export default function DraftSection({
             pendingScoreId={d.pendingScoreId}
             track={d.track}
             events={d.events}
+            eventCount={d.eventCount}
           />
         ))}
         {showSkeleton && drafts.length === 0 && <SkeletonRows count={3} />}

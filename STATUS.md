@@ -20,13 +20,11 @@
 
 ## 当前进度
 
-**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1-local 已提交 `65516d0`**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`；B1-vercel 待用户在 Vercel 三环境线下添加。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`（修前 baseline；`/score/12` Lighthouse 3/4 次 500 作为可用性 finding）。
+**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1-local 已提交 `65516d0`**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`；B1-vercel 待用户在 Vercel 三环境线下添加。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**2026-05-15 C3 已完成本地验证**：`/api/me/scores?light=1` 不再拉 `events_data`，DraftCard 点击播放时按需拉 events endpoint。**C5 已完成本地验证**：首页空数据/慢网态改为 spinner + 慢网提示 + 手动重试。**C6 已完成本地验证**：5 个 next/font 都显式 `display: "swap"` + `preload: true`，未做激进字体裁剪。**C7 已完成本地验证**：`/me`、`/artist`、`/score/[id]` 增加 loading.tsx 骨架；verify 通过。**C8 已产出对比报告**：`reviews/2026-05-15-phase-7-perf-completion.md`，Track C 按 downgraded-accepted 收口，剩余深度性能 / `/score/12` 500 稳定性归 A10/P8/P10。
 
-**下一步**（C1 后继续 Phase 7）—— 建议第一刀：
-  1. **C2 目标值讨论**（基于 C1 baseline 锁 mobile score / LCP / TBT 目标）
-  2. **C3 /api/me/scores split**（Track C 主优化；同时是 A14/A15 polling 契约前置）
-  3. **A2 AirdropNFT 加 `_uriSet` 防覆盖 + 重新部署**（Track A 下一步，涉及 OP Sepolia + Vercel 原子流程）
-  4. **B2 SemiLogin 组件 + LoginModal 两 tab**（Track B 下一步，等 B1-local 即可开工；B4a 仍等 B1-vercel）
+**下一步**（C8 后继续 Phase 7）—— 建议第一刀：
+  1. **A2 AirdropNFT 加 `_uriSet` 防覆盖 + 重新部署**（Track A 下一步，涉及 OP Sepolia + Vercel 原子流程）
+  2. **B2 SemiLogin 组件 + LoginModal 两 tab**（Track B 下一步，等 B1-local 即可开工；B4a 仍等 B1-vercel）
 
 **Track 依赖图（修订）**：
 - A3+A12 → 阻塞 A14/A15（cron 状态机改完才能稳定 polling）；不再阻塞 C1
@@ -46,7 +44,7 @@
 **已实质完成的步骤**：
 - Track A：A0 operator 锁 ✅ / A1 ScoreNFT cron durable lease ✅ / A2 failure_kind ✅ / A3 sync cursor 事务性 ✅ / A4 草稿原子化 ✅ / A5 P7 / A6 决策冻结
 - Track B：B1 cache 隔离 ✅ / B2 Bug A/B 由 B8 数据流重设实质收口 + Bug C 5/6 修 ✅ / B3 草稿铸造 + 5/8 实测 ✅ / B5 #7 ✅ #9 ✅ #8 废弃（HomeJam 已 dead-code）/ B6 ✅ / B7 待 / B4 删
-- Phase 7 Track C：C1 Lighthouse baseline ✅（修前）/ C2 待
+- Phase 7 Track C：C1 Lighthouse baseline ✅（修前）/ C2 四个体感目标 + ROI 准则 ✅ / C3 split ✅ / C5 loading UI ✅ / C6 font swap/preload ✅ / C7 loading.tsx ✅ / C8 对比报告 ✅（downgraded-accepted）
 - Track C（Phase 6 历史）：C1/C2/C3/C4 ✅
 - Track D：D1 决策不做 / D2 admin Bearer ✅ / D3-D5 挂起（D1=不做）
 - Track E：E1 health mintQueue ✅ / E2 Semi P7 / E3 依赖 E2 P7 / E4 废弃（B8 P3 删 decoder iframe）/ E5 本次 ✅
