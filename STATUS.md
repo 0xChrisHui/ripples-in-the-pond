@@ -20,10 +20,10 @@
 
 ## 当前进度
 
-**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1-local 已提交 `65516d0`**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`；B1-vercel 待用户在 Vercel 三环境线下添加。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**2026-05-15 C3 已完成本地验证**：`/api/me/scores?light=1` 不再拉 `events_data`，DraftCard 点击播放时按需拉 events endpoint。**C5 已完成本地验证**：首页空数据/慢网态改为 spinner + 慢网提示 + 手动重试。**C6 已完成本地验证**：5 个 next/font 都显式 `display: "swap"` + `preload: true`，未做激进字体裁剪。**C7 已完成本地验证**：`/me`、`/artist`、`/score/[id]` 增加 loading.tsx 骨架；verify 通过。**C8 已产出对比报告**：`reviews/2026-05-15-phase-7-perf-completion.md`，Track C 按 downgraded-accepted 收口。**2026-05-15 C9a 已完成本地实测**：`/me` 三个 fetch（score-nfts / nfts / scores）改并行触发；唱片区/草稿区独立 skeleton + error 态，单 section 失败不阻塞其他。**C9b 已完成本地实测**：`getScoreById` 加 React `cache()` per-request dedupe；首屏不再 SELECT `events_data`，改用 `pending_scores.event_count`；新增公开 endpoint `/api/scores/[id]/events` + ScorePlayer 改为挂载时 fetch events（loading / error / ready 三态）。Track C 全套（C1-C9）收口。
+**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1-local 已提交 `65516d0`**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`；B1-vercel 待用户在 Vercel 三环境线下添加。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**2026-05-15 C3 已完成本地验证**：`/api/me/scores?light=1` 不再拉 `events_data`，DraftCard 点击播放时按需拉 events endpoint。**C5 已完成本地验证**：首页空数据/慢网态改为 spinner + 慢网提示 + 手动重试。**C6 已完成本地验证**：5 个 next/font 都显式 `display: "swap"` + `preload: true`，未做激进字体裁剪。**C7 已完成本地验证**：`/me`、`/artist`、`/score/[id]` 增加 loading.tsx 骨架；verify 通过。**C8 已产出对比报告**：`reviews/2026-05-15-phase-7-perf-completion.md`，Track C 按 downgraded-accepted 收口。**2026-05-15 C9a 已完成本地实测**：`/me` 三个 fetch（score-nfts / nfts / scores）改并行触发；唱片区/草稿区独立 skeleton + error 态，单 section 失败不阻塞其他。**C9b 已完成本地实测**：`getScoreById` 加 React `cache()` per-request dedupe；首屏不再 SELECT `events_data`，改用 `pending_scores.event_count`；新增公开 endpoint `/api/scores/[id]/events` + ScorePlayer 改为挂载时 fetch events（loading / error / ready 三态）。Track C 全套（C1-C9）收口。**2026-05-15 A2 已上链 + Vercel + 归档**：AirdropNFT v2 部署 OP Sepolia `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`（加 `_uriSet` 防 MINTER 私钥泄露后改 metadata），forge 7/7 + Vercel 三环境同步 + pond-ripple.xyz 验证通过；v1 `0xa6Aa896b...e56B` 永久弃用。
 
-**下一步**（C9a + C9b 后继续 Phase 7）—— 建议第一刀：
-  1. **A2 AirdropNFT 加 `_uriSet` 防覆盖 + 重新部署**（Track A 下一步，涉及 OP Sepolia + Vercel 原子流程）
+**下一步**（A2 后继续 Track A）—— 建议第一刀：
+  1. **A3+A12 score queue 状态机修复包**（双 mint 防御 + lease 25min 根因，合并避免二次手术；含 migration 032 + 测试网 cron 验证）
   2. **B2 SemiLogin 组件 + LoginModal 两 tab**（Track B 下一步，等 B1-local 即可开工；B4a 仍等 B1-vercel）
 
 **Track 依赖图（修订）**：
@@ -42,7 +42,8 @@
   - Phase 10 = 性能深度优化 + 上线检查 + 换 CRON_SECRET + OP Mainnet 部署 + 9 项 P1 挂 P10 清单 + 首周救火
 
 **已实质完成的步骤**：
-- Track A：A0 operator 锁 ✅ / A1 ScoreNFT cron durable lease ✅ / A2 failure_kind ✅ / A3 sync cursor 事务性 ✅ / A4 草稿原子化 ✅ / A5 P7 / A6 决策冻结
+- Phase 7 Track A：A1 chain-config 抽单一来源 ✅（commit `e0084db`）/ A2 AirdropNFT v2 加 `_uriSet` + 重新部署 ✅（2026-05-15）
+- Phase 6 Track A：A0 operator 锁 ✅ / A1 ScoreNFT cron durable lease ✅ / A2 failure_kind ✅ / A3 sync cursor 事务性 ✅ / A4 草稿原子化 ✅ / A5 P7 / A6 决策冻结
 - Track B：B1 cache 隔离 ✅ / B2 Bug A/B 由 B8 数据流重设实质收口 + Bug C 5/6 修 ✅ / B3 草稿铸造 + 5/8 实测 ✅ / B5 #7 ✅ #9 ✅ #8 废弃（HomeJam 已 dead-code）/ B6 ✅ / B7 待 / B4 删
 - Phase 7 Track C：C1 Lighthouse baseline ✅（修前）/ C2 四个体感目标 + ROI 准则 ✅ / C3 split ✅ / C5 loading UI ✅ / C6 font swap/preload ✅ / C7 loading.tsx ✅ / C8 对比报告 ✅（downgraded-accepted）/ C9a /me 并行 + section error ✅ / C9b /score events 按需 fetch + cache() ✅
 - Track C（Phase 6 历史）：C1/C2/C3/C4 ✅
@@ -154,6 +155,21 @@
 
 ## 上次成功验证
 
+- 验证: **Phase 7 Track A A2 AirdropNFT v2 重部署**（加 `_uriSet` 防 MINTER 私钥泄露后改 metadata）
+- 时间: 2026-05-15
+- 改动:
+  - **合约层**：`contracts/src/AirdropNFT.sol` 加 7 行 `_uriSet` mapping + setTokenURI `require(!_uriSet[tokenId])` + 标 `_uriSet[tokenId]=true`（与 ScoreNFT v2 对齐）；`contracts/test/AirdropNFT.t.sol` 加 `testSetTokenURIOnlyOnce`（首次成功 → 二次 revert `"AirdropNFT: URI already set"` → URI 保持首次值）
+  - **链上部署**：OP Sepolia 新 v2 `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`，部署 tx `0xe05fafc3ccd3c9df4301f16fc4fa1d2cdf32d96d89e68bd59b49d1b674c37f06`，broadcast 记录在 `contracts/broadcast/DeployAirdropNFT.s.sol/11155420/run-latest.json`；v1 `0xa6Aa896b222bB522bA5c8fcC6bD8e59e3f5de56B` 永久弃用
+  - **Vercel env**：`NEXT_PUBLIC_AIRDROP_NFT_ADDRESS` Production / Preview / Development 三环境同步新地址 + manual redeploy（不带 Build Cache）
+  - **本地 `.env.local`**：替换为新 v2（顺手清理一个未文档化的谜地址 `0xf8e269818A...`，详 JOURNAL 2026-05-15 A2 段）
+  - **归档**：`reviews/phase-6-deprecated-contracts.md` 加 2026-05-15 段（v1→v2 对照表 + 原子流程证明）
+- 验证证据: forge test --match-contract AirdropNFTTest 7/7 通过（原 6 + 新 1）/ bash scripts/verify.sh 全绿（TS / ESLint / 行数 / build 28 路由）/ Vercel build 通过 / pond-ripple.xyz 正常打开
+- 待办（用户线下做）:
+  - cron-job.org `process-airdrop` 保持 Inactive（D1 决策主网首版不上空投）
+  - 主网部署日：AIRDROP_ENABLED 仍保持 unset
+
+### 上一轮成功验证（保留）
+
 - 验证: **Phase 7 Track C C9a + C9b 落地**（`/me` 内容区 + `/score/[id]` 详情页首屏轻量化）
 - 时间: 2026-05-15
 - 改动:
@@ -162,10 +178,8 @@
   - **C9b R2** `score-source.ts` `pending_scores` 改 SELECT `event_count`（migration 031 generated column）替代 `events_data.length`；删 `ScorePageData.events` 字段，首屏 HTML 不再阻塞大 JSON
   - **C9b R3** 新建 `src/data/score-events-source.ts`（双兼容路由解析 + 拉 events_data）+ 公开 endpoint `app/api/scores/[id]/events/route.ts`（middleware 已注释 `/api/scores/*` 公开只读）；`ScorePlayer.tsx` 改为挂载时 fetch events，三态：loading（按钮 disabled + "加载中…"）/ error（红条 + "请稍后刷新"）/ ready
 - 验证证据: TS 0 errors / ESLint 通过（仅 3 项 pre-existing warning）/ npm run build 全 28 路由生成完成（新增 `/api/scores/[id]/events`）；用户本地浏览器实测 `/me` 进入体感 + `/score/[id]` 首屏速度 + ScorePlayer 三态切换 + 双兼容路由（数字 tokenId / queue.id UUID）通过
-- 待办（用户线下做）:
-  - 后续若做 Vercel preview 实跑 Lighthouse 修后对照，可对齐 C8 报告口径
 
-### 上一轮成功验证（保留）
+### 上上轮成功验证（保留）
 
 - 验证: **strict CTO review "现在就修" 6 项落地**（测试网立即修补，避免等 Phase 7）
 - 时间: 2026-05-08
@@ -182,7 +196,7 @@
   - 测试网 Vercel 加环境变量 `AIRDROP_ENABLED=true`（保持现有空投行为）；主网部署时**不设**此 env
   - 运维脚本 / runbook 把 `/api/cron/queue-status?token=…` 改成 `curl -H 'Authorization: Bearer $ADMIN_TOKEN'`
 
-### 上上轮成功验证（保留）
+### 上上上轮成功验证（保留）
 
 - 验证: **B8 P3 端到端实测 + B6 demo 5 球 arweave_url 上链回写**（草稿铸造主链路全通）
 - 时间: 2026-05-08
@@ -197,7 +211,7 @@
   - Resend 邮件告警 P3 commit 提了未做 → 主网前必做
   - Agent review 13 finding：5 项本次合入修，8 项挂 P7
 
-### 上上上轮成功验证（保留）
+### 上上上上轮成功验证（保留）
 
 - 验证: B2 Bug C 主链路双根因修复（cron 4-28~5-6 全 fail 修通到 minting_onchain 上链）
 - 时间: 2026-05-06

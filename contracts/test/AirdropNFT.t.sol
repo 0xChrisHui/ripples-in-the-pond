@@ -66,4 +66,22 @@ contract AirdropNFTTest is Test {
         vm.expectRevert();
         nft.setTokenURI(id, "ar://bad");
     }
+
+    /// Phase 7 A2 — setTokenURI 仅允许首次写入
+    /// 验证：首次成功 → 二次 revert → URI 保持首次值（防 MINTER 私钥泄露后改钓鱼 URL）
+    function testSetTokenURIOnlyOnce() public {
+        vm.prank(minter);
+        uint256 id = nft.mint(user);
+
+        vm.prank(minter);
+        nft.setTokenURI(id, "ar://original");
+        assertEq(nft.tokenURI(id), "ar://original");
+
+        vm.prank(minter);
+        vm.expectRevert(bytes("AirdropNFT: URI already set"));
+        nft.setTokenURI(id, "ar://phishing");
+
+        // revert 后首次 URI 仍保持
+        assertEq(nft.tokenURI(id), "ar://original");
+    }
 }
