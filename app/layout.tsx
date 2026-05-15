@@ -55,8 +55,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // suppressHydrationWarning 仅压制 html/body 根节点 — 处理浏览器扩展（NeonLingo / Monica AI 之类）
+    // 在 React hydrate 前往 html/body 注入 CSS 变量或 data 属性导致的 hydration mismatch；
+    // 子树的真实 hydration bug 仍会正常报警。
+    <html lang="en" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} ${azeretMono.variable} ${modak.variable} antialiased`}
       >
         <Providers>{children}</Providers>
