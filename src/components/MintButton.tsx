@@ -7,14 +7,14 @@ import { useMint } from '@/src/hooks/useMint';
  * 铸造按钮 — 登录后显示，点击调 mint API
  */
 export default function MintButton({ tokenId }: { tokenId: number }) {
-  const { authenticated, login } = useAuth();
+  const { authenticated, openLoginModal } = useAuth();
   const { status, mint } = useMint();
 
   if (!authenticated) {
     return (
       <button
         type="button"
-        onClick={login}
+        onClick={openLoginModal}
         className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/40 transition-colors hover:border-white/30 hover:text-white/70"
       >
         登录后铸造

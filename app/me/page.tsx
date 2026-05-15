@@ -48,7 +48,7 @@ function buildDisplayDrafts(
  * 草稿来源：localStorage（未上传）+ 服务端（已上传未入队）
  */
 export default function MePage() {
-  const { ready, authenticated, login, getAccessToken, userId } = useAuth();
+  const { ready, authenticated, openLoginModal, getAccessToken, userId } = useAuth();
   const [scoreNfts, setScoreNfts] = useState<OwnedScoreNFT[]>([]);
   const [nfts, setNfts] = useState<OwnedNFT[]>(() => getCachedNFTs(null));
   const [drafts, setDrafts] = useState<DisplayDraft[]>(() =>
@@ -149,7 +149,7 @@ export default function MePage() {
         <p className="text-white/50">请先登录查看你的收藏</p>
         <button
           type="button"
-          onClick={login}
+          onClick={openLoginModal}
           className="rounded-full border border-white/20 px-6 py-2 text-sm text-white hover:bg-white/10"
         >
           登录

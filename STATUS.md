@@ -20,11 +20,11 @@
 
 ## 当前进度
 
-**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1-local 已提交 `65516d0`**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`；B1-vercel 待用户在 Vercel 三环境线下添加。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**2026-05-15 C3 已完成本地验证**：`/api/me/scores?light=1` 不再拉 `events_data`，DraftCard 点击播放时按需拉 events endpoint。**C5 已完成本地验证**：首页空数据/慢网态改为 spinner + 慢网提示 + 手动重试。**C6 已完成本地验证**：5 个 next/font 都显式 `display: "swap"` + `preload: true`，未做激进字体裁剪。**C7 已完成本地验证**：`/me`、`/artist`、`/score/[id]` 增加 loading.tsx 骨架；verify 通过。**C8 已产出对比报告**：`reviews/2026-05-15-phase-7-perf-completion.md`，Track C 按 downgraded-accepted 收口。**2026-05-15 C9a 已完成本地实测**：`/me` 三个 fetch（score-nfts / nfts / scores）改并行触发；唱片区/草稿区独立 skeleton + error 态，单 section 失败不阻塞其他。**C9b 已完成本地实测**：`getScoreById` 加 React `cache()` per-request dedupe；首屏不再 SELECT `events_data`，改用 `pending_scores.event_count`；新增公开 endpoint `/api/scores/[id]/events` + ScorePlayer 改为挂载时 fetch events（loading / error / ready 三态）。Track C 全套（C1-C9）收口。**2026-05-15 A2 已上链 + Vercel + 归档**：AirdropNFT v2 部署 OP Sepolia `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`（加 `_uriSet` 防 MINTER 私钥泄露后改 metadata），forge 7/7 + Vercel 三环境同步 + pond-ripple.xyz 验证通过；v1 `0xa6Aa896b...e56B` 永久弃用。
+**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1 已完整完成**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`（commit `65516d0`）；**B1-vercel 用户 2026-05-15 已在 Vercel 三环境添加完成**。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**Track C 全套（C1-C9）已收口**（详见上一轮验证）。**2026-05-15 A2 已上链 + Vercel + 归档**：AirdropNFT v2 部署 OP Sepolia `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`。**2026-05-15 B2/B3 已完成本地实施**：新建 SemiLogin + LoginModal 两 tab + useAuth 双源化（Privy / Semi JWT），4 个 caller（LoginButton / MintButton / useFavorite / me/page.tsx）从 `login` 改 `openLoginModal`；client-jwt.ts store 用 useSyncExternalStore + storage event 跨 tab 同步，60s 兜底 exp 检查。verify.sh 全绿。**Track B 剩余**：B4a 端到端实测（用户线下走 7 步）+ B4b 投资人 demo 协调；演示话术 + 实测脚本已草拟在 `docs/SEMI-DEMO-SCRIPT.md`。
 
-**下一步**（A2 后继续 Track A）—— 建议第一刀：
-  1. **A3+A12 score queue 状态机修复包**（双 mint 防御 + lease 25min 根因，合并避免二次手术；含 migration 032 + 测试网 cron 验证）
-  2. **B2 SemiLogin 组件 + LoginModal 两 tab**（Track B 下一步，等 B1-local 即可开工；B4a 仍等 B1-vercel）
+**下一步** —— Track B 端到端实测（用户线下做）：
+  1. **B4a 用户线下走 7 步流程**：`docs/SEMI-DEMO-SCRIPT.md §一` — 退 Privy → 切 Semi tab → 手机号 + 验证码 → /me → 收藏铸造 → Etherscan + Semi APP 确认；问题反馈后再迭代
+  2. **A3+A12 score queue 状态机修复包**（Track A 下一刀，独立于 B4a 实测）
 
 **Track 依赖图（修订）**：
 - A3+A12 → 阻塞 A14/A15（cron 状态机改完才能稳定 polling）；不再阻塞 C1
@@ -43,8 +43,9 @@
 
 **已实质完成的步骤**：
 - Phase 7 Track A：A1 chain-config 抽单一来源 ✅（commit `e0084db`）/ A2 AirdropNFT v2 加 `_uriSet` + 重新部署 ✅（2026-05-15）
+- Phase 7 Track B：B1 SEMI_API_URL env 三环境同步 ✅（local + Vercel）/ B2 SemiLogin + LoginModal 两 tab ✅（2026-05-15）/ B3 useAuth 双源化 + 4 caller 改 openLoginModal ✅（2026-05-15）/ B4a 待用户线下实测 / B4b 待投资人 demo 协调
 - Phase 6 Track A：A0 operator 锁 ✅ / A1 ScoreNFT cron durable lease ✅ / A2 failure_kind ✅ / A3 sync cursor 事务性 ✅ / A4 草稿原子化 ✅ / A5 P7 / A6 决策冻结
-- Track B：B1 cache 隔离 ✅ / B2 Bug A/B 由 B8 数据流重设实质收口 + Bug C 5/6 修 ✅ / B3 草稿铸造 + 5/8 实测 ✅ / B5 #7 ✅ #9 ✅ #8 废弃（HomeJam 已 dead-code）/ B6 ✅ / B7 待 / B4 删
+- Track B（Phase 6）：B1 cache 隔离 ✅ / B2 Bug A/B 由 B8 数据流重设实质收口 + Bug C 5/6 修 ✅ / B3 草稿铸造 + 5/8 实测 ✅ / B5 #7 ✅ #9 ✅ #8 废弃（HomeJam 已 dead-code）/ B6 ✅ / B7 待 / B4 删
 - Phase 7 Track C：C1 Lighthouse baseline ✅（修前）/ C2 四个体感目标 + ROI 准则 ✅ / C3 split ✅ / C5 loading UI ✅ / C6 font swap/preload ✅ / C7 loading.tsx ✅ / C8 对比报告 ✅（downgraded-accepted）/ C9a /me 并行 + section error ✅ / C9b /score events 按需 fetch + cache() ✅
 - Track C（Phase 6 历史）：C1/C2/C3/C4 ✅
 - Track D：D1 决策不做 / D2 admin Bearer ✅ / D3-D5 挂起（D1=不做）
@@ -155,6 +156,27 @@
 
 ## 上次成功验证
 
+- 验证: **Phase 7 Track B B2 + B3 落地**（Semi 社区钱包前端接入：SemiLogin + LoginModal 两 tab + useAuth 双源化）
+- 时间: 2026-05-15
+- 改动:
+  - **新建 store** `src/lib/auth/client-jwt.ts`：localStorage key `ripples_auth_jwt`（D-B5 契约），atob 解 JWT payload，自校验 `exp` 过期即清；pub/sub `subscribeSemiJwt` + 跨 tab `storage` 事件同步
+  - **新建组件** `src/components/auth/SemiLogin.tsx`：状态机 phone → code，60s 倒计时，宽松手机号校验 `^\+?[0-9]{5,15}$`，错误分类 4 类（手机格式 / 60s 重发 / 验证码错 401 / 网络错）；登录成功 `setSemiJwt(token)` + onSuccess 关 modal
+  - **新建组件** `src/components/auth/LoginModal.tsx`：全站单例 modal（useSyncExternalStore + module 级 isOpen），两 tab Privy / Semi；Privy tab 内放"用邮箱登录"按钮，点击 close modal + 调 `privy.login()` 让 Privy 原生 modal 接管
+  - **改写** `src/hooks/useAuth.ts`：Privy authenticated 优先，否则读 Semi JWT；新增 `authSource: 'privy' | 'semi' | null` + `openLoginModal`；`logout` 双源都清（含 nft-cache）；`getAccessToken` 双源返对应 token；useSyncExternalStore 订阅 client-jwt 实现 rerender 同步
+  - **挂载 modal** `src/components/Providers.tsx` 末尾加 `<LoginModal />`
+  - **caller 改 openLoginModal**（4 处）：`LoginButton.tsx` / `MintButton.tsx` / `useFavorite.ts` / `app/me/page.tsx`；保留 `login` 字段做兼容（旧 caller 若直接调仍弹 Privy 原生 modal）
+  - **文档** 新建 `docs/SEMI-DEMO-SCRIPT.md`（B4b 投资人 demo 话术 + B4a 7 步实测脚本 + 边界场景验证清单 + 现场踩坑预案）
+  - **后端 100% 复用**（不动）：`/api/auth/community/send-code` + `/api/auth/community` + `semi-client.ts` + `jwt.ts` + `middleware.ts`（Privy 后 JWT 双通道已就绪）
+- 验证证据: TS 0 errors / ESLint 通过（仅 3 项 pre-existing warning：comet-system / use-layer-wave / FXPanel）/ npm run build 全 28 路由生成完成（路由数量不变，纯前端组件）/ scripts/verify.sh 全绿
+- 待办（用户线下做）:
+  - **B4a 端到端实测**：按 `docs/SEMI-DEMO-SCRIPT.md §一` 走 7 步，需 Semi APP 注册的手机号 + OP Sepolia operator 有 ETH；问题反馈后我再迭代
+  - **B4b 投资人 demo 协调**：约时间窗 + demo 前 1 小时本地预演 + 现场截图归档到 `reviews/2026-05-XX-semi-demo-screenshots/`
+  - **A1 完结后回归 smoke**：本次未触碰 operator-wallet.ts（按 D-B7 约束），A1 收口后跑步骤 5-6 重测 10min
+- 减项（明示）:
+  - **401 自动 logout 全 caller 覆盖** 未做：当前各 caller 自行 catch error，遇到 JWT 失效 user 看到 toast 但不会自动登出；JWT 过期本地由 useAuth 60s 兜底检查 + storage event 自动清，**前端自检覆盖了 D-B5 verify 标准里"过期自登出"那条**；后端 jwt_blacklist 撤销 → 下次 401 不自动 logout，挂 P10 主网前补 fetch wrapper
+
+### 上一轮成功验证（保留）
+
 - 验证: **Phase 7 Track A A2 AirdropNFT v2 重部署**（加 `_uriSet` 防 MINTER 私钥泄露后改 metadata）
 - 时间: 2026-05-15
 - 改动:
@@ -168,7 +190,7 @@
   - cron-job.org `process-airdrop` 保持 Inactive（D1 决策主网首版不上空投）
   - 主网部署日：AIRDROP_ENABLED 仍保持 unset
 
-### 上一轮成功验证（保留）
+### 上上轮成功验证（保留）
 
 - 验证: **Phase 7 Track C C9a + C9b 落地**（`/me` 内容区 + `/score/[id]` 详情页首屏轻量化）
 - 时间: 2026-05-15
@@ -179,7 +201,7 @@
   - **C9b R3** 新建 `src/data/score-events-source.ts`（双兼容路由解析 + 拉 events_data）+ 公开 endpoint `app/api/scores/[id]/events/route.ts`（middleware 已注释 `/api/scores/*` 公开只读）；`ScorePlayer.tsx` 改为挂载时 fetch events，三态：loading（按钮 disabled + "加载中…"）/ error（红条 + "请稍后刷新"）/ ready
 - 验证证据: TS 0 errors / ESLint 通过（仅 3 项 pre-existing warning）/ npm run build 全 28 路由生成完成（新增 `/api/scores/[id]/events`）；用户本地浏览器实测 `/me` 进入体感 + `/score/[id]` 首屏速度 + ScorePlayer 三态切换 + 双兼容路由（数字 tokenId / queue.id UUID）通过
 
-### 上上轮成功验证（保留）
+### 上上上轮成功验证（保留）
 
 - 验证: **strict CTO review "现在就修" 6 项落地**（测试网立即修补，避免等 Phase 7）
 - 时间: 2026-05-08
@@ -196,7 +218,7 @@
   - 测试网 Vercel 加环境变量 `AIRDROP_ENABLED=true`（保持现有空投行为）；主网部署时**不设**此 env
   - 运维脚本 / runbook 把 `/api/cron/queue-status?token=…` 改成 `curl -H 'Authorization: Bearer $ADMIN_TOKEN'`
 
-### 上上上轮成功验证（保留）
+### 上上上上轮成功验证（保留）
 
 - 验证: **B8 P3 端到端实测 + B6 demo 5 球 arweave_url 上链回写**（草稿铸造主链路全通）
 - 时间: 2026-05-08
@@ -211,7 +233,7 @@
   - Resend 邮件告警 P3 commit 提了未做 → 主网前必做
   - Agent review 13 finding：5 项本次合入修，8 项挂 P7
 
-### 上上上上轮成功验证（保留）
+### 上上上上上轮成功验证（保留）
 
 - 验证: B2 Bug C 主链路双根因修复（cron 4-28~5-6 全 fail 修通到 minting_onchain 上链）
 - 时间: 2026-05-06

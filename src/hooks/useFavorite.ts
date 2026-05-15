@@ -21,7 +21,7 @@ export function useFavorite(
   trackId: string,
   onMinted?: (tokenId: number) => void,
 ) {
-  const { authenticated, login, getAccessToken } = useAuth();
+  const { authenticated, openLoginModal, getAccessToken } = useAuth();
   const [status, setStatus] = useState<FavoriteStatus>('idle');
   const pendingRef = useRef(false);
   const onMintedRef = useRef(onMinted);
@@ -104,11 +104,11 @@ export function useFavorite(
   const favorite = useCallback(() => {
     if (!authenticated) {
       pendingRef.current = true;
-      login();
+      openLoginModal();
       return;
     }
     doFavorite();
-  }, [authenticated, login, doFavorite]);
+  }, [authenticated, openLoginModal, doFavorite]);
 
   return { status, favorite };
 }
