@@ -148,6 +148,10 @@ export interface ScoreMintQueueRow {
   locked_by: string | null;
   /** Phase 6 A1: durable lease 过期时间，过期后其他 cron 可重新 claim */
   lease_expires_at: string | null;
+  /** Phase 7 A3: writeContract(mintScore) 前盖戳，10min 窗口内无 tx_hash 不重发，窗口外 → manual_review */
+  mint_attempted_at: string | null;
+  /** Phase 7 A3: writeContract(setTokenURI) 前盖戳，同款窗口语义 */
+  uri_attempted_at: string | null;
   created_at: string;
   updated_at: string;
 }

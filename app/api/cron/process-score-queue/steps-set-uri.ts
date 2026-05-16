@@ -9,6 +9,8 @@ import {
 } from '@/src/lib/chain/contracts';
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
 
+const ATTEMPT_WINDOW_MS = 10 * 60 * 1000;
+
 /**
  * Step: setting_uri → success（Phase 6 A1：拆步 + lease CAS）
  *
@@ -30,7 +32,36 @@ export async function stepSetTokenUri(
   let uriTxHash = row.uri_tx_hash as `0x${string}` | null;
 
   if (!uriTxHash) {
-    // 没 uri_tx_hash → 发 setTokenURI tx + 立刻存（CAS）
+    const attemptedAt = row.uri_attempted_at
+      ? new Date(row.uri_attempted_at).getTime()
+      : null;
+    const nowMs = Date.now();
+
+    if (attemptedAt !== null) {
+      if (nowMs - attemptedAt < ATTEMPT_WINDOW_MS) {
+        console.warn(`[score-cron] setTokenURI attempt within window, skip resend: ${row.id}`);
+        return 'setting_uri';
+      }
+      throw new Error(
+        `CRITICAL: setTokenURI attempt stuck >${ATTEMPT_WINDOW_MS / 60000}min without uri_tx_hash, manual review`,
+      );
+    }
+
+    const stampIso = new Date().toISOString();
+    const { data: stampOk } = await supabaseAdmin
+      .from('score_nft_queue')
+      .update({ uri_attempted_at: stampIso, updated_at: stampIso })
+      .eq('id', row.id)
+      .eq('locked_by', leaseOwner)
+      .gt('lease_expires_at', stampIso)
+      .select('id')
+      .maybeSingle();
+
+    if (!stampOk) {
+      console.warn(`[score-cron] lease lost before setTokenURI stamp for ${row.id}`);
+      return 'setting_uri';
+    }
+
     console.log(`[score-cron] sending setTokenURI tx: ${tokenUri}`);
     uriTxHash = await operatorWalletClient.writeContract({
       address: SCORE_NFT_ADDRESS,

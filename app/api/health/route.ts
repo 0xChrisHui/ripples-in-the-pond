@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
     walletBalance: '0',
     pendingJobs: 0,
     scoreQueue: {},
+    scoreQueueManualReview: 0,
     jwtBlacklistSize: 0,
     lastBalanceAlert: null,
     mintQueue: { failed: 0, stuck: 0, oldestAgeSeconds: null },
@@ -59,7 +60,12 @@ export async function GET(req: NextRequest) {
     for (const r of scoreRows ?? []) {
       dist[r.status] = (dist[r.status] ?? 0) + 1;
     }
-    result.scoreQueue = dist;
+    const { count: scoreManualReview } = await supabaseAdmin
+      .from('score_nft_queue')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'failed')
+      .eq('failure_kind', 'manual_review');
+    result.scoreQueueManualReview = scoreManualReview ?? 0;
 
     // 5. jwt_blacklist 大小
     const { count: blacklistSize } = await supabaseAdmin

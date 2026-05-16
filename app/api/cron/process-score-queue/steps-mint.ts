@@ -10,6 +10,8 @@ import {
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
 import { extractTokenIdFromLogs } from './_shared';
 
+const ATTEMPT_WINDOW_MS = 10 * 60 * 1000;
+
 /**
  * Step: minting_onchain → uploading_metadata（Phase 6 A1：拆步 + lease CAS）
  *
@@ -32,7 +34,36 @@ export async function stepMintOnchain(
   let txHash = row.tx_hash as `0x${string}` | null;
 
   if (!txHash) {
-    // 没 tx_hash → 发交易 + 立刻存 hash（CAS）
+    const attemptedAt = row.mint_attempted_at
+      ? new Date(row.mint_attempted_at).getTime()
+      : null;
+    const nowMs = Date.now();
+
+    if (attemptedAt !== null) {
+      if (nowMs - attemptedAt < ATTEMPT_WINDOW_MS) {
+        console.warn(`[score-cron] mint attempt within window, skip resend: ${row.id}`);
+        return 'minting_onchain';
+      }
+      throw new Error(
+        `CRITICAL: mint attempt stuck >${ATTEMPT_WINDOW_MS / 60000}min without tx_hash, manual review`,
+      );
+    }
+
+    const stampIso = new Date().toISOString();
+    const { data: stampOk } = await supabaseAdmin
+      .from('score_nft_queue')
+      .update({ mint_attempted_at: stampIso, updated_at: stampIso })
+      .eq('id', row.id)
+      .eq('locked_by', leaseOwner)
+      .gt('lease_expires_at', stampIso)
+      .select('id')
+      .maybeSingle();
+
+    if (!stampOk) {
+      console.warn(`[score-cron] lease lost before mint stamp for ${row.id}`);
+      return 'minting_onchain';
+    }
+
     console.log(`[score-cron] sending mintScore tx → ${user.evm_address}`);
     txHash = await operatorWalletClient.writeContract({
       address: ORCHESTRATOR_ADDRESS,
@@ -41,7 +72,6 @@ export async function stepMintOnchain(
       args: [user.evm_address as `0x${string}`],
     });
 
-    // tx 已广播 — DB 写失败不能 reset（会双 mint）
     const nowIso = new Date().toISOString();
     const { data: dbOk } = await supabaseAdmin
       .from('score_nft_queue')

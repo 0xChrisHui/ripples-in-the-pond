@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { verifyCronSecret } from '@/src/lib/auth/cron-auth';
 import { acquireOpLock, releaseOpLock } from '@/src/lib/chain/operator-lock';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { sendAlert } from '@/src/lib/alerts/resend';
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
 import { stepUploadEvents, stepUploadMetadata } from './steps-upload';
 import { stepMintOnchain } from './steps-mint';
@@ -18,11 +19,14 @@ import { stepSetTokenUri } from './steps-set-uri';
  * Phase 6 A0：入口拿运营钱包全局锁（防 nonce race）
  * Phase 6 A1：每次 claim 分配 leaseOwner，所有 update 必须 CAS owner + 未过期
  *             终态（success / failed）清 lease；catch 失败也清 lease 让其他 cron 接管
+ * Phase 7 A12：route 不再用 row.status 做 CAS（step 不再内部跃迁 status，pending→uploading_events
+ *             这种"中间跃迁"全部由本 route 在 step 返回后统一推进；status CAS 反而会导致 race-of-self）
+ * Phase 7 A3 ：mint / setTokenURI 入口加 mint_attempted_at / uri_attempted_at 窗口（详见 step 文件）
  *
  * 幂等核心：
  *   - 上传步骤：Arweave 内容寻址，同内容重传得到同 txid
  *   - mint / setTokenURI：tx_hash / uri_tx_hash 立刻入库，崩溃重启不重发
- *   - "CRITICAL: ..." 错误（chain 已发但 DB 失败）→ 直接 failed 不 retry
+ *   - "CRITICAL: ..." 错误（chain 已发但 DB 失败 / mint 卡死窗口超限）→ 直接 failed=manual_review，alert 邮件
  */
 
 const MAX_RETRY = 3;
@@ -80,7 +84,9 @@ export async function GET(req: NextRequest) {
         throw new Error(`unexpected status: ${row.status}`);
     }
 
-    // 推进 status：CAS 校验 (status 未变 + 仍是我 + lease 未过期)，终态清 lease
+    // 推进 status：CAS 只校验 (仍是我 + lease 未过期)；终态清 lease
+    // A12 修复（2026-05-16）：去掉 `.eq('status', row.status)` —— step 不再内部跃迁 status，
+    // pending→uploading_events 这种跃迁也由本 route 统一推；status CAS 反而让"自己 vs 自己"假失败。
     const isFinal = newStatus === 'success' || newStatus === 'failed';
     const nowIso = new Date().toISOString();
     const { data: updated } = await supabaseAdmin
@@ -94,13 +100,12 @@ export async function GET(req: NextRequest) {
           : {}),
       })
       .eq('id', claimedId)
-      .eq('status', row.status)
       .eq('locked_by', leaseOwner)
       .gt('lease_expires_at', nowIso)
       .select('id');
 
     if (!updated || updated.length === 0) {
-      console.warn(`[score-cron] CAS failed: ${claimedId} lease lost or status changed by stale worker`);
+      console.warn(`[score-cron] CAS failed: ${claimedId} lease lost (worker stale)`);
     }
 
     return NextResponse.json({
@@ -140,6 +145,19 @@ export async function GET(req: NextRequest) {
         })
         .eq('id', claimedId)
         .eq('locked_by', leaseOwner);
+
+      // Phase 7 A8：manual_review 是不可自动恢复的状态，需要人工介入。
+      // fire-and-forget 调一次邮件告警；sendAlert 内部自带 try/catch + 未配 env 静默 log。
+      if (failureKind === 'manual_review') {
+        void sendAlert({
+          subject: 'score_nft_queue manual_review',
+          body: [
+            `queueId: ${claimedId}`,
+            `retry_count: ${claimedRetry}`,
+            `last_error: ${msg.slice(0, 500)}`,
+          ].join('\n'),
+        });
+      }
     }
 
     return NextResponse.json(

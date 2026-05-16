@@ -72,6 +72,7 @@ export interface HealthResponse {
   walletBalance: string;
   pendingJobs: number;
   scoreQueue: Record<string, number>;
+  scoreQueueManualReview: number;
   jwtBlacklistSize: number;
   lastBalanceAlert: string | null;
   /** Phase 6 E1：material mint_queue 失败/卡住聚合视图 */

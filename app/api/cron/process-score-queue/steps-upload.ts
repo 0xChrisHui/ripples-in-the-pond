@@ -28,17 +28,6 @@ export async function stepUploadEvents(
     return 'minting_onchain';
   }
 
-  // pending → uploading_events 标记（CAS）
-  if (row.status === 'pending') {
-    const nowIso = new Date().toISOString();
-    await supabaseAdmin
-      .from('score_nft_queue')
-      .update({ status: 'uploading_events', updated_at: nowIso })
-      .eq('id', row.id)
-      .eq('locked_by', leaseOwner)
-      .gt('lease_expires_at', nowIso);
-  }
-
   const { data: draft, error } = await supabaseAdmin
     .from('pending_scores')
     .select('events_data')
