@@ -113,9 +113,9 @@ export function getGroupTracks(gid: GroupId, allTracks: Track[]): Track[] {
   return allTracks.filter((t) => t.week >= 1 && t.week <= 36);
 }
 
-// A 组 5 球（demo）/ B/C 组 36 球；SphereCanvas 和 Archipelago 预热都用这个常量
+// A 组 15 球（P7 A6.1 扩容；artist 给 10 首新曲 No.6-15）/ B/C 组 36 球
 export function getGroupTargetCount(gid: GroupId): number {
-  return gid === 'A' ? 5 : 36;
+  return gid === 'A' ? 15 : 36;
 }
 
 // DB < target 时循环 padding；改 week 1..target 让颜色/size 各异；id 加后缀避 React key 冲突

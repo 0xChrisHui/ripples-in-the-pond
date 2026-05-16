@@ -20,11 +20,11 @@
 
 ## 当前进度
 
-**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1 已完整完成**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`（commit `65516d0`）；**B1-vercel 用户 2026-05-15 已在 Vercel 三环境添加完成**。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**Track C 全套（C1-C9）已收口**（详见上一轮验证）。**2026-05-15 A2 已上链 + Vercel + 归档**：AirdropNFT v2 部署 OP Sepolia `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`。**2026-05-15 Track D D1-D3 已完成**：LoginModal 默认 Semi + 邮箱直跳 Privy；SemiLogin 两阶段深色布局 + 6 格 PinInput；`/me` 顶栏按 `authSource` 切「← 首页」/「↗ 社区钱包」。verify.sh 全绿。**D4 剩余**：用户本机浏览器 7 步实测确认。
+**做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1 已完整完成**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`（commit `65516d0`）；**B1-vercel 用户 2026-05-15 已在 Vercel 三环境添加完成**。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**Track C 全套（C1-C9）已收口**（详见上一轮验证）。**2026-05-15 A2 已上链 + Vercel + 归档**：AirdropNFT v2 部署 OP Sepolia `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`。**2026-05-15 Track D D1-D3 已完成**：LoginModal 默认 Semi + 邮箱直跳 Privy；SemiLogin 两阶段深色布局 + 6 格 PinInput；`/me` 顶栏按 `authSource` 切「← 首页」/「↗ 社区钱包」。verify.sh 全绿。**D4 剩余**：用户本机浏览器 7 步实测确认。**2026-05-16 A3+A12+A8 score queue 状态机修复包已 commit `a48f4de` + push + 端到端真实数据验证通过**（migration 032 加 mint/uri_attempted_at + token_id partial unique；route 去掉 status CAS；steps-mint/set-uri 三刀盖戳；A8 Resend fire-and-forget；/api/health 加 scoreQueueManualReview）。验证副产物：发现 Vercel `NEXT_PUBLIC_SCORE_NFT_ADDRESS` 被错配为 AirdropNFT 地址，已修；两个历史 NFT（tokenId 21/22）经手动数据修复 → cron 自动跑完 setTokenURI。**2026-05-16 A6.1+A6.2 完成**：tracks 表 INSERT week 6-15（migration 033）+ sphere-config 5→15 + SphereNode badge 双位数适配 + 10 首 mp3 上 Arweave 回写 arweave_url（week 6-15 全部就绪）。verify.sh 全绿。
 
 **下一步** —— Track A 继续推进：
-  1. **A3+A12 score queue 状态机修复包**（双 mint 防御 + lease 25min 根因；A14/A15 前置）
-  2. **A4 MAINNET-RUNBOOK grantRole 验收命令**（小步快跑）
+  1. **A4 MAINNET-RUNBOOK grantRole 验收命令**（小步快跑）
+  2. **A14/A15 5s 乐观成功诚实文案 + auto-polling + useMintScore 失败回滚**（A3+A12 已解锁；需 C3 已完成 → 已就绪）
 
 **Track 依赖图（修订）**：
 - A3+A12 → 阻塞 A14/A15（cron 状态机改完才能稳定 polling）；不再阻塞 C1
@@ -32,7 +32,7 @@
 - C1 baseline → 已完成；C8 修后对照必须复用同样 4 页 × desktop/mobile × 2 次口径
 - B4a 不再硬等 A1（接受临时硬编码 chain 配置做冒烟，A1 完成后重测 10 分钟）
 
-**A6 范围缩水（2026-05-13）**：A6 = "20 曲 arweave_url 全量上链"（不是 108）。含 B6.1 子任务（A 组 5 球→20 球 / B+C 36 球 21-36 循环 1-16 / SphereNode badge 双位数）。剩余 88 曲挪 Phase 10 / 运营长期。
+**A6 范围（2026-05-16 实际完成版）**：A6 = "15 曲 arweave_url 上链"（原设计 20 曲，艺术家给 10 首新曲 No.6-15 + 原 5 首 = 15）。A 组 5 球→15 球；SphereNode badge 双位数适配。剩余曲目挪 Phase 10 / 运营长期。
 
 **用户说"开始 A1"** → AI 进 A1 概念简报 → slow mode 实施。
 
@@ -42,7 +42,7 @@
   - Phase 10 = 性能深度优化 + 上线检查 + 换 CRON_SECRET + OP Mainnet 部署 + 9 项 P1 挂 P10 清单 + 首周救火
 
 **已实质完成的步骤**：
-- Phase 7 Track A：A1 chain-config 抽单一来源 ✅（commit `e0084db`）/ A2 AirdropNFT v2 加 `_uriSet` + 重新部署 ✅（2026-05-15）
+- Phase 7 Track A：A1 chain-config 抽单一来源 ✅（commit `e0084db`）/ A2 AirdropNFT v2 加 `_uriSet` + 重新部署 ✅（2026-05-15）/ A3+A12+A8 score queue 状态机修复包 ✅（2026-05-16，commit `a48f4de`，端到端真实数据验证）/ A6.1+A6.2 tracks 5→15 球 + 10 首 Arweave 上链 ✅（2026-05-16）
 - Phase 7 Track B（**全部 ✅** 2026-05-15）：B1 SEMI_API_URL env 三环境同步 ✅ / B2 SemiLogin + LoginModal 两 tab ✅ / B3 useAuth 双源化 + 4 caller 改 openLoginModal ✅ / B4a 用户线下 7 步实测 ✅ / B4b 投资人 demo 协调 ✅ / review 整合 ✅（claude 自审 + codex 2 条 P1 落地：useAuth ready 双源 + SEMI-DEMO-SCRIPT 步骤 6 校验方式）
 - Phase 6 Track A：A0 operator 锁 ✅ / A1 ScoreNFT cron durable lease ✅ / A2 failure_kind ✅ / A3 sync cursor 事务性 ✅ / A4 草稿原子化 ✅ / A5 P7 / A6 决策冻结
 - Track B（Phase 6）：B1 cache 隔离 ✅ / B2 Bug A/B 由 B8 数据流重设实质收口 + Bug C 5/6 修 ✅ / B3 草稿铸造 + 5/8 实测 ✅ / B5 #7 ✅ #9 ✅ #8 废弃（HomeJam 已 dead-code）/ B6 ✅ / B7 待 / B4 删
