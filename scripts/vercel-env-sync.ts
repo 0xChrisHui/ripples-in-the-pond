@@ -41,6 +41,8 @@ async function main() {
 
   const localEnv = parseLocalEnv();
 
+  // 已知限制：limit=100 不分页。超过 100 条 env 时后续变量不参与比对，A/C 类可能漏报。
+  // 当前项目 env 变量约 30 条，风险可控；主网部署日若 env 增多应升级为分页循环。
   const res = await fetch(`https://api.vercel.com/v9/projects/${projectId}/env?limit=100`, {
     headers: { Authorization: `Bearer ${token}` },
   });

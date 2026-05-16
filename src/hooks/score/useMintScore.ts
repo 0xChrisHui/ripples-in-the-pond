@@ -77,6 +77,9 @@ export function useMintScore() {
       }
       await mintScore(token, pendingScoreId);
     } catch (err) {
+      // 有意不取消 timerRef：即使 API 请求失败，5s 后仍触发 setState('success') 进入乐观态，
+      // 由 startRollbackPoll 在 60s 内轮询确认草稿消失；若未消失则回滚到 error。
+      // 不在 catch 里 clearTimeout，否则破坏"乐观成功 + 轮询兜底"的设计。
       console.error('[mintScore] 铸造请求失败（前端乐观成功，轮询兜底）', {
         pendingScoreId, err, ts: new Date().toISOString(),
       });

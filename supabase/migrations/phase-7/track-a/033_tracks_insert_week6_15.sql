@@ -22,4 +22,5 @@ ON CONFLICT (week) DO UPDATE
       audio_url  = EXCLUDED.audio_url,
       cover      = EXCLUDED.cover,
       published  = EXCLUDED.published,
-      arweave_url = NULL;
+      -- 保留已上链的 arweave_url，防止 migration 重跑清除已写入的 Arweave URL
+      arweave_url = COALESCE(tracks.arweave_url, EXCLUDED.arweave_url);
