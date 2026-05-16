@@ -127,7 +127,7 @@ export async function stepSetTokenUri(
     throw new Error(`pending_score not found: ${row.pending_score_id}`);
   }
 
-  await supabaseAdmin.from('mint_events').upsert(
+  const { error: upsertErr } = await supabaseAdmin.from('mint_events').upsert(
     {
       mint_queue_id: null,
       user_id: row.user_id,
@@ -141,6 +141,9 @@ export async function stepSetTokenUri(
     },
     { onConflict: 'score_queue_id' },
   );
+  if (upsertErr) {
+    throw new Error(`mint_events upsert failed for queue ${row.id}: ${upsertErr.message}`);
+  }
 
   console.log(`[score-cron] success, tokenId=${row.token_id}`);
   return 'success';

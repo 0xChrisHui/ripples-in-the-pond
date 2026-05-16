@@ -5,12 +5,14 @@ import { fetchSounds } from '@/src/data/jam-source';
 import type { Sound } from '@/src/types/jam';
 
 interface UseJamReturn {
-  /** 26 个音效数据 */
   sounds: Sound[];
-  /** mp3 已下载，可以开始演奏 */
+  /** mp3 ArrayBuffer 已下载完毕（fetch 阶段完成）*/
   ready: boolean;
-  /** 按键触发音效 — 传给 useKeyboard 的 onKeyDown */
+  /** A13: AudioBuffer 已解码完毕，可安全开始事件时钟 */
+  decodeReady: boolean;
   playSound: (key: string) => void;
+  /** A13: 主动触发解码（useEventsPlayback 在播放开始时调用，避免懒触发延迟）*/
+  triggerDecode: () => void;
 }
 
 /**
@@ -24,6 +26,7 @@ interface UseJamReturn {
 export function useJam(): UseJamReturn {
   const [sounds, setSounds] = useState<Sound[]>([]);
   const [ready, setReady] = useState(false);
+  const [decodeReady, setDecodeReady] = useState(false);
   const ctxRef = useRef<AudioContext | null>(null);
   // 阶段 1：存原始 ArrayBuffer（页面加载时填充）
   const rawRef = useRef<Map<string, ArrayBuffer>>(new Map());
@@ -90,6 +93,7 @@ export function useJam(): UseJamReturn {
       );
       buffersRef.current = new Map(entries);
       decodeStateRef.current = 'decoded';
+      setDecodeReady(true);
 
       // 重放解码期间排队的按键
       for (const k of pendingKeysRef.current) playSingle(k);
@@ -118,5 +122,10 @@ export function useJam(): UseJamReturn {
     };
   }, []);
 
-  return { sounds, ready, playSound };
+  // A13: 主动触发解码，供 useEventsPlayback 在播放开始时调用（避免第一次 playSound 才懒触发）
+  const triggerDecode = useCallback(() => {
+    if (decodeStateRef.current === 'idle') ensureDecoded();
+  }, [ensureDecoded]);
+
+  return { sounds, ready, decodeReady, playSound, triggerDecode };
 }

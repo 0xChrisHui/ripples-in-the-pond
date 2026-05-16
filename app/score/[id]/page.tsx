@@ -1,9 +1,9 @@
-import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getScoreById } from '@/src/data/score-source';
 import { explorerAddressUrl } from '@/src/lib/chain/chain-config';
 import ScorePlayer from './ScorePlayer';
+import FallbackShell from './FallbackShell';
 
 /**
  * /score/[id] — ScoreNFT 公开回放页（B8 重设：路由 ID 兼容 tokenId / queue.id UUID）
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ScorePage({ params }: Props) {
   const { id } = await params;
   const score = await getScoreById(id);
-  if (!score) notFound();
+  if (!score) return <FallbackShell />;
 
   const shortAddr = score.creatorAddress
     ? `${score.creatorAddress.slice(0, 6)}...${score.creatorAddress.slice(-4)}`
@@ -51,10 +51,10 @@ export default async function ScorePage({ params }: Props) {
     <main className="min-h-screen bg-black px-4 py-10">
       <div className="mx-auto max-w-xl">
         <Link
-          href="/"
+          href="/me"
           className="mb-8 inline-block text-xs text-white/30 hover:text-white/50"
         >
-          &larr; Ripples in the Pond
+          &larr; 我的收藏
         </Link>
 
         <div className="mb-6 text-center">

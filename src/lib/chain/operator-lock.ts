@@ -3,18 +3,20 @@ import { Redis } from '@upstash/redis';
 
 /**
  * Phase 6 A0 — 运营钱包全局串行锁
+ * A16 — TTL 120s + Lua 心跳续期 + 生产 fail-closed
  *
- * material / score / airdrop 三条 cron 共用同一个 EOA（operatorWalletClient）。
- * 任意两条 cron 同分钟发 tx → nonce race（后发可能 replace 前一笔 / RPC 拒绝 / 互相覆盖）。
+ * LEASE_MS 从 30s 升至 120s：setTokenURI 在 OP Sepolia gas spike 时 receipt
+ * 等待可能超 30s，原 30s TTL 会导致锁过期后第二个 cron 拿到锁 → nonce race。
  *
- * 实现：Upstash Redis SETNX 分布式锁，30 秒 TTL（cron 单次执行 < 5 秒，留余量）。
- * 释放用 Lua 脚本 GET-then-DEL，避免 lease 过期后误删别人的锁。
+ * 心跳续期（heartbeatOpLock）用 Lua 脚本保证只对自己持有的锁续期：
+ *   if GET(key) == holder then PEXPIRE(key, ms) else return 0
  *
- * 本地开发（无 UPSTASH env）→ console.warn + 直接放行（不阻塞开发）。
+ * fail-closed：生产环境无 Upstash 时一律拒绝（return false），
+ * 防止测试/staging 配置漏配时误以为拿到锁。
  */
 
 const LOCK_KEY = 'op_wallet_lock';
-const LEASE_MS = 30_000;
+export const LEASE_MS = 120_000;
 
 let redis: Redis | null = null;
 
@@ -23,7 +25,6 @@ function getRedis(): Redis | null {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
-  // .env.local 里的引号兼容（Phase 5 Upstash 初始化容错经验）
   redis = new Redis({
     url: url.replace(/^["']+|["']+$/g, '').trim(),
     token: token.replace(/^["']+|["']+$/g, '').trim(),
@@ -31,25 +32,20 @@ function getRedis(): Redis | null {
   return redis;
 }
 
-/**
- * 尝试拿锁。返回 true = 拿到了；false = 被别人占用。
- * holder 必须每次调用唯一（推荐 `${cron-name}-${randomUUID()}`），
- * 用于 release 时校验只删自己的锁。
- */
 export async function acquireOpLock(holder: string): Promise<boolean> {
   const r = getRedis();
   if (!r) {
-    console.warn('[op-lock] Upstash 未配置，无法加锁，跳过（仅限本地开发）');
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[op-lock] Upstash 未配置，生产环境 fail-closed，拒绝加锁');
+      return false;
+    }
+    console.warn('[op-lock] Upstash 未配置，本地开发 fail-open（跳过锁）');
     return true;
   }
   const result = await r.set(LOCK_KEY, holder, { nx: true, px: LEASE_MS });
   return result === 'OK';
 }
 
-/**
- * 释放锁。Lua 脚本保证只删自己的锁（即使 lease 过期了被别人拿走也不会误删）。
- * 静默失败（finally 里调用，不能 throw 影响业务返回）。
- */
 export async function releaseOpLock(holder: string): Promise<void> {
   const r = getRedis();
   if (!r) return;
@@ -62,4 +58,30 @@ export async function releaseOpLock(holder: string): Promise<void> {
   } catch (err) {
     console.error('[op-lock] release failed (lease 可能已过期，无副作用):', err);
   }
+}
+
+/**
+ * A16 — 心跳续期：仅对自己的锁续期（Lua 脚本校验 holder，防误续他人锁）。
+ * 长步骤（writeContract / getTransactionReceipt）期间每 30s 调一次。
+ * 返回 true = 续期成功；false = 锁已被他人持有（应终止当前步骤）。
+ */
+export async function heartbeatOpLock(holder: string): Promise<boolean> {
+  const r = getRedis();
+  if (!r) return true; // 本地开发 fail-open
+  try {
+    const result = await r.eval(
+      'if redis.call("GET", KEYS[1]) == ARGV[1] then return redis.call("PEXPIRE", KEYS[1], ARGV[2]) else return 0 end',
+      [LOCK_KEY],
+      [holder, String(LEASE_MS)],
+    );
+    return result === 1;
+  } catch (err) {
+    console.error('[op-lock] heartbeat failed:', err);
+    return false;
+  }
+}
+
+/** A16: /api/health 用于暴露锁提供方（upstash = 正常；fallback = Upstash 未配置） */
+export function getLockProvider(): 'upstash' | 'fallback' {
+  return getRedis() ? 'upstash' : 'fallback';
 }

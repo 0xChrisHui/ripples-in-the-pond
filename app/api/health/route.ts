@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyCronSecret } from '@/src/lib/auth/cron-auth';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { publicClient } from '@/src/lib/chain/operator-wallet';
+import { getLockProvider } from '@/src/lib/chain/operator-lock';
 import { formatEther } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import type { HealthResponse } from '@/src/types/tracks';
@@ -115,6 +116,7 @@ export async function GET(req: NextRequest) {
         : null,
     };
 
+    result.lockProvider = getLockProvider();
     return NextResponse.json(result);
   } catch (err) {
     console.error('GET /api/health error:', err);

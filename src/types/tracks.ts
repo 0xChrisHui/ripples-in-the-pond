@@ -83,4 +83,6 @@ export interface HealthResponse {
     /** 队列最老一笔 pending/minting 的等待秒数；空队列为 null */
     oldestAgeSeconds: number | null;
   };
+  /** A16: upstash = Upstash 已配置；fallback = 未配置（生产 fail-closed）*/
+  lockProvider?: 'upstash' | 'fallback';
 }
