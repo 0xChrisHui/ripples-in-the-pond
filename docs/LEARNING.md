@@ -220,6 +220,16 @@
 
 ---
 
+### Attempted Window（防双发时间戳窗口）
+
+- **是什么**：cron 发链上交易前，先在 DB 写一个 `*_attempted_at` 时间戳；下一轮 cron 看到这个时间戳在 25 分钟内就跳过本行。事务一旦走到终态再清掉时间戳。
+- **类比**：像快递柜门口贴的"已联系骑手，请稍候"小条——即使你掉线了，下一个用户看到条子会等 25 分钟再尝试，不会重复寄出第二件。
+- **为什么重要**：链上 tx 没有幂等键（每笔都消耗 nonce），cron 如果被 sigkill / 重启 / lease 误判，可能对同一 row 发两次 tx → 双 mint / 双 setTokenURI → 钱花了 NFT 状态错乱。Attempted window 兜底 25 分钟比纯靠 lease 更安全（lease 5 分钟内 row 走完 5 步会让 lease 误清）。
+- **判错警告**：`attempted_at = null` **不能**反推"代码 bug"。设计是先写时间戳后发 tx，所以 null 只能说"cron 根本没跑过这行"，而不是"跑了但失败"。要区分"代码没跑"和"跑了但 revert"必须看链上 + Vercel env，不能只看 DB。
+- **第一次出现**：`supabase/migrations/phase-7/track-a/032_score_queue_state_machine.sql` + `steps-mint.ts` + `steps-set-uri.ts`，Phase 7 A3+A12。
+
+---
+
 ## 🗓 历史归档
 
 每个月末，AI 会把超过 30 天的条目归档到本文件末尾。
