@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useMintScore } from '@/src/hooks/useMintScore';
+import { useMintScore } from '@/src/hooks/score/useMintScore';
 import { useEventsPlayback } from '@/src/hooks/useEventsPlayback';
 import { useAuth } from '@/src/hooks/useAuth';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
@@ -103,6 +103,17 @@ export default function DraftCard({
           <span className="text-xs text-white/80">铸造中...</span>
         ) : clientState === 'success' ? (
           <span className="text-xs text-emerald-400/90">铸造成功 ✓</span>
+        ) : clientState === 'error' ? (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-red-300/80">提交失败，请重试</span>
+            <button
+              type="button"
+              onClick={() => mint(pendingScoreId)}
+              className="rounded-full border border-red-300/30 px-3 py-0.5 text-xs text-red-300/80 transition-all hover:bg-red-300/10"
+            >
+              重试
+            </button>
+          </div>
         ) : (
           <button
             type="button"

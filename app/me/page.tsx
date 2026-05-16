@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { OwnedNFT } from '@/src/types/tracks';
 import type { OwnedScoreNFT } from '@/src/types/jam';
 import { useAuth } from '@/src/hooks/useAuth';
+import { useScoreNftPolling } from '@/src/hooks/score/useScoreNftPolling';
 import { fetchMyNFTs } from '@/src/data/nfts-source';
 import { getDrafts, removeDraft } from '@/src/lib/draft-store';
 import { getCachedNFTs, setCachedNFTs } from '@/src/lib/nft-cache';
@@ -140,6 +141,8 @@ export default function MePage() {
       }
     });
   }, [authenticated, userId]);
+
+  useScoreNftPolling({ scoreNfts, authenticated, userId, getAccessToken, onRefresh: setScoreNfts });
 
   if (!ready && nfts.length === 0) return null;
 

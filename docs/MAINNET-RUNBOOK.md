@@ -105,6 +105,45 @@ cast call <ScoreNFT> "hasRole(bytes32,address)(bool)" \
 # 期望 true
 ```
 
+#### 3.3.2 全角色验收（所有合约部署完后执行一次）
+
+一次性跑完所有 `hasRole` 验收，确认 admin / minter / deployer 权限分离正确。把 `<...>` 占位替换成实际地址：
+
+```bash
+# ── ScoreNFT ──
+# 1. admin 持 DEFAULT_ADMIN_ROLE（治理权在冷钱包）
+cast call <ScoreNFT> "hasRole(bytes32,address)(bool)" \
+  0x0000000000000000000000000000000000000000000000000000000000000000 \
+  <ADMIN_ADDRESS> --rpc-url $ALCHEMY_RPC_URL
+# 期望 true
+
+# 2. MintOrchestrator 持 MINTER_ROLE（能 mint + setTokenURI）
+cast call <ScoreNFT> "hasRole(bytes32,address)(bool)" \
+  $(cast keccak "MINTER_ROLE") <MintOrchestrator> --rpc-url $ALCHEMY_RPC_URL
+# 期望 true
+
+# 3. deployer 已被 revoke DEFAULT_ADMIN_ROLE
+cast call <ScoreNFT> "hasRole(bytes32,address)(bool)" \
+  0x0000000000000000000000000000000000000000000000000000000000000000 \
+  <DEPLOYER_ADDRESS> --rpc-url $ALCHEMY_RPC_URL
+# 期望 false
+
+# ── MaterialNFT ──
+# 4. minter 热钱包持 MINTER_ROLE
+cast call <MaterialNFT> "hasRole(bytes32,address)(bool)" \
+  $(cast keccak "MINTER_ROLE") <MINTER_ADDRESS> --rpc-url $ALCHEMY_RPC_URL
+# 期望 true
+
+# 5. deployer 已被 revoke
+cast call <MaterialNFT> "hasRole(bytes32,address)(bool)" \
+  0x0000000000000000000000000000000000000000000000000000000000000000 \
+  <DEPLOYER_ADDRESS> --rpc-url $ALCHEMY_RPC_URL
+# 期望 false
+```
+
+> `cast call` 返回 hex：`0x...0001 = true`，`0x...0000 = false`。
+> 5 项全部符合预期才算验收通过，否则立刻停止并手动核查 grantRole / revokeRole 步骤。
+
 ### 3.4 AirdropNFT（Phase 6 D1 = 主网不做空投，但合约保留部署）
 ```bash
 forge script script/DeployAirdropNFT.s.sol \
