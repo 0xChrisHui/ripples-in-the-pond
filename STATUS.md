@@ -6,13 +6,13 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 6 v2 已完结**（2026-05-08）→ **Phase 7 范围重定 @ 2026-05-13**：修严重 BUG + Semi 社区钱包前端接入 + 全站提速（14-18 天）
+**Phase**: **Phase 7 已完结**（2026-05-16，completion review `5a2211a`）→ **Phase 8 当前**：UI 大升级（艺术家反馈 5 条 + Claude Design 接入 + /me /score /artist 深度重设计）
 **Phase 拆分（2026-05-13 决策，旧 5/8 三段作废）**：
-  - **Phase 7**（当前）= 修严重 BUG + Semi + 提速
-  - **Phase 8** = UI 大升级（艺术家反馈 5 条 + Claude Design 接入）
+  - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
+  - **Phase 8**（当前）= UI 大升级（艺术家反馈 5 条 + Claude Design 接入）
   - **Phase 9** = 按键动画 + 音效系统扩展 26 → 50
   - **Phase 10** = 性能深度优化 + 上线检查 + OP Mainnet 部署 + 首周救火
-**playbook 7**: `playbook/phase-7/overview.md` + 3 个 track 子文档（track-a-bugs / track-b-semi / track-c-perf），三方 review 整合后版本（commit 待 push）
+**P7 Completion Review**: `reviews/2026-05-16-phase-7-completion-review.md`（commit `5a2211a`，结论：Phase 7 完结，deferred 项挂 Phase 10）
 **P7 三方 review**：`reviews/2026-05-13-phase-7-playbook-review.md`（Claude 自审 + 2 个 Codex review，16 项必修已全部落地）
 **Phase 6 Completion**: `reviews/2026-05-08-phase-6-completion-review.md`（含旧 10 项硬阻塞清单，已在 P7 Track A 里重新拆分归宿）
 **P6 Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`（16/19 通过 + 0 P0 + 0 P1）
@@ -22,10 +22,11 @@
 
 **做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1 已完整完成**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`（commit `65516d0`）；**B1-vercel 用户 2026-05-15 已在 Vercel 三环境添加完成**。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**Track C 全套（C1-C9）已收口**（详见上一轮验证）。**2026-05-15 A2 已上链 + Vercel + 归档**：AirdropNFT v2 部署 OP Sepolia `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`。**2026-05-15 Track D D1-D3 已完成**：LoginModal 默认 Semi + 邮箱直跳 Privy；SemiLogin 两阶段深色布局 + 6 格 PinInput；`/me` 顶栏按 `authSource` 切「← 首页」/「↗ 社区钱包」。verify.sh 全绿。**D4 剩余**：用户本机浏览器 7 步实测确认。**2026-05-16 A3+A12+A8 score queue 状态机修复包已 commit `a48f4de` + push + 端到端真实数据验证通过**（migration 032 加 mint/uri_attempted_at + token_id partial unique；route 去掉 status CAS；steps-mint/set-uri 三刀盖戳；A8 Resend fire-and-forget；/api/health 加 scoreQueueManualReview）。验证副产物：发现 Vercel `NEXT_PUBLIC_SCORE_NFT_ADDRESS` 被错配为 AirdropNFT 地址，已修；两个历史 NFT（tokenId 21/22）经手动数据修复 → cron 自动跑完 setTokenURI。**2026-05-16 A6.1+A6.2 完成**：tracks 表 INSERT week 6-15（migration 033）+ sphere-config 5→15 + SphereNode badge 双位数适配 + 10 首 mp3 上 Arweave 回写 arweave_url（week 6-15 全部就绪）。verify.sh 全绿。
 
-**下一步** —— Phase 7 进入收尾 / Completion Review：
-  1. 产出 `reviews/2026-05-16-phase-7-completion-review.md`（宏观 review + deferred 清单 + Phase 8 gate）
-  2. 确认 Track D D4 用户浏览器 7 步实测口径（已做则补确认；未做则挂 P8 前非代码验收）
-  3. Phase 8 起点：UI 大升级（艺术家反馈 5 条 + Claude Design + /me /score /artist 深度重设计）
+**下一步** —— Phase 8 启动：
+  1. 汇总艺术家反馈 5 条 + 排优先级
+  2. Claude Design 介入，出 /me /score/[id] /artist 三个核心页面视觉方案
+  3. 按 playbook 逐 step 实施 UI 大升级
+  4. D4 浏览器 7 步实测（若用户此前未做）：作为 P8 前非代码验收项补确认
 
 **Track 依赖图（修订）**：
 - A3+A12 → 阻塞 A14/A15（cron 状态机改完才能稳定 polling）；不再阻塞 C1
@@ -49,7 +50,7 @@
 - Track B（Phase 6）：B1 cache 隔离 ✅ / B2 Bug A/B 由 B8 数据流重设实质收口 + Bug C 5/6 修 ✅ / B3 草稿铸造 + 5/8 实测 ✅ / B5 #7 ✅ #9 ✅ #8 废弃（HomeJam 已 dead-code）/ B6 ✅ / B7 待 / B4 删
 - Phase 7 Track C：C1 Lighthouse baseline ✅（修前）/ C2 四个体感目标 + ROI 准则 ✅ / C3 split ✅ / C5 loading UI ✅ / C6 font swap/preload ✅ / C7 loading.tsx ✅ / C8 对比报告 ✅（downgraded-accepted）/ C9a /me 并行 + section error ✅ / C9b /score events 按需 fetch + cache() ✅
 - Track C（Phase 6 历史）：C1/C2/C3/C4 ✅
-- Phase 7 Track D：D1 LoginModal 默认 Semi + 邮箱直跳 Privy ✅ / D2 SemiLogin 两阶段布局 + 6 格 PinInput ✅ / D3 /me 顶栏社区钱包外链 ✅ / D4 verify.sh ✅，浏览器 7 步实测口径待 completion review 明确（已做则补确认；未做则挂 P8 前非代码验收）
+- Phase 7 Track D：D1 LoginModal 默认 Semi + 邮箱直跳 Privy ✅ / D2 SemiLogin 两阶段布局 + 6 格 PinInput ✅ / D3 /me 顶栏社区钱包外链 ✅ / D4 verify.sh ✅ + 浏览器 7 步实测 ✅（commit `5a2211a` 后已补确认）
 - Track E：E1 health mintQueue ✅ / E2 Semi P7 / E3 依赖 E2 P7 / E4 废弃（B8 P3 删 decoder iframe）/ E5 本次 ✅
 
 **剩余**: Phase 6 v2（B7 冒烟半天 + completion review 半天 = **1 天**）→ Phase 7（OP 主网 + UI 深度重设计 + 音阶系统 + 监控 + 退出准备）
@@ -67,7 +68,7 @@
 
 **主网首版包含**：Privy 邮箱登录 / 浏览 + 播放 108 曲 / 素材收藏 → MaterialNFT / 合奏录制 + 草稿 / 草稿 → ScoreNFT（B3 接通后）/ 已铸造乐谱回放 + 分享卡 / 个人页（"我铸造的"语义）/ 艺术家页
 
-**主网首版不包含**：空投（D1 = 不做）/ Semi 社区钱包登录（E2 挂 Phase 7）
+**主网首版不包含**：空投（D1 = 不做）/ Semi 社区钱包登录（✅ **已落地 P7 Track B+D**，主网 Semi 策略见 Phase 10）
 
 **主网首版不允许**：airdrop cron 定时运行 / airdrop trigger 端点对外暴露
 
@@ -260,7 +261,7 @@
 
 **主网首版不包含**（Phase 6 D1/E2 决策）：
 - **空投 NFT**（D1=不做）— cron-job.org 停用 process-airdrop 定时，合约保留不触发
-- **Semi 社区钱包登录**（E2=挂 Phase 7）— Phase 4A S0-S2 后端可复用，前端未接
+- **Semi 社区钱包登录**（✅ **已落地 P7 Track B+D**，主网 Semi 策略见 Phase 10）— Phase 4A S0-S2 后端可复用，前端未接
 
 **主网首版不允许**：
 - airdrop cron 定时运行（代码保留，调度器不配置）
@@ -270,7 +271,7 @@
 - /artist 页不显示空投进度标记（或显示为"运营内部"）
 - /me 无草稿上链按钮之前路径关闭（Phase 6 B3 接通前）
 
-## 🚀 Phase 7 当前执行范围（2026-05-13 重定）
+## 🚀 Phase 7 执行范围（历史归档，2026-05-16 完结）
 
 Phase 7 不再是 UI 翻修候选清单，而是三 Track 并行：
 - **Track A**：修严重 BUG（A1 起点，含 A6 20 曲 arweave_url 全量上链）
