@@ -173,7 +173,7 @@ export default function MePage() {
           </h1>
           {authSource === 'semi' ? (
             <a
-              href="https://app.ntdao.xyz/"
+              href="https://semi.ntdao.xyz/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-white/30 hover:text-white/50"
