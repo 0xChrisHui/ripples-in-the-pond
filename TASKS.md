@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 8 启动**。Phase 7 已于 2026-05-16 完结（completion review `reviews/2026-05-16-phase-7-completion-review.md`，commit `5a2211a`）。下一步：汇总艺术家 5 条反馈 → Claude Design 出视觉方案 → 实施 /me /score/[id] /artist 深度重设计。
+- **Phase 8 启动**：首页水塘视觉重设计。P7 已完结（commit `5a2211a`）。下一步：AI 调研水塘视觉方向 → 用户预览确认 → 逐 step 实施。
 
 ---
 
@@ -184,12 +184,31 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 
 ---
 
-## ⏭⏭⏭ 之后（2026-05-13 重定，四段拆分）
+## ⏭⏭⏭ 之后（2026-06-04 新定，九段拆分）
 
-- **Phase 7（已完结 ✅，2026-05-16）** — 修严重 BUG + Semi 社区钱包 + 全站提速（详上面 Phase 7 启动序列）
-- **Phase 8** — UI 大升级（艺术家反馈 5 条 + Claude Design 接入 + /me /score /artist 深度重设计）
-- **Phase 9** — 按键动画 + 音效系统扩展 26 → 50（含 P1-21 useEventsPlayback decode 时序）
-- **Phase 10** — 性能深度优化 + 上线检查 + OP Mainnet 部署 + 首周救火
+- **Phase 7（已完结 ✅，2026-05-16）** — 修严重 BUG + Semi 社区钱包 + 全站提速
+- **Phase 8（当前）** — 水塘视觉重设计（首页从星空改水塘）
+- **Phase 9** — 按键动画优化
+- **Phase 10** — 组件功能升级 + 小球数量 36→35 + 分享/海报/5 大球
+- **Phase 11** — 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
+- **Phase 12** — OP Mainnet 上线准备与部署
+- **Phase 13** — 混音系统 + RemixNFT
+- **Phase 14** — 音效系统扩展
+- **Phase 15** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
+- **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
+
+### Phase 8 Scope（当前任务）
+
+**核心**：首页视觉从星空改水塘，水塘/涟漪/水面/漂浮感。
+
+**不在 P8 范围**（已分流）：
+- 小球数量 36→35 → P10
+- 5 个背景大球 → P10
+- 按键动画 → P9
+- 全局 UI 重设计 → P11
+- 音效扩展 → P14
+
+详细 roadmap：`playbook/roadmap-P8-P16.md`；P8 playbook：`playbook/phase-8/overview.md`
 
 延后项清单：`reviews/phase-0-deferred.md` + `reviews/phase-1-deferred.md` + `reviews/2026-04-24-phase-5-s5-smoke-test.md`
 

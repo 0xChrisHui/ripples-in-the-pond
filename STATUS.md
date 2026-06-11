@@ -6,12 +6,18 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 7 已完结**（2026-05-16，completion review `5a2211a`）→ **Phase 8 当前**：UI 大升级（艺术家反馈 5 条 + Claude Design 接入 + /me /score /artist 深度重设计）
-**Phase 拆分（2026-05-13 决策，旧 5/8 三段作废）**：
+**Phase**: **Phase 7 已完结**（2026-05-16，completion review `5a2211a`）→ **Phase 8 当前**：水塘视觉重设计（首页从星空改水塘）
+**Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
-  - **Phase 8**（当前）= UI 大升级（艺术家反馈 5 条 + Claude Design 接入）
-  - **Phase 9** = 按键动画 + 音效系统扩展 26 → 50
-  - **Phase 10** = 性能深度优化 + 上线检查 + OP Mainnet 部署 + 首周救火
+  - **Phase 8**（当前）= 水塘视觉重设计（首页星空 → 水塘）
+  - **Phase 9** = 按键动画优化
+  - **Phase 10** = 组件功能升级 + 小球数量 36→35 + 分享/海报/5 大球
+  - **Phase 11** = 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
+  - **Phase 12** = OP Mainnet 上线准备与部署
+  - **Phase 13** = 混音系统 + RemixNFT
+  - **Phase 14** = 音效系统扩展
+  - **Phase 15** = Semi 音乐 NFT 生态合作（待你和社区商量后定）
+  - **Phase 16** = 原生钱包 + 多链 / ETH Mainnet（往后排）
 **P7 Completion Review**: `reviews/2026-05-16-phase-7-completion-review.md`（commit `5a2211a`，结论：Phase 7 完结，deferred 项挂 Phase 10）
 **P7 三方 review**：`reviews/2026-05-13-phase-7-playbook-review.md`（Claude 自审 + 2 个 Codex review，16 项必修已全部落地）
 **Phase 6 Completion**: `reviews/2026-05-08-phase-6-completion-review.md`（含旧 10 项硬阻塞清单，已在 P7 Track A 里重新拆分归宿）
@@ -22,11 +28,11 @@
 
 **做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1 已完整完成**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`（commit `65516d0`）；**B1-vercel 用户 2026-05-15 已在 Vercel 三环境添加完成**。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**Track C 全套（C1-C9）已收口**（详见上一轮验证）。**2026-05-15 A2 已上链 + Vercel + 归档**：AirdropNFT v2 部署 OP Sepolia `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`。**2026-05-15 Track D D1-D3 已完成**：LoginModal 默认 Semi + 邮箱直跳 Privy；SemiLogin 两阶段深色布局 + 6 格 PinInput；`/me` 顶栏按 `authSource` 切「← 首页」/「↗ 社区钱包」。verify.sh 全绿。**D4 剩余**：用户本机浏览器 7 步实测确认。**2026-05-16 A3+A12+A8 score queue 状态机修复包已 commit `a48f4de` + push + 端到端真实数据验证通过**（migration 032 加 mint/uri_attempted_at + token_id partial unique；route 去掉 status CAS；steps-mint/set-uri 三刀盖戳；A8 Resend fire-and-forget；/api/health 加 scoreQueueManualReview）。验证副产物：发现 Vercel `NEXT_PUBLIC_SCORE_NFT_ADDRESS` 被错配为 AirdropNFT 地址，已修；两个历史 NFT（tokenId 21/22）经手动数据修复 → cron 自动跑完 setTokenURI。**2026-05-16 A6.1+A6.2 完成**：tracks 表 INSERT week 6-15（migration 033）+ sphere-config 5→15 + SphereNode badge 双位数适配 + 10 首 mp3 上 Arweave 回写 arweave_url（week 6-15 全部就绪）。verify.sh 全绿。
 
-**下一步** —— Phase 8 启动：
-  1. 汇总艺术家反馈 5 条 + 排优先级
-  2. Claude Design 介入，出 /me /score/[id] /artist 三个核心页面视觉方案
-  3. 按 playbook 逐 step 实施 UI 大升级
-  4. D4 浏览器 7 步实测（若用户此前未做）：作为 P8 前非代码验收项补确认
+**下一步** —— Phase 8 启动（2026-06-04 新定）：
+  1. AI 调研水塘视觉方向（颜色/质感/动效），产出一页方案描述
+  2. 用户预览确认方向
+  3. 按 playbook 逐 step 实施水塘视觉重设计
+  4. 每步 verify.sh + 6 行汇报
 
 **Track 依赖图（修订）**：
 - A3+A12 → 阻塞 A14/A15（cron 状态机改完才能稳定 polling）；不再阻塞 C1
@@ -38,10 +44,17 @@
 
 **用户说"开始 A1"** → AI 进 A1 概念简报 → slow mode 实施。
 
-**Phase 8 / 9 / 10 计划**（已锁，不 P7 期间动）:
-  - Phase 8 = UI 大升级（艺术家反馈 5 条 + Claude Design + /me /score /artist 深度重设计）
-  - Phase 9 = 按键动画 + 音效系统扩展 26 → 50（含 P1-21 useEventsPlayback decode 时序）
-  - Phase 10 = 性能深度优化 + 上线检查 + 换 CRON_SECRET + OP Mainnet 部署 + 9 项 P1 挂 P10 清单 + 首周救火
+**Phase 8-16 计划（2026-06-04 新定）**:
+  - Phase 8 = 水塘视觉重设计（首页从星空改水塘）
+  - Phase 9 = 按键动画优化
+  - Phase 10 = 组件功能升级 + 小球数量 36→35 + 分享/海报/5 大球
+  - Phase 11 = 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
+  - Phase 12 = OP Mainnet 上线准备与部署
+  - Phase 13 = 混音系统 + RemixNFT
+  - Phase 14 = 音效系统扩展
+  - Phase 15 = Semi 音乐 NFT 生态合作（待你和社区商量后定）
+  - Phase 16 = 原生钱包 + 多链 / ETH Mainnet（往后排）
+  - 详细 roadmap：`playbook/roadmap-P8-P16.md` + `playbook/phase-8/overview.md`
 
 **已实质完成的步骤**：
 - Phase 7 Track A：A1 ✅ / A2 ✅ / A3+A12+A8 ✅ / A6（15 曲）✅ / A4 ✅ / A14 ✅ / A15 ✅ / A9 ✅ / A10 ✅ / A13 ✅ / A16 ✅（TTL 120s + Lua heartbeat 能力；heartbeat 接入长 cron step 挂 P10） / A17 ✅（2026-05-16 工程修复完结）/ A5 暂挂 P10 / A7 挂 P10
