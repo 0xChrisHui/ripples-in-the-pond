@@ -96,6 +96,8 @@
 
 **Phase 8 工时**：约 4 天（单步串行估，实际可按用户节奏走）
 
+> **P8-S4「Archipelago 动效改造」已细化为独立子track**：`playbook/phase-8/phase-8-a-water-ripple.md`（水波折射动效，路线 A = 纯 SVG `feDisplacementMap`，5 步，2026-06-11 拍板）。
+
 ---
 
 ## 关键依赖

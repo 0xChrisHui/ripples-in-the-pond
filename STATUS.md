@@ -293,6 +293,8 @@ Phase 7 不再是 UI 翻修候选清单，而是三 Track 并行：
 
 旧 Phase 7 UI 翻修候选已分流：艺术家反馈 5 条 + Claude Design + /me /score /artist 深度重设计 → Phase 8；按键动画 + 音效系统扩展 26→50 → Phase 9；主网部署 / Resend / CRON_SECRET / operator 主网 ETH → Phase 10。
 
+> ⚠️ **本段为 2026-05-13 历史分流，已被 2026-06-04 新路线图覆盖**：P8=水塘视觉、P9=按键动画、P11=全局 UI 重设计、P12=主网、P14=音效扩展。当前权威以顶部 Phase 拆分表 + `playbook/roadmap-P8-P16.md` 为准。
+
 ## 📌 悬空 TODO（不在 step 内但要追踪）
 
 - **5 首正式曲名上架**（艺术家未给）
