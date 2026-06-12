@@ -21,7 +21,13 @@ export interface EffectsConfig {
   // --- Lane A 球体线 ---（waterRipple / waterDrop / bobbing / dropShimmer / sphereSheen）
   // --- Lane B 环境线 ---（caustics / filmGrain / pondLights / drops / pondShadow / skyReflection / moonPath / pondEdge / rain）
   // --- Lane C 物理线 ---（springBack / viscous / breeze）
-  // --- Lane D 音频线 ---（audioPulse / beatRipple / echoRipple / playWaves / bubbles / lightFollow）
+  // --- Lane D 音频线 ---
+  audioPulse: boolean;       // C1 播放球/月亮随低频能量呼吸脉动
+  beatRipple: boolean;       // C1 强拍以播放球为中心荡开离散涟漪
+  echoRipple: boolean;       // F2 播放开始时声音传到最近 4-6 球（延迟小涟漪）
+  playWaves: boolean;        // F2 播放球处 2-3 环同心声波环连续扩散
+  bubbles: boolean;          // F2 播放中播放球附近气泡升腾
+  lightFollow: boolean;      // F2 环境月光斑向播放球偏移（降级订阅者，目标缺失则 no-op）
   // --- Lane E 编排线 ---（waterWake / dragWake / waterMoon / groupWave / navPond / tide / clickSplash / cursorRing / splashIntro）
 }
 
@@ -47,6 +53,12 @@ export const DESKTOP_EFFECTS: EffectsConfig = {
   // --- Lane B 环境线 ---
   // --- Lane C 物理线 ---
   // --- Lane D 音频线 ---
+  audioPulse: false,
+  beatRipple: false,
+  echoRipple: false,
+  playWaves: false,
+  bubbles: false,
+  lightFollow: false,
   // --- Lane E 编排线 ---
 };
 
@@ -78,6 +90,12 @@ export const MOBILE_EFFECTS: EffectsConfig = {
   // --- Lane B 环境线 ---
   // --- Lane C 物理线 ---
   // --- Lane D 音频线 ---
+  audioPulse: false,
+  beatRipple: false,
+  echoRipple: false,
+  playWaves: false,
+  bubbles: false,
+  lightFollow: false,
   // --- Lane E 编排线 ---
 };
 
@@ -111,6 +129,12 @@ export const EFFECTS_META: EffectMeta[] = [
   // --- Lane B 环境线 ---
   // --- Lane C 物理线 ---
   // --- Lane D 音频线 ---
+  { key: 'audioPulse', label: '音频脉动（球/月随低频呼吸）', group: '运动' },
+  { key: 'beatRipple', label: '节拍涟漪（强拍荡开）', group: '运动' },
+  { key: 'echoRipple', label: '回声涟漪（声传最近球）', group: '运动' },
+  { key: 'playWaves', label: '持续声波环', group: '运动' },
+  { key: 'bubbles', label: '气泡升腾', group: '运动' },
+  { key: 'lightFollow', label: '月光寻声', group: '环境' },
   // --- Lane E 编排线 ---
 ];
 

@@ -34,4 +34,45 @@
 
 /* === Lane D 音频线（playWaves / bubbles 等 keyframe）=== */
 
+/* bubbles 气泡：自下而上漂 + 正弦横摆 + 淡出（纯 transform/opacity，抽象圆光斑）。
+   --bub-rise 负值上升量、--bub-sway 横摆幅度由 JS 注入。 */
+.pond-bubble {
+  position: fixed;
+  border-radius: 9999px;
+  background: var(--pond-light);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: pond-bubble-rise;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+@keyframes pond-bubble-rise {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  15%  { opacity: 0.5; }
+  50%  { transform: translate(calc(var(--bub-sway) * 0.6), calc(var(--bub-rise) * 0.5)); opacity: 0.4; }
+  100% { transform: translate(var(--bub-sway), var(--bub-rise)); opacity: 0; }
+}
+
+/* playWaves 持续声波环：以播放球为原点的同心环连续扩散（容器由 JS 跟随定位）。
+   性能纪律：只动 transform/opacity——环固定基础尺寸，靠 scale() 扩散（不动 width/height）。
+   --pw-base 为基础直径，由 JS 按播放球屏幕半径注入。 */
+.pond-playwave {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--pw-base, 24px);
+  height: var(--pw-base, 24px);
+  margin-left: calc(var(--pw-base, 24px) / -2);
+  margin-top: calc(var(--pw-base, 24px) / -2);
+  border-radius: 9999px;
+  border: 1px solid var(--pond-ripple);
+  will-change: transform, opacity;
+  animation: pond-playwave-out 2s linear infinite;
+}
+@keyframes pond-playwave-out {
+  0%   { transform: scale(1); opacity: 0.45; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
 /* === Lane E 编排线（splashIntro / groupWave / clickSplash / cursorRing 等 keyframe）=== */

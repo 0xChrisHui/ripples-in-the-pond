@@ -12,6 +12,7 @@ import { DEFAULT_EFFECTS, type EffectsConfig } from './effects-config';
 import AuroraBackground from './effects/ambient/aurora-background';
 import StarsBackground from './effects/ambient/stars-background';
 import FogLayer from './effects/ambient/fog-layer';
+import AudioNarrative from './effects/motion/audio-narrative'; // Lane D 音频线协调（自挂 fixed overlay）
 
 interface Props {
   fullscreen?: boolean;
@@ -157,6 +158,7 @@ export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFE
       {effects.aurora && <AuroraBackground />}
       {effects.stars && <StarsBackground />}
       {effects.fog && <FogLayer />}
+      <AudioNarrative effects={effects} />{/* Lane D 音频线：beatRipple/echoRipple/playWaves/bubbles/lightFollow + 音频能量 */}
       <nav className={navCls}>
         {GROUPS.map((g) => {
           const active = g.id === currentGroupId;

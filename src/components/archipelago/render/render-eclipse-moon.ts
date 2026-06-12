@@ -10,6 +10,8 @@
 import { fLayer, type SimNode } from '../sphere-config';
 import { tiltCoef, persp } from './render-helpers';
 import type { LayerWaveEvent } from '../hooks/use-layer-wave';
+import { setPlaySpherePos, clearPlaySpherePos, isAudioPulseEnabled } from '../hooks/pond/use-play-sphere-pos';
+import { getAudioEnv } from '../hooks/pond/use-audio-energy';
 
 export interface RenderEclipseMoonArgs {
   eclipseEl: SVGGElement | null;
@@ -52,9 +54,18 @@ export function renderEclipseMoon(a: RenderEclipseMoonArgs): void {
       const p = persp(ex, ey, pz, a.cx, a.cy, a.k);
       ex = p.x; ey = p.y; eScale *= p.factor;
     }
+    // Lane D audioPulse — 日食月亮随低频能量同步脉动（scale *= 1 + env*0.07）
+    if (isAudioPulseEnabled()) {
+      eScale *= 1 + getAudioEnv() * 0.07;
+    }
     a.eclipseEl.setAttribute('transform', `translate(${ex},${ey}) scale(${eScale})`);
     a.eclipseEl.style.display = 'block';
+    // Lane D — 把日食元素的真实屏幕中心（含 zoom 的 getBoundingClientRect）广播给
+    // beatRipple / echoRipple / playWaves / bubbles 的 overlay 消费者。
+    const rect = a.eclipseEl.getBoundingClientRect();
+    setPlaySpherePos(rect.left + rect.width / 2, rect.top + rect.height / 2, rect.width / 2);
   } else {
     a.eclipseEl.style.display = 'none';
+    clearPlaySpherePos();
   }
 }
