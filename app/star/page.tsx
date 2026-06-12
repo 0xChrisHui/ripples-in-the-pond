@@ -29,13 +29,16 @@ export default function StarPage() {
       </div>
 
       <div className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex items-start justify-between px-6 py-5">
-        <h1 className="text-lg font-light tracking-[0.3em] text-white/80">
+        <h1 className={`text-lg font-light tracking-[0.3em] text-white/80${effects.navPond ? ' nav-pond' : ''}`}>
           Ripples in the Pond
         </h1>
         <div className="pointer-events-auto">
           <LoginButton />
         </div>
       </div>
+      {effects.navPond && (
+        <div className="nav-pond-glow-line pointer-events-none fixed inset-x-0 top-[60px] z-[60]" />
+      )}
 
       <DraftSavedToast />
       <PerfHUD />

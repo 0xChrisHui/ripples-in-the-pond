@@ -23,6 +23,15 @@ export interface EffectsConfig {
   // --- Lane C 物理线 ---（springBack / viscous / breeze）
   // --- Lane D 音频线 ---（audioPulse / beatRipple / echoRipple / playWaves / bubbles / lightFollow）
   // --- Lane E 编排线 ---（waterWake / dragWake / waterMoon / groupWave / navPond / tide / clickSplash / cursorRing / splashIntro）
+  waterWake: boolean;     // §2.9 水痕：抽象掠水扰动，沿路径微椭圆涟漪串 + 推球
+  dragWake: boolean;      // §2.16 拖拽水痕：拖球身后微椭圆涟漪尾迹（与 waterWake 共享池）
+  waterMoon: boolean;     // §2.15 水中月：月影落球群之下（替日食"挂天上"）
+  groupWave: boolean;     // E2 切组涟漪：切组触发一道大涟漪从标签侧扫过
+  navPond: boolean;       // E3 顶栏水塘化：文字/边框/hover 引 --pond-* token（默认零变化）
+  tide: boolean;          // F1 潮汐呼吸：球群独立 wrapper g 极缓 scale 呼吸
+  clickSplash: boolean;   // F1 点击水花：播放瞬间球心迸光点一次性抛出
+  cursorRing: boolean;    // F5 指尖涟漪：空白水面低 opacity 椭圆环延迟跟随鼠标
+  splashIntro: boolean;   // E1 入场编排（依赖 Lane A bobbing 内层 g，留 Wave 2 集成）
 }
 
 /** v87 桌面：10 个 effect 全开 + gradientGlow 默认关闭（= 用原 SVG filter 看视觉基准） */
@@ -48,6 +57,15 @@ export const DESKTOP_EFFECTS: EffectsConfig = {
   // --- Lane C 物理线 ---
   // --- Lane D 音频线 ---
   // --- Lane E 编排线 ---
+  waterWake: false,
+  dragWake: false,
+  waterMoon: false,
+  groupWave: false,
+  navPond: false,
+  tide: false,
+  clickSplash: false,
+  cursorRing: false,
+  splashIntro: false,
 };
 
 /**
@@ -78,7 +96,16 @@ export const MOBILE_EFFECTS: EffectsConfig = {
   // --- Lane B 环境线 ---
   // --- Lane C 物理线 ---
   // --- Lane D 音频线 ---
-  // --- Lane E 编排线 ---
+  // --- Lane E 编排线 ---（cursorRing 移动端无意义，全部 false）
+  waterWake: false,
+  dragWake: false,
+  waterMoon: false,
+  groupWave: false,
+  navPond: false,
+  tide: false,
+  clickSplash: false,
+  cursorRing: false,
+  splashIntro: false,
 };
 
 /** 兼容老引用 — Archipelago 兜底 + 桌面默认（设备无关 fallback） */
@@ -112,6 +139,15 @@ export const EFFECTS_META: EffectMeta[] = [
   // --- Lane C 物理线 ---
   // --- Lane D 音频线 ---
   // --- Lane E 编排线 ---
+  { key: 'waterWake', label: '水痕（掠水扰动）', group: '运动' },
+  { key: 'dragWake', label: '拖拽水痕', group: '运动' },
+  { key: 'waterMoon', label: '水中月', group: '渲染' },
+  { key: 'groupWave', label: '切组涟漪', group: '运动' },
+  { key: 'navPond', label: '顶栏水塘化', group: '渲染' },
+  { key: 'tide', label: '潮汐呼吸', group: '运动' },
+  { key: 'clickSplash', label: '点击水花', group: '运动' },
+  { key: 'cursorRing', label: '指尖涟漪环', group: '运动' },
+  { key: 'splashIntro', label: '入场编排（Wave 2）', group: '运动' },
 ];
 
 /**

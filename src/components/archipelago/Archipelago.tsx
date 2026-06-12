@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Track, TracksListResponse } from '@/src/types/tracks';
 import LoadingState from '@/src/components/common/LoadingState';
 import { useAuth } from '@/src/hooks/useAuth';
@@ -116,6 +116,24 @@ export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFE
     }, 250);
   }, [currentGroupId, fading]);
 
+  // E2 groupWave — 切组触发一道大涟漪从被点标签左侧扫过（≥800ms 节流，连切不堆积）。
+  // 起点 = 标签元素左缘竖直中点；只画+推球，不动重排逻辑。
+  // 延迟 ~320ms 发：避开 sim 重建时 'archipelago:reset' 的清屏（use-sphere-sim:52），
+  // 让波在新组重排到位后扫过 = "波带动球"的因果成立（§E2 的"波先到、球再动"）。
+  const lastGroupWaveRef = useRef(0);
+  const spawnGroupWave = useCallback((el: HTMLElement) => {
+    const now = performance.now();
+    if (now - lastGroupWaveRef.current < 800) return;
+    lastGroupWaveRef.current = now;
+    const r = el.getBoundingClientRect();
+    const x = r.left, y = r.top + r.height / 2;
+    const detail = { x, y, size: 520, duration: 18, prio: 1 };
+    window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('bg-ripple:wave', { detail }));
+      window.dispatchEvent(new CustomEvent('bg-ripple:spawn', { detail: { ...detail, once: false } }));
+    }, 320);
+  }, []);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === ' ' || e.code === 'Space') {
@@ -164,7 +182,10 @@ export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFE
             <button
               key={g.id}
               type="button"
-              onClick={() => handleGroupChange(g.id)}
+              onClick={(e) => {
+                if (effects.groupWave) spawnGroupWave(e.currentTarget);
+                handleGroupChange(g.id);
+              }}
               className={[
                 'flex items-center gap-2 rounded px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] transition',
                 active ? 'border border-white/10 bg-white/5 text-white/80' : 'border border-transparent text-white/30 hover:text-white/60',

@@ -54,11 +54,14 @@ function TestPageInner() {
         <div className="pointer-events-auto"><TestJam /></div>
       </div>
       <div className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex items-start justify-between px-6 py-5">
-        <h1 className="text-lg font-light tracking-[0.3em] text-white/80">
+        <h1 className={`text-lg font-light tracking-[0.3em] text-white/80${finalEffects.navPond ? ' nav-pond' : ''}`}>
           Ripples in the Pond <span className="text-white/30">— /test sandbox</span>
         </h1>
         <div className="pointer-events-auto"><LoginButton /></div>
       </div>
+      {finalEffects.navPond && (
+        <div className="nav-pond-glow-line pointer-events-none fixed inset-x-0 top-[60px] z-[60]" />
+      )}
 
       <DraftSavedToast />
       <PerfHUD />
