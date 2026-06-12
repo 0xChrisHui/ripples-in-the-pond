@@ -1,0 +1,113 @@
+/*
+ * Phase 8 — 水塘特效 CSS（运动编排：Lane D 音频 + Lane E 编排）。
+ * 从 pond-effects.css 拆出以守 220 行硬线；由 globals.css @import。
+ */
+
+/* === Lane D 音频线（playWaves / bubbles 等 keyframe）=== */
+
+/* bubbles 气泡：自下而上漂 + 正弦横摆 + 淡出（纯 transform/opacity，抽象圆光斑）。
+   --bub-rise 负值上升量、--bub-sway 横摆幅度由 JS 注入。 */
+.pond-bubble {
+  position: fixed;
+  border-radius: 9999px;
+  background: var(--pond-light);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: pond-bubble-rise;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+@keyframes pond-bubble-rise {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  15%  { opacity: 0.5; }
+  50%  { transform: translate(calc(var(--bub-sway) * 0.6), calc(var(--bub-rise) * 0.5)); opacity: 0.4; }
+  100% { transform: translate(var(--bub-sway), var(--bub-rise)); opacity: 0; }
+}
+
+/* playWaves 持续声波环：以播放球为原点的同心环连续扩散（容器由 JS 跟随定位）。
+   性能纪律：只动 transform/opacity——环固定基础尺寸，靠 scale() 扩散（不动 width/height）。
+   --pw-base 为基础直径，由 JS 按播放球屏幕半径注入。 */
+.pond-playwave {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--pw-base, 24px);
+  height: var(--pw-base, 24px);
+  margin-left: calc(var(--pw-base, 24px) / -2);
+  margin-top: calc(var(--pw-base, 24px) / -2);
+  border-radius: 9999px;
+  border: 1px solid var(--pond-ripple);
+  will-change: transform, opacity;
+  animation: pond-playwave-out 2s linear infinite;
+}
+@keyframes pond-playwave-out {
+  0%   { transform: scale(1); opacity: 0.45; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+/* === Lane E 编排线（splashIntro / groupWave / clickSplash / cursorRing 等 keyframe）=== */
+
+/* F1 tide 潮汐呼吸 — 球群独立 wrapper <g> 套，scale 1↔1.015 极缓往复。
+   套独立 g（SphereNodesGroup 外层），不写 zoomG / sim 外层 g 的 transform。
+   transform-box: fill-box + origin center = 以球群自身中心呼吸，不破坏 hit-test。 */
+@keyframes tide-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.015); }
+}
+.tide-breathe {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tide-breathe 52s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* F1 clickSplash 点击水花 — 球心迸出的光点沿随机方向（--sx/--sy）抛出 + 淡出，用后即删。
+   只动 transform/opacity（合成线程）。 */
+@keyframes click-splash {
+  0%   { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(var(--sx, 0), var(--sy, 0)); opacity: 0; }
+}
+.click-splash {
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: click-splash;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+/* §2.15 waterMoon 极慢呼吸 — 水中月光斑只动 scale/opacity（暗带随父 g 一起轻缩）。 */
+@keyframes water-moon-breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.92; }
+  50%      { transform: scale(1.04); opacity: 1; }
+}
+.water-moon-breathe {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: water-moon-breathe 9s ease-in-out infinite;
+}
+
+/* E3 navPond 顶栏水塘化 — 文字 / 边框 / hover 改引 --pond-* token。
+   默认 token = 现状兼容值（白系），即视觉零变化；接 token 为未来配色重启留接口。
+   不碰布局 / 字体 / 登录逻辑。 */
+.nav-pond {
+  /* 不覆盖 base color（保留 text-white/80 现状不变）；hover 时叠 --pond-glow 水光晕。
+     未来配色重启：把 --pond-glow 换成水塘色即生效，无需改组件。 */
+  transition: text-shadow 0.4s ease;
+}
+.nav-pond:hover {
+  text-shadow: 0 0 12px color-mix(in srgb, var(--pond-glow) 35%, transparent);
+}
+/* 顶栏底部 1px 水面光泽线（@10%，pointer-events:none，零动画）*/
+.nav-pond-glow-line {
+  pointer-events: none;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in srgb, var(--pond-glow) 10%, transparent),
+    transparent
+  );
+}

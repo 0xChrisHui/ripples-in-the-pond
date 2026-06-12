@@ -17,10 +17,19 @@ import {
   type SimNode,
   type SimLink,
 } from './sphere-config';
+import { getPhys } from './forces/phys-config';
+import { springReturnStep, PERTURB_MIN } from './forces/spring';
+import { setBreezeTargets } from './forces/breeze-force';
 
 /** sim 持续漂浮的 baseline alpha */
 const ALPHA_BASELINE = 0.008;
 const PAD = 20;
+
+// Lane C — 节点物理私有字段（同 _dragLoose 模式）：_ax/_ay=spring 回归 anchor，_perturb=受扰能量 0-1
+type PhysNode = SimNode & {
+  _dragLoose?: boolean;
+  _ax?: number; _ay?: number; _perturb?: number;
+};
 
 export function setupSimulation(
   simNodes: SimNode[],
@@ -68,19 +77,31 @@ export function setupSimulation(
     n.vy = 0;
     delete n.fx;
     delete n.fy;
+    const pn = n as PhysNode; // Lane C — anchor 同步到私有字段供 springBack tick 读取
+    pn._ax = ax; pn._ay = ay; pn._perturb = 0;
   });
+  setBreezeTargets(simNodes as PhysNode[]); // Lane C breeze — 把当前节点交给微风施力模块
 
-  const strengthOf = (d: SimNode) => {
-    if ((d as SimNode & { _dragLoose?: boolean })._dragLoose) return 0.025;
+  const strengthOf = (d: SimNode) => { // Lane C springBack — 受扰球 cluster 拉力让给弹簧（返回 0）
+    const pn = d as PhysNode;
+    if (getPhys().springBack && (pn._perturb ?? 0) > PERTURB_MIN) return 0;
+    if (pn._dragLoose) return 0.025;
     return anchorMap.get(d.id)?.strength ?? 0.1;
   };
 
-  return forceSimulation<SimNode>(simNodes)
-    .force('link', forceLink<SimNode, SimLink>(links)
-      .id((d) => d.id)
-      .distance((d) => CFG.linkBaseDist + (1 - d.correlation) * CFG.linkVariance)
-      .strength((d) => d.correlation * 0.30))
-    .force('charge', forceManyBody<SimNode>().strength((d) => -(70 * (0.6 + d.importance * 0.8))))
+  // Lane C viscous — 关=原样；开=削弱 charge/link 去星系结构感（×0.35/×0.4）+ 调高 velocityDecay 黏滞
+  const visc = () => getPhys().viscous;
+  const chargeForce = forceManyBody<SimNode>().strength((d) =>
+    -(70 * (0.6 + d.importance * 0.8)) * (visc() ? 0.35 : 1),
+  );
+  const linkForce = forceLink<SimNode, SimLink>(links)
+    .id((d) => d.id)
+    .distance((d) => CFG.linkBaseDist + (1 - d.correlation) * CFG.linkVariance)
+    .strength((d) => d.correlation * (visc() ? 0.12 : 0.30));
+
+  const sim = forceSimulation<SimNode>(simNodes)
+    .force('link', linkForce)
+    .force('charge', chargeForce)
     .force('collide', forceCollide<SimNode>()
       // v32 — r*1.0+4（v31 太挤）→ r*1.1+8，介于 v30/v31 之间
       .radius((d) => d.radius * 1.1 + 8).strength(0.85).iterations(4))
@@ -90,15 +111,25 @@ export function setupSimulation(
     .alphaDecay(0.016)
     .velocityDecay(0.5)
     .alphaTarget(ALPHA_BASELINE)
-    .alpha(0.3)
-    .on('tick', () => {
-      simNodes.forEach((n) => {
-        if (n.fx != null || n.fy != null) return;
-        if (n.x != null) n.x = Math.max(PAD, Math.min(width - PAD, n.x));
-        if (n.y != null) n.y = Math.max(PAD, Math.min(height - PAD, n.y));
-      });
-      onTick();
+    .alpha(0.3);
+
+  let lastTick = 0; // springBack 自适应 dt（毫秒时间戳）
+  sim.on('tick', () => {
+    const phys = getPhys();
+    // viscous — 实时切 velocityDecay 黏滞档（开 0.72 拖泥带水 / 关 0.5 原值）
+    sim.velocityDecay(phys.viscous ? 0.72 : 0.5);
+    // springBack — 受扰球弹簧回归 anchor（过冲回摆），力逻辑在 forces/spring.ts
+    lastTick = phys.springBack ? springReturnStep(simNodes as PhysNode[], cx, cy, lastTick) : 0;
+
+    simNodes.forEach((n) => {
+      if (n.fx != null || n.fy != null) return;
+      if (n.x != null) n.x = Math.max(PAD, Math.min(width - PAD, n.x));
+      if (n.y != null) n.y = Math.max(PAD, Math.min(height - PAD, n.y));
     });
+    onTick();
+  });
+
+  return sim;
 }
 
 /** 背景涟漪在球周围扩散时的瞬时数据（spawn 时由 BackgroundRipples 通过事件传入）*/
@@ -136,6 +167,8 @@ export function pushSpheresByWaves(
         const force = 0.18 * (1 - dist / band);
         n.vx = (n.vx ?? 0) + (dx / d) * force;
         n.vy = (n.vy ?? 0) + (dy / d) * force;
+        // Lane C springBack — 标记受扰，回归阶段交弹簧驱动（过冲回摆）
+        (n as PhysNode)._perturb = 1;
       }
     }
   }

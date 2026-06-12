@@ -14,6 +14,7 @@ import SkyReflection from './pond/sky-reflection';
 import MoonPath from './pond/moon-path';
 import PondEdge from './pond/pond-edge';
 import AudioNarrative from '../motion/audio-narrative';
+import Breeze from '../motion/breeze'; // Lane C 物理线（始终挂载：广播 springBack/viscous/breeze 给 sim）
 
 /**
  * 全部氛围层 + 音频协调层的集中挂载点（从 Archipelago 抽出，控其行数）。
@@ -37,6 +38,8 @@ export default function AmbientLayers({ effects }: { effects: EffectsConfig }) {
       {(effects.drops || effects.rain) && <DropsLayer rain={effects.rain} />}
       {/* Lane D 音频线协调（自挂 fixed overlay，beatRipple/echoRipple/playWaves/bubbles/lightFollow + 音频能量）*/}
       <AudioNarrative effects={effects} />
+      {/* Lane C 物理线：始终挂载（内部按 effects.breeze 控可见，并向 sim 广播三开关）*/}
+      <Breeze effects={effects} />
     </>
   );
 }

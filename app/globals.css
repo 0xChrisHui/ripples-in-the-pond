@@ -2,6 +2,7 @@
 /* Phase 8 — 水塘特效 CSS（.ripple-once + 各 lane keyframe）独立成文件，
    避免 globals.css 撞 220 行硬线，且给并行 lane 一个隔离的追加区。 */
 @import "./pond-effects.css";
+@import "./pond-effects-motion.css";
 
 /*
  * Tailwind v4 默认扫整个项目寻找 className，遇到二进制/非法 UTF-8 文件
