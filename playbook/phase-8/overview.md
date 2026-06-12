@@ -83,6 +83,27 @@
 
 ---
 
+## P8 子 track 索引 + 全局铁律（2026-06-12 立项）
+
+| Track | 文件 | 内容 |
+|---|---|---|
+| **P8-A** | `phase-8-a-water-ripple.md` | 水波折射动效 + 水面机位常量（默认正圆 1.0 + /test slider）+ 动效语言三原则 |
+| **P8-B** | `phase-8-b-effects-migration.md` | 13 特效开关水塘化迁移（waterDrop / caustics / pondLights / waterWake / drops / pondShadow / waterMoon 水中月）+ S8 移动端最小水塘集拍板 |
+| **P8-C** | `phase-8-c-opensource-integration.md` | 开源方案引入（audioPulse / beatRipple / flow / springBack / gooey） |
+| **P8-D** | `phase-8-d-color-direction.md` | ❄️ **已冻结（2026-06-12）**：色彩方向 A–K 11 套经 D0 外部 HTML 预览粗筛全部淘汰，暂不排期；P8 期间默认配色保持现状。重启先做新一轮 D0 粗筛 |
+| **P8-E** | `phase-8-e-orchestration.md` | 入场转场与收尾（splashIntro 入场落水 / groupWave 切组涟漪转场 / navPond 导航顶栏水塘化）；依赖 8-B S1 先行（2026-06-12 立项） |
+| **P8-F** | `phase-8-f-effects-pool.md` | 效果候选池：15 个广撒网 flag（播放叙事 4 / 交互反馈 2 / 氛围 7 / 编排 2）+ F0 /test 面板分组与预设按钮 + ambient/pond/ 子目录方案 + F9 统一删减拍板（2026-06-12 立项） |
+| P8-W | （gate，未立项） | WebGL 背景水面，仅当纯 SVG 验收后"还差口气"再议 |
+
+**P8 全局铁律（每个 track 都适用）**：
+
+1. **模块化**：P8 每一处新增/修改的功能都必须挂 `EffectsConfig` 开关，在 /test 的 effects 面板可手动单独开启/关闭、可单独回退；关 = 与现状像素级一致。
+2. **抽象**：氛围元素禁止具象形态（鱼/虫/叶/花），只用光、波、斑、雾、痕表达。
+3. **沙盒先行**：新 flag 桌面/移动默认全 false，先在 /test 充分体验，用户拍板后才改默认值。
+4. **无指令不行动**：讨论 ≠ 行动授权（AGENTS.md 铁律 6）。
+
+---
+
 ## Step 总览（待拆细）
 
 | ID | 内容 | 工时 |
@@ -97,6 +118,10 @@
 **Phase 8 工时**：约 4 天（单步串行估，实际可按用户节奏走）
 
 > **P8-S4「Archipelago 动效改造」已细化为独立子track**：`playbook/phase-8/phase-8-a-water-ripple.md`（水波折射动效，路线 A = 纯 SVG `feDisplacementMap`，5 步，2026-06-11 拍板）。
+>
+> **P8-S5 的「导航 / 顶栏」部分已归 P8-E**（2026-06-12 用户拍板开 8-E）：见 `phase-8-e-orchestration.md` E3（navPond）。
+>
+> **P8-S2「颜色体系重设计」随 8-D 冻结（2026-06-12）暂不排期**——P8 期间默认配色保持现状，水塘感由质感/动效/氛围效果承担。
 
 ---
 
@@ -109,6 +134,8 @@
 ---
 
 ## 工作流
+
+> **⚡ 并行执行模式（2026-06-12 用户拍板，优先级高于下方串行流程）**：P8 采用"跑法一"并行冲刺——主会话调度 + 5 条 lane worktree 子代理，铁律"每步等'继续'"临时改为"lane 内自动继续、按波集中验收"。**执行手册：`p8-parallel-guide.md`**（用户说"跑 Phase 8"即按该指南自动开始）。P8 收尾后松绑失效，回归下方串行流程。
 
 按 AGENTS.md 铁律"一次只做一件事"，P8 逐 Step 推进：
 

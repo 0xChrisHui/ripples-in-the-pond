@@ -4,10 +4,25 @@
  * use-sphere-sim 和 render-links 都用，独立成文件避免循环依赖 + 控制单文件行数。
  */
 
-/** tilt: 远端 baseline 0.15 微动，近端 pow(z,1.2) 偏陡；TILT_PX 145 近球 145px */
+/** tilt: 远端 baseline 0.15 微动，近端 pow(z,1.2) 偏陡；TILT_PX 145 近球 145px（P8-B S3 减半为 72） */
 export const TILT_PX = 145;
 export const tiltCoef = (z: number): number =>
   0.15 + Math.pow(Math.max(0, z), 1.2) * 0.85;
+
+/**
+ * Phase 8 — 全场景统一机位常量。
+ *
+ * POND_TILT_RATIO_DEFAULT：涟漪等"躺在水面"元素的 ry/rx 透视压扁比。
+ *   1.0 = 垂直俯视正圆（= 现状，默认零视觉变化）；<1 = 斜视水面椭圆。
+ *   ⚠️ 运行时值不要读这个常量——读 hooks/pond/use-pond-tilt.ts 的响应式值，
+ *   否则 /test slider 一动会出现"一半元素压扁一半没压"（违背统一机位的唯一目的）。
+ *   本常量仅作 SSR 初值 / store 默认值。
+ *
+ * MOON_ANCHOR：全场景统一光源锚点（视口比例坐标，画面上方偏左 ≈10-11 点钟）。
+ *   水珠高光方位 / 碎光月光带 / 月光水路 / 水中月出现侧，全部由它派生，禁止各处写死方位。
+ */
+export const POND_TILT_RATIO_DEFAULT = 1.0;
+export const MOON_ANCHOR = { x: 0.35, y: -0.1 } as const;
 
 /**
  * 一点透视投影：z 高（近）的球随 k 增长更快。

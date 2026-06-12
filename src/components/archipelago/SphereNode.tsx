@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { Track } from '@/src/types/tracks';
 import type { EffectsConfig } from './effects-config';
+import { usePondTilt } from './hooks/pond/use-pond-tilt';
 
 /**
  * 单个球体节点（圆 + ripple + 标题 + hover-ring + play-icon）
@@ -36,6 +37,8 @@ export default function SphereNode({
   effects,
 }: Props) {
   const [hovered, setHovered] = useState(false);
+  const tilt = usePondTilt();
+  const lastHoverSpawn = useRef(0);
 
   const baseOpacity = 0.52 + importance * 0.36;
   const showOverlay = hovered || isPlaying;
@@ -47,7 +50,21 @@ export default function SphereNode({
   const haloUrl = hovered ? 'url(#halo-strong)' : 'url(#halo-soft)';
   const renderFill =
     isPlaying || (hovered && isAnyPlaying) ? '#ffffff' : color;
-  const rippleStroke = isAnyPlaying ? '#ffffff' : color;
+  // §2.2 — 播放态涟漪用月光色 token（兼容值 = 白），非播放态用球色
+  const rippleStroke = isAnyPlaying ? 'var(--pond-light)' : color;
+  // §2.14 hoverRipple — hover 进入瞬间在指尖处发一圈一次性小涟漪（每球 ≥800ms 节流）
+  const handleEnter = (e: React.MouseEvent) => {
+    setHovered(true);
+    if (!effects?.hoverRipple) return;
+    const now = e.timeStamp;
+    if (now - lastHoverSpawn.current < 800) return;
+    lastHoverSpawn.current = now;
+    window.dispatchEvent(
+      new CustomEvent('bg-ripple:spawn', {
+        detail: { x: e.clientX, y: e.clientY, size: radius * 2.2, duration: 5, prio: 1, once: true },
+      }),
+    );
+  };
   const rippleTiming = useMemo(() => {
     let h = 0;
     for (let i = 0; i < track.id.length; i++) h = (h * 31 + track.id.charCodeAt(i)) >>> 0;
@@ -61,17 +78,18 @@ export default function SphereNode({
   return (
     <g
       data-sphere
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={handleEnter}
       onMouseLeave={() => setHovered(false)}
     >
       {effects?.sphereRipple && rippleTiming.map((rt, i) => (
-        <circle
+        <ellipse
           key={i}
-          r={radius}
+          rx={radius}
+          ry={radius * tilt}
+          cy={radius * 0.45 * (1 - tilt)}
           fill="none"
-          stroke={rippleStroke}
           className="ripple-c"
-          style={{ animationDuration: `${rt.duration}s`, animationDelay: `${rt.delay}s` }}
+          style={{ stroke: rippleStroke, animationDuration: `${rt.duration}s`, animationDelay: `${rt.delay}s` }}
         />
       ))}
 

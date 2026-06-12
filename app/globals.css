@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* Phase 8 — 水塘特效 CSS（.ripple-once + 各 lane keyframe）独立成文件，
+   避免 globals.css 撞 220 行硬线，且给并行 lane 一个隔离的追加区。 */
+@import "./pond-effects.css";
 
 /*
  * Tailwind v4 默认扫整个项目寻找 className，遇到二进制/非法 UTF-8 文件
@@ -22,6 +25,20 @@
   --surface: rgba(255,255,255,0.03);
   --border: rgba(255,255,255,0.07);
   --dim: rgba(216,211,200,0.32);
+
+  /* Phase 8-B S1 — 水塘色 token（:root = 现状兼容值，= 视觉零变化）。
+     三套水塘方向值原计划放 .theme-pond-a/b/c（8-D），8-D 已冻结暂不实现；
+     token 体系保留，P8 各效果一律引用 --pond-*，为未来配色重启留接口。 */
+  --pond-bg: #07070f;       /* = 现 --background */
+  --pond-ripple: #ffffff;   /* 涟漪描边（现状白） */
+  --pond-light: #ffffff;    /* 高光 / 强发光（现状白） */
+  --pond-mist: #ffffff;     /* 雾（现状白） */
+  --pond-glow: #ffffff;     /* 焦散 / 碎光 */
+  --pond-accent: #F3D340;   /* 浮光暖金（新效果专用，无现状对应） */
+
+  /* Phase 8-A 补充一 — 全场景统一机位比例（ry/rx）。1 = 正圆（现状）。
+     由 hooks/pond/use-pond-tilt.ts 的 setPondTilt 运行时改写，CSS 消费者读这里。 */
+  --pond-tilt: 1;
 }
 
 @theme inline {
@@ -91,7 +108,8 @@ body::after {
   transform-origin: center;
   stroke-width: 0.6; /* v87 — 静态窄宽度（避免宽度跳动，用户偏好） */
   animation-name: ripple-out;
-  animation-timing-function: ease-out;
+  /* Phase 8-B §2.2 — 涟漪减速扩散：先快后慢（真实波），替换 ease-out（已拍板的总线升级） */
+  animation-timing-function: cubic-bezier(0.2, 0.6, 0.35, 1);
   animation-iteration-count: infinite;
 }
 
@@ -153,7 +171,8 @@ body::after {
   transform-box: fill-box;
   transform-origin: center;
   animation-name: bg-ripple-manual;
-  animation-timing-function: ease-out;
+  /* Phase 8-B §2.1 — 减速扩散曲线（已拍板的总线升级） */
+  animation-timing-function: cubic-bezier(0.2, 0.6, 0.35, 1);
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
   /* v47 — 边缘模糊 → 柔光带 */
@@ -169,7 +188,8 @@ body::after {
   transform-box: fill-box;
   transform-origin: center;
   animation-name: bg-ripple-out;
-  animation-timing-function: ease-out;
+  /* Phase 8-B §2.1 — 减速扩散曲线（已拍板的总线升级） */
+  animation-timing-function: cubic-bezier(0.2, 0.6, 0.35, 1);
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
   /* v47 — 边缘模糊 → 柔光带 */

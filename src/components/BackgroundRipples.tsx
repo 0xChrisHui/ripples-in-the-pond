@@ -1,17 +1,23 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { getPondTilt, subscribePondTilt } from './archipelago/hooks/pond/use-pond-tilt';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const MAX_AUTO = 4; // 自动 spawn 时同时存在的上限
-const MAX_TOTAL = 8; // 手动 + 自动叠加最大值（防 GPU 累积闪烁）
+const MAX_AUTO = 4;   // P3 氛围涟漪同时存在的配额（不挤占用户交互）
+const MAX_TOTAL = 10; // 手动 + 自动叠加最大值（8-B §2.1.6：实测后从 8 上调到 ≤12）
 
 /**
- * BackgroundRipples — v22：
- * - 自动 spawn 受 MAX_AUTO=4 限制（已有 >= 4 时跳过 tick）
- * - 用户点击立即 spawn（不挤自动配额，可叠到 MAX_TOTAL=8）
- * - 超 MAX_TOTAL 强制移除最老（防 GPU layer 累积）
- * - 每次 spawn dispatch 'bg-ripple:wave' 让 SphereCanvas 推球
+ * BackgroundRipples — Phase 8-B S1 升级为世界观核心涟漪总线。
+ *
+ * - 椭圆透视涟漪：ry = rx × POND_TILT_RATIO（默认 1.0 = 正圆 = 现状），运行时随机位 slider 响应。
+ * - 月光青白色：stroke 走 --pond-ripple / --pond-light token（现状兼容值 = 白）。
+ * - 三级优先调度（§2.1.6）：
+ *   P1 用户直接交互（点击空白 / hoverRipple / groupWave）——永不丢弃，必要时挤掉 P3；
+ *   P2 播放叙事（beatRipple / echoRipple）——同源限流由调用方负责；
+ *   P3 氛围（自动涟漪 / drops / rain）——只用 MAX_AUTO 剩余配额。
+ * - `bg-ripple:spawn` 事件：外部（hoverRipple / drops / waterWake 等）只画圈、不推球。
+ * - `bg-ripple:wave` 事件：自动 / 点击路径继续推球（语义不变）。
  */
 export default function BackgroundRipples() {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -23,41 +29,75 @@ export default function BackgroundRipples() {
     let cancelled = false;
     const timers: number[] = [];
 
-    const spawnAt = (x: number, y: number, manual: boolean) => {
-      if (cancelled || !svg) return;
-      // 总上限 8 — 超了强制移除最老（防 GPU 累积）
-      while (svg.children.length >= MAX_TOTAL && svg.firstChild) {
-        svg.removeChild(svg.firstChild);
+    // 满员时按"低优先、最老优先"腾位；不为更低优先的来者挤掉更高优先的在场者。
+    const makeRoom = (incomingPrio: number): boolean => {
+      while (svg.children.length >= MAX_TOTAL) {
+        let victim: Element | null = null;
+        for (const order of [3, 2, 1]) {
+          for (const ch of Array.from(svg.children)) {
+            if (Number(ch.getAttribute('data-prio')) === order) { victim = ch; break; }
+          }
+          if (victim) break;
+        }
+        if (!victim) return false;
+        if (Number(victim.getAttribute('data-prio')) < incomingPrio) return false;
+        svg.removeChild(victim);
       }
-      // 自动模式：现存 >= 4 时跳过本次（不抢手动配额）
-      if (!manual && svg.children.length >= MAX_AUTO) return;
+      return true;
+    };
+
+    // 画一个涟漪椭圆（不推球）。kind: 'auto' | 'manual' | 'once'
+    const draw = (
+      x: number, y: number,
+      opts: { prio: number; kind: 'auto' | 'manual' | 'once'; size: number; duration: number },
+    ) => {
+      if (cancelled || !svg) return;
+      const { prio, kind, size, duration } = opts;
+      if (prio === 3) {
+        const ambient = Array.from(svg.children)
+          .filter((c) => c.getAttribute('data-prio') === '3').length;
+        if (svg.children.length >= MAX_TOTAL || ambient >= MAX_AUTO) return;
+      } else if (svg.children.length >= MAX_TOTAL && !makeRoom(prio)) {
+        return;
+      }
       lastPosRef.current = { x, y };
+      const tilt = getPondTilt();
+      const el = document.createElementNS(SVG_NS, 'ellipse');
+      el.setAttribute('cx', String(x));
+      el.setAttribute('cy', String(y));
+      el.setAttribute('rx', String(size));
+      el.setAttribute('ry', String(size * tilt));
+      el.setAttribute('fill', 'none');
+      el.setAttribute('data-prio', String(prio));
+      el.setAttribute('data-rx', String(size));
+      if (kind === 'manual') {
+        el.style.stroke = 'var(--pond-light)';
+        el.setAttribute('class', 'bg-ripple-manual');
+      } else if (kind === 'once') {
+        el.style.stroke = 'var(--pond-ripple)';
+        el.setAttribute('class', 'ripple-once');
+      } else {
+        el.style.stroke = 'var(--pond-ripple)';
+        el.style.strokeOpacity = '0.27';
+        el.setAttribute('stroke-width', '1.4');
+        el.setAttribute('class', 'bg-ripple');
+      }
+      el.style.animationDuration = `${duration}s`;
+      svg.appendChild(el);
+      const removeId = window.setTimeout(() => {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, duration * 1000 + 200);
+      timers.push(removeId);
+    };
+
+    // 内部 spawn（自动 / 点击）——画圈 + 推球
+    const spawnAt = (x: number, y: number, manual: boolean) => {
       const size = 220 + Math.random() * 260;
       const duration = 14.5 + Math.random() * 5.8;
-      const c = document.createElementNS(SVG_NS, 'circle');
-      c.setAttribute('cx', String(x));
-      c.setAttribute('cy', String(y));
-      c.setAttribute('r', String(size));
-      c.setAttribute('fill', 'none');
-      // v25：手动 stroke 用 white + CSS keyframe 控 stroke-width/opacity 平滑渐变
-      // 前 12%（≈2s）从 strong 渐到普通值，之后曲线和自动涟漪完全一致
-      if (manual) {
-        c.setAttribute('stroke', 'white');
-        c.setAttribute('class', 'bg-ripple-manual');
-      } else {
-        c.setAttribute('stroke', 'rgba(255,255,255,0.27)');
-        c.setAttribute('stroke-width', '1.4');
-        c.setAttribute('class', 'bg-ripple');
-      }
-      c.style.animationDuration = `${duration}s`;
-      svg.appendChild(c);
+      draw(x, y, { prio: manual ? 1 : 3, kind: manual ? 'manual' : 'auto', size, duration });
       window.dispatchEvent(
         new CustomEvent('bg-ripple:wave', { detail: { x, y, size, duration } }),
       );
-      const removeId = window.setTimeout(() => {
-        if (c.parentNode) c.parentNode.removeChild(c);
-      }, duration * 1000 + 200);
-      timers.push(removeId);
     };
 
     const spawnAuto = (near = false) => {
@@ -76,10 +116,8 @@ export default function BackgroundRipples() {
 
     const tick = () => {
       if (cancelled) return;
-      // v87 G1 — tab 不可见时跳过 spawn（setTimeout 在隐藏 tab 中节流到 1Hz 但仍跑）
       if (document.hidden) {
-        const id = window.setTimeout(tick, 2400);
-        timers.push(id);
+        timers.push(window.setTimeout(tick, 2400));
         return;
       }
       spawnAuto(false);
@@ -87,19 +125,14 @@ export default function BackgroundRipples() {
         const extra = 1 + (Math.random() < 0.5 ? 1 : 0);
         for (let i = 0; i < extra; i++) {
           const delay = 240 + Math.random() * 360;
-          const id = window.setTimeout(() => spawnAuto(true), delay * (i + 1));
-          timers.push(id);
+          timers.push(window.setTimeout(() => spawnAuto(true), delay * (i + 1)));
         }
       }
-      const nextDelay = 2400 + Math.random() * 1100;
-      const nextId = window.setTimeout(tick, nextDelay);
-      timers.push(nextId);
+      timers.push(window.setTimeout(tick, 2400 + Math.random() * 1100));
     };
+    timers.push(window.setTimeout(tick, 600));
 
-    const startId = window.setTimeout(tick, 600);
-    timers.push(startId);
-
-    // 用户点击空白立即触发涟漪（manual=true 不受 MAX_AUTO 限制）
+    // 用户点击空白立即触发涟漪（P1，不受配额限制）
     const onClick = (e: MouseEvent) => {
       const t = e.target as Element | null;
       if (!t) return;
@@ -109,23 +142,48 @@ export default function BackgroundRipples() {
     };
     window.addEventListener('click', onClick);
 
-    // v34 — 切 group / 重建 sim 时清屏 + 暂停 2s 等球稳定后再 spawn
+    // §2.10/§2.14 — 外部画圈事件（hoverRipple / drops / waterWake…）：只画不推球。
+    // detail: { x, y, size?, duration?, prio?, once? }
+    const onSpawn = (e: Event) => {
+      const d = (e as CustomEvent).detail ?? {};
+      if (typeof d.x !== 'number' || typeof d.y !== 'number') return;
+      draw(d.x, d.y, {
+        prio: d.prio ?? 1,
+        kind: d.once === false ? 'auto' : 'once',
+        size: d.size ?? 60,
+        duration: d.duration ?? 6,
+      });
+    };
+    window.addEventListener('bg-ripple:spawn', onSpawn);
+
+    // 切 group / 重建 sim 时清屏 + 暂停 2s 等球稳定后再 spawn
     const onReset = () => {
       if (cancelled || !svg) return;
       while (svg.firstChild) svg.removeChild(svg.firstChild);
       timers.forEach((t) => window.clearTimeout(t));
       timers.length = 0;
       lastPosRef.current = null;
-      const id = window.setTimeout(tick, 2000);
-      timers.push(id);
+      timers.push(window.setTimeout(tick, 2000));
     };
     window.addEventListener('archipelago:reset', onReset);
+
+    // 机位 slider 改动时，实时更新在场椭圆的 ry（全场景统一机位，避免半压扁）
+    const unsubTilt = subscribePondTilt(() => {
+      if (!svg) return;
+      const tilt = getPondTilt();
+      for (const ch of Array.from(svg.children)) {
+        const rx = Number(ch.getAttribute('data-rx'));
+        if (rx) ch.setAttribute('ry', String(rx * tilt));
+      }
+    });
 
     return () => {
       cancelled = true;
       timers.forEach((t) => window.clearTimeout(t));
       window.removeEventListener('click', onClick);
+      window.removeEventListener('bg-ripple:spawn', onSpawn);
       window.removeEventListener('archipelago:reset', onReset);
+      unsubTilt();
       if (svg) while (svg.firstChild) svg.removeChild(svg.firstChild);
     };
   }, []);

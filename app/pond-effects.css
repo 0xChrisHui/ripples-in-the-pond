@@ -1,0 +1,37 @@
+/*
+ * Phase 8 — 水塘视觉重设计的特效 CSS（由 globals.css @import）。
+ *
+ * 放这里的东西：P8 新增的 keyframe / animation class，以及各并行 lane 的专属区块。
+ * 不放这里的东西：:root token / 机位变量（在 globals.css，全局基座）。
+ *
+ * 性能纪律（8-B §0.3）：动画只用 transform / opacity（合成线程）；
+ * 禁止动画化 stroke-width / filter 属性；SVG filter 必须收紧 region；禁逐帧改 baseFrequency。
+ */
+
+/* Phase 8 §0.6 — 一次性涟漪独立 class（waterWake / dragWake 微椭圆 / echoRipple 等）。
+   与 .ripple-c 同款 transform/opacity 动画，但不进 .zoom-large 暂停规则：
+   zoom>1.5 时由各自 JS 提前移除（绝不暂停冻结残留在屏上）。复用 bg-ripple-out 关键帧。 */
+.ripple-once {
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: bg-ripple-out;
+  animation-timing-function: cubic-bezier(0.2, 0.6, 0.35, 1);
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+/* ============================================================
+   Phase 8 并行 lane 专属 CSS 区块（Wave 0 预埋，2026-06-12）
+   各 lane 只在自己区块内追加 keyframe / class，合并冲突机械可解。
+   ============================================================ */
+
+/* === Lane A 球体线（bobbing / dropShimmer / sphereSheen 等 keyframe）=== */
+
+/* === Lane B 环境线（caustics / pondLights / drops / pondShadow 等 keyframe）=== */
+
+/* === Lane C 物理线（breeze 碎光带等；多数为 JS force，CSS 可能为空）=== */
+
+/* === Lane D 音频线（playWaves / bubbles 等 keyframe）=== */
+
+/* === Lane E 编排线（splashIntro / groupWave / clickSplash / cursorRing 等 keyframe）=== */
