@@ -20,6 +20,7 @@ export default function MoonPath() {
   return (
     <>
       <div
+        data-moon-path
         className="pointer-events-none fixed inset-0 z-[1] overflow-hidden"
         aria-hidden="true"
       >
