@@ -43,7 +43,7 @@ function makeBlobs(): Blob[] {
 
 export default function PondShadow() {
   const tilt = usePondTilt();
-  const blobs = useMemo(makeBlobs, []);
+  const blobs = useMemo(() => makeBlobs(), []);
 
   // keyframes 在 app/pond-effects.css「Lane B」区块（pondshadow-drift-a..d）
   return (
