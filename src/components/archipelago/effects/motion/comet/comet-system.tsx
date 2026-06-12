@@ -1,9 +1,9 @@
 'use client';
 // v54-v86 彗星 (C2)：拖尾 + 推球 + 点击日食 + perspective 联动 + focus
 import { useEffect, useRef } from 'react';
-import type { SimNode } from '../../sphere-config';
+import type { SimNode } from '../../../sphere-config';
 import { spawnComet, SIZE_BASE, TRAIL_HISTORY, PUSH_RADIUS, Z_REACH, PUSH_FORCE, HOVER_RADIUS, type Comet } from './comet-spawn';
-import { makeCometTrailPools, renderCometTrail, type CometTrailPools } from '../../render/render-comet-trail';
+import { makeCometTrailPools, renderCometTrail, type CometTrailPools } from '../../../render/render-comet-trail';
 
 interface Props {
   simNodes: SimNode[];

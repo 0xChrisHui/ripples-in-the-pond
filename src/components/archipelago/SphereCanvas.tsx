@@ -26,7 +26,7 @@ import { useSphereZ } from './hooks/use-sphere-z';
 import { useWaveEvents } from './hooks/use-wave-events';
 import { useMouseTilt } from './hooks/use-mouse-tilt';
 import { useSphereSim } from './hooks/use-sphere-sim';
-import CometSystem from './effects/motion/comet-system';
+import CometSystem from './effects/motion/comet/comet-system';
 import WaterWake from './effects/motion/water-wake';
 import WaterMoon from './effects/motion/water-moon';
 import CursorRing from './effects/motion/cursor-ring';

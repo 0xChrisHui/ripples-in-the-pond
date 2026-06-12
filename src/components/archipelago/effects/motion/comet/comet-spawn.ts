@@ -1,6 +1,6 @@
 'use client';
 
-import { K_MIN, LAYER_MIN_FACTOR } from '../../sphere-config';
+import { K_MIN, LAYER_MIN_FACTOR } from '../../../sphere-config';
 
 /** v57 — 彗星 spawn helper：从 comet-system 抽出（行数硬线 220）*/
 
