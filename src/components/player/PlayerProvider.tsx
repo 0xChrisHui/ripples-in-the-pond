@@ -27,6 +27,8 @@ interface PlayerState {
   subscribe: (lifecycle: PlayerLifecycle) => () => void;
   /** 当前 audio.currentTime（秒） */
   getCurrentTime: () => number;
+  /** Lane D 音频能量分析用：拿到底层 HTMLAudioElement（lazy，未播放时可能为 null） */
+  getAudioElement: () => HTMLAudioElement | null;
 }
 
 const PlayerContext = createContext<PlayerState | null>(null);
@@ -66,6 +68,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (!audioRef.current) {
       const audio = new Audio();
       audio.preload = 'auto';
+      // Lane D — 赋 src 前设 crossOrigin，让 createMediaElementSource 不污染 analyser
+      // （现 public/tracks 同源无影响；为未来迁 Arweave 网关预留）
+      audio.crossOrigin = 'anonymous';
       audio.addEventListener('loadedmetadata', () => {
         if (audioRef.current === audio) setDuration(audio.duration || 0);
       });
@@ -139,10 +144,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     return audioRef.current?.currentTime ?? 0;
   }, []);
 
+  const getAudioElement = useCallback(() => audioRef.current, []);
+
   return (
     <PlayerContext value={{
       playing, currentTrack, duration, startedAt,
-      toggle, stop, subscribe, getCurrentTime,
+      toggle, stop, subscribe, getCurrentTime, getAudioElement,
     }}>
       {children}
     </PlayerContext>

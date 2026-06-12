@@ -9,18 +9,7 @@ import { addCachedMintedId, getCachedMintedIds, setCachedMintedIds } from '@/src
 import SphereCanvas from './SphereCanvas';
 import { GROUPS, type GroupId, getGroupTargetCount, getGroupTracks, padTracksToTarget } from './sphere-config';
 import { DEFAULT_EFFECTS, type EffectsConfig } from './effects-config';
-import AuroraBackground from './effects/ambient/aurora-background';
-import StarsBackground from './effects/ambient/stars-background';
-import FogLayer from './effects/ambient/fog-layer';
-// Lane B 环境线（P8-B S4/S5/S7 + F1/F3/F4）
-import CausticsLayer from './effects/ambient/pond/caustics-layer';
-import FilmGrain from './effects/ambient/pond/film-grain';
-import PondLights from './effects/ambient/pond/pond-lights';
-import DropsLayer from './effects/ambient/pond/drops-layer';
-import PondShadow from './effects/ambient/pond/pond-shadow';
-import SkyReflection from './effects/ambient/pond/sky-reflection';
-import MoonPath from './effects/ambient/pond/moon-path';
-import PondEdge from './effects/ambient/pond/pond-edge';
+import AmbientLayers from './effects/ambient/AmbientLayers';
 
 interface Props {
   fullscreen?: boolean;
@@ -181,19 +170,8 @@ export default function Archipelago({ fullscreen = false, effects = DEFAULT_EFFE
 
   return (
     <section className={sectionCls}>
-      {effects.aurora && <AuroraBackground />}
-      {effects.stars && <StarsBackground />}
-      {effects.fog && <FogLayer />}
-      {/* Lane B 环境线 — 氛围层挂载（关任一 flag = 回现状） */}
-      {effects.caustics && <CausticsLayer />}
-      {effects.pondShadow && <PondShadow />}
-      {effects.skyReflection && <SkyReflection />}
-      {effects.pondLights && <PondLights />}
-      {effects.moonPath && <MoonPath />}
-      {effects.pondEdge && <PondEdge />}
-      {effects.filmGrain && <FilmGrain />}
-      {/* rain=1 覆盖 drops 节奏（同组件强化档），rain 关时退回 drops 档 */}
-      {(effects.drops || effects.rain) && <DropsLayer rain={effects.rain} />}
+      {/* 全部氛围层 + 音频协调层抽到 AmbientLayers（控 Archipelago 行数，关任一 flag = 回现状） */}
+      <AmbientLayers effects={effects} />
       <nav className={navCls}>
         {GROUPS.map((g) => {
           const active = g.id === currentGroupId;

@@ -109,6 +109,6 @@ export function useAdaptiveEffects(effects: EffectsConfig): EffectsConfig {
 
   if (disabled.size === 0) return effects;
   const result = { ...effects };
-  for (const key of disabled) result[key] = false;
+  for (const key of disabled) result[key] = false as never;
   return result;
 }

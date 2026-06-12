@@ -50,15 +50,20 @@ export default function EffectsPanel({ effects, onChange }: Props) {
     if (kind === 'base') return onChange({ ...DESKTOP_EFFECTS });
     if (kind === 'stress') {
       const all = { ...effects };
-      (Object.keys(all) as Array<keyof EffectsConfig>).forEach((k) => { all[k] = true; });
+      // waterRippleScale 是数值 flag，全开压测时给最大强度，其余布尔置 true
+      (Object.keys(all) as Array<keyof EffectsConfig>).forEach((k) => {
+        if (typeof all[k] === 'boolean') all[k] = true as never;
+      });
+      all.waterRippleScale = 30;
       return onChange(all);
     }
-    const next = { ...DESKTOP_EFFECTS } as Record<string, boolean>;
-    (Object.keys(next) as string[]).forEach((k) => {
-      if (RECOMMENDED_OFF.includes(k)) next[k] = false;
-      else if (RECOMMENDED_ON.includes(k)) next[k] = true;
+    const next: EffectsConfig = { ...DESKTOP_EFFECTS };
+    (Object.keys(next) as Array<keyof EffectsConfig>).forEach((k) => {
+      if (typeof next[k] !== 'boolean') return;  // 跳过 waterRippleScale 数值键
+      if (RECOMMENDED_OFF.includes(k)) next[k] = false as never;
+      else if (RECOMMENDED_ON.includes(k)) next[k] = true as never;
     });
-    onChange(next as unknown as EffectsConfig);
+    onChange(next);
   };
 
   return (
