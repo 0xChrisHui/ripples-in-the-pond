@@ -20,6 +20,15 @@ export interface EffectsConfig {
   hoverRipple: boolean;      // §2.14 hover 入水反馈：指尖掠过球生一圈小涟漪
   // --- Lane A 球体线 ---（waterRipple / waterDrop / bobbing / dropShimmer / sphereSheen）
   // --- Lane B 环境线 ---（caustics / filmGrain / pondLights / drops / pondShadow / skyReflection / moonPath / pondEdge / rain）
+  caustics: boolean;         // §2.7 水焦散网纹（aurora 替身）
+  filmGrain: boolean;        // §2.17 胶片颗粒（全屏静态 overlay）
+  pondLights: boolean;       // §2.8 浮光 + 水面碎光（stars 替身）
+  drops: boolean;            // §2.10 落滴（抽象涟漪发生器，触水推球+画圈）
+  pondShadow: boolean;       // §2.12 浮影暗斑（尺度参照物）
+  skyReflection: boolean;    // F3 星空倒影（旧 stars 倒进水里）
+  moonPath: boolean;         // F3 月光水路（MOON_ANCHOR 派生竖直光带）
+  pondEdge: boolean;         // F1 塘岸暗缘（全屏静态羽化暗角，零动画）
+  rain: boolean;             // F4 细雨（drops 强化档：更密更快，涟漪走 P3 氛围级）
   // --- Lane C 物理线 ---（springBack / viscous / breeze）
   // --- Lane D 音频线 ---（audioPulse / beatRipple / echoRipple / playWaves / bubbles / lightFollow）
   // --- Lane E 编排线 ---（waterWake / dragWake / waterMoon / groupWave / navPond / tide / clickSplash / cursorRing / splashIntro）
@@ -45,6 +54,15 @@ export const DESKTOP_EFFECTS: EffectsConfig = {
   hoverRipple: false,     // Wave 0
   // --- Lane A 球体线 ---
   // --- Lane B 环境线 ---
+  caustics: false,
+  filmGrain: false,
+  pondLights: false,
+  drops: false,
+  pondShadow: false,
+  skyReflection: false,
+  moonPath: false,
+  pondEdge: false,
+  rain: false,
   // --- Lane C 物理线 ---
   // --- Lane D 音频线 ---
   // --- Lane E 编排线 ---
@@ -76,6 +94,15 @@ export const MOBILE_EFFECTS: EffectsConfig = {
   hoverRipple: false,     // Wave 0
   // --- Lane A 球体线 ---
   // --- Lane B 环境线 ---
+  caustics: false,
+  filmGrain: false,
+  pondLights: false,
+  drops: false,
+  pondShadow: false,
+  skyReflection: false,
+  moonPath: false,
+  pondEdge: false,
+  rain: false,
   // --- Lane C 物理线 ---
   // --- Lane D 音频线 ---
   // --- Lane E 编排线 ---
@@ -109,6 +136,15 @@ export const EFFECTS_META: EffectMeta[] = [
   { key: 'hoverRipple', label: 'hover 入水涟漪', group: '运动' },
   // --- Lane A 球体线 ---
   // --- Lane B 环境线 ---
+  { key: 'caustics', label: '水焦散网纹', group: '环境' },
+  { key: 'filmGrain', label: '胶片颗粒', group: '环境' },
+  { key: 'pondLights', label: '浮光 + 水面碎光', group: '环境' },
+  { key: 'drops', label: '落滴（触水生涟漪）', group: '环境' },
+  { key: 'pondShadow', label: '浮影暗斑', group: '环境' },
+  { key: 'skyReflection', label: '星空倒影', group: '环境' },
+  { key: 'moonPath', label: '月光水路', group: '环境' },
+  { key: 'pondEdge', label: '塘岸暗缘', group: '环境' },
+  { key: 'rain', label: '细雨（drops 强化档）', group: '环境' },
   // --- Lane C 物理线 ---
   // --- Lane D 音频线 ---
   // --- Lane E 编排线 ---
