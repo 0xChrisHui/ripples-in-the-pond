@@ -5,9 +5,9 @@
  */
 
 /** tilt: 远端 baseline 0.15 微动，近端 pow(z,1.2) 偏陡。
- *  P8-B S3（§2.5）— TILT_PX 145→72：水塘视觉里视差幅度收一半，球更像「躺在水面」
- *  随鼠标轻晃而非大幅平移，让水波/bobbing 微动成为主体感。 */
-export const TILT_PX = 72;
+ *  P8-B S3（§2.5）拟把 TILT_PX 145→72（视差减半，更"躺水面"），但属"默认视觉变化"
+ *  且无 flag 可单独回退 → 留 S8 与 perspective 默认值一并拍板；现保持现状 145。 */
+export const TILT_PX = 145;
 export const tiltCoef = (z: number): number =>
   0.15 + Math.pow(Math.max(0, z), 1.2) * 0.85;
 

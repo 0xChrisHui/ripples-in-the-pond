@@ -9,7 +9,8 @@ import type { EffectsConfig } from '../effects-config';
 export const DESKTOP_EFFECTS: EffectsConfig = {
   focus: true,
   tilt: true,
-  perspective: false,    // P8-B S3 — 弱化 3D，桌面默认关（?perspective=1 随时看回）
+  perspective: true,     // P8-B S3 拟改 false（弱化 3D），但属"默认视觉变化"→ 留 S8 拍板；现保持现状
+                          // /test 用 ?perspective=0 体验关闭效果
   comet: true,
   sphereRipple: true,
   layerWave2: true,
