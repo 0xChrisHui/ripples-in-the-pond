@@ -30,8 +30,11 @@
 
 **下一步** —— Phase 8 并行冲刺进行中（2026-06-12，跑法一）：
   - **Wave 0 已完成**（主会话串行）：8-B S1 涟漪总线升级（`--pond-*` token / `POND_TILT_RATIO` 机位 store / `MOON_ANCHOR` / bgRipples+sphereRipple 椭圆化+减速曲线 / 三级优先涟漪调度器 / `.ripple-once` class / `hoverRipple` flag）+ F0 /test 面板分组折叠+3 预设+机位 slider + 并行基建（`effects/ambient/pond/`、`forces/`、`hooks/pond/`、`sphere/` 子目录方案 + effects-config/pond-effects.css 五 lane 标记区块）。verify.sh 全绿（含生产构建）。
-  - **Wave 1 进行中**：5 条 lane worktree 子代理并行（A 球体线 / B 环境线 / C 物理线 / D 音频线 / E 编排线）。
-  - **Wave 2 待办**：主会话收口 + 用户 /test 集中验收 + S8/F9 默认值拍板。
+  - **Wave 1 已完成并全部合并入 main**（5 条 lane → 35 个新 flag，桌面/移动默认全 false）：A 球体线（waterRipple/waterDrop/bobbing/dropShimmer/sphereSheen）/ B 环境线（caustics/filmGrain/pondLights/drops/pondShadow/skyReflection/moonPath/pondEdge/rain）/ C 物理线（springBack/viscous/breeze，flow 未批跳过）/ D 音频线（audioPulse/beatRipple/echoRipple/playWaves/bubbles/lightFollow + reduced-motion）/ E 编排线（waterWake/dragWake/waterMoon/groupWave/navPond/tide/clickSplash/cursorRing；splashIntro 留 Wave 2）。verify.sh 全绿（tsc+lint+生产构建）。
+    - **合并踩坑记录**：worktree 全部从 Wave 0 之前的 `375af33` 检出 → B/D/E 自行并入 Wave 0（干净合并），A/C 未并入（主会话手工集成：checkout 干净文件 + 把特性嫁接到 Wave 0 的 SphereNode/EffectsPanel）。
+    - **结构性拆分**（撞 220 行/8 文件硬线自决）：effects-config → 拆 config/effects-presets + config/effects-meta；pond-effects.css → 拆 pond-effects-motion.css；Archipelago 氛围挂载 → 抽 AmbientLayers.tsx；新建 config//forces//sphere//hooks-pond//ambient-pond/ 子目录。
+    - **待 Wave 2**：splashIntro 入场编排（依赖已合并的 bobbing 内层 g）；S8/F9 默认值删减拍板 + 移动端最小水塘集；真机 FPS 压测（单球四层滤镜）。
+  - **Wave 2 待办**：splashIntro + 用户 /test 集中验收 + S8/F9 默认值拍板 + 真机压测。
   - 执行手册：`playbook/phase-8/p8-parallel-guide.md`；新 flag 桌面/移动默认全 false（沙盒铁律）。
 
 **Track 依赖图（修订）**：
