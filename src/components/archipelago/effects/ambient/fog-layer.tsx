@@ -20,7 +20,8 @@ interface Props {
 }
 
 export default function FogLayer({ opacity = 0.06 }: Props) {
-  // 顶部更白（天空雾）→ 中段轻雾 → 底部接近透明，给一点纵深感
+  // P8-B §2.11 夜霭调色：white → var(--pond-mist)（现状兼容值=白）；
+  // 渐变方向反转——水汽贴水面，顶部 0.4× 薄 → 中段 1× → 底部 1.4× 沉底。
   // 用 svg 而非 div 是为了和 BackgroundRipples 同层级语义一致
   return (
     <svg
@@ -30,9 +31,9 @@ export default function FogLayer({ opacity = 0.06 }: Props) {
     >
       <defs>
         <linearGradient id="fog-vertical" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="white" stopOpacity={opacity * 1.4} />
-          <stop offset="55%" stopColor="white" stopOpacity={opacity} />
-          <stop offset="100%" stopColor="white" stopOpacity={opacity * 0.4} />
+          <stop offset="0%" stopColor="var(--pond-mist)" stopOpacity={opacity * 0.4} />
+          <stop offset="55%" stopColor="var(--pond-mist)" stopOpacity={opacity} />
+          <stop offset="100%" stopColor="var(--pond-mist)" stopOpacity={opacity * 1.4} />
         </linearGradient>
       </defs>
       <rect width="100%" height="100%" fill="url(#fog-vertical)" />

@@ -30,6 +30,69 @@
 
 /* === Lane B 环境线（caustics / pondLights / drops / pondShadow 等 keyframe）=== */
 
+/* caustics 焦散漂移（§2.7）：2 层错相位 transform-only 缓慢漂移 */
+@keyframes caustics-drift-a {
+  0%   { transform: translate(-6%, -4%) scale(1.0);  opacity: 0.06; }
+  50%  { transform: translate( 5%,  3%) scale(1.12); opacity: 0.12; }
+  100% { transform: translate(-6%, -4%) scale(1.0);  opacity: 0.06; }
+}
+@keyframes caustics-drift-b {
+  0%   { transform: translate( 5%,  4%) scale(1.10); opacity: 0.05; }
+  50%  { transform: translate(-4%, -3%) scale(1.0);  opacity: 0.11; }
+  100% { transform: translate( 5%,  4%) scale(1.10); opacity: 0.05; }
+}
+
+/* moonPath 月光水路摇曳（F3）：2 层错相位明暗 + 横向轻摆 */
+@keyframes moonpath-sway-a {
+  0%   { transform: translateX(-1.5%) scaleX(1.0);  opacity: 0.05; }
+  50%  { transform: translateX( 1.5%) scaleX(1.15); opacity: 0.10; }
+  100% { transform: translateX(-1.5%) scaleX(1.0);  opacity: 0.05; }
+}
+@keyframes moonpath-sway-b {
+  0%   { transform: translateX( 1.2%) scaleX(1.1);  opacity: 0.04; }
+  50%  { transform: translateX(-1.2%) scaleX(0.92); opacity: 0.08; }
+  100% { transform: translateX( 1.2%) scaleX(1.1);  opacity: 0.04; }
+}
+
+/* pondShadow 浮影暗斑极慢漂（§2.12）：4 块错相位 translate + 微旋 */
+@keyframes pondshadow-drift-a {
+  0%,100% { transform: translate(-10px, -6px) rotate(-1.5deg); }
+  50%     { transform: translate( 10px,  6px) rotate( 1.5deg); }
+}
+@keyframes pondshadow-drift-b {
+  0%,100% { transform: translate( 8px, -8px) rotate( 2deg); }
+  50%     { transform: translate(-8px,  8px) rotate(-2deg); }
+}
+@keyframes pondshadow-drift-c {
+  0%,100% { transform: translate(-7px,  9px) rotate( 1deg); }
+  50%     { transform: translate( 7px, -9px) rotate(-1deg); }
+}
+@keyframes pondshadow-drift-d {
+  0%,100% { transform: translate( 9px,  7px) rotate(-2deg); }
+  50%     { transform: translate(-9px, -7px) rotate( 2deg); }
+}
+
+/* skyReflection 星空倒影（F3）：呼吸明灭 + 极慢晃动（封顶低于球高光） */
+@keyframes skyref-breathe {
+  0%, 100% { fill-opacity: 0.06; }
+  50%      { fill-opacity: 0.34; }
+}
+@keyframes skyref-sway {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(calc(var(--skr-dx) * 1px), calc(var(--skr-dy) * 1px)); }
+}
+
+/* pondLights 浮光呼吸 / 碎光闪烁（§2.8）：峰值封顶低于球高光 */
+@keyframes pl-breathe { 0%,100% { fill-opacity: 0.1; } 50% { fill-opacity: 0.55; } }
+@keyframes pl-shard   { 0%,100% { fill-opacity: 0.05; } 50% { fill-opacity: 0.5; } }
+
+/* drops / rain 落滴坠落（§2.10 / F4）：加速下落 + 拉成竖痕 + 入水淡出 */
+@keyframes drop-fall {
+  0%   { transform: translate(0, 0) scaleY(1); }
+  85%  { transform: translate(var(--drop-drift), var(--drop-fall)) scaleY(2.2); }
+  100% { transform: translate(var(--drop-drift), var(--drop-fall)) scaleY(2.2); opacity: 0; }
+}
+
 /* === Lane C 物理线（breeze 碎光带等；多数为 JS force，CSS 可能为空）=== */
 
 /* === Lane D 音频线（playWaves / bubbles 等 keyframe）=== */
