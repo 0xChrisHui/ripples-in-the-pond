@@ -6,6 +6,9 @@ import { createPortal } from 'react-dom';
 interface Props {
   zoomGRef: React.RefObject<SVGGElement | null>;
   eclipseGRef: React.RefObject<SVGGElement | null>;
+  /** §2.15 waterMoon=true 时隐藏"挂天上"日食（改由 SphereCanvas 的 WaterMoon 在球群之下呈现水中月）。
+   *  日食 DOM 原样保留（eclipseGRef 仍接位置 tick），仅整层不可见 = 关 flag 即回日食。 */
+  waterMoon?: boolean;
 }
 
 /** server 时返回 false，client mount 后返回 true 并触发 re-render（用于 Portal mount）*/
@@ -27,14 +30,15 @@ function useIsClient(): boolean {
  * 改用 useSyncExternalStore 双快照 API：server snapshot=false / client=true，
  * React 自动在 hydration 后切换并 re-render，Portal 挂到 document.body。
  */
-export default function EclipseLayer({ zoomGRef, eclipseGRef }: Props) {
+export default function EclipseLayer({ zoomGRef, eclipseGRef, waterMoon = false }: Props) {
   const isClient = useIsClient();
   if (!isClient) return null;
 
   return createPortal(
     <svg
       className="pointer-events-none fixed inset-0 h-full w-full"
-      style={{ zIndex: 9999 }}
+      // waterMoon 开 = 日食"挂天上"形态隐藏，水中月接管（球群之下）；关 = 原样日食
+      style={{ zIndex: 9999, display: waterMoon ? 'none' : undefined }}
       aria-hidden="true"
     >
       <defs>

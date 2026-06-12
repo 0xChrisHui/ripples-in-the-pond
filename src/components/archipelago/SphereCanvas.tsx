@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { type Simulation } from 'd3-force';
 import type { Track } from '@/src/types/tracks';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
-import SphereNode from './SphereNode';
 import SphereGlowDefs from './SphereGlowDefs';
 import EclipseLayer from './EclipseLayer';
 import {
@@ -28,6 +27,11 @@ import { useWaveEvents } from './hooks/use-wave-events';
 import { useMouseTilt } from './hooks/use-mouse-tilt';
 import { useSphereSim } from './hooks/use-sphere-sim';
 import CometSystem from './effects/motion/comet-system';
+import WaterWake from './effects/motion/water-wake';
+import WaterMoon from './effects/motion/water-moon';
+import CursorRing from './effects/motion/cursor-ring';
+import { useDragWakeFeed, spawnClickSplash } from './effects/motion/orchestration-helpers';
+import SphereNodesGroup from './render/SphereNodesGroup';
 import type { EffectsConfig } from './effects-config';
 
 
@@ -117,6 +121,15 @@ export default function SphereCanvas({
     effects, simRef,
   });
 
+  // §2.16 dragWake：球上拖拽喂点给 WaterWake 微涟漪池（helper 内常驻轻量，flag 在 WaterWake 判）
+  const splashLayerRef = useRef<SVGGElement>(null);
+  useDragWakeFeed(svgRef);
+  // F1 clickSplash：经播放事件在 SphereCanvas 层迸光点（不碰 SphereNode）
+  const handleToggle = (n: SimNode) => {
+    void toggle(n.track);
+    if (effects.clickSplash) spawnClickSplash(splashLayerRef.current, n);
+  };
+
   return (
     <>
     <svg ref={svgRef} className="h-full w-full cursor-grab active:cursor-grabbing">
@@ -140,7 +153,20 @@ export default function SphereCanvas({
           playingId={playingId} focus={effects.focus}
         />
       )}
+      {/* §2.9/§2.16 水痕 + 拖拽水痕（共享微涟漪池，屏幕坐标，挂 zoomG 之外随 comet）*/}
+      {(effects.waterWake || effects.dragWake) && (
+        <WaterWake
+          simNodes={simNodes} zMap={zMap} svgRef={svgRef}
+          waterWake={effects.waterWake} dragWake={effects.dragWake} playingId={playingId}
+        />
+      )}
+      {/* F5 指尖涟漪环（屏幕坐标，挂 zoomG 之外）*/}
+      {effects.cursorRing && <CursorRing svgRef={svgRef} />}
       <g ref={zoomGRef} style={{ willChange: 'transform' }}>
+        {/* §2.15 水中月：挂球群之下，在 zoomG 内随缩放镜像（水面层）*/}
+        {effects.waterMoon && <WaterMoon simNodesRef={simNodesRef} playingId={playingId} />}
+        {/* F1 clickSplash 一次性光点层（sim 坐标，随 zoomG 缩放）*/}
+        <g ref={splashLayerRef} aria-hidden="true" style={{ pointerEvents: 'none' }} />
         <g style={{ opacity: anyPlaying ? 0 : 1, transition: 'opacity 0.5s ease', pointerEvents: 'none' }}>
           {simLinks.map((l, i) => {
             const src = simNodes.find((n) => n.id === (typeof l.source === 'string' ? l.source : (l.source as SimNode).id));
@@ -160,44 +186,14 @@ export default function SphereCanvas({
             );
           })}
         </g>
-        <g>
-          {sortedNodes.map((n) => {
-            const isPlaying = playingId === n.track.id;
-            const dimmed = anyPlaying && !isPlaying;
-            const z = zMap.get(n.id) ?? 0.5;
-            return (
-              <g key={n.id} data-z={z}
-                ref={(el) => {
-                  if (el) nodeRefMap.current.set(n.id, el);
-                  else nodeRefMap.current.delete(n.id);
-                }}
-                style={{
-                  opacity: dimmed ? 0 : 1,
-                  // v87 perf — 删 transition: filter。filter 在 sim tick 每帧改，
-                  // CSS transition 反而强制每帧插值 + 离屏 GPU layer 重做，是 FPS 杀手。
-                  transition: 'opacity 0.5s ease',
-                  // v87 G2 — contain: layout style 给浏览器 isolation 提示，
-                  // 重绘时不污染邻居（不用 paint 因为会裁剪 glow halo）
-                  contain: 'layout style',
-                }}>
-                <SphereNode
-                  track={n.track} importance={n.importance} radius={n.radius}
-                  color={n.color}
-                  isPlaying={isPlaying} isAnyPlaying={anyPlaying}
-                  alreadyMinted={mintedIds.has(n.track.week)} onMinted={onMinted}
-                  onTogglePlay={() => {
-                    if (n._dragged) return;
-                    toggle(n.track);
-                  }}
-                  effects={effects}
-                />
-              </g>
-            );
-          })}
-        </g>
+        <SphereNodesGroup
+          sortedNodes={sortedNodes} playingId={playingId} anyPlaying={anyPlaying}
+          zMap={zMap} mintedIds={mintedIds} onMinted={onMinted}
+          nodeRefMap={nodeRefMap} effects={effects} onTogglePlay={handleToggle}
+        />
       </g>
     </svg>
-    <EclipseLayer zoomGRef={eclipseZoomGRef} eclipseGRef={eclipseGRef} />
+    <EclipseLayer zoomGRef={eclipseZoomGRef} eclipseGRef={eclipseGRef} waterMoon={effects.waterMoon} />
     </>
   );
 }
