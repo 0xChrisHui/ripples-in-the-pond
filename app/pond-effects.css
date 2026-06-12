@@ -28,6 +28,57 @@
 
 /* === Lane A 球体线（bobbing / dropShimmer / sphereSheen 等 keyframe）=== */
 
+/* §2.18 bobbing — 内层 <g data-bob.sphere-bob>：translateY 周期 4.5s 与 rotate 周期 6.7s
+   不可通约 → 不同步、不机械；delay 由 SphereNode 按 hash 内联错峰。 */
+@keyframes sphere-bob-y {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+@keyframes sphere-bob-r {
+  0%   { rotate: -1.5deg; }
+  50%  { rotate: 1.5deg; }
+  100% { rotate: -1.5deg; }
+}
+.sphere-bob {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: sphere-bob-y, sphere-bob-r;
+  animation-duration: 4.5s, 6.7s;
+  animation-timing-function: ease-in-out, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+}
+.zoom-large .sphere-bob { animation-play-state: paused; }
+
+/* F1 dropShimmer — 水滴主高光 opacity 呼吸 0.6↔1.0，周期 5.5s（只动 opacity）。 */
+@keyframes drop-shimmer {
+  0%   { opacity: 0.6; }
+  50%  { opacity: 1.0; }
+  100% { opacity: 0.6; }
+}
+.drop-shimmer {
+  animation-name: drop-shimmer;
+  animation-duration: 5.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* F5 sphereSheen — 斜向高光带 translateX 扫过球面，周期 11s（只动 transform/opacity）。 */
+@keyframes sphere-sheen {
+  0%   { transform: translateX(0); opacity: 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translateX(340%); opacity: 0; }
+}
+.sphere-sheen {
+  transform-box: fill-box;
+  animation-name: sphere-sheen;
+  animation-duration: 11s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.zoom-large .sphere-sheen { animation-play-state: paused; }
+
 /* === Lane B 环境线（caustics / pondLights / drops / pondShadow 等 keyframe）=== */
 
 /* caustics 焦散漂移（§2.7）：2 层错相位 transform-only 缓慢漂移 */

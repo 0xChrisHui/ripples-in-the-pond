@@ -11,6 +11,8 @@ import {
 import { applyFocusBlur, focusZOf, focusDecay } from './use-sphere-zoom';
 import { lerpMouseSmooth } from './use-mouse-tilt';
 import { fLayer, NUM_LAYERS, type SimNode, type SimLink } from '../sphere-config';
+import { getAudioEnv } from './pond/use-audio-energy';
+import { isAudioPulseEnabled } from './pond/use-play-sphere-pos';
 import type { EffectsConfig } from '../effects-config';
 import { useLayerWave } from './use-layer-wave';
 import { TILT_PX, tiltCoef, persp, getLastActivityTime, initActivityTracking } from '../render/render-helpers';
@@ -150,7 +152,9 @@ export function useSphereSim(a: Args): void {
           const dist = Math.abs(zEff - focusZ);
           const blur = Math.round(dist * 0.6 * decay * 10) / 10;
           const bright = Math.round((1 - dist * 0.15 * decay) * 100) / 100;
-          const fStr = blur === 0 ? '' : `blur(${blur}px) brightness(${bright})`;
+          // P8-B §2.4 — focus 叠 saturate：失焦球去饱和（水下偏灰）；同字符串/节流/cache，零额外开销
+          const sat = Math.round((1 - dist * 0.35 * decay) * 100) / 100;
+          const fStr = blur === 0 ? '' : `blur(${blur}px) brightness(${bright}) saturate(${sat})`;
           if (filterCache.get(n.id) !== fStr) {
             el.style.filter = fStr;
             filterCache.set(n.id, fStr);
@@ -174,6 +178,7 @@ export function useSphereSim(a: Args): void {
           }
           if (!visible) return;
         }
+        if (n.id === playingId && isAudioPulseEnabled()) scale *= 1 + getAudioEnv() * 0.07; // P8-C1 audioPulse 播放球呼吸
         const t = scale === 1
           ? `translate(${x},${y})`
           : `translate(${x},${y}) scale(${scale})`;

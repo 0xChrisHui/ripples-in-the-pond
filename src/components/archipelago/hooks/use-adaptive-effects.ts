@@ -25,6 +25,10 @@ import type { EffectsConfig } from '../effects-config';
  */
 
 const DEGRADATION_ORDER: (keyof EffectsConfig)[] = [
+  // P8-A/F5 — Lane A 重效果排最前先关：sphereSheen（36 球扫光最贵）、
+  //   waterRipple（feDisplacementMap 折射；降级 = 卸 filter url 属性，彻底移除 GPU 折射开销）
+  'sphereSheen',
+  'waterRipple',
   'comet',
   'sphereRipple',
   'layerWave2',

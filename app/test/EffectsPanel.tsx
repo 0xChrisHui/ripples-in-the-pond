@@ -34,7 +34,8 @@ export default function EffectsPanel({ effects, onChange }: Props) {
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [tilt, setTilt] = useState(1);
-  const enabledCount = Object.values(effects).filter(Boolean).length;
+  // waterRippleScale 是数值（非开关），按 EFFECTS_META 的布尔 flag 计数
+  const enabledCount = EFFECTS_META.filter((m) => effects[m.key]).length;
 
   const groups = useMemo(() => {
     const m = new Map<string, typeof EFFECTS_META>();
@@ -105,6 +106,20 @@ export default function EffectsPanel({ effects, onChange }: Props) {
                 setTilt(v);
                 setPondTilt(v);
               }}
+              className="flex-1"
+            />
+          </label>
+
+          {/* P8-A — 水波强度 slider（仅 waterRipple 开时生效；数值 flag 不进复选框） */}
+          <label className="mb-2 flex items-center gap-2 py-1 text-[10px] text-white/60">
+            <span className="w-16 shrink-0 uppercase tracking-[0.1em] text-white/40">水波 {effects.waterRippleScale}</span>
+            <input
+              type="range"
+              min={0}
+              max={30}
+              step={1}
+              value={effects.waterRippleScale}
+              onChange={(e) => onChange({ ...effects, waterRippleScale: Number(e.target.value) })}
               className="flex-1"
             />
           </label>

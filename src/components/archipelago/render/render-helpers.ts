@@ -4,8 +4,10 @@
  * use-sphere-sim 和 render-links 都用，独立成文件避免循环依赖 + 控制单文件行数。
  */
 
-/** tilt: 远端 baseline 0.15 微动，近端 pow(z,1.2) 偏陡；TILT_PX 145 近球 145px（P8-B S3 减半为 72） */
-export const TILT_PX = 145;
+/** tilt: 远端 baseline 0.15 微动，近端 pow(z,1.2) 偏陡。
+ *  P8-B S3（§2.5）— TILT_PX 145→72：水塘视觉里视差幅度收一半，球更像「躺在水面」
+ *  随鼠标轻晃而非大幅平移，让水波/bobbing 微动成为主体感。 */
+export const TILT_PX = 72;
 export const tiltCoef = (z: number): number =>
   0.15 + Math.pow(Math.max(0, z), 1.2) * 0.85;
 
