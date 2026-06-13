@@ -15,12 +15,15 @@ export interface GLFlags {
   glBase: boolean;
   /** G3 — 基调两档：deep（推荐，夜塘感）/ black（纯黑，更冷） */
   artDir: ArtDir;
+  /** G4 — GL 球总开关；true = 隐 SVG 球组 + 显 InstancedMesh 球，false = 回 SVG 球（默认） */
+  glSpheres: boolean;
 }
 
-/** /test1 默认：开 GL 基调 + deep 档 */
+/** /test1 默认：开 GL 基调 + deep 档；球默认仍走 SVG（沙盒铁律：每步 flag 化，关 = 回上一步） */
 export const DEFAULT_GL_FLAGS: GLFlags = {
   glBase: true,
   artDir: 'deep',
+  glSpheres: false,
 };
 
 /** 从 URL query 解析 G 线开关（仅覆盖出现的参数，其余取默认） */
@@ -33,6 +36,10 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
 
   const artDir = searchParams.get('artDir');
   if (artDir === 'deep' || artDir === 'black') result.artDir = artDir;
+
+  const glSpheres = searchParams.get('glSpheres');
+  if (glSpheres === '1' || glSpheres === 'true') result.glSpheres = true;
+  else if (glSpheres === '0' || glSpheres === 'false') result.glSpheres = false;
 
   return result;
 }

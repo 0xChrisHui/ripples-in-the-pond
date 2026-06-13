@@ -40,6 +40,9 @@ export default function EclipseLayer({ zoomGRef, eclipseGRef, waterMoon = false 
       // waterMoon 开 = 日食"挂天上"形态隐藏，水中月接管（球群之下）；关 = 原样日食
       style={{ zIndex: 9999, display: waterMoon ? 'none' : undefined }}
       aria-hidden="true"
+      // 纯标识属性（不影响任何渲染/行为，首页零变化）：供 /test1 P8-G glSpheres=1 时
+      // 用 scoped <style> 隐藏 portal-to-body 的日食层，避免与 GL 球错位（见 app/test1/page.tsx）
+      data-eclipse-layer
     >
       <defs>
         <radialGradient id="eclipse-halo">

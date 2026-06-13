@@ -4,6 +4,8 @@ import { Canvas } from '@react-three/fiber';
 import { Component, useMemo, type ReactNode } from 'react';
 import type { GLFlags } from './gl-flags';
 import { baseToneVertexShader, baseToneFragmentShader } from './base-tone-shader';
+import SphereInstances from './spheres/SphereInstances';
+import type { GlSim } from './spheres/use-gl-sim';
 
 /**
  * GL 渲染层入口 — P8-G G3。
@@ -52,22 +54,32 @@ class GLErrorBoundary extends Component<{ children: ReactNode }, { failed: boole
 
 export interface PondGLProps {
   flags: GLFlags;
+  glSim?: GlSim;
 }
 
-export default function PondGL({ flags }: PondGLProps) {
-  if (!flags.glBase) return null;
+export default function PondGL({ flags, glSim }: PondGLProps) {
+  // G3 基调 或 G4 球任一开启都需要 Canvas；都关 = 卸载（回纯 SVG）
+  const active = flags.glBase || flags.glSpheres;
+  // 球开启时才开 AA（基调是全屏渐变无边缘）；useMemo 稳定 gl 对象，避免 Canvas 频繁重建
+  const gl = useMemo(() => ({ antialias: flags.glSpheres, alpha: false }), [flags.glSpheres]);
+  if (!active) return null;
   return (
     <div className="pointer-events-none fixed inset-0 z-0">
       <GLErrorBoundary>
         <Canvas
+          // 切 glSpheres 时重挂 Canvas，让 gl(antialias) 干净生效（R3F 该 prop 非热更新）
+          key={flags.glSpheres ? 'gl-spheres' : 'gl-base'}
           orthographic
-          frameloop="demand" // G3 基调静止：只渲一次后休眠，不每帧抢 SVG 的帧（G5 有水面动画再切回 always）
+          // G4 球需逐帧动画 → always；仅基调时 demand（只渲一次省帧，不每帧抢 SVG）
+          frameloop={flags.glSpheres ? 'always' : 'demand'}
           dpr={[1, 2]} // DPR cap 2（性能预算）
-          gl={{ antialias: false, alpha: false }} // 基调是全屏渐变，无边缘可抗锯齿 → 关 AA 省开销（G4 球再开回）
-          // 正交相机：G4 起把世界坐标锁成屏幕像素 1:1；G3 基调层走裁剪空间不依赖相机
-          camera={{ position: [0, 0, 100], near: 0.1, far: 1000 }}
+          gl={gl}
+          // 球开启时 manual:true —— 让 SphereInstances 自己把正交相机配成屏幕像素 1:1，
+          // 阻止 R3F 的 resize 处理器覆盖我的 frustum；基调层走裁剪空间不依赖相机
+          camera={{ manual: flags.glSpheres, position: [0, 0, 10], near: -1000, far: 1000 }}
         >
-          <BaseTone artDir={flags.artDir} />
+          {flags.glBase && <BaseTone artDir={flags.artDir} />}
+          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} />}
         </Canvas>
       </GLErrorBoundary>
     </div>
