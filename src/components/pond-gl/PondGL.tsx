@@ -1,10 +1,12 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { Component, useMemo, type ReactNode } from 'react';
+import { Component, Suspense, useMemo, type ReactNode } from 'react';
 import type { GLFlags } from './gl-flags';
 import { baseToneVertexShader, baseToneFragmentShader } from './base-tone-shader';
 import SphereInstances from './spheres/SphereInstances';
+import WaterSurface from './water/WaterSurface';
+import BgImage from './BgImage';
 import type { GlSim } from './spheres/use-gl-sim';
 
 /**
@@ -58,9 +60,9 @@ export interface PondGLProps {
 }
 
 export default function PondGL({ flags, glSim }: PondGLProps) {
-  // G3 基调 或 G4 球任一开启都需要 Canvas；都关 = 卸载（回纯 SVG）
-  const active = flags.glBase || flags.glSpheres;
-  // 球开启时才开 AA（基调是全屏渐变无边缘）；useMemo 稳定 gl 对象，避免 Canvas 频繁重建
+  // 基调 / 球 / 水面 / 背景图 任一开启都需要 Canvas；都关 = 卸载（回纯 SVG）
+  const active = flags.glBase || flags.glSpheres || flags.water || flags.bgImage;
+  // 球开启时才开 AA（基调/水面是全屏无硬边）；useMemo 稳定 gl 对象，避免 Canvas 频繁重建
   const gl = useMemo(() => ({ antialias: flags.glSpheres, alpha: false }), [flags.glSpheres]);
   if (!active) return null;
   return (
@@ -70,15 +72,23 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           // 切 glSpheres 时重挂 Canvas，让 gl(antialias) 干净生效（R3F 该 prop 非热更新）
           key={flags.glSpheres ? 'gl-spheres' : 'gl-base'}
           orthographic
-          // G4 球需逐帧动画 → always；仅基调时 demand（只渲一次省帧，不每帧抢 SVG）
-          frameloop={flags.glSpheres ? 'always' : 'demand'}
+          // 球 / 水面需逐帧动画 → always；仅基调 / 背景图时 demand（只渲一次省帧）
+          frameloop={flags.glSpheres || flags.water ? 'always' : 'demand'}
           dpr={[1, 2]} // DPR cap 2（性能预算）
           gl={gl}
           // 球开启时 manual:true —— 让 SphereInstances 自己把正交相机配成屏幕像素 1:1，
-          // 阻止 R3F 的 resize 处理器覆盖我的 frustum；基调层走裁剪空间不依赖相机
+          // 阻止 R3F 的 resize 处理器覆盖我的 frustum；基调/水面走裁剪空间不依赖相机
           camera={{ manual: flags.glSpheres, position: [0, 0, 10], near: -1000, far: 1000 }}
         >
-          {flags.glBase && <BaseTone artDir={flags.artDir} />}
+          {/* 背景图（renderOrder -2，最底）与纯色基调互斥：bgImage 开时不画 BaseTone */}
+          {flags.bgImage && (
+            <Suspense fallback={null}>
+              <BgImage url="/test1-bg.png" />
+            </Suspense>
+          )}
+          {flags.glBase && !flags.bgImage && <BaseTone artDir={flags.artDir} />}
+          {/* 水面垫在球之下（renderOrder -0.5），基调/背景图之上 */}
+          {flags.water && <WaterSurface artDir={flags.artDir} />}
           {flags.glSpheres && glSim && <SphereInstances glSim={glSim} />}
         </Canvas>
       </GLErrorBoundary>

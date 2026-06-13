@@ -115,6 +115,59 @@ app/test1/
 - `glSpheres=1` → 隐 SVG 球组（display:none 级 CSS，不卸载）；`=0` → 回 SVG
 - 暂不做：日食 / 彗星 / links 线 / focus 景深（GL 线后续按需补）
 - 验收（**停，等用户**）：35 球外观接近现状；拖/点/hover/播放全正常；PerfHUD 帧率 ≥ SVG 版；关 flag 回 G2
+- **G4 实际落地（2026-06-13，commit `744b64d`）**：球数实为 A=15 / B,C=36（"35"是旧文案）；球色走手动 `hexToSRGB` 直通（绕过 three `Color`/`ColorManagement`，否则自定义 shader 不编码回 sRGB → 暗一半）；加了 `TunePanel` 实时调色面板（亮度/对比度/饱和度/光晕/浓度 + localStorage）。
+
+> ### ⚠️ G4 验收转折（2026-06-13）→ 方向 A 立项
+>
+> G4 浏览器验收暴露**结构性问题**：原设计"GL **独立** sim + 只隐 SVG 球 + 留 SVG 线/日食/缩放" = **两套互不相干的 sim**（坐标/布局/组/缩放各算各），必然错位（切组球不变线变 / 滚轮线缩球不缩 / 日食黑圈与播放白圈错位）。根因不是 bug，是 G4 这步定义的**内在矛盾**。
+>
+> **用户拍板【方向 A：GL 彻底取代 SVG】**（否决"GL 镜像 SVG sim 坐标"——因 P8-G 初衷是验证 GL 能否替代 SVG、突破性能天花板；镜像方案 SVG 仍跑、GL 退化成换皮叠加，验证不了性能）。
+> **架构边界**（重要）：**渲染层（球 / 水 / 光）走 GL；命中层（点 / 拖 / hover）+ 文字 / UI 继续用薄 DOM overlay**——不是"一切皆 GL"（DOM 接交互在折射解耦 / 原生事件 / 无障碍上更优）。
+>
+> **P0 止血已落地**（commit `744b64d`）：glSpheres=1 时 SVG sim 层【整层退场】（scoped `<style>` 隐整个 `svg.cursor-grab`＋portal 日食 `data-eclipse-layer`），GL 成唯一渲染、错位消除。
+> **P1（GL 跟 nav 点击切组的桥）跳过**：它是过渡期临时桥，终态 GL 接管 nav/groupId 唯一化会吸收它（见 P2-b）；过渡期切组走键盘 ←→（不写注定删的代码）。
+
+### P2 — SVG 视觉搬迁（方向 A，2026-06-13 立项，插在 G4 与 G5 之间）
+
+> **目标**：让 glSpheres=1 时 GL 渲染**对等 SVG 现状**（视觉＋交互），最终**卸载 SVG**（而非隐藏）。这是"GL 取代 SVG"的前置，也让 G5/G6 在干净 GL 基础上加水波水位、帧率对照才公平。
+> **执行**：P2-a…f 每步一闭环、可单独 flag/回退；视觉步骤末尾 ⏸ 等用户验收。
+> **红线照旧**：`effects-config` / `effects-presets` / `SphereNode` / `use-sphere-sim` / `sphere-sim-setup` / `globals.css` 一律只读；不改 `/` 与 `/test`；任一步必须改 `Archipelago`/`SphereCanvas` 才能推进 → **停下问**（首页零变化铁律）。不装新包。
+
+- **P2-a 连接线（links）搬进 GL**
+  - 📦 范围：`spheres/`（新建 GL 连接线渲染，如 `gl-links.ts` + Canvas 内加一个 `LineSegments`）
+  - 做什么：cluster 连接线用 GL 画（`THREE.LineSegments`，每帧从 `simLinks` 写顶点，读**同一 GL sim 坐标**）；颜色 = src 球色、透明度复刻 SVG（线宽 GL 难逐线变 → 用 alpha 近似 `0.05+corr*0.13`）；播放时整组淡出（同 SVG `anyPlaying` opacity 0）
+  - 红线：links 数据复用 `generateLinks`（sphere-config 纯函数）
+  - 验收（⏸）：glSpheres=1 出现连接线，与 GL 球**对齐**、随拖拽/切组实时跟随；播放淡出正常
+
+- **P2-b nav 切组 GL 接管 + groupId 唯一化（吸收 P1）**
+  - 📦 范围：`use-gl-sim`（groupId 来源）+ **不碰 Archipelago 的**组切换 UI
+  - 做什么：让 GL 响应"切组"。**首选方案**：/test1 page 提升 groupId state（键盘 ←→ + GL 侧独立的小 nav），glSpheres=1 时用 CSS 隐掉 Archipelago 的 nav（同 P0 的 scoped style 套路），GL 用自己的 nav → groupId 唯一来源在 GL 侧
+  - 红线：不改 Archipelago/SphereCanvas；隐其 nav 走 scoped `<style>`（不改组件）
+  - 验收（⏸）：点 GL nav / 键盘 ←→ 都能切组；A=15 / B,C=36 正确
+
+- **P2-c 滚轮缩放＋平移搬进 GL（与 G6 水位滚轮统一）**
+  - 📦 范围：`spheres/`（缩放/平移状态）、正交相机或世界 group 变换、`gl-flags` 接 `wheelMode`
+  - 做什么：GL 接 滚轮=缩放（非 perspective 锚点居中）＋拖背景=平移＋Esc reset；**与 G6 的 `waterLevel` 滚轮互斥**（`wheelMode` 二选一，这里先做 `zoomFx` 分支）
+  - 红线：命中层 overlay 坐标要跟随缩放（点击仍精准）
+  - 验收（⏸）：缩放/平移手感对照 /test 非 perspective 分支；缩放下拖/点仍精准
+
+- **P2-d 播放叙事 / 日食搬进 GL**
+  - 📦 范围：`spheres/` 或 `water/`（播放聚焦的 GL 版）
+  - 做什么：播放时其他球淡出（已有 dim）＋补"月光/聚焦"GL 版（对标 SVG EclipseLayer 的意境，GL 实现不强求 1:1，可与 G5 月光 specular 共用）
+  - 验收（⏸）：播放聚焦感与 SVG 接近、无错位（同一 GL 坐标天然对齐）
+
+- **P2-e 氛围层评估（星 / 雾 / aurora / 水塘特效）**
+  - 📦 范围：决策＋记录（reviews/ 或 JOURNAL），按需少量搬迁
+  - 做什么：逐个评估 `AmbientLayers`——**背景氛围大多 DOM 保留**（不影响球交互、搬 GL 收益低）；仅"必须逐像素 / 与水面交互"的才搬。产出一张"搬 / 留"清单
+  - 验收：清单落文档；不盲目全搬
+
+- **P2-f SVG 真正卸载＋帧率公平对照**
+  - 📦 范围：`page.tsx`（glSpheres=1 时**卸载** SphereCanvas 而非隐藏）
+  - 做什么：P2-a…d 让 GL 对等后，glSpheres=1 时 /test1 不再挂 SVG 球渲染（条件卸载，SVG sim 停跑）；此时 PerfHUD 帧率 = GL 真实单跑值
+  - 红线：**仍不改 Archipelago 本身**——在 page 层条件不挂其 SphereCanvas；若 Archipelago 结构不允许 page 层卸载内部 SphereCanvas → **停下评估**（可能 /test1 改用精简版页面而非整体克隆）
+  - 验收（⏸）：DevTools 确认 SVG 球 DOM 不存在 / sim 不跑；帧率为 GL 单跑真实值，对照 glSpheres=0 拍板 GL 是否达标
+
+> **P2 完结 → 回 G5/G6**：GL 对等 SVG 后，G5（水波高度场＋月光）/ G6（水位三态）在干净 GL 基础上推进（下文原样）。G7 对比验收时 GL 已是完整渲染层。
 
 ### G5 — 水波第一层：高度场 + 月光（⏸ 验收必停）
 

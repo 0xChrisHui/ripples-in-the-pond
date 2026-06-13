@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useMemo } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import Archipelago from '@/src/components/archipelago/Archipelago';
@@ -12,10 +12,11 @@ import SvgAnimationLayer from '@/src/components/animations-svg/SvgAnimationLayer
 import PerfHUD from '@/src/components/PerfHUD';
 import { useResponsiveDefaultEffects } from '@/src/components/archipelago/hooks/use-responsive-effects';
 import { useAdaptiveEffects } from '@/src/components/archipelago/hooks/use-adaptive-effects';
-import { parseGLFlags } from '@/src/components/pond-gl/gl-flags';
+import { parseGLFlags, type GLFlags } from '@/src/components/pond-gl/gl-flags';
 import { useGlSim } from '@/src/components/pond-gl/spheres/use-gl-sim';
 import SphereOverlay from '@/src/components/pond-gl/overlay/SphereOverlay';
 import TunePanel from '@/src/components/pond-gl/overlay/TunePanel';
+import ScenePanel, { type SceneFx } from '@/src/components/pond-gl/overlay/ScenePanel';
 
 // GL 渲染层：全链路 next/dynamic + ssr:false，three/R3F 只进 /test1 异步 chunk → 首页 bundle 零增量
 const PondGL = dynamic(() => import('@/src/components/pond-gl/PondGL'), { ssr: false });
@@ -37,12 +38,17 @@ function Test1PageInner() {
   const baseEffects = useResponsiveDefaultEffects();
   // G2：默认关 1 点透视；URL ?perspective=1 临时开回对比
   const perspectiveOn = searchParams.get('perspective') === '1';
-  // L 方案：adaptiveQuality 开启时，FPS 持续低会自动关掉性能贵的 effect
-  const effects = useAdaptiveEffects({ ...baseEffects, perspective: perspectiveOn });
-  // G3/G4：G 线沙盒开关（独立文件，不碰共享 effects-config）
-  const glFlags = useMemo(() => parseGLFlags(searchParams), [searchParams]);
-  // G4：GL 球 sim（glSpheres=0 时 active=false，不取数/不建 sim，零额外成本）
-  const glSim = useGlSim(glFlags.glSpheres);
+
+  // G5：视觉控制台 state —— GL 层开关（初值取 URL）+ 背景氛围 override（默认全关 = 纯净夜塘）
+  const [glFlags, setGlFlags] = useState<GLFlags>(() => parseGLFlags(searchParams));
+  const [fx, setFx] = useState<SceneFx>({ stars: false, aurora: false, fog: false, bgRipples: false, comet: false });
+  const onGl = useCallback((patch: Partial<GLFlags>) => setGlFlags((f) => ({ ...f, ...patch })), []);
+  const onFx = useCallback((patch: Partial<SceneFx>) => setFx((f) => ({ ...f, ...patch })), []);
+
+  // 背景氛围默认关叠加到 base（页面级 override，不动共享 presets）；adaptiveQuality 只会再关不会开
+  const effects = useAdaptiveEffects({ ...baseEffects, ...fx, perspective: perspectiveOn });
+  // 球或水面开启时 glSim active（取数 / 建 sim / 订阅涟漪事件）
+  const glSim = useGlSim(glFlags.glSpheres || glFlags.water);
 
   return (
     <main data-gl-spheres={glFlags.glSpheres ? '1' : '0'} className="relative min-h-screen overflow-hidden bg-black">
@@ -55,8 +61,8 @@ function Test1PageInner() {
         <style>{`main[data-gl-spheres="1"] svg.cursor-grab{display:none!important}[data-eclipse-layer]{display:none!important}`}</style>
       )}
 
-      {/* GL 层：基调（glBase）或球（glSpheres）任一开启就挂 Canvas，都关 = 不加载 three chunk */}
-      {(glFlags.glBase || glFlags.glSpheres) && <PondGL flags={glFlags} glSim={glSim} />}
+      {/* GL 层：基调 / 球 / 水面 / 背景图 任一开启就挂 Canvas，都关 = 不加载 three chunk */}
+      {(glFlags.glBase || glFlags.glSpheres || glFlags.water || glFlags.bgImage) && <PondGL flags={glFlags} glSim={glSim} />}
 
       {effects.bgRipples && <BackgroundRipples />}
 
@@ -89,6 +95,9 @@ function Test1PageInner() {
 
       {/* G4：GL 球实时调色面板（右下角，亮度/对比度/饱和度/光晕/浓度 + 保存到 localStorage） */}
       {glFlags.glSpheres && <TunePanel />}
+
+      {/* G5：视觉控制台（左下角，逐层开关 GL 层 + 背景氛围，默认纯净夜塘） */}
+      <ScenePanel glFlags={glFlags} onGl={onGl} fx={fx} onFx={onFx} />
 
       <DraftSavedToast />
       <PerfHUD />

@@ -17,13 +17,20 @@ export interface GLFlags {
   artDir: ArtDir;
   /** G4 — GL 球总开关；true = 隐 SVG 球组 + 显 InstancedMesh 球，false = 回 SVG 球（默认） */
   glSpheres: boolean;
+  /** G5 — GL 高度场水面总开关（涟漪 + 月光，球之下/基调之上）；默认关 */
+  water: boolean;
+  /** 背景图开关（测试用，public/test1-bg.png）；开时替代纯色基调垫最底层。默认关 */
+  bgImage: boolean;
 }
 
-/** /test1 默认：开 GL 基调 + deep 档；球默认仍走 SVG（沙盒铁律：每步 flag 化，关 = 回上一步） */
+/** /test1 默认（方向 A 后）：基调 + GL 球默认开（/test1 = GL 沙盒，直接看 GL）；
+ *  水面默认关（面板里开）。仅 /test1 默认，`/` 与 `/test` 零影响。 */
 export const DEFAULT_GL_FLAGS: GLFlags = {
   glBase: true,
   artDir: 'deep',
-  glSpheres: false,
+  glSpheres: true,
+  water: false,
+  bgImage: false,
 };
 
 /** 从 URL query 解析 G 线开关（仅覆盖出现的参数，其余取默认） */
@@ -40,6 +47,14 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const glSpheres = searchParams.get('glSpheres');
   if (glSpheres === '1' || glSpheres === 'true') result.glSpheres = true;
   else if (glSpheres === '0' || glSpheres === 'false') result.glSpheres = false;
+
+  const water = searchParams.get('water');
+  if (water === '1' || water === 'true') result.water = true;
+  else if (water === '0' || water === 'false') result.water = false;
+
+  const bgImage = searchParams.get('bgImage');
+  if (bgImage === '1' || bgImage === 'true') result.bgImage = true;
+  else if (bgImage === '0' || bgImage === 'false') result.bgImage = false;
 
   return result;
 }
