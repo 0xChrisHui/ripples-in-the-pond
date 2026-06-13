@@ -7,7 +7,9 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 8 启动**：首页水塘视觉重设计。P7 已完结（commit `5a2211a`）。下一步：AI 调研水塘视觉方向 → 用户预览确认 → 逐 step 实施。
+- **Phase 8 进行中**：Wave 0+1 已合并入 main（35 个新 flag 默认 false）。两条待办线由用户定先后：
+  - ① **Wave 2 收口**：splashIntro + /test 集中验收 + S8/F9 默认值拍板 + 真机压测
+  - ② **P8-G /test1 GL 渲染层 spike**（2026-06-12 立项，**进行中**）：**G1-G3 ✅**（/test1 克隆 + 默认关透视 + GL 深色基调层骨架；装 three/R3F/drei，dynamic ssr:false 首页零增量，verify.sh 全绿）；**下一步 G4**（GL 球 instanced + sim 接驳 + DOM 命中层，⏸ 验收必停）。G1-G7 见 `playbook/phase-8/phase-8-g-gl-water.md`
 
 ---
 

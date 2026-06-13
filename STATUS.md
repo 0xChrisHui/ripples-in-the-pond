@@ -35,6 +35,7 @@
     - **结构性拆分**（撞 220 行/8 文件硬线自决）：effects-config → 拆 config/effects-presets + config/effects-meta；pond-effects.css → 拆 pond-effects-motion.css；Archipelago 氛围挂载 → 抽 AmbientLayers.tsx；新建 config//forces//sphere//hooks-pond//ambient-pond/ 子目录。
     - **待 Wave 2**：splashIntro 入场编排（依赖已合并的 bobbing 内层 g）；S8/F9 默认值删减拍板 + 移动端最小水塘集；真机 FPS 压测（单球四层滤镜）。
   - **Wave 2 待办**：splashIntro + 用户 /test 集中验收 + S8/F9 默认值拍板 + 真机压测。
+  - **P8-G 已立项（2026-06-12，取代旧 P8-W gate）**：/test1 GL 渲染层 spike。`three` + `@react-three/fiber` + `@react-three/drei` 已批进白名单并登记 STACK.md（G3 才实际装包）；路线 G1-G7：/test1 克隆 / → 默认关 1 点透视（仅 /test1，页面级 override，不动共享代码）→ GL 球 instanced + DOM 命中层 → 高度场水面（深色基调 + 月光 specular，不加背景图）→ 滚轮水位三态（水上/贴面/水下，与 zoom fx 互斥）→ 对比验收拍板去留。playbook：`playbook/phase-8/phase-8-g-gl-water.md`。与 Wave 2 零文件冲突可并行。**G1-G3 已完成（2026-06-12）**：/test1 克隆 / + 默认关透视（`?perspective=1` 可临回）+ GL 基调层骨架（装 three^0.184/R3F^9.6/drei^10.7，PondGL 走 dynamic ssr:false，artDir deep|black 两档，glBase=0 回 G2 现状）；首页 First Load JS +89B≈零增量，verify.sh 全绿。**下一步 G4**（GL 球 instanced + sim 接驳 + DOM 命中层，⏸ 验收必停）。
   - 执行手册：`playbook/phase-8/p8-parallel-guide.md`；新 flag 桌面/移动默认全 false（沙盒铁律）。
 
 **Track 依赖图（修订）**：
@@ -173,6 +174,17 @@
 - `app/api/` 硬线豁免缺失：hook 只认 `src/app/api/`，当前 app/api/ 接近 8 上限，新 route 考虑复用现有子目录（见 S5.c 放 `cron/queue-status/`）
 
 ## 上次成功验证
+
+- 验证: **P8-G G1-G3 落地**（/test1 GL 渲染层 spike 骨架：克隆 / + 默认关 1 点透视 + GL 深色基调层）
+- 时间: 2026-06-12
+- 改动:
+  - 新建 `app/test1/layout.tsx`（robots noindex，抄 /test）+ `app/test1/page.tsx`（/ 的克隆 + 标题后缀「— /test1 GL sandbox」；G2 用 useSearchParams 叠 `perspective:false`，`?perspective=1` 可临回；G3 dynamic ssr:false 挂 PondGL）
+  - 新建 `src/components/pond-gl/`：`gl-flags.ts`（G 线独立开关 glBase/artDir，不碰共享 effects-config）+ `base-tone-shader.ts`（全屏裁剪空间平面 GLSL，deep 径向渐晕 / black 纯黑）+ `PondGL.tsx`（正交相机 + DPR≤2 Canvas + class 错误边界兜 WebGL 失败 → null）
+  - 装包 `three@^0.184` + `@react-three/fiber@^9.6` + `@react-three/drei@^10.7`（pre-approved，STACK.md 已登记）
+- 验证证据: verify.sh 全绿（tsc + lint 0 error + 行数 + 目录 + 危险扫描 + 生产构建 30 路由含 /test1）；首页首屏 JS 3047350→3047439B（**+89B≈零增量**，three 只进 /test1 异步 chunk）；本会话 verify.sh 2 次瞬态 flake（lint/build 各一）clean 重跑即绿
+- 下一步: **G4**（GL 球 instanced + use-gl-sim 接 sphere-config 纯函数/力参数 + SphereOverlay DOM 命中层；⏸ 末尾必停等用户浏览器验收）
+
+### 上一轮成功验证（2026-05-15 Phase 7 Track B，保留）
 
 - 验证: **Phase 7 Track B B2 + B3 落地**（Semi 社区钱包前端接入：SemiLogin + LoginModal 两 tab + useAuth 双源化）
 - 时间: 2026-05-15

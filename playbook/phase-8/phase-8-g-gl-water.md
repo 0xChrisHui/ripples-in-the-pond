@@ -1,0 +1,214 @@
+# P8-G — /test1 GL 渲染层 spike（three.js + R3F + 水位层级系统）
+
+> **立项**：2026-06-12 用户拍板。**取代** overview 里的旧 `P8-W` gate（"WebGL 背景水面"），范围升级为"渲染层整体迁移 spike"。
+> **装包批准**：`three` / `@react-three/fiber` / `@react-three/drei` 已批准进 `docs/STACK.md` 白名单（2026-06-12，同日已登记）。
+> **决策背景**：SVG + d3-force 管线已到性能/效果天花板（自适应降级系统靠"关特效"保帧率 = 结构性上限）；用户的"水位换层"产品愿景（见 §3）需要逐像素折射，SVG 滤镜做不到。完整论证见 2026-06-12 对话。
+
+---
+
+## 0. 是什么 / 不是什么
+
+### 是
+
+- 新沙盒页 **`/test1`**：先与 `/` 同步，再逐步换成 GL 渲染层
+- **three.js + R3F** 渲染 35 球 + 高度场水面（涟漪 / 折射 / 月光高光）
+- **水位层级系统**：滚轮升降水位，球分水上 / 贴面 / 水下三态
+- `/test1` 默认**关闭 1 点透视**（perspective=false，页面级 override）
+
+### 不是
+
+- ❌ **不改 `/` 与 `/test` 的任何现状**（首页默认零变化铁律照旧）
+- ❌ **不删共享 SVG 管线里的 perspective 代码**——G2 只是 /test1 页面级默认关；真正删码留到"GL 替换首页"拍板后（G7 出口）
+- ❌ 不碰 Wave 2 热点文件：`effects-config.ts` / `config/effects-presets.ts` / `globals.css` / `SphereNode.tsx` / `use-sphere-sim.ts` / `sphere-sim-setup.ts` 等**一律只读**
+- ❌ 不做氛围特效全量 GL 迁移（星/雾/彗星等 DOM 氛围层暂时共用）；不做日食/彗星 GL 版
+- ❌ 不做移动端 GL 适配（移动端继续走 SVG + MOBILE_EFFECTS，G7 再议）
+
+**与 Wave 2 的关系**：G 线全部落在新文件（`app/test1/`、`src/components/pond-gl/`），与 Wave 2（splashIntro / S8/F9 拍板）零文件冲突，先后顺序由用户定。
+
+---
+
+## 1. 架构蓝图
+
+### 保留层（一行不改，直接复用）
+
+| 复用什么 | 在哪 |
+|---|---|
+| 球数据纯函数（computeNodeAttrs / buildClusterAssignment / halton / generateLinks / pad…） | `sphere-config.ts` |
+| d3-force 力参数 | `sphere-sim-setup.ts` / `forces/`（**只读**；若与 SVG drag 耦合则把参数快照进 use-gl-sim 并注明出处） |
+| 播放器 / 音频能量 | `PlayerProvider` / `use-audio-energy.ts` |
+| 涟漪事件总线 | `bg-ripple:wave` / `bg-ripple:spawn` CustomEvent（GL 水面直接订阅） |
+| 机位 / 光源锚点 | `POND_TILT_RATIO`（椭圆压扁）/ `MOON_ANCHOR`（月光方向） |
+| /api/tracks 数据流、分组逻辑 | `Archipelago.tsx` 现有取数路径 |
+
+### 替换层（GL 重写）
+
+- 35 球 SVG 元素（每球 9-17 节点 + filter）→ **一个 InstancedMesh（一次 draw call）**，光晕在片元 shader 里按径向衰减算（对标 gradientGlow=C 方案视觉），不再有 feGaussianBlur
+- 水面（caustics/skyReflection/moonPath 等 SVG 叠层的最终归宿）→ **高度场水面 shader**（本 spike 先做最小集：涟漪 + 折射 + 月光高光）
+
+### 新增层
+
+- **DOM 命中层**（`SphereOverlay`）：35 个绝对定位 div，承载标题 / 角标 / 点击 / 拖拽 / hover，每帧只写 transform。点击热区跟 sim 坐标走，**不受水下折射视觉偏移影响**。
+
+### 关键约定
+
+- **坐标系**：正交相机，世界坐标 = 屏幕像素坐标 1:1 ⇒ d3 sim 坐标直接当 GL 坐标用，零换算。
+- **开关体系**：G 线 flag 走独立 `pond-gl/gl-flags.ts`（URL 参数范式抄 effects-config，但独立文件 → 不碰共享热点）。P8 全局铁律 1 的精神保留：每个 G 功能可单独开关、关 = 回上一步现状。
+- **包体纪律**：PondGL 全链路 `next/dynamic` + `ssr: false`，仅 /test1 挂载 ⇒ 首页 main bundle 零增量（G3 验收项）。
+- **行数/目录纪律**：每文件 ≤200 行（shader 字符串单独拆文件）、每目录 ≤8 文件。
+
+### 目录规划
+
+```
+src/components/pond-gl/
+  PondGL.tsx            # 入口：dynamic Canvas + 正交相机 + DPR≤2 + WebGL 失败回退 null
+  gl-flags.ts           # G 线沙盒开关（glBase/glSpheres/water/wheelMode/artDir…）
+  spheres/
+    SphereInstances.tsx # instanced 球，每帧从 sim 写矩阵/颜色/播放态
+    sphere-shader.ts    # 球片元：径向渐变球体 + halo falloff
+    use-gl-sim.ts       # 建 sim（复用 sphere-config 纯函数 + 力参数）+ tick 桥
+  overlay/
+    SphereOverlay.tsx   # DOM 命中层：标题/角标/点/拖(阈值8px)/hover → 写 node.fx/fy
+  water/
+    use-ripple-fbo.ts   # 高度场 ping-pong（256² half-float，按性能可升 512²）
+    ripple-shaders.ts   # 模拟 pass：波动方程 + 阻尼 + 滴水注入
+    WaterSurface.tsx    # 合成 pass：基调 + 折射 + 月光 specular + 水位三态
+    water-level.ts      # 水位 store + wheelMode 互斥 + 三态参数表
+app/test1/
+  layout.tsx            # robots noindex（抄 /test）
+  page.tsx              # G1 = / 克隆；G2 关透视；G3 起挂 PondGL
+```
+
+### 依赖（G3 才执行安装）
+
+- `three`（最新稳定版）+ `@react-three/fiber@^9`（React 19 配套）+ `@react-three/drei@^10`（只用 Instances / useFBO 级轻工具）
+- ⚠️ `@react-three/postprocessing` **未批准**：bloom 先用 shader falloff 替代，G5 验收若不够亮 → 停下来按灰名单流程问
+
+---
+
+## 2. Steps（G1-G7，每步一个闭环）
+
+### G1 — /test1 = / 克隆
+
+- 📦 范围：`app/test1/layout.tsx`、`app/test1/page.tsx`（新建 2 文件）
+- 做什么：复制 `app/page.tsx` JSX 为 /test1（同 Archipelago / 同 effects 来源 / PerfHUD 自带），标题加 `— /test1 GL sandbox` 后缀；layout 抄 /test 的 robots noindex
+- **同步机制**：复用同一 Archipelago 组件 + 同一 effects 预设 ⇒ `/` 的后续改动自动跟进 /test1；G4 之后"同步"语义收窄为"同数据 + 同交互语义 + 共用氛围 DOM 层"
+- 验收：/test1 与 / 并排肉眼一致；verify.sh 绿
+
+### G2 — /test1 默认关 1 点透视
+
+- 📦 范围：`app/test1/page.tsx`（行级改动）
+- 做什么：baseEffects 上叠 `{ perspective: false }` 再传 Archipelago；URL `?perspective=1` 仍可临时开回对比
+- 边界：**不动** `config/effects-presets.ts`（/ 与 /test 现状零变化）
+- 验收：滚轮 = 普通锚点居中缩放（走 use-sphere-zoom 的非 perspective 分支，无消失点扩散）；Esc reset、拖拽 pan 正常
+
+### G3 — 装包 + GL 画布骨架 + 深色水体基调
+
+- 📦 范围：`package.json`（装 3 包）、`pond-gl/PondGL.tsx` + `gl-flags.ts`（新建）、`app/test1/page.tsx`（挂载行）
+- 做什么：`npm install three @react-three/fiber @react-three/drei`；PondGL = dynamic Canvas（ssr:false）+ 正交相机 + DPR cap 2 + 全屏基调平面；基调两档可切（`artDir=deep` 深蓝墨绿渐晕 / `artDir=black` 纯黑，见 §3 艺术方向）；WebGL 不可用或 context lost → 渲染 null（/test1 的 SVG 全套还在，视觉 = G2 态）
+- 挂载：GL canvas 垫在最底层，与 SVG 共存
+- 验收：verify.sh 绿 + `npm run build` 后**首页 First Load JS 零增量**；/test1 见基调层；`glBase=0` = 回 G2 现状
+
+### G4 — GL 球 + sim 接驳 + DOM 命中层（⏸ 验收必停）
+
+- 📦 范围：`spheres/` 3 文件、`overlay/SphereOverlay.tsx`（新建）、`page.tsx`（glSpheres 切换）
+- 做什么：use-gl-sim 用 sphere-config 纯函数 + 力参数建 35 球 sim（与 SVG 版同参，实施前先勘探真实代码）；SphereInstances 每帧写 instance 矩阵/颜色/播放态；球 shader 复刻"径向渐变球体 + halo"；SphereOverlay 承载标题/角标/点击播放（PlayerProvider.toggle）/拖拽（8px 阈值区分 click，pointermove 写 fx/fy）/hover；播放时其他球淡出 = GL 透明度 + overlay opacity 同步
+- `glSpheres=1` → 隐 SVG 球组（display:none 级 CSS，不卸载）；`=0` → 回 SVG
+- 暂不做：日食 / 彗星 / links 线 / focus 景深（GL 线后续按需补）
+- 验收（**停，等用户**）：35 球外观接近现状；拖/点/hover/播放全正常；PerfHUD 帧率 ≥ SVG 版；关 flag 回 G2
+
+### G5 — 水波第一层：高度场 + 月光（⏸ 验收必停）
+
+- 📦 范围：`water/` 4 文件（新建）、PondGL 挂载行
+- 做什么：256² half-float ping-pong 高度场（波动方程 + 阻尼）；**滴水来源三路**：① 指针移动/点击 ② `bg-ripple:wave` 事件桥（groupWave / hoverRipple 语义自动进水面）③ 拖球喂点（dragWake 语义）；合成 pass：基调 + 高度场梯度折射 + `MOON_ANCHOR` 方向月光 specular；`POND_TILT_RATIO` 接入涟漪椭圆压扁
+- 验收（**停，等用户**）：涟漪手感对照 sirxemic/jquery.ripples demo；月光碎闪可见；`artDir` 两档并排对比拍板；桌面 60fps
+
+### G6 — 水位层级系统（本 track 的 payoff，⏸ 验收必停）
+
+- 📦 范围：`water/water-level.ts`（新建）、WaterSurface / SphereInstances 接 uniform、overlay 水位指示
+- 做什么：
+  - **wheelMode 互斥**：`waterLevel`（/test1 默认）/ `zoomFx` 二选一，gl-flags + 页面小按钮切换
+  - 滚轮驱动 `uWaterLevel ∈ [0,1]`（映射球 z 域，带缓动）
+  - **三态**（详表见 §3）：水上 = 清晰原色；贴面 |z−L|<0.06 = 持续注入宽涟漪（半径 2.5×r）；水下 = 折射偏移 ≤8px + 亮度 ×0.6 + 青蓝 tint
+  - **穿越动画**：出/入水迸圈 + 注大滴 + 200ms 弹动；**限流**：单帧 >6 球穿越 → 合并为一道大涟漪
+  - 水位指示：屏幕右缘细刻度（DOM），滚轮时淡入
+- 验收（**停，等用户**）：滚轮升降水位三态正确；快速扫水位不掉帧、无水花风暴；wheelMode 切换互斥正常；水下球点击仍精准（热区走 sim 坐标）
+
+### G7 — 对比验收 + 去留拍板
+
+- 📦 范围：`reviews/`（对比报告）、STATUS / JOURNAL / TASKS
+- 做什么：/test1 vs /test 并排评测（帧率 / 视觉上限 / 交互完整性 / 包体）→ 一页报告；**用户拍板**三选一：
+  - **a)** GL 线升级为首页方案 → 另立 track（特效全量迁移 + 移动端策略 + 首页替换 + SVG perspective 删码）
+  - **b)** 继续打磨 G 线（列下一批目标）
+  - **c)** 冻结归档（保留 /test1 与代码，记录原因）
+- 验收：报告落 reviews/ + 拍板进 JOURNAL + STATUS/TASKS 同步
+
+---
+
+## 3. 技术规格（G5/G6 实施基准）
+
+### 用户产品愿景（2026-06-12 原话要点，验收对照表）
+
+1. 音乐圆圈保持现状不做大改动
+2. 圆圈存在层（已有：z / baseLayer）
+3. 滚轮升降水面所在的层
+4. 水上 / 水下 / 贴面差异：水下折射、浮出有动画、水上更清晰、贴面更广涟漪
+5. 滚轮缩放做成可开关 fx，与水位滚轮互斥
+6. 纯黑背景的水效问题 → 本 playbook 解法：**不加背景图**，用"深色水体基调 + 月光 specular"让水可见（水靠扭曲内容 + 高光被看见）
+
+### 水位三态
+
+| 态 | 判定 | 视觉 |
+|---|---|---|
+| 水上 | z > L + 0.06 | 清晰原色，无折射；可选淡接触阴影投在水面 |
+| 贴面 | \|z − L\| ≤ 0.06 | 持续微涟（注入半径 2.5×r、低幅高频）；球体原色 |
+| 水下 | z < L − 0.06 | 折射偏移 ≤8px（高度场梯度驱动）+ 亮度 ×0.6 + 青蓝 tint；越深越暗（线性到 ×0.45 封底） |
+
+### 滴水注入表
+
+| 来源 | 半径 | 强度 | 备注 |
+|---|---|---|---|
+| 指针移动 | 小 | 低 | 节流 ~30Hz |
+| 点击 / clickSplash 语义 | 中 | 高 | 一次性 |
+| `bg-ripple:wave` 事件 | 按 detail.size | 按 prio | groupWave / hoverRipple 自动接入 |
+| 拖球（dragWake 语义） | 小 | 中 | 跟球速度 |
+| 贴面球常驻 | 2.5×r | 低 | 每球限频 |
+| 穿越水面 | 3×r | 高 | 单帧 >6 球合并为一道大涟漪 |
+
+### 艺术方向两档（G5 拍板）
+
+- `artDir=deep`（推荐默认）：亮度 2-5% 的深蓝墨绿渐晕底 + 月光高光——夜塘感，水处处可读
+- `artDir=black`：纯黑底，水只在"月光高光 + 被折射的球"处存在——更冷更神秘，易读性弱
+
+### 性能预算
+
+- 桌面 60fps（水面 sim + 合成 ≤2ms/帧 量级）；高度场 256² 起步，富余再升 512²
+- DPR cap 2；`document.hidden` 时暂停 RAF / sim
+- G4/G5/G6 每步用 PerfHUD 对照 /test 同场景帧率，**GL 版不得低于 SVG 版**（低了 = 停下来报告）
+
+---
+
+## 4. 风险与回退
+
+- 每步 flag 化：任意 flag 关 = 回上一步现状；全关 = G2 态（纯 SVG）
+- WebGL 不可用 / context lost → PondGL 渲染 null，SVG 全套兜底
+- R3F v9 需 React 19 ✓（本项目 19.x）；three 为 ESM，Next 16 client 组件直接用
+- 不碰共享热点文件 ⇒ 与 Wave 2 / 主干零合并风险
+- spike 全程不动 `/` 与 `/test`：最坏情况损失 = /test1 + pond-gl/ 两个新目录，删除即回滚
+
+## 5. 执行模式与停下条款
+
+- **模式**：沿用 P8 松绑精神——step 内自动继续，**G4 / G5 / G6 末尾必停**等用户视觉验收；G1/G2/G3 完成后简报不等回复直接下一步。用户说"**跑 G**"即从 G1 开始。
+- **触发停下问用户**：
+  - 想装任何新包（含 @react-three/postprocessing）
+  - GL 帧率低于 SVG 版同场景
+  - 任何步骤发现必须改共享文件（effects-config / SphereNode / use-sphere-sim / sphere-sim-setup 等）才能推进
+  - 水下折射引发点击/拖拽体验问题且 ≤8px 限幅救不回
+  - 同一文件改 3 次还在改
+
+## 6. 完结标准（G 线收口 gate）
+
+- [ ] G1-G6 全部验收通过（用户浏览器实测）
+- [ ] /test1：35 球拖/点/hover/播放 100% 正常 + 水位三态正确 + 桌面 60fps
+- [ ] 首页 First Load JS 与 G 线开工前一致（dynamic import 验证）
+- [ ] G7 对比报告落 `reviews/` + 用户拍板 a/b/c + JOURNAL 记录
+- [ ] STATUS / TASKS 同步收口

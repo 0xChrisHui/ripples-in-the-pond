@@ -230,6 +230,30 @@
 
 ---
 
+### React Three Fiber (R3F) / WebGL 渲染层
+
+- **是什么**：用 `<Canvas>` 把 three.js（浏览器原生 GPU 绘图 WebGL 的封装）写成 React 组件，逐像素画球和水面，取代 SVG 滤镜。
+- **类比**：SVG 像用一套现成印章盖图案（够用但花样固定）；WebGL 像直接给每个像素发指令，想要折射/高光这种"逐像素扭曲"只能走它。
+- **第一次出现**：`src/components/pond-gl/PondGL.tsx`，P8-G G3。
+
+---
+
+### 代码分割（next/dynamic + ssr:false）
+
+- **是什么**：`dynamic(() => import('X'), { ssr: false })` 让 X 及其依赖（这里是 three，~150KB+）单独打成一个"异步 chunk"，只有真正用到的页面在运行时才下载，不进别的页面首屏。
+- **类比**：像超市把冷冻品单独放一个柜，只有买冰淇淋的人才去开那个柜门；逛别的区的人完全不受影响（首页 bundle 零增量就是这么来的）。
+- **第一次出现**：`app/test1/page.tsx` 挂 PondGL，P8-G G3。
+
+---
+
+### React 错误边界（Error Boundary）
+
+- **是什么**：一个 class 组件，子树渲染抛错时它接住、显示兜底 UI（这里是渲染 null）而不是整页白屏。React 目前只支持 class 形式。
+- **类比**：像电路里的保险丝——某个电器短路时只断那一路，不烧掉整间屋子的电。WebGL 不可用时只让 GL 层消失，SVG 全套照常。
+- **第一次出现**：`src/components/pond-gl/PondGL.tsx` 的 `GLErrorBoundary`，P8-G G3（CONVENTIONS §4.2"不写 class"的合理例外）。
+
+---
+
 ## 🗓 历史归档
 
 每个月末，AI 会把超过 30 天的条目归档到本文件末尾。

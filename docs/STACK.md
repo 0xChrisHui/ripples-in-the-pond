@@ -47,6 +47,11 @@
 - `two.js`（0.8.x）— 轻量 2D 引擎（13KB gzip），canvas overlay 渲染（Phase 6 B2 patatap 视觉移植用）
 - `@tweenjs/tween.js`（25.x）— 补间动画库，patatap 原项目用（Phase 6 B2 移植配套）
 - 仅在 `'use client'` 组件用，禁止 SSR import（Two.js 依赖 DOM）
+- `three`（最新稳定版）— WebGL 渲染引擎（P8-G /test1 GL 渲染层 spike，2026-06-12 用户批准）
+- `@react-three/fiber`（9.x，React 19 配套）— three 的 React 渲染器（P8-G）
+- `@react-three/drei`（10.x）— R3F 工具集，只用 Instances / useFBO 级轻工具（P8-G）
+- 三者仅 `'use client'` + `next/dynamic` `ssr:false` 使用，禁止 SSR import；P8-G 期间仅 /test1 挂载，首页 bundle 零增量（G3 验收项）
+- ⚠️ `@react-three/postprocessing` **未批准**（灰名单：G5 若 shader 自算光晕不够亮，停下来问）
 
 ### 合约开发
 - Foundry（`forge` / `cast` / `anvil`）
@@ -117,6 +122,9 @@
 
 ### Phase 3+
 按需，每次新加都要在本文件登记。
+
+### Phase 8-G（2026-06-12 登记，G3 步骤才实际安装）
+新增：`three`, `@react-three/fiber`, `@react-three/drei`（/test1 GL 渲染层 spike，用户批准；playbook `phase-8/phase-8-g-gl-water.md`）
 
 ---
 
