@@ -34,7 +34,7 @@
 
 ## Steps（每步一闭环，⏸ 末尾必停等浏览器验收）
 
-### H1 — RTT + ping-pong 风险 spike（½ 天，路径 1 二分法）⏸
+### H1 — RTT + ping-pong 风险 spike　✅ 已完成（commit `a8b8adb`）
 
 - 📦 范围：`water/` 新建**隔离实验文件**（独立 flag，不碰正在工作的 /test1 渲染）；drei `useFBO`，**零新包**。
 - 做什么（二分法）：
@@ -44,13 +44,16 @@
 - 风险阀：Step 2 仍别扭 → sim 段换 `GPUComputationRenderer`（合成 pass 不动）；再不行才装包（**停下问**）。
 - 验收（⏸）：浏览器看到**会扩散的扭曲、稳定、不掉帧** → 放行 H2；若不稳，照调研报告 §3 翻车清单逐条对照 / 或换路径2 `GPUComputationRenderer`，再不行停下等用户。
 
-### H2 — 扭曲水面整合进 PondGL（全屏扭曲，取代程序化水面）⏸ 重
+### H2 — 扭曲水面整合进 PondGL（全屏扭曲，取代程序化水面）　✅ 已完成（commit `7bd678c`）
 
 - 📦 范围：`water/` 真 FBO 模块（与旧解析 `use-ripple-fbo.ts` 改名区分）+ 合成扭曲 pass + GLSL；`PondGL` 渲染流重构（内容 FBO → 扭曲 pass → 输出）；旧程序化 `WaterSurface` 退役（留 flag 兜底）；`ScenePanel` 开关。
 - 做什么：把 spike 证明的管线搬进真场景，**先全屏扭一切**（暂不分水上水下）= jquery.ripples 盖整个塘 + `MOON_ANCHOR` 月光高光；接鼠标移动/点击泛涟漪 + 常驻微波；复用 `bg-ripple:wave` 事件桥。
 - 验收（⏸）：真塘上**会扩散的全屏扭曲 + 鼠标涟漪**，桌面 60fps；关 flag 回上一步。
 
-### H3 — 水位深度遮罩（水上清晰 / 水下扭）⏸ 重·payoff（吸收原 G6 三态）
+### H3 — 水位深度遮罩（水上清晰 / 水下扭）　✅ 已完成（commit `1210c4c`）
+
+> **实现实况（与原计划不同）**：原计划"渲离屏 z 图（换材质/override）"在 **R3F + InstancedMesh 上不稳**（实测：sphereFound 但 aZ 不绑定 / 换材质渲的是球自己的 shader）——**已弃**。改为**把球的位置/半径/深度从 sim（glSim.nodes）当 uniform 数组传进合成 shader，逐像素遍历球算"露出水面程度"**。另加"防鬼影"：折射采样落点若是水上球则撤销偏移（否则水下像素把水上球涂进水波 = 重复）。滚轮/水位 store/指示器复用 G6-1。
+> **已知挂 H6**：折射强度调很高时，256² Nearest 高度场的块状梯度把球色打散成色斑（待 512² / 梯度双线性平滑）。
 
 - 📦 范围：`water-level.ts`（**复用 G6-1**）作深度阈值 L；内容按深度分两拨渲；`SphereInstances` 按深度劈。
 - 做什么：按**整颗对象 z vs L** 分两拨——水下→内容 FBO（被扭）；露头球→清晰盖最上；背景图永远水下。复用 G6-1 已有的**水位 store + 滚轮/pinch 控制 + 缓动 + 右缘 `WaterLevelIndicator`**。
@@ -77,6 +80,7 @@
 
 - 📦 范围：新增**波纹/运动参数板**（仿 `TunePanel`，`overlay/`）；`ScenePanel` 开关补全；reduced-motion。
 - 做什么：参数板调 涟漪扩散/阻尼/强度、扭曲幅度(perturbance)、月光、浮沉幅度/频率、**默认水位**（+ 每实例参数 min/max、随机种子，到此拍）；reduced-motion 弱化路径（到此拍）；用面板把观感调到位。
+- **从 H3 挂过来**：高折射时色斑 → 高度场 **256²→512²** + 梯度**双线性平滑**采样（已有波纹参数面板 spike 版可扩，store/shader 在 `water/spike/` + `water/water-distort-shaders.ts`）。
 - 验收（⏸）：整套 H 线对照**需求规格 v1** 逐条过。
 
 ---
