@@ -31,7 +31,10 @@ export const compositeMaskFrag = /* glsl */ `
     for (int i = 0; i < ${MAX_SPHERES}; i++) {
       if (i >= uSphereCount) break;
       vec4 s = uSpheres[i];
-      float depthMask = smoothstep(uWaterLevel - 0.02, uWaterLevel + 0.03, s.w); // 水位带软过渡
+      // above = 1 - submerge，与 water-level.ts getSubmerge 同阈值/曲线 →
+      // DOM 标题没入 与 GL 折射清晰 完全同步（否则两者在水位带内错位：编号先浮出、圆圈后浮出）
+      float st = clamp((uWaterLevel - s.w + 0.02) / 0.12, 0.0, 1.0);
+      float depthMask = 1.0 - st * st * (3.0 - 2.0 * st);
       float edge = 1.0 - smoothstep(s.z * 0.82, s.z, distance(px, s.xy));        // 圆形软边
       a = max(a, depthMask * edge);
     }

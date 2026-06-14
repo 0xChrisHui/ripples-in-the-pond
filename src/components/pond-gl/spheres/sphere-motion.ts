@@ -24,7 +24,7 @@ import type { GlPhysNode } from './gl-sim-setup';
  * 浮沉幅度/频率/缘距等先用合理默认常量，H6 接参数板。
  */
 
-const BOB_AMP = 0.04;        // 自漂幅度（z 单位；没入带宽 0.12，0.04≈水面附近轻柔进出）
+const BOB_AMP = 0.08;        // 自漂幅度（z 单位；没入带宽 0.12，0.08 → 水面附近的球清晰进出可见）
 const BOB_OMEGA_BASE = 0.6;  // 自漂角频率下限（rad/s）
 const BOB_OMEGA_SPAN = 5;    // 由 lw.f2 映射的频率跨度 → 每球周期≈3.4–5.7s
 const FOCUS_MARGIN = 0.06;   // 播放球浮出：停到水面之上多少（露出 → 清晰成焦点）
