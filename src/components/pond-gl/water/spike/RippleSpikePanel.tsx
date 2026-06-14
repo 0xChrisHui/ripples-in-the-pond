@@ -12,12 +12,13 @@ import {
 } from './ripple-tuning';
 
 /**
- * H1 spike 波纹参数面板（右下角，H6 参数板的提前 spike 版）。
- * 拖动即时改 RttSpike 的涟漪 uniform；"保存"写 localStorage 刷新保留。rtt flag 开时才挂。
+ * H6 波纹/运动参数板（仿 TunePanel；rtt 或 H2+ 扭曲水面开时挂）。
+ * 拖动即时改 WaterDistort/RttSpike 的涟漪 uniform + sphere-motion 的浮沉；"保存"写 localStorage。
+ * 定位由父级 flex 容器给（与 TunePanel 同栏堆叠，不再各自 fixed → 不重叠）。
  */
-const SLIDERS: ReadonlyArray<{
-  key: keyof RippleTuning; label: string; min: number; max: number; step: number;
-}> = [
+type Slider = { key: keyof RippleTuning; label: string; min: number; max: number; step: number };
+
+const RIPPLE_SLIDERS: ReadonlyArray<Slider> = [
   { key: 'damping', label: '阻尼(持续)', min: 0.95, max: 0.999, step: 0.001 },
   { key: 'perturb', label: '折射强度', min: 0, max: 0.12, step: 0.002 },
   { key: 'dropMove', label: '滴水·移动', min: 0, max: 0.05, step: 0.001 },
@@ -28,6 +29,32 @@ const SLIDERS: ReadonlyArray<{
   { key: 'splash', label: '溅起强度', min: 0, max: 0.5, step: 0.005 },
   { key: 'ambient', label: '常驻微波', min: 0, max: 0.06, step: 0.002 },
 ];
+
+const MOTION_SLIDERS: ReadonlyArray<Slider> = [
+  { key: 'bobAmp', label: '浮沉幅度', min: 0, max: 0.2, step: 0.005 },
+  { key: 'bobScale', label: '浮沉频率', min: 0.2, max: 3, step: 0.1 },
+  { key: 'focusMargin', label: '焦点露出', min: 0, max: 0.2, step: 0.005 },
+];
+
+function SliderRow({ s, value }: { s: Slider; value: number }) {
+  return (
+    <label className="mb-1.5 block">
+      <div className="mb-0.5 flex justify-between">
+        <span>{s.label}</span>
+        <span className="text-white/40">{value.toFixed(3)}</span>
+      </div>
+      <input
+        type="range"
+        min={s.min}
+        max={s.max}
+        step={s.step}
+        value={value}
+        onChange={(e) => setRippleTuning({ [s.key]: parseFloat(e.target.value) } as Partial<RippleTuning>)}
+        className="w-full cursor-pointer accent-white/70"
+      />
+    </label>
+  );
+}
 
 export default function RippleSpikePanel() {
   const t = useSyncExternalStore(subscribeRippleTuning, getRippleTuning, () => DEFAULT_RIPPLE_TUNING);
@@ -41,35 +68,23 @@ export default function RippleSpikePanel() {
   };
 
   return (
-    <div className="pointer-events-auto fixed bottom-3 right-3 z-50 w-56 rounded border border-white/10 bg-black/85 p-3 text-[11px] text-white/70 backdrop-blur-sm">
+    <div className="pointer-events-auto w-56 rounded border border-white/10 bg-black/85 p-3 text-[11px] text-white/70 backdrop-blur-sm">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="mb-1 flex w-full items-center justify-between text-white/80"
+        className="flex w-full items-center justify-between text-white/80"
       >
-        <span className="tracking-wide">波纹参数 (H4)</span>
+        <span className="tracking-wide">波纹/运动参数</span>
         <span className="text-white/40">{open ? '−' : '+'}</span>
       </button>
 
       {open && (
-        <>
-          {SLIDERS.map((s) => (
-            <label key={s.key} className="mb-1.5 block">
-              <div className="mb-0.5 flex justify-between">
-                <span>{s.label}</span>
-                <span className="text-white/40">{t[s.key].toFixed(3)}</span>
-              </div>
-              <input
-                type="range"
-                min={s.min}
-                max={s.max}
-                step={s.step}
-                value={t[s.key]}
-                onChange={(e) => setRippleTuning({ [s.key]: parseFloat(e.target.value) } as Partial<RippleTuning>)}
-                className="w-full cursor-pointer accent-white/70"
-              />
-            </label>
-          ))}
+        <div className="mt-1 max-h-[55vh] overflow-y-auto pr-0.5">
+          <div className="mb-1 text-[10px] uppercase tracking-wider text-white/30">波纹</div>
+          {RIPPLE_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+
+          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">运动（球浮沉）</div>
+          {MOTION_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
 
           <div className="mt-2 flex gap-1.5">
             <button
@@ -87,7 +102,7 @@ export default function RippleSpikePanel() {
               重置
             </button>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

@@ -4,7 +4,8 @@ import { useEffect, useRef } from 'react';
 import { getWaterLevel, getLastWheelAt } from '../water/water-level';
 
 /**
- * G6 — 右缘水位指示（DOM 细刻度）。滚轮时淡入、静止 1.2s 后淡出。
+ * G6 — 左缘水位指示（DOM 细刻度）。滚轮时淡入、静止 1.2s 后淡出。
+ * H6：从右缘移到左缘，给右下角的「调色 + 波纹/运动」参数板栏让位（否则被面板盖住）。
  *
  * 每帧 rAF 直读 water-level store 写样式，不触发 React 重渲染（同 SphereOverlay 范式）。
  * 刻度条底=水位 0、顶=水位 1；青色游标随 current 上下移动。
@@ -34,7 +35,7 @@ export default function WaterLevelIndicator() {
     <div
       ref={barRef}
       style={{ opacity: 0 }}
-      className="pointer-events-none fixed right-3 top-1/2 z-40 h-56 -translate-y-1/2"
+      className="pointer-events-none fixed left-3 top-1/2 z-40 h-56 -translate-y-1/2"
     >
       {/* 竖刻度线 */}
       <div className="relative h-full w-px bg-white/15">

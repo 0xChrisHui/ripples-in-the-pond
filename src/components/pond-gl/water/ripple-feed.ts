@@ -3,6 +3,7 @@
 import { Vector4, type ShaderMaterial } from 'three';
 import { getSubmerge } from './water-level';
 import { MAX_DROPS } from './spike/ripple-spike-shaders';
+import { prefersReducedMotion } from '../reduced-motion';
 import type { RippleTuning } from './spike/ripple-tuning';
 import type { GlPhysNode } from '../spheres/gl-sim-setup';
 
@@ -78,10 +79,10 @@ export function collectObjectDrops(nodes: GlPhysNode[], w: number, h: number, t:
   return [...trailDrops(nodes, w, h, t), ...splashDrops(nodes, w, h, t)];
 }
 
-/** 常驻微波：每 ~14 帧在随机处落一滴极轻的水让塘面始终有细腻波动（ambient=0 关） */
+/** 常驻微波：每 ~14 帧在随机处落一滴极轻的水让塘面始终有细腻波动（ambient=0 或 reduced-motion 时关） */
 export function collectAmbientDrop(t: RippleTuning): Drop | null {
   ambientFrame++;
-  if (t.ambient <= 0 || ambientFrame % 14 !== 0) return null;
+  if (t.ambient <= 0 || prefersReducedMotion() || ambientFrame % 14 !== 0) return null;
   return { ux: Math.random(), uy: Math.random(), radius: t.dropRadius * 1.3, strength: t.ambient };
 }
 

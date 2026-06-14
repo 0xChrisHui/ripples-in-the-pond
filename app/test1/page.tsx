@@ -101,14 +101,16 @@ function Test1PageInner() {
         <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} />
       )}
 
-      {/* G4：GL 球实时调色面板（右下角，亮度/对比度/饱和度/光晕/浓度 + 保存到 localStorage） */}
-      {glFlags.glSpheres && <TunePanel />}
-
-      {/* G6/H3：右缘水位指示（水面或扭曲水面开时显示，滚轮淡入） */}
+      {/* G6/H3：左缘水位指示（水面或扭曲水面开时显示，滚轮淡入；H6 从右缘移左给参数板栏让位） */}
       {(glFlags.water || glFlags.waterFx) && <WaterLevelIndicator />}
 
-      {/* 波纹参数面板（rtt 实验 或 H2 扭曲水面 开时，右下角实时调阻尼/折射/滴水/高光） */}
-      {(glFlags.rtt || glFlags.waterFx) && <RippleSpikePanel />}
+      {/* 右下角参数板栏：调色 + 波纹/运动 同栏从下往上堆叠（H6 起统一容器定位 → 两板不再重叠） */}
+      <div className="pointer-events-none fixed bottom-3 right-3 z-50 flex flex-col-reverse items-end gap-2">
+        {/* G4：GL 球实时调色（亮度/对比度/饱和度/光晕/浓度 + 保存 localStorage） */}
+        {glFlags.glSpheres && <TunePanel />}
+        {/* 波纹/运动参数（rtt 实验 或 H2+ 扭曲水面 开时，调阻尼/折射/滴水/高光/拖尾/溅起/微波/浮沉） */}
+        {(glFlags.rtt || glFlags.waterFx) && <RippleSpikePanel />}
+      </div>
 
       {/* G5：视觉控制台（左下角，逐层开关 GL 层 + 背景氛围，默认纯净夜塘） */}
       <ScenePanel glFlags={glFlags} onGl={onGl} fx={fx} onFx={onFx} />

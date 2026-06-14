@@ -12,8 +12,9 @@ import {
 } from '../spheres/sphere-tuning';
 
 /**
- * G4 调色面板 — 右下角浮动滑块，实时调 GL 球的亮度/对比度/饱和度/光晕/浓度。
+ * G4 调色面板 — 实时调 GL 球的亮度/对比度/饱和度/光晕/浓度。
  * 拖动即时预览（写 tuning store，SphereInstances 每帧读）；"保存"写 localStorage 刷新保留。
+ * 定位由父级 flex 容器给（与波纹/运动参数板同栏堆叠，H6 起不再各自 fixed → 不重叠）。
  */
 const SLIDERS: ReadonlyArray<{
   key: keyof SphereTuning; label: string; min: number; max: number; step: number;
@@ -37,7 +38,7 @@ export default function TunePanel() {
   };
 
   return (
-    <div className="pointer-events-auto fixed bottom-3 right-3 z-50 w-56 rounded border border-white/10 bg-black/85 p-3 text-[11px] text-white/70 backdrop-blur-sm">
+    <div className="pointer-events-auto w-56 rounded border border-white/10 bg-black/85 p-3 text-[11px] text-white/70 backdrop-blur-sm">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}

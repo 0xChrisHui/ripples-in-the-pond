@@ -1,10 +1,11 @@
 'use client';
 
 /**
- * H1 spike 波纹参数 store（H6"波纹/运动参数板"的提前 spike 版，范式同 sphere-tuning）。
+ * 波纹/运动参数 store（H1 spike 起，H6 升格为 H 线统一"波纹/运动参数板"后端，范式同 sphere-tuning）。
  *
- * 单例 + pub/sub + localStorage。RttSpike 每帧读 getRippleTuning() 写 shader uniform；
- * RippleSpikePanel 用 useSyncExternalStore 订阅渲染滑块。H6 正式化时挪进 overlay/ 扩展。
+ * 单例 + pub/sub + localStorage。WaterDistort/RttSpike 每帧读 getRippleTuning() 写 ripple uniform；
+ * sphere-motion 读 bobAmp/bobScale/focusMargin 算球浮沉；RippleSpikePanel 用 useSyncExternalStore 订阅渲染滑块。
+ * H6 收尾：spike 文件正式化挪进 overlay/ 的 cleanup 留作后续（不影响功能）。
  */
 export interface RippleTuning {
   damping: number;    // sim 阻尼（越大涟漪持续越久；0.995 起）
@@ -16,6 +17,9 @@ export interface RippleTuning {
   trail: number;      // H4 拖球尾迹强度（被拖的球留下的水痕）
   splash: number;     // H4 球穿过水面溅起强度
   ambient: number;    // H4 常驻微波强度（塘面始终有细腻波动；0=关）
+  bobAmp: number;     // H5 球自漂浮沉幅度（z 单位；0=不自漂）
+  bobScale: number;   // H5 球自漂频率倍率（×lw 基频；越大越快）
+  focusMargin: number;// H5 播放球浮出水面的露出量（越大越高越清晰）
 }
 
 export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
@@ -28,6 +32,9 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   trail: 0.1,
   splash: 0.2,
   ambient: 0.012,
+  bobAmp: 0.08,
+  bobScale: 1,
+  focusMargin: 0.06,
 };
 
 const KEY = 'pond-gl-ripple-spike';
