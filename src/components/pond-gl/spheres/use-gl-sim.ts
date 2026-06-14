@@ -34,6 +34,7 @@ export interface GlSim {
   hoverIdRef: React.RefObject<string | null>;
   sizeRef: React.RefObject<{ w: number; h: number }>;
   setHover: (id: string | null) => void;
+  setGroup: (id: GroupId) => void;
   toggle: (t: Track) => Promise<void>;
 }
 
@@ -51,6 +52,8 @@ export function useGlSim(active: boolean): GlSim {
   const hoverIdRef = useRef<string | null>(null);
   const sizeRef = useRef({ w: 0, h: 0 });
   const setHover = useCallback((id: string | null) => { hoverIdRef.current = id; }, []);
+  // I1 — GL nav 点击切组（取代旧 Archipelago nav；直接驱动 GL 组、修 G4"nav 点击 GL 不跟随"）
+  const setGroup = useCallback((id: GroupId) => setGroupId(id), []);
 
   // 取数（仅 active；与 Archipelago 各取一次，/api/tracks 有 ISR 缓存，重复成本低）
   useEffect(() => {
@@ -126,6 +129,6 @@ export function useGlSim(active: boolean): GlSim {
 
   return {
     ready: nodes.length > 0,
-    groupId, nodes, simRef, wavesRef, playingIdRef, hoverIdRef, sizeRef, setHover, toggle,
+    groupId, nodes, simRef, wavesRef, playingIdRef, hoverIdRef, sizeRef, setHover, setGroup, toggle,
   };
 }

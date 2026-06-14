@@ -4,31 +4,14 @@ import { useState } from 'react';
 import type { GLFlags } from '../gl-flags';
 
 /**
- * G5 控制台（左下角）— 逐层开关所有视觉，默认纯净夜塘。
- * GL 层（基调/球/水面 + deep·black）+ 背景氛围（星空/极光/雾/背景涟漪/彗星，默认全关）。
+ * G5 控制台（左下角）— 逐层开关 GL 视觉，默认纯净夜塘。
+ * I1：旧 SVG 背景氛围（星空/极光/雾/彗星）随 Archipelago 一并卸载，对应开关删除；
+ * 重做版氛围（GL）到 I3 再加回控制台。
  */
-export interface SceneFx {
-  stars: boolean;
-  aurora: boolean;
-  fog: boolean;
-  bgRipples: boolean;
-  comet: boolean;
-}
-
 interface Props {
   glFlags: GLFlags;
   onGl: (patch: Partial<GLFlags>) => void;
-  fx: SceneFx;
-  onFx: (patch: Partial<SceneFx>) => void;
 }
-
-const FX_ROWS: ReadonlyArray<{ key: keyof SceneFx; label: string }> = [
-  { key: 'stars', label: '星空' },
-  { key: 'aurora', label: '极光' },
-  { key: 'fog', label: '雾' },
-  { key: 'bgRipples', label: '背景涟漪' },
-  { key: 'comet', label: '彗星' },
-];
 
 function Row({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -44,7 +27,7 @@ function Row({ label, checked, onChange }: { label: string; checked: boolean; on
   );
 }
 
-export default function ScenePanel({ glFlags, onGl, fx, onFx }: Props) {
+export default function ScenePanel({ glFlags, onGl }: Props) {
   const [open, setOpen] = useState(true);
 
   return (
@@ -105,11 +88,6 @@ export default function ScenePanel({ glFlags, onGl, fx, onFx }: Props) {
           {/* H1 spike：RTT 离屏渲染验证（隔离实验，开时全屏盖测试图案 + 假 sin 扭曲） */}
           <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">实验 (H1)</div>
           <Row label="RTT 验证" checked={glFlags.rtt} onChange={(v) => onGl({ rtt: v })} />
-
-          <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">背景氛围</div>
-          {FX_ROWS.map((r) => (
-            <Row key={r.key} label={r.label} checked={fx[r.key]} onChange={(v) => onFx({ [r.key]: v } as Partial<SceneFx>)} />
-          ))}
         </>
       )}
     </div>
