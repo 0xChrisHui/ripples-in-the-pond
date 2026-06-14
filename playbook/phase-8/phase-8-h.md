@@ -70,7 +70,11 @@
 - 做什么：对象喂涟漪——拖球尾迹、球穿过水面**溅起**、单帧 **>6 球穿越合并为一道大涟漪**（限流）；常驻微波调参；复用 `bg-ripple:wave`（groupWave/hoverRipple 自动接入）。
 - 验收（⏸）：拖/穿越激起涟漪、**无水花风暴**。
 
-### H5 — 对象运动模型（全局水位变量 + 每组件自定义公式 + 球自驱浮沉）⏸
+### H5 — 对象运动模型（全局水位变量 + 每组件自定义公式 + 球自驱浮沉）　✅ 已完成（commit `2065e25` + 修复 `9892be1`）
+
+> **实现实况 + 拍的悬置项**：新增 `spheres/sphere-motion.ts`——公式契约 `depth=f(time,waterLevel,nodeAttrs,params)`（I3 新组件对接 API）。**公式粒度** = 每类一条公式 + 每实例参数（沿用 `lw`，非每实例独立）；**球自驱浮沉触发** = 两者（① `lw` 驱动正弦自漂 ② 播放球浮出成焦点，`_focusLerp` 缓动避免切歌突跳）；**共享输入** = `time + waterLevel + playingId`（音频能量本拍不接，GL 层无音频管线 → 挂后续音频线）；浮沉只作用 depth、x/y 仍 d3。动态深度走 `node.displayZ`（SphereInstances priority-0 单点 `stepSphereMotion` 推进，WaterDistort 遮罩 / SphereOverlay 标题没入 / 球淡出 一律读它）；`water-level` 升格为渲染 + 运动共读的通用水位变量。ScenePanel 加「球浮沉」开关（默认关=回 H4）。
+> **验收踩坑（已修 `9892be1`）**：① DOM(`getSubmerge`) 与 GL(`computeAbove`) 水上判定阈值/曲线不一致 → 标题先浮出、圆圈后浮出 + 过渡期错位 → shader 统一为 `1 - getSubmerge`；② 水下球标题归零 + 禁点 → 标题留 0.4 下限锚点 + 恢复可点（H 规格"水下对象仍可点"）；③ 自漂幅度 0.04→0.08 才看得见。
+> **挂 H6**：浮沉幅度/频率、焦点缘距现为 `sphere-motion.ts` 常量，H6 接参数板成滑块。
 
 - 📦 范围：`water-level.ts` 扩成**通用可订阅 store**（暴露 `getWaterLevel` / `getSubmerge` 等）；一个"每组件声明 深度来源 + 运动公式"的小框架；球自驱浮沉公式。
 - 做什么：水位做成通用全局变量；定"每组件写自己的 `f(时间,水位,…) + 每实例参数`"框架（沿用 `lw` 模式）；水上/水下视觉自动；落地**球自驱浮沉**。鱼是未来，框架为它就位。

@@ -9,7 +9,7 @@
 
 - **Phase 8 进行中**：Wave 0+1 已合并入 main（35 个新 flag 默认 false）。两条待办线由用户定先后：
   - ① **Wave 2 收口**：splashIntro + /test 集中验收 + S8/F9 默认值拍板 + 真机压测
-  - ② **P8-G /test1 GL 渲染层 spike**（2026-06-12 立项，**进行中**）：**G1-G5 ✅**（克隆+关透视+GL 基调骨架 / G4 GL 球 instanced+DOM 命中层+TunePanel `744b64d` / G5 程序化水面+视觉控制台 `eb5e11d`）；**G6-1 已实现**（水位 store+滚轮缓动+wheelMode 互斥+球淡出覆盖+水位指示，工作树）。**2026-06-14 方向再拍板 + 重组 G/H/I 三线**（水面改"动态扭曲"对标 jquery.ripples + 水位全局变量 + 鼠标交互；G 地基✅ / H 水面子系统 / I 去SVG+全新组件，G7 拍板取消、收口并入 I）。**H1–H4 ✅**（RTT spike `a8b8adb` / 扭曲整合真场景 `7bd678c` / 水位深度遮罩[uniform 数组逐像素算水上水下] `1210c4c` / 涟漪交互全集[sim 多滴 `uDrops`+`ripple-feed` 拖尾/溅起/>6合并/常驻微波] `191d34a`）。**下一步 = H5**（对象运动模型：通用水位变量 + 每组件运动公式框架 + 球自驱浮沉）。新版见 `playbook/phase-8/phase-8-{g,h,i}.md`
+  - ② **P8-G /test1 GL 渲染层 spike**（2026-06-12 立项，**进行中**）：**G1-G5 ✅**（克隆+关透视+GL 基调骨架 / G4 GL 球 instanced+DOM 命中层+TunePanel `744b64d` / G5 程序化水面+视觉控制台 `eb5e11d`）；**G6-1 已实现**（水位 store+滚轮缓动+wheelMode 互斥+球淡出覆盖+水位指示，工作树）。**2026-06-14 方向再拍板 + 重组 G/H/I 三线**（水面改"动态扭曲"对标 jquery.ripples + 水位全局变量 + 鼠标交互；G 地基✅ / H 水面子系统 / I 去SVG+全新组件，G7 拍板取消、收口并入 I）。**H1–H5 ✅**（RTT spike `a8b8adb` / 扭曲整合真场景 `7bd678c` / 水位深度遮罩 `1210c4c` / 涟漪交互全集[`uDrops`+`ripple-feed`] `191d34a` / 对象运动模型[`sphere-motion` 公式契约+球自驱浮沉+动态 displayZ] `2065e25`+修复 `9892be1`）。**下一步 = H6**（H 线总验收：波纹/运动参数板 + 控制台开关补全 + reduced-motion + H3 挂起的 256²→512² 色斑）。新版见 `playbook/phase-8/phase-8-{g,h,i}.md`
 
 ---
 
