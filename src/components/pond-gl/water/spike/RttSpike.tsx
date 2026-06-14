@@ -100,7 +100,7 @@ function tick(
 /** 把波纹参数 store 同步到 shader uniform（模块级，避 react-hooks/immutability） */
 function applyTuning(sim: QuadScene, composite: QuadScene, t: RippleTuning): void {
   sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z），不再走 uniform
-  composite.mat.uniforms.uPerturb.value = t.perturb;
+  composite.mat.uniforms.uPerturb.value = t.refract;
   composite.mat.uniforms.uSpec.value = t.specular;
 }
 

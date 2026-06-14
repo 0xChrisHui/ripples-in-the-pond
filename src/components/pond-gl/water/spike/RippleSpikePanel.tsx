@@ -20,7 +20,7 @@ type Slider = { key: keyof RippleTuning; label: string; min: number; max: number
 
 const RIPPLE_SLIDERS: ReadonlyArray<Slider> = [
   { key: 'damping', label: '阻尼(持续)', min: 0.95, max: 0.999, step: 0.001 },
-  { key: 'perturb', label: '折射强度', min: 0, max: 0.12, step: 0.002 },
+  { key: 'refract', label: '折射强度', min: 0, max: 3, step: 0.05 },
   { key: 'dropMove', label: '滴水·移动', min: 0, max: 0.05, step: 0.001 },
   { key: 'dropClick', label: '滴水·点击', min: 0, max: 0.4, step: 0.005 },
   { key: 'dropRadius', label: '滴水半径', min: 0.01, max: 0.15, step: 0.005 },

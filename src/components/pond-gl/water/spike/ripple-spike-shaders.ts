@@ -101,10 +101,12 @@ export const compositeHeightFrag = /* glsl */ `
     float h  = texture2D(uHeight, vUv).r;
     float hx = texture2D(uHeight, vUv + vec2(uDelta.x, 0.0)).r;
     float hy = texture2D(uHeight, vUv + vec2(0.0, uDelta.y)).r;
-    vec3 dx = vec3(uDelta.x, hx - h, 0.0);
-    vec3 dy = vec3(0.0, hy - h, uDelta.y);
-    vec2 offset = -normalize(cross(dy, dx)).xz;   // 平静水面 offset≈0，有波处偏移
-    float spec = pow(max(0.0, dot(offset, normalize(vec2(-0.6, 1.0)))), 4.0);
-    gl_FragColor = texture2D(uScene, vUv + offset * uPerturb) + vec4(vec3(spec * uSpec), 0.0);
+    // 折射位移 ∝ 梯度(坡度) + clamp：缓坡轻折、陡坡强折但不破（弃 normalize，避免满幅位移→麻点）
+    vec2 grad = vec2(hx - h, hy - h);
+    float gmag = length(grad);
+    vec2 disp = clamp(-grad * uPerturb, -0.025, 0.025);
+    vec2 dir = gmag > 1e-5 ? grad / gmag : vec2(0.0);
+    float spec = pow(max(0.0, dot(-dir, normalize(vec2(-0.6, 1.0)))), 4.0) * smoothstep(0.0, 0.01, gmag);
+    gl_FragColor = texture2D(uScene, vUv + disp) + vec4(vec3(spec * uSpec), 0.0);
   }
 `;

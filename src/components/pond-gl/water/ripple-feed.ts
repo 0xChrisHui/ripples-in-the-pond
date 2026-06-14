@@ -79,11 +79,12 @@ export function collectObjectDrops(nodes: GlPhysNode[], w: number, h: number, t:
   return [...trailDrops(nodes, w, h, t), ...splashDrops(nodes, w, h, t)];
 }
 
-/** 常驻微波：每 ~14 帧在随机处落一滴极轻的水让塘面始终有细腻波动（ambient=0 或 reduced-motion 时关） */
+/** 常驻微波：每 ~24 帧落一滴「宽而轻」的水 → 缓慢大尺度起伏（swell）而非密集小点阵
+ *  （小而频的微波在高折射下会被放大成点阵/麻点）。ambient=0 或 reduced-motion 时关。 */
 export function collectAmbientDrop(t: RippleTuning): Drop | null {
   ambientFrame++;
-  if (t.ambient <= 0 || prefersReducedMotion() || ambientFrame % 14 !== 0) return null;
-  return { ux: Math.random(), uy: Math.random(), radius: t.dropRadius * 1.3, strength: t.ambient };
+  if (t.ambient <= 0 || prefersReducedMotion() || ambientFrame % 24 !== 0) return null;
+  return { ux: Math.random(), uy: Math.random(), radius: t.dropRadius * 2.4, strength: t.ambient };
 }
 
 /** 把本帧汇集的滴水写进 sim 的 uDrops 数组（截断到 MAX_DROPS，多余丢弃） */

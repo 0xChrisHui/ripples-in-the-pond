@@ -45,9 +45,11 @@ export const compositeMaskFrag = /* glsl */ `
     float h  = texture2D(uHeight, vUv).r;
     float hx = texture2D(uHeight, vUv + vec2(uDelta.x, 0.0)).r;
     float hy = texture2D(uHeight, vUv + vec2(0.0, uDelta.y)).r;
-    vec3 dx = vec3(uDelta.x, hx - h, 0.0);
-    vec3 dy = vec3(0.0, hy - h, uDelta.y);
-    vec2 offset = -normalize(cross(dy, dx)).xz;
+    // 折射位移 ∝ 高度梯度(坡度) 并 clamp 上限：平水≈0、缓坡轻折、陡坡强折但不破。
+    // ⚠ 旧版 -normalize(法线).xz 让"任何涟漪都满幅位移"→ 鼠标狂晃/微波被放大成麻点破洞，弃用。
+    vec2 grad = vec2(hx - h, hy - h);
+    float gmag = length(grad);
+    vec2 disp = clamp(-grad * uPerturb, -0.025, 0.025);
     float above = computeAbove(vUv);
     float sub = 1.0 - above;
     if (uDebug > 0.5) {                       // 调试：绿=水上(清晰)/红=水下(扭)，白线=水位 L
@@ -56,9 +58,11 @@ export const compositeMaskFrag = /* glsl */ `
       return;
     }
     // 折射采样；若采样落点是水上球，撤销偏移 → 不把水上球涂进水波（去重复鬼影）
-    vec2 sampleUv = vUv + offset * uPerturb * sub;
+    vec2 sampleUv = vUv + disp * sub;
     sampleUv = mix(sampleUv, vUv, computeAbove(sampleUv));
-    float spec = pow(max(0.0, dot(offset, normalize(vec2(-0.6, 1.0)))), 4.0);
+    // 月光高光：涟漪坡面朝月处发光（坡度方向，gmag gate → 平水无高光）
+    vec2 dir = gmag > 1e-5 ? grad / gmag : vec2(0.0);
+    float spec = pow(max(0.0, dot(-dir, normalize(vec2(-0.6, 1.0)))), 4.0) * smoothstep(0.0, 0.01, gmag);
     gl_FragColor = texture2D(uScene, sampleUv) + vec4(vec3(spec * uSpec * sub), 0.0);
   }
 `;

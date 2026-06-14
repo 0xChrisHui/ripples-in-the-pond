@@ -9,7 +9,7 @@
  */
 export interface RippleTuning {
   damping: number;    // sim 阻尼（越大涟漪持续越久；0.995 起）
-  perturb: number;    // 折射强度（高度场梯度 → UV 偏移）
+  refract: number;    // 折射强度（位移 ∝ 高度梯度×此值，clamp 上限；旧 perturb 改名换标度，老存档自动回默认）
   dropMove: number;   // 滴水强度·鼠标移动
   dropClick: number;  // 滴水强度·点击
   dropRadius: number; // 滴水半径（占屏比）
@@ -24,14 +24,14 @@ export interface RippleTuning {
 
 export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   damping: 0.995,
-  perturb: 0.04,
+  refract: 0.6,
   dropMove: 0.012,
   dropClick: 0.16,
   dropRadius: 0.05,
   specular: 0.5,
   trail: 0.1,
   splash: 0.2,
-  ambient: 0.012,
+  ambient: 0.008,
   bobAmp: 0.08,
   bobScale: 1,
   focusMargin: 0.06,
