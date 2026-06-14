@@ -37,8 +37,14 @@ import type { Track } from '@/src/types/tracks';
 const ALPHA_BASELINE = 0.008; // 出处 sphere-sim-setup.ts:25（持续漂浮 baseline alpha）
 const PAD = 20;               // 出处 sphere-sim-setup.ts:26（边界内缩）
 
-// 拖过的球减弱 cluster 拉力（几乎留在新位置），对标 sphere-sim-setup.ts 的 _dragLoose
-export type GlPhysNode = SimNode & { z: number; _dragLoose?: boolean };
+// z = 基准深度（建点固定，painter 排序用）；displayZ = H5 每帧浮沉后的动态深度（消费方读它）。
+// _dragLoose 对标 sphere-sim-setup.ts；_focusLerp = H5 播放球浮出焦点的缓动状态（见 sphere-motion）。
+export type GlPhysNode = SimNode & {
+  z: number;
+  _dragLoose?: boolean;
+  displayZ?: number;
+  _focusLerp?: number;
+};
 
 /** tracksToShow → 节点 + 链接（复刻 SphereCanvas.tsx:64-83 的建点逻辑，含 baseLayer/lw/radius/z） */
 export function buildGlNodes(tracksToShow: Track[], groupId: GroupId): {

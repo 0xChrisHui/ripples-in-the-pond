@@ -84,7 +84,8 @@ function applySpheres(composite: QuadScene, nodes: GlPhysNode[], w: number, h: n
   const n = Math.min(nodes.length, MAX_SPHERES);
   for (let i = 0; i < n; i++) {
     const node = nodes[i];
-    arr[i].set(node.x ?? 0, node.y ?? 0, node.radius * 1.15, node.z); // 半径放大覆盖光晕
+    // H5：用动态深度 displayZ（球浮沉后的实时深度），未启用浮沉时回退静态 z
+    arr[i].set(node.x ?? 0, node.y ?? 0, node.radius * 1.15, node.displayZ ?? node.z); // 半径放大覆盖光晕
   }
   composite.mat.uniforms.uSphereCount.value = n;
   (composite.mat.uniforms.uViewport.value as Vector2).set(w || 1, h || 1);

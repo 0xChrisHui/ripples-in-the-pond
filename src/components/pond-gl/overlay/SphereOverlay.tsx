@@ -33,7 +33,8 @@ export default function SphereOverlay({ glSim, waterOn }: { glSim: GlSim; waterO
         if (!el || n.x == null || n.y == null) continue;
         const dim = pid != null && n.id !== pid;
         // G6 没入：球被水波盖住时同步淡出标题/命中（否则标题会浮在水面上）；>0.7 视为已没入、不可点
-        const sub = waterOn ? getSubmerge(n.z) : 0;
+        // H5：读动态深度 displayZ → 球浮沉/播放浮出时标题随之淡入淡出
+        const sub = waterOn ? getSubmerge(n.displayZ ?? n.z) : 0;
         el.style.transform = `translate(${n.x - n.radius}px, ${n.y - n.radius}px)`;
         el.style.opacity = dim ? '0' : String(1 - sub);
         el.style.pointerEvents = dim || sub > 0.7 ? 'none' : 'auto';

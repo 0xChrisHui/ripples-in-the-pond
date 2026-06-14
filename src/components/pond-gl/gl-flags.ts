@@ -32,6 +32,8 @@ export interface GLFlags {
   waterFx: boolean;
   /** H3 调试：扭曲水面显示遮罩调试视图（绿=水上/红=水下 + 水位横线）。默认关 */
   waterDbg: boolean;
+  /** H5 — 球自驱浮沉（常态自漂 + 播放球浮出成焦点）；关 = 球深度静止（回 H4）。默认关 */
+  sphereMotion: boolean;
 }
 
 /** /test1 默认（方向 A 后）：基调 + GL 球默认开（/test1 = GL 沙盒，直接看 GL）；
@@ -46,6 +48,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   rtt: false,
   waterFx: false,
   waterDbg: false,
+  sphereMotion: false,
 };
 
 /** 从 URL query 解析 G 线开关（仅覆盖出现的参数，其余取默认） */
@@ -85,6 +88,10 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const waterDbg = searchParams.get('waterDbg');
   if (waterDbg === '1' || waterDbg === 'true') result.waterDbg = true;
   else if (waterDbg === '0' || waterDbg === 'false') result.waterDbg = false;
+
+  const sphereMotion = searchParams.get('sphereMotion');
+  if (sphereMotion === '1' || sphereMotion === 'true') result.sphereMotion = true;
+  else if (sphereMotion === '0' || sphereMotion === 'false') result.sphereMotion = false;
 
   return result;
 }

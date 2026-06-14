@@ -95,8 +95,11 @@ function Test1PageInner() {
         <div className="nav-pond-glow-line pointer-events-none fixed inset-x-0 top-[60px] z-[60]" />
       )}
 
-      {/* G4：GL 球 DOM 命中层（z-10，盖在 SVG/GL 之上接点击拖拽，在 nav/HUD 之下） */}
-      {glFlags.glSpheres && glSim.ready && <SphereOverlay glSim={glSim} waterOn={glFlags.water} />}
+      {/* G4：GL 球 DOM 命中层（z-10，盖在 SVG/GL 之上接点击拖拽，在 nav/HUD 之下）
+          waterOn 含 waterFx：扭曲水面下球没入时标题也随之淡出（H5 浮沉读 displayZ） */}
+      {glFlags.glSpheres && glSim.ready && (
+        <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} />
+      )}
 
       {/* G4：GL 球实时调色面板（右下角，亮度/对比度/饱和度/光晕/浓度 + 保存到 localStorage） */}
       {glFlags.glSpheres && <TunePanel />}

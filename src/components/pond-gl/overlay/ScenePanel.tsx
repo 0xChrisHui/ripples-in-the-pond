@@ -64,6 +64,7 @@ export default function ScenePanel({ glFlags, onGl, fx, onFx }: Props) {
           <Row label="基调" checked={glFlags.glBase} onChange={(v) => onGl({ glBase: v })} />
           <Row label="背景图" checked={glFlags.bgImage} onChange={(v) => onGl({ bgImage: v })} />
           <Row label="GL 球" checked={glFlags.glSpheres} onChange={(v) => onGl({ glSpheres: v })} />
+          <Row label="球浮沉" checked={glFlags.sphereMotion} onChange={(v) => onGl({ sphereMotion: v })} />
           <Row label="水面" checked={glFlags.water} onChange={(v) => onGl({ water: v })} />
           <Row label="扭曲水面" checked={glFlags.waterFx} onChange={(v) => onGl({ waterFx: v })} />
           <div className="mt-1 flex gap-1">

@@ -91,7 +91,7 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           {flags.glBase && !flags.bgImage && <BaseTone artDir={flags.artDir} />}
           {/* 旧程序化水面（renderOrder -0.5）；waterFx 开时退役、由 WaterDistort 全屏扭曲取代 */}
           {flags.water && !flags.waterFx && <WaterSurface artDir={flags.artDir} />}
-          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} />}
+          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} />}
           {/* H1 spike：RTT 验证全屏盖在最上（renderOrder 10），隔离实验、默认关 */}
           {flags.rtt && <RttSpike />}
           {/* H2/H3：扭曲水面——渲真场景进 FBO 全屏折射扭曲 + 水位遮罩（接管渲染循环，返回 null） */}

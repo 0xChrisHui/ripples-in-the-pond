@@ -13,7 +13,8 @@ import {
 import { sphereVertexShader, sphereFragmentShader, HALO_R } from './sphere-shader';
 import { pushGlSpheresByWaves, type GlPhysNode, type BgWave } from './gl-sim-setup';
 import { getTuning, type SphereTuning } from './sphere-tuning';
-import { getSubmerge } from '../water/water-level';
+import { getSubmerge, getWaterLevel } from '../water/water-level';
+import { stepSphereMotion } from './sphere-motion';
 import type { GlSim } from './use-gl-sim';
 
 // 球色：手动解析 hex → sRGB 0-1，**绕过 three 的 Color/ColorManagement**。
@@ -88,8 +89,11 @@ function writeFrame(
   hoverId: string | null,
   tuning: SphereTuning,
   waterOn: boolean,
+  motionOn: boolean,
 ): void {
   const now = performance.now();
+  // H5：单点推进浮沉 → 写 node.displayZ（WaterDistort/SphereOverlay 随后读它）
+  stepSphereMotion(nodes, now / 1000, getWaterLevel(), playingId, motionOn);
   wavesRef.current = wavesRef.current.filter((w) => now - w.spawnTime < w.duration);
   pushGlSpheresByWaves(nodes, wavesRef.current, playingId, now);
 
@@ -118,8 +122,8 @@ function writeFrame(
     let fill = 0.52 + n.importance * 0.36;        // 复刻 baseOpacity
     if (isPlaying) fill = Math.min(0.95, fill + 0.2);
     // G6 没入淡出：水位升过球 → 球淡出，露出下方铺满全屏的水波（= 水波盖住球）。
-    // 折叠进整体不透明度 dim，shader 端无需改动；水关时 submerge=0 不影响。
-    const submerge = waterOn ? getSubmerge(n.z) : 0;
+    // 折叠进整体不透明度 dim，shader 端无需改动；水关时 submerge=0 不影响。H5：读动态深度 displayZ。
+    const submerge = waterOn ? getSubmerge(n.displayZ ?? n.z) : 0;
     aParams[i * 4] = Math.min(1, fill * tuning.fill);          // 浓度（fillOpacity × 调参）
     aParams[i * 4 + 1] = (isHover ? 0.5 : 0.3) * tuning.halo;  // haloPeak（halo-strong/soft × 调参）
     aParams[i * 4 + 2] = dimLerp[i] * (1 - submerge);
@@ -131,7 +135,9 @@ function writeFrame(
   (mesh.geometry.getAttribute('aParams') as InstancedBufferAttribute).needsUpdate = true;
 }
 
-export default function SphereInstances({ glSim, waterOn }: { glSim: GlSim; waterOn: boolean }) {
+export default function SphereInstances(
+  { glSim, waterOn, motionOn }: { glSim: GlSim; waterOn: boolean; motionOn: boolean },
+) {
   const { nodes, sizeRef } = glSim;
   const count = nodes.length;
   const meshRef = useRef<InstancedMesh>(null);
@@ -166,7 +172,7 @@ export default function SphereInstances({ glSim, waterOn }: { glSim: GlSim; wate
     if (!mesh || !mat || count === 0) return;
     const tuning = getTuning();
     applyTuningUniforms(mat, tuning);
-    writeFrame(mesh, nodes, buf, glSim.wavesRef, glSim.playingIdRef.current, glSim.hoverIdRef.current, tuning, waterOn);
+    writeFrame(mesh, nodes, buf, glSim.wavesRef, glSim.playingIdRef.current, glSim.hoverIdRef.current, tuning, waterOn, motionOn);
   });
 
   if (count === 0) return null;

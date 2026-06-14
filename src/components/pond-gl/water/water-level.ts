@@ -4,11 +4,13 @@ import { useEffect } from 'react';
 
 /**
  * G6 — 水位 store + 滚轮控制（程序化单例，范式同 sphere-tuning）。
+ * H5：升格为对象运动的**通用共享水位变量**——既驱动渲染（WaterDistort 遮罩 / 球淡出 / 指示器），
+ *      又驱动对象运动公式（sphere-motion 的浮沉/焦点都读 getWaterLevel）。
  *
  * 水位 L ∈ [0,1]，直接映射球的 z 域（gl-sim-setup.ts 里 node.z ∈ [0,1]）。
  * - target：滚轮拨到的目标水位
- * - current：缓动后的实时水位（shader / 指示器每帧读，避免突跳）
- * 命令式 mutate 放模块级（避 react-hooks/immutability）；不做 pub/sub —— 读方全部走 rAF 直读，
+ * - current：缓动后的实时水位（shader / 指示器 / 运动公式每帧读，避免突跳）
+ * 命令式 mutate 放模块级（避 react-hooks/immutability）；不做 pub/sub —— 读方全部走 rAF/useFrame 直读，
  * 不触发 React 重渲染（同 SphereOverlay 的每帧 DOM 写法）。
  */
 
