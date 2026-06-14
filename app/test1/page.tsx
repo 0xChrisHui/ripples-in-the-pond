@@ -52,8 +52,8 @@ function Test1PageInner() {
   const effects = useAdaptiveEffects({ ...baseEffects, ...fx, perspective: perspectiveOn });
   // 球或水面开启时 glSim active（取数 / 建 sim / 订阅涟漪事件）
   const glSim = useGlSim(glFlags.glSpheres || glFlags.water);
-  // G6：水面开 + wheelMode=waterLevel 时，滚轮驱动水位升降（带缓动）；否则不挂、滚轮归原行为
-  useWaterLevelControl(glFlags.water && glFlags.wheelMode === 'waterLevel');
+  // G6/H3：水面或扭曲水面开 + wheelMode=waterLevel 时，滚轮驱动水位升降（带缓动）；否则不挂
+  useWaterLevelControl((glFlags.water || glFlags.waterFx) && glFlags.wheelMode === 'waterLevel');
 
   return (
     <main data-gl-spheres={glFlags.glSpheres ? '1' : '0'} className="relative min-h-screen overflow-hidden bg-black">
@@ -101,8 +101,8 @@ function Test1PageInner() {
       {/* G4：GL 球实时调色面板（右下角，亮度/对比度/饱和度/光晕/浓度 + 保存到 localStorage） */}
       {glFlags.glSpheres && <TunePanel />}
 
-      {/* G6：右缘水位指示（水面开时显示，滚轮淡入） */}
-      {glFlags.water && <WaterLevelIndicator />}
+      {/* G6/H3：右缘水位指示（水面或扭曲水面开时显示，滚轮淡入） */}
+      {(glFlags.water || glFlags.waterFx) && <WaterLevelIndicator />}
 
       {/* 波纹参数面板（rtt 实验 或 H2 扭曲水面 开时，右下角实时调阻尼/折射/滴水/高光） */}
       {(glFlags.rtt || glFlags.waterFx) && <RippleSpikePanel />}

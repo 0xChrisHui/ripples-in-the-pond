@@ -30,6 +30,8 @@ export interface GLFlags {
   rtt: boolean;
   /** H2 — 扭曲水面：把真场景渲进 FBO 全屏折射扭曲（取代旧程序化 WaterSurface）。默认关 */
   waterFx: boolean;
+  /** H3 调试：扭曲水面显示遮罩调试视图（绿=水上/红=水下 + 水位横线）。默认关 */
+  waterDbg: boolean;
 }
 
 /** /test1 默认（方向 A 后）：基调 + GL 球默认开（/test1 = GL 沙盒，直接看 GL）；
@@ -43,6 +45,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   wheelMode: 'waterLevel',
   rtt: false,
   waterFx: false,
+  waterDbg: false,
 };
 
 /** 从 URL query 解析 G 线开关（仅覆盖出现的参数，其余取默认） */
@@ -78,6 +81,10 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const waterFx = searchParams.get('waterFx');
   if (waterFx === '1' || waterFx === 'true') result.waterFx = true;
   else if (waterFx === '0' || waterFx === 'false') result.waterFx = false;
+
+  const waterDbg = searchParams.get('waterDbg');
+  if (waterDbg === '1' || waterDbg === 'true') result.waterDbg = true;
+  else if (waterDbg === '0' || waterDbg === 'false') result.waterDbg = false;
 
   return result;
 }
