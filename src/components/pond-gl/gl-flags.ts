@@ -28,6 +28,8 @@ export interface GLFlags {
   wheelMode: WheelMode;
   /** H1 — RTT 风险 spike（隔离实验）：开时挂 RttSpike 全屏验证离屏渲染+扭曲。默认关 */
   rtt: boolean;
+  /** H2 — 扭曲水面：把真场景渲进 FBO 全屏折射扭曲（取代旧程序化 WaterSurface）。默认关 */
+  waterFx: boolean;
 }
 
 /** /test1 默认（方向 A 后）：基调 + GL 球默认开（/test1 = GL 沙盒，直接看 GL）；
@@ -40,6 +42,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   bgImage: false,
   wheelMode: 'waterLevel',
   rtt: false,
+  waterFx: false,
 };
 
 /** 从 URL query 解析 G 线开关（仅覆盖出现的参数，其余取默认） */
@@ -71,6 +74,10 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const rtt = searchParams.get('rtt');
   if (rtt === '1' || rtt === 'true') result.rtt = true;
   else if (rtt === '0' || rtt === 'false') result.rtt = false;
+
+  const waterFx = searchParams.get('waterFx');
+  if (waterFx === '1' || waterFx === 'true') result.waterFx = true;
+  else if (waterFx === '0' || waterFx === 'false') result.waterFx = false;
 
   return result;
 }

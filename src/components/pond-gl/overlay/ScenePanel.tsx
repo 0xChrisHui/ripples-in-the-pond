@@ -65,6 +65,7 @@ export default function ScenePanel({ glFlags, onGl, fx, onFx }: Props) {
           <Row label="背景图" checked={glFlags.bgImage} onChange={(v) => onGl({ bgImage: v })} />
           <Row label="GL 球" checked={glFlags.glSpheres} onChange={(v) => onGl({ glSpheres: v })} />
           <Row label="水面" checked={glFlags.water} onChange={(v) => onGl({ water: v })} />
+          <Row label="扭曲水面" checked={glFlags.waterFx} onChange={(v) => onGl({ waterFx: v })} />
           <div className="mt-1 flex gap-1">
             {(['deep', 'black'] as const).map((d) => (
               <button

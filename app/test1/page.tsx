@@ -104,8 +104,8 @@ function Test1PageInner() {
       {/* G6：右缘水位指示（水面开时显示，滚轮淡入） */}
       {glFlags.water && <WaterLevelIndicator />}
 
-      {/* H1 spike：波纹参数面板（rtt 开时，右下角实时调阻尼/折射/滴水/高光） */}
-      {glFlags.rtt && <RippleSpikePanel />}
+      {/* 波纹参数面板（rtt 实验 或 H2 扭曲水面 开时，右下角实时调阻尼/折射/滴水/高光） */}
+      {(glFlags.rtt || glFlags.waterFx) && <RippleSpikePanel />}
 
       {/* G5：视觉控制台（左下角，逐层开关 GL 层 + 背景氛围，默认纯净夜塘） */}
       <ScenePanel glFlags={glFlags} onGl={onGl} fx={fx} onFx={onFx} />
