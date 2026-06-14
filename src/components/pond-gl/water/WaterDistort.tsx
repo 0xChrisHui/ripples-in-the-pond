@@ -13,7 +13,7 @@ import {
   Vector4,
   HalfFloatType,
   RGBAFormat,
-  NearestFilter,
+  LinearFilter,
   ClampToEdgeWrapping,
   type Camera,
   type IUniform,
@@ -42,11 +42,15 @@ import type { GlPhysNode } from '../spheres/gl-sim-setup';
  */
 
 const RES = 256;
+// H6 色斑修复：高度场用 Linear（双线性）采样，让合成 pass 重建梯度时平滑、消块状色斑 +
+// 缓解 half-float 梯度量化。⚠ sim 只在「texel 中心」采 uPrev（vUv ± 1/RES），Linear 在中心点
+// 等价 Nearest → 波动方程逐字不变（H1 调研报告"数据纹理 Nearest"针对非中心采样，此处不踩）。
+// 不升 512²：分辨率会改波速/阻尼的屏幕观感、推翻已调好的手感；色斑根因是采样而非分辨率。
 const SIM_OPTS = {
   type: HalfFloatType,
   format: RGBAFormat,
-  minFilter: NearestFilter,
-  magFilter: NearestFilter,
+  minFilter: LinearFilter,
+  magFilter: LinearFilter,
   wrapS: ClampToEdgeWrapping,
   wrapT: ClampToEdgeWrapping,
   depthBuffer: false,
