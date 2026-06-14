@@ -46,17 +46,24 @@ export const compositeSinFrag = /* glsl */ `
 `;
 
 /**
+ * 单帧可注入的滴水上限（指针 + 拖球尾迹 + 穿越溅起 + 常驻微波合用一组槽）。
+ * JS 侧据此分配 uDrops 数组长度，GLSL 侧当循环常量上限。
+ */
+export const MAX_DROPS = 12;
+
+/**
  * Step 2 — ping-pong 高度场 sim（jquery.ripples 离散波动方程，逐行来自调研报告 §4 路径1）。
- * 数据纹理：.r=高度、.g=速度。读 uPrev、写新一帧。鼠标处注入"升余弦凸包"滴水。
+ * 数据纹理：.r=高度、.g=速度。读 uPrev、写新一帧。
+ * H4：滴水从「单个 uMouse」改成「uDrops 数组」——一帧能同时注入指针 + 拖球尾迹 + 多颗穿越溅起，
+ * 每滴 = (uv.x, uv.y, 半径, 强度)，逐滴叠"升余弦凸包"（与单滴公式一致）。
  */
 export const simFrag = /* glsl */ `
   precision highp float;
   varying vec2 vUv;
   uniform sampler2D uPrev;
   uniform vec2  uDelta;     // (1/RES, 1/RES)
-  uniform vec2  uMouse;     // 0..1，无输入时 (-1,-1)
-  uniform float uRadius;
-  uniform float uStrength;
+  uniform vec4  uDrops[${MAX_DROPS}]; // 每滴 (uv.x, uv.y, 半径, 强度)
+  uniform int   uDropCount; // 本帧有效滴数（其余槽忽略）
   uniform float uDamping;   // 阻尼（参数板可调，0.995 起）
   const float PI = 3.141592653589793;
   void main() {
@@ -69,9 +76,11 @@ export const simFrag = /* glsl */ `
     info.g += (avg - info.r) * 2.0;   // 速度 += (邻居均值 - 高度) * 2（离散拉普拉斯回复力）
     info.g *= uDamping;               // 阻尼（唯一能量损耗）
     info.r += info.g;                 // 高度 += 速度（半隐式欧拉）
-    if (uMouse.x >= 0.0) {            // 鼠标滴水：升余弦凸包
-      float d = max(0.0, 1.0 - length(uMouse - vUv) / uRadius);
-      info.r += (0.5 - 0.5 * cos(d * PI)) * uStrength;
+    for (int i = 0; i < ${MAX_DROPS}; i++) {  // 多滴注入：升余弦凸包逐滴叠加
+      if (i >= uDropCount) break;
+      vec4 dp = uDrops[i];
+      float d = max(0.0, 1.0 - length(dp.xy - vUv) / dp.z);
+      info.r += (0.5 - 0.5 * cos(d * PI)) * dp.w;
     }
     gl_FragColor = info;
   }

@@ -10,6 +10,7 @@ import {
   ShaderMaterial,
   OrthographicCamera,
   Vector2,
+  Vector4,
   HalfFloatType,
   RGBAFormat,
   NearestFilter,
@@ -18,7 +19,7 @@ import {
   type WebGLRenderer,
   type WebGLRenderTarget,
 } from 'three';
-import { quadVert, contentFrag, simFrag, compositeHeightFrag } from './ripple-spike-shaders';
+import { quadVert, contentFrag, simFrag, compositeHeightFrag, MAX_DROPS } from './ripple-spike-shaders';
 import { getRippleTuning, type RippleTuning } from './ripple-tuning';
 
 /**
@@ -76,11 +77,15 @@ function tick(
   // 1. 内容图案 → 内容 FBO
   gl.setRenderTarget(content);
   gl.render(contentScene.scene, cam);
-  // 2. sim：读 read、写 write（波动方程 + 鼠标滴水）
+  // 2. sim：读 read、写 write（波动方程 + 鼠标滴水，单滴写进 uDrops[0]）
   const { read, write } = bufs.current;
   sim.mat.uniforms.uPrev.value = read.texture;
-  (sim.mat.uniforms.uMouse.value as Vector2).copy(mouse);
-  sim.mat.uniforms.uStrength.value = strength;
+  if (mouse.x >= 0) {
+    (sim.mat.uniforms.uDrops.value as Vector4[])[0].set(mouse.x, mouse.y, getRippleTuning().dropRadius, strength);
+    sim.mat.uniforms.uDropCount.value = 1;
+  } else {
+    sim.mat.uniforms.uDropCount.value = 0;
+  }
   gl.setRenderTarget(write);
   gl.render(sim.scene, cam);
   // 3. 合成：内容 + 新高度场（梯度折射）→ 屏幕
@@ -94,8 +99,7 @@ function tick(
 
 /** 把波纹参数 store 同步到 shader uniform（模块级，避 react-hooks/immutability） */
 function applyTuning(sim: QuadScene, composite: QuadScene, t: RippleTuning): void {
-  sim.mat.uniforms.uDamping.value = t.damping;
-  sim.mat.uniforms.uRadius.value = t.dropRadius;
+  sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z），不再走 uniform
   composite.mat.uniforms.uPerturb.value = t.perturb;
   composite.mat.uniforms.uSpec.value = t.specular;
 }
@@ -114,9 +118,8 @@ export default function RttSpike() {
     () => makeQuadScene(simFrag, {
       uPrev: { value: null },
       uDelta: { value: new Vector2(1 / RES, 1 / RES) },
-      uMouse: { value: new Vector2(-1, -1) },
-      uRadius: { value: 0.05 },
-      uStrength: { value: 0 },
+      uDrops: { value: Array.from({ length: MAX_DROPS }, () => new Vector4()) },
+      uDropCount: { value: 0 },
       uDamping: { value: 0.995 },
     }),
     [],

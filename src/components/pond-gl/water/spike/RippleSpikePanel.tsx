@@ -24,6 +24,9 @@ const SLIDERS: ReadonlyArray<{
   { key: 'dropClick', label: '滴水·点击', min: 0, max: 0.4, step: 0.005 },
   { key: 'dropRadius', label: '滴水半径', min: 0.01, max: 0.15, step: 0.005 },
   { key: 'specular', label: '高光', min: 0, max: 1.5, step: 0.02 },
+  { key: 'trail', label: '拖尾强度', min: 0, max: 0.4, step: 0.005 },
+  { key: 'splash', label: '溅起强度', min: 0, max: 0.5, step: 0.005 },
+  { key: 'ambient', label: '常驻微波', min: 0, max: 0.06, step: 0.002 },
 ];
 
 export default function RippleSpikePanel() {
@@ -44,7 +47,7 @@ export default function RippleSpikePanel() {
         onClick={() => setOpen((v) => !v)}
         className="mb-1 flex w-full items-center justify-between text-white/80"
       >
-        <span className="tracking-wide">波纹参数 (H1 spike)</span>
+        <span className="tracking-wide">波纹参数 (H4)</span>
         <span className="text-white/40">{open ? '−' : '+'}</span>
       </button>
 

@@ -20,20 +20,24 @@ import {
   type WebGLRenderer,
   type WebGLRenderTarget,
 } from 'three';
-import { quadVert, simFrag } from './spike/ripple-spike-shaders';
+import { quadVert, simFrag, MAX_DROPS } from './spike/ripple-spike-shaders';
 import { getRippleTuning, type RippleTuning } from './spike/ripple-tuning';
 import { compositeMaskFrag, MAX_SPHERES } from './water-distort-shaders';
 import { getWaterLevel } from './water-level';
+import {
+  collectObjectDrops, collectAmbientDrop, writeDrops, resetRippleFeed, type Drop,
+} from './ripple-feed';
 import type { GlSim } from '../spheres/use-gl-sim';
 import type { GlPhysNode } from '../spheres/gl-sim-setup';
 
 /**
- * H2/H3 — 全屏动态扭曲水面（整合进真场景 + 水位深度遮罩）。
+ * H2/H3/H4 — 全屏动态扭曲水面（真场景 + 水位深度遮罩 + 涟漪交互全集）。
  *
  * 渲真实 GL 场景（基调/背景/球）进内容 FBO → ping-pong 高度场 → 合成折射 pass 全屏扭（接管渲染循环、返回 null）。
  * H3：把球的坐标/半径/深度当 uniform 数组传进合成 shader，逐像素算"露出水面程度"——
  * 露出水面(z>L)的球不扭(清晰)、水下的扭。（不渲离屏 z 图：换材质在 R3F+InstancedMesh 上不稳。）
- * 命中层是 canvas 之上的 DOM、不进 shader → 点击不受扭曲影响。
+ * H4：一帧汇集多滴喂高度场——指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并，见 ripple-feed）
+ * + 常驻微波，写进 sim 的 uDrops 数组。命中层是 canvas 之上的 DOM、不进 shader → 点击不受扭曲影响。
  * 注：sim/quadVert/参数 store 暂复用 water/spike/（H 线收尾、spike 退役时挪进 water/ 正式化）。
  */
 
@@ -68,8 +72,7 @@ interface PingPong {
 const EMPTY_NODES: GlPhysNode[] = []; // glSim 未就绪时占位（无球 → 全屏扭）
 
 function applyTuning(sim: QuadScene, composite: QuadScene, t: RippleTuning, debug: boolean): void {
-  sim.mat.uniforms.uDamping.value = t.damping;
-  sim.mat.uniforms.uRadius.value = t.dropRadius;
+  sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z）
   composite.mat.uniforms.uPerturb.value = t.perturb;
   composite.mat.uniforms.uSpec.value = t.specular;
   composite.mat.uniforms.uDebug.value = debug ? 1 : 0;
@@ -88,7 +91,7 @@ function applySpheres(composite: QuadScene, nodes: GlPhysNode[], w: number, h: n
   composite.mat.uniforms.uWaterLevel.value = waterLevel;
 }
 
-/** 一帧：真场景→内容 FBO，ping-pong sim 推进，合成折射(带遮罩)→屏幕。 */
+/** 一帧：真场景→内容 FBO，ping-pong sim 推进（滴水已在 useFrame 写好 uDrops），合成折射(带遮罩)→屏幕。 */
 function tick(
   gl: WebGLRenderer,
   realScene: Scene,
@@ -98,15 +101,11 @@ function tick(
   bufs: { current: PingPong },
   composite: QuadScene,
   quadCam: OrthographicCamera,
-  mouse: Vector2,
-  strength: number,
 ): void {
   gl.setRenderTarget(content);
   gl.render(realScene, realCam);
   const { read, write } = bufs.current;
   sim.mat.uniforms.uPrev.value = read.texture;
-  (sim.mat.uniforms.uMouse.value as Vector2).copy(mouse);
-  sim.mat.uniforms.uStrength.value = strength;
   gl.setRenderTarget(write);
   gl.render(sim.scene, quadCam);
   composite.mat.uniforms.uScene.value = content.texture;
@@ -121,19 +120,19 @@ export default function WaterDistort({ debug = false, glSim }: { debug?: boolean
   const heightA = useFBO(RES, RES, SIM_OPTS);
   const heightB = useFBO(RES, RES, SIM_OPTS);
   const bufs = useRef<PingPong>({ read: heightA, write: heightB });
-  const mouse = useRef(new Vector2(-1, -1));
-  const strength = useRef(0);
+  const pending = useRef<Drop[]>([]); // 指针/wave 滴水：事件回调里 push，useFrame 每帧排空
+  const nodes = glSim?.nodes;
 
+  const dropSlots = useMemo(() => Array.from({ length: MAX_DROPS }, () => new Vector4()), []);
   const sim = useMemo(
     () => makeQuadScene(simFrag, {
       uPrev: { value: null },
       uDelta: { value: new Vector2(1 / RES, 1 / RES) },
-      uMouse: { value: new Vector2(-1, -1) },
-      uRadius: { value: 0.05 },
-      uStrength: { value: 0 },
+      uDrops: { value: dropSlots },
+      uDropCount: { value: 0 },
       uDamping: { value: 0.995 },
     }),
-    [],
+    [dropSlots],
   );
   const spheresInit = useMemo(() => Array.from({ length: MAX_SPHERES }, () => new Vector4()), []);
   const composite = useMemo(
@@ -153,44 +152,51 @@ export default function WaterDistort({ debug = false, glSim }: { debug?: boolean
   );
   const quadCam = useMemo(() => new OrthographicCamera(-1, 1, 1, -1, 0, 1), []);
 
-  // 指针 + bg-ripple:wave → 注入滴水（坐标 → uv，y 翻转匹配 quad）
+  // 指针 + bg-ripple:wave → push 一滴到 pending（坐标 → uv，y 翻转匹配 quad；一次性，不留持续鼠标位）
   useEffect(() => {
     let last = 0;
-    const setUv = (x: number, y: number) =>
-      mouse.current.set(x / window.innerWidth, 1 - y / window.innerHeight);
-    const onMove = (e: PointerEvent) => {
-      const t = performance.now();
-      if (t - last < 16) return;
-      last = t;
-      setUv(e.clientX, e.clientY);
-      strength.current = getRippleTuning().dropMove;
+    const push = (x: number, y: number, str: number) => {
+      const t = getRippleTuning();
+      pending.current.push({ ux: x / window.innerWidth, uy: 1 - y / window.innerHeight, radius: t.dropRadius, strength: str });
     };
-    const onDown = (e: PointerEvent) => { setUv(e.clientX, e.clientY); strength.current = getRippleTuning().dropClick; };
-    const onLeave = () => mouse.current.set(-1, -1);
+    const onMove = (e: PointerEvent) => {
+      const now = performance.now();
+      if (now - last < 16) return;
+      last = now;
+      push(e.clientX, e.clientY, getRippleTuning().dropMove);
+    };
+    const onDown = (e: PointerEvent) => push(e.clientX, e.clientY, getRippleTuning().dropClick);
     const onWave = (e: Event) => {
       const ce = e as CustomEvent<{ x: number; y: number }>;
-      setUv(ce.detail.x, ce.detail.y);
-      strength.current = getRippleTuning().dropClick;
+      push(ce.detail.x, ce.detail.y, getRippleTuning().dropClick);
     };
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerdown', onDown);
-    window.addEventListener('pointerleave', onLeave);
     window.addEventListener('bg-ripple:wave', onWave);
     return () => {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerdown', onDown);
-      window.removeEventListener('pointerleave', onLeave);
       window.removeEventListener('bg-ripple:wave', onWave);
     };
   }, []);
 
+  // 切组 / 重建节点 → 清穿越/尾迹记忆，避免旧球的没入状态触发假溅起
+  useEffect(() => { resetRippleFeed(); }, [nodes]);
+
   // 正优先级 = 接管渲染循环（在 SphereInstances priority-0 写完矩阵之后跑）
   useFrame((state) => {
-    applyTuning(sim, composite, getRippleTuning(), debug);
+    const t = getRippleTuning();
+    applyTuning(sim, composite, t, debug);
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
-    applySpheres(composite, glSim ? glSim.nodes : EMPTY_NODES, size.w, size.h, getWaterLevel());
-    tick(state.gl, state.scene, state.camera, content, sim, bufs, composite, quadCam, mouse.current, strength.current);
-    strength.current = 0;
+    applySpheres(composite, nodes ?? EMPTY_NODES, size.w, size.h, getWaterLevel());
+    // 汇集本帧所有滴水：指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并）+ 常驻微波
+    const drops = pending.current;
+    pending.current = [];
+    if (nodes) drops.push(...collectObjectDrops(nodes, size.w, size.h, t));
+    const amb = collectAmbientDrop(t);
+    if (amb) drops.push(amb);
+    writeDrops(sim.mat, drops, dropSlots);
+    tick(state.gl, state.scene, state.camera, content, sim, bufs, composite, quadCam);
   }, 1);
 
   return null;

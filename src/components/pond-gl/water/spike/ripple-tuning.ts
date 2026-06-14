@@ -13,6 +13,9 @@ export interface RippleTuning {
   dropClick: number;  // 滴水强度·点击
   dropRadius: number; // 滴水半径（占屏比）
   specular: number;   // 月光高光强度
+  trail: number;      // H4 拖球尾迹强度（被拖的球留下的水痕）
+  splash: number;     // H4 球穿过水面溅起强度
+  ambient: number;    // H4 常驻微波强度（塘面始终有细腻波动；0=关）
 }
 
 export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
@@ -22,6 +25,9 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   dropClick: 0.16,
   dropRadius: 0.05,
   specular: 0.5,
+  trail: 0.1,
+  splash: 0.2,
+  ambient: 0.012,
 };
 
 const KEY = 'pond-gl-ripple-spike';
