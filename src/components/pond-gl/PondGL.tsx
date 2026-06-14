@@ -6,6 +6,7 @@ import type { GLFlags } from './gl-flags';
 import { baseToneVertexShader, baseToneFragmentShader } from './base-tone-shader';
 import SphereInstances from './spheres/SphereInstances';
 import WaterSurface from './water/WaterSurface';
+import RttSpike from './water/spike/RttSpike';
 import BgImage from './BgImage';
 import type { GlSim } from './spheres/use-gl-sim';
 
@@ -60,8 +61,8 @@ export interface PondGLProps {
 }
 
 export default function PondGL({ flags, glSim }: PondGLProps) {
-  // 基调 / 球 / 水面 / 背景图 任一开启都需要 Canvas；都关 = 卸载（回纯 SVG）
-  const active = flags.glBase || flags.glSpheres || flags.water || flags.bgImage;
+  // 基调 / 球 / 水面 / 背景图 / RTT 实验 任一开启都需要 Canvas；都关 = 卸载（回纯 SVG）
+  const active = flags.glBase || flags.glSpheres || flags.water || flags.bgImage || flags.rtt;
   // 球开启时才开 AA（基调/水面是全屏无硬边）；useMemo 稳定 gl 对象，避免 Canvas 频繁重建
   const gl = useMemo(() => ({ antialias: flags.glSpheres, alpha: false }), [flags.glSpheres]);
   if (!active) return null;
@@ -72,8 +73,8 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           // 切 glSpheres 时重挂 Canvas，让 gl(antialias) 干净生效（R3F 该 prop 非热更新）
           key={flags.glSpheres ? 'gl-spheres' : 'gl-base'}
           orthographic
-          // 球 / 水面需逐帧动画 → always；仅基调 / 背景图时 demand（只渲一次省帧）
-          frameloop={flags.glSpheres || flags.water ? 'always' : 'demand'}
+          // 球 / 水面 / RTT 需逐帧动画 → always；仅基调 / 背景图时 demand（只渲一次省帧）
+          frameloop={flags.glSpheres || flags.water || flags.rtt ? 'always' : 'demand'}
           dpr={[1, 2]} // DPR cap 2（性能预算）
           gl={gl}
           // 球开启时 manual:true —— 让 SphereInstances 自己把正交相机配成屏幕像素 1:1，
@@ -90,6 +91,8 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           {/* 水面垫在球之下（renderOrder -0.5），基调/背景图之上 */}
           {flags.water && <WaterSurface artDir={flags.artDir} />}
           {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} />}
+          {/* H1 spike：RTT 验证全屏盖在最上（renderOrder 10），隔离实验、默认关 */}
+          {flags.rtt && <RttSpike />}
         </Canvas>
       </GLErrorBoundary>
     </div>

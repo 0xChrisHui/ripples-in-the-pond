@@ -99,6 +99,10 @@ export default function ScenePanel({ glFlags, onGl, fx, onFx }: Props) {
             ))}
           </div>
 
+          {/* H1 spike：RTT 离屏渲染验证（隔离实验，开时全屏盖测试图案 + 假 sin 扭曲） */}
+          <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">实验 (H1)</div>
+          <Row label="RTT 验证" checked={glFlags.rtt} onChange={(v) => onGl({ rtt: v })} />
+
           <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">背景氛围</div>
           {FX_ROWS.map((r) => (
             <Row key={r.key} label={r.label} checked={fx[r.key]} onChange={(v) => onFx({ [r.key]: v } as Partial<SceneFx>)} />

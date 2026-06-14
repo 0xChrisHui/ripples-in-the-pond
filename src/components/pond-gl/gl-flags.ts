@@ -26,6 +26,8 @@ export interface GLFlags {
   bgImage: boolean;
   /** G6 — 滚轮模式：waterLevel（默认，升降水位）/ zoomFx（缩放，互斥）。仅水面开时生效 */
   wheelMode: WheelMode;
+  /** H1 — RTT 风险 spike（隔离实验）：开时挂 RttSpike 全屏验证离屏渲染+扭曲。默认关 */
+  rtt: boolean;
 }
 
 /** /test1 默认（方向 A 后）：基调 + GL 球默认开（/test1 = GL 沙盒，直接看 GL）；
@@ -37,6 +39,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   water: false,
   bgImage: false,
   wheelMode: 'waterLevel',
+  rtt: false,
 };
 
 /** 从 URL query 解析 G 线开关（仅覆盖出现的参数，其余取默认） */
@@ -64,6 +67,10 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
 
   const wheelMode = searchParams.get('wheelMode');
   if (wheelMode === 'waterLevel' || wheelMode === 'zoomFx') result.wheelMode = wheelMode;
+
+  const rtt = searchParams.get('rtt');
+  if (rtt === '1' || rtt === 'true') result.rtt = true;
+  else if (rtt === '0' || rtt === 'false') result.rtt = false;
 
   return result;
 }

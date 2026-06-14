@@ -19,6 +19,7 @@ import SphereOverlay from '@/src/components/pond-gl/overlay/SphereOverlay';
 import WaterLevelIndicator from '@/src/components/pond-gl/overlay/WaterLevelIndicator';
 import TunePanel from '@/src/components/pond-gl/overlay/TunePanel';
 import ScenePanel, { type SceneFx } from '@/src/components/pond-gl/overlay/ScenePanel';
+import RippleSpikePanel from '@/src/components/pond-gl/water/spike/RippleSpikePanel';
 
 // GL 渲染层：全链路 next/dynamic + ssr:false，three/R3F 只进 /test1 异步 chunk → 首页 bundle 零增量
 const PondGL = dynamic(() => import('@/src/components/pond-gl/PondGL'), { ssr: false });
@@ -66,7 +67,7 @@ function Test1PageInner() {
       )}
 
       {/* GL 层：基调 / 球 / 水面 / 背景图 任一开启就挂 Canvas，都关 = 不加载 three chunk */}
-      {(glFlags.glBase || glFlags.glSpheres || glFlags.water || glFlags.bgImage) && <PondGL flags={glFlags} glSim={glSim} />}
+      {(glFlags.glBase || glFlags.glSpheres || glFlags.water || glFlags.bgImage || glFlags.rtt) && <PondGL flags={glFlags} glSim={glSim} />}
 
       {effects.bgRipples && <BackgroundRipples />}
 
@@ -102,6 +103,9 @@ function Test1PageInner() {
 
       {/* G6：右缘水位指示（水面开时显示，滚轮淡入） */}
       {glFlags.water && <WaterLevelIndicator />}
+
+      {/* H1 spike：波纹参数面板（rtt 开时，右下角实时调阻尼/折射/滴水/高光） */}
+      {glFlags.rtt && <RippleSpikePanel />}
 
       {/* G5：视觉控制台（左下角，逐层开关 GL 层 + 背景氛围，默认纯净夜塘） */}
       <ScenePanel glFlags={glFlags} onGl={onGl} fx={fx} onFx={onFx} />
