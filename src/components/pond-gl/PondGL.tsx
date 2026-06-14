@@ -89,7 +89,7 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           {flags.glBase && !flags.bgImage && <BaseTone artDir={flags.artDir} />}
           {/* 水面垫在球之下（renderOrder -0.5），基调/背景图之上 */}
           {flags.water && <WaterSurface artDir={flags.artDir} />}
-          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} />}
+          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} />}
         </Canvas>
       </GLErrorBoundary>
     </div>

@@ -81,6 +81,24 @@ export default function ScenePanel({ glFlags, onGl, fx, onFx }: Props) {
             ))}
           </div>
 
+          {/* G6 滚轮模式（互斥）：水位升降 / 缩放。仅水面开时驱动水位（zoomFx 待 P2-c 接 GL 缩放） */}
+          <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">滚轮</div>
+          <div className="flex gap-1">
+            {(['waterLevel', 'zoomFx'] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => onGl({ wheelMode: m })}
+                className={[
+                  'flex-1 rounded border py-0.5 text-[10px]',
+                  glFlags.wheelMode === m ? 'border-white/20 bg-white/10 text-white/80' : 'border-transparent text-white/40 hover:text-white/70',
+                ].join(' ')}
+              >
+                {m === 'waterLevel' ? '水位' : '缩放'}
+              </button>
+            ))}
+          </div>
+
           <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">背景氛围</div>
           {FX_ROWS.map((r) => (
             <Row key={r.key} label={r.label} checked={fx[r.key]} onChange={(v) => onFx({ [r.key]: v } as Partial<SceneFx>)} />

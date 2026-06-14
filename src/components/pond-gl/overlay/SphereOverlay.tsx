@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
 import type { GlSim } from '../spheres/use-gl-sim';
 import { setNodeDrag, endNodeDrag, type GlPhysNode } from '../spheres/gl-sim-setup';
+import { getSubmerge } from '../water/water-level';
 
 /**
  * G4 — DOM 命中层：每球一个绝对定位 div，承载标题/角标/点击播放/拖拽/hover。
@@ -16,7 +17,7 @@ const PLAY_PATH = 'M-4.5,-6 L7,0 L-4.5,6 Z';
 const PAUSE_PATH = 'M-5.5,-6 L-2,-6 L-2,6 L-5.5,6 Z M0.5,-6 L4,-6 L4,6 L0.5,6 Z';
 const DRAG_THRESHOLD = 8; // 出处 sphere-sim-setup.ts:178（位移 <8px 不算拖动，松手仍 toggle）
 
-export default function SphereOverlay({ glSim }: { glSim: GlSim }) {
+export default function SphereOverlay({ glSim, waterOn }: { glSim: GlSim; waterOn: boolean }) {
   const { nodes, playingIdRef } = glSim;
   const { playing, currentTrack } = usePlayer();
   const playingId = playing && currentTrack ? currentTrack.id : null;
@@ -31,15 +32,17 @@ export default function SphereOverlay({ glSim }: { glSim: GlSim }) {
         const el = elsRef.current.get(n.id);
         if (!el || n.x == null || n.y == null) continue;
         const dim = pid != null && n.id !== pid;
+        // G6 没入：球被水波盖住时同步淡出标题/命中（否则标题会浮在水面上）；>0.7 视为已没入、不可点
+        const sub = waterOn ? getSubmerge(n.z) : 0;
         el.style.transform = `translate(${n.x - n.radius}px, ${n.y - n.radius}px)`;
-        el.style.opacity = dim ? '0' : '1';
-        el.style.pointerEvents = dim ? 'none' : 'auto';
+        el.style.opacity = dim ? '0' : String(1 - sub);
+        el.style.pointerEvents = dim || sub > 0.7 ? 'none' : 'auto';
       }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [nodes, playingIdRef]);
+  }, [nodes, playingIdRef, waterOn]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-10">

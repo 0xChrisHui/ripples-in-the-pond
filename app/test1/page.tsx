@@ -14,7 +14,9 @@ import { useResponsiveDefaultEffects } from '@/src/components/archipelago/hooks/
 import { useAdaptiveEffects } from '@/src/components/archipelago/hooks/use-adaptive-effects';
 import { parseGLFlags, type GLFlags } from '@/src/components/pond-gl/gl-flags';
 import { useGlSim } from '@/src/components/pond-gl/spheres/use-gl-sim';
+import { useWaterLevelControl } from '@/src/components/pond-gl/water/water-level';
 import SphereOverlay from '@/src/components/pond-gl/overlay/SphereOverlay';
+import WaterLevelIndicator from '@/src/components/pond-gl/overlay/WaterLevelIndicator';
 import TunePanel from '@/src/components/pond-gl/overlay/TunePanel';
 import ScenePanel, { type SceneFx } from '@/src/components/pond-gl/overlay/ScenePanel';
 
@@ -49,6 +51,8 @@ function Test1PageInner() {
   const effects = useAdaptiveEffects({ ...baseEffects, ...fx, perspective: perspectiveOn });
   // 球或水面开启时 glSim active（取数 / 建 sim / 订阅涟漪事件）
   const glSim = useGlSim(glFlags.glSpheres || glFlags.water);
+  // G6：水面开 + wheelMode=waterLevel 时，滚轮驱动水位升降（带缓动）；否则不挂、滚轮归原行为
+  useWaterLevelControl(glFlags.water && glFlags.wheelMode === 'waterLevel');
 
   return (
     <main data-gl-spheres={glFlags.glSpheres ? '1' : '0'} className="relative min-h-screen overflow-hidden bg-black">
@@ -91,10 +95,13 @@ function Test1PageInner() {
       )}
 
       {/* G4：GL 球 DOM 命中层（z-10，盖在 SVG/GL 之上接点击拖拽，在 nav/HUD 之下） */}
-      {glFlags.glSpheres && glSim.ready && <SphereOverlay glSim={glSim} />}
+      {glFlags.glSpheres && glSim.ready && <SphereOverlay glSim={glSim} waterOn={glFlags.water} />}
 
       {/* G4：GL 球实时调色面板（右下角，亮度/对比度/饱和度/光晕/浓度 + 保存到 localStorage） */}
       {glFlags.glSpheres && <TunePanel />}
+
+      {/* G6：右缘水位指示（水面开时显示，滚轮淡入） */}
+      {glFlags.water && <WaterLevelIndicator />}
 
       {/* G5：视觉控制台（左下角，逐层开关 GL 层 + 背景氛围，默认纯净夜塘） */}
       <ScenePanel glFlags={glFlags} onGl={onGl} fx={fx} onFx={onFx} />

@@ -8,10 +8,12 @@ import {
   InstancedBufferAttribute,
   Matrix4,
   OrthographicCamera,
+  ShaderMaterial,
 } from 'three';
 import { sphereVertexShader, sphereFragmentShader, HALO_R } from './sphere-shader';
 import { pushGlSpheresByWaves, type GlPhysNode, type BgWave } from './gl-sim-setup';
 import { getTuning, type SphereTuning } from './sphere-tuning';
+import { getSubmerge } from '../water/water-level';
 import type { GlSim } from './use-gl-sim';
 
 // 球色：手动解析 hex → sRGB 0-1，**绕过 three 的 Color/ColorManagement**。
@@ -46,19 +48,26 @@ interface InstanceBuf {
   dimLerp: Float32Array;
 }
 
-interface TuneUniforms {
+interface SphereUniforms {
   uBrightness: { value: number };
   uContrast: { value: number };
   uSaturation: { value: number };
   // 索引签名：让对象直接满足 R3F shaderMaterial 的 uniforms prop 类型（{ [k]: IUniform }）
-  [key: string]: { value: number };
+  [key: string]: { value: unknown };
 }
 
-/** 把调色 store 同步到 shader uniform（模块级 → 避开 react-hooks/immutability 对改 hook 返回值的限制） */
-function applyTuningUniforms(u: TuneUniforms, t: SphereTuning): void {
-  u.uBrightness.value = t.brightness;
-  u.uContrast.value = t.contrast;
-  u.uSaturation.value = t.saturation;
+/**
+ * 把调色 store 同步到 shader uniform。
+ *
+ * ★必须写 material 真身的 uniforms（matRef.current.uniforms.X.value）——R3F 把 uniforms prop
+ * 拷贝进 material，改外部那个 useMemo 对象到不了 shader（血泪踩坑 #1，WaterSurface 同此修法）。
+ * 之前球色/淡出/白球能动是因为它们走逐实例 attribute（aColor/aParams），不依赖 uniform 通道。
+ * 模块级函数：命令式写 GPU uniform，避开 react-hooks/immutability。
+ */
+function applyTuningUniforms(mat: ShaderMaterial, t: SphereTuning): void {
+  mat.uniforms.uBrightness.value = t.brightness;
+  mat.uniforms.uContrast.value = t.contrast;
+  mat.uniforms.uSaturation.value = t.saturation;
 }
 
 /** 正交相机像素对齐：top<bottom → y 向下，与 sim 坐标系一致 */
@@ -78,6 +87,7 @@ function writeFrame(
   playingId: string | null,
   hoverId: string | null,
   tuning: SphereTuning,
+  waterOn: boolean,
 ): void {
   const now = performance.now();
   wavesRef.current = wavesRef.current.filter((w) => now - w.spawnTime < w.duration);
@@ -107,9 +117,12 @@ function writeFrame(
 
     let fill = 0.52 + n.importance * 0.36;        // 复刻 baseOpacity
     if (isPlaying) fill = Math.min(0.95, fill + 0.2);
+    // G6 没入淡出：水位升过球 → 球淡出，露出下方铺满全屏的水波（= 水波盖住球）。
+    // 折叠进整体不透明度 dim，shader 端无需改动；水关时 submerge=0 不影响。
+    const submerge = waterOn ? getSubmerge(n.z) : 0;
     aParams[i * 4] = Math.min(1, fill * tuning.fill);          // 浓度（fillOpacity × 调参）
     aParams[i * 4 + 1] = (isHover ? 0.5 : 0.3) * tuning.halo;  // haloPeak（halo-strong/soft × 调参）
-    aParams[i * 4 + 2] = dimLerp[i];
+    aParams[i * 4 + 2] = dimLerp[i] * (1 - submerge);
     aParams[i * 4 + 3] = BODY_RATIO;
   }
 
@@ -118,10 +131,11 @@ function writeFrame(
   (mesh.geometry.getAttribute('aParams') as InstancedBufferAttribute).needsUpdate = true;
 }
 
-export default function SphereInstances({ glSim }: { glSim: GlSim }) {
+export default function SphereInstances({ glSim, waterOn }: { glSim: GlSim; waterOn: boolean }) {
   const { nodes, sizeRef } = glSim;
   const count = nodes.length;
   const meshRef = useRef<InstancedMesh>(null);
+  const matRef = useRef<ShaderMaterial>(null); // 写 uniform 走真身（见 applySphereUniforms）
   const camera = useThree((s) => s.camera);
 
   // per-instance 缓冲（随 nodes 重建：切组时 count 变 → 整组重建）
@@ -133,8 +147,8 @@ export default function SphereInstances({ glSim }: { glSim: GlSim }) {
     dimLerp: new Float32Array(count).fill(1),
   }), [nodes, count]);
 
-  // 调色 uniform（稳定对象，TunePanel 拖动 → 每帧从 store 同步到 .value）
-  const uniforms = useMemo<TuneUniforms>(() => ({
+  // 调色 uniform（稳定对象，每帧从 store 同步到 .value）
+  const uniforms = useMemo<SphereUniforms>(() => ({
     uBrightness: { value: 1 },
     uContrast: { value: 1 },
     uSaturation: { value: 1 },
@@ -148,10 +162,11 @@ export default function SphereInstances({ glSim }: { glSim: GlSim }) {
 
   useFrame(() => {
     const mesh = meshRef.current;
-    if (!mesh || count === 0) return;
+    const mat = matRef.current;
+    if (!mesh || !mat || count === 0) return;
     const tuning = getTuning();
-    applyTuningUniforms(uniforms, tuning);
-    writeFrame(mesh, nodes, buf, glSim.wavesRef, glSim.playingIdRef.current, glSim.hoverIdRef.current, tuning);
+    applyTuningUniforms(mat, tuning);
+    writeFrame(mesh, nodes, buf, glSim.wavesRef, glSim.playingIdRef.current, glSim.hoverIdRef.current, tuning, waterOn);
   });
 
   if (count === 0) return null;
@@ -162,6 +177,7 @@ export default function SphereInstances({ glSim }: { glSim: GlSim }) {
         <instancedBufferAttribute attach="attributes-aParams" args={[buf.aParams, 4]} />
       </planeGeometry>
       <shaderMaterial
+        ref={matRef}
         vertexShader={sphereVertexShader}
         fragmentShader={sphereFragmentShader}
         uniforms={uniforms}

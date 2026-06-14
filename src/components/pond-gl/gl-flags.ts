@@ -10,6 +10,9 @@
 /** 基调艺术方向两档（G5 拍板）：deep 深蓝墨绿渐晕 / black 纯黑 */
 export type ArtDir = 'deep' | 'black';
 
+/** G6 滚轮模式（二选一互斥）：waterLevel 升降水位 / zoomFx 缩放（P2-c 才接 GL 缩放） */
+export type WheelMode = 'waterLevel' | 'zoomFx';
+
 export interface GLFlags {
   /** G3 — GL 基调层总开关；false = 卸载 GL，回 G2 纯 SVG 现状 */
   glBase: boolean;
@@ -21,6 +24,8 @@ export interface GLFlags {
   water: boolean;
   /** 背景图开关（测试用，public/test1-bg.png）；开时替代纯色基调垫最底层。默认关 */
   bgImage: boolean;
+  /** G6 — 滚轮模式：waterLevel（默认，升降水位）/ zoomFx（缩放，互斥）。仅水面开时生效 */
+  wheelMode: WheelMode;
 }
 
 /** /test1 默认（方向 A 后）：基调 + GL 球默认开（/test1 = GL 沙盒，直接看 GL）；
@@ -31,6 +36,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   glSpheres: true,
   water: false,
   bgImage: false,
+  wheelMode: 'waterLevel',
 };
 
 /** 从 URL query 解析 G 线开关（仅覆盖出现的参数，其余取默认） */
@@ -55,6 +61,9 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const bgImage = searchParams.get('bgImage');
   if (bgImage === '1' || bgImage === 'true') result.bgImage = true;
   else if (bgImage === '0' || bgImage === 'false') result.bgImage = false;
+
+  const wheelMode = searchParams.get('wheelMode');
+  if (wheelMode === 'waterLevel' || wheelMode === 'zoomFx') result.wheelMode = wheelMode;
 
   return result;
 }
