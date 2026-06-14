@@ -93,7 +93,7 @@
 | **P8-D** | `phase-8-d-color-direction.md` | ❄️ **已冻结（2026-06-12）**：色彩方向 A–K 11 套经 D0 外部 HTML 预览粗筛全部淘汰，暂不排期；P8 期间默认配色保持现状。重启先做新一轮 D0 粗筛 |
 | **P8-E** | `phase-8-e-orchestration.md` | 入场转场与收尾（splashIntro 入场落水 / groupWave 切组涟漪转场 / navPond 导航顶栏水塘化）；依赖 8-B S1 先行（2026-06-12 立项） |
 | **P8-F** | `phase-8-f-effects-pool.md` | 效果候选池：15 个广撒网 flag（播放叙事 4 / 交互反馈 2 / 氛围 7 / 编排 2）+ F0 /test 面板分组与预设按钮 + ambient/pond/ 子目录方案 + F9 统一删减拍板（2026-06-12 立项） |
-| **P8-G** | `phase-8-g-gl-water.md` | /test1 GL 渲染层 spike（2026-06-12 立项，取代旧 P8-W gate）：three+R3F 已批进白名单；/test1 先同步 / 再默认关 1 点透视；GL 球 + 高度场水面 + 滚轮水位三态（水上/贴面/水下）。开关走 /test1 独立 gl-flags，不碰共享热点文件 |
+| **P8-G** | `phase-8-g.md`（+ `phase-8-h.md` / `phase-8-i.md`；旧版存档 `phase-8-g-gl-water.md`） | /test1 用 GL 重建水塘（2026-06-12 立项，2026-06-14 重组为 G/H/I 三线、从 spike 毕业为正式重建）：G 地基✅（克隆/关透视/GL球+命中层）→ H 水面子系统（全屏动态扭曲 RTT + 水位全局变量 + 运动模型）→ I 去SVG+全新组件（含日蚀 GL 重做）。开关走 /test1 独立 gl-flags，不碰共享热点文件 |
 
 **P8 全局铁律（每个 track 都适用）**：
 

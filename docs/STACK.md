@@ -124,7 +124,7 @@
 按需，每次新加都要在本文件登记。
 
 ### Phase 8-G（2026-06-12 登记，G3 步骤才实际安装）
-新增：`three`, `@react-three/fiber`, `@react-three/drei`（/test1 GL 渲染层 spike，用户批准；playbook `phase-8/phase-8-g-gl-water.md`）
+新增：`three`, `@react-three/fiber`, `@react-three/drei`（/test1 GL 渲染层，用户批准；playbook `phase-8/phase-8-g.md`）
 
 ---
 

@@ -9,7 +9,7 @@
 
 - **Phase 8 进行中**：Wave 0+1 已合并入 main（35 个新 flag 默认 false）。两条待办线由用户定先后：
   - ① **Wave 2 收口**：splashIntro + /test 集中验收 + S8/F9 默认值拍板 + 真机压测
-  - ② **P8-G /test1 GL 渲染层 spike**（2026-06-12 立项，**进行中**）：**G1-G3 ✅**（/test1 克隆 + 默认关透视 + GL 深色基调层骨架；装 three/R3F/drei，dynamic ssr:false 首页零增量，verify.sh 全绿）；**下一步 G4**（GL 球 instanced + sim 接驳 + DOM 命中层，⏸ 验收必停）。G1-G7 见 `playbook/phase-8/phase-8-g-gl-water.md`
+  - ② **P8-G /test1 GL 渲染层 spike**（2026-06-12 立项，**进行中**）：**G1-G5 ✅**（克隆+关透视+GL 基调骨架 / G4 GL 球 instanced+DOM 命中层+TunePanel `744b64d` / G5 程序化水面+视觉控制台 `eb5e11d`）；**G6-1 已实现**（水位 store+滚轮缓动+wheelMode 互斥+球淡出覆盖+水位指示，工作树）。**2026-06-14 方向再拍板 + 重组 G/H/I 三线**（水面改"动态扭曲"对标 jquery.ripples + 水位全局变量 + 鼠标交互；G 地基✅ / H 水面子系统 / I 去SVG+全新组件，G7 拍板取消、收口并入 I）。**下一步 = H1**（RTT 风险 spike，½ 天；起手先 `commit` 归档 G6-1）。新版见 `playbook/phase-8/phase-8-{g,h,i}.md`，旧版存档 `phase-8-g-gl-water.md`
 
 ---
 
