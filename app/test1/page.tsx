@@ -11,6 +11,7 @@ import { parseGLFlags, type GLFlags } from '@/src/components/pond-gl/gl-flags';
 import { useGlSim } from '@/src/components/pond-gl/spheres/use-gl-sim';
 import { useWaterLevelControl } from '@/src/components/pond-gl/water/water-level';
 import SphereOverlay from '@/src/components/pond-gl/overlay/SphereOverlay';
+import GlEclipse from '@/src/components/pond-gl/overlay/GlEclipse';
 import GlNav from '@/src/components/pond-gl/overlay/GlNav';
 import WaterLevelIndicator from '@/src/components/pond-gl/overlay/WaterLevelIndicator';
 import TunePanel from '@/src/components/pond-gl/overlay/TunePanel';
@@ -71,6 +72,9 @@ function Test1PageInner() {
       {glFlags.glSpheres && glSim.ready && (
         <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} />
       )}
+
+      {/* I2：GL 日蚀层（z-20，播放球叠日蚀焦点；其他球已隐去） */}
+      {glFlags.glSpheres && glSim.ready && <GlEclipse glSim={glSim} />}
 
       {/* 左缘水位指示（水面或扭曲水面开时显示，滚轮淡入） */}
       {(glFlags.water || glFlags.waterFx) && <WaterLevelIndicator />}

@@ -36,9 +36,9 @@ export default function SphereOverlay({ glSim, waterOn }: { glSim: GlSim; waterO
         // H5：读动态深度 displayZ → 球浮沉/播放浮出时标题随之淡入淡出
         const sub = waterOn ? getSubmerge(n.displayZ ?? n.z) : 0;
         el.style.transform = `translate(${n.x - n.radius}px, ${n.y - n.radius}px)`;
-        // 没入：标题快速淡到下限 0.4（仍留可见锚点，不完全消失，hover 时角标更清楚）；过渡期已淡足够避免错位观感
+        // 别的球在播 → 完全隐藏（聚焦只剩播放球 + 日蚀）；否则没入淡出（水下仍留 0.4 锚点）
         el.style.opacity = dim ? '0' : String(Math.max(0.4, 1 - sub * 1.5));
-        // 水下对象仍可点（H 规格：命中走真实坐标、不反解扭曲偏移）；仅"别的球在播"时让出交互
+        // 水下对象仍可点（H 规格）；别的球在播时让出交互（其他球已隐藏）
         el.style.pointerEvents = dim ? 'none' : 'auto';
       }
       raf = requestAnimationFrame(loop);
