@@ -176,14 +176,16 @@
 
 ## 上次成功验证
 
-- 验证: **P8-G G1-G3 落地**（/test1 GL 渲染层 spike 骨架：克隆 / + 默认关 1 点透视 + GL 深色基调层）
-- 时间: 2026-06-12
+- 验证: **P8-G H 线全完（H4–H6）+ I 线 I1/I2 落地**——/test1 成干净 GL 水塘页（涟漪交互全集 + 球自驱浮沉 + 波纹/运动参数板 + 去 SVG + GL 日蚀），逐步浏览器验收通过
+- 时间: 2026-06-15
 - 改动:
-  - 新建 `app/test1/layout.tsx`（robots noindex，抄 /test）+ `app/test1/page.tsx`（/ 的克隆 + 标题后缀「— /test1 GL sandbox」；G2 用 useSearchParams 叠 `perspective:false`，`?perspective=1` 可临回；G3 dynamic ssr:false 挂 PondGL）
-  - 新建 `src/components/pond-gl/`：`gl-flags.ts`（G 线独立开关 glBase/artDir，不碰共享 effects-config）+ `base-tone-shader.ts`（全屏裁剪空间平面 GLSL，deep 径向渐晕 / black 纯黑）+ `PondGL.tsx`（正交相机 + DPR≤2 Canvas + class 错误边界兜 WebGL 失败 → null）
-  - 装包 `three@^0.184` + `@react-three/fiber@^9.6` + `@react-three/drei@^10.7`（pre-approved，STACK.md 已登记）
-- 验证证据: verify.sh 全绿（tsc + lint 0 error + 行数 + 目录 + 危险扫描 + 生产构建 30 路由含 /test1）；首页首屏 JS 3047350→3047439B（**+89B≈零增量**，three 只进 /test1 异步 chunk）；本会话 verify.sh 2 次瞬态 flake（lint/build 各一）clean 重跑即绿
-- 下一步: **G4**（GL 球 instanced + use-gl-sim 接 sphere-config 纯函数/力参数 + SphereOverlay DOM 命中层；⏸ 末尾必停等用户浏览器验收）
+  - **H4** `water/ripple-feed.ts`：sim 单滴→`uDrops[12]` 多滴；拖球尾迹 / 穿越溅起 / 单帧>6 合并限流 / 常驻微波（`191d34a`）
+  - **H5** `spheres/sphere-motion.ts`：公式契约 `depth=f(time,waterLevel,nodeAttrs,params)` + 球自驱浮沉（自漂 + 播放浮出焦点）+ 动态深度 `node.displayZ`（`2065e25`+`9892be1`：统一 DOM/GL 水上判定阈值、水下球可点）
+  - **H6** 参数板布局（调色+波纹/运动同栏不重叠）+ 运动参数 + reduced-motion + 遮罩开关（`baddee8`）；色斑修复 Nearest→Linear（`a170029`）；折射重做 位移∝梯度+clamp 消麻点破洞（`b93f065`）
+  - **I1** 去 SVG：卸 Archipelago + 停后台 d3 sim + 移除 SvgAnimationLayer/BackgroundRipples + `overlay/GlNav.tsx` 切组（`7469ae4`）
+  - **I2** `overlay/GlEclipse.tsx`：播放球叠日蚀焦点（移植 SVG EclipseLayer 视觉，DOM overlay 不被折射）+ 其他球完全隐去（`add5a2f`）
+- 验证证据: 本会话每步 tsc + eslint 全绿（逐文件）；用户浏览器逐步验收（拖尾/溅起/浮沉/播放浮出/日蚀/切组/折射平滑/无麻点）。⚠ 未跑 `next build`——dev 在 3001 跑着，build/dev 共用 `.next` 会互踩（见 memory）
+- 下一步: **I3 新组件首批（⏸ 暂缓，2026-06-15 用户未定首批组件，先收口）**——待用户定鱼/贴图/新动效等逐个；做法见 `playbook/phase-8/phase-8-i.md` I3（挂 H5 运动框架 + 控制台开关 + 逐个浏览器验收）
 
 ### 上一轮成功验证（2026-05-15 Phase 7 Track B，保留）
 
