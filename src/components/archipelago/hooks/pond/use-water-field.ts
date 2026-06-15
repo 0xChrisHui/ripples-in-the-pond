@@ -39,7 +39,10 @@ function ensureInit(): void {
       y: d.y,
       size: d.size ?? 180,
       spawnTime: performance.now(),
-      duration: d.duration ?? 3200,
+      // 总线（BackgroundRipples / drops / Archipelago…）的 duration 单位是「秒」，
+      // 而本模块内部按毫秒算 t（performance.now()），必须 ×1000，否则源在十几毫秒内就过期，
+      // driverLoop 每 ~5 帧采样几乎永远落空 → scale 恒为 0 → 水波形同未开。
+      duration: (d.duration ?? 3.2) * 1000,
     });
     if (sources.length > MAX_SOURCES) sources = sources.slice(-MAX_SOURCES);
   });
@@ -75,7 +78,8 @@ export function sampleWaterField(px: number, py: number): number {
   return total > 1 ? 1 : total;
 }
 
-/** 给外部（如测试 / 主会话 Wave 2）手动注入扰动源用 */
+/** 给外部（如测试 / 主会话 Wave 2）手动注入扰动源用。
+ *  注意：duration 这里是「毫秒」（模块内部单位），与 'bg-ripple:wave' 总线的「秒」不同。 */
 export function spawnWaterSource(x: number, y: number, size = 180, duration = 3200): void {
   if (!inited) ensureInit();
   sources.push({ x, y, size, spawnTime: performance.now(), duration });

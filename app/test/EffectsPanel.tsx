@@ -48,7 +48,14 @@ export default function EffectsPanel({ effects, onChange }: Props) {
   }, []);
 
   const applyPreset = (kind: 'base' | 'pond' | 'stress') => {
-    if (kind === 'base') return onChange({ ...DESKTOP_EFFECTS });
+    if (kind === 'base') {
+      // 全关基准：所有布尔 effect 关掉，给单项调试一个干净起点（waterRippleScale 保留默认值）
+      const off = { ...DESKTOP_EFFECTS };
+      (Object.keys(off) as Array<keyof EffectsConfig>).forEach((k) => {
+        if (typeof off[k] === 'boolean') off[k] = false as never;
+      });
+      return onChange(off);
+    }
     if (kind === 'stress') {
       const all = { ...effects };
       // waterRippleScale 是数值 flag，全开压测时给最大强度，其余布尔置 true
@@ -79,7 +86,7 @@ export default function EffectsPanel({ effects, onChange }: Props) {
       {open && (
         <div className="absolute bottom-full right-0 mb-2 max-h-[70vh] w-72 overflow-y-auto rounded border border-white/10 bg-black/85 p-3 backdrop-blur-sm">
           <div className="mb-2 flex gap-1">
-            {([['base', '现状基准'], ['pond', '水塘推荐'], ['stress', '全开压测']] as const).map(
+            {([['base', '全关'], ['pond', '水塘推荐'], ['stress', '全开压测']] as const).map(
               ([k, label]) => (
                 <button
                   key={k}
@@ -110,9 +117,20 @@ export default function EffectsPanel({ effects, onChange }: Props) {
             />
           </label>
 
+          {/* P8-A — 水波折射开关入口（与下方强度 slider 配对，免去到"环境"组里翻找） */}
+          <label className="mb-1 flex items-center gap-2 py-1 text-[11px] text-white/70 hover:text-white">
+            <input
+              type="checkbox"
+              checked={effects.waterRipple}
+              onChange={(e) => onChange({ ...effects, waterRipple: e.target.checked })}
+              className="h-3 w-3 cursor-pointer"
+            />
+            <span>水波折射（displacement）</span>
+          </label>
+
           {/* P8-A — 水波强度 slider（仅 waterRipple 开时生效；数值 flag 不进复选框） */}
           <label className="mb-2 flex items-center gap-2 py-1 text-[10px] text-white/60">
-            <span className="w-16 shrink-0 uppercase tracking-[0.1em] text-white/40">水波 {effects.waterRippleScale}</span>
+            <span className="w-16 shrink-0 pl-4 uppercase tracking-[0.1em] text-white/40">└ 强度 {effects.waterRippleScale}</span>
             <input
               type="range"
               min={0}
