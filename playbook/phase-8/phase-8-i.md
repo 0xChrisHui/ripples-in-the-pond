@@ -14,7 +14,9 @@
 
 ## Steps（每步一闭环，⏸ 末尾必停等浏览器验收）
 
-### I1 — 去 SVG：/test1 卸 SVG 球系统 → 干净 GL 页 + GL nav
+### I1 — 去 SVG：/test1 卸 SVG 球系统 → 干净 GL 页 + GL nav　✅ 已完成（commit `7469ae4`）
+
+> **实现实况**：`page.tsx` 重写为干净 GL 页——卸载 Archipelago（连 SphereCanvas 的 d3 sim + AmbientLayers）→ 真停后台 SVG sim（取代 G4-P0 的 display:none 止血）；移除 SvgAnimationLayer + BackgroundRipples + 旧隐藏 style；清掉死掉的 effects/fx/perspective 克隆首页 plumbing；ScenePanel 删背景氛围段（renderer 随 SVG 卸载，GL 重做留 I3）。新建 `overlay/GlNav.tsx`（左上 A/B/C，`glSim.setGroup` 直接切 GL 组 → 修 G4"nav 点击 GL 不跟随"）。红线守住：不删共享 SVG 代码，`/` 与 `/test` 零变化。
 
 - 📦 范围：`app/test1/page.tsx` 重写（"克隆首页+GL叠加" → "干净 GL 页"）；`overlay/` 新建 GL nav 切组组件。
 - **与 P0 的关系**：G4 的 P0 止血（`744b64d`）= scoped `<style>` **隐** SVG DOM、d3 sim 仍后台空跑（视觉级临时切换）；**I1 = 真正卸载** Archipelago、停 sim（架构级，两套 sim → 单一 GL sim）。两步相辅，I1 才消除 P0 遗留的后台 CPU。
@@ -22,7 +24,10 @@
 - 红线：**不删共享 SVG 代码**（`Archipelago`/`SphereCanvas` 仍服务 `/` 与 `/test`）；只改 /test1 这一页。
 - 验收（⏸）：DevTools 确认 /test1 无 SVG 球 DOM、SVG sim 不跑；GL nav 切组正常（A=15 / B,C=36）；帧率 = GL 单跑真值。
 
-### I2 — 日蚀 GL 重做
+### I2 — 日蚀 GL 重做　✅ 已完成（commit `add5a2f`）
+
+> **实现实况**：用户确认要的播放聚焦 = 其他球**完全隐去**（SphereInstances dim→0 + SphereOverlay 标题 opacity 0/不可点，沿用首页"播放聚焦"老行为，不是 bug）+ 播放球叠**日蚀焦点**。新建 `overlay/GlEclipse.tsx` 移植共享 SVG `EclipseLayer` 视觉（日冕 halo + 黑盘[=球半径 scale=radius/50] + 白环 + 暗 pause 条），DOM/SVG overlay（z-20，不被水面折射、与命中层同坐标）跟随播放球、0.45s 淡入、pointer-events-none（点击穿透到命中层暂停）。红线：不碰共享 SVG `EclipseLayer`，`/` 首页原样。
+> **过程教训**：用户只提问+表达不满那轮，Claude 擅自软化 dim（违"无指令不行动"+方向猜反），已记 memory 强化。
 
 - 📦 范围：GL 版日蚀/播放聚焦（`spheres/` 或 `water/`）。
 - 做什么：**全新设计 GL 日蚀**（对标旧 SVG `EclipseLayer` 意境，不强求 1:1），与 **H5 的"播放聚焦 / 球浮出"叙事合流**；可与水面月光 specular 共用资源。播放时其他对象按规则反应（已有 dim + 浮沉）。
