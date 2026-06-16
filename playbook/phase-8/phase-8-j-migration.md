@@ -31,7 +31,12 @@
 - 做什么：① 检测 WebGL 不可用 → 渲染**兜底**（静态水塘图 / 极简 CSS 夜塘，不白屏）；② `GLErrorBoundary` 的 fallback 从 `null` 改成兜底；③ 接 WebGL context lost（GPU 重置）→ 尝试恢复，恢复不了退兜底。
 - 验收（⏸）：禁用 WebGL（浏览器 flag / 模拟）打开 → 看到兜底而非空白；强制丢 context → 能恢复或退兜底。
 
-### J2 — 手机能用 + 改窗口/转屏不错位 ⏸
+### J2 — 手机能用 + 改窗口/转屏不错位　✅ 代码完成（resize 已验 `723419a` / 触控 `911b702` 待真机验）
+
+> **实现实况**：
+> - **① resize/转屏对齐**（`723419a`，**桌面已验**）：`SphereInstances` 相机改每帧跟随 `sizeRef`（变了才重配像素相机，不再 useEffect 冻结）；`use-gl-sim` 加 `resize`/`orientationchange` 监听 → 更新 `sizeRef` + `resizeGlSim`（等比缩放节点位置 **+ cluster 锚点**，否则 cluster 力把球拉回旧 px）+ 更新中心力/边界 clamp；`setupGlSimulation` 返回 anchors。撞 220 行 → `BgWave`/`pushGlSpheresByWaves` 拆到 `gl-sim-waves.ts`。
+> - **② 触控**（`911b702`，**待真机验**——用户设备是触控板非触屏，挂 push 后手机验）：`useWaterLevelControl` 加双指捏合控水位（拉开升/捏拢降，仅双指 preventDefault 拦缩放）；触控拖/点本就走 `SphereOverlay` 的 pointer 事件 + 命中 div `touchAction:none`。
+> - **移动响应式默认**：当前 GL 默认已轻（基调+球、水面默认关），按屏档调默认值挂 **J3/真机压测** 一起定。
 
 > **审计实况**：GL 尺寸只在「建 sim」那刻冻结、之后不更新——`use-gl-sim.ts:106-107` 写 `sizeRef={w,h}`，该 effect deps `[active,tracks,groupId]`（:115），window 尺寸**不在依赖** → 纯 resize/转屏不重建；相机像素对齐 `SphereInstances.tsx:163-167` 也只在 nodes 变时跑。**全树无 resize 监听 → 拉窗口/转屏后 GL 球与 DOM 命中层错位（确认 bug，不只手机）**。无触控 pinch（水位只 wheel，`water-level.ts` `useWaterLevelControl` 仅监听 wheel）。SVG 侧 `use-responsive-effects.ts` 按屏宽给桌面/手机不同默认 effect 集。
 
