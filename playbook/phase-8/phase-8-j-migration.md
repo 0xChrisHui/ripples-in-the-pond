@@ -21,9 +21,11 @@
 
 ## 本期要做（J1–J4）
 
-### J1 — WebGL 兜底 + 画面中途崩了自愈 ⏸
+### J1 — WebGL 兜底 + 画面中途崩了自愈　✅ 已完成（commit `4abc882` + 修复 `967b66a`）
 
-> **审计实况（主会话核 PondGL）**：`PondGL.tsx` 的 `GLErrorBoundary` 在 WebGL 创建失败 / 渲染抛错时 `getDerivedStateFromError` → **渲染 null**（`componentDidCatch` 只 console.error）= 「挂了 = 空」。无 WebGL context lost / restore 处理。/test1 现在还有 nav 等 DOM 垫着不全黑，但若 `/` 全靠 GL，没 WebGL 的设备 = 水塘区一片空。
+> **审计实况（主会话核 PondGL）**：`PondGL.tsx` 的 `GLErrorBoundary` 原在 WebGL 失败 / 渲染抛错时渲染 **null**（= 空），无 context lost / restore 处理。
+> **实现实况**：① `isWebGLAvailable()`（挪进 `gl-flags`、无 three 依赖 → page 可廉价调用门控 overlay）检测，**真没 WebGL → 不挂 Canvas、渲 `GlFallback` 夜塘**（纯 CSS 径向渐晕，色值对齐 base-tone deep/black）；② `GLErrorBoundary` fallback `null` → `GlFallback`；③ `onCreated` 挂 `webglcontextlost`(preventDefault + 盖兜底)/`restored`(撤兜底)。page 用 `glOk = isWebGLAvailable() && !forceFallback` 门控 GL 球 DOM 叠层（兜底时隐，免浮空标题）。新增 `forceFallback` flag + ScenePanel「强制兜底」开关（免手动禁 WebGL 验收）。
+> **验收踩坑（已修 `967b66a`）**：切「GL 球」/「强制兜底」会**重挂整个 Canvas** → 每次漏一个 WebGL context（累积被浏览器丢弃 → 球闪一下就没、再切不回）。修：forceFallback 改盖 overlay 不卸 Canvas；去掉 glSpheres 的 Canvas key 重挂（AA 固定开 + camera manual 固定）→ **Canvas 全程只挂一次**，切球只挂/卸 SphereInstances mesh。
 
 - 📦 范围：`PondGL.tsx` 错误边界 + 一个兜底视觉 + R3F `onContextLost`/restore。
 - 做什么：① 检测 WebGL 不可用 → 渲染**兜底**（静态水塘图 / 极简 CSS 夜塘，不白屏）；② `GLErrorBoundary` 的 fallback 从 `null` 改成兜底；③ 接 WebGL context lost（GPU 重置）→ 尝试恢复，恢复不了退兜底。
