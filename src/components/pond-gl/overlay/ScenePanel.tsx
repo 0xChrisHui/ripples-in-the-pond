@@ -86,8 +86,10 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           </div>
 
           {/* H1 spike：RTT 离屏渲染验证（隔离实验，开时全屏盖测试图案 + 假 sin 扭曲） */}
-          <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">实验 (H1)</div>
+          <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">实验</div>
           <Row label="RTT 验证" checked={glFlags.rtt} onChange={(v) => onGl({ rtt: v })} />
+          {/* J1：强制走 WebGL 兜底夜塘（免手动禁 WebGL，验收兜底用） */}
+          <Row label="强制兜底" checked={glFlags.forceFallback} onChange={(v) => onGl({ forceFallback: v })} />
         </>
       )}
     </div>

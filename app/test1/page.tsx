@@ -7,7 +7,7 @@ import LoginButton from '@/src/components/auth/LoginButton';
 import TestJam from '@/src/components/jam/TestJam';
 import DraftSavedToast from '@/src/components/jam/DraftSavedToast';
 import PerfHUD from '@/src/components/PerfHUD';
-import { parseGLFlags, type GLFlags } from '@/src/components/pond-gl/gl-flags';
+import { parseGLFlags, isWebGLAvailable, type GLFlags } from '@/src/components/pond-gl/gl-flags';
 import { useGlSim } from '@/src/components/pond-gl/spheres/use-gl-sim';
 import { useWaterLevelControl } from '@/src/components/pond-gl/water/water-level';
 import SphereOverlay from '@/src/components/pond-gl/overlay/SphereOverlay';
@@ -38,6 +38,9 @@ function Test1PageInner() {
 
   // 球 / 水面 / 扭曲水面 任一开 → glSim active（取数 / 建 sim / 订阅涟漪事件）
   const glSim = useGlSim(glFlags.glSpheres || glFlags.water || glFlags.waterFx);
+  // J1：WebGL 不可用 / 强制兜底 → GL 走兜底夜塘，对应隐掉 GL 球的 DOM 叠层（命中/日蚀/切组），
+  // 免得兜底上浮着一堆没有球的标题（缓存检测，forceFallback 切换时重算）
+  const glOk = isWebGLAvailable() && !glFlags.forceFallback;
   // 水面或扭曲水面开 + wheelMode=waterLevel → 滚轮驱动水位升降（带缓动）；否则不挂
   useWaterLevelControl((glFlags.water || glFlags.waterFx) && glFlags.wheelMode === 'waterLevel');
 
@@ -58,8 +61,8 @@ function Test1PageInner() {
         </div>
       </div>
 
-      {/* I1：GL 切组 nav（左上 A/B/C，点击直接切 GL 组） */}
-      {glSim.ready && <GlNav glSim={glSim} />}
+      {/* I1：GL 切组 nav（左上 A/B/C，点击直接切 GL 组）；J1：兜底时隐（无可见球可切） */}
+      {glSim.ready && glOk && <GlNav glSim={glSim} />}
 
       {/* 左侧 Jam UI（在 nav 下方） */}
       <div className="pointer-events-none fixed left-6 z-30" style={{ top: '14rem' }}>
@@ -68,13 +71,13 @@ function Test1PageInner() {
         </div>
       </div>
 
-      {/* GL 球 DOM 命中层（z-10，接点击拖拽，在 nav/HUD 之下） */}
-      {glFlags.glSpheres && glSim.ready && (
+      {/* GL 球 DOM 命中层（z-10，接点击拖拽，在 nav/HUD 之下）；J1：兜底时隐 */}
+      {glFlags.glSpheres && glSim.ready && glOk && (
         <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} />
       )}
 
-      {/* I2：GL 日蚀层（z-20，播放球叠日蚀焦点；其他球已隐去） */}
-      {glFlags.glSpheres && glSim.ready && <GlEclipse glSim={glSim} />}
+      {/* I2：GL 日蚀层（z-20，播放球叠日蚀焦点；其他球已隐去）；J1：兜底时隐 */}
+      {glFlags.glSpheres && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
 
       {/* 左缘水位指示（水面或扭曲水面开时显示，滚轮淡入） */}
       {(glFlags.water || glFlags.waterFx) && <WaterLevelIndicator />}

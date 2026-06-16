@@ -34,6 +34,8 @@ export interface GLFlags {
   waterDbg: boolean;
   /** H5 — 球自驱浮沉（常态自漂 + 播放球浮出成焦点）；关 = 球深度静止（回 H4）。默认关 */
   sphereMotion: boolean;
+  /** J1 — 强制走 WebGL 兜底夜塘（测试用，免去手动禁 WebGL）；默认关 */
+  forceFallback: boolean;
 }
 
 /** /test1 默认（方向 A 后）：基调 + GL 球默认开（/test1 = GL 沙盒，直接看 GL）；
@@ -49,6 +51,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   waterFx: false,
   waterDbg: false,
   sphereMotion: false,
+  forceFallback: false,
 };
 
 /** 从 URL query 解析 G 线开关（仅覆盖出现的参数，其余取默认） */
@@ -93,5 +96,26 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   if (sphereMotion === '1' || sphereMotion === 'true') result.sphereMotion = true;
   else if (sphereMotion === '0' || sphereMotion === 'false') result.sphereMotion = false;
 
+  const forceFallback = searchParams.get('forceFallback');
+  if (forceFallback === '1' || forceFallback === 'true') result.forceFallback = true;
+  else if (forceFallback === '0' || forceFallback === 'false') result.forceFallback = false;
+
   return result;
+}
+
+/**
+ * J1 — WebGL 可用性检测（建测试 canvas 取 webgl2/webgl context，模块级缓存一次）。
+ * 放在 gl-flags（无 three 依赖）→ /test1 page 可廉价调用、门控 GL overlay，不拉 three chunk。
+ */
+let webglCached: boolean | null = null;
+export function isWebGLAvailable(): boolean {
+  if (webglCached !== null) return webglCached;
+  if (typeof document === 'undefined') return true; // SSR 假定可用（client 再判）
+  try {
+    const c = document.createElement('canvas');
+    webglCached = !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+  } catch {
+    webglCached = false;
+  }
+  return webglCached;
 }
