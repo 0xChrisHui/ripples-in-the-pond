@@ -72,32 +72,34 @@ export interface PondGLProps {
 export default function PondGL({ flags, glSim }: PondGLProps) {
   // 基调 / 球 / 水面 / 背景图 / RTT / 扭曲水面 任一开启都需要 Canvas；都关 = 卸载（回纯 SVG）
   const active = flags.glBase || flags.glSpheres || flags.water || flags.bgImage || flags.rtt || flags.waterFx;
-  // 球开启时才开 AA（基调/水面是全屏无硬边）；useMemo 稳定 gl 对象，避免 Canvas 频繁重建
-  const gl = useMemo(() => ({ antialias: flags.glSpheres, alpha: false }), [flags.glSpheres]);
+  // J1：gl 对象恒定（AA 固定开）——不再随 glSpheres 变。原本为换 AA 用 key 重挂 Canvas，
+  // 但重挂会新建/泄漏 WebGL context（多次切球 → context 累积被浏览器丢弃 → 球闪一下就没）。
+  const gl = useMemo(() => ({ antialias: true, alpha: false }), []);
   const [lost, setLost] = useState(false); // J1：context lost 期间盖兜底，restored 后撤
   if (!active) return null;
-  // J1：WebGL 不可用 / 强制兜底（测试）→ 直接铺夜塘兜底，不挂 Canvas、不白屏
-  if (!isWebGLAvailable() || flags.forceFallback) {
+  // J1：真没 WebGL → 不挂 Canvas，直接铺夜塘兜底（不白屏）
+  if (!isWebGLAvailable()) {
     return (
       <div className="pointer-events-none fixed inset-0 z-0">
         <GlFallback artDir={flags.artDir} />
       </div>
     );
   }
+  // context lost（GPU 重置）或 forceFallback（测试）→ 盖兜底在 Canvas 之上（**不卸载 Canvas**，
+  // 避免重挂丢球：早先 forceFallback 走 early-return 卸 Canvas，关掉后重挂 GL 球不回来）
+  const showFallback = lost || flags.forceFallback;
   return (
     <div className="pointer-events-none fixed inset-0 z-0">
       <GLErrorBoundary fallback={<GlFallback artDir={flags.artDir} />}>
         <Canvas
-          // 切 glSpheres 时重挂 Canvas，让 gl(antialias) 干净生效（R3F 该 prop 非热更新）
-          key={flags.glSpheres ? 'gl-spheres' : 'gl-base'}
           orthographic
           // 球 / 水面 / RTT / 扭曲 需逐帧动画 → always；仅基调 / 背景图时 demand（只渲一次省帧）
           frameloop={flags.glSpheres || flags.water || flags.rtt || flags.waterFx ? 'always' : 'demand'}
           dpr={[1, 2]} // DPR cap 2（性能预算）
           gl={gl}
-          // 球开启时 manual:true —— 让 SphereInstances 自己把正交相机配成屏幕像素 1:1，
-          // 阻止 R3F 的 resize 处理器覆盖我的 frustum；基调/水面走裁剪空间不依赖相机
-          camera={{ manual: flags.glSpheres, position: [0, 0, 10], near: -1000, far: 1000 }}
+          // manual:true 恒定——base/水面走裁剪空间不用相机；球开时 SphereInstances 自己配像素相机。
+          // 不再随 glSpheres 改 key 重挂 Canvas（重挂泄漏 context），切球只挂/卸 SphereInstances 这个 mesh
+          camera={{ manual: true, position: [0, 0, 10], near: -1000, far: 1000 }}
           // J1：GPU 重置丢 context → 盖兜底 + preventDefault 允许浏览器恢复；restored → 撤兜底
           onCreated={({ gl: renderer }) => {
             const c = renderer.domElement;
@@ -121,8 +123,8 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} />}
         </Canvas>
       </GLErrorBoundary>
-      {/* J1：context lost 期间盖兜底夜塘，three 恢复后自动撤 */}
-      {lost && <GlFallback artDir={flags.artDir} />}
+      {/* J1：context lost / forceFallback → 盖兜底夜塘（Canvas 仍在底下跑，撤掉即恢复） */}
+      {showFallback && <GlFallback artDir={flags.artDir} />}
     </div>
   );
 }
