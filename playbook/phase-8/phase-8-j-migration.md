@@ -44,7 +44,11 @@
 - 做什么：① 加 `resize`/`orientationchange` 监听 → 重算 sizeRef + 相机 frustum + sim 边界（**这条电脑拉窗口也受益**）；② 移动端响应式默认（参考 `use-responsive-effects` 断点思路，手机精简层 + 默认水位/球数）；③ pinch 手势驱动水位（对标 wheel）；④ 触控 down/move/up 复核（`SphereOverlay` 已用 pointer events，验证拖/点/捏不打架）+ DPR/分辨率移动降级（并入 J3）。
 - 验收（⏸）：拉窗口/转屏 → 球与点击位置始终对齐；手机上能点/拖/捏缩水位、不卡。
 
-### J3 — 卡了自动降配 ⏸
+### J3 — 卡了自动降配　✅ 机制就位（commit `eb59ab3` + 日志 `58dce2e`，真效果验真机）
+
+> **实现实况**：`PondGL` 内 `AutoDpr`（Canvas 里、仅测时长 + setDpr 不渲染）：每 1s 窗口测 FPS，持续 <40 → `setDpr` 降 0.5（到 1 为底）、持续 >55 → 升回（到初始 DPR 为顶），滞回防抖（跌 2 窗 / 回 4 窗）。DPR 是最广杠杆（减半 = 全管线像素减半，含水面 content FBO）。`autoDegrade` flag（默认开）+ ScenePanel「自动降配」开关 + 降/升档 `console.info` 日志（可观测）。
+> **验收实况**：桌面 CPU 6x 节流 → 控制台见 `[AutoDpr] 降 DPR` 日志 = **触发机制确认 fire**。但 **DPR 减的是 GPU 像素、CPU 节流拖的是 CPU**，故 CPU 受限时 FPS 不会因降 DPR 回升（用户实测"无差异"= 预期）；**真效果（降 DPR → FPS 回升）只在 GPU 受限出现 = 弱 GPU/手机**，挂真机压测验。
+> **挂真机压测**：① DPR-1 屏无 headroom 的降配 ② 更深 tier（实在低就降水面扭曲 RES / 关浮沉微波 / 减球数）③ 阈值/档位调参——都需真机 FPS 数据定，桌面瞎调易错。
 
 > **审计实况**：GL 侧**无任何自动降配**，只有只读 FPS 显示——`PerfHUD.tsx` 用 rAF 算滚动 FPS + 最长帧，纯展示、`pointer-events:none`、**从不回写渲染参数**。DPR 写死 `PondGL.tsx:79 dpr={[1,2]}`（R3F 初始 prop、不热更新）；水面高度场 `RES=256` 写死（`WaterDistort`）。SVG 侧 `use-adaptive-effects.ts` 在 FPS 持续低时自动关贵 effect。
 
