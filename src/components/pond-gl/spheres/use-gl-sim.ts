@@ -27,6 +27,9 @@ import type { BgWave } from './gl-sim-waves';
  */
 export interface GlSim {
   ready: boolean;
+  loading: boolean;      // J4：取数中（还没球、也没出错）
+  error: boolean;        // J4：取数失败（显示"加载失败，点击重试"）
+  retry: () => void;     // J4：重新取数
   groupId: GroupId;
   nodes: GlPhysNode[];
   simRef: React.RefObject<Simulation<SimNode, SimLink> | null>;
@@ -47,6 +50,7 @@ export function useGlSim(active: boolean): GlSim {
 
   const [groupId, setGroupId] = useState<GroupId>('A');
   const [tracks, setTracks] = useState<Track[]>([]);
+  const [tracksError, setTracksError] = useState(false);
   const [nodes, setNodes] = useState<GlPhysNode[]>([]);
   const simRef = useRef<Simulation<SimNode, SimLink> | null>(null);
   const wavesRef = useRef<BgWave[]>([]);
@@ -57,16 +61,21 @@ export function useGlSim(active: boolean): GlSim {
   // I1 — GL nav 点击切组（取代旧 Archipelago nav；直接驱动 GL 组、修 G4"nav 点击 GL 不跟随"）
   const setGroup = useCallback((id: GroupId) => setGroupId(id), []);
 
-  // 取数（仅 active；与 Archipelago 各取一次，/api/tracks 有 ISR 缓存，重复成本低）
-  useEffect(() => {
-    if (!active) return;
-    let cancelled = false;
-    fetch('/api/tracks')
-      .then((r) => r.json())
-      .then((d: TracksListResponse) => { if (!cancelled) setTracks(d.tracks); })
-      .catch((e) => console.error('[GLSim] tracks 加载失败:', e));
-    return () => { cancelled = true; };
-  }, [active]);
+  // 取数（仅 active；与 Archipelago 各取一次，/api/tracks 有 ISR 缓存，重复成本低）。
+  // J4：加 res.ok 判定 + error 态 + retry（失败不再静默 console.error、无 UI）。
+  const loadTracks = useCallback(async () => {
+    setTracksError(false);
+    try {
+      const r = await fetch('/api/tracks');
+      if (!r.ok) throw new Error(`tracks HTTP ${r.status}`);
+      const d = (await r.json()) as TracksListResponse;
+      setTracks(d.tracks);
+    } catch (e) {
+      console.error('[GLSim] tracks 加载失败:', e);
+      setTracksError(true);
+    }
+  }, []);
+  useEffect(() => { if (active) void loadTracks(); }, [active, loadTracks]);
 
   // 键盘 ←→ 切组（复刻 Archipelago.tsx:135-149 的并行逻辑，初始同为 A → 同步）
   useEffect(() => {
@@ -151,8 +160,28 @@ export function useGlSim(active: boolean): GlSim {
     };
   }, [active, nodes]);
 
+  // J4 — 音频预热：当前组曲目各拉前 300KB（6 worker 并发），点播放更跟手（移植 Archipelago）。
+  useEffect(() => {
+    if (!active || tracks.length === 0) return;
+    const padded = padTracksToTarget(getGroupTracks(groupId, tracks), getGroupTargetCount(groupId));
+    let cancelled = false;
+    const queue = padded.filter((t) => t.audio_url);
+    const workers = Array.from({ length: 6 }, async () => {
+      while (queue.length > 0 && !cancelled) {
+        const t = queue.shift();
+        if (!t?.audio_url) continue;
+        try { await fetch(t.audio_url, { headers: { Range: 'bytes=0-307199' } }); } catch { /* 预热失败不影响主流程 */ }
+      }
+    });
+    void Promise.all(workers);
+    return () => { cancelled = true; };
+  }, [active, tracks, groupId]);
+
   return {
     ready: nodes.length > 0,
+    loading: nodes.length === 0 && !tracksError,
+    error: tracksError,
+    retry: loadTracks,
     groupId, nodes, simRef, wavesRef, playingIdRef, hoverIdRef, sizeRef, setHover, setGroup, toggle,
   };
 }

@@ -13,6 +13,7 @@ import { useWaterLevelControl } from '@/src/components/pond-gl/water/water-level
 import SphereOverlay from '@/src/components/pond-gl/overlay/SphereOverlay';
 import GlEclipse from '@/src/components/pond-gl/overlay/GlEclipse';
 import GlNav from '@/src/components/pond-gl/overlay/GlNav';
+import GlLoading from '@/src/components/pond-gl/overlay/GlLoading';
 import WaterLevelIndicator from '@/src/components/pond-gl/overlay/WaterLevelIndicator';
 import TunePanel from '@/src/components/pond-gl/overlay/TunePanel';
 import ScenePanel from '@/src/components/pond-gl/overlay/ScenePanel';
@@ -63,6 +64,11 @@ function Test1PageInner() {
 
       {/* I1：GL 切组 nav（左上 A/B/C，点击直接切 GL 组）；J1：兜底时隐（无可见球可切） */}
       {glSim.ready && glOk && <GlNav glSim={glSim} />}
+
+      {/* J4：GL 球取数中/失败的加载浮层（WebGL 可用时才有意义；兜底夜塘自带视觉，不叠） */}
+      {glFlags.glSpheres && glOk && (glSim.loading || glSim.error) && (
+        <GlLoading error={glSim.error} onRetry={glSim.retry} />
+      )}
 
       {/* 左侧 Jam UI（在 nav 下方） */}
       <div className="pointer-events-none fixed left-6 z-30" style={{ top: '14rem' }}>
