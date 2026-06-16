@@ -90,6 +90,8 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="RTT 验证" checked={glFlags.rtt} onChange={(v) => onGl({ rtt: v })} />
           {/* J1：强制走 WebGL 兜底夜塘（免手动禁 WebGL，验收兜底用） */}
           <Row label="强制兜底" checked={glFlags.forceFallback} onChange={(v) => onGl({ forceFallback: v })} />
+          {/* J3：低 FPS 自动降 DPR 保流畅（默认开，关了对比用） */}
+          <Row label="自动降配" checked={glFlags.autoDegrade} onChange={(v) => onGl({ autoDegrade: v })} />
         </>
       )}
     </div>

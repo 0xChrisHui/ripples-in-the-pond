@@ -36,6 +36,8 @@ export interface GLFlags {
   sphereMotion: boolean;
   /** J1 — 强制走 WebGL 兜底夜塘（测试用，免去手动禁 WebGL）；默认关 */
   forceFallback: boolean;
+  /** J3 — 低 FPS 自动降 DPR 保流畅；默认开（保护性，测试可关对比） */
+  autoDegrade: boolean;
 }
 
 /** /test1 默认（方向 A 后）：基调 + GL 球默认开（/test1 = GL 沙盒，直接看 GL）；
@@ -52,6 +54,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   waterDbg: false,
   sphereMotion: false,
   forceFallback: false,
+  autoDegrade: true,
 };
 
 /** 从 URL query 解析 G 线开关（仅覆盖出现的参数，其余取默认） */
@@ -99,6 +102,10 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const forceFallback = searchParams.get('forceFallback');
   if (forceFallback === '1' || forceFallback === 'true') result.forceFallback = true;
   else if (forceFallback === '0' || forceFallback === 'false') result.forceFallback = false;
+
+  const autoDegrade = searchParams.get('autoDegrade');
+  if (autoDegrade === '0' || autoDegrade === 'false') result.autoDegrade = false;
+  else if (autoDegrade === '1' || autoDegrade === 'true') result.autoDegrade = true;
 
   return result;
 }

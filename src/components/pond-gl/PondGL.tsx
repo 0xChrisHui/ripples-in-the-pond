@@ -1,7 +1,7 @@
 'use client';
 
-import { Canvas } from '@react-three/fiber';
-import { Component, Suspense, useMemo, useState, type ReactNode } from 'react';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import { Component, Suspense, useMemo, useRef, useState, type ReactNode } from 'react';
 import { isWebGLAvailable, type GLFlags } from './gl-flags';
 import { baseToneVertexShader, baseToneFragmentShader } from './base-tone-shader';
 import SphereInstances from './spheres/SphereInstances';
@@ -64,6 +64,32 @@ function GlFallback({ artDir }: { artDir: GLFlags['artDir'] }) {
   return <div className="absolute inset-0" style={{ background: bg }} aria-hidden="true" />;
 }
 
+// J3 — 低 FPS 自动降 DPR（最广的降配杠杆：DPR 减半 = 全管线像素减半，含水面 FBO）。
+// 每 1s 窗口测 FPS；持续 <40 → 降 0.5（到 1 为底），持续 >55 → 升回（到初始 DPR 为顶）。
+// 滞回：跌得快(2 窗)、回得慢(4 窗)，防来回抖。DPR-1 屏无 headroom → 不动（水面 RES 降配挂后续）。
+function AutoDpr() {
+  const gl = useThree((s) => s.gl);
+  const setDpr = useThree((s) => s.setDpr);
+  const s = useRef({ frames: 0, winStart: 0, last: 0, low: 0, high: 0, dpr: 0, maxDpr: 0 });
+  useFrame(() => {
+    const now = performance.now();
+    const st = s.current;
+    if (st.maxDpr === 0) { st.maxDpr = gl.getPixelRatio(); st.dpr = st.maxDpr; st.winStart = now; st.last = now; }
+    const dt = now - st.last;
+    st.last = now;
+    if (dt > 100) { st.winStart = now; st.frames = 0; return; } // tab 恢复跳过（rAF 暂停过）
+    st.frames++;
+    if (now - st.winStart < 1000) return;
+    const fps = (st.frames * 1000) / (now - st.winStart);
+    st.frames = 0;
+    st.winStart = now;
+    if (fps < 40) { st.low++; st.high = 0; } else if (fps > 55) { st.high++; st.low = 0; } else { st.low = 0; st.high = 0; }
+    if (st.low >= 2 && st.dpr > 1) { st.dpr = Math.max(1, st.dpr - 0.5); setDpr(st.dpr); st.low = 0; }
+    else if (st.high >= 4 && st.dpr < st.maxDpr) { st.dpr = Math.min(st.maxDpr, st.dpr + 0.5); setDpr(st.dpr); st.high = 0; }
+  });
+  return null;
+}
+
 export interface PondGLProps {
   flags: GLFlags;
   glSim?: GlSim;
@@ -121,6 +147,8 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           {flags.rtt && <RttSpike />}
           {/* H2/H3：扭曲水面——渲真场景进 FBO 全屏折射扭曲 + 水位遮罩（接管渲染循环，返回 null） */}
           {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} />}
+          {/* J3：低 FPS 自动降 DPR 保流畅（仅测时长 + setDpr，不渲染） */}
+          {flags.autoDegrade && <AutoDpr />}
         </Canvas>
       </GLErrorBoundary>
       {/* J1：context lost / forceFallback → 盖兜底夜塘（Canvas 仍在底下跑，撤掉即恢复） */}
