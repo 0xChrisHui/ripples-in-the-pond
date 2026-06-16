@@ -14,6 +14,9 @@ import { useEffect } from 'react';
  * 不触发 React 重渲染（同 SphereOverlay 的每帧 DOM 写法）。
  */
 
+// J2 — 双指捏合的像素差 → 等效滚轮 deltaY（喂 nudgeWaterLevel）。拉开≈升、捏拢≈降水位。
+const PINCH_TO_WHEEL = 2;
+
 let target = 0;
 let current = 0;
 let lastWheelAt = -9999; // 指示器淡入用：最近一次滚轮的时间戳（performance.now）
@@ -56,12 +59,29 @@ export function getSubmerge(z: number): number {
 export function useWaterLevelControl(active: boolean): void {
   useEffect(() => {
     if (!active) return;
-    // preventDefault 截断页面滚动；passive:false 才允许 preventDefault
+    // 桌面滚轮：preventDefault 截断页面滚动；passive:false 才允许 preventDefault
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       nudgeWaterLevel(e.deltaY);
     };
+    // J2 触屏双指捏合控水位：仅双指时 preventDefault（拦浏览器缩放）；单指不拦 →
+    // 留给球的拖/点（SphereOverlay 的 pointer 事件，命中 div 已 touchAction:none）。
+    let lastDist = 0;
+    const dist = (t: TouchList) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+    const onTouchStart = (e: TouchEvent) => { if (e.touches.length === 2) lastDist = dist(e.touches); };
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length !== 2) return;
+      e.preventDefault();
+      const d = dist(e.touches);
+      if (lastDist) nudgeWaterLevel(-(d - lastDist) * PINCH_TO_WHEEL); // 拉开(d↑)→负 deltaY→升水位
+      lastDist = d;
+    };
+    const onTouchEnd = (e: TouchEvent) => { if (e.touches.length < 2) lastDist = 0; };
     window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: false });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('touchcancel', onTouchEnd);
     // 独立 rAF 只负责缓动；读方（球 shader / 指示器）各自 rAF 直读 current
     let raf = 0;
     const loop = () => {
@@ -71,6 +91,10 @@ export function useWaterLevelControl(active: boolean): void {
     raf = requestAnimationFrame(loop);
     return () => {
       window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
       cancelAnimationFrame(raf);
     };
   }, [active]);
