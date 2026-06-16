@@ -84,8 +84,14 @@ function AutoDpr() {
     st.frames = 0;
     st.winStart = now;
     if (fps < 40) { st.low++; st.high = 0; } else if (fps > 55) { st.high++; st.low = 0; } else { st.low = 0; st.high = 0; }
-    if (st.low >= 2 && st.dpr > 1) { st.dpr = Math.max(1, st.dpr - 0.5); setDpr(st.dpr); st.low = 0; }
-    else if (st.high >= 4 && st.dpr < st.maxDpr) { st.dpr = Math.min(st.maxDpr, st.dpr + 0.5); setDpr(st.dpr); st.high = 0; }
+    // 可观测：降/升档时打日志（验收用——确认是否 fire；DPR 减的是 GPU 像素，CPU 受限时 FPS 未必回升）
+    if (st.low >= 2 && st.dpr > 1) {
+      st.dpr = Math.max(1, st.dpr - 0.5); setDpr(st.dpr); st.low = 0;
+      console.info(`[AutoDpr] 低 FPS(${Math.round(fps)}) → 降 DPR 到 ${st.dpr}`);
+    } else if (st.high >= 4 && st.dpr < st.maxDpr) {
+      st.dpr = Math.min(st.maxDpr, st.dpr + 0.5); setDpr(st.dpr); st.high = 0;
+      console.info(`[AutoDpr] FPS 回升(${Math.round(fps)}) → 升 DPR 到 ${st.dpr}`);
+    }
   });
   return null;
 }
