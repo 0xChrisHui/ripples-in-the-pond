@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import {
   DoubleSide,
@@ -11,7 +11,8 @@ import {
   ShaderMaterial,
 } from 'three';
 import { sphereVertexShader, sphereFragmentShader, HALO_R } from './sphere-shader';
-import { pushGlSpheresByWaves, type GlPhysNode, type BgWave } from './gl-sim-setup';
+import type { GlPhysNode } from './gl-sim-setup';
+import { pushGlSpheresByWaves, type BgWave } from './gl-sim-waves';
 import { getTuning, type SphereTuning } from './sphere-tuning';
 import { getSubmerge, getWaterLevel } from '../water/water-level';
 import { stepSphereMotion } from './sphere-motion';
@@ -143,6 +144,7 @@ export default function SphereInstances(
   const meshRef = useRef<InstancedMesh>(null);
   const matRef = useRef<ShaderMaterial>(null); // 写 uniform 走真身（见 applySphereUniforms）
   const camera = useThree((s) => s.camera);
+  const lastSize = useRef({ w: 0, h: 0 }); // J2：相机跟随 sizeRef 的上次值（变了才重配像素相机）
 
   // per-instance 缓冲（随 nodes 重建：切组时 count 变 → 整组重建）
   const buf = useMemo<InstanceBuf>(() => ({
@@ -160,16 +162,16 @@ export default function SphereInstances(
     uSaturation: { value: 1 },
   }), []);
 
-  // 正交相机像素对齐（sizeRef 在 sim 建立时冻结 = sim 坐标空间）
-  useEffect(() => {
-    const { w, h } = sizeRef.current;
-    if (w && h) configurePixelCamera(camera as OrthographicCamera, w, h);
-  }, [camera, sizeRef, nodes]);
-
   useFrame(() => {
     const mesh = meshRef.current;
     const mat = matRef.current;
     if (!mesh || !mat || count === 0) return;
+    // J2：相机跟随 sizeRef（resize/转屏后 use-gl-sim 更新 sizeRef → 这里重配像素相机 → 与 DOM 命中层对齐）
+    const sz = sizeRef.current;
+    if (sz.w && sz.h && (sz.w !== lastSize.current.w || sz.h !== lastSize.current.h)) {
+      configurePixelCamera(camera as OrthographicCamera, sz.w, sz.h);
+      lastSize.current = { w: sz.w, h: sz.h };
+    }
     const tuning = getTuning();
     applyTuningUniforms(mat, tuning);
     writeFrame(mesh, nodes, buf, glSim.wavesRef, glSim.playingIdRef.current, glSim.hoverIdRef.current, tuning, waterOn, motionOn);

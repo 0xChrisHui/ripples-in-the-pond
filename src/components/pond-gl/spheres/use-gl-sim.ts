@@ -13,7 +13,8 @@ import {
   type SimLink,
 } from '@/src/components/archipelago/sphere-config';
 import type { Track, TracksListResponse } from '@/src/types/tracks';
-import { buildGlNodes, setupGlSimulation, type GlPhysNode, type BgWave } from './gl-sim-setup';
+import { buildGlNodes, setupGlSimulation, resizeGlSim, type GlPhysNode } from './gl-sim-setup';
+import type { BgWave } from './gl-sim-waves';
 
 /**
  * G4 — GL 球 sim 编排 hook（无 three 依赖，可在 page 层调用）。
@@ -51,6 +52,7 @@ export function useGlSim(active: boolean): GlSim {
   const wavesRef = useRef<BgWave[]>([]);
   const hoverIdRef = useRef<string | null>(null);
   const sizeRef = useRef({ w: 0, h: 0 });
+  const anchorsRef = useRef<Map<string, { x: number; y: number; strength: number }> | null>(null);
   const setHover = useCallback((id: string | null) => { hoverIdRef.current = id; }, []);
   // I1 — GL nav 点击切组（取代旧 Archipelago nav；直接驱动 GL 组、修 G4"nav 点击 GL 不跟随"）
   const setGroup = useCallback((id: GroupId) => setGroupId(id), []);
@@ -108,7 +110,9 @@ export function useGlSim(active: boolean): GlSim {
     const show = padTracksToTarget(getGroupTracks(groupId, tracks), getGroupTargetCount(groupId));
     const { nodes: built, links, assignment } = buildGlNodes(show, groupId);
     simRef.current?.stop();
-    simRef.current = setupGlSimulation(built, links, assignment, w, h);
+    const { sim, anchors } = setupGlSimulation(built, links, assignment, w, h);
+    simRef.current = sim;
+    anchorsRef.current = anchors;
     wavesRef.current = [];
     queueMicrotask(() => setNodes(built));
     return () => { simRef.current?.stop(); };
@@ -126,6 +130,26 @@ export function useGlSim(active: boolean): GlSim {
     document.addEventListener('visibilitychange', onVis);
     return () => document.removeEventListener('visibilitychange', onVis);
   }, [active]);
+
+  // J2 — 窗口/转屏后把 sim + cluster 锚点等比缩放到新尺寸（配合 SphereInstances 相机跟随 sizeRef）→
+  // GL 球与 DOM 命中层不错位、球随尺寸重适配。sizeRef 始终同步当前窗口（相机/水面/overlay 都读它）。
+  useEffect(() => {
+    if (!active) return;
+    const onResize = () => {
+      const old = sizeRef.current;
+      const w = window.innerWidth, h = window.innerHeight;
+      if ((w === old.w && h === old.h) || !old.w || !old.h) { sizeRef.current = { w, h }; return; }
+      const sim = simRef.current, anchors = anchorsRef.current;
+      if (sim && anchors) resizeGlSim(sim, nodes, anchors, w / old.w, h / old.h, w, h);
+      sizeRef.current = { w, h };
+    };
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('orientationchange', onResize);
+    };
+  }, [active, nodes]);
 
   return {
     ready: nodes.length > 0,

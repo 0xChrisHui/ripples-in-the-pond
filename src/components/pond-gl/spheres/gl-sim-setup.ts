@@ -9,6 +9,7 @@ import {
   forceX,
   forceY,
   type Simulation,
+  type ForceCenter,
 } from 'd3-force';
 import {
   CFG,
@@ -80,14 +81,18 @@ export function buildGlNodes(tracksToShow: Track[], groupId: GroupId): {
   return { nodes, links, assignment };
 }
 
-/** 建 sim（力参数快照自 sphere-sim-setup.ts:34-133，去掉 onTick 的 SVG 写入） */
+/** cluster 锚点（绝对 px）；resize 时随尺寸等比缩放，故单列类型供 resizeGlSim 用 */
+type ClusterAnchor = { x: number; y: number; strength: number };
+
+/** 建 sim（力参数快照自 sphere-sim-setup.ts:34-133，去掉 onTick 的 SVG 写入）。
+ *  返回 anchors（cluster 锚点 Map）供 J2 resizeGlSim 等比缩放——否则 cluster 力把球拉回旧 px。 */
 export function setupGlSimulation(
   nodes: GlPhysNode[],
   links: SimLink[],
   assignment: Map<string, number>,
   width: number,
   height: number,
-): Simulation<SimNode, SimLink> {
+): { sim: Simulation<SimNode, SimLink>; anchors: Map<string, ClusterAnchor> } {
   const cx = width / 2;
   const cy = height / 2;
 
@@ -103,7 +108,7 @@ export function setupGlSimulation(
   });
 
   // anchorMap + 初始落点（jitter ±15，strength 0.18）— 出处 sphere-sim-setup.ts:64-82
-  const anchorMap = new Map<string, { x: number; y: number; strength: number }>();
+  const anchorMap = new Map<string, ClusterAnchor>();
   nodes.forEach((n) => {
     const c = assignment.get(n.id) ?? 0;
     const a = clusterAnchors[c] ?? { x: cx, y: cy };
@@ -144,7 +149,40 @@ export function setupGlSimulation(
     });
   });
 
-  return sim;
+  return { sim, anchors: anchorMap };
+}
+
+/**
+ * J2 — 窗口/转屏后把 sim 适配到新尺寸：等比缩放节点位置 + cluster 锚点（否则 cluster 力把球拉回旧 px），
+ * 更新中心力 + 边界 clamp 到新宽高。配合 SphereInstances 相机跟随 sizeRef → GL 球与 DOM 命中层保持对齐。
+ */
+export function resizeGlSim(
+  sim: Simulation<SimNode, SimLink>,
+  nodes: GlPhysNode[],
+  anchors: Map<string, ClusterAnchor>,
+  sx: number,
+  sy: number,
+  width: number,
+  height: number,
+): void {
+  for (const n of nodes) {
+    if (n.x != null) n.x *= sx;
+    if (n.y != null) n.y *= sy;
+    if (n.fx != null) n.fx *= sx;
+    if (n.fy != null) n.fy *= sy;
+  }
+  anchors.forEach((a) => { a.x *= sx; a.y *= sy; });
+  const center = sim.force('center') as ForceCenter<SimNode> | undefined;
+  if (center) center.x(width / 2).y(height / 2);
+  // 边界 clamp 重注册到新宽高（旧 tick 闭包捕获的是旧 width/height）
+  sim.on('tick', () => {
+    nodes.forEach((n) => {
+      if (n.fx != null || n.fy != null) return;
+      if (n.x != null) n.x = Math.max(PAD, Math.min(width - PAD, n.x));
+      if (n.y != null) n.y = Math.max(PAD, Math.min(height - PAD, n.y));
+    });
+  });
+  sim.alpha(0.12).restart();
 }
 
 /**
@@ -161,32 +199,4 @@ export function endNodeDrag(node: GlPhysNode): void {
   node._dragLoose = true; // 拖过的球弱回弹（出处 sphere-sim-setup.ts:209）
 }
 
-/** 背景涟漪经过球时给球加 outward velocity（快照自 sphere-sim-setup.ts:145-175，去掉 _perturb） */
-export interface BgWave { x: number; y: number; size: number; spawnTime: number; duration: number }
-
-export function pushGlSpheresByWaves(
-  nodes: GlPhysNode[],
-  waves: BgWave[],
-  playingId: string | null,
-  now: number,
-): void {
-  if (waves.length === 0) return;
-  for (const n of nodes) {
-    if (n.id === playingId || n.fx != null || n.fy != null || n.x == null || n.y == null) continue;
-    for (const w of waves) {
-      const ratio = (now - w.spawnTime) / w.duration;
-      if (ratio < 0.05 || ratio > 0.85) continue;
-      const curR = w.size * (0.15 + ratio * 1.25);
-      const dx = n.x - w.x;
-      const dy = n.y - w.y;
-      const dd = Math.hypot(dx, dy) || 1;
-      const band = 70;
-      const dist = Math.abs(dd - curR);
-      if (dist < band) {
-        const force = 0.18 * (1 - dist / band);
-        n.vx = (n.vx ?? 0) + (dx / dd) * force;
-        n.vy = (n.vy ?? 0) + (dy / dd) * force;
-      }
-    }
-  }
-}
+// 背景涟漪推球（BgWave / pushGlSpheresByWaves）已拆到 ./gl-sim-waves（J2 加 resizeGlSim 后撞 220 行硬线）。
