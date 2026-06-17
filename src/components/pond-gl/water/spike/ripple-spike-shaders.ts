@@ -65,23 +65,28 @@ export const simFrag = /* glsl */ `
   uniform vec4  uDrops[${MAX_DROPS}]; // 每滴 (uv.x, uv.y, 半径, 强度)
   uniform int   uDropCount; // 本帧有效滴数（其余槽忽略）
   uniform float uDamping;   // 阻尼（参数板可调，0.995 起）
-  uniform float uAspect;    // K1：屏幕宽高比 W/H，校正滴水距离度量 → 正圆
+  uniform float uAspect;    // K1：屏幕宽高比 W/H，校正滴水距离 + 波动传播 → 正圆
   const float PI = 3.141592653589793;
   void main() {
     vec4 info = texture2D(uPrev, vUv);
-    float avg = (
-      texture2D(uPrev, vUv - vec2(uDelta.x, 0.0)).r +
-      texture2D(uPrev, vUv - vec2(0.0, uDelta.y)).r +
-      texture2D(uPrev, vUv + vec2(uDelta.x, 0.0)).r +
-      texture2D(uPrev, vUv + vec2(0.0, uDelta.y)).r) * 0.25;
-    info.g += (avg - info.r) * 2.0;   // 速度 += (邻居均值 - 高度) * 2（离散拉普拉斯回复力）
+    float hL = texture2D(uPrev, vUv - vec2(uDelta.x, 0.0)).r;
+    float hR = texture2D(uPrev, vUv + vec2(uDelta.x, 0.0)).r;
+    float hT = texture2D(uPrev, vUv - vec2(0.0, uDelta.y)).r;
+    float hB = texture2D(uPrev, vUv + vec2(0.0, uDelta.y)).r;
+    // K1+：拉普拉斯按宽高比校正。高度场方形被拉满宽屏，各向同性的 texel 传播在
+    // 屏幕上仍是椭圆 → 把 x 向回复力按 1/aspect² 减弱，x 屏幕波速降到与 y 一致
+    // → 扩散环也正圆、振幅各向一致。aspect=1 时退化为原式 2.0*(邻居均值−高度)；
+    // x 权重恒 ≤ y 权重 0.5 → CFL 稳定性不劣于原版。
+    float lapX = (hL + hR - 2.0 * info.r) * (0.5 / (uAspect * uAspect));
+    float lapY = (hT + hB - 2.0 * info.r) * 0.5;
+    info.g += lapX + lapY;            // 速度 += 各向异性拉普拉斯回复力
     info.g *= uDamping;               // 阻尼（唯一能量损耗）
     info.r += info.g;                 // 高度 += 速度（半隐式欧拉）
     for (int i = 0; i < ${MAX_DROPS}; i++) {  // 多滴注入：升余弦凸包逐滴叠加
       if (i >= uDropCount) break;
       vec4 dp = uDrops[i];
       // K1：高度场方形 + 屏幕宽屏 → 直接用 UV 距离会被横向拉成椭圆。
-      // 把 x 分量乘 uAspect（W/H）预压窄，铺满宽屏后回正圆；只改距离度量，不动波动方程。
+      // 把 x 分量乘 uAspect（W/H）预压窄，铺满宽屏后回正圆（与上面传播校正同源）。
       vec2 off = (dp.xy - vUv) * vec2(uAspect, 1.0);
       float d = max(0.0, 1.0 - length(off) / dp.z);
       info.r += (0.5 - 0.5 * cos(d * PI)) * dp.w;
