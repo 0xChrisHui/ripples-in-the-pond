@@ -70,10 +70,13 @@ export function makeCompositeScene(
     uPondDepth: { value: 0.5 },
     uRefrExp: { value: 1.4 },
     uMoonExp: { value: 1.2 },
+    // K4 空中球水面投影：uSphereShowing<0.5 时 shader 跳过投影 → 与现状逐字一致
+    uSphereShowing: { value: 0 },
+    uShadowStrength: { value: 0.3 },
   });
 }
 
-/** 每帧写 sim/composite 的标量 uniform（参数板 + debug + 宽高比 + K3 深度调制）。模块级避 immutability。 */
+/** 每帧写 sim/composite 的标量 uniform（参数板 + debug + 宽高比 + K3 深度调制 + K4 投影）。模块级避 immutability。 */
 export function applyTuning(
   sim: QuadScene,
   composite: QuadScene,
@@ -81,6 +84,7 @@ export function applyTuning(
   debug: boolean,
   aspect: number,
   depthModel: boolean,
+  sphereShadow: boolean,
 ): void {
   sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z）
   sim.mat.uniforms.uAspect.value = aspect;     // K1：高度场方形被拉满宽屏 → 按宽高比校正滴水为正圆
@@ -92,6 +96,9 @@ export function applyTuning(
   composite.mat.uniforms.uPondDepth.value = t.pondDepth;
   composite.mat.uniforms.uRefrExp.value = t.refrExp;
   composite.mat.uniforms.uMoonExp.value = t.moonExp;
+  // K4：sphereShadow 开 → shader 给空中球在下方水面投柔影；关 → 跳过投影（现状）
+  composite.mat.uniforms.uSphereShowing.value = sphereShadow ? 1 : 0;
+  composite.mat.uniforms.uShadowStrength.value = t.shadowStrength;
 }
 
 /** 把球数据写进 uniform 数组（位置/半径/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */

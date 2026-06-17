@@ -36,6 +36,8 @@ export interface GLFlags {
   sphereMotion: boolean;
   /** K3 — 深度三层模型：统一球/标题/水面按带符号深度渐变（修 R4 浮沉不一致 + 标题去闪）。默认关 */
   depthModel: boolean;
+  /** K4 — 浮出水面（空中）球在下方水面投柔影（R8 悬空 3D 感）；关 = 无投影（回 K3）。默认关 */
+  sphereShadow: boolean;
   /** J1 — 强制走 WebGL 兜底夜塘（测试用，免去手动禁 WebGL）；默认关 */
   forceFallback: boolean;
   /** J3 — 低 FPS 自动降 DPR 保流畅；默认开（保护性，测试可关对比） */
@@ -56,6 +58,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   waterDbg: false,
   sphereMotion: false,
   depthModel: false,
+  sphereShadow: false,
   forceFallback: false,
   autoDegrade: true,
 };
@@ -105,6 +108,10 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const depthModel = searchParams.get('depthModel');
   if (depthModel === '1' || depthModel === 'true') result.depthModel = true;
   else if (depthModel === '0' || depthModel === 'false') result.depthModel = false;
+
+  const sphereShadow = searchParams.get('sphereShadow');
+  if (sphereShadow === '1' || sphereShadow === 'true') result.sphereShadow = true;
+  else if (sphereShadow === '0' || sphereShadow === 'false') result.sphereShadow = false;
 
   const forceFallback = searchParams.get('forceFallback');
   if (forceFallback === '1' || forceFallback === 'true') result.forceFallback = true;

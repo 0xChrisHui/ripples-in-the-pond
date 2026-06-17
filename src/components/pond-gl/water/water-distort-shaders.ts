@@ -28,6 +28,9 @@ export const compositeMaskFrag = /* glsl */ `
   uniform float uPondDepth;   // 塘深：深度因子 d 的归一分母（与 water-level.ts depthFactor 同义）
   uniform float uRefrExp;     // 折射随深度指数 a：折射 ∝ d^a（近轻深重）
   uniform float uMoonExp;     // 月光随深度指数 b：月光 ∝ (1−d)^b（近强深弱）
+  // K4 浮出水面球投影（R8，uSphereShowing<0.5 时不投 → 与现状逐字一致）：
+  uniform float uSphereShowing; // 0=关（现状）/ 1=开（空中球在下方水面投柔影）
+  uniform float uShadowStrength;// 柔影最大压暗量（0=无影，叠到合成色前 color -= shadow）
 
   // 给定屏幕 uv，遍历球算"露出水面程度"（0=水下/1=水上）
   float computeAbove(vec2 uv) {
@@ -67,6 +70,33 @@ export const compositeMaskFrag = /* glsl */ `
     return d;
   }
 
+  // K4：空中球（s = uWaterLevel − depthZ > 0，即露出水面/悬空）在它下方水面投柔影。
+  // 物理直觉——球悬在水面上方挡月光 → 正下方水面暗一块；球越高（s 越大），影越大、越散、越淡（半影变宽）。
+  // 坐标：px=sim 像素（y 已翻转，screen-down = px.y 增大）；影心在球心略下方 (x, y + drop)，drop ∝ s。
+  // 椭圆软斑：横向用球半径、纵向略压扁（贴水面斜投感）；高度 s 越大 → 半径放大 + 边缘更软 + 峰值更淡。
+  float computeShadowMask(vec2 uv) {
+    vec2 px = vec2(uv.x, 1.0 - uv.y) * uViewport;
+    float shadow = 0.0;
+    for (int i = 0; i < ${MAX_SPHERES}; i++) {
+      if (i >= uSphereCount) break;
+      vec4 s = uSpheres[i];
+      float air = uWaterLevel - s.w;          // >0 = 球在空中（露出水面/悬空）
+      if (air <= 0.0) continue;               // 水下/贴面球不投影（只空中带投）
+      float rise = clamp(air / max(0.001, uPondDepth), 0.0, 1.0); // 归一空中高度 0..1
+      float drop = s.z * (0.35 + 0.9 * rise);                     // 影心下移：越高投得越远
+      vec2 ctr = vec2(s.x, s.y + drop);
+      float rad = s.z * (0.85 + 0.7 * rise);                      // 越高影越大
+      // 椭圆度量：纵向压扁 0.65（贴水面斜投），距离归一到半径
+      vec2 dd = (px - ctr) / vec2(rad, rad * 0.65);
+      float dist = length(dd);
+      float soft = 0.45 + 0.45 * rise;        // 越高边缘越软（半影更宽）
+      float spot = 1.0 - smoothstep(1.0 - soft, 1.0, dist);
+      float peak = 1.0 - 0.45 * rise;         // 越高峰值越淡（光被散开）
+      shadow = max(shadow, spot * peak);
+    }
+    return shadow;
+  }
+
   void main() {
     float h  = texture2D(uHeight, vUv).r;
     float hx = texture2D(uHeight, vUv + vec2(uDelta.x, 0.0)).r;
@@ -99,6 +129,14 @@ export const compositeMaskFrag = /* glsl */ `
     // 月光高光：涟漪坡面朝月处发光（坡度方向，gmag gate → 平水无高光）
     vec2 dir = gmag > 1e-5 ? grad / gmag : vec2(0.0);
     float spec = pow(max(0.0, dot(-dir, normalize(vec2(-0.6, 1.0)))), 4.0) * smoothstep(0.0, 0.01, gmag);
-    gl_FragColor = texture2D(uScene, sampleUv) + vec4(vec3(spec * uSpec * sub * moonMod), 0.0);
+    vec4 scene = texture2D(uScene, sampleUv);
+    vec3 col = scene.rgb + vec3(spec * uSpec * sub * moonMod);
+    // K4：空中球投影压暗水面（uSphereShowing<0.5 时跳过 → 与现状逐字一致）。
+    // 只投在水面（× sub）：影落在水上球身上无意义，且 sub 让"被空中球自己遮住的那块"不重复压暗。
+    if (uSphereShowing > 0.5) {
+      float shadow = computeShadowMask(vUv) * uShadowStrength * sub;
+      col = max(col - shadow, 0.0); // 不压成负值（红线：水下不压黑由亮度地板兜，这里只夺月光）
+    }
+    gl_FragColor = vec4(col, scene.a);
   }
 `;

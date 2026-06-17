@@ -42,6 +42,10 @@ const DEPTH_SLIDERS: ReadonlyArray<Slider> = [
   { key: 'moonExp', label: '月光·深度指数', min: 0.3, max: 3, step: 0.1 },
 ];
 
+const SHADOW_SLIDERS: ReadonlyArray<Slider> = [
+  { key: 'shadowStrength', label: '投影强度', min: 0, max: 1, step: 0.02 },
+];
+
 function SliderRow({ s, value }: { s: Slider; value: number }) {
   return (
     <label className="mb-1.5 block">
@@ -94,6 +98,9 @@ export default function RippleSpikePanel() {
 
           <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">深度模型（K3，需开开关）</div>
           {DEPTH_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+
+          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">球投影（K4，需开开关）</div>
+          {SHADOW_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
 
           <div className="mt-2 flex gap-1.5">
             <button
