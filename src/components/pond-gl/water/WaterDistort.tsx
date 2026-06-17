@@ -53,6 +53,10 @@ const SIM_OPTS = {
   format: RGBAFormat,
   minFilter: LinearFilter,
   magFilter: LinearFilter,
+  // 保持 ClampToEdge：sim 读 uPrev 也用这块 FBO，改 Repeat 会把波动方程的边界从「夹边软墙」
+  // 偷换成「环绕」→ 即便 K6 关也会改变涟漪在边缘的行为，破「OFF=现状」红线。
+  // K6 缩小时采样越界 [0,1] 的平铺需求 → 改在合成 shader 里对采样 UV 取 fract() 手动平铺解决（见 compositeMaskFrag），
+  // 与 wrap 模式解耦：K6 关时 zoom≡1、不取 fract，与现状逐字一致。
   wrapS: ClampToEdgeWrapping,
   wrapT: ClampToEdgeWrapping,
   depthBuffer: false,
@@ -91,8 +95,8 @@ function tick(
 }
 
 export default function WaterDistort(
-  { debug = false, glSim, depthModel = false, sphereShadow = false, caustics = false }:
-  { debug?: boolean; glSim?: GlSim; depthModel?: boolean; sphereShadow?: boolean; caustics?: boolean },
+  { debug = false, glSim, depthModel = false, sphereShadow = false, caustics = false, waterZoom = false }:
+  { debug?: boolean; glSim?: GlSim; depthModel?: boolean; sphereShadow?: boolean; caustics?: boolean; waterZoom?: boolean },
 ) {
   const content = useFBO();
   const heightA = useFBO(RES_X, RES_Y, SIM_OPTS);
@@ -145,7 +149,8 @@ export default function WaterDistort(
     // K3：depthModel prop 传进 helper → composite 的深度调制 uniform 每帧刷新
     // K4：sphereShadow prop 传进 helper → composite 的空中球投影 uniform 每帧刷新
     // K5：caustics prop + state.clock 传进 helper → 焦散开关 + 游走流光的时间每帧刷新
-    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, sphereShadow, caustics, state.clock.getElapsedTime());
+    // K6：waterZoom prop 传进 helper → composite 的 uZoomAmount（开=t.zoomAmount/关=0）每帧刷新
+    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, sphereShadow, caustics, state.clock.getElapsedTime(), waterZoom);
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
     applySpheres(composite, nodes ?? EMPTY_NODES, size.w, size.h, getWaterLevel());
     // 汇集本帧所有滴水：指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并）+ 常驻微波

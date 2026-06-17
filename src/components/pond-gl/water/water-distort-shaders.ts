@@ -35,6 +35,8 @@ export const compositeMaskFrag = /* glsl */ `
   uniform float uCaustics;        // 0=关（现状）/ 1=开（冷白月光漫反射+焦散流光叠到水面）
   uniform float uCausticsStrength;// 焦散光照总强度（0=无光，乘到整层冷白增量上）
   uniform float uTime;            // 秒（state.clock）→ 光池/光带缓慢游走，静止水面也"活"
+  // K6 水面深度缩放（R1，uZoomAmount=0 时缩放系数恒 1 → 与现状逐字一致）：
+  uniform float uZoomAmount;      // 0=关（现状）/ >0=按水位绕中心缩放高度场采样（升放大/降缩小）
 
   // 给定屏幕 uv，遍历球算"露出水面程度"（0=水下/1=水上）
   float computeAbove(vec2 uv) {
@@ -120,9 +122,18 @@ export const compositeMaskFrag = /* glsl */ `
   }
 
   void main() {
-    float h  = texture2D(uHeight, vUv).r;
-    float hx = texture2D(uHeight, vUv + vec2(uDelta.x, 0.0)).r;
-    float hy = texture2D(uHeight, vUv + vec2(0.0, uDelta.y)).r;
+    // K6：按水位绕画面中心缩放「高度场采样 UV」（只缩水层、球不动 → 红线保住）。
+    // zoom = 1 + (水位−0.5)·uZoomAmount：水位高→zoom>1→UV 收缩到中心→采样跨度小→高度场放大溢出；
+    //        水位低→zoom<1→UV 朝外撑→采样更宽→高度场缩小、露出更多水面。整张一起缩 → 进行中的涟漪也随之缩放。
+    // uZoomAmount=0 时 zoom≡1、hUv≡vUv 且不取 fract → 下面三个采样与现状逐字一致（OFF=现状）。
+    // 缩小(zoom<1)时 hUv 越界 [0,1]：高度场 FBO 是 ClampToEdge（不能改 Repeat，会偷换 sim 边界），
+    // 故只在 K6 开时对 hUv 取 fract() 手动平铺 → 露出区域填重复涟漪图案、不露边，与 wrap 模式解耦。
+    float zoom = 1.0 + (uWaterLevel - 0.5) * uZoomAmount;
+    vec2 hUv = (vUv - 0.5) / max(0.001, zoom) + 0.5;
+    if (uZoomAmount > 0.0) hUv = fract(hUv);
+    float h  = texture2D(uHeight, hUv).r;
+    float hx = texture2D(uHeight, hUv + vec2(uDelta.x, 0.0)).r;
+    float hy = texture2D(uHeight, hUv + vec2(0.0, uDelta.y)).r;
     // 折射位移 ∝ 高度梯度(坡度) 并 clamp 上限：平水≈0、缓坡轻折、陡坡强折但不破。
     // ⚠ 旧版 -normalize(法线).xz 让"任何涟漪都满幅位移"→ 鼠标狂晃/微波被放大成麻点破洞，弃用。
     vec2 grad = vec2(hx - h, hy - h);

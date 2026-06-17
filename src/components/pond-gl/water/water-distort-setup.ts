@@ -77,6 +77,8 @@ export function makeCompositeScene(
     uCaustics: { value: 0 },
     uCausticsStrength: { value: 0.4 },
     uTime: { value: 0 },
+    // K6 水面深度缩放：uZoomAmount=0 时高度场采样缩放系数恒 1 → 与现状逐字一致（开关关时此值即 0）
+    uZoomAmount: { value: 0 },
   });
 }
 
@@ -91,6 +93,7 @@ export function applyTuning(
   sphereShadow: boolean,
   caustics: boolean,
   time: number,
+  waterZoom: boolean,
 ): void {
   sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z）
   sim.mat.uniforms.uAspect.value = aspect;     // K1：高度场方形被拉满宽屏 → 按宽高比校正滴水为正圆
@@ -109,6 +112,8 @@ export function applyTuning(
   composite.mat.uniforms.uCaustics.value = caustics ? 1 : 0;
   composite.mat.uniforms.uCausticsStrength.value = t.causticsStrength;
   composite.mat.uniforms.uTime.value = time; // state.clock.getElapsedTime()：光池/光带每帧前进 → 静止也活
+  // K6：waterZoom 开 → shader 按水位绕中心缩放高度场采样（升放大/降缩小）；关 → 0（缩放系数恒 1=现状）
+  composite.mat.uniforms.uZoomAmount.value = waterZoom ? t.zoomAmount : 0;
 }
 
 /** 把球数据写进 uniform 数组（位置/半径/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */
