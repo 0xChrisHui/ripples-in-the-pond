@@ -56,7 +56,9 @@
 - 做什么：① 复用 `PerfHUD` 的 FPS 测量，加**反馈回路**：持续低 FPS → 逐级降配（先降 DPR → 降/关水面扭曲 RES → 关浮沉/微波…）；② 把写死的 DPR、RES 改成**可运行时调**（`setDpr` / RES 作为可变）；③ 降配策略对标 `use-adaptive-effects`（只降不回升 vs 允许回升，实施时定）。
 - 验收（⏸）：人为压低帧（throttle）→ 画质自动降、帧率回升；解除 → 行为符合策略。
 
-### J4 — 加载提示 + 失败重试 + 提前缓冲 ⏸
+### J4 — 加载提示 + 失败重试 + 提前缓冲　✅ 已完成（commit `efe1dd2`）
+
+> **实现实况**：`use-gl-sim` 的 `loadTracks` 加 `res.ok` 判定 + `error` 态 + `retry()`，暴露 `loading/error/retry`；新 `overlay/GlLoading`（取数中「唤醒水塘…」脉动 + >3s 慢网提示，失败「加载失败，点击重试」）；音频预热移植 Archipelago（当前组各拉前 300KB、6 worker）。`page` 在 `glSpheres + WebGL 可用 + loading/error` 时挂 `GlLoading`。用户免验收（"就当做好了"）。
 
 > **审计实况**：GL **完全无**加载态/失败/重试/预热——`use-gl-sim.ts:59-67` `fetch('/api/tracks').then(setTracks).catch(console.error)`；失败只 console.error 无 UI（:65），且**不判 `res.ok`**（HTTP 500/404 也进 then，与 `Archipelago.tsx:39` `if(!res.ok)throw` 不同）。SVG 侧 `Archipelago` 有 `LoadingState`（"正在唤醒群岛"）+ 慢网提示（3s）+ 重试（8s）+ 6-worker 音频预热。
 
@@ -85,4 +87,4 @@
 
 ## 收口线
 
-**J1–J4 ✅ = GL 沙盒「生产级靠谱」**；deferred（已铸造 / 生产化 / 定稿 / 替换）按需推进；**`/` 正式替换 + 删 SVG = J 线（及 Phase-8-G）真正收官**。
+**J1–J4 ✅（2026-06-16 本期全完）= GL 沙盒「生产级靠谱」**（J2 触控 / J3 降配真效果 待真机验）；deferred（已铸造 / 生产化 / 定稿 / 替换）按需推进；**`/` 正式替换 + 删 SVG = J 线（及 Phase-8-G）真正收官**。
