@@ -31,6 +31,10 @@ export const compositeMaskFrag = /* glsl */ `
   // K4 浮出水面球投影（R8，uSphereShowing<0.5 时不投 → 与现状逐字一致）：
   uniform float uSphereShowing; // 0=关（现状）/ 1=开（空中球在下方水面投柔影）
   uniform float uShadowStrength;// 柔影最大压暗量（0=无影，叠到合成色前 color -= shadow）
+  // K5 月光焦散光照（R7，uCaustics<0.5 时不加 → 与现状逐字一致）：
+  uniform float uCaustics;        // 0=关（现状）/ 1=开（冷白月光漫反射+焦散流光叠到水面）
+  uniform float uCausticsStrength;// 焦散光照总强度（0=无光，乘到整层冷白增量上）
+  uniform float uTime;            // 秒（state.clock）→ 光池/光带缓慢游走，静止水面也"活"
 
   // 给定屏幕 uv，遍历球算"露出水面程度"（0=水下/1=水上）
   float computeAbove(vec2 uv) {
@@ -97,6 +101,24 @@ export const compositeMaskFrag = /* glsl */ `
     return shadow;
   }
 
+  // K5：月光焦散光照（参考 flower-water-ripples FSH 的 light/spec/band/pool，翻成夜塘月光冷白版）。
+  // 返回一个标量"冷白增量"——main 里乘冷白 RGB 叠加（只加亮、不上色、不压暗 → 不破"水下不压黑"）。
+  // 四层：①漫反射(坡面朝月微提亮) ②波峰高光(陡坡尖峰增辉) ③飘移对角光带 ④缓慢游走的月光池。
+  // 后两层用 uTime 自驱，平水/静止时水面仍有缓慢流光（焦散感）；前两层 gate 在涟漪梯度上、平水≈0。
+  float computeCaustics(vec2 uv, vec2 grad, float time) {
+    // ①漫反射：坡面沿月光方向(左上)提亮。参考用 (grad.x+grad.y)，这里用与月光方向一致的点积更聚焦。
+    float light = max(0.0, dot(grad, normalize(vec2(-0.6, 1.0)))) * 2.2;
+    // ②波峰高光：只取超过阈值的强坡尖峰增辉（涟漪波峰冷白闪烁），平缓处为 0。
+    float peak = max(0.0, light - 0.012) * 4.0;
+    // ③对角飘移光带：sin 沿对角随时间移动，smoothstep 取窄亮带 → 一道道月光斜扫水面。
+    float band = sin(dot(uv, vec2(1.3, 1.0)) * 2.6 - time * 0.18);
+    band = smoothstep(0.8, 1.0, band) * 0.06;
+    // ④游走月光池：一团柔光中心随 time 缓慢漂移，距离衰减成柔斑（静止也活的"焦散池"）。
+    vec2 pc = vec2(0.5 + 0.22 * cos(time * 0.06), 0.5 + 0.18 * sin(time * 0.08));
+    float pool = (1.0 - smoothstep(0.0, 0.5, distance(uv, pc))) * 0.05;
+    return light + peak + band + pool;
+  }
+
   void main() {
     float h  = texture2D(uHeight, vUv).r;
     float hx = texture2D(uHeight, vUv + vec2(uDelta.x, 0.0)).r;
@@ -136,6 +158,13 @@ export const compositeMaskFrag = /* glsl */ `
     if (uSphereShowing > 0.5) {
       float shadow = computeShadowMask(vUv) * uShadowStrength * sub;
       col = max(col - shadow, 0.0); // 不压成负值（红线：水下不压黑由亮度地板兜，这里只夺月光）
+    }
+    // K5：月光焦散冷白光照（uCaustics<0.5 时跳过 → 与现状逐字一致）。
+    // 只在水域（× sub）叠加：水上球身上不染焦散；冷白偏蓝 RGB(0.62,0.74,0.85)→月光感、不上暖色。
+    // 只加亮不压暗（col += 正值）→ 不破"水下不压黑"红线；强度小 + 参数板可调到 0 关闭。
+    if (uCaustics > 0.5) {
+      float caustic = computeCaustics(vUv, grad, uTime) * uCausticsStrength * sub;
+      col += caustic * vec3(0.62, 0.74, 0.85);
     }
     gl_FragColor = vec4(col, scene.a);
   }

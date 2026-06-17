@@ -24,6 +24,7 @@ export interface RippleTuning {
   refrExp: number;    // K3 折射随深度的指数 a（折射 ∝ d^a，近轻深重；越大近处越清晰）
   moonExp: number;    // K3 月光随深度的指数 b（月光 ∝ (1−d)^b，近强深弱）
   shadowStrength: number; // K4 空中球水面投影最大压暗量（0=无影；越大影越深）
+  causticsStrength: number; // K5 月光焦散光照总强度（0=无光；越大水面流光越亮）
 }
 
 export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
@@ -43,6 +44,7 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   refrExp: 1.4,
   moonExp: 1.2,
   shadowStrength: 0.3,
+  causticsStrength: 0.4,
 };
 
 const KEY = 'pond-gl-ripple-spike';

@@ -91,8 +91,8 @@ function tick(
 }
 
 export default function WaterDistort(
-  { debug = false, glSim, depthModel = false, sphereShadow = false }:
-  { debug?: boolean; glSim?: GlSim; depthModel?: boolean; sphereShadow?: boolean },
+  { debug = false, glSim, depthModel = false, sphereShadow = false, caustics = false }:
+  { debug?: boolean; glSim?: GlSim; depthModel?: boolean; sphereShadow?: boolean; caustics?: boolean },
 ) {
   const content = useFBO();
   const heightA = useFBO(RES_X, RES_Y, SIM_OPTS);
@@ -144,7 +144,8 @@ export default function WaterDistort(
     // K1：画布宽高比 → 滴水距离度量校正成正圆（仅度量，不动 sim 数学）
     // K3：depthModel prop 传进 helper → composite 的深度调制 uniform 每帧刷新
     // K4：sphereShadow prop 传进 helper → composite 的空中球投影 uniform 每帧刷新
-    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, sphereShadow);
+    // K5：caustics prop + state.clock 传进 helper → 焦散开关 + 游走流光的时间每帧刷新
+    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, sphereShadow, caustics, state.clock.getElapsedTime());
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
     applySpheres(composite, nodes ?? EMPTY_NODES, size.w, size.h, getWaterLevel());
     // 汇集本帧所有滴水：指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并）+ 常驻微波

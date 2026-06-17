@@ -46,6 +46,10 @@ const SHADOW_SLIDERS: ReadonlyArray<Slider> = [
   { key: 'shadowStrength', label: '投影强度', min: 0, max: 1, step: 0.02 },
 ];
 
+const CAUSTICS_SLIDERS: ReadonlyArray<Slider> = [
+  { key: 'causticsStrength', label: '焦散强度', min: 0, max: 1, step: 0.02 },
+];
+
 function SliderRow({ s, value }: { s: Slider; value: number }) {
   return (
     <label className="mb-1.5 block">
@@ -101,6 +105,9 @@ export default function RippleSpikePanel() {
 
           <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">球投影（K4，需开开关）</div>
           {SHADOW_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+
+          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">月光焦散（K5，需开开关）</div>
+          {CAUSTICS_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
 
           <div className="mt-2 flex gap-1.5">
             <button
