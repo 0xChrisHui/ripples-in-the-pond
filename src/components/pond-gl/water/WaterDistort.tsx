@@ -41,9 +41,12 @@ import type { GlPhysNode } from '../spheres/gl-sim-setup';
  * 注：sim/quadVert/参数 store 暂复用 water/spike/（H 线收尾、spike 退役时挪进 water/ 正式化）。
  */
 
-const RES = 256;
+// 高度场分辨率：纵向固定，横向按屏幕宽高比 → 格子在屏幕上是「正方形」→ 涟漪传播天然正圆
+// （取代旧的方形 256² + 各向异性补偿；载入时按当前窗口定，重载即重适配，clamp 防极端比例）
+const RES_Y = 256;
+const RES_X = Math.min(1024, Math.max(64, Math.round(RES_Y * (typeof window === 'undefined' ? 1 : window.innerWidth / Math.max(1, window.innerHeight)))));
 // H6 色斑修复：高度场用 Linear（双线性）采样，让合成 pass 重建梯度时平滑、消块状色斑 +
-// 缓解 half-float 梯度量化。⚠ sim 只在「texel 中心」采 uPrev（vUv ± 1/RES），Linear 在中心点
+// 缓解 half-float 梯度量化。⚠ sim 只在「texel 中心」采 uPrev（vUv ± uDelta），Linear 在中心点
 // 等价 Nearest → 波动方程逐字不变（H1 调研报告"数据纹理 Nearest"针对非中心采样，此处不踩）。
 // 不升 512²：分辨率会改波速/阻尼的屏幕观感、推翻已调好的手感；色斑根因是采样而非分辨率。
 const SIM_OPTS = {
@@ -123,8 +126,8 @@ function tick(
 
 export default function WaterDistort({ debug = false, glSim }: { debug?: boolean; glSim?: GlSim }) {
   const content = useFBO();
-  const heightA = useFBO(RES, RES, SIM_OPTS);
-  const heightB = useFBO(RES, RES, SIM_OPTS);
+  const heightA = useFBO(RES_X, RES_Y, SIM_OPTS);
+  const heightB = useFBO(RES_X, RES_Y, SIM_OPTS);
   const bufs = useRef<PingPong>({ read: heightA, write: heightB });
   const pending = useRef<Drop[]>([]); // 指针/wave 滴水：事件回调里 push，useFrame 每帧排空
   const nodes = glSim?.nodes;
@@ -133,7 +136,7 @@ export default function WaterDistort({ debug = false, glSim }: { debug?: boolean
   const sim = useMemo(
     () => makeQuadScene(simFrag, {
       uPrev: { value: null },
-      uDelta: { value: new Vector2(1 / RES, 1 / RES) },
+      uDelta: { value: new Vector2(1 / RES_X, 1 / RES_Y) },
       uDrops: { value: dropSlots },
       uDropCount: { value: 0 },
       uDamping: { value: 0.995 },
@@ -146,7 +149,7 @@ export default function WaterDistort({ debug = false, glSim }: { debug?: boolean
     () => makeQuadScene(compositeMaskFrag, {
       uScene: { value: content.texture },
       uHeight: { value: heightA.texture },
-      uDelta: { value: new Vector2(1 / RES, 1 / RES) },
+      uDelta: { value: new Vector2(1 / RES_X, 1 / RES_Y) },
       uPerturb: { value: 0.04 },
       uSpec: { value: 0.5 },
       uWaterLevel: { value: 0 },
