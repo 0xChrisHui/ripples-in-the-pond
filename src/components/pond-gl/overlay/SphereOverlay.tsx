@@ -17,11 +17,12 @@ const PLAY_PATH = 'M-4.5,-6 L7,0 L-4.5,6 Z';
 const PAUSE_PATH = 'M-5.5,-6 L-2,-6 L-2,6 L-5.5,6 Z M0.5,-6 L4,-6 L4,6 L0.5,6 Z';
 const DRAG_THRESHOLD = 8; // 出处 sphere-sim-setup.ts:178（位移 <8px 不算拖动，松手仍 toggle）
 
-export default function SphereOverlay({ glSim, waterOn }: { glSim: GlSim; waterOn: boolean }) {
+export default function SphereOverlay({ glSim, waterOn, depthModel = false }: { glSim: GlSim; waterOn: boolean; depthModel?: boolean }) {
   const { nodes, playingIdRef } = glSim;
   const { playing, currentTrack } = usePlayer();
   const playingId = playing && currentTrack ? currentTrack.id : null;
   const elsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+  const subSmooth = useRef<Map<string, number>>(new Map()); // K3 修 R4：没入度逐节点阻尼，消标题闪烁
 
   // 每帧把每个 hit-div 移到对应球的 sim 坐标（div 左上角对齐 (x-r, y-r) → 中心落在球心）
   useEffect(() => {
@@ -34,7 +35,13 @@ export default function SphereOverlay({ glSim, waterOn }: { glSim: GlSim; waterO
         const dim = pid != null && n.id !== pid;
         // G6 没入：球被水波盖住时同步淡出标题/命中（否则标题会浮在水面上）；>0.7 视为已没入、不可点
         // H5：读动态深度 displayZ → 球浮沉/播放浮出时标题随之淡入淡出
-        const sub = waterOn ? getSubmerge(n.displayZ ?? n.z) : 0;
+        const raw = waterOn ? getSubmerge(n.displayZ ?? n.z) : 0;
+        // K3 修 R4：depthModel 开时对没入度加阻尼（lerp）→ 浮沉小幅脉动不再让标题闪烁
+        let sub = raw;
+        if (depthModel) {
+          sub = (subSmooth.current.get(n.id) ?? raw) * 0.85 + raw * 0.15;
+          subSmooth.current.set(n.id, sub);
+        }
         el.style.transform = `translate(${n.x - n.radius}px, ${n.y - n.radius}px)`;
         // 别的球在播 → 完全隐藏（聚焦只剩播放球 + 日蚀）；否则没入淡出（水下仍留 0.4 锚点）
         el.style.opacity = dim ? '0' : String(Math.max(0.4, 1 - sub * 1.5));
@@ -45,7 +52,7 @@ export default function SphereOverlay({ glSim, waterOn }: { glSim: GlSim; waterO
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [nodes, playingIdRef, waterOn]);
+  }, [nodes, playingIdRef, waterOn, depthModel]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-10">

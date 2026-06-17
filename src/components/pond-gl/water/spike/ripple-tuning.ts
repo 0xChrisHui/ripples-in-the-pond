@@ -20,6 +20,9 @@ export interface RippleTuning {
   bobAmp: number;     // H5 球自漂浮沉幅度（z 单位；0=不自漂）
   bobScale: number;   // H5 球自漂频率倍率（×lw 基频；越大越快）
   focusMargin: number;// H5 播放球浮出水面的露出量（越大越高越清晰）
+  pondDepth: number;  // K3 塘深：深度因子 d 的归一分母（越小越快到"最深"）
+  refrExp: number;    // K3 折射随深度的指数 a（折射 ∝ d^a，近轻深重；越大近处越清晰）
+  moonExp: number;    // K3 月光随深度的指数 b（月光 ∝ (1−d)^b，近强深弱）
 }
 
 export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
@@ -35,6 +38,9 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   bobAmp: 0.08,
   bobScale: 1,
   focusMargin: 0.06,
+  pondDepth: 0.5,
+  refrExp: 1.4,
+  moonExp: 1.2,
 };
 
 const KEY = 'pond-gl-ripple-spike';

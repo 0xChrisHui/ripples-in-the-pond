@@ -53,6 +53,15 @@ export function getSubmerge(z: number): number {
 }
 
 /**
+ * K3 深度因子 d ∈[0,1]：球相对水位的"水下深度"（0=贴水面/水上、1=塘底 pondDepth 处）。
+ * s = current − z（>0 越深没入）；d = clamp(s/pondDepth)。球/标题/水面三个消费方共用此 d，
+ * 浮沉时 d 连续变 → 三效果一起连续变（统一 R4 的不一致 + 让浮沉"看得见"）。
+ */
+export function depthFactor(z: number, pondDepth: number): number {
+  return Math.min(1, Math.max(0, (current - z) / Math.max(0.001, pondDepth)));
+}
+
+/**
  * 滚轮控制 + 缓动驱动 hook。active=false（wheelMode≠waterLevel 或水面关）时**不挂任何监听**，
  * 滚轮回归原行为（GL 沙盒里 SVG 已隐，等于无操作；P2-c 后归 GL 缩放）。
  */

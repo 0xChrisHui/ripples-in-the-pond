@@ -148,11 +148,12 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           {flags.glBase && !flags.bgImage && <BaseTone artDir={flags.artDir} />}
           {/* 旧程序化水面（renderOrder -0.5）；waterFx 开时退役、由 WaterDistort 全屏扭曲取代 */}
           {flags.water && !flags.waterFx && <WaterSurface artDir={flags.artDir} />}
-          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} />}
+          {/* K3 修 R4：球没入认 waterFx（depthModel 开时）——之前只认旧「水面」→ 开扭曲水面时球 dim 不随浮沉变 */}
+          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water || (flags.depthModel && flags.waterFx)} motionOn={flags.sphereMotion} />}
           {/* H1 spike：RTT 验证全屏盖在最上（renderOrder 10），隔离实验、默认关 */}
           {flags.rtt && <RttSpike />}
           {/* H2/H3：扭曲水面——渲真场景进 FBO 全屏折射扭曲 + 水位遮罩（接管渲染循环，返回 null） */}
-          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} />}
+          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} depthModel={flags.depthModel} />}
           {/* J3：低 FPS 自动降 DPR 保流畅（仅测时长 + setDpr，不渲染） */}
           {flags.autoDegrade && <AutoDpr />}
         </Canvas>

@@ -79,7 +79,7 @@ function Test1PageInner() {
 
       {/* GL 球 DOM 命中层（z-10，接点击拖拽，在 nav/HUD 之下）；J1：兜底时隐 */}
       {glFlags.glSpheres && glSim.ready && glOk && (
-        <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} />
+        <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} depthModel={glFlags.depthModel} />
       )}
 
       {/* I2：GL 日蚀层（z-20，播放球叠日蚀焦点；其他球已隐去）；J1：兜底时隐 */}

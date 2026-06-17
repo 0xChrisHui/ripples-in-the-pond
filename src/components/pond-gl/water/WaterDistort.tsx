@@ -4,26 +4,24 @@ import { useFBO } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import {
-  Scene,
-  Mesh,
-  PlaneGeometry,
-  ShaderMaterial,
   OrthographicCamera,
-  Vector2,
   Vector4,
   HalfFloatType,
   RGBAFormat,
   LinearFilter,
   ClampToEdgeWrapping,
   type Camera,
-  type IUniform,
+  type Scene,
   type WebGLRenderer,
   type WebGLRenderTarget,
 } from 'three';
-import { quadVert, simFrag, MAX_DROPS } from './spike/ripple-spike-shaders';
-import { getRippleTuning, type RippleTuning } from './spike/ripple-tuning';
-import { compositeMaskFrag, MAX_SPHERES } from './water-distort-shaders';
+import { MAX_DROPS } from './spike/ripple-spike-shaders';
+import { getRippleTuning } from './spike/ripple-tuning';
+import { MAX_SPHERES } from './water-distort-shaders';
 import { getWaterLevel } from './water-level';
+import {
+  makeSimScene, makeCompositeScene, applyTuning, applySpheres, type QuadScene,
+} from './water-distort-setup';
 import {
   collectObjectDrops, collectAmbientDrop, writeDrops, resetRippleFeed,
   pointerPathDrops, resetPointerPath, type Drop,
@@ -61,45 +59,12 @@ const SIM_OPTS = {
   stencilBuffer: false,
 };
 
-interface QuadScene {
-  scene: Scene;
-  mat: ShaderMaterial;
-}
-function makeQuadScene(frag: string, uniforms?: Record<string, IUniform>): QuadScene {
-  const mat = new ShaderMaterial({ vertexShader: quadVert, fragmentShader: frag, uniforms });
-  const scene = new Scene();
-  scene.add(new Mesh(new PlaneGeometry(2, 2), mat));
-  return { scene, mat };
-}
-
 interface PingPong {
   read: WebGLRenderTarget;
   write: WebGLRenderTarget;
 }
 
 const EMPTY_NODES: GlPhysNode[] = []; // glSim 未就绪时占位（无球 → 全屏扭）
-
-function applyTuning(sim: QuadScene, composite: QuadScene, t: RippleTuning, debug: boolean, aspect: number): void {
-  sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z）
-  sim.mat.uniforms.uAspect.value = aspect;     // K1：高度场方形被拉满宽屏 → 按宽高比校正滴水为正圆
-  composite.mat.uniforms.uPerturb.value = t.refract;
-  composite.mat.uniforms.uSpec.value = t.specular;
-  composite.mat.uniforms.uDebug.value = debug ? 1 : 0;
-}
-
-/** 把球数据写进 uniform 数组（位置/半径/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */
-function applySpheres(composite: QuadScene, nodes: GlPhysNode[], w: number, h: number, waterLevel: number): void {
-  const arr = composite.mat.uniforms.uSpheres.value as Vector4[];
-  const n = Math.min(nodes.length, MAX_SPHERES);
-  for (let i = 0; i < n; i++) {
-    const node = nodes[i];
-    // H5：用动态深度 displayZ（球浮沉后的实时深度），未启用浮沉时回退静态 z
-    arr[i].set(node.x ?? 0, node.y ?? 0, node.radius * 1.15, node.displayZ ?? node.z); // 半径放大覆盖光晕
-  }
-  composite.mat.uniforms.uSphereCount.value = n;
-  (composite.mat.uniforms.uViewport.value as Vector2).set(w || 1, h || 1);
-  composite.mat.uniforms.uWaterLevel.value = waterLevel;
-}
 
 /** 一帧：真场景→内容 FBO，ping-pong sim 推进（滴水已在 useFrame 写好 uDrops），合成折射(带遮罩)→屏幕。 */
 function tick(
@@ -125,7 +90,10 @@ function tick(
   bufs.current = { read: write, write: read };
 }
 
-export default function WaterDistort({ debug = false, glSim }: { debug?: boolean; glSim?: GlSim }) {
+export default function WaterDistort(
+  { debug = false, glSim, depthModel = false }:
+  { debug?: boolean; glSim?: GlSim; depthModel?: boolean },
+) {
   const content = useFBO();
   const heightA = useFBO(RES_X, RES_Y, SIM_OPTS);
   const heightB = useFBO(RES_X, RES_Y, SIM_OPTS);
@@ -134,31 +102,10 @@ export default function WaterDistort({ debug = false, glSim }: { debug?: boolean
   const nodes = glSim?.nodes;
 
   const dropSlots = useMemo(() => Array.from({ length: MAX_DROPS }, () => new Vector4()), []);
-  const sim = useMemo(
-    () => makeQuadScene(simFrag, {
-      uPrev: { value: null },
-      uDelta: { value: new Vector2(1 / RES_X, 1 / RES_Y) },
-      uDrops: { value: dropSlots },
-      uDropCount: { value: 0 },
-      uDamping: { value: 0.995 },
-      uAspect: { value: 1 }, // K1：每帧由画布宽高比刷新（见 useFrame），校正滴水为正圆
-    }),
-    [dropSlots],
-  );
+  const sim: QuadScene = useMemo(() => makeSimScene(RES_X, RES_Y, dropSlots), [dropSlots]);
   const spheresInit = useMemo(() => Array.from({ length: MAX_SPHERES }, () => new Vector4()), []);
-  const composite = useMemo(
-    () => makeQuadScene(compositeMaskFrag, {
-      uScene: { value: content.texture },
-      uHeight: { value: heightA.texture },
-      uDelta: { value: new Vector2(1 / RES_X, 1 / RES_Y) },
-      uPerturb: { value: 0.04 },
-      uSpec: { value: 0.5 },
-      uWaterLevel: { value: 0 },
-      uViewport: { value: new Vector2(1, 1) },
-      uSphereCount: { value: 0 },
-      uSpheres: { value: spheresInit },
-      uDebug: { value: 0 },
-    }),
+  const composite: QuadScene = useMemo(
+    () => makeCompositeScene(content.texture, heightA.texture, RES_X, RES_Y, spheresInit),
     [content, heightA, spheresInit],
   );
   const quadCam = useMemo(() => new OrthographicCamera(-1, 1, 1, -1, 0, 1), []);
@@ -195,7 +142,8 @@ export default function WaterDistort({ debug = false, glSim }: { debug?: boolean
   useFrame((state) => {
     const t = getRippleTuning();
     // K1：画布宽高比 → 滴水距离度量校正成正圆（仅度量，不动 sim 数学）
-    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height));
+    // K3：depthModel prop 传进 helper → composite 的深度调制 uniform 每帧刷新
+    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel);
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
     applySpheres(composite, nodes ?? EMPTY_NODES, size.w, size.h, getWaterLevel());
     // 汇集本帧所有滴水：指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并）+ 常驻微波

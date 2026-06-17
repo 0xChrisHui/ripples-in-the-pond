@@ -23,6 +23,11 @@ export const compositeMaskFrag = /* glsl */ `
   uniform int   uSphereCount;
   uniform vec4  uSpheres[${MAX_SPHERES}]; // 每球 (x, y, radius, depthZ)，xy/radius 为 sim 像素
   uniform float uDebug;       // 1 = 遮罩调试（绿=水上/红=水下 + 水位横线）
+  // K3 深度三层模型（uDepthModel<0.5 时所有调制系数恒 1 → shader 逐字回到现状）：
+  uniform float uDepthModel;  // 0=关（现状）/ 1=开（按逐球水下深度调制折射/月光）
+  uniform float uPondDepth;   // 塘深：深度因子 d 的归一分母（与 water-level.ts depthFactor 同义）
+  uniform float uRefrExp;     // 折射随深度指数 a：折射 ∝ d^a（近轻深重）
+  uniform float uMoonExp;     // 月光随深度指数 b：月光 ∝ (1−d)^b（近强深弱）
 
   // 给定屏幕 uv，遍历球算"露出水面程度"（0=水下/1=水上）
   float computeAbove(vec2 uv) {
@@ -41,6 +46,27 @@ export const compositeMaskFrag = /* glsl */ `
     return a;
   }
 
+  // K3：给定屏幕 uv，取"对该像素影响最大的水下球"的深度因子 d∈[0,1]（贴水面=0、塘底=1）。
+  // d = clamp((uWaterLevel - depthZ) / uPondDepth)，与 water-level.ts depthFactor 同式 →
+  // 球 dim / 标题淡出 / 水面折射月光 三个消费方读同一 d、浮沉时一起连续变（统一 R4）。
+  // 离球的水域（无球覆盖）落最近覆盖球的 d；都无 → 用一个中性 d（水位本身映射）保证平滑过渡。
+  float computeDepth(vec2 uv) {
+    vec2 px = vec2(uv.x, 1.0 - uv.y) * uViewport;
+    float best = -1.0; // 影响权重（取覆盖最强的球）
+    float d = clamp(uWaterLevel / max(0.001, uPondDepth), 0.0, 1.0); // 无球区域的中性深度
+    for (int i = 0; i < ${MAX_SPHERES}; i++) {
+      if (i >= uSphereCount) break;
+      vec4 s = uSpheres[i];
+      float cover = 1.0 - smoothstep(s.z * 0.82, s.z * 1.6, distance(px, s.xy)); // 球域软覆盖
+      if (cover > best) {
+        best = cover;
+        float dd = clamp((uWaterLevel - s.w) / max(0.001, uPondDepth), 0.0, 1.0);
+        d = mix(d, dd, cover); // 球内取球深、边缘平滑回中性深度
+      }
+    }
+    return d;
+  }
+
   void main() {
     float h  = texture2D(uHeight, vUv).r;
     float hx = texture2D(uHeight, vUv + vec2(uDelta.x, 0.0)).r;
@@ -49,7 +75,6 @@ export const compositeMaskFrag = /* glsl */ `
     // ⚠ 旧版 -normalize(法线).xz 让"任何涟漪都满幅位移"→ 鼠标狂晃/微波被放大成麻点破洞，弃用。
     vec2 grad = vec2(hx - h, hy - h);
     float gmag = length(grad);
-    vec2 disp = clamp(-grad * uPerturb, -0.025, 0.025);
     float above = computeAbove(vUv);
     float sub = 1.0 - above;
     if (uDebug > 0.5) {                       // 调试：绿=水上(清晰)/红=水下(扭)，白线=水位 L
@@ -57,12 +82,23 @@ export const compositeMaskFrag = /* glsl */ `
       gl_FragColor = vec4(mix(vec3(0.7, 0.0, 0.0), vec3(0.0, 0.7, 0.0), above) + vec3(line), 1.0);
       return;
     }
+    // K3 深度调制（uDepthModel<0.5 时 refrMod=moonMod=1.0 → 下面两式与现状逐字一致）：
+    // 物理直觉——折射随水下深度变重(光程更长、扭得更狠)：refr ∝ d^a；clamp 上限防深球糊成噪点。
+    //           月光高光随深度变弱(水面下衰减)：moon ∝ (1−d)^b，贴水面球高光最强、深球几乎无。
+    float refrMod = 1.0;
+    float moonMod = 1.0;
+    if (uDepthModel > 0.5) {
+      float d = computeDepth(vUv);
+      refrMod = clamp(pow(d, uRefrExp), 0.0, 1.4);   // 上限 1.4：深球折射加强但不破（叠 disp 的 clamp 兜底）
+      moonMod = pow(1.0 - d, uMoonExp);              // 近强深弱
+    }
+    vec2 disp = clamp(-grad * uPerturb * refrMod, -0.025, 0.025);
     // 折射采样；若采样落点是水上球，撤销偏移 → 不把水上球涂进水波（去重复鬼影）
     vec2 sampleUv = vUv + disp * sub;
     sampleUv = mix(sampleUv, vUv, computeAbove(sampleUv));
     // 月光高光：涟漪坡面朝月处发光（坡度方向，gmag gate → 平水无高光）
     vec2 dir = gmag > 1e-5 ? grad / gmag : vec2(0.0);
     float spec = pow(max(0.0, dot(-dir, normalize(vec2(-0.6, 1.0)))), 4.0) * smoothstep(0.0, 0.01, gmag);
-    gl_FragColor = texture2D(uScene, sampleUv) + vec4(vec3(spec * uSpec * sub), 0.0);
+    gl_FragColor = texture2D(uScene, sampleUv) + vec4(vec3(spec * uSpec * sub * moonMod), 0.0);
   }
 `;
