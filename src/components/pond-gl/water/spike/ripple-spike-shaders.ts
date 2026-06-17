@@ -69,14 +69,22 @@ export const simFrag = /* glsl */ `
   const float PI = 3.141592653589793;
   void main() {
     vec4 info = texture2D(uPrev, vUv);
-    // K1(正式)：高度场已按屏幕宽高比建成「屏上正方格」(WaterDistort RES_X/RES_Y) →
-    // 各向同性拉普拉斯在屏幕上天然就是正圆，撤回 K1+ 的 1/aspect² 各向异性补偿。
-    float avg = (
-      texture2D(uPrev, vUv - vec2(uDelta.x, 0.0)).r +
-      texture2D(uPrev, vUv - vec2(0.0, uDelta.y)).r +
-      texture2D(uPrev, vUv + vec2(uDelta.x, 0.0)).r +
-      texture2D(uPrev, vUv + vec2(0.0, uDelta.y)).r) * 0.25;
-    info.g += (avg - info.r) * 2.0;   // 速度 += (邻居均值 - 高度) * 2（离散拉普拉斯回复力）
+    // 高度场已按屏幕比例建成「屏上正方格」(WaterDistort RES_X/RES_Y)，解决了全局椭圆；
+    // 但 5 点拉普拉斯(只取上下左右)的波速沿网格轴/对角不同 → 远处涟漪呈「圆角方形」。
+    // 改 9 点各向同性拉普拉斯：补 4 个对角邻居(轴向×4 + 对角×1 − 中心×20，再 /6)，
+    // 方向依赖大幅下降 → 正圆；低频波速与 5 点同阶(手感不变)，CFL 比 5 点更宽松。
+    vec2 ex = vec2(uDelta.x, 0.0);
+    vec2 ey = vec2(0.0, uDelta.y);
+    float aL = texture2D(uPrev, vUv - ex).r;
+    float aR = texture2D(uPrev, vUv + ex).r;
+    float aT = texture2D(uPrev, vUv - ey).r;
+    float aB = texture2D(uPrev, vUv + ey).r;
+    float dTL = texture2D(uPrev, vUv - ex - ey).r;
+    float dTR = texture2D(uPrev, vUv + ex - ey).r;
+    float dBL = texture2D(uPrev, vUv - ex + ey).r;
+    float dBR = texture2D(uPrev, vUv + ex + ey).r;
+    float lap = (4.0 * (aL + aR + aT + aB) + (dTL + dTR + dBL + dBR) - 20.0 * info.r) / 6.0;
+    info.g += lap * 0.5;              // 速度 += 拉普拉斯回复力（系数 0.5 沿用原波速）
     info.g *= uDamping;               // 阻尼（唯一能量损耗）
     info.r += info.g;                 // 高度 += 速度（半隐式欧拉）
     for (int i = 0; i < ${MAX_DROPS}; i++) {  // 多滴注入：升余弦凸包逐滴叠加
