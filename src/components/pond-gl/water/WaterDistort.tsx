@@ -75,8 +75,9 @@ interface PingPong {
 
 const EMPTY_NODES: GlPhysNode[] = []; // glSim 未就绪时占位（无球 → 全屏扭）
 
-function applyTuning(sim: QuadScene, composite: QuadScene, t: RippleTuning, debug: boolean): void {
+function applyTuning(sim: QuadScene, composite: QuadScene, t: RippleTuning, debug: boolean, aspect: number): void {
   sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z）
+  sim.mat.uniforms.uAspect.value = aspect;     // K1：高度场方形被拉满宽屏 → 按宽高比校正滴水为正圆
   composite.mat.uniforms.uPerturb.value = t.refract;
   composite.mat.uniforms.uSpec.value = t.specular;
   composite.mat.uniforms.uDebug.value = debug ? 1 : 0;
@@ -136,6 +137,7 @@ export default function WaterDistort({ debug = false, glSim }: { debug?: boolean
       uDrops: { value: dropSlots },
       uDropCount: { value: 0 },
       uDamping: { value: 0.995 },
+      uAspect: { value: 1 }, // K1：每帧由画布宽高比刷新（见 useFrame），校正滴水为正圆
     }),
     [dropSlots],
   );
@@ -191,7 +193,8 @@ export default function WaterDistort({ debug = false, glSim }: { debug?: boolean
   // 正优先级 = 接管渲染循环（在 SphereInstances priority-0 写完矩阵之后跑）
   useFrame((state) => {
     const t = getRippleTuning();
-    applyTuning(sim, composite, t, debug);
+    // K1：画布宽高比 → 滴水距离度量校正成正圆（仅度量，不动 sim 数学）
+    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height));
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
     applySpheres(composite, nodes ?? EMPTY_NODES, size.w, size.h, getWaterLevel());
     // 汇集本帧所有滴水：指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并）+ 常驻微波

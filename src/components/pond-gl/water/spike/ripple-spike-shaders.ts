@@ -65,6 +65,7 @@ export const simFrag = /* glsl */ `
   uniform vec4  uDrops[${MAX_DROPS}]; // 每滴 (uv.x, uv.y, 半径, 强度)
   uniform int   uDropCount; // 本帧有效滴数（其余槽忽略）
   uniform float uDamping;   // 阻尼（参数板可调，0.995 起）
+  uniform float uAspect;    // K1：屏幕宽高比 W/H，校正滴水距离度量 → 正圆
   const float PI = 3.141592653589793;
   void main() {
     vec4 info = texture2D(uPrev, vUv);
@@ -79,7 +80,10 @@ export const simFrag = /* glsl */ `
     for (int i = 0; i < ${MAX_DROPS}; i++) {  // 多滴注入：升余弦凸包逐滴叠加
       if (i >= uDropCount) break;
       vec4 dp = uDrops[i];
-      float d = max(0.0, 1.0 - length(dp.xy - vUv) / dp.z);
+      // K1：高度场方形 + 屏幕宽屏 → 直接用 UV 距离会被横向拉成椭圆。
+      // 把 x 分量乘 uAspect（W/H）预压窄，铺满宽屏后回正圆；只改距离度量，不动波动方程。
+      vec2 off = (dp.xy - vUv) * vec2(uAspect, 1.0);
+      float d = max(0.0, 1.0 - length(off) / dp.z);
       info.r += (0.5 - 0.5 * cos(d * PI)) * dp.w;
     }
     gl_FragColor = info;
