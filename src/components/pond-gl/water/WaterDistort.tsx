@@ -25,7 +25,8 @@ import { getRippleTuning, type RippleTuning } from './spike/ripple-tuning';
 import { compositeMaskFrag, MAX_SPHERES } from './water-distort-shaders';
 import { getWaterLevel } from './water-level';
 import {
-  collectObjectDrops, collectAmbientDrop, writeDrops, resetRippleFeed, type Drop,
+  collectObjectDrops, collectAmbientDrop, writeDrops, resetRippleFeed,
+  pointerPathDrops, resetPointerPath, type Drop,
 } from './ripple-feed';
 import type { GlSim } from '../spheres/use-gl-sim';
 import type { GlPhysNode } from '../spheres/gl-sim-setup';
@@ -164,18 +165,15 @@ export default function WaterDistort({ debug = false, glSim }: { debug?: boolean
 
   // 指针 + bg-ripple:wave → push 一滴到 pending（坐标 → uv，y 翻转匹配 quad；一次性，不留持续鼠标位）
   useEffect(() => {
-    let last = 0;
     const push = (x: number, y: number, str: number) => {
       const t = getRippleTuning();
       pending.current.push({ ux: x / window.innerWidth, uy: 1 - y / window.innerHeight, radius: t.dropRadius, strength: str });
     };
+    // K2：划水改路径插值（按位移触发、上帧↔当前补点连成线）→ 快划连续不"咚咚"
     const onMove = (e: PointerEvent) => {
-      const now = performance.now();
-      if (now - last < 16) return;
-      last = now;
-      push(e.clientX, e.clientY, getRippleTuning().dropMove);
+      pending.current.push(...pointerPathDrops(e.clientX, e.clientY, window.innerWidth, window.innerHeight, getRippleTuning()));
     };
-    const onDown = (e: PointerEvent) => push(e.clientX, e.clientY, getRippleTuning().dropClick);
+    const onDown = (e: PointerEvent) => { resetPointerPath(); push(e.clientX, e.clientY, getRippleTuning().dropClick); };
     const onWave = (e: Event) => {
       const ce = e as CustomEvent<{ x: number; y: number }>;
       push(ce.detail.x, ce.detail.y, getRippleTuning().dropClick);

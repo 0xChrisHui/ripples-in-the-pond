@@ -25,7 +25,7 @@ export interface RippleTuning {
 export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   damping: 0.995,
   refract: 0.6,
-  dropMove: 0.012,
+  dropMove: 0.008, // K2：划水改路径插值后单笔落多滴 → 调小单滴强度，免快划过强
   dropClick: 0.16,
   dropRadius: 0.05,
   specular: 0.5,
