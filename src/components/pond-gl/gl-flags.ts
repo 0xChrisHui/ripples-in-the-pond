@@ -56,6 +56,10 @@ export interface GLFlags {
   pondFloor: boolean;
   /** K11 — 月光倒影（合成 shader 一道大柔冷白月华；被涟漪扭碎、随 K6 缩放放缩当参照、点题月夜水塘）；关 = shader 跳过（现状）。默认关 */
   moonReflect: boolean;
+  /** K12 — 水位标尺柱·礁石（钉死暗岩 + 顶冷光 + 水线湿痕，水从其身上漫过=水位/深度参照）；默认关 */
+  reefStones: boolean;
+  /** K12 — 水位标尺柱·水晶簇（钉死冷光半透柱、接月光）；默认关 */
+  crystalPillars: boolean;
   /** J1 — 强制走 WebGL 兜底夜塘（测试用，免去手动禁 WebGL）；默认关 */
   forceFallback: boolean;
   /** J3 — 低 FPS 自动降 DPR 保流畅；默认开（保护性，测试可关对比） */
@@ -86,6 +90,8 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   waterPlants: false,
   pondFloor: false,
   moonReflect: false,
+  reefStones: false,
+  crystalPillars: false,
   forceFallback: false,
   autoDegrade: true,
 };
@@ -175,6 +181,14 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const moonReflect = searchParams.get('moonReflect');
   if (moonReflect === '1' || moonReflect === 'true') result.moonReflect = true;
   else if (moonReflect === '0' || moonReflect === 'false') result.moonReflect = false;
+
+  const reefStones = searchParams.get('reefStones');
+  if (reefStones === '1' || reefStones === 'true') result.reefStones = true;
+  else if (reefStones === '0' || reefStones === 'false') result.reefStones = false;
+
+  const crystalPillars = searchParams.get('crystalPillars');
+  if (crystalPillars === '1' || crystalPillars === 'true') result.crystalPillars = true;
+  else if (crystalPillars === '0' || crystalPillars === 'false') result.crystalPillars = false;
 
   const forceFallback = searchParams.get('forceFallback');
   if (forceFallback === '1' || forceFallback === 'true') result.forceFallback = true;

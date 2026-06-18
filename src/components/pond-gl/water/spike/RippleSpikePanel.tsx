@@ -77,6 +77,14 @@ const MOONREFLECT_SLIDERS: ReadonlyArray<Slider> = [
   { key: 'moonReflectStrength', label: '月光倒影', min: 0, max: 1, step: 0.02 },
 ];
 
+const COLUMNS_SLIDERS: ReadonlyArray<Slider> = [
+  { key: 'perspStrength', label: '透视强度', min: 0, max: 0.6, step: 0.01 },
+  { key: 'colCount', label: '柱数量', min: 0, max: 1, step: 0.02 },
+  { key: 'colHeight', label: '柱高', min: 0.3, max: 2, step: 0.05 },
+  { key: 'colWidth', label: '柱宽', min: 0.3, max: 2, step: 0.05 },
+  { key: 'colOpacity', label: '柱透明', min: 0, max: 1, step: 0.02 },
+];
+
 function SliderRow({ s, value }: { s: Slider; value: number }) {
   return (
     <label className="mb-1.5 block">
@@ -150,6 +158,9 @@ export default function RippleSpikePanel() {
 
           <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">月光倒影（K11，需开开关）</div>
           {MOONREFLECT_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+
+          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">水位标尺柱（K12，需开开关）</div>
+          {COLUMNS_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
 
           <div className="mt-2 flex gap-1.5">
             <button

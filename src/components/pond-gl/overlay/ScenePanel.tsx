@@ -59,6 +59,8 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="水面缩放(K6)" checked={glFlags.waterZoom} onChange={(v) => onGl({ waterZoom: v })} />
           <Row label="可见塘底(K10)" checked={glFlags.pondFloor} onChange={(v) => onGl({ pondFloor: v })} />
           <Row label="月光倒影(K11)" checked={glFlags.moonReflect} onChange={(v) => onGl({ moonReflect: v })} />
+          <Row label="礁石(K12)" checked={glFlags.reefStones} onChange={(v) => onGl({ reefStones: v })} />
+          <Row label="水晶柱(K12)" checked={glFlags.crystalPillars} onChange={(v) => onGl({ crystalPillars: v })} />
           <Row label="漂浮微光(K8)" checked={glFlags.floatMotes} onChange={(v) => onGl({ floatMotes: v })} />
           <Row label="水生植物(K9)" checked={glFlags.waterPlants} onChange={(v) => onGl({ waterPlants: v })} />
           <Row label="遮罩调试" checked={glFlags.waterDbg} onChange={(v) => onGl({ waterDbg: v })} />

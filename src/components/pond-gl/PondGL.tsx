@@ -10,6 +10,7 @@ import WaterDistort from './water/WaterDistort';
 import RttSpike from './water/spike/RttSpike';
 import FloatingMotes from './decor/FloatingMotes';
 import WaterPlants from './decor/WaterPlants';
+import WaterColumns from './decor/WaterColumns';
 import BgImage from './BgImage';
 import type { GlSim } from './spheres/use-gl-sim';
 
@@ -105,7 +106,7 @@ export interface PondGLProps {
 
 export default function PondGL({ flags, glSim }: PondGLProps) {
   // 基调 / 球 / 水面 / 背景图 / RTT / 扭曲水面 / 漂浮微光 / 水生植物 任一开启都需要 Canvas；都关 = 卸载（回纯 SVG）
-  const active = flags.glBase || flags.glSpheres || flags.water || flags.bgImage || flags.rtt || flags.waterFx || flags.floatMotes || flags.waterPlants;
+  const active = flags.glBase || flags.glSpheres || flags.water || flags.bgImage || flags.rtt || flags.waterFx || flags.floatMotes || flags.waterPlants || flags.reefStones || flags.crystalPillars;
   // J1：gl 对象恒定（AA 固定开）——不再随 glSpheres 变。原本为换 AA 用 key 重挂 Canvas，
   // 但重挂会新建/泄漏 WebGL context（多次切球 → context 累积被浏览器丢弃 → 球闪一下就没）。
   const gl = useMemo(() => ({ antialias: true, alpha: false }), []);
@@ -128,7 +129,7 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
         <Canvas
           orthographic
           // 球 / 水面 / RTT / 扭曲 需逐帧动画 → always；仅基调 / 背景图时 demand（只渲一次省帧）
-          frameloop={flags.glSpheres || flags.water || flags.rtt || flags.waterFx || flags.floatMotes || flags.waterPlants ? 'always' : 'demand'}
+          frameloop={flags.glSpheres || flags.water || flags.rtt || flags.waterFx || flags.floatMotes || flags.waterPlants || flags.reefStones || flags.crystalPillars ? 'always' : 'demand'}
           dpr={[1, 2]} // DPR cap 2（性能预算）
           gl={gl}
           // manual:true 恒定——base/水面走裁剪空间不用相机；球开时 SphereInstances 自己配像素相机。
@@ -154,6 +155,8 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           {flags.floatMotes && <FloatingMotes waterZoom={flags.waterZoom} />}
           {/* K9：水生植物层（俯视睡莲叶 + 边缘芦苇；进 realScene 被合成扭曲；绕中心随 K6 缩放当强参照 + 涟漪轻晃）。OFF=不挂载=现状 */}
           {flags.waterPlants && <WaterPlants waterZoom={flags.waterZoom} />}
+          {/* K12：水位标尺柱（礁石/水晶簇）——钉死、水从其身上漫过=水位/深度参照 + 中心一点透视。OFF=不挂载=现状 */}
+          {(flags.reefStones || flags.crystalPillars) && <WaterColumns reefStones={flags.reefStones} crystalPillars={flags.crystalPillars} />}
           {/* waterOn 只认旧「水面」(G6 没入淡到全透明=水波盖住球)。扭曲水面(waterFx)下球**不淡出**：
               红线「水下不压黑/不虚化」→ 水下球保持可见、靠合成 pass 的深度折射(K3 d^a)体现浮沉，不消失。 */}
           {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} />}
