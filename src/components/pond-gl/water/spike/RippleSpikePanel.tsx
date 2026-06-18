@@ -156,7 +156,7 @@ export default function RippleSpikePanel() {
           <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">可见塘底（K10，需开开关）</div>
           {PONDFLOOR_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
           <div className="mb-1.5 flex flex-wrap gap-1">
-            {['细沙', '彩晕', '卵石', '沙纹', '矿脉'].map((label, i) => (
+            {['暗矿', '亮沙', '虹彩', '莲花', '星河'].map((label, i) => (
               <button
                 key={label}
                 type="button"

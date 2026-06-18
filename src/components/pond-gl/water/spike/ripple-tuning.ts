@@ -37,7 +37,7 @@ export interface RippleTuning {
   plantsSway: number;   // K9 涟漪轻晃幅度（伪光流摇曳；克制——比 K8 更沉静、运动更小）
   pondFloorStrength: number; // K10 塘底暗纹强度（极淡冷暗增量；只加微妙纵深，不破"水下不压黑"——默认/上限都很小）
   moonReflectStrength: number; // K11 月光倒影强度（≤0.5 克制；偏画面一侧、低不透明 → 氛围点睛、不盖过球）
-  pondFloorStyle: number; // K10 塘底花纹（0 细沙偏亮 / 1 彩晕偏彩 / 2 鹅卵石 / 3 沙纹 / 4 矿脉微光）
+  pondFloorStyle: number; // K10 塘底花纹（0 暗矿 / 1 亮沙 / 2 虹彩 / 3 莲花 / 4 星河）
   perspStrength: number; // K12 一点透视强度（柱顶按离中心距离径向外斜；0=纯俯视，越大边缘柱越斜出露身）
   colCount: number;      // K12 标尺柱数量（0–1 映射可见柱数；偏边缘撒点、稀疏不抢球）
   colHeight: number;     // K12 柱高倍率（×逐柱随机高）
@@ -73,9 +73,9 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   plantsSize: 0.09,  // 放大圆片（NDC 半径，逐叶随机 0.6×–1.4×）→ 读成叶不读成碎片
   plantsOpacity: 0.62,// 提亮半透墨绿，暗塘上可辨、仍退让
   plantsSway: 0.2,   // 涟漪轻晃（沉静——比微光更小、几乎静止只微摇）
-  pondFloorStrength: 0.05, // 极淡暗纹：默认 0.05（面板 0–0.2），只给一丝纵深、绝不压亮整体
+  pondFloorStrength: 0.18, // 默认 0.18（面板 0–0.2）：差异化花纹（亮/彩/花/画）需更高基线才看得见
   moonReflectStrength: 0.4, // 月华倒影：默认 0.4（面板 0–1），安静优雅的一道冷白、点睛不抢球
-  pondFloorStyle: 0, // 默认细沙偏亮（面板 5 选 1）
+  pondFloorStyle: 0, // 默认暗矿（面板 5 选 1）
   perspStrength: 0.18, // 透视：轻为主（面板 0–0.6），免和俯视的平球违和
   colCount: 0.5,       // ~32 柱，偏边缘稀疏
   colHeight: 1.0,      // 柱高倍率（面板 0.3–2）
