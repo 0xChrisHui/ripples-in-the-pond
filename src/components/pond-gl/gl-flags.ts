@@ -52,6 +52,8 @@ export interface GLFlags {
   floatMotes: boolean;
   /** K9 — 水生植物层（俯视睡莲叶圆片 + 边缘芦苇暗示岸；绕中心随水位缩放当 K6 强参照 + 涟漪轻晃）；关 = 不挂载（现状）。默认关 */
   waterPlants: boolean;
+  /** K10 — 可见塘底层（合成 shader 程序化极淡暗纹；静止不缩 → 动水面在其上产生视差当 K6/K3 参照）；关 = shader 跳过（纯黑塘底现状）。默认关 */
+  pondFloor: boolean;
   /** J1 — 强制走 WebGL 兜底夜塘（测试用，免去手动禁 WebGL）；默认关 */
   forceFallback: boolean;
   /** J3 — 低 FPS 自动降 DPR 保流畅；默认开（保护性，测试可关对比） */
@@ -80,6 +82,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   waterZoom: false,
   floatMotes: false,
   waterPlants: false,
+  pondFloor: false,
   forceFallback: false,
   autoDegrade: true,
 };
@@ -161,6 +164,10 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const waterPlants = searchParams.get('waterPlants');
   if (waterPlants === '1' || waterPlants === 'true') result.waterPlants = true;
   else if (waterPlants === '0' || waterPlants === 'false') result.waterPlants = false;
+
+  const pondFloor = searchParams.get('pondFloor');
+  if (pondFloor === '1' || pondFloor === 'true') result.pondFloor = true;
+  else if (pondFloor === '0' || pondFloor === 'false') result.pondFloor = false;
 
   const forceFallback = searchParams.get('forceFallback');
   if (forceFallback === '1' || forceFallback === 'true') result.forceFallback = true;

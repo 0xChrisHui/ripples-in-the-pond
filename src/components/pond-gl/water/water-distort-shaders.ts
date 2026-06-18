@@ -41,6 +41,9 @@ export const compositeMaskFrag = /* glsl */ `
   uniform float uTime;            // 秒（state.clock）→ 光池/光带缓慢游走，静止水面也"活"
   // K6 水面深度缩放（R1，uZoomAmount=0 时缩放系数恒 1 → 与现状逐字一致）：
   uniform float uZoomAmount;      // 0=关（现状）/ >0=按水位绕中心缩放高度场采样（升放大/降缩小）
+  // K10 可见塘底层（uPondFloor<0.5 时跳过 → 纯黑塘底现状）：
+  uniform float uPondFloor;        // 0=关（现状）/ 1=开（水域叠极淡静止暗纹塘底，被涟漪折射产生视差）
+  uniform float uPondFloorStrength;// 塘底暗纹强度（极小，只加微妙冷暗纵深，不压亮整体）
 
   // 给定屏幕 uv，遍历球算"露出水面程度"（0=水下/1=水上）
   float computeAbove(vec2 uv) {
@@ -80,11 +83,8 @@ export const compositeMaskFrag = /* glsl */ `
     return d;
   }
 
-  // K4：浮出水面（空中/悬空）的球在下方水面投柔影。air = depthZ − uWaterLevel > 0 才投
-  // （depthZ>水位=露出水面；之前写反成"水下球投影"=bug）。水下/贴面球不投。
-  // 投影"位置"= 离水面距离 rise 的函数：越高 → 沿背光方向(右下，月光自左上)偏移越远 + 越大 + 越软 + 越淡。
-  // 参考 flower-water-ripples 花瓣 sunk shadow：很轻 + 冷蓝灰 + 椭圆纵向压扁；这里做成"挡月光的减光"。
-  // K4：浮出水面（空中/悬空）的球在下方水面投"水面软影"。月光=远光源(角直径~0.5°、近平行光)，故按
+  // K4：浮出水面（空中/悬空）的球在下方水面投"水面软影"。air = depthZ − uWaterLevel > 0 才投（露出水面）；水下/贴面球不投。
+  // 月光=远光源(角直径~0.5°、近平行光)，故按
   //  远光源建模：air 越大 → ①视差偏移越远(高球甩得远，主高度线索) ②大小≈恒定(平行光无放大，本影=球侧影)
   //  ③透起伏水面/夜雾看影 → 随高"温和"变糊 ④天空环境补光 → 随高"温和"变淡(不大幅、不膨胀)。
   //  (旧版按近光源做成"越高越大越淡的模糊盘"=物理错，已纠正。)完整因素+远近光源辨析见 docs/JOURNAL.md(2026-06-18)。
@@ -136,13 +136,22 @@ export const compositeMaskFrag = /* glsl */ `
     return web * (0.45 + 0.55 * pool) + slope;
   }
 
+  // K10：程序化值噪声塘底（无 glsl noise 库 → fract/sin 哈希 + smoothstep 双线性插值，两 octave 叠成有机沙纹/细石）。
+  // 返回 0..1"暗纹强弱"——main 里乘极小冷暗 RGB（只加一丝结构、不压亮，不破"水下不压黑"）。静止（不随 uTime/uZoomAmount）→ 动水面在其上产生视差 = K10 纵深核心。
+  float k10hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+  float k10noise(vec2 p) {
+    vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+    return mix(mix(k10hash(i), k10hash(i + vec2(1.0, 0.0)), f.x), mix(k10hash(i + vec2(0.0, 1.0)), k10hash(i + vec2(1.0, 1.0)), f.x), f.y);
+  }
+  float pondFloorTex(vec2 uv) {
+    vec2 p = uv * vec2(uViewport.x / max(1.0, uViewport.y), 1.0); // 宽高比校正 → 纹理近各向同性、不被宽屏拉长
+    float n = k10noise(p * 9.0) * 0.6 + k10noise(p * 22.0) * 0.4; // 两 octave：大块沙纹 + 细石点
+    return smoothstep(0.35, 0.85, n);                            // 收成稀疏暗纹（非均匀雾），留大片纯黑 = 高级感
+  }
+
   void main() {
     // K6：按水位绕画面中心缩放「高度场采样 UV」（只缩水层、球不动 → 红线保住）。
-    // zoom = 1 + (水位−0.5)·uZoomAmount：水位高→zoom>1→UV 收缩到中心→采样跨度小→高度场放大溢出；
-    //        水位低→zoom<1→UV 朝外撑→采样更宽→高度场缩小、露出更多水面。整张一起缩 → 进行中的涟漪也随之缩放。
-    // uZoomAmount=0 时 zoom≡1、hUv≡vUv 且不取 fract → 下面三个采样与现状逐字一致（OFF=现状）。
-    // 缩小(zoom<1)时 hUv 越界 [0,1]：高度场 FBO 是 ClampToEdge（不能改 Repeat，会偷换 sim 边界），
-    // 故只在 K6 开时对 hUv 取 fract() 手动平铺 → 露出区域填重复涟漪图案、不露边，与 wrap 模式解耦。
+    // zoom = 1 + (水位−0.5)·uZoomAmount：高→UV 收缩到中心→高度场放大溢出；低→UV 朝外撑→缩小露更多水面；整张一起缩 → 进行中涟漪也随之缩放。
     // OFF（uZoomAmount=0）：hUv=vUv、edgeWin=1 → 下面采样/梯度与现状逐字一致。
     vec2 hUv = vUv;
     float edgeWin = 1.0;
@@ -202,6 +211,9 @@ export const compositeMaskFrag = /* glsl */ `
     if (uShadowContact > 0.5) col = max(col - computeShadowMask(vUv, grad, 0.0) * sub * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
     // K5：月光焦散冷白光照（uCaustics<0.5 跳过=现状）。×sub 只水域、只加亮不压暗(不破"水下不压黑")；×(1−occ) 被挡月光夺。
     if (uCaustics > 0.5) col += computeCaustics(vUv, grad, uTime) * uCausticsStrength * sub * (1.0 - occ) * vec3(0.55, 0.72, 0.95);
+    // K10：可见塘底（uPondFloor<0.5 跳过=纯黑塘底现状）。用「未缩 vUv + 涟漪折射 disp」采纹理 —— 塘底坐标基不随 uZoomAmount 缩、
+    // 只被涟漪折射 → 缩放/起伏的水面在静止塘底上产生视差(K10 纵深核心)。×sub 只水域、极淡冷暗增量(只加结构、不压亮，不破"水下不压黑")。
+    if (uPondFloor > 0.5) col += pondFloorTex(vUv + disp * sub) * uPondFloorStrength * sub * vec3(0.30, 0.45, 0.55);
     gl_FragColor = vec4(col, scene.a);
   }
 `;

@@ -69,6 +69,10 @@ const PLANTS_SLIDERS: ReadonlyArray<Slider> = [
   { key: 'plantsSway', label: '睡莲轻晃', min: 0, max: 1, step: 0.02 },
 ];
 
+const PONDFLOOR_SLIDERS: ReadonlyArray<Slider> = [
+  { key: 'pondFloorStrength', label: '塘底暗纹', min: 0, max: 0.2, step: 0.005 },
+];
+
 function SliderRow({ s, value }: { s: Slider; value: number }) {
   return (
     <label className="mb-1.5 block">
@@ -136,6 +140,9 @@ export default function RippleSpikePanel() {
 
           <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">水生植物（K9，需开开关）</div>
           {PLANTS_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+
+          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">可见塘底（K10，需开开关）</div>
+          {PONDFLOOR_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
 
           <div className="mt-2 flex gap-1.5">
             <button
