@@ -22,6 +22,7 @@ export const compositeMaskFrag = /* glsl */ `
   uniform vec2  uViewport;    // 画面像素 (w,h)，= sim 坐标空间
   uniform int   uSphereCount;
   uniform vec4  uSpheres[${MAX_SPHERES}]; // 每球 (x, y, radius, depthZ)，xy/radius 为 sim 像素
+  uniform float uSphereVis[${MAX_SPHERES}]; // 每球遮罩可见度（播放时非播放球→0；乘遮罩贡献=原地淡出，修"暗斑收缩"）
   uniform float uDebug;       // 1 = 遮罩调试（绿=水上/红=水下 + 水位横线）
   uniform float uDepthModel;  // K3 深度模型：0=关（现状）/ 1=开（按逐球水下深度调制折射/月光；<0.5 时调制系数恒 1=现状）
   uniform float uPondDepth;   // 塘深：深度因子 d 的归一分母（与 water-level.ts depthFactor 同义）
@@ -54,7 +55,7 @@ export const compositeMaskFrag = /* glsl */ `
       float st = clamp((uWaterLevel - s.w + 0.02) / 0.12, 0.0, 1.0);
       float depthMask = 1.0 - st * st * (3.0 - 2.0 * st);
       float edge = 1.0 - smoothstep(s.z * 0.82, s.z, distance(px, s.xy));        // 圆形软边
-      a = max(a, depthMask * edge);
+      a = max(a, depthMask * edge * uSphereVis[i]);  // ×vis：球淡出时遮罩原地变淡（不缩半径）
     }
     return a;
   }
@@ -69,7 +70,7 @@ export const compositeMaskFrag = /* glsl */ `
     for (int i = 0; i < ${MAX_SPHERES}; i++) {
       if (i >= uSphereCount) break;
       vec4 s = uSpheres[i];
-      float cover = 1.0 - smoothstep(s.z * 0.82, s.z * 1.6, distance(px, s.xy)); // 球域软覆盖
+      float cover = (1.0 - smoothstep(s.z * 0.82, s.z * 1.6, distance(px, s.xy))) * uSphereVis[i]; // 球域软覆盖 ×vis（淡出球不参与深度）
       if (cover > best) {
         best = cover;
         float dd = clamp((uWaterLevel - s.w) / max(0.001, uPondDepth), 0.0, 1.0);
@@ -98,7 +99,7 @@ export const compositeMaskFrag = /* glsl */ `
       vec2 dd = (px + warp - ctr) / vec2(s.z, s.z * 0.55);                   // ②大小≈恒定（远光源平行光无放大；纵压扁=斜投椭圆）
       float umbra = 0.85 - 0.3 * t;            // 仅温和变软（天空环境光填半影）：贴面 0.85 → 高处 0.55
       float spot = 1.0 - smoothstep(umbra, 1.0, length(dd));
-      shadow = max(shadow, spot * (1.0 - 0.35 * t)); // ③温和变淡（环境补光）：高处 ×0.65，不大幅
+      shadow = max(shadow, spot * (1.0 - 0.35 * t) * uSphereVis[i]); // ③温和变淡（环境补光）：高处 ×0.65；×vis 淡出球不投影
     }
     // 水光网纹打碎（亮处被光"打穿" → 水面感、平水也活），四种投影模式共用此 mask。
     float sAspect = uViewport.x / max(1.0, uViewport.y);

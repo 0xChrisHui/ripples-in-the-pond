@@ -64,6 +64,7 @@ export function makeCompositeScene(
     uViewport: { value: new Vector2(1, 1) },
     uSphereCount: { value: 0 },
     uSpheres: { value: spheresInit },
+    uSphereVis: { value: Array.from({ length: MAX_SPHERES }, () => 1) }, // 每球遮罩可见度（播放时非播放球→0；原地淡出不缩半径）
     uDebug: { value: 0 },
     // K3 深度三层模型：uDepthModel<0.5 时 shader 调制系数恒 1 → 与现状逐字一致
     uDepthModel: { value: 0 },
@@ -154,16 +155,18 @@ export function applySpheres(
   playingId: string | null,
 ): void {
   const arr = composite.mat.uniforms.uSpheres.value as Vector4[];
+  const vis = composite.mat.uniforms.uSphereVis.value as number[];
   const n = Math.min(nodes.length, MAX_SPHERES);
   const anyPlaying = playingId != null;
   for (let i = 0; i < n; i++) {
     const node = nodes[i];
-    // 播放时非播放球遮罩淡出（与球视觉 dim 同 0.12 lerp）→ 半径→0、不再压月光 → 暗斑消失
+    // 播放时非播放球遮罩淡出（与球视觉 dim 同 0.12 lerp）→ vis→0；shader 用它乘遮罩贡献=原地淡出（不缩半径，无收缩痕迹）
     const target = anyPlaying && node.id !== playingId ? 0 : 1;
-    const vis = (sphereVis.get(node.id) ?? 1) + (target - (sphereVis.get(node.id) ?? 1)) * 0.12;
-    sphereVis.set(node.id, vis);
-    // H5：用动态深度 displayZ（球浮沉后的实时深度），未启用浮沉时回退静态 z
-    arr[i].set(node.x ?? 0, node.y ?? 0, node.radius * 1.15 * vis, node.displayZ ?? node.z); // 半径放大覆盖光晕，×vis 随淡出收
+    const v = (sphereVis.get(node.id) ?? 1) + (target - (sphereVis.get(node.id) ?? 1)) * 0.12;
+    sphereVis.set(node.id, v);
+    vis[i] = v;
+    // H5：用动态深度 displayZ（球浮沉后的实时深度），未启用浮沉时回退静态 z。半径恒满（×vis 在 shader 乘贡献，避缩）
+    arr[i].set(node.x ?? 0, node.y ?? 0, node.radius * 1.15, node.displayZ ?? node.z);
   }
   composite.mat.uniforms.uSphereCount.value = n;
   (composite.mat.uniforms.uViewport.value as Vector2).set(w || 1, h || 1);
