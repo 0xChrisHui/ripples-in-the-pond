@@ -140,20 +140,30 @@ export function applyTuning(
   composite.mat.uniforms.uMoonReflectStrength.value = t.moonReflectStrength;
 }
 
-/** 把球数据写进 uniform 数组（位置/半径/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */
+// 每球"遮罩可见度"（播放时非播放球→0），与 SphereInstances 的 dimLerp 同步（同 0.12 lerp）。
+// 修暗斑：球淡出后其合成遮罩(压月光/折射撤销)若还在 → 月光水面上留暗洞。半径×vis 让遮罩随球一起消失。
+const sphereVis = new Map<string, number>();
+
+/** 把球数据写进 uniform 数组（位置/半径×可见度/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */
 export function applySpheres(
   composite: QuadScene,
   nodes: GlPhysNode[],
   w: number,
   h: number,
   waterLevel: number,
+  playingId: string | null,
 ): void {
   const arr = composite.mat.uniforms.uSpheres.value as Vector4[];
   const n = Math.min(nodes.length, MAX_SPHERES);
+  const anyPlaying = playingId != null;
   for (let i = 0; i < n; i++) {
     const node = nodes[i];
+    // 播放时非播放球遮罩淡出（与球视觉 dim 同 0.12 lerp）→ 半径→0、不再压月光 → 暗斑消失
+    const target = anyPlaying && node.id !== playingId ? 0 : 1;
+    const vis = (sphereVis.get(node.id) ?? 1) + (target - (sphereVis.get(node.id) ?? 1)) * 0.12;
+    sphereVis.set(node.id, vis);
     // H5：用动态深度 displayZ（球浮沉后的实时深度），未启用浮沉时回退静态 z
-    arr[i].set(node.x ?? 0, node.y ?? 0, node.radius * 1.15, node.displayZ ?? node.z); // 半径放大覆盖光晕
+    arr[i].set(node.x ?? 0, node.y ?? 0, node.radius * 1.15 * vis, node.displayZ ?? node.z); // 半径放大覆盖光晕，×vis 随淡出收
   }
   composite.mat.uniforms.uSphereCount.value = n;
   (composite.mat.uniforms.uViewport.value as Vector2).set(w || 1, h || 1);

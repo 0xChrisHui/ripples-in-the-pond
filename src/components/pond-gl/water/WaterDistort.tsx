@@ -154,7 +154,7 @@ export default function WaterDistort(
     // K11：moonReflect prop 传进 helper → composite 的 uMoonReflect（开=1 叠大柔月华倒影/关=0 现状）每帧刷新
     applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, { dark: sphereShadow, occlude: shadowOcclude, glow: shadowGlow, contact: shadowContact }, caustics, state.clock.getElapsedTime(), waterZoom, pondFloor, moonReflect);
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
-    applySpheres(composite, nodes ?? EMPTY_NODES, size.w, size.h, getWaterLevel());
+    applySpheres(composite, nodes ?? EMPTY_NODES, size.w, size.h, getWaterLevel(), glSim?.playingIdRef.current ?? null);
     // 汇集本帧所有滴水：指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并）+ 常驻微波
     const drops = pending.current;
     pending.current = [];
