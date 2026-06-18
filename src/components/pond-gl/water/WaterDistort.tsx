@@ -159,7 +159,9 @@ export default function WaterDistort(
     if (nodes) drops.push(...collectObjectDrops(nodes, size.w, size.h, t));
     const amb = collectAmbientDrop(t);
     if (amb) drops.push(amb);
-    writeDrops(sim.mat, drops, dropSlots);
+    // K6：缩放开时把滴水位置做同款 inverse-zoom 变换（在 writeDrops 内施加，避免改 drop 对象）→ 涟漪显示位置 = 实际鼠标/球位置
+    const iz = waterZoom && t.zoomAmount > 0 ? 1 / Math.max(0.001, 1 + (getWaterLevel() - 0.5) * t.zoomAmount) : 1;
+    writeDrops(sim.mat, drops, dropSlots, iz);
     tick(state.gl, state.scene, state.camera, content, sim, bufs, composite, quadCam);
   }, 1);
 

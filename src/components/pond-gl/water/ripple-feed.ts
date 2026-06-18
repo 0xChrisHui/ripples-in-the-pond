@@ -120,12 +120,16 @@ export function pointerPathDrops(x: number, y: number, w: number, h: number, t: 
   return out;
 }
 
-/** 把本帧汇集的滴水写进 sim 的 uDrops 数组（截断到 MAX_DROPS，多余丢弃） */
-export function writeDrops(mat: ShaderMaterial, drops: Drop[], slots: Vector4[]): void {
+/** 把本帧汇集的滴水写进 sim 的 uDrops 数组（截断到 MAX_DROPS，多余丢弃）。
+ *  iz = inverse-zoom（K6 缩放开时 ≠1）：把屏幕坐标按 (uv−0.5)·iz+0.5 变换 → 与合成的缩放采样一致，
+ *  使涟漪显示位置 = 实际鼠标/球位置（消除 K6 偏移）。iz=1 时逐字等于原写法。 */
+export function writeDrops(mat: ShaderMaterial, drops: Drop[], slots: Vector4[], iz = 1): void {
   const n = Math.min(drops.length, MAX_DROPS);
   for (let i = 0; i < n; i++) {
     const d = drops[i];
-    slots[i].set(d.ux, d.uy, d.radius, d.strength);
+    const ux = iz === 1 ? d.ux : (d.ux - 0.5) * iz + 0.5;
+    const uy = iz === 1 ? d.uy : (d.uy - 0.5) * iz + 0.5;
+    slots[i].set(ux, uy, d.radius, d.strength);
   }
   mat.uniforms.uDropCount.value = n;
 }
