@@ -44,9 +44,15 @@ function makeColumns(): { aBase: Float32Array; aMeta: Float32Array } {
     const a = rnd() * TWO_PI;
     aBase[i * 2] = Math.cos(a) * r;
     aBase[i * 2 + 1] = Math.sin(a) * r;
-    aMeta[i * 3] = 0.45 + rnd() * 0.6;       // 柱高 NDC
-    aMeta[i * 3 + 1] = 0.018 + rnd() * 0.022; // 半宽 NDC（细）
-    aMeta[i * 3 + 2] = rnd() < 0.5 ? 0 : 1;  // 石/晶各半
+    const kind = rnd() < 0.5 ? 0 : 1;
+    if (kind === 0) {                          // 礁石：矮而宽（圆钝巨石）
+      aMeta[i * 3] = 0.18 + rnd() * 0.16;
+      aMeta[i * 3 + 1] = 0.07 + rnd() * 0.06;
+    } else {                                   // 水晶柱：高而细
+      aMeta[i * 3] = 0.5 + rnd() * 0.5;
+      aMeta[i * 3 + 1] = 0.013 + rnd() * 0.018;
+    }
+    aMeta[i * 3 + 2] = kind;
   }
   return { aBase, aMeta };
 }

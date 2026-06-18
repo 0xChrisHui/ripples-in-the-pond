@@ -73,32 +73,35 @@ export const columnsFragment = /* glsl */ `
     float kindOn = isStone ? uStoneOn : uCrystalOn;
     if (kindOn < 0.5) discard;
 
-    // 柱身横截面：以 quad 中心竖线为轴，|x−0.5| 决定离轴距离 → 做柔边 silhouette（圆柱感）。
+    // 横截面轴距：|x−0.5| 离轴距离 → 各风格据此做 silhouette。
     float ax = abs(vUv.x - 0.5) * 2.0;        // 0=轴心 1=边
-    // 竖向锥形：根略宽、梢略窄（礁石/晶簇上收），叠到边界柔化
-    float taper = mix(1.0, 0.62, vUv.y);
-    float body = smoothstep(1.0, 0.55, ax / max(0.0001, taper));
-    if (body <= 0.001) discard;
 
     // 水线：柱身 uv.y → z = mix(zBase, zTop, uv.y)；水线处 z == 水位。
     float waterlineUv = clamp((uWaterLevel - uZBase) / max(0.0001, (uZTop - uZBase)), 0.0, 1.0);
     float aboveWater = step(waterlineUv, vUv.y);    // 1=出水 0=没入
-    // 没入深度 0..1：水线处 0 → 柱根 1（越深越压暗渐隐，与 getSubmerge 同向：z 越小越深）
     float subDepth = clamp((waterlineUv - vUv.y) / max(0.0001, waterlineUv), 0.0, 1.0);
 
     vec3 col;
+    float body;
     float alpha;
     if (isStone) {
-      // 礁石：暗岩冷调，竖向微噪让岩面不呆板（廉价 sin 纹，不引噪声纹理）
-      float grain = 0.5 + 0.5 * sin(vUv.y * 38.0 + ax * 7.0);
-      vec3 rock = mix(vec3(0.05, 0.075, 0.085), vec3(0.11, 0.145, 0.16), grain);
-      // 顶冷光：出水段顶端受月光提一点冷白（仅线上）
-      float topLight = aboveWater * smoothstep(waterlineUv, 1.0, vUv.y) * 0.35;
-      rock += vec3(0.10, 0.14, 0.18) * topLight;
+      // 礁石：下宽上圆的「穹顶」圆钝巨石；中性暗灰岩（区别于冷蓝水 → 看得出是石头）；
+      // 低频起伏（非高频 hatch）+ 出水顶受月光 + 冷描边提辨识。
+      float dome = sqrt(max(0.0, 1.0 - pow(vUv.y, 1.6)));   // 下宽上窄的轮廓宽度
+      body = smoothstep(dome, dome - 0.22, ax);
+      if (body <= 0.001) discard;
+      float mottle = 0.5 + 0.5 * sin(vUv.y * 5.0 + ax * 3.0 + 1.7);
+      vec3 rock = mix(vec3(0.06, 0.065, 0.072), vec3(0.16, 0.165, 0.17), clamp(vUv.y * 0.55 + mottle * 0.25, 0.0, 1.0));
+      float topLight = aboveWater * smoothstep(waterlineUv, 1.0, vUv.y) * 0.45;
+      rock += vec3(0.10, 0.14, 0.20) * topLight;                       // 出水段顶冷光
+      rock += vec3(0.05, 0.07, 0.11) * smoothstep(dome - 0.06, dome, ax); // 边缘冷描边
       col = rock;
       alpha = body * uOpacity;
     } else {
-      // 水晶柱：冷光半透，内部一道缓慢游走的高光带（接月光、通透）
+      // 水晶柱：高细、冷光半透、内部游走高光（接月光、通透）。
+      float taper = mix(1.0, 0.55, vUv.y);
+      body = smoothstep(1.0, 0.5, ax / max(0.0001, taper));
+      if (body <= 0.001) discard;
       float core = smoothstep(1.0, 0.0, ax);                 // 轴心更亮
       float glow = 0.5 + 0.5 * sin(vUv.y * 9.0 - uTime * 0.6 + ax * 3.0);
       vec3 crystal = mix(vec3(0.16, 0.27, 0.36), vec3(0.55, 0.74, 0.95), core * (0.4 + 0.6 * glow));
