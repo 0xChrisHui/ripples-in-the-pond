@@ -76,29 +76,25 @@ export const compositeMaskFrag = /* glsl */ `
     return d;
   }
 
-  // K4：空中球（s = uWaterLevel − depthZ > 0，即露出水面/悬空）在它下方水面投柔影。
-  // 物理直觉——球悬在水面上方挡月光 → 正下方水面暗一块；球越高（s 越大），影越大、越散、越淡（半影变宽）。
-  // 坐标：px=sim 像素（y 已翻转，screen-down = px.y 增大）；影心在球心略下方 (x, y + drop)，drop ∝ s。
-  // 椭圆软斑：横向用球半径、纵向略压扁（贴水面斜投感）；高度 s 越大 → 半径放大 + 边缘更软 + 峰值更淡。
+  // K4：浮出水面（空中/悬空）的球在下方水面投柔影。air = depthZ − uWaterLevel > 0 才投
+  // （depthZ>水位=露出水面；之前写反成"水下球投影"=bug）。水下/贴面球不投。
+  // 投影"位置"= 离水面距离 rise 的函数：越高 → 沿背光方向(右下，月光自左上)偏移越远 + 越大 + 越软 + 越淡。
+  // 参考 flower-water-ripples 花瓣 sunk shadow：很轻 + 冷蓝灰 + 椭圆纵向压扁；这里做成"挡月光的减光"。
   float computeShadowMask(vec2 uv) {
     vec2 px = vec2(uv.x, 1.0 - uv.y) * uViewport;
+    vec2 offDir = normalize(vec2(0.5, 1.0)); // px 空间影偏移方向：右下（px.y 向下=屏下）
     float shadow = 0.0;
     for (int i = 0; i < ${MAX_SPHERES}; i++) {
       if (i >= uSphereCount) break;
       vec4 s = uSpheres[i];
-      float air = uWaterLevel - s.w;          // >0 = 球在空中（露出水面/悬空）
+      float air = s.w - uWaterLevel;          // >0 = 球在空中（悬空/露出水面）
       if (air <= 0.0) continue;               // 水下/贴面球不投影（只空中带投）
-      float rise = clamp(air / max(0.001, uPondDepth), 0.0, 1.0); // 归一空中高度 0..1
-      float drop = s.z * (0.35 + 0.9 * rise);                     // 影心下移：越高投得越远
-      vec2 ctr = vec2(s.x, s.y + drop);
-      float rad = s.z * (0.85 + 0.7 * rise);                      // 越高影越大
-      // 椭圆度量：纵向压扁 0.65（贴水面斜投），距离归一到半径
-      vec2 dd = (px - ctr) / vec2(rad, rad * 0.65);
-      float dist = length(dd);
-      float soft = 0.45 + 0.45 * rise;        // 越高边缘越软（半影更宽）
-      float spot = 1.0 - smoothstep(1.0 - soft, 1.0, dist);
-      float peak = 1.0 - 0.45 * rise;         // 越高峰值越淡（光被散开）
-      shadow = max(shadow, spot * peak);
+      float rise = clamp(air / 0.12, 0.0, 1.0); // 归一空中高度（0.12≈最大浮高 focusMargin/bobAmp 量级）
+      vec2 ctr = s.xy + offDir * (s.z * (0.12 + 1.2 * rise)); // 影位：贴面≈球正下，升高→沿背光更偏移
+      float rad = s.z * (0.62 + 0.7 * rise);    // 越高影越大
+      vec2 dd = (px - ctr) / vec2(rad, rad * 0.5); // 椭圆纵向压扁（贴水面斜投，参考 ~0.52）
+      float spot = 1.0 - smoothstep(0.5 - 0.4 * rise, 1.0, length(dd)); // 越高半影越宽（边缘更软）
+      shadow = max(shadow, spot * (1.0 - 0.4 * rise)); // 越高峰值越淡（光被散开）
     }
     return shadow;
   }
@@ -173,7 +169,8 @@ export const compositeMaskFrag = /* glsl */ `
     // 只投在水面（× sub）：影落在水上球身上无意义，且 sub 让"被空中球自己遮住的那块"不重复压暗。
     if (uSphereShowing > 0.5) {
       float shadow = computeShadowMask(vUv) * uShadowStrength * sub;
-      col = max(col - shadow, 0.0); // 不压成负值（红线：水下不压黑由亮度地板兜，这里只夺月光）
+      // 冷向减光（多减暖、留冷）→ 影偏蓝灰、不死黑；max≥0（红线：水下不压黑，这里只夺月光/亮处）
+      col = max(col - shadow * vec3(1.1, 1.0, 0.82), 0.0);
     }
     // K5：月光焦散冷白光照（uCaustics<0.5 时跳过 → 与现状逐字一致）。
     // 只在水域（× sub）叠加：水上球身上不染焦散；冷白偏蓝 RGB(0.62,0.74,0.85)→月光感、不上暖色。

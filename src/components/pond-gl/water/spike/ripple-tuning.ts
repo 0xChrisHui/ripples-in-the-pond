@@ -44,7 +44,7 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   pondDepth: 0.5,
   refrExp: 1.4,
   moonExp: 1.2,
-  shadowStrength: 0.3,
+  shadowStrength: 0.2,
   causticsStrength: 0.4,
   zoomAmount: 0.4,
 };
