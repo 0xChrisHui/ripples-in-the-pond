@@ -104,17 +104,21 @@ export const compositeMaskFrag = /* glsl */ `
   // 四层：①漫反射(坡面朝月微提亮) ②波峰高光(陡坡尖峰增辉) ③飘移对角光带 ④缓慢游走的月光池。
   // 后两层用 uTime 自驱，平水/静止时水面仍有缓慢流光（焦散感）；前两层 gate 在涟漪梯度上、平水≈0。
   float computeCaustics(vec2 uv, vec2 grad, float time) {
-    // ①漫反射：坡面沿月光方向(左上)提亮。参考用 (grad.x+grad.y)，这里用与月光方向一致的点积更聚焦。
-    float light = max(0.0, dot(grad, normalize(vec2(-0.6, 1.0)))) * 2.2;
-    // ②波峰高光：只取超过阈值的强坡尖峰增辉（涟漪波峰冷白闪烁），平缓处为 0。
-    float peak = max(0.0, light - 0.012) * 4.0;
-    // ③对角飘移光带：sin 沿对角随时间移动，smoothstep 取窄亮带 → 一道道月光斜扫水面。
-    float band = sin(dot(uv, vec2(1.3, 1.0)) * 2.6 - time * 0.18);
-    band = smoothstep(0.8, 1.0, band) * 0.06;
-    // ④游走月光池：一团柔光中心随 time 缓慢漂移，距离衰减成柔斑（静止也活的"焦散池"）。
-    vec2 pc = vec2(0.5 + 0.22 * cos(time * 0.06), 0.5 + 0.18 * sin(time * 0.08));
-    float pool = (1.0 - smoothstep(0.0, 0.5, distance(uv, pc))) * 0.05;
-    return light + peak + band + pool;
+    // ①焦散网纹（主体）：四层缓慢移动的正弦干涉成胞状，pow 锐化成"细亮丝"（月光在水里的网纹），
+    //   随时间明显流动 → 静止水面也"活"。按宽高比缩 uv，胞状近正方、不被宽屏横向拉长。
+    float aspect = uViewport.x / max(1.0, uViewport.y);
+    vec2 p = uv * vec2(7.0 * aspect, 7.0);
+    float t = time * 0.4;
+    float w = sin(p.x + t) + sin(p.y - t * 0.9)
+            + sin((p.x + p.y) * 0.7 + t * 1.1)
+            + sin((p.x - p.y) * 0.6 - t * 0.7);
+    float web = pow(clamp(w * 0.25 + 0.5, 0.0, 1.0), 3.0); // 归一 0..1 再锐化成稀疏亮丝（非均匀雾）
+    // ②大尺度游走明暗：缓慢漂移的柔斑，只「调制」网纹强弱（不再是整片均匀加雾）。
+    vec2 pc = vec2(0.5 + 0.3 * cos(time * 0.05), 0.5 + 0.25 * sin(time * 0.07));
+    float pool = 1.0 - smoothstep(0.2, 0.75, distance(uv, pc));
+    // ③涟漪坡面朝月动态增辉：有涟漪处网纹更亮（活水感），平水≈0。
+    float slope = max(0.0, dot(grad, normalize(vec2(-0.6, 1.0)))) * 5.0;
+    return web * (0.45 + 0.55 * pool) + slope;
   }
 
   void main() {
@@ -177,7 +181,7 @@ export const compositeMaskFrag = /* glsl */ `
     // 只加亮不压暗（col += 正值）→ 不破"水下不压黑"红线；强度小 + 参数板可调到 0 关闭。
     if (uCaustics > 0.5) {
       float caustic = computeCaustics(vUv, grad, uTime) * uCausticsStrength * sub;
-      col += caustic * vec3(0.62, 0.74, 0.85);
+      col += caustic * vec3(0.55, 0.72, 0.95); // 月光冷蓝白（偏蓝、非死白雾）
     }
     gl_FragColor = vec4(col, scene.a);
   }
