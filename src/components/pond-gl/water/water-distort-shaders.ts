@@ -172,7 +172,13 @@ export const compositeMaskFrag = /* glsl */ `
     // K4：空中球投影压暗水面（uSphereShowing<0.5 时跳过 → 与现状逐字一致）。
     // 只投在水面（× sub）：影落在水上球身上无意义，且 sub 让"被空中球自己遮住的那块"不重复压暗。
     if (uSphereShowing > 0.5) {
-      float shadow = computeShadowMask(vUv) * uShadowStrength * sub;
+      // 让影子"长在水面上"而非硬桌面：①边缘随涟漪坡度晃动 ②被一层缓慢移动的水光网纹打碎（平水也活）。
+      vec2 sWarp = clamp(grad * 6.0, -0.02, 0.02);                  // ①涟漪坡度扭动影子采样位置 → 边缘随波晃
+      float shadow = computeShadowMask(vUv + sWarp) * uShadowStrength * sub;
+      float sAspect = uViewport.x / max(1.0, uViewport.y);
+      vec2 wp = vUv * vec2(8.0 * sAspect, 8.0);                     // ②移动的低频水光网纹（按宽高比，不横向拉长）
+      float lite = sin(wp.x + uTime * 0.5) + sin(wp.y * 0.9 - uTime * 0.4) + sin((wp.x + wp.y) * 0.6 + uTime * 0.6);
+      shadow *= 1.0 - 0.5 * smoothstep(0.4, 2.2, lite);            // 亮水纹处影子被光"打穿" → 不再实心硬块
       // 冷向减光（多减暖、留冷）→ 影偏蓝灰、不死黑；max≥0（红线：水下不压黑，这里只夺月光/亮处）
       col = max(col - shadow * vec3(1.1, 1.0, 0.82), 0.0);
     }
