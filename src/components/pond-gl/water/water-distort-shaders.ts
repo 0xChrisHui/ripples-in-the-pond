@@ -143,17 +143,17 @@ export const compositeMaskFrag = /* glsl */ `
     // uZoomAmount=0 时 zoom≡1、hUv≡vUv 且不取 fract → 下面三个采样与现状逐字一致（OFF=现状）。
     // 缩小(zoom<1)时 hUv 越界 [0,1]：高度场 FBO 是 ClampToEdge（不能改 Repeat，会偷换 sim 边界），
     // 故只在 K6 开时对 hUv 取 fract() 手动平铺 → 露出区域填重复涟漪图案、不露边，与 wrap 模式解耦。
-    // OFF（uZoomAmount=0）：hUv=vUv、hd=uDelta → 下面三个采样位级回到原始 texture2D(uHeight,vUv/+uDelta)。
+    // OFF（uZoomAmount=0）：hUv=vUv → 下面三个采样位级回到原始 texture2D(uHeight,vUv/+uDelta)。
     vec2 hUv = vUv;
-    vec2 hd = uDelta;
     if (uZoomAmount > 0.0) {
       float zoom = 1.0 + (uWaterLevel - 0.5) * uZoomAmount;
       hUv = fract((vUv - 0.5) / max(0.001, zoom) + 0.5); // 绕中心缩放采样 + fract 平铺防露边
-      hd = uDelta / max(0.001, zoom);                    // 梯度步长随缩放：否则 zoom≠1 时折射/焦散强度与显示波形脱节
     }
+    // 梯度步长恒用 uDelta（采"场内自然梯度"）→ 缩放只改涟漪在屏上的位置/大小，不改其亮度。
+    // ⚠ 曾用 hd=uDelta/zoom 让折射尺度更"准"，但降水位 zoom<1 → gmag 整体放大 → 全屏涟漪突然变亮，弃用。
     float h  = texture2D(uHeight, hUv).r;
-    float hx = texture2D(uHeight, hUv + vec2(hd.x, 0.0)).r;
-    float hy = texture2D(uHeight, hUv + vec2(0.0, hd.y)).r;
+    float hx = texture2D(uHeight, hUv + vec2(uDelta.x, 0.0)).r;
+    float hy = texture2D(uHeight, hUv + vec2(0.0, uDelta.y)).r;
     // 折射位移 ∝ 高度梯度(坡度) 并 clamp 上限：平水≈0、缓坡轻折、陡坡强折但不破。
     // ⚠ 旧版 -normalize(法线).xz 让"任何涟漪都满幅位移"→ 鼠标狂晃/微波被放大成麻点破洞，弃用。
     vec2 grad = vec2(hx - h, hy - h);
