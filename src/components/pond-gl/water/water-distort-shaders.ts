@@ -98,7 +98,7 @@ export const compositeMaskFrag = /* glsl */ `
       if (air <= 0.0) continue;               // 水下/贴面球不投影
       float t = clamp(air / 0.5, 0.0, 1.0);   // 归一高度（0.5≈最高，覆盖整层级差，不再 0.12 早饱和）
       vec2 warp = clamp(grad * (1.0 + 6.0 * t * g), -0.02, 0.02) * uViewport; // ③折射/涟漪打散：高→更糊
-      vec2 ctr = s.xy + offDir * (s.z * 0.15 + air * vh * 0.18 * g);          // ①视差：偏移∝真实高度
+      vec2 ctr = s.xy + offDir * (s.z * 0.15 + air * vh * 0.08 * g);          // ①视差：偏移∝真实高度/tanθ（月光仰角≈70°，水面系；θ 越陡影越近）
       float rOuter = s.z * (1.0 + 1.6 * t * g);                              // ②外半影随高涨
       vec2 dd = (px + warp - ctr) / vec2(rOuter, rOuter * 0.55);            // 椭圆纵向压扁
       float umbra = (1.0 - t) * 0.85;          // ②本影占比随高缩（高→0=全半影模糊盘；贴面→大本影=锐）
