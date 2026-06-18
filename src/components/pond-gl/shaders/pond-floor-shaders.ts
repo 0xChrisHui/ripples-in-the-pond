@@ -161,7 +161,8 @@ export const pondFloorGlsl = /* glsl */ `
   }
   vec3 floorStyle4(vec2 p) {
     float nebulaWarp = f4_fbm(p * 2.5) * 0.3 - 0.15;                          // 对角星云带扭动 ±0.15
-    float nebulaMask = exp(-pow(((p.x - p.y) * 0.8 + nebulaWarp) * 3.0, 2.0)); // 高斯柔光
+    float nbAxis = ((p.x - p.y) * 0.8 + nebulaWarp) * 3.0;
+    float nebulaMask = exp(-nbAxis * nbAxis);                                  // 高斯柔光（x*x 代 pow：避负底 pow 未定义→NaN/花屏）
     vec3 result = vec3(0.08, 0.08, 0.12) + f4_nebulaColor(p * 1.2) * nebulaMask * 0.8; // 深空背景+彩色星云
     vec2 pdense = p * 12.0, psparse = p * 6.0;
     float starsDense = f4_starNeighborMax(pdense, 0.92) * (0.4 + 0.2 * f4_noise(pdense)); // 密星
