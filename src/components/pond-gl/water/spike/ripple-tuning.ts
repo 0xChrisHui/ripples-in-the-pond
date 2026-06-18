@@ -63,9 +63,9 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   motesSize: 2.0,    // 细小光点
   motesOpacity: 0.6, // 半透，退让衬托
   motesDrift: 0.15,  // 轻柔游走（缩放为主、漂移克制）
-  plantsCount: 0.3,  // 稀疏：~0.3·MAX 片睡莲，优雅留白、不挡球
-  plantsSize: 0.06,  // 俯视小圆片（NDC 半径，逐叶随机 0.6×–1.4×）
-  plantsOpacity: 0.5,// 半透墨绿，退让衬托
+  plantsCount: 0.42, // 稍密：~0.42·MAX 片睡莲，成"浮叶"而非零碎，仍留白不挡球
+  plantsSize: 0.09,  // 放大圆片（NDC 半径，逐叶随机 0.6×–1.4×）→ 读成叶不读成碎片
+  plantsOpacity: 0.62,// 提亮半透墨绿，暗塘上可辨、仍退让
   plantsSway: 0.2,   // 涟漪轻晃（沉静——比微光更小、几乎静止只微摇）
   pondFloorStrength: 0.05, // 极淡暗纹：默认 0.05（面板 0–0.2），只给一丝纵深、绝不压亮整体
   moonReflectStrength: 0.4, // 月华倒影：默认 0.4（面板 0–1），安静优雅的一道冷白、点睛不抢球

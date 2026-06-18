@@ -66,15 +66,15 @@ const plantsFragment = /* glsl */ `
       // 一道窄径向缺口（叶裂暗示）
       float ang = atan(d.y, d.x);
       float notch = smoothstep(0.16, 0.30, abs(sin((ang - vSeed * 6.2831853) * 0.5)));
-      disk *= mix(0.55, 1.0, notch);
-      // 墨绿冷调：中心略亮、边缘更暗（俯视体积感），整体压暗不抢球
-      vec3 col = mix(vec3(0.043, 0.149, 0.094), vec3(0.102, 0.247, 0.169), smoothstep(1.0, 0.2, r));
+      disk *= mix(0.82, 1.0, notch);
+      // 墨绿冷调：中心略亮、边缘更暗（俯视体积感）；提亮到暗塘上可辨，仍冷暗不抢球
+      vec3 col = mix(vec3(0.075, 0.22, 0.145), vec3(0.16, 0.36, 0.25), smoothstep(1.0, 0.2, r));
       col *= 0.85 + 0.25 * vSeed;
       gl_FragColor = vec4(col, disk * uOpacity);
     } else {
       // 芦苇丛：竖向暗条，下实上虚（贴边框构图，极暗）
       float a = smoothstep(0.5, 0.18, abs(vUv.x - 0.5)) * smoothstep(1.0, 0.15, vUv.y);
-      vec3 reed = vec3(0.031, 0.094, 0.063) * (0.8 + 0.4 * vSeed);
+      vec3 reed = vec3(0.06, 0.16, 0.105) * (0.8 + 0.4 * vSeed);
       gl_FragColor = vec4(reed, a * uOpacity * 0.85);
     }
   }
