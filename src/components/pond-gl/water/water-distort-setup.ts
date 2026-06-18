@@ -86,6 +86,9 @@ export function makeCompositeScene(
     // K10 可见塘底：uPondFloor<0.5 时 shader 跳过 → 纯黑塘底现状；uPondFloorStrength 极小（极淡暗纹）
     uPondFloor: { value: 0 },
     uPondFloorStrength: { value: 0.05 },
+    // K11 月光倒影：uMoonReflect<0.5 时 shader 跳过 → 现状；uMoonReflectStrength 克制（≤0.5、偏一侧不盖球）
+    uMoonReflect: { value: 0 },
+    uMoonReflectStrength: { value: 0.4 },
   });
 }
 
@@ -102,6 +105,7 @@ export function applyTuning(
   time: number,
   waterZoom: boolean,
   pondFloor: boolean,
+  moonReflect: boolean,
 ): void {
   sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z）
   sim.mat.uniforms.uAspect.value = aspect;     // K1：高度场方形被拉满宽屏 → 按宽高比校正滴水为正圆
@@ -129,6 +133,9 @@ export function applyTuning(
   // K10：pondFloor 开 → shader 叠极淡静止暗纹塘底（动水面在其上产生视差）；关 → 0（跳过 = 纯黑塘底现状）
   composite.mat.uniforms.uPondFloor.value = pondFloor ? 1 : 0;
   composite.mat.uniforms.uPondFloorStrength.value = t.pondFloorStrength;
+  // K11：moonReflect 开 → shader 叠大柔冷白月华倒影（被涟漪扭碎、随 K6 缩放）；关 → 0（跳过 = 现状）
+  composite.mat.uniforms.uMoonReflect.value = moonReflect ? 1 : 0;
+  composite.mat.uniforms.uMoonReflectStrength.value = t.moonReflectStrength;
 }
 
 /** 把球数据写进 uniform 数组（位置/半径/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */
