@@ -31,6 +31,10 @@ export interface RippleTuning {
   motesSize: number;    // K8 微光点径（屏幕像素，sizeAttenuation 关 → 与缩放无关、只随此值）
   motesOpacity: number; // K8 微光最大不透明度（≤1，克制免抢球）
   motesDrift: number;   // K8 游走幅度（轻柔漂移强度；缩放为主、漂移克制——默认小，免糊掉缩放感）
+  plantsCount: number;  // K9 睡莲叶密度（0–1 归一，映射叶片数；稀疏留白、不挡球）
+  plantsSize: number;   // K9 叶片基准半径（NDC 比例，逐叶随机微差；俯视圆片大小）
+  plantsOpacity: number;// K9 叶片最大不透明度（≤1，半透墨绿，退让不盖球）
+  plantsSway: number;   // K9 涟漪轻晃幅度（伪光流摇曳；克制——比 K8 更沉静、运动更小）
 }
 
 export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
@@ -57,6 +61,10 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   motesSize: 2.0,    // 细小光点
   motesOpacity: 0.6, // 半透，退让衬托
   motesDrift: 0.15,  // 轻柔游走（缩放为主、漂移克制）
+  plantsCount: 0.3,  // 稀疏：~0.3·MAX 片睡莲，优雅留白、不挡球
+  plantsSize: 0.06,  // 俯视小圆片（NDC 半径，逐叶随机 0.6×–1.4×）
+  plantsOpacity: 0.5,// 半透墨绿，退让衬托
+  plantsSway: 0.2,   // 涟漪轻晃（沉静——比微光更小、几乎静止只微摇）
 };
 
 const KEY = 'pond-gl-ripple-spike';

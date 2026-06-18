@@ -48,7 +48,7 @@ function Test1PageInner() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-black">
       {/* GL 层：基调 / 球 / 水面 / 背景图 / 实验 任一开就挂 Canvas，都关 = 不加载 three chunk */}
-      {(glFlags.glBase || glFlags.glSpheres || glFlags.water || glFlags.bgImage || glFlags.rtt || glFlags.waterFx) && (
+      {(glFlags.glBase || glFlags.glSpheres || glFlags.water || glFlags.bgImage || glFlags.rtt || glFlags.waterFx || glFlags.floatMotes || glFlags.waterPlants) && (
         <PondGL flags={glFlags} glSim={glSim} />
       )}
 
@@ -91,7 +91,7 @@ function Test1PageInner() {
       {/* 右下角参数板栏：调色 + 波纹/运动 同栏从下往上堆叠（不重叠） */}
       <div className="pointer-events-none fixed bottom-3 right-3 z-50 flex flex-col-reverse items-end gap-2">
         {glFlags.glSpheres && <TunePanel />}
-        {(glFlags.rtt || glFlags.waterFx || glFlags.floatMotes) && <RippleSpikePanel />}
+        {(glFlags.rtt || glFlags.waterFx || glFlags.floatMotes || glFlags.waterPlants) && <RippleSpikePanel />}
       </div>
 
       {/* 视觉控制台（左下角，逐层开关 GL 层） */}

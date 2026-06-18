@@ -50,6 +50,8 @@ export interface GLFlags {
   waterZoom: boolean;
   /** K8 — 水面漂浮微光层（冷白浮尘点阵；绕中心随水位缩放当 K6 参照 + 轻柔游走）；关 = 不挂载（现状）。默认关 */
   floatMotes: boolean;
+  /** K9 — 水生植物层（俯视睡莲叶圆片 + 边缘芦苇暗示岸；绕中心随水位缩放当 K6 强参照 + 涟漪轻晃）；关 = 不挂载（现状）。默认关 */
+  waterPlants: boolean;
   /** J1 — 强制走 WebGL 兜底夜塘（测试用，免去手动禁 WebGL）；默认关 */
   forceFallback: boolean;
   /** J3 — 低 FPS 自动降 DPR 保流畅；默认开（保护性，测试可关对比） */
@@ -77,6 +79,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   caustics: false,
   waterZoom: false,
   floatMotes: false,
+  waterPlants: false,
   forceFallback: false,
   autoDegrade: true,
 };
@@ -154,6 +157,10 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const floatMotes = searchParams.get('floatMotes');
   if (floatMotes === '1' || floatMotes === 'true') result.floatMotes = true;
   else if (floatMotes === '0' || floatMotes === 'false') result.floatMotes = false;
+
+  const waterPlants = searchParams.get('waterPlants');
+  if (waterPlants === '1' || waterPlants === 'true') result.waterPlants = true;
+  else if (waterPlants === '0' || waterPlants === 'false') result.waterPlants = false;
 
   const forceFallback = searchParams.get('forceFallback');
   if (forceFallback === '1' || forceFallback === 'true') result.forceFallback = true;
