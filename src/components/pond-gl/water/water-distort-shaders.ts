@@ -81,10 +81,11 @@ export const compositeMaskFrag = /* glsl */ `
   // （depthZ>水位=露出水面；之前写反成"水下球投影"=bug）。水下/贴面球不投。
   // 投影"位置"= 离水面距离 rise 的函数：越高 → 沿背光方向(右下，月光自左上)偏移越远 + 越大 + 越软 + 越淡。
   // 参考 flower-water-ripples 花瓣 sunk shadow：很轻 + 冷蓝灰 + 椭圆纵向压扁；这里做成"挡月光的减光"。
-  // K4：浮出水面（空中/悬空）的球在下方水面投"水面软影"。物理软投影，强调离水面高度 air 的影响：
-  //  air 越大 → ①视差偏移越远(高球甩得远) ②外半影越大/本影收缩(够高=整团模糊盘) ③被涟漪/折射搅得越糊
-  //  ④峰值越淡(散射+半影主导)；air→0=贴面接触影(锐、深、与球重合)。uShadowHeight=高度影响总增益 g。
-  //  完整物理因素清单见 docs/JOURNAL.md(2026-06-18)。grad=本像素水面坡度(扭影=折射模糊)。
+  // K4：浮出水面（空中/悬空）的球在下方水面投"水面软影"。月光=远光源(角直径~0.5°、近平行光)，故按
+  //  远光源建模：air 越大 → ①视差偏移越远(高球甩得远，主高度线索) ②大小≈恒定(平行光无放大，本影=球侧影)
+  //  ③透起伏水面/夜雾看影 → 随高"温和"变糊 ④天空环境补光 → 随高"温和"变淡(不大幅、不膨胀)。
+  //  (旧版按近光源做成"越高越大越淡的模糊盘"=物理错，已纠正。)完整因素+远近光源辨析见 docs/JOURNAL.md(2026-06-18)。
+  //  uShadowHeight=g：高度影响总增益(主要放大偏移与糊度)。grad=本像素水面坡度(扭影=折射模糊)。
   float computeShadowMask(vec2 uv, vec2 grad) {
     vec2 px = vec2(uv.x, 1.0 - uv.y) * uViewport;
     vec2 offDir = normalize(vec2(0.5, 1.0)); // 背光方向(右下，月光自左上)：影偏移方向
@@ -96,14 +97,13 @@ export const compositeMaskFrag = /* glsl */ `
       vec4 s = uSpheres[i];
       float air = s.w - uWaterLevel;          // >0 = 悬空高度（z 归一），越大离水面越远
       if (air <= 0.0) continue;               // 水下/贴面球不投影
-      float t = clamp(air / 0.5, 0.0, 1.0);   // 归一高度（0.5≈最高，覆盖整层级差，不再 0.12 早饱和）
-      vec2 warp = clamp(grad * (1.0 + 6.0 * t * g), -0.02, 0.02) * uViewport; // ③折射/涟漪打散：高→更糊
-      vec2 ctr = s.xy + offDir * (s.z * 0.15 + air * vh * 0.08 * g);          // ①视差：偏移∝真实高度/tanθ（月光仰角≈70°，水面系；θ 越陡影越近）
-      float rOuter = s.z * (1.0 + 1.6 * t * g);                              // ②外半影随高涨
-      vec2 dd = (px + warp - ctr) / vec2(rOuter, rOuter * 0.55);            // 椭圆纵向压扁
-      float umbra = (1.0 - t) * 0.85;          // ②本影占比随高缩（高→0=全半影模糊盘；贴面→大本影=锐）
+      float t = clamp(air / 0.5, 0.0, 1.0);   // 归一高度（0.5≈最高，覆盖整层级差）
+      vec2 warp = clamp(grad * (1.0 + 3.0 * t * g), -0.02, 0.02) * uViewport; // ③透起伏水面/雾看影→随高温和变糊
+      vec2 ctr = s.xy + offDir * (s.z * 0.15 + air * vh * 0.08 * g);          // ①视差：偏移∝真实高度/tanθ（月光仰角≈70°；主高度线索）
+      vec2 dd = (px + warp - ctr) / vec2(s.z, s.z * 0.55);                   // ②大小≈恒定（远光源平行光无放大；纵压扁=斜投椭圆）
+      float umbra = 0.85 - 0.3 * t;            // 仅温和变软（天空环境光填半影）：贴面 0.85 → 高处 0.55
       float spot = 1.0 - smoothstep(umbra, 1.0, length(dd));
-      shadow = max(shadow, spot * mix(1.0, 0.3, t)); // ④衰减：高→淡但不消失
+      shadow = max(shadow, spot * (1.0 - 0.35 * t)); // ③温和变淡（环境补光）：高处 ×0.65，不大幅
     }
     return shadow;
   }
