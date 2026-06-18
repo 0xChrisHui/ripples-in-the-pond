@@ -51,7 +51,10 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="水面" checked={glFlags.water} onChange={(v) => onGl({ water: v })} />
           <Row label="扭曲水面" checked={glFlags.waterFx} onChange={(v) => onGl({ waterFx: v })} />
           <Row label="深度模型(K3)" checked={glFlags.depthModel} onChange={(v) => onGl({ depthModel: v })} />
-          <Row label="球投影(K4)" checked={glFlags.sphereShadow} onChange={(v) => onGl({ sphereShadow: v })} />
+          <Row label="投影·暗影(K4)" checked={glFlags.sphereShadow} onChange={(v) => onGl({ sphereShadow: v })} />
+          <Row label="投影·挡月光" checked={glFlags.shadowOcclude} onChange={(v) => onGl({ shadowOcclude: v })} />
+          <Row label="投影·反光晕" checked={glFlags.shadowGlow} onChange={(v) => onGl({ shadowGlow: v })} />
+          <Row label="投影·接触影" checked={glFlags.shadowContact} onChange={(v) => onGl({ shadowContact: v })} />
           <Row label="月光焦散(K5)" checked={glFlags.caustics} onChange={(v) => onGl({ caustics: v })} />
           <Row label="水面缩放(K6)" checked={glFlags.waterZoom} onChange={(v) => onGl({ waterZoom: v })} />
           <Row label="遮罩调试" checked={glFlags.waterDbg} onChange={(v) => onGl({ waterDbg: v })} />

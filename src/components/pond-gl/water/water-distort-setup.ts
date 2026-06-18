@@ -74,6 +74,9 @@ export function makeCompositeScene(
     uSphereShowing: { value: 0 },
     uShadowStrength: { value: 0.3 },
     uShadowHeight: { value: 1.2 }, // K4 高度影响增益（拉高=层级差更显）
+    uShadowOcclude: { value: 0 },  // K4-B 挡月光
+    uShadowGlow: { value: 0 },     // K4-C 反光晕
+    uShadowContact: { value: 0 },  // K4-D 接触影
     // K5 月光焦散光照：uCaustics<0.5 时 shader 跳过光照 → 与现状逐字一致；uTime 每帧由 state.clock 刷新
     uCaustics: { value: 0 },
     uCausticsStrength: { value: 0.4 },
@@ -91,7 +94,7 @@ export function applyTuning(
   debug: boolean,
   aspect: number,
   depthModel: boolean,
-  sphereShadow: boolean,
+  shadow: { dark: boolean; occlude: boolean; glow: boolean; contact: boolean }, // K4 投影四模式
   caustics: boolean,
   time: number,
   waterZoom: boolean,
@@ -106,8 +109,11 @@ export function applyTuning(
   composite.mat.uniforms.uPondDepth.value = t.pondDepth;
   composite.mat.uniforms.uRefrExp.value = t.refrExp;
   composite.mat.uniforms.uMoonExp.value = t.moonExp;
-  // K4：sphereShadow 开 → shader 给空中球在下方水面投柔影；关 → 跳过投影（现状）
-  composite.mat.uniforms.uSphereShowing.value = sphereShadow ? 1 : 0;
+  // K4：四种投影模式各自开关（暗影/挡月光/反光晕/接触影；都关 → shader 跳过 = 现状）
+  composite.mat.uniforms.uSphereShowing.value = shadow.dark ? 1 : 0;
+  composite.mat.uniforms.uShadowOcclude.value = shadow.occlude ? 1 : 0;
+  composite.mat.uniforms.uShadowGlow.value = shadow.glow ? 1 : 0;
+  composite.mat.uniforms.uShadowContact.value = shadow.contact ? 1 : 0;
   composite.mat.uniforms.uShadowStrength.value = t.shadowStrength;
   composite.mat.uniforms.uShadowHeight.value = t.shadowHeight; // K4 高度对投影影响的总增益
   // K5：caustics 开 → shader 叠冷白月光焦散光照（uTime 驱游走流光）；关 → 跳过（现状）

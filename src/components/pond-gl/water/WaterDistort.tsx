@@ -95,8 +95,8 @@ function tick(
 }
 
 export default function WaterDistort(
-  { debug = false, glSim, depthModel = false, sphereShadow = false, caustics = false, waterZoom = false }:
-  { debug?: boolean; glSim?: GlSim; depthModel?: boolean; sphereShadow?: boolean; caustics?: boolean; waterZoom?: boolean },
+  { debug = false, glSim, depthModel = false, sphereShadow = false, shadowOcclude = false, shadowGlow = false, shadowContact = false, caustics = false, waterZoom = false }:
+  { debug?: boolean; glSim?: GlSim; depthModel?: boolean; sphereShadow?: boolean; shadowOcclude?: boolean; shadowGlow?: boolean; shadowContact?: boolean; caustics?: boolean; waterZoom?: boolean },
 ) {
   const content = useFBO();
   const heightA = useFBO(RES_X, RES_Y, SIM_OPTS);
@@ -150,7 +150,7 @@ export default function WaterDistort(
     // K4：sphereShadow prop 传进 helper → composite 的空中球投影 uniform 每帧刷新
     // K5：caustics prop + state.clock 传进 helper → 焦散开关 + 游走流光的时间每帧刷新
     // K6：waterZoom prop 传进 helper → composite 的 uZoomAmount（开=t.zoomAmount/关=0）每帧刷新
-    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, sphereShadow, caustics, state.clock.getElapsedTime(), waterZoom);
+    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, { dark: sphereShadow, occlude: shadowOcclude, glow: shadowGlow, contact: shadowContact }, caustics, state.clock.getElapsedTime(), waterZoom);
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
     applySpheres(composite, nodes ?? EMPTY_NODES, size.w, size.h, getWaterLevel());
     // 汇集本帧所有滴水：指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并）+ 常驻微波

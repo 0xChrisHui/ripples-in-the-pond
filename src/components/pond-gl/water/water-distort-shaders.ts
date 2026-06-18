@@ -32,6 +32,9 @@ export const compositeMaskFrag = /* glsl */ `
   uniform float uSphereShowing; // 0=关（现状）/ 1=开（空中球在下方水面投柔影）
   uniform float uShadowStrength;// 柔影最大压暗量（0=无影，叠到合成色前 color -= shadow）
   uniform float uShadowHeight;  // K4 高度对投影的影响总增益（拉高=层级差更显：偏移/半影/模糊/衰减都更随高度）
+  uniform float uShadowOcclude; // K4-B 挡月光：球挡住下方月光/焦散（乘性夺光，暗处不动只压亮）
+  uniform float uShadowGlow;    // K4-C 反光晕：球在下方水面投淡冷光（加亮，暗塘更显）
+  uniform float uShadowContact; // K4-D 接触影：紧贴球的小柔影（g=0，无视差/不随高度涨）
   // K5 月光焦散光照（R7，uCaustics<0.5 时不加 → 与现状逐字一致）：
   uniform float uCaustics;        // 0=关（现状）/ 1=开（冷白月光漫反射+焦散流光叠到水面）
   uniform float uCausticsStrength;// 焦散光照总强度（0=无光，乘到整层冷白增量上）
@@ -86,11 +89,10 @@ export const compositeMaskFrag = /* glsl */ `
   //  ③透起伏水面/夜雾看影 → 随高"温和"变糊 ④天空环境补光 → 随高"温和"变淡(不大幅、不膨胀)。
   //  (旧版按近光源做成"越高越大越淡的模糊盘"=物理错，已纠正。)完整因素+远近光源辨析见 docs/JOURNAL.md(2026-06-18)。
   //  uShadowHeight=g：高度影响总增益(主要放大偏移与糊度)。grad=本像素水面坡度(扭影=折射模糊)。
-  float computeShadowMask(vec2 uv, vec2 grad) {
+  float computeShadowMask(vec2 uv, vec2 grad, float g) {
     vec2 px = vec2(uv.x, 1.0 - uv.y) * uViewport;
     vec2 offDir = normalize(vec2(0.5, 1.0)); // 背光方向(右下，月光自左上)：影偏移方向
     float vh = max(1.0, uViewport.y);
-    float g = uShadowHeight;                  // 高度对投影影响的总增益（参数板）
     float shadow = 0.0;
     for (int i = 0; i < ${MAX_SPHERES}; i++) {
       if (i >= uSphereCount) break;
@@ -105,7 +107,11 @@ export const compositeMaskFrag = /* glsl */ `
       float spot = 1.0 - smoothstep(umbra, 1.0, length(dd));
       shadow = max(shadow, spot * (1.0 - 0.35 * t)); // ③温和变淡（环境补光）：高处 ×0.65，不大幅
     }
-    return shadow;
+    // 水光网纹打碎（亮处被光"打穿" → 水面感、平水也活），四种投影模式共用此 mask。
+    float sAspect = uViewport.x / max(1.0, uViewport.y);
+    vec2 wp = uv * vec2(8.0 * sAspect, 8.0);
+    float lite = sin(wp.x + uTime * 0.5) + sin(wp.y * 0.9 - uTime * 0.4) + sin((wp.x + wp.y) * 0.6 + uTime * 0.6);
+    return shadow * (1.0 - 0.5 * smoothstep(0.4, 2.2, lite));
   }
 
   // K5：月光焦散光照（参考 flower-water-ripples FSH 的 light/spec/band/pool，翻成夜塘月光冷白版）。
@@ -180,17 +186,17 @@ export const compositeMaskFrag = /* glsl */ `
     vec3 col = scene.rgb + vec3(spec * uSpec * sub * moonMod);
     // K4：空中球投影压暗水面（uSphereShowing<0.5 时跳过 → 与现状逐字一致）。
     // 只投在水面（× sub）：影落在水上球身上无意义，且 sub 让"被空中球自己遮住的那块"不重复压暗。
-    if (uSphereShowing > 0.5) {
-      // 物理软影（视差/半影/折射模糊/衰减都在 computeShadowMask 内按高度算；warp 已并入）。
-      float shadow = computeShadowMask(vUv, grad) * uShadowStrength * sub;
-      // 再被一层缓慢移动的水光网纹打碎（亮处被光"打穿" → 不实心、平水也活）。
-      float sAspect = uViewport.x / max(1.0, uViewport.y);
-      vec2 wp = vUv * vec2(8.0 * sAspect, 8.0);
-      float lite = sin(wp.x + uTime * 0.5) + sin(wp.y * 0.9 - uTime * 0.4) + sin((wp.x + wp.y) * 0.6 + uTime * 0.6);
-      shadow *= 1.0 - 0.5 * smoothstep(0.4, 2.2, lite);
-      // 冷向减光（多减暖、留冷）→ 影偏蓝灰、不死黑；max≥0（红线：水下不压黑，这里只夺月光/亮处）
-      col = max(col - shadow * vec3(1.1, 1.0, 0.82), 0.0);
-    }
+    // K4 空中球→水面"投影"四模式（独立开关、可叠加对比；mask 已含视差/温和软化/水光打碎）。
+    float aMask = (uSphereShowing > 0.5 || uShadowOcclude > 0.5 || uShadowGlow > 0.5)
+      ? computeShadowMask(vUv, grad, uShadowHeight) * sub : 0.0;
+    // A 暗影：冷向减光（多减暖留冷、影偏蓝灰不死黑；暗塘上弱、亮处显）
+    if (uSphereShowing > 0.5) col = max(col - aMask * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
+    // B 挡月光：乘性夺光（按当前亮度比例 → 暗处几乎不动、只压住月光/焦散的亮 = 球挡光）
+    if (uShadowOcclude > 0.5) col *= 1.0 - aMask * min(uShadowStrength * 1.6, 0.92);
+    // C 反光晕：加冷光（暗塘上加光比减光更显，像球的光落在下方水面）
+    if (uShadowGlow > 0.5) col += aMask * uShadowStrength * 0.6 * vec3(0.55, 0.72, 0.95);
+    // D 接触影：g=0 紧贴球的小柔影（无视差、不随高度涨），冷向减光
+    if (uShadowContact > 0.5) col = max(col - computeShadowMask(vUv, grad, 0.0) * sub * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
     // K5：月光焦散冷白光照（uCaustics<0.5 时跳过 → 与现状逐字一致）。
     // 只在水域（× sub）叠加：水上球身上不染焦散；冷白偏蓝 RGB(0.62,0.74,0.85)→月光感、不上暖色。
     // 只加亮不压暗（col += 正值）→ 不破"水下不压黑"红线；强度小 + 参数板可调到 0 关闭。

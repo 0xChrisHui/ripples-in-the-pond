@@ -36,8 +36,14 @@ export interface GLFlags {
   sphereMotion: boolean;
   /** K3 — 深度三层模型：统一球/标题/水面按带符号深度渐变（修 R4 浮沉不一致 + 标题去闪）。默认关 */
   depthModel: boolean;
-  /** K4 — 浮出水面（空中）球在下方水面投柔影（R8 悬空 3D 感）；关 = 无投影（回 K3）。默认关 */
+  /** K4 — 浮出水面（空中）球在下方水面投柔影·暗影（减光）。默认关 */
   sphereShadow: boolean;
+  /** K4-B — 投影·挡月光：球挡住下方月光/焦散（乘性夺光，暗塘更自然）。默认关 */
+  shadowOcclude: boolean;
+  /** K4-C — 投影·反光晕：球在下方水面投淡冷光（加亮，暗塘更显）。默认关 */
+  shadowGlow: boolean;
+  /** K4-D — 投影·接触影：紧贴球的小柔影（无视差/不随高度涨）。默认关 */
+  shadowContact: boolean;
   /** K5 — 水面月光焦散光照（R7 冷白漫反射+游走流光，从哑玻璃变活水）；关 = 无光照（回 K4）。默认关 */
   caustics: boolean;
   /** K6 — 水面深度缩放（R1 按水位绕中心缩放高度场，升放大/降缩小，球不缩放）；关 = 缩放=1（回 K5）。默认关 */
@@ -63,6 +69,9 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   sphereMotion: false,
   depthModel: false,
   sphereShadow: false,
+  shadowOcclude: false,
+  shadowGlow: false,
+  shadowContact: false,
   caustics: false,
   waterZoom: false,
   forceFallback: false,
@@ -118,6 +127,18 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const sphereShadow = searchParams.get('sphereShadow');
   if (sphereShadow === '1' || sphereShadow === 'true') result.sphereShadow = true;
   else if (sphereShadow === '0' || sphereShadow === 'false') result.sphereShadow = false;
+
+  const shadowOcclude = searchParams.get('shadowOcclude');
+  if (shadowOcclude === '1' || shadowOcclude === 'true') result.shadowOcclude = true;
+  else if (shadowOcclude === '0' || shadowOcclude === 'false') result.shadowOcclude = false;
+
+  const shadowGlow = searchParams.get('shadowGlow');
+  if (shadowGlow === '1' || shadowGlow === 'true') result.shadowGlow = true;
+  else if (shadowGlow === '0' || shadowGlow === 'false') result.shadowGlow = false;
+
+  const shadowContact = searchParams.get('shadowContact');
+  if (shadowContact === '1' || shadowContact === 'true') result.shadowContact = true;
+  else if (shadowContact === '0' || shadowContact === 'false') result.shadowContact = false;
 
   const caustics = searchParams.get('caustics');
   if (caustics === '1' || caustics === 'true') result.caustics = true;
