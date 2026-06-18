@@ -192,7 +192,15 @@ export const compositeMaskFrag = /* glsl */ `
     // B 挡月光：夺球下方"月光高光+焦散"两项光（暗处无光可夺→只在有光处显；验收需同开 K5 或划水产高光，否则看不出）。
     float occ = uShadowOcclude > 0.5 ? aMask * clamp(uShadowStrength * 3.0, 0.0, 1.0) : 0.0;
     vec4 scene = texture2D(uScene, sampleUv);
-    vec3 col = scene.rgb + vec3(spec * uSpec * moonGate * moonMod * (1.0 - occ)); // 月光高光（均匀眷顾水上水下）被"挡月光"夺
+    // K10「亮底」：暗塘底(非球)区域用塘底花纹 mix 替换 → 明亮/彩色的水底（不再"黑上加微光"那种灰雾）。
+    // 球比暗底亮 → 用亮度阈值 notBase 保护，不被塘底覆盖。作 base 放在月光/焦散之下 = 真水底。<0.5 跳过=现状。
+    // 塘底坐标用 vUv+涟漪折射 disp（静止、只被涟漪折射 → 动水面在静止塘底上产生视差）。
+    vec3 base = scene.rgb;
+    if (uPondFloor > 0.5) {
+      float notBase = smoothstep(0.08, 0.20, max(base.r, max(base.g, base.b))); // 球/亮物≈1（保留），暗塘底≈0（露塘底）
+      base = mix(base, pondFloorColor(vUv + disp * sub, uPondFloorStyle), uPondFloorStrength * sub * (1.0 - notBase));
+    }
+    vec3 col = base + vec3(spec * uSpec * moonGate * moonMod * (1.0 - occ)); // 月光高光（均匀眷顾水上水下）被"挡月光"夺
     // A 暗影：冷向减光（多减暖留冷、影偏蓝灰不死黑；暗塘上弱、亮处显）
     if (uSphereShowing > 0.5) col = max(col - aMask * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
     // C 反光晕：加冷光（暗塘上加光比减光更显，像球的光落在下方水面）
@@ -201,9 +209,6 @@ export const compositeMaskFrag = /* glsl */ `
     if (uShadowContact > 0.5) col = max(col - computeShadowMask(vUv, grad, 0.0) * sub * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
     // K5：月光焦散冷白光照（uCaustics<0.5 跳过=现状）。×sub 只水域、只加亮不压暗(不破"水下不压黑")；×(1−occ) 被挡月光夺。
     if (uCaustics > 0.5) col += computeCaustics(vUv, grad, uTime) * uCausticsStrength * moonGate * (1.0 - occ) * vec3(0.55, 0.72, 0.95);
-    // K10：可见塘底（<0.5 跳过=纯黑现状）。用「未缩 vUv + 涟漪折射 disp」采纹理 → 塘底坐标基不随 uZoomAmount 缩、只被涟漪折射 →
-    // 动水面在静止塘底上产生视差(K10 纵深核心)。×sub 只水域、极淡冷暗增量(不压亮，不破"水下不压黑")。
-    if (uPondFloor > 0.5) col += pondFloorColor(vUv + disp * sub, uPondFloorStyle) * uPondFloorStrength * sub;
     // K11：月光倒影（uMoonReflect<0.5 跳过=现状）。喂 hUv(已随 K6 缩放的采样 UV→倒影随水放缩) + grad(被涟漪扭碎展示波纹)；
     // ×sub 只水域、低不透明克制冷白(#e8f2ff)→ 偏左一侧不盖球，只加亮不压暗（不破"水下不压黑"）。
     if (uMoonReflect > 0.5) col += moonReflectTex(hUv, grad, uTime) * uMoonReflectStrength * moonGate * vec3(0.91, 0.95, 1.0);

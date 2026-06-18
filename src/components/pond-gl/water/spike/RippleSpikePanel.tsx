@@ -70,7 +70,7 @@ const PLANTS_SLIDERS: ReadonlyArray<Slider> = [
 ];
 
 const PONDFLOOR_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'pondFloorStrength', label: '塘底暗纹', min: 0, max: 0.2, step: 0.005 },
+  { key: 'pondFloorStrength', label: '塘底浓度', min: 0, max: 1, step: 0.02 },
 ];
 
 const MOONREFLECT_SLIDERS: ReadonlyArray<Slider> = [
