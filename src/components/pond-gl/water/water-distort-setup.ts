@@ -73,6 +73,7 @@ export function makeCompositeScene(
     // K4 空中球水面投影：uSphereShowing<0.5 时 shader 跳过投影 → 与现状逐字一致
     uSphereShowing: { value: 0 },
     uShadowStrength: { value: 0.3 },
+    uShadowHeight: { value: 1.2 }, // K4 高度影响增益（拉高=层级差更显）
     // K5 月光焦散光照：uCaustics<0.5 时 shader 跳过光照 → 与现状逐字一致；uTime 每帧由 state.clock 刷新
     uCaustics: { value: 0 },
     uCausticsStrength: { value: 0.4 },
@@ -108,6 +109,7 @@ export function applyTuning(
   // K4：sphereShadow 开 → shader 给空中球在下方水面投柔影；关 → 跳过投影（现状）
   composite.mat.uniforms.uSphereShowing.value = sphereShadow ? 1 : 0;
   composite.mat.uniforms.uShadowStrength.value = t.shadowStrength;
+  composite.mat.uniforms.uShadowHeight.value = t.shadowHeight; // K4 高度对投影影响的总增益
   // K5：caustics 开 → shader 叠冷白月光焦散光照（uTime 驱游走流光）；关 → 跳过（现状）
   composite.mat.uniforms.uCaustics.value = caustics ? 1 : 0;
   composite.mat.uniforms.uCausticsStrength.value = t.causticsStrength;

@@ -24,6 +24,7 @@ export interface RippleTuning {
   refrExp: number;    // K3 折射随深度的指数 a（折射 ∝ d^a，近轻深重；越大近处越清晰）
   moonExp: number;    // K3 月光随深度的指数 b（月光 ∝ (1−d)^b，近强深弱）
   shadowStrength: number; // K4 空中球水面投影最大压暗量（0=无影；越大影越深）
+  shadowHeight: number;   // K4 高度对投影的影响增益（越大：高/低层级球的影差异越显——偏移/半影/模糊/衰减更随高度）
   causticsStrength: number; // K5 月光焦散光照总强度（0=无光；越大水面流光越亮）
   zoomAmount: number; // K6 水面缩放幅度（zoom=1+(水位−0.5)·此值；0=不缩，0.4 时水位 0→1 约 0.8×→1.2×）
 }
@@ -45,6 +46,7 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   refrExp: 1.4,
   moonExp: 1.2,
   shadowStrength: 0.2,
+  shadowHeight: 1.2,
   causticsStrength: 0.4,
   zoomAmount: 0.4,
 };

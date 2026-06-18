@@ -44,6 +44,7 @@ const DEPTH_SLIDERS: ReadonlyArray<Slider> = [
 
 const SHADOW_SLIDERS: ReadonlyArray<Slider> = [
   { key: 'shadowStrength', label: '投影强度', min: 0, max: 1, step: 0.02 },
+  { key: 'shadowHeight', label: '投影高度感', min: 0, max: 2.5, step: 0.05 },
 ];
 
 const CAUSTICS_SLIDERS: ReadonlyArray<Slider> = [

@@ -31,6 +31,7 @@ export const compositeMaskFrag = /* glsl */ `
   // K4 浮出水面球投影（R8，uSphereShowing<0.5 时不投 → 与现状逐字一致）：
   uniform float uSphereShowing; // 0=关（现状）/ 1=开（空中球在下方水面投柔影）
   uniform float uShadowStrength;// 柔影最大压暗量（0=无影，叠到合成色前 color -= shadow）
+  uniform float uShadowHeight;  // K4 高度对投影的影响总增益（拉高=层级差更显：偏移/半影/模糊/衰减都更随高度）
   // K5 月光焦散光照（R7，uCaustics<0.5 时不加 → 与现状逐字一致）：
   uniform float uCaustics;        // 0=关（现状）/ 1=开（冷白月光漫反射+焦散流光叠到水面）
   uniform float uCausticsStrength;// 焦散光照总强度（0=无光，乘到整层冷白增量上）
@@ -80,21 +81,29 @@ export const compositeMaskFrag = /* glsl */ `
   // （depthZ>水位=露出水面；之前写反成"水下球投影"=bug）。水下/贴面球不投。
   // 投影"位置"= 离水面距离 rise 的函数：越高 → 沿背光方向(右下，月光自左上)偏移越远 + 越大 + 越软 + 越淡。
   // 参考 flower-water-ripples 花瓣 sunk shadow：很轻 + 冷蓝灰 + 椭圆纵向压扁；这里做成"挡月光的减光"。
-  float computeShadowMask(vec2 uv) {
+  // K4：浮出水面（空中/悬空）的球在下方水面投"水面软影"。物理软投影，强调离水面高度 air 的影响：
+  //  air 越大 → ①视差偏移越远(高球甩得远) ②外半影越大/本影收缩(够高=整团模糊盘) ③被涟漪/折射搅得越糊
+  //  ④峰值越淡(散射+半影主导)；air→0=贴面接触影(锐、深、与球重合)。uShadowHeight=高度影响总增益 g。
+  //  完整物理因素清单见 docs/JOURNAL.md(2026-06-18)。grad=本像素水面坡度(扭影=折射模糊)。
+  float computeShadowMask(vec2 uv, vec2 grad) {
     vec2 px = vec2(uv.x, 1.0 - uv.y) * uViewport;
-    vec2 offDir = normalize(vec2(0.5, 1.0)); // px 空间影偏移方向：右下（px.y 向下=屏下）
+    vec2 offDir = normalize(vec2(0.5, 1.0)); // 背光方向(右下，月光自左上)：影偏移方向
+    float vh = max(1.0, uViewport.y);
+    float g = uShadowHeight;                  // 高度对投影影响的总增益（参数板）
     float shadow = 0.0;
     for (int i = 0; i < ${MAX_SPHERES}; i++) {
       if (i >= uSphereCount) break;
       vec4 s = uSpheres[i];
-      float air = s.w - uWaterLevel;          // >0 = 球在空中（悬空/露出水面）
-      if (air <= 0.0) continue;               // 水下/贴面球不投影（只空中带投）
-      float rise = clamp(air / 0.12, 0.0, 1.0); // 归一空中高度（0.12≈最大浮高 focusMargin/bobAmp 量级）
-      vec2 ctr = s.xy + offDir * (s.z * (0.12 + 1.2 * rise)); // 影位：贴面≈球正下，升高→沿背光更偏移
-      float rad = s.z * (0.62 + 0.7 * rise);    // 越高影越大
-      vec2 dd = (px - ctr) / vec2(rad, rad * 0.5); // 椭圆纵向压扁（贴水面斜投，参考 ~0.52）
-      float spot = 1.0 - smoothstep(0.5 - 0.4 * rise, 1.0, length(dd)); // 越高半影越宽（边缘更软）
-      shadow = max(shadow, spot * (1.0 - 0.4 * rise)); // 越高峰值越淡（光被散开）
+      float air = s.w - uWaterLevel;          // >0 = 悬空高度（z 归一），越大离水面越远
+      if (air <= 0.0) continue;               // 水下/贴面球不投影
+      float t = clamp(air / 0.5, 0.0, 1.0);   // 归一高度（0.5≈最高，覆盖整层级差，不再 0.12 早饱和）
+      vec2 warp = clamp(grad * (1.0 + 6.0 * t * g), -0.02, 0.02) * uViewport; // ③折射/涟漪打散：高→更糊
+      vec2 ctr = s.xy + offDir * (s.z * 0.15 + air * vh * 0.18 * g);          // ①视差：偏移∝真实高度
+      float rOuter = s.z * (1.0 + 1.6 * t * g);                              // ②外半影随高涨
+      vec2 dd = (px + warp - ctr) / vec2(rOuter, rOuter * 0.55);            // 椭圆纵向压扁
+      float umbra = (1.0 - t) * 0.85;          // ②本影占比随高缩（高→0=全半影模糊盘；贴面→大本影=锐）
+      float spot = 1.0 - smoothstep(umbra, 1.0, length(dd));
+      shadow = max(shadow, spot * mix(1.0, 0.3, t)); // ④衰减：高→淡但不消失
     }
     return shadow;
   }
@@ -172,13 +181,13 @@ export const compositeMaskFrag = /* glsl */ `
     // K4：空中球投影压暗水面（uSphereShowing<0.5 时跳过 → 与现状逐字一致）。
     // 只投在水面（× sub）：影落在水上球身上无意义，且 sub 让"被空中球自己遮住的那块"不重复压暗。
     if (uSphereShowing > 0.5) {
-      // 让影子"长在水面上"而非硬桌面：①边缘随涟漪坡度晃动 ②被一层缓慢移动的水光网纹打碎（平水也活）。
-      vec2 sWarp = clamp(grad * 6.0, -0.02, 0.02);                  // ①涟漪坡度扭动影子采样位置 → 边缘随波晃
-      float shadow = computeShadowMask(vUv + sWarp) * uShadowStrength * sub;
+      // 物理软影（视差/半影/折射模糊/衰减都在 computeShadowMask 内按高度算；warp 已并入）。
+      float shadow = computeShadowMask(vUv, grad) * uShadowStrength * sub;
+      // 再被一层缓慢移动的水光网纹打碎（亮处被光"打穿" → 不实心、平水也活）。
       float sAspect = uViewport.x / max(1.0, uViewport.y);
-      vec2 wp = vUv * vec2(8.0 * sAspect, 8.0);                     // ②移动的低频水光网纹（按宽高比，不横向拉长）
+      vec2 wp = vUv * vec2(8.0 * sAspect, 8.0);
       float lite = sin(wp.x + uTime * 0.5) + sin(wp.y * 0.9 - uTime * 0.4) + sin((wp.x + wp.y) * 0.6 + uTime * 0.6);
-      shadow *= 1.0 - 0.5 * smoothstep(0.4, 2.2, lite);            // 亮水纹处影子被光"打穿" → 不再实心硬块
+      shadow *= 1.0 - 0.5 * smoothstep(0.4, 2.2, lite);
       // 冷向减光（多减暖、留冷）→ 影偏蓝灰、不死黑；max≥0（红线：水下不压黑，这里只夺月光/亮处）
       col = max(col - shadow * vec3(1.1, 1.0, 0.82), 0.0);
     }
