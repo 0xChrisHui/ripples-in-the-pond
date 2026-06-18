@@ -182,28 +182,22 @@ export const compositeMaskFrag = /* glsl */ `
     // 月光高光：涟漪坡面朝月处发光（坡度方向，gmag gate → 平水无高光）
     vec2 dir = gmag > 1e-5 ? grad / gmag : vec2(0.0);
     float spec = pow(max(0.0, dot(-dir, normalize(vec2(-0.6, 1.0)))), 4.0) * smoothstep(0.0, 0.01, gmag);
-    vec4 scene = texture2D(uScene, sampleUv);
-    vec3 col = scene.rgb + vec3(spec * uSpec * sub * moonMod);
-    // K4：空中球投影压暗水面（uSphereShowing<0.5 时跳过 → 与现状逐字一致）。
-    // 只投在水面（× sub）：影落在水上球身上无意义，且 sub 让"被空中球自己遮住的那块"不重复压暗。
-    // K4 空中球→水面"投影"四模式（独立开关、可叠加对比；mask 已含视差/温和软化/水光打碎）。
+    // K4 空中球→水面"投影"软盘 mask（A 暗影 / B 挡月光 / C 反光晕 共用；含视差/温和软化/水光打碎）。
     float aMask = (uSphereShowing > 0.5 || uShadowOcclude > 0.5 || uShadowGlow > 0.5)
       ? computeShadowMask(vUv, grad, uShadowHeight) * sub : 0.0;
+    // B 挡月光：直接夺球下方的"月光高光 + 焦散"两项光（故明显）；暗处本无光可夺 → 只在有光处显
+    //   （合物理；验收请同时开「月光焦散(K5)」或划水产生高光，否则无光可挡=看不出变化）。
+    float occ = uShadowOcclude > 0.5 ? aMask * clamp(uShadowStrength * 3.0, 0.0, 1.0) : 0.0;
+    vec4 scene = texture2D(uScene, sampleUv);
+    vec3 col = scene.rgb + vec3(spec * uSpec * sub * moonMod * (1.0 - occ)); // 月光高光被"挡月光"夺
     // A 暗影：冷向减光（多减暖留冷、影偏蓝灰不死黑；暗塘上弱、亮处显）
     if (uSphereShowing > 0.5) col = max(col - aMask * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
-    // B 挡月光：乘性夺光（按当前亮度比例 → 暗处几乎不动、只压住月光/焦散的亮 = 球挡光）
-    if (uShadowOcclude > 0.5) col *= 1.0 - aMask * min(uShadowStrength * 1.6, 0.92);
     // C 反光晕：加冷光（暗塘上加光比减光更显，像球的光落在下方水面）
     if (uShadowGlow > 0.5) col += aMask * uShadowStrength * 0.6 * vec3(0.55, 0.72, 0.95);
     // D 接触影：g=0 紧贴球的小柔影（无视差、不随高度涨），冷向减光
     if (uShadowContact > 0.5) col = max(col - computeShadowMask(vUv, grad, 0.0) * sub * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
-    // K5：月光焦散冷白光照（uCaustics<0.5 时跳过 → 与现状逐字一致）。
-    // 只在水域（× sub）叠加：水上球身上不染焦散；冷白偏蓝 RGB(0.62,0.74,0.85)→月光感、不上暖色。
-    // 只加亮不压暗（col += 正值）→ 不破"水下不压黑"红线；强度小 + 参数板可调到 0 关闭。
-    if (uCaustics > 0.5) {
-      float caustic = computeCaustics(vUv, grad, uTime) * uCausticsStrength * sub;
-      col += caustic * vec3(0.55, 0.72, 0.95); // 月光冷蓝白（偏蓝、非死白雾）
-    }
+    // K5：月光焦散冷白光照（uCaustics<0.5 跳过=现状）。×sub 只水域、只加亮不压暗(不破"水下不压黑")；×(1−occ) 被挡月光夺。
+    if (uCaustics > 0.5) col += computeCaustics(vUv, grad, uTime) * uCausticsStrength * sub * (1.0 - occ) * vec3(0.55, 0.72, 0.95);
     gl_FragColor = vec4(col, scene.a);
   }
 `;
