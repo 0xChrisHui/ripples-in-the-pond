@@ -155,6 +155,21 @@ export default function RippleSpikePanel() {
 
           <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">可见塘底（K10，需开开关）</div>
           {PONDFLOOR_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+          <div className="mb-1.5 flex flex-wrap gap-1">
+            {['细沙', '彩晕', '卵石', '沙纹', '矿脉'].map((label, i) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => setRippleTuning({ pondFloorStyle: i })}
+                className={[
+                  'rounded border px-1.5 py-0.5 text-[10px]',
+                  Math.round(t.pondFloorStyle) === i ? 'border-white/20 bg-white/10 text-white/80' : 'border-transparent text-white/40 hover:text-white/70',
+                ].join(' ')}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
 
           <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">月光倒影（K11，需开开关）</div>
           {MOONREFLECT_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}

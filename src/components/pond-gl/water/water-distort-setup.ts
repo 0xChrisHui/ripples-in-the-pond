@@ -86,6 +86,7 @@ export function makeCompositeScene(
     // K10 可见塘底：uPondFloor<0.5 时 shader 跳过 → 纯黑塘底现状；uPondFloorStrength 极小（极淡暗纹）
     uPondFloor: { value: 0 },
     uPondFloorStrength: { value: 0.05 },
+    uPondFloorStyle: { value: 0 }, // K10 花纹选择（0–4）
     // K11 月光倒影：uMoonReflect<0.5 时 shader 跳过 → 现状；uMoonReflectStrength 克制（≤0.5、偏一侧不盖球）
     uMoonReflect: { value: 0 },
     uMoonReflectStrength: { value: 0.4 },
@@ -133,6 +134,7 @@ export function applyTuning(
   // K10：pondFloor 开 → shader 叠极淡静止暗纹塘底（动水面在其上产生视差）；关 → 0（跳过 = 纯黑塘底现状）
   composite.mat.uniforms.uPondFloor.value = pondFloor ? 1 : 0;
   composite.mat.uniforms.uPondFloorStrength.value = t.pondFloorStrength;
+  composite.mat.uniforms.uPondFloorStyle.value = t.pondFloorStyle;
   // K11：moonReflect 开 → shader 叠大柔冷白月华倒影（被涟漪扭碎、随 K6 缩放）；关 → 0（跳过 = 现状）
   composite.mat.uniforms.uMoonReflect.value = moonReflect ? 1 : 0;
   composite.mat.uniforms.uMoonReflectStrength.value = t.moonReflectStrength;

@@ -6,6 +6,8 @@
  * 防鬼影：折射采样落点若是水上球则撤销偏移 → 水下像素不把水上球涂进水波（去重复）。
  */
 
+import { pondFloorGlsl } from '../shaders/pond-floor-shaders';
+
 export const MAX_SPHERES = 48;
 
 export const compositeMaskFrag = /* glsl */ `
@@ -37,6 +39,7 @@ export const compositeMaskFrag = /* glsl */ `
   uniform float uZoomAmount;      // K6 缩放：0=关（现状）/ >0=按水位绕中心缩放高度场采样（升放大/降缩小）
   uniform float uPondFloor;        // K10 塘底：0=关（纯黑现状）/ 1=开（水域叠极淡静止暗纹，被涟漪折射产生视差）
   uniform float uPondFloorStrength;// 塘底暗纹强度（极小，只加微妙冷暗纵深，不压亮整体）
+  uniform float uPondFloorStyle;   // K10 塘底花纹（0 细沙偏亮/1 彩晕/2 鹅卵石/3 沙纹/4 矿脉）
   uniform float uMoonReflect;        // K11 月光倒影：0=关（现状）/ 1=开（大柔冷白月华，被涟漪扭碎、随 K6 缩放）
   uniform float uMoonReflectStrength;// 月光倒影强度（≤0.5 克制；偏画面一侧、低不透明 → 不盖过球）
 
@@ -125,18 +128,8 @@ export const compositeMaskFrag = /* glsl */ `
     return web * (0.45 + 0.55 * pool) + slope;
   }
 
-  // K10：程序化值噪声塘底（fract/sin 哈希 + smoothstep 双线性插值，两 octave 成有机沙纹/细石）。返回 0..1 暗纹强弱，
-  // main 乘极小冷暗 RGB（不压亮，不破"水下不压黑"）；静止(不随 uTime/uZoomAmount)→ 动水面在其上产生视差=K10 纵深核心。
-  float k10hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-  float k10noise(vec2 p) {
-    vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
-    return mix(mix(k10hash(i), k10hash(i + vec2(1.0, 0.0)), f.x), mix(k10hash(i + vec2(0.0, 1.0)), k10hash(i + vec2(1.0, 1.0)), f.x), f.y);
-  }
-  float pondFloorTex(vec2 uv) {
-    vec2 p = uv * vec2(uViewport.x / max(1.0, uViewport.y), 1.0); // 宽高比校正 → 纹理近各向同性、不被宽屏拉长
-    float n = k10noise(p * 9.0) * 0.6 + k10noise(p * 22.0) * 0.4; // 两 octave：大块沙纹 + 细石点
-    return smoothstep(0.35, 0.85, n);                            // 收成稀疏暗纹（非均匀雾），留大片纯黑 = 高级感
-  }
+  // K10 塘底花纹（5 套，pondFloorColor 注入自 shaders/pond-floor-shaders.ts；返回 vec3 冷暗色，main ×强度×sub）。
+  ${pondFloorGlsl}
 
   // K11：月光倒影 mask（0..1）——一道大柔竖向冷白光华，偏左侧避球密集中区。muv=已随 K6 缩放的采样 UV（缩放参照）；
   // +grad 沿涟漪坡度把光带扭碎(展示波纹)；内嵌低频游走条纹 = 月华碎成的粼光（静水也活）。
@@ -209,7 +202,7 @@ export const compositeMaskFrag = /* glsl */ `
     if (uCaustics > 0.5) col += computeCaustics(vUv, grad, uTime) * uCausticsStrength * moonGate * (1.0 - occ) * vec3(0.55, 0.72, 0.95);
     // K10：可见塘底（<0.5 跳过=纯黑现状）。用「未缩 vUv + 涟漪折射 disp」采纹理 → 塘底坐标基不随 uZoomAmount 缩、只被涟漪折射 →
     // 动水面在静止塘底上产生视差(K10 纵深核心)。×sub 只水域、极淡冷暗增量(不压亮，不破"水下不压黑")。
-    if (uPondFloor > 0.5) col += pondFloorTex(vUv + disp * sub) * uPondFloorStrength * sub * vec3(0.30, 0.45, 0.55);
+    if (uPondFloor > 0.5) col += pondFloorColor(vUv + disp * sub, uPondFloorStyle) * uPondFloorStrength * sub;
     // K11：月光倒影（uMoonReflect<0.5 跳过=现状）。喂 hUv(已随 K6 缩放的采样 UV→倒影随水放缩) + grad(被涟漪扭碎展示波纹)；
     // ×sub 只水域、低不透明克制冷白(#e8f2ff)→ 偏左一侧不盖球，只加亮不压暗（不破"水下不压黑"）。
     if (uMoonReflect > 0.5) col += moonReflectTex(hUv, grad, uTime) * uMoonReflectStrength * moonGate * vec3(0.91, 0.95, 1.0);
