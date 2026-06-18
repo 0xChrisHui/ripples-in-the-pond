@@ -152,25 +152,24 @@ export const compositeMaskFrag = /* glsl */ `
     // K6：按水位绕中心缩放「高度场采样 UV」(只缩水层、球不动)。zoom=1+(水位−0.5)·uZoomAmount：高→收缩放大溢出/低→外撑缩小露更多，
     // 进行中涟漪也随之缩。OFF(uZoomAmount=0)：hUv=vUv、edgeWin=1 → 下面采样/梯度与现状逐字一致。
     vec2 hUv = vUv;
-    float edgeWin = 1.0;
     if (uZoomAmount > 0.0) {
       float zoom = 1.0 + (uWaterLevel - 0.5) * uZoomAmount;
       hUv = (vUv - 0.5) / max(0.001, zoom) + 0.5;        // 绕中心缩放采样
-      // 缩小(zoom<1)越界 [0,1]：不再 fract 平铺(会把 sim 边界"墙"+接缝露进画面=涟漪撞墙)；
-      // 改用平滑窗把涟漪在贴近/越过高度场边缘处渐隐为平水 → 缩出去看到平静水面、不撞墙。
-      vec2 w = smoothstep(0.0, 0.10, hUv) * smoothstep(0.0, 0.10, 1.0 - hUv);
-      edgeWin = w.x * w.y;
-      hUv = clamp(hUv, 0.0, 1.0);
+      // 缩小(zoom<1)越界 [0,1]：镜像平铺(mirror) → 涟漪无缝延续，无真空区、无边界墙线/回弹硬边
+      // （旧 clamp+平滑窗留"无涟漪真空区 + 边缘回弹线"；mirror C0 连续、弃用之）。
+      hUv = 1.0 - abs(mod(hUv, 2.0) - 1.0);
     }
     // 梯度步长恒用 uDelta（场内自然梯度）→ 缩放只改涟漪位置/大小、不改亮度（曾用 uDelta/zoom 致降水位全屏变亮，弃用）。
     float h  = texture2D(uHeight, hUv).r;
     float hx = texture2D(uHeight, hUv + vec2(uDelta.x, 0.0)).r;
     float hy = texture2D(uHeight, hUv + vec2(0.0, uDelta.y)).r;
-    // 折射位移 ∝ 梯度；×edgeWin → 缩出区域涟漪渐隐为平水（无边界墙）。旧 -normalize 法线满幅位移→麻点，弃用。
-    vec2 grad = vec2(hx - h, hy - h) * edgeWin;
+    vec2 grad = vec2(hx - h, hy - h); // 旧 -normalize 法线满幅位移→麻点，弃用
     float gmag = length(grad);
     float above = computeAbove(vUv);
     float sub = 1.0 - above;
+    // 月光均匀眷顾水上水下：高光/焦散/倒影本来 ×sub（只水域）→ 出水球完全没月光、入水"一下子变亮"。
+    // 改 ×moonGate（出水也得 70% 月光、水下 100%）→ 过水线平滑、出水球也被月光照到。折射/投影仍用 sub。
+    float moonGate = mix(0.7, 1.0, sub);
     if (uDebug > 0.5) {                       // 调试：绿=水上(清晰)/红=水下(扭)，白线=水位 L
       float line = step(abs(vUv.y - uWaterLevel), 0.004);
       gl_FragColor = vec4(mix(vec3(0.7, 0.0, 0.0), vec3(0.0, 0.7, 0.0), above) + vec3(line), 1.0);
@@ -199,7 +198,7 @@ export const compositeMaskFrag = /* glsl */ `
     // B 挡月光：夺球下方"月光高光+焦散"两项光（暗处无光可夺→只在有光处显；验收需同开 K5 或划水产高光，否则看不出）。
     float occ = uShadowOcclude > 0.5 ? aMask * clamp(uShadowStrength * 3.0, 0.0, 1.0) : 0.0;
     vec4 scene = texture2D(uScene, sampleUv);
-    vec3 col = scene.rgb + vec3(spec * uSpec * sub * moonMod * (1.0 - occ)); // 月光高光被"挡月光"夺
+    vec3 col = scene.rgb + vec3(spec * uSpec * moonGate * moonMod * (1.0 - occ)); // 月光高光（均匀眷顾水上水下）被"挡月光"夺
     // A 暗影：冷向减光（多减暖留冷、影偏蓝灰不死黑；暗塘上弱、亮处显）
     if (uSphereShowing > 0.5) col = max(col - aMask * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
     // C 反光晕：加冷光（暗塘上加光比减光更显，像球的光落在下方水面）
@@ -207,13 +206,13 @@ export const compositeMaskFrag = /* glsl */ `
     // D 接触影：g=0 紧贴球的小柔影（无视差、不随高度涨），冷向减光
     if (uShadowContact > 0.5) col = max(col - computeShadowMask(vUv, grad, 0.0) * sub * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
     // K5：月光焦散冷白光照（uCaustics<0.5 跳过=现状）。×sub 只水域、只加亮不压暗(不破"水下不压黑")；×(1−occ) 被挡月光夺。
-    if (uCaustics > 0.5) col += computeCaustics(vUv, grad, uTime) * uCausticsStrength * sub * (1.0 - occ) * vec3(0.55, 0.72, 0.95);
+    if (uCaustics > 0.5) col += computeCaustics(vUv, grad, uTime) * uCausticsStrength * moonGate * (1.0 - occ) * vec3(0.55, 0.72, 0.95);
     // K10：可见塘底（<0.5 跳过=纯黑现状）。用「未缩 vUv + 涟漪折射 disp」采纹理 → 塘底坐标基不随 uZoomAmount 缩、只被涟漪折射 →
     // 动水面在静止塘底上产生视差(K10 纵深核心)。×sub 只水域、极淡冷暗增量(不压亮，不破"水下不压黑")。
     if (uPondFloor > 0.5) col += pondFloorTex(vUv + disp * sub) * uPondFloorStrength * sub * vec3(0.30, 0.45, 0.55);
     // K11：月光倒影（uMoonReflect<0.5 跳过=现状）。喂 hUv(已随 K6 缩放的采样 UV→倒影随水放缩) + grad(被涟漪扭碎展示波纹)；
     // ×sub 只水域、低不透明克制冷白(#e8f2ff)→ 偏左一侧不盖球，只加亮不压暗（不破"水下不压黑"）。
-    if (uMoonReflect > 0.5) col += moonReflectTex(hUv, grad, uTime) * uMoonReflectStrength * sub * vec3(0.91, 0.95, 1.0);
+    if (uMoonReflect > 0.5) col += moonReflectTex(hUv, grad, uTime) * uMoonReflectStrength * moonGate * vec3(0.91, 0.95, 1.0);
     gl_FragColor = vec4(col, scene.a);
   }
 `;
