@@ -28,7 +28,9 @@ export default function Test2Canvas({ glSim }: { glSim: GlSim }) {
         <Suspense fallback={null}>
           <Test2Water />
         </Suspense>
-        {glSim.ready && <SphereInstances glSim={glSim} waterOn motionOn={false} />}
+        {/* waterOn=false：球不随水位"没入淡出"。/test2 参考水是背景、不折射球，若 true 则水下半数球
+            会淡到不可见="显示不全面"。关掉后 35 颗球全显示、叠在明亮参考水上感受"嵌在水里"。 */}
+        {glSim.ready && <SphereInstances glSim={glSim} waterOn={false} motionOn={false} />}
       </Canvas>
     </div>
   );

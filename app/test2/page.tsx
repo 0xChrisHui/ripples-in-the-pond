@@ -7,6 +7,7 @@ import { useWaterLevelControl, nudgeWaterLevel } from '@/src/components/pond-gl/
 import SphereOverlay from '@/src/components/pond-gl/overlay/SphereOverlay';
 import GlNav from '@/src/components/pond-gl/overlay/GlNav';
 import WaterLevelIndicator from '@/src/components/pond-gl/overlay/WaterLevelIndicator';
+import TunePanel from '@/src/components/pond-gl/overlay/TunePanel';
 
 // GL 渲染层全链路 next/dynamic + ssr:false：three/R3F 只进 /test2 异步 chunk（与 /test1 同纪律）
 const Test2Canvas = dynamic(() => import('./components/Test2Canvas'), { ssr: false });
@@ -49,11 +50,16 @@ export default function Test2Page() {
       {/* GL 切组 nav（左上 A/B/C）；球就绪后显示 */}
       {glSim.ready && <GlNav glSim={glSim} />}
 
-      {/* 球 DOM 命中层（标题 / 点击播放 / 拖拽）；waterOn → 没入水下时标题淡出 */}
-      {glSim.ready && <SphereOverlay glSim={glSim} waterOn />}
+      {/* 球 DOM 命中层（标题 / 点击播放 / 拖拽）；waterOn=false → 标题不随没入淡出（与球全显示一致） */}
+      {glSim.ready && <SphereOverlay glSim={glSim} waterOn={false} />}
 
       {/* 左缘水位指示（滚轮 / 捏合时淡入） */}
       <WaterLevelIndicator />
+
+      {/* GL 球调色板（亮度/对比/饱和/光晕/浓度；与 /test1 共享 sphere-tuning store） */}
+      <div className="pointer-events-none fixed bottom-3 right-3 z-50 flex flex-col items-end gap-2">
+        <TunePanel />
+      </div>
     </main>
   );
 }
