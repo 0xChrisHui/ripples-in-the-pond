@@ -55,6 +55,13 @@ const ZOOM_SLIDERS: ReadonlyArray<Slider> = [
   { key: 'zoomAmount', label: '缩放幅度', min: 0, max: 1, step: 0.02 },
 ];
 
+const MOTES_SLIDERS: ReadonlyArray<Slider> = [
+  { key: 'motesCount', label: '微光密度', min: 0, max: 1, step: 0.02 },
+  { key: 'motesSize', label: '微光点径', min: 0.5, max: 6, step: 0.1 },
+  { key: 'motesOpacity', label: '微光透明', min: 0, max: 1, step: 0.02 },
+  { key: 'motesDrift', label: '微光游走', min: 0, max: 1, step: 0.02 },
+];
+
 function SliderRow({ s, value }: { s: Slider; value: number }) {
   return (
     <label className="mb-1.5 block">
@@ -116,6 +123,9 @@ export default function RippleSpikePanel() {
 
           <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">水面缩放（K6，需开开关）</div>
           {ZOOM_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+
+          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">漂浮微光（K8，需开开关）</div>
+          {MOTES_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
 
           <div className="mt-2 flex gap-1.5">
             <button

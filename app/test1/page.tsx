@@ -91,7 +91,7 @@ function Test1PageInner() {
       {/* 右下角参数板栏：调色 + 波纹/运动 同栏从下往上堆叠（不重叠） */}
       <div className="pointer-events-none fixed bottom-3 right-3 z-50 flex flex-col-reverse items-end gap-2">
         {glFlags.glSpheres && <TunePanel />}
-        {(glFlags.rtt || glFlags.waterFx) && <RippleSpikePanel />}
+        {(glFlags.rtt || glFlags.waterFx || glFlags.floatMotes) && <RippleSpikePanel />}
       </div>
 
       {/* 视觉控制台（左下角，逐层开关 GL 层） */}

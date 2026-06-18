@@ -48,6 +48,8 @@ export interface GLFlags {
   caustics: boolean;
   /** K6 — 水面深度缩放（R1 按水位绕中心缩放高度场，升放大/降缩小，球不缩放）；关 = 缩放=1（回 K5）。默认关 */
   waterZoom: boolean;
+  /** K8 — 水面漂浮微光层（冷白浮尘点阵；绕中心随水位缩放当 K6 参照 + 轻柔游走）；关 = 不挂载（现状）。默认关 */
+  floatMotes: boolean;
   /** J1 — 强制走 WebGL 兜底夜塘（测试用，免去手动禁 WebGL）；默认关 */
   forceFallback: boolean;
   /** J3 — 低 FPS 自动降 DPR 保流畅；默认开（保护性，测试可关对比） */
@@ -74,6 +76,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   shadowContact: false,
   caustics: false,
   waterZoom: false,
+  floatMotes: false,
   forceFallback: false,
   autoDegrade: true,
 };
@@ -147,6 +150,10 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
   const waterZoom = searchParams.get('waterZoom');
   if (waterZoom === '1' || waterZoom === 'true') result.waterZoom = true;
   else if (waterZoom === '0' || waterZoom === 'false') result.waterZoom = false;
+
+  const floatMotes = searchParams.get('floatMotes');
+  if (floatMotes === '1' || floatMotes === 'true') result.floatMotes = true;
+  else if (floatMotes === '0' || floatMotes === 'false') result.floatMotes = false;
 
   const forceFallback = searchParams.get('forceFallback');
   if (forceFallback === '1' || forceFallback === 'true') result.forceFallback = true;

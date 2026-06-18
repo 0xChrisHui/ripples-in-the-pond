@@ -57,6 +57,7 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="投影·接触影" checked={glFlags.shadowContact} onChange={(v) => onGl({ shadowContact: v })} />
           <Row label="月光焦散(K5)" checked={glFlags.caustics} onChange={(v) => onGl({ caustics: v })} />
           <Row label="水面缩放(K6)" checked={glFlags.waterZoom} onChange={(v) => onGl({ waterZoom: v })} />
+          <Row label="漂浮微光(K8)" checked={glFlags.floatMotes} onChange={(v) => onGl({ floatMotes: v })} />
           <Row label="遮罩调试" checked={glFlags.waterDbg} onChange={(v) => onGl({ waterDbg: v })} />
           <div className="mt-1 flex gap-1">
             {(['deep', 'black'] as const).map((d) => (

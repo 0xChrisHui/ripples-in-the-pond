@@ -27,6 +27,10 @@ export interface RippleTuning {
   shadowHeight: number;   // K4 高度对投影的影响增益（越大：高/低层级球的影差异越显——偏移/半影/模糊/衰减更随高度）
   causticsStrength: number; // K5 月光焦散光照总强度（0=无光；越大水面流光越亮）
   zoomAmount: number; // K6 水面缩放幅度（zoom=1+(水位−0.5)·此值；0=不缩，0.4 时水位 0→1 约 0.8×→1.2×）
+  motesCount: number;   // K8 微光密度（0–1 归一，映射粒子数；越大点越多）
+  motesSize: number;    // K8 微光点径（屏幕像素，sizeAttenuation 关 → 与缩放无关、只随此值）
+  motesOpacity: number; // K8 微光最大不透明度（≤1，克制免抢球）
+  motesDrift: number;   // K8 游走幅度（轻柔漂移强度；缩放为主、漂移克制——默认小，免糊掉缩放感）
 }
 
 export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
@@ -49,6 +53,10 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   shadowHeight: 1.2,
   causticsStrength: 0.4,
   zoomAmount: 0.4,
+  motesCount: 0.4,   // 稀疏-中等：~0.4·MAX 颗，柔光不喧宾夺主
+  motesSize: 2.0,    // 细小光点
+  motesOpacity: 0.6, // 半透，退让衬托
+  motesDrift: 0.15,  // 轻柔游走（缩放为主、漂移克制）
 };
 
 const KEY = 'pond-gl-ripple-spike';
