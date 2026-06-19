@@ -65,6 +65,16 @@ export function stepWaterLevel(): void {
 }
 
 /**
+ * 把"没入边界(submerge=0.5)"对齐到渲染深度 lineDepth：建点后调用 → 默认水线落在球渲染深度**中位数**，
+ * 让球在水线上下对半分；任一方向滚轮(/test3 滚轮移球 shift)都立即让球穿越水面 = 零死区(无需先空滚一段)。
+ * submerge=0.5 ⇔ z = effective−0.04 ⇔ effective = lineDepth+0.04 ⇔ current 反解。/test3 水位固定，直接置 current。
+ */
+export function alignWaterLineTo(lineDepth: number): void {
+  const c = (lineDepth + 0.04 - EFF_LOW) / (EFF_HIGH - EFF_LOW);
+  target = current = c < 0 ? 0 : c > 1 ? 1 : c;
+}
+
+/**
  * 球的"没入程度" 0..1：0 = 水上/贴面（露出，原样）、1 = 完全没入（被水波盖住、淡出）。
  * 用 current(已缓动) − 球 z 判定：z 越低于水位越没入。阈值即三态边界（贴面带 ≈ -0.02..0）。
  * 集中在此 → 球淡出与 overlay 标题淡出共用同一判定（G6-2 贴面涟漪也复用）。

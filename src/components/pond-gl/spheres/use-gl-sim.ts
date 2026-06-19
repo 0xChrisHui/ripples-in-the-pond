@@ -15,6 +15,15 @@ import {
 import type { Track, TracksListResponse } from '@/src/types/tracks';
 import { buildGlNodes, setupGlSimulation, resizeGlSim, type GlPhysNode } from './gl-sim-setup';
 import type { BgWave } from './gl-sim-waves';
+import { alignWaterLineTo } from '../water/water-level';
+
+/** 数组中位数（空→0.5）：建点后把默认水线对齐到球深度中位数用（零死区：任一方向滚轮即穿越水面）。 */
+function medianOf(vals: number[]): number {
+  if (vals.length === 0) return 0.5;
+  const s = [...vals].sort((a, b) => a - b);
+  const m = s.length >> 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
 
 /**
  * G4 — GL 球 sim 编排 hook（无 three 依赖，可在 page 层调用）。
@@ -118,6 +127,7 @@ export function useGlSim(active: boolean): GlSim {
     sizeRef.current = { w, h };
     const show = padTracksToTarget(getGroupTracks(groupId, tracks), getGroupTargetCount(groupId));
     const { nodes: built, links, assignment } = buildGlNodes(show, groupId);
+    alignWaterLineTo(medianOf(built.map((n) => n.z))); // 默认水线对齐球深度中位数 → 滚轮任一方向即穿越水面(零死区)
     simRef.current?.stop();
     const { sim, anchors } = setupGlSimulation(built, links, assignment, w, h);
     simRef.current = sim;
