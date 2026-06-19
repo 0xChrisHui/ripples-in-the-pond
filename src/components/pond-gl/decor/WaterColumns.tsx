@@ -4,7 +4,7 @@ import { useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { DoubleSide, InstancedMesh, Matrix4, type ShaderMaterial } from 'three';
 import { getRippleTuning } from '../water/spike/ripple-tuning';
-import { getWaterLevel } from '../water/water-level';
+import { getEffectiveWaterLevel } from '../water/water-level';
 import { columnsVertex, columnsFragment, COL_Z_BASE, COL_Z_TOP } from './water-columns-shaders';
 
 /**
@@ -111,7 +111,7 @@ export default function WaterColumns(
     const u = mat.uniforms; // R3F 拷贝坑：写 material 真身
     u.uPersp.value = t.perspStrength;
     u.uAspect.value = aspect;
-    u.uWaterLevel.value = getWaterLevel(); // 水线随水位在柱身上下移动（钉死的标尺）
+    u.uWaterLevel.value = getEffectiveWaterLevel(); // 水线 = 真实水面层(归一 0.10–1.00)，在柱身上下移动（钉死的标尺）
     u.uTime.value = s.clock.getElapsedTime();
     u.uOpacity.value = t.colOpacity;
     u.uStoneOn.value = reefStones ? 1 : 0;

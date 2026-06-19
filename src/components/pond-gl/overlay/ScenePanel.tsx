@@ -47,7 +47,8 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="基调" checked={glFlags.glBase} onChange={(v) => onGl({ glBase: v })} />
           <Row label="背景图" checked={glFlags.bgImage} onChange={(v) => onGl({ bgImage: v })} />
           <Row label="GL 球" checked={glFlags.glSpheres} onChange={(v) => onGl({ glSpheres: v })} />
-          <Row label="球浮沉" checked={glFlags.sphereMotion} onChange={(v) => onGl({ sphereMotion: v })} />
+          <Row label="球浮动" checked={glFlags.sphereMotion} onChange={(v) => onGl({ sphereMotion: v })} />
+          <Row label="球飘动+涟漪推" checked={glFlags.sphereDrift} onChange={(v) => onGl({ sphereDrift: v })} />
           <Row label="水面" checked={glFlags.water} onChange={(v) => onGl({ water: v })} />
           <Row label="扭曲水面" checked={glFlags.waterFx} onChange={(v) => onGl({ waterFx: v })} />
           <Row label="深度模型(K3)" checked={glFlags.depthModel} onChange={(v) => onGl({ depthModel: v })} />
@@ -63,6 +64,7 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="水晶柱(K12)" checked={glFlags.crystalPillars} onChange={(v) => onGl({ crystalPillars: v })} />
           <Row label="漂浮微光(K8)" checked={glFlags.floatMotes} onChange={(v) => onGl({ floatMotes: v })} />
           <Row label="水生植物(K9)" checked={glFlags.waterPlants} onChange={(v) => onGl({ waterPlants: v })} />
+          <Row label="水面花瓣" checked={glFlags.flowerPetals} onChange={(v) => onGl({ flowerPetals: v })} />
           <Row label="遮罩调试" checked={glFlags.waterDbg} onChange={(v) => onGl({ waterDbg: v })} />
           <div className="mt-1 flex gap-1">
             {(['deep', 'black'] as const).map((d) => (

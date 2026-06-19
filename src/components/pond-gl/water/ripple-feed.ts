@@ -65,7 +65,8 @@ function trailDrops(nodes: GlPhysNode[], w: number, h: number, t: RippleTuning):
 function splashDrops(nodes: GlPhysNode[], w: number, h: number, t: RippleTuning): Drop[] {
   const crossed: { x: number; y: number }[] = [];
   for (const n of nodes) {
-    const sub = getSubmerge(n.z);
+    const sub = getSubmerge(n.displayZ ?? n.z); // 用 displayZ（含球浮动 _waveZ）→ 球浮动穿过水面也触发溅起，不只水位滚动
+
     const prev = prevSub.get(n.id);
     prevSub.set(n.id, sub);
     if (prev == null || n.x == null || n.y == null) continue;   // 首帧/重建后只建基线，不溅

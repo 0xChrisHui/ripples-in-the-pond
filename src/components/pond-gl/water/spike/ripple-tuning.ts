@@ -17,9 +17,13 @@ export interface RippleTuning {
   trail: number;      // H4 拖球尾迹强度（被拖的球留下的水痕）
   splash: number;     // H4 球穿过水面溅起强度
   ambient: number;    // H4 常驻微波强度（塘面始终有细腻波动；0=关）
-  bobAmp: number;     // H5 球自漂浮沉幅度（z 单位；0=不自漂）
-  bobScale: number;   // H5 球自漂频率倍率（×lw 基频；越大越快）
-  focusMargin: number;// H5 播放球浮出水面的露出量（越大越高越清晰）
+  bobAmp: number;     // （旧 H5 浮沉幅度；球浮动已改区间 waveAmp*，此字段不再用）
+  bobScale: number;   // 球浮动：波动**触发频率**（越大越频繁有球开始波动）
+  focusMargin: number;// 播放球浮出水面的露出量（越大越高越清晰；焦点，与波动正交）
+  waveAmpMin: number; // 球浮动：单次沉浮**幅度下限**（=尺寸倍率偏移；每次波动在[min,max]随机取 → 更多元）
+  waveAmpMax: number; // 单次沉浮幅度上限
+  waveSpeedMin: number; // 球浮动：单次沉浮**速度下限**（越大越快=时长越短；时长=10s/speed。每次在[min,max]随机取）
+  waveSpeedMax: number; // 单次沉浮速度上限
   pondDepth: number;  // K3 塘深：深度因子 d 的归一分母（越小越快到"最深"）
   refrExp: number;    // K3 折射随深度的指数 a（折射 ∝ d^a，近轻深重；越大近处越清晰）
   moonExp: number;    // K3 月光随深度的指数 b（月光 ∝ (1−d)^b，近强深弱）
@@ -37,50 +41,83 @@ export interface RippleTuning {
   plantsSway: number;   // K9 涟漪轻晃幅度（伪光流摇曳；克制——比 K8 更沉静、运动更小）
   pondFloorStrength: number; // K10 亮底 mix 浓度（0–1：暗塘底→塘底花纹的替换量；越大花纹越亮越显，球受亮度阈值保护不被覆盖）
   moonReflectStrength: number; // K11 月光倒影强度（≤0.5 克制；偏画面一侧、低不透明 → 氛围点睛、不盖过球）
+  ballLightAbove: number; // 月光(焦散/倒影取高者·无涟漪环境光)对"水上球"的增亮衰减 0..1（独立于强度）
+  ballLightBelow: number; // 月光对"水下球"的增亮衰减 0..1
+  waveOnBall: number;     // 水下球波纹增强：水面涟漪明暗乘性荡漾过水下球面，提升水下感（0=关）
   pondFloorStyle: number; // K10 塘底花纹（0 暗矿 / 1 亮沙 / 2 虹彩 / 3 莲花 / 4 星河）
   perspStrength: number; // K12 一点透视强度（柱顶按离中心距离径向外斜；0=纯俯视，越大边缘柱越斜出露身）
   colCount: number;      // K12 标尺柱数量（0–1 映射可见柱数；偏边缘撒点、稀疏不抢球）
   colHeight: number;     // K12 柱高倍率（×逐柱随机高）
   colWidth: number;      // K12 柱宽倍率（×逐柱随机半宽；细柱）
   colOpacity: number;    // K12 柱最大不透明度（石晶共用，退让不抢球）
+  drift: number;         // 新效果 球随机飘动幅度（每帧注入游走速度的强度；0=不漂）
+  wavePush: number;      // 新效果 点击涟漪推水下球的推力倍率（0=不推）
+  wavePushDepth: number; // 新效果 推力随深度衰减的深度（归一层；球离水面这么深→推力≈0，越小衰减越快）
+  wheelSens: number;     // 滚轮控水位灵敏度倍率（1=现状基准 0.0008/notch；越小越钝越好微调，触屏捏合同步缩放）
+  petalCount: number;    // 水面花瓣数量（整数取整；0=无）
+  petalSize: number;     // 水面花瓣大小倍率（×基准；含投影）
+  petalSens: number;     // 水面花瓣灵敏度（各种运动幅度倍率：随波漂/起伏/旋转/轻摇；0=几乎静止）
+  petalDrag: number;     // 花瓣触发·划水/移动 强度倍率（1=默认，0=不影响）
+  petalClick: number;    // 花瓣触发·点击 强度倍率
+  petalWave: number;     // 花瓣触发·背景/导航涟漪(bg-ripple:wave) 强度倍率
+  petalSplash: number;   // 花瓣触发·球出入水(穿越水面) 强度倍率
 }
 
+// /test1 默认参数组（用户拍板，2026-06-19）：未提到的项保留原默认。
 export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
-  damping: 0.995,
-  refract: 0.6,
-  dropMove: 0.008, // K2：划水改路径插值后单笔落多滴 → 调小单滴强度，免快划过强
-  dropClick: 0.16,
-  dropRadius: 0.05,
-  specular: 0.5,
-  trail: 0.1,
-  splash: 0.2,
-  ambient: 0.008,
-  bobAmp: 0.08,
-  bobScale: 1,
-  focusMargin: 0.06,
-  pondDepth: 0.5,
-  refrExp: 1.4,
-  moonExp: 1.2,
-  shadowStrength: 0.2,
-  shadowHeight: 1.2,
+  damping: 0.96,
+  refract: 0.8,
+  dropMove: 0.016,
+  dropClick: 0.1,
+  dropRadius: 0.01,
+  specular: 0.4,     // 高光
+  trail: 0.04,
+  splash: 0.15,
+  ambient: 0.01,
+  bobAmp: 0.08,      // 旧字段，不再用
+  bobScale: 1.5,     // 球浮动触发频率
+  focusMargin: 0.06, // 未指定，保留
+  waveAmpMin: 0.1,   // 球浮动幅度区间下限（=尺寸/层级偏移）
+  waveAmpMax: 0.6,   // 球浮动幅度区间上限
+  waveSpeedMin: 0.2, // 球浮动速度区间下限（越大越快）
+  waveSpeedMax: 0.4, // 球浮动速度区间上限
+  pondDepth: 1,
+  refrExp: 3,
+  moonExp: 3,
+  shadowStrength: 0.2, // 未指定，保留
+  shadowHeight: 1.2,   // 未指定，保留
   causticsStrength: 0.4,
-  zoomAmount: 0.4,
-  motesCount: 0.4,   // 稀疏-中等：~0.4·MAX 颗，柔光不喧宾夺主
-  motesSize: 2.0,    // 细小光点
-  motesOpacity: 0.6, // 半透，退让衬托
-  motesDrift: 0.15,  // 轻柔游走（缩放为主、漂移克制）
-  plantsCount: 0.42, // 稍密：~0.42·MAX 片睡莲，成"浮叶"而非零碎，仍留白不挡球
-  plantsSize: 0.09,  // 放大圆片（NDC 半径，逐叶随机 0.6×–1.4×）→ 读成叶不读成碎片
-  plantsOpacity: 0.62,// 提亮半透墨绿，暗塘上可辨、仍退让
-  plantsSway: 0.2,   // 涟漪轻晃（沉静——比微光更小、几乎静止只微摇）
-  pondFloorStrength: 0.7, // 亮底 mix 浓度（面板 0–1）：暗塘底→塘底花纹的替换量，越大花纹越显/越亮
-  moonReflectStrength: 0.4, // 月华倒影：默认 0.4（面板 0–1），安静优雅的一道冷白、点睛不抢球
-  pondFloorStyle: 0, // 默认暗矿（面板 5 选 1）
-  perspStrength: 0.18, // 透视：轻为主（面板 0–0.6），免和俯视的平球违和
-  colCount: 0.5,       // ~32 柱，偏边缘稀疏
-  colHeight: 1.0,      // 柱高倍率（面板 0.3–2）
-  colWidth: 1.0,       // 柱宽倍率（面板 0.3–2，细柱）
-  colOpacity: 0.7,     // 柱不透明度（面板 0–1）
+  zoomAmount: 0.85,  // 水面缩放幅度
+  motesCount: 1,
+  motesSize: 6,
+  motesOpacity: 0.6,
+  motesDrift: 1,
+  plantsCount: 0.42, // 未指定，保留
+  plantsSize: 0.09,
+  plantsOpacity: 0.62,
+  plantsSway: 0.2,
+  pondFloorStrength: 0.7,
+  moonReflectStrength: 0.4,
+  ballLightAbove: 0.38, // 月光对水上球增亮
+  ballLightBelow: 0.16, // 月光对水下球增亮
+  waveOnBall: 0.3,      // 水下球波纹增强
+  pondFloorStyle: 0,    // 未指定，保留（暗矿）
+  perspStrength: 0.18,  // 未指定，保留
+  colCount: 0.5,        // 未指定，保留
+  colHeight: 1.0,
+  colWidth: 1.0,
+  colOpacity: 0.7,
+  drift: 0.1,          // 球飘动幅度
+  wavePush: 1.5,       // 涟漪推力
+  wavePushDepth: 0.46, // 推力衰减深
+  wheelSens: 0.3,      // 滚轮灵敏度
+  petalCount: 7,       // 水面花瓣数量
+  petalSize: 0.4,      // 水面花瓣大小
+  petalSens: 1.0,      // 水面花瓣灵敏度
+  petalDrag: 0.5,      // 花瓣触发·划水
+  petalClick: 0.5,     // 花瓣触发·点击
+  petalWave: 0.5,      // 花瓣触发·背景涟漪
+  petalSplash: 0.2,    // 花瓣触发·球出入水
 };
 
 const KEY = 'pond-gl-ripple-spike';

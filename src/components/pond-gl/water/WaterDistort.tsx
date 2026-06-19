@@ -18,7 +18,7 @@ import {
 import { MAX_DROPS } from './spike/ripple-spike-shaders';
 import { getRippleTuning } from './spike/ripple-tuning';
 import { MAX_SPHERES } from './water-distort-shaders';
-import { getWaterLevel } from './water-level';
+import { getWaterLevel, getEffectiveWaterLevel } from './water-level';
 import {
   makeSimScene, makeCompositeScene, applyTuning, applySpheres, type QuadScene,
 } from './water-distort-setup';
@@ -95,8 +95,8 @@ function tick(
 }
 
 export default function WaterDistort(
-  { debug = false, glSim, depthModel = false, sphereShadow = false, shadowOcclude = false, shadowGlow = false, shadowContact = false, caustics = false, waterZoom = false, pondFloor = false, moonReflect = false }:
-  { debug?: boolean; glSim?: GlSim; depthModel?: boolean; sphereShadow?: boolean; shadowOcclude?: boolean; shadowGlow?: boolean; shadowContact?: boolean; caustics?: boolean; waterZoom?: boolean; pondFloor?: boolean; moonReflect?: boolean },
+  { debug = false, glSim, depthModel = false, sphereShadow = false, shadowOcclude = false, shadowGlow = false, shadowContact = false, caustics = false, waterZoom = false, pondFloor = false, moonReflect = false, sphereDrift = false }:
+  { debug?: boolean; glSim?: GlSim; depthModel?: boolean; sphereShadow?: boolean; shadowOcclude?: boolean; shadowGlow?: boolean; shadowContact?: boolean; caustics?: boolean; waterZoom?: boolean; pondFloor?: boolean; moonReflect?: boolean; sphereDrift?: boolean },
 ) {
   const content = useFBO();
   const heightA = useFBO(RES_X, RES_Y, SIM_OPTS);
@@ -114,6 +114,11 @@ export default function WaterDistort(
   );
   const quadCam = useMemo(() => new OrthographicCamera(-1, 1, 1, -1, 0, 1), []);
 
+  // 事件回调（useEffect[] 一次绑定）里读最新 sphereDrift/glSim：用 ref 同步，避免把它们进依赖致反复重绑监听
+  const driftRef = useRef(false);
+  const glSimRef = useRef<GlSim | undefined>(glSim);
+  useEffect(() => { driftRef.current = sphereDrift; glSimRef.current = glSim; });
+
   // 指针 + bg-ripple:wave → push 一滴到 pending（坐标 → uv，y 翻转匹配 quad；一次性，不留持续鼠标位）
   useEffect(() => {
     const push = (x: number, y: number, str: number) => {
@@ -124,7 +129,21 @@ export default function WaterDistort(
     const onMove = (e: PointerEvent) => {
       pending.current.push(...pointerPathDrops(e.clientX, e.clientY, window.innerWidth, window.innerHeight, getRippleTuning()));
     };
-    const onDown = (e: PointerEvent) => { resetPointerPath(); push(e.clientX, e.clientY, getRippleTuning().dropClick); };
+    const onDown = (e: PointerEvent) => {
+      resetPointerPath();
+      push(e.clientX, e.clientY, getRippleTuning().dropClick);
+      // 新效果：点击同位置投一道 BgWave（sim 像素坐标）→ pushGlSpheresByWaves 推水下球（深度衰减）；wavesRef 为稳定 ref
+      const gs = glSimRef.current;
+      if (driftRef.current && gs) {
+        const sz = gs.sizeRef.current;
+        const sx = e.clientX * (sz.w / Math.max(1, window.innerWidth));
+        const sy = e.clientY * (sz.h / Math.max(1, window.innerHeight));
+        // 推力环现按"可见水波速度"从 0 扩张(见 pushGlSpheresByWaves)→ 与高光同步抵达；size=覆盖半径、duration=存活上限(够环扩满即可)
+        const size = 300 + Math.random() * 220;
+        const duration = 4500; // ms：让环按水波速度扩满 size（curR>size 后 push 自停，波再存活片刻无害）
+        gs.wavesRef.current.push({ x: sx, y: sy, size, spawnTime: performance.now(), duration });
+      }
+    };
     const onWave = (e: Event) => {
       const ce = e as CustomEvent<{ x: number; y: number }>;
       push(ce.detail.x, ce.detail.y, getRippleTuning().dropClick);
@@ -154,7 +173,8 @@ export default function WaterDistort(
     // K11：moonReflect prop 传进 helper → composite 的 uMoonReflect（开=1 叠大柔月华倒影/关=0 现状）每帧刷新
     applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, { dark: sphereShadow, occlude: shadowOcclude, glow: shadowGlow, contact: shadowContact }, caustics, state.clock.getElapsedTime(), waterZoom, pondFloor, moonReflect);
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
-    applySpheres(composite, nodes ?? EMPTY_NODES, size.w, size.h, getWaterLevel(), glSim?.playingIdRef.current ?? null);
+    // 有效水位喂没入判定（全 z 域两端可达 0/1）、原始水位喂 K6 缩放（与 motes/plants/滴水缩放同步）
+    applySpheres(composite, nodes ?? EMPTY_NODES, size.w, size.h, getEffectiveWaterLevel(), getWaterLevel(), glSim?.playingIdRef.current ?? null);
     // 汇集本帧所有滴水：指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并）+ 常驻微波
     const drops = pending.current;
     pending.current = [];
@@ -162,7 +182,8 @@ export default function WaterDistort(
     const amb = collectAmbientDrop(t);
     if (amb) drops.push(amb);
     // K6：缩放开时把滴水位置做同款 inverse-zoom 变换（在 writeDrops 内施加，避免改 drop 对象）→ 涟漪显示位置 = 实际鼠标/球位置
-    const iz = waterZoom && t.zoomAmount > 0 ? 1 / Math.max(0.001, 1 + (getWaterLevel() - 0.5) * t.zoomAmount) : 1;
+    // 与 shader 同款「只放大」公式 zoom=1+原始水位·幅度（≥1）→ 滴水位置始终对齐
+    const iz = waterZoom && t.zoomAmount > 0 ? 1 / (1 + getWaterLevel() * t.zoomAmount) : 1;
     writeDrops(sim.mat, drops, dropSlots, iz);
     tick(state.gl, state.scene, state.camera, content, sim, bufs, composite, quadCam);
   }, 1);

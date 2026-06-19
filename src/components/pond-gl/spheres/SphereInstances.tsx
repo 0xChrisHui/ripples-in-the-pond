@@ -12,9 +12,10 @@ import {
 } from 'three';
 import { sphereVertexShader, sphereFragmentShader, HALO_R } from './sphere-shader';
 import type { GlPhysNode } from './gl-sim-setup';
-import { pushGlSpheresByWaves, type BgWave } from './gl-sim-waves';
+import { pushGlSpheresByWaves, driftSpheres, stepSphereGlide, type BgWave } from './gl-sim-waves';
 import { getTuning, type SphereTuning } from './sphere-tuning';
-import { getSubmerge, getWaterLevel } from '../water/water-level';
+import { getRippleTuning } from '../water/spike/ripple-tuning';
+import { getSubmerge, getEffectiveWaterLevel } from '../water/water-level';
 import { stepSphereMotion } from './sphere-motion';
 import type { GlSim } from './use-gl-sim';
 
@@ -91,12 +92,19 @@ function writeFrame(
   tuning: SphereTuning,
   waterOn: boolean,
   motionOn: boolean,
+  drift: boolean,
+  waveSpeed: number, // 涟漪推力环扩张速度（px/s，≈可见水波前沿速度）→ 推力与高光同步
 ): void {
   const now = performance.now();
   // H5：单点推进浮沉 → 写 node.displayZ（WaterDistort/SphereOverlay 随后读它）
-  stepSphereMotion(nodes, now / 1000, getWaterLevel(), playingId, motionOn);
+  // 焦点浮出用有效水位 → 与 getSubmerge 同基准（播放球升到"会被判定为出水"的高度之上）
+  stepSphereMotion(nodes, now / 1000, getEffectiveWaterLevel(), playingId, motionOn);
   wavesRef.current = wavesRef.current.filter((w) => now - w.spawnTime < w.duration);
-  pushGlSpheresByWaves(nodes, wavesRef.current, playingId, now);
+  // 新效果：drift 开 → 球随机飘动 + 涟漪推球随深度衰减（drift 关 → push 用默认参数 = 现状逐字一致）
+  const rt = getRippleTuning();
+  if (drift) driftSpheres(nodes, now / 1000, rt.drift);
+  pushGlSpheresByWaves(nodes, wavesRef.current, playingId, now, getEffectiveWaterLevel(), drift, rt.wavePush, rt.wavePushDepth, waveSpeed);
+  stepSphereGlide(nodes); // 涟漪推的惯性滑行收尾（_gvx 慢衰减加到位置）→ 波过后丝滑滑停
 
   const anyPlaying = playingId != null;
   const { aColor, aParams, baseColors, hoverLerp, dimLerp } = buf;
@@ -111,7 +119,8 @@ function writeFrame(
     hoverLerp[i] += ((isHover ? 1 : 0) - hoverLerp[i]) * 0.18;
     dimLerp[i] += ((anyPlaying && !isPlaying ? 0 : 1) - dimLerp[i]) * 0.12;
 
-    const diameter = 2 * n.radius * HALO_R * (1 + hoverLerp[i] * 0.09);
+    // 球浮动：_waveZ 当尺寸倍率 (1+_waveZ) → 球随层级波动平滑变大/变小（无透视的 test1 等效 test3 perspScale）
+    const diameter = 2 * n.radius * HALO_R * (1 + (n._waveZ ?? 0)) * (1 + hoverLerp[i] * 0.09);
     tmpMatrix.makeScale(diameter, diameter, 1);
     tmpMatrix.setPosition(n.x, n.y, 0);
     mesh.setMatrixAt(i, tmpMatrix);
@@ -137,7 +146,7 @@ function writeFrame(
 }
 
 export default function SphereInstances(
-  { glSim, waterOn, motionOn }: { glSim: GlSim; waterOn: boolean; motionOn: boolean },
+  { glSim, waterOn, motionOn, sphereDrift }: { glSim: GlSim; waterOn: boolean; motionOn: boolean; sphereDrift: boolean },
 ) {
   const { nodes, sizeRef } = glSim;
   const count = nodes.length;
@@ -174,7 +183,9 @@ export default function SphereInstances(
     }
     const tuning = getTuning();
     applyTuningUniforms(mat, tuning);
-    writeFrame(mesh, nodes, buf, glSim.wavesRef, glSim.playingIdRef.current, glSim.hoverIdRef.current, tuning, waterOn, motionOn);
+    // 推力环速度 ≈ 可见水波前沿(高度场波速 ~0.166×高 + 适度缩放)→ 0.2×画布高 px/s，使推力与高光同步抵达
+    const waveSpeed = 0.2 * (sz.h || 900);
+    writeFrame(mesh, nodes, buf, glSim.wavesRef, glSim.playingIdRef.current, glSim.hoverIdRef.current, tuning, waterOn, motionOn, sphereDrift, waveSpeed);
   });
 
   if (count === 0) return null;

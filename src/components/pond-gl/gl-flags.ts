@@ -34,6 +34,8 @@ export interface GLFlags {
   waterDbg: boolean;
   /** H5 — 球自驱浮沉（常态自漂 + 播放球浮出成焦点）；关 = 球深度静止（回 H4）。默认关 */
   sphereMotion: boolean;
+  /** 新效果 — 球随机飘动（不论水上水下） + 水中球被点击涟漪推动（离水面越远推力越小）；关 = 球不漂、涟漪不推（现状）。默认关 */
+  sphereDrift: boolean;
   /** K3 — 深度三层模型：统一球/标题/水面按带符号深度渐变（修 R4 浮沉不一致 + 标题去闪）。默认关 */
   depthModel: boolean;
   /** K4 — 浮出水面（空中）球在下方水面投柔影·暗影（减光）。默认关 */
@@ -52,6 +54,8 @@ export interface GLFlags {
   floatMotes: boolean;
   /** K9 — 水生植物层（俯视睡莲叶圆片 + 边缘芦苇暗示岸；绕中心随水位缩放当 K6 强参照 + 涟漪轻晃）；关 = 不挂载（现状）。默认关 */
   waterPlants: boolean;
+  /** 水面花瓣层（复刻 flower-water-ripples）：GL 之上 2D overlay 画樱花瓣 + 投影，跟同源 CPU 涟漪场漂/起伏。默认关 */
+  flowerPetals: boolean;
   /** K10 — 可见塘底层（合成 shader 程序化极淡暗纹；静止不缩 → 动水面在其上产生视差当 K6/K3 参照）；关 = shader 跳过（纯黑塘底现状）。默认关 */
   pondFloor: boolean;
   /** K11 — 月光倒影（合成 shader 一道大柔冷白月华；被涟漪扭碎、随 K6 缩放放缩当参照、点题月夜水塘）；关 = shader 跳过（现状）。默认关 */
@@ -66,139 +70,80 @@ export interface GLFlags {
   autoDegrade: boolean;
 }
 
-/** /test1 默认（方向 A 后）：基调 + GL 球默认开（/test1 = GL 沙盒，直接看 GL）；
- *  水面默认关（面板里开）。仅 /test1 默认，`/` 与 `/test` 零影响。 */
+/** /test1 默认：按用户指定打开 GL球 / 球浮动 / 球飘动+涟漪推 / 扭曲水面 / K3深度 / K5焦散 / K6缩放 / K8微光 / K10塘底 / K11倒影 / 水面花瓣，
+ *  其余视觉层默认关（含基调——背景改由 K10 可见塘底提供）；autoDegrade 保留(非视觉的性能保护)。仅 /test1 默认，`/` 与 `/test` 零影响。 */
 export const DEFAULT_GL_FLAGS: GLFlags = {
-  glBase: true,
+  glBase: false,
   artDir: 'deep',
   glSpheres: true,
   water: false,
   bgImage: false,
   wheelMode: 'waterLevel',
   rtt: false,
-  waterFx: false,
+  waterFx: true,
   waterDbg: false,
-  sphereMotion: false,
-  depthModel: false,
+  sphereMotion: true,
+  sphereDrift: true,
+  depthModel: true,
   sphereShadow: false,
   shadowOcclude: false,
   shadowGlow: false,
   shadowContact: false,
-  caustics: false,
-  waterZoom: false,
-  floatMotes: false,
+  caustics: true,
+  waterZoom: true,
+  floatMotes: true,
   waterPlants: false,
-  pondFloor: false,
-  moonReflect: false,
+  flowerPetals: true,
+  pondFloor: true,
+  moonReflect: true,
   reefStones: false,
   crystalPillars: false,
   forceFallback: false,
   autoDegrade: true,
 };
 
+/** 解析单个布尔 flag：'1'/'true'→true，'0'/'false'→false，其余取默认。统一收口，省去逐 flag 重复块。 */
+function getBool(sp: URLSearchParams, key: string, dflt: boolean): boolean {
+  const v = sp.get(key);
+  if (v === '1' || v === 'true') return true;
+  if (v === '0' || v === 'false') return false;
+  return dflt;
+}
+
 /** 从 URL query 解析 G 线开关（仅覆盖出现的参数，其余取默认） */
 export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
-  const result: GLFlags = { ...DEFAULT_GL_FLAGS };
-
-  const glBase = searchParams.get('glBase');
-  if (glBase === '0' || glBase === 'false') result.glBase = false;
-  else if (glBase === '1' || glBase === 'true') result.glBase = true;
-
+  const d = DEFAULT_GL_FLAGS;
   const artDir = searchParams.get('artDir');
-  if (artDir === 'deep' || artDir === 'black') result.artDir = artDir;
-
-  const glSpheres = searchParams.get('glSpheres');
-  if (glSpheres === '1' || glSpheres === 'true') result.glSpheres = true;
-  else if (glSpheres === '0' || glSpheres === 'false') result.glSpheres = false;
-
-  const water = searchParams.get('water');
-  if (water === '1' || water === 'true') result.water = true;
-  else if (water === '0' || water === 'false') result.water = false;
-
-  const bgImage = searchParams.get('bgImage');
-  if (bgImage === '1' || bgImage === 'true') result.bgImage = true;
-  else if (bgImage === '0' || bgImage === 'false') result.bgImage = false;
-
   const wheelMode = searchParams.get('wheelMode');
-  if (wheelMode === 'waterLevel' || wheelMode === 'zoomFx') result.wheelMode = wheelMode;
-
-  const rtt = searchParams.get('rtt');
-  if (rtt === '1' || rtt === 'true') result.rtt = true;
-  else if (rtt === '0' || rtt === 'false') result.rtt = false;
-
-  const waterFx = searchParams.get('waterFx');
-  if (waterFx === '1' || waterFx === 'true') result.waterFx = true;
-  else if (waterFx === '0' || waterFx === 'false') result.waterFx = false;
-
-  const waterDbg = searchParams.get('waterDbg');
-  if (waterDbg === '1' || waterDbg === 'true') result.waterDbg = true;
-  else if (waterDbg === '0' || waterDbg === 'false') result.waterDbg = false;
-
-  const sphereMotion = searchParams.get('sphereMotion');
-  if (sphereMotion === '1' || sphereMotion === 'true') result.sphereMotion = true;
-  else if (sphereMotion === '0' || sphereMotion === 'false') result.sphereMotion = false;
-
-  const depthModel = searchParams.get('depthModel');
-  if (depthModel === '1' || depthModel === 'true') result.depthModel = true;
-  else if (depthModel === '0' || depthModel === 'false') result.depthModel = false;
-
-  const sphereShadow = searchParams.get('sphereShadow');
-  if (sphereShadow === '1' || sphereShadow === 'true') result.sphereShadow = true;
-  else if (sphereShadow === '0' || sphereShadow === 'false') result.sphereShadow = false;
-
-  const shadowOcclude = searchParams.get('shadowOcclude');
-  if (shadowOcclude === '1' || shadowOcclude === 'true') result.shadowOcclude = true;
-  else if (shadowOcclude === '0' || shadowOcclude === 'false') result.shadowOcclude = false;
-
-  const shadowGlow = searchParams.get('shadowGlow');
-  if (shadowGlow === '1' || shadowGlow === 'true') result.shadowGlow = true;
-  else if (shadowGlow === '0' || shadowGlow === 'false') result.shadowGlow = false;
-
-  const shadowContact = searchParams.get('shadowContact');
-  if (shadowContact === '1' || shadowContact === 'true') result.shadowContact = true;
-  else if (shadowContact === '0' || shadowContact === 'false') result.shadowContact = false;
-
-  const caustics = searchParams.get('caustics');
-  if (caustics === '1' || caustics === 'true') result.caustics = true;
-  else if (caustics === '0' || caustics === 'false') result.caustics = false;
-
-  const waterZoom = searchParams.get('waterZoom');
-  if (waterZoom === '1' || waterZoom === 'true') result.waterZoom = true;
-  else if (waterZoom === '0' || waterZoom === 'false') result.waterZoom = false;
-
-  const floatMotes = searchParams.get('floatMotes');
-  if (floatMotes === '1' || floatMotes === 'true') result.floatMotes = true;
-  else if (floatMotes === '0' || floatMotes === 'false') result.floatMotes = false;
-
-  const waterPlants = searchParams.get('waterPlants');
-  if (waterPlants === '1' || waterPlants === 'true') result.waterPlants = true;
-  else if (waterPlants === '0' || waterPlants === 'false') result.waterPlants = false;
-
-  const pondFloor = searchParams.get('pondFloor');
-  if (pondFloor === '1' || pondFloor === 'true') result.pondFloor = true;
-  else if (pondFloor === '0' || pondFloor === 'false') result.pondFloor = false;
-
-  const moonReflect = searchParams.get('moonReflect');
-  if (moonReflect === '1' || moonReflect === 'true') result.moonReflect = true;
-  else if (moonReflect === '0' || moonReflect === 'false') result.moonReflect = false;
-
-  const reefStones = searchParams.get('reefStones');
-  if (reefStones === '1' || reefStones === 'true') result.reefStones = true;
-  else if (reefStones === '0' || reefStones === 'false') result.reefStones = false;
-
-  const crystalPillars = searchParams.get('crystalPillars');
-  if (crystalPillars === '1' || crystalPillars === 'true') result.crystalPillars = true;
-  else if (crystalPillars === '0' || crystalPillars === 'false') result.crystalPillars = false;
-
-  const forceFallback = searchParams.get('forceFallback');
-  if (forceFallback === '1' || forceFallback === 'true') result.forceFallback = true;
-  else if (forceFallback === '0' || forceFallback === 'false') result.forceFallback = false;
-
-  const autoDegrade = searchParams.get('autoDegrade');
-  if (autoDegrade === '0' || autoDegrade === 'false') result.autoDegrade = false;
-  else if (autoDegrade === '1' || autoDegrade === 'true') result.autoDegrade = true;
-
-  return result;
+  return {
+    glBase: getBool(searchParams, 'glBase', d.glBase),
+    artDir: artDir === 'deep' || artDir === 'black' ? artDir : d.artDir,
+    glSpheres: getBool(searchParams, 'glSpheres', d.glSpheres),
+    water: getBool(searchParams, 'water', d.water),
+    bgImage: getBool(searchParams, 'bgImage', d.bgImage),
+    wheelMode: wheelMode === 'waterLevel' || wheelMode === 'zoomFx' ? wheelMode : d.wheelMode,
+    rtt: getBool(searchParams, 'rtt', d.rtt),
+    waterFx: getBool(searchParams, 'waterFx', d.waterFx),
+    waterDbg: getBool(searchParams, 'waterDbg', d.waterDbg),
+    sphereMotion: getBool(searchParams, 'sphereMotion', d.sphereMotion),
+    sphereDrift: getBool(searchParams, 'sphereDrift', d.sphereDrift),
+    depthModel: getBool(searchParams, 'depthModel', d.depthModel),
+    sphereShadow: getBool(searchParams, 'sphereShadow', d.sphereShadow),
+    shadowOcclude: getBool(searchParams, 'shadowOcclude', d.shadowOcclude),
+    shadowGlow: getBool(searchParams, 'shadowGlow', d.shadowGlow),
+    shadowContact: getBool(searchParams, 'shadowContact', d.shadowContact),
+    caustics: getBool(searchParams, 'caustics', d.caustics),
+    waterZoom: getBool(searchParams, 'waterZoom', d.waterZoom),
+    floatMotes: getBool(searchParams, 'floatMotes', d.floatMotes),
+    waterPlants: getBool(searchParams, 'waterPlants', d.waterPlants),
+    flowerPetals: getBool(searchParams, 'flowerPetals', d.flowerPetals),
+    pondFloor: getBool(searchParams, 'pondFloor', d.pondFloor),
+    moonReflect: getBool(searchParams, 'moonReflect', d.moonReflect),
+    reefStones: getBool(searchParams, 'reefStones', d.reefStones),
+    crystalPillars: getBool(searchParams, 'crystalPillars', d.crystalPillars),
+    forceFallback: getBool(searchParams, 'forceFallback', d.forceFallback),
+    autoDegrade: getBool(searchParams, 'autoDegrade', d.autoDegrade),
+  };
 }
 
 /**

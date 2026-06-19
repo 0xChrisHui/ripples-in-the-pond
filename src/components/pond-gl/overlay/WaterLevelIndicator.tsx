@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { getWaterLevel, getLastWheelAt } from '../water/water-level';
+import { getEffectiveWaterLevel, getLastWheelAt } from '../water/water-level';
 
 /**
  * G6 — 左缘水位指示（DOM 细刻度）。滚轮时淡入、静止 1.2s 后淡出。
@@ -18,13 +18,13 @@ export default function WaterLevelIndicator() {
   useEffect(() => {
     let raf = 0;
     const loop = () => {
-      const lvl = getWaterLevel();
+      const lvl = getEffectiveWaterLevel(); // 水面层归一 [0.10,1.00] → 刻度条底=层 0、顶=层 100，游标即真实水面层
       const idle = performance.now() - getLastWheelAt();
       // 滚动后 1.2s 全显，再 0.8s 渐隐到 0
       const op = idle < 1200 ? 1 : Math.max(0, 1 - (idle - 1200) / 800);
       if (barRef.current) barRef.current.style.opacity = String(op);
       if (markRef.current) markRef.current.style.bottom = `${lvl * 100}%`;
-      if (labelRef.current) labelRef.current.textContent = `水位 ${Math.round(lvl * 100)}%`;
+      if (labelRef.current) labelRef.current.textContent = `水面 ${Math.round(lvl * 100)} 层`;
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);

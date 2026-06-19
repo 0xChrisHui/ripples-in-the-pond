@@ -11,7 +11,9 @@ import RttSpike from './water/spike/RttSpike';
 import FloatingMotes from './decor/FloatingMotes';
 import WaterPlants from './decor/WaterPlants';
 import WaterColumns from './decor/WaterColumns';
+import WaterPetals from './decor/WaterPetals';
 import BgImage from './BgImage';
+import GlAmbientRipples from './GlAmbientRipples';
 import type { GlSim } from './spheres/use-gl-sim';
 
 /**
@@ -125,6 +127,8 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
   const showFallback = lost || flags.forceFallback;
   return (
     <div className="pointer-events-none fixed inset-0 z-0">
+      {/* 背景涟漪流（复刻 /test）：sphereDrift 开时持续派发 bg-ripple:wave → 推水下球 + 起水面涟漪。headless，挂 Canvas 外 */}
+      <GlAmbientRipples active={flags.sphereDrift} />
       <GLErrorBoundary fallback={<GlFallback artDir={flags.artDir} />}>
         <Canvas
           orthographic
@@ -159,15 +163,17 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           {(flags.reefStones || flags.crystalPillars) && <WaterColumns reefStones={flags.reefStones} crystalPillars={flags.crystalPillars} />}
           {/* waterOn 只认旧「水面」(G6 没入淡到全透明=水波盖住球)。扭曲水面(waterFx)下球**不淡出**：
               红线「水下不压黑/不虚化」→ 水下球保持可见、靠合成 pass 的深度折射(K3 d^a)体现浮沉，不消失。 */}
-          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} />}
+          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} sphereDrift={flags.sphereDrift} />}
           {/* H1 spike：RTT 验证全屏盖在最上（renderOrder 10），隔离实验、默认关 */}
           {flags.rtt && <RttSpike />}
           {/* H2/H3：扭曲水面——渲真场景进 FBO 全屏折射扭曲 + 水位遮罩（接管渲染循环，返回 null） */}
-          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} depthModel={flags.depthModel} sphereShadow={flags.sphereShadow} shadowOcclude={flags.shadowOcclude} shadowGlow={flags.shadowGlow} shadowContact={flags.shadowContact} caustics={flags.caustics} waterZoom={flags.waterZoom} pondFloor={flags.pondFloor} moonReflect={flags.moonReflect} />}
+          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} depthModel={flags.depthModel} sphereShadow={flags.sphereShadow} shadowOcclude={flags.shadowOcclude} shadowGlow={flags.shadowGlow} shadowContact={flags.shadowContact} caustics={flags.caustics} waterZoom={flags.waterZoom} pondFloor={flags.pondFloor} moonReflect={flags.moonReflect} sphereDrift={flags.sphereDrift} />}
           {/* J3：低 FPS 自动降 DPR 保流畅（仅测时长 + setDpr，不渲染） */}
           {flags.autoDegrade && <AutoDpr />}
         </Canvas>
       </GLErrorBoundary>
+      {/* 水面花瓣层（复刻 flower-water-ripples）：GL 之上 2D overlay，自跑 CPU 涟漪场跟水面漂 + 投影。默认关 */}
+      {flags.flowerPetals && <WaterPetals glSim={glSim} />}
       {/* J1：context lost / forceFallback → 盖兜底夜塘（Canvas 仍在底下跑，撤掉即恢复） */}
       {showFallback && <GlFallback artDir={flags.artDir} />}
     </div>

@@ -7,6 +7,7 @@
  */
 
 import { pondFloorGlsl } from '../shaders/pond-floor-shaders';
+import { waterLightGlsl } from '../shaders/water-light-glsl';
 
 export const MAX_SPHERES = 48;
 
@@ -18,7 +19,8 @@ export const compositeMaskFrag = /* glsl */ `
   uniform vec2  uDelta;       // (1/RES, 1/RES)
   uniform float uPerturb;     // 折射强度
   uniform float uSpec;        // 高光强度
-  uniform float uWaterLevel;  // 水位 L ∈[0,1]
+  uniform float uWaterLevel;  // 「有效水位」（没入判定用，∈[EFF_LOW,EFF_HIGH]≈[-0.15,1.20]）→ 全 z 域两端可完全出水/没入
+  uniform float uWaterLevelRaw;// 「原始水位」current∈[0,1]（只给 K6 缩放/debug 横线用，与 motes/plants/滴水缩放同步）
   uniform vec2  uViewport;    // 画面像素 (w,h)，= sim 坐标空间
   uniform int   uSphereCount;
   uniform vec4  uSpheres[${MAX_SPHERES}]; // 每球 (x, y, radius, depthZ)，xy/radius 为 sim 像素
@@ -43,6 +45,9 @@ export const compositeMaskFrag = /* glsl */ `
   uniform float uPondFloorStyle;   // K10 塘底花纹（0 细沙偏亮/1 彩晕/2 鹅卵石/3 沙纹/4 矿脉）
   uniform float uMoonReflect;        // K11 月光倒影：0=关（现状）/ 1=开（大柔冷白月华，被涟漪扭碎、随 K6 缩放）
   uniform float uMoonReflectStrength;// 月光倒影强度（≤0.5 克制；偏画面一侧、低不透明 → 不盖过球）
+  uniform float uBallLightAbove;     // 月光对"水上球"的增亮衰减（0..1，独立于强度参数）
+  uniform float uBallLightBelow;     // 月光对"水下球"的增亮衰减（0..1）
+  uniform float uWaveOnBall;         // 水下球波纹增强：水面涟漪明暗乘性荡漾过水下球面，提升"水下感"；0=关
 
   // 给定屏幕 uv，遍历球算"露出水面程度"（0=水下/1=水上）
   float computeAbove(vec2 uv) {
@@ -80,92 +85,38 @@ export const compositeMaskFrag = /* glsl */ `
     return d;
   }
 
-  // K4：空中球(air=depthZ−uWaterLevel>0)在下方水面投软影；水下/贴面球不投。月光=远光源(近平行)→按远光源建模：
-  //  air 越大 → ①视差偏移越远(主高度线索) ②大小≈恒定(平行光无放大) ③透起伏水面/雾→温和变糊 ④环境补光→温和变淡。
-  //  (旧近光源版"越高越大越淡的盘"=物理错，已纠正；辨析见 docs/JOURNAL.md 2026-06-18。)uShadowHeight=g 高度增益；grad=水面坡度。
-  float computeShadowMask(vec2 uv, vec2 grad, float g) {
-    vec2 px = vec2(uv.x, 1.0 - uv.y) * uViewport;
-    vec2 offDir = normalize(vec2(0.5, 1.0)); // 背光方向(右下，月光自左上)：影偏移方向
-    float vh = max(1.0, uViewport.y);
-    float shadow = 0.0;
-    for (int i = 0; i < ${MAX_SPHERES}; i++) {
-      if (i >= uSphereCount) break;
-      vec4 s = uSpheres[i];
-      float air = s.w - uWaterLevel;          // >0 = 悬空高度（z 归一），越大离水面越远
-      if (air <= 0.0) continue;               // 水下/贴面球不投影
-      float t = clamp(air / 0.5, 0.0, 1.0);   // 归一高度（0.5≈最高，覆盖整层级差）
-      vec2 warp = clamp(grad * (1.0 + 3.0 * t * g), -0.02, 0.02) * uViewport; // ③透起伏水面/雾看影→随高温和变糊
-      vec2 ctr = s.xy + offDir * (s.z * 0.15 + air * vh * 0.08 * g);          // ①视差：偏移∝真实高度/tanθ（月光仰角≈70°；主高度线索）
-      vec2 dd = (px + warp - ctr) / vec2(s.z, s.z * 0.55);                   // ②大小≈恒定（远光源平行光无放大；纵压扁=斜投椭圆）
-      float umbra = 0.85 - 0.3 * t;            // 仅温和变软（天空环境光填半影）：贴面 0.85 → 高处 0.55
-      float spot = 1.0 - smoothstep(umbra, 1.0, length(dd));
-      shadow = max(shadow, spot * (1.0 - 0.35 * t) * uSphereVis[i]); // ③温和变淡（环境补光）：高处 ×0.65；×vis 淡出球不投影
-    }
-    // 水光网纹打碎（亮处被光"打穿" → 水面感、平水也活），四种投影模式共用此 mask。
-    float sAspect = uViewport.x / max(1.0, uViewport.y);
-    vec2 wp = uv * vec2(8.0 * sAspect, 8.0);
-    float lite = sin(wp.x + uTime * 0.5) + sin(wp.y * 0.9 - uTime * 0.4) + sin((wp.x + wp.y) * 0.6 + uTime * 0.6);
-    return shadow * (1.0 - 0.5 * smoothstep(0.4, 2.2, lite));
-  }
-
-  // K5：月光焦散光照（参考 flower-water-ripples FSH 的 light/spec/band/pool，翻成夜塘月光冷白版）。
-  // 返回一个标量"冷白增量"——main 里乘冷白 RGB 叠加（只加亮、不上色、不压暗 → 不破"水下不压黑"）。
-  // 四层：①漫反射(坡面朝月微提亮) ②波峰高光(陡坡尖峰增辉) ③飘移对角光带 ④缓慢游走的月光池。
-  // 后两层用 uTime 自驱，平水/静止时水面仍有缓慢流光（焦散感）；前两层 gate 在涟漪梯度上、平水≈0。
-  float computeCaustics(vec2 uv, vec2 grad, float time) {
-    // ①焦散网纹（主体）：四层缓慢正弦干涉成胞状，pow 锐化成"细亮丝"，随时间流动→静水也"活"；按宽高比缩 uv 防宽屏拉长。
-    float aspect = uViewport.x / max(1.0, uViewport.y);
-    vec2 p = uv * vec2(7.0 * aspect, 7.0);
-    float t = time * 0.4;
-    float w = sin(p.x + t) + sin(p.y - t * 0.9)
-            + sin((p.x + p.y) * 0.7 + t * 1.1)
-            + sin((p.x - p.y) * 0.6 - t * 0.7);
-    float web = pow(clamp(w * 0.25 + 0.5, 0.0, 1.0), 3.0); // 归一 0..1 再锐化成稀疏亮丝（非均匀雾）
-    // ②大尺度游走明暗：缓慢漂移的柔斑，只「调制」网纹强弱（不再是整片均匀加雾）。
-    vec2 pc = vec2(0.5 + 0.3 * cos(time * 0.05), 0.5 + 0.25 * sin(time * 0.07));
-    float pool = 1.0 - smoothstep(0.2, 0.75, distance(uv, pc));
-    // ③涟漪坡面朝月动态增辉：有涟漪处网纹更亮（活水感），平水≈0。
-    float slope = max(0.0, dot(grad, normalize(vec2(-0.6, 1.0)))) * 5.0;
-    return web * (0.45 + 0.55 * pool) + slope;
-  }
+  // K4 投影 computeShadowMask / K5 焦散 computeCaustics / K11 倒影 moonReflectTex / 球遮罩 ballMask
+  // 注入自 ../shaders/water-light-glsl（腾行数；这些函数引用本 shader 上方声明的 uniform）。
+  ${waterLightGlsl(MAX_SPHERES)}
 
   // K10 塘底花纹（5 套，pondFloorColor 注入自 shaders/pond-floor-shaders.ts；返回 vec3 冷暗色，main ×强度×sub）。
   ${pondFloorGlsl}
 
-  // K11：月光倒影 mask（0..1）——一道大柔竖向冷白光华，偏左侧避球密集中区。muv=已随 K6 缩放的采样 UV（缩放参照）；
-  // +grad 沿涟漪坡度把光带扭碎(展示波纹)；内嵌低频游走条纹 = 月华碎成的粼光（静水也活）。
-  float moonReflectTex(vec2 muv, vec2 grad, float time) {
-    vec2 q = muv + grad * 28.0;                       // 被高度梯度扭动 → 倒影随涟漪碎裂（梯度已含 edgeWin，平水≈不扭）
-    float band = exp(-pow((q.x - 0.32) * 4.2, 2.0));  // 竖向高斯柔光带，中心偏左 0.32（一侧、不压中央的球）
-    float vert = smoothstep(0.05, 0.45, q.y) * (1.0 - smoothstep(0.7, 1.05, q.y)); // 纵向柔窗：下半为主、顶端渐隐
-    float shimmer = 0.6 + 0.4 * sin(q.y * 26.0 - time * 0.7 + sin(q.x * 9.0)); // 低频粼光条纹随时间游走 → 静水也活
-    return band * vert * clamp(shimmer, 0.0, 1.0);
-  }
-
   void main() {
-    // K6：按水位绕中心缩放「高度场采样 UV」(只缩水层、球不动)。zoom=1+(水位−0.5)·uZoomAmount：高→收缩放大溢出/低→外撑缩小露更多，
-    // 进行中涟漪也随之缩。OFF(uZoomAmount=0)：hUv=vUv、edgeWin=1 → 下面采样/梯度与现状逐字一致。
+    // K6：按水位「放大」高度场采样 UV(只缩水层、球不动)。zoom = 1 + 原始水位·uZoomAmount，**恒 ≥ 1（只放大不缩小）**：
+    // 水位 0 → zoom 1（看整片塘=满屏涟漪）；水位升 → 放大中心（"升放大"）。zoom≥1 → hUv 恒在 [0,1] →
+    // **任何缩放幅度下涟漪都铺满全屏**（不再缩出中间一小块/9 宫格，故无需 edge 淡出/clamp）。
+    // OFF(uZoomAmount=0)：zoom=1、hUv=vUv → 下面采样/梯度与现状逐字一致。
     vec2 hUv = vUv;
     if (uZoomAmount > 0.0) {
-      float zoom = 1.0 + (uWaterLevel - 0.5) * uZoomAmount;
-      hUv = (vUv - 0.5) / max(0.001, zoom) + 0.5;        // 绕中心缩放采样
-      // 缩小(zoom<1)越界 [0,1]：镜像平铺(mirror) → 涟漪无缝延续，无真空区、无边界墙线/回弹硬边
-      // （旧 clamp+平滑窗留"无涟漪真空区 + 边缘回弹线"；mirror C0 连续、弃用之）。
-      hUv = 1.0 - abs(mod(hUv, 2.0) - 1.0);
+      float zoom = 1.0 + uWaterLevelRaw * uZoomAmount;   // ≥1：水位 0=全塘、水位 1=最大放大
+      hUv = (vUv - 0.5) / zoom + 0.5;                    // 绕中心放大采样（恒在 [0,1]，全屏皆有效涟漪）
     }
     // 梯度步长恒用 uDelta（场内自然梯度）→ 缩放只改涟漪位置/大小、不改亮度（曾用 uDelta/zoom 致降水位全屏变亮，弃用）。
     float h  = texture2D(uHeight, hUv).r;
     float hx = texture2D(uHeight, hUv + vec2(uDelta.x, 0.0)).r;
     float hy = texture2D(uHeight, hUv + vec2(0.0, uDelta.y)).r;
-    vec2 grad = vec2(hx - h, hy - h); // 旧 -normalize 法线满幅位移→麻点，弃用
+    vec2 grad = vec2(hx - h, hy - h);
     float gmag = length(grad);
     float above = computeAbove(vUv);
     float sub = 1.0 - above;
-    // 月光均匀眷顾水上水下：高光/焦散/倒影本来 ×sub（只水域）→ 出水球完全没月光、入水"一下子变亮"。
-    // 改 ×moonGate（出水也得 70% 月光、水下 100%）→ 过水线平滑、出水球也被月光照到。折射/投影仍用 sub。
-    float moonGate = mix(0.7, 1.0, sub);
-    if (uDebug > 0.5) {                       // 调试：绿=水上(清晰)/红=水下(扭)，白线=水位 L
-      float line = step(abs(vUv.y - uWaterLevel), 0.004);
+    // 【遮挡契约·勿破】水是一层半透明面：above=可见出水球遮罩(含 1−没入；没入/淡出球=0)、sub=1−above。
+    //   水下球 & 开阔水面(sub=1)：水面一切派生效果(折射 disp / 高光 spec / 焦散 / 倒影 / 亮塘底)照常显
+    //     → "从上到下先看到半透明水波，透过水波看到球"。
+    //   出水球(sub=0=不透明、挡在水面之上)：上述全部 ×sub=0 → 球上无任何水波/高光，只见球本色；球下水面照常起波。
+    //   过水线 sub 连续 → 出入水平滑不跳变。⚠ 今后新增任何"水面/涟漪"派生效果必须 ×sub，否则会爬到出水球上破坏遮挡（本问题反复复发的根因）。
+    if (uDebug > 0.5) {                       // 调试：绿=水上(清晰)/红=水下(扭)，白线=原始水位
+      float line = step(abs(vUv.y - uWaterLevelRaw), 0.004);
       gl_FragColor = vec4(mix(vec3(0.7, 0.0, 0.0), vec3(0.0, 0.7, 0.0), above) + vec3(line), 1.0);
       return;
     }
@@ -200,18 +151,32 @@ export const compositeMaskFrag = /* glsl */ `
       float notBase = smoothstep(0.08, 0.20, max(base.r, max(base.g, base.b))); // 球/亮物≈1（保留），暗塘底≈0（露塘底）
       base = mix(base, pondFloorColor(vUv + disp * sub, uPondFloorStyle), uPondFloorStrength * sub * (1.0 - notBase));
     }
-    vec3 col = base + vec3(spec * uSpec * moonGate * moonMod * (1.0 - occ)); // 月光高光（均匀眷顾水上水下）被"挡月光"夺
+    vec3 col = base + vec3(spec * uSpec * sub * moonMod * (1.0 - occ)); // 月光高光 ×sub（遮挡契约）：水下球/水面显，出水球为 0；被"挡月光"夺
     // A 暗影：冷向减光（多减暖留冷、影偏蓝灰不死黑；暗塘上弱、亮处显）
     if (uSphereShowing > 0.5) col = max(col - aMask * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
     // C 反光晕：加冷光（暗塘上加光比减光更显，像球的光落在下方水面）
     if (uShadowGlow > 0.5) col += aMask * uShadowStrength * 0.6 * vec3(0.55, 0.72, 0.95);
     // D 接触影：g=0 紧贴球的小柔影（无视差、不随高度涨），冷向减光
     if (uShadowContact > 0.5) col = max(col - computeShadowMask(vUv, grad, 0.0) * sub * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
-    // K5：月光焦散冷白光照（uCaustics<0.5 跳过=现状）。×sub 只水域、只加亮不压暗(不破"水下不压黑")；×(1−occ) 被挡月光夺。
-    if (uCaustics > 0.5) col += computeCaustics(vUv, grad, uTime) * uCausticsStrength * moonGate * (1.0 - occ) * vec3(0.55, 0.72, 0.95);
-    // K11：月光倒影（uMoonReflect<0.5 跳过=现状）。喂 hUv(已随 K6 缩放的采样 UV→倒影随水放缩) + grad(被涟漪扭碎展示波纹)；
-    // ×sub 只水域、低不透明克制冷白(#e8f2ff)→ 偏左一侧不盖球，只加亮不压暗（不破"水下不压黑"）。
-    if (uMoonReflect > 0.5) col += moonReflectTex(hUv, grad, uTime) * uMoonReflectStrength * moonGate * vec3(0.91, 0.95, 1.0);
+    // K5/K11 月光两效（焦散+倒影）：各算一次冷白增量，水面/球路径共用。<0.5 时=0=现状跳过。
+    vec3 causV = (uCaustics > 0.5 ? computeCaustics(vUv, grad, uTime) * uCausticsStrength : 0.0) * vec3(0.55, 0.72, 0.95);
+    vec3 moonV = (uMoonReflect > 0.5 ? moonReflectTex(hUv, grad, uTime) * uMoonReflectStrength : 0.0) * vec3(0.91, 0.95, 1.0);
+    // 水面（保持现状·两效叠加）：×sub 只水域、焦散×(1−occ) 被挡月光夺；×(1−ballCover) 把球抠出水面路径 → 球改走下面"球路径"。开阔水面 ballCover≈0 → 与现状一致。
+    vec2 bm = ballMask(vUv);
+    float ballCover = bm.x;
+    col += causV * sub * (1.0 - occ) * (1.0 - ballCover);
+    col += moonV * sub * (1.0 - ballCover);
+    // 球路径：球只吃「无涟漪」环境月光（grad=0 → 去掉 slope/扭动等涟漪响应项）→ 点击涟漪时球上不起高光（水上球纯净）。
+    // 取两效"增亮更高者"(非叠加) × 衰减(水上 uBallLightAbove/水下 uBallLightBelow，独立于强度) × 覆盖；aboveFrac=出水比例 → 水上/水下衰减插值。
+    vec3 causAmb = (uCaustics > 0.5 ? computeCaustics(vUv, vec2(0.0), uTime) * uCausticsStrength : 0.0) * vec3(0.55, 0.72, 0.95);
+    vec3 moonAmb = (uMoonReflect > 0.5 ? moonReflectTex(hUv, vec2(0.0), uTime) * uMoonReflectStrength : 0.0) * vec3(0.91, 0.95, 1.0);
+    float aboveFrac = ballCover > 1e-4 ? clamp(bm.y / ballCover, 0.0, 1.0) : 0.0;
+    float ballAtten = mix(uBallLightBelow, uBallLightAbove, aboveFrac);
+    vec3 ballLight = dot(causAmb, vec3(0.299, 0.587, 0.114)) >= dot(moonAmb, vec3(0.299, 0.587, 0.114)) ? causAmb : moonAmb;
+    col += ballLight * ballAtten * ballCover;
+    // 水下球"水下感"增强：水面涟漪明暗(梯度·朝月，亮带+暗带)乘性荡漾过水下球面。×sub 只水下、×ballCover 只球。
+    float waveBall = dot(dir, normalize(vec2(-0.6, 1.0))) * smoothstep(0.0, 0.004, gmag);
+    col *= 1.0 + waveBall * uWaveOnBall * sub * ballCover;
     gl_FragColor = vec4(col, scene.a);
   }
 `;

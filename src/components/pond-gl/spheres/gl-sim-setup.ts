@@ -38,6 +38,11 @@ import type { Track } from '@/src/types/tracks';
 const ALPHA_BASELINE = 0.008; // 出处 sphere-sim-setup.ts:25（持续漂浮 baseline alpha）
 const PAD = 20;               // 出处 sphere-sim-setup.ts:26（边界内缩）
 
+// 深度轴 100 层（0=塘底 / 100=顶）。球随机分布在 30–80 层 → 归一深度 z∈[0.30,0.80]。
+// 水面滚动 10–100 层（见 water-level.ts effective），两端各留 20 层余量 → 层10 全出水、层100 全没入。
+const BALL_LAYER_LO = 0.30; // 球最低层 30/100
+const BALL_LAYER_HI = 0.80; // 球最高层 80/100
+
 // z = 基准深度（建点固定，painter 排序用）；displayZ = H5 每帧浮沉后的动态深度（消费方读它）。
 // _dragLoose 对标 sphere-sim-setup.ts；_focusLerp = H5 播放球浮出焦点的缓动状态（见 sphere-motion）。
 export type GlPhysNode = SimNode & {
@@ -45,6 +50,9 @@ export type GlPhysNode = SimNode & {
   _dragLoose?: boolean;
   displayZ?: number;
   _focusLerp?: number;
+  _gvx?: number; // 涟漪推"滑行"速度（独立于 d3 velocityDecay，慢衰减 → 惯性收尾，见 gl-sim-waves stepSphereGlide）
+  _gvy?: number;
+  _waveZ?: number; // 「球浮动」层级波动值 ∈[-amp,amp]（sphere-motion 写）；/test1 当尺寸倍率 (1+_waveZ) 消费 → 球变大/小
 };
 
 /** tracksToShow → 节点 + 链接（复刻 SphereCanvas.tsx:64-83 的建点逻辑，含 baseLayer/lw/radius/z） */
@@ -58,14 +66,14 @@ export function buildGlNodes(tracksToShow: Track[], groupId: GroupId): {
     track: t,
     ...computeNodeAttrs(t, groupId),
   }));
-  const { assignment, clusterCount } = buildClusterAssignment(baseNodes.map((n) => n.id));
-  // baseLayer 由 z 派生（与 use-sphere-z.ts 同公式），z 用于 painter 排序
-  const clusterZ = Array.from({ length: clusterCount }, (_, i) => halton(i + 1, 5));
+  const { assignment } = buildClusterAssignment(baseNodes.map((n) => n.id));
+  // 深度 z：每球随机分布在 30–80 层（归一 [0.30,0.80]），hash 决定 → 稳定可复现；z 用于没入判定 + painter 排序。
+  // 大小 baseLayer：把带内位置归一到满层级（深=小/近面=大），保留与原来一样的完整大小变化，不因深度收窄而变同质。
   const nodes: GlPhysNode[] = baseNodes.map((n) => {
-    const baseZ = clusterZ[assignment.get(n.id) ?? 0] ?? 0.5;
     const h = hashStr(n.id);
-    const z = Math.max(0, Math.min(1, baseZ + ((h % 601) / 1000) - 0.3));
-    const baseLayer = Math.max(1, Math.min(NUM_LAYERS, Math.round((1 - z) * (NUM_LAYERS - 1) + 1)));
+    const z = BALL_LAYER_LO + ((h % 1000) / 1000) * (BALL_LAYER_HI - BALL_LAYER_LO);
+    const sizeT = (z - BALL_LAYER_LO) / (BALL_LAYER_HI - BALL_LAYER_LO); // 0=最深(最小) … 1=近面(最大)
+    const baseLayer = Math.max(1, Math.min(NUM_LAYERS, Math.round((1 - sizeT) * (NUM_LAYERS - 1) + 1)));
     const lw = {
       amp: 0.6 + Math.random() * 0.8,
       f1: 0.04 + Math.random() * 0.08,

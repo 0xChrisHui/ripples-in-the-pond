@@ -18,8 +18,8 @@ export const DEFAULT_TUNING: SphereTuning = {
   brightness: 1,
   contrast: 1,
   saturation: 1,
-  halo: 1,
-  fill: 1,
+  halo: 1.9,
+  fill: 1.6,
 };
 
 const KEY = 'pond-gl-tune';

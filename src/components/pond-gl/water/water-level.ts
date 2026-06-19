@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { getRippleTuning } from './spike/ripple-tuning';
 
 /**
  * G6 — 水位 store + 滚轮控制（程序化单例，范式同 sphere-tuning）。
@@ -21,9 +22,30 @@ let target = 0;
 let current = 0;
 let lastWheelAt = -9999; // 指示器淡入用：最近一次滚轮的时间戳（performance.now）
 
-/** shader / 指示器每帧读的实时水位（已缓动） */
+/**
+ * 「有效水位」域端点 = 水面滚动范围（深度轴 100 层模型：0=塘底/100=顶；球分布在 30–80 层=z∈[0.30,0.80]）。
+ * 原始 current∈[0,1] 是滚轮控制量，线性映射到水面层 [10,100]/100=[0.10,1.00] 喂给所有"没入判定"
+ * （shader 没入遮罩/深度、getSubmerge、depthFactor、浮沉焦点）：
+ *   current=0 → 水面层 10（低于最低球层 30，留 20 层余量 → 全部球出水/悬空）；
+ *   current=1 → 水面层 100（高于最高球层 80，留 20 层余量 → 全部球没入）。
+ * K6 缩放/滴水缩放仍读原始 current（getWaterLevel）→ 缩放量与没入覆盖解耦，互不影响。
+ */
+const EFF_LOW = 0.10;   // current=0 → 水面层 10（< 最低球层 30，全出水）
+const EFF_HIGH = 1.00;  // current=1 → 水面层 100（> 最高球层 80，全没入）
+
+/** K6 缩放/滴水缩放读的「原始水位」current（已缓动，∈[0,1]）。 */
 export function getWaterLevel(): number {
   return current;
+}
+
+/** 没入判定 + 指示器/水线读的「有效水位」= 水面层归一（current 线性映射到 [EFF_LOW,EFF_HIGH]=层 10–100/100）。 */
+export function getEffectiveWaterLevel(): number {
+  return EFF_LOW + (EFF_HIGH - EFF_LOW) * current;
+}
+
+/** 给定 current 值算有效水位（getSubmerge/depthFactor 内部用，避免重复读 current）。 */
+function effective(): number {
+  return EFF_LOW + (EFF_HIGH - EFF_LOW) * current;
 }
 /** 指示器读：最近滚轮时间，用于"滚轮时淡入、静止后淡出" */
 export function getLastWheelAt(): number {
@@ -31,8 +53,9 @@ export function getLastWheelAt(): number {
 }
 
 /** 滚轮拨动水位：deltaY<0（上滚）抬高水位、更多球入水；clamp [0,1] */
+const WHEEL_BASE = 0.0008; // 基准灵敏度（×wheelSens 倍率，面板可调；1.0 倍 = 历史现状）
 export function nudgeWaterLevel(deltaY: number): void {
-  target = Math.max(0, Math.min(1, target - deltaY * 0.0008));
+  target = Math.max(0, Math.min(1, target - deltaY * WHEEL_BASE * getRippleTuning().wheelSens));
   lastWheelAt = performance.now();
 }
 
@@ -48,7 +71,7 @@ export function stepWaterLevel(): void {
  * 集中在此 → 球淡出与 overlay 标题淡出共用同一判定（G6-2 贴面涟漪也复用）。
  */
 export function getSubmerge(z: number): number {
-  const t = Math.min(1, Math.max(0, (current - z + 0.02) / 0.12)); // 线性映射 [-0.02,0.10] → [0,1]
+  const t = Math.min(1, Math.max(0, (effective() - z + 0.02) / 0.12)); // 用有效水位 → 全 z 域两端可达 0/1
   return t * t * (3 - 2 * t); // smoothstep 软化出入水
 }
 
@@ -58,7 +81,7 @@ export function getSubmerge(z: number): number {
  * 浮沉时 d 连续变 → 三效果一起连续变（统一 R4 的不一致 + 让浮沉"看得见"）。
  */
 export function depthFactor(z: number, pondDepth: number): number {
-  return Math.min(1, Math.max(0, (current - z) / Math.max(0.001, pondDepth)));
+  return Math.min(1, Math.max(0, (effective() - z) / Math.max(0.001, pondDepth)));
 }
 
 /**

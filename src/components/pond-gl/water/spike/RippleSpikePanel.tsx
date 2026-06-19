@@ -10,81 +10,13 @@ import {
   DEFAULT_RIPPLE_TUNING,
   type RippleTuning,
 } from './ripple-tuning';
+import { type Slider, SLIDER_GROUPS, SLIDER_GROUPS_TAIL, PONDFLOOR_SLIDERS } from './ripple-panel-config';
 
 /**
  * H6 波纹/运动参数板（仿 TunePanel；rtt 或 H2+ 扭曲水面开时挂）。
  * 拖动即时改 WaterDistort/RttSpike 的涟漪 uniform + sphere-motion 的浮沉；"保存"写 localStorage。
  * 定位由父级 flex 容器给（与 TunePanel 同栏堆叠，不再各自 fixed → 不重叠）。
  */
-type Slider = { key: keyof RippleTuning; label: string; min: number; max: number; step: number };
-
-const RIPPLE_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'damping', label: '阻尼(持续)', min: 0.95, max: 0.999, step: 0.001 },
-  { key: 'refract', label: '折射强度', min: 0, max: 3, step: 0.05 },
-  { key: 'dropMove', label: '滴水·移动', min: 0, max: 0.05, step: 0.001 },
-  { key: 'dropClick', label: '滴水·点击', min: 0, max: 0.4, step: 0.005 },
-  { key: 'dropRadius', label: '滴水半径', min: 0.01, max: 0.15, step: 0.005 },
-  { key: 'specular', label: '高光', min: 0, max: 1.5, step: 0.02 },
-  { key: 'trail', label: '拖尾强度', min: 0, max: 0.4, step: 0.005 },
-  { key: 'splash', label: '溅起强度', min: 0, max: 0.5, step: 0.005 },
-  { key: 'ambient', label: '常驻微波', min: 0, max: 0.06, step: 0.002 },
-];
-
-const MOTION_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'bobAmp', label: '浮沉幅度', min: 0, max: 0.2, step: 0.005 },
-  { key: 'bobScale', label: '浮沉频率', min: 0.2, max: 3, step: 0.1 },
-  { key: 'focusMargin', label: '焦点露出', min: 0, max: 0.2, step: 0.005 },
-];
-
-const DEPTH_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'pondDepth', label: '塘深', min: 0.1, max: 1, step: 0.02 },
-  { key: 'refrExp', label: '折射·深度指数', min: 0.3, max: 3, step: 0.1 },
-  { key: 'moonExp', label: '月光·深度指数', min: 0.3, max: 3, step: 0.1 },
-];
-
-const SHADOW_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'shadowStrength', label: '投影强度', min: 0, max: 1, step: 0.02 },
-  { key: 'shadowHeight', label: '投影高度感', min: 0, max: 2.5, step: 0.05 },
-];
-
-const CAUSTICS_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'causticsStrength', label: '焦散强度', min: 0, max: 1, step: 0.02 },
-];
-
-const ZOOM_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'zoomAmount', label: '缩放幅度', min: 0, max: 1, step: 0.02 },
-];
-
-const MOTES_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'motesCount', label: '微光密度', min: 0, max: 1, step: 0.02 },
-  { key: 'motesSize', label: '微光点径', min: 0.5, max: 6, step: 0.1 },
-  { key: 'motesOpacity', label: '微光透明', min: 0, max: 1, step: 0.02 },
-  { key: 'motesDrift', label: '微光游走', min: 0, max: 1, step: 0.02 },
-];
-
-const PLANTS_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'plantsCount', label: '睡莲密度', min: 0, max: 1, step: 0.02 },
-  { key: 'plantsSize', label: '睡莲大小', min: 0.02, max: 0.14, step: 0.005 },
-  { key: 'plantsOpacity', label: '睡莲透明', min: 0, max: 1, step: 0.02 },
-  { key: 'plantsSway', label: '睡莲轻晃', min: 0, max: 1, step: 0.02 },
-];
-
-const PONDFLOOR_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'pondFloorStrength', label: '塘底浓度', min: 0, max: 1, step: 0.02 },
-];
-
-const MOONREFLECT_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'moonReflectStrength', label: '月光倒影', min: 0, max: 1, step: 0.02 },
-];
-
-const COLUMNS_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'perspStrength', label: '透视强度', min: 0, max: 0.6, step: 0.01 },
-  { key: 'colCount', label: '柱数量', min: 0, max: 1, step: 0.02 },
-  { key: 'colHeight', label: '柱高', min: 0.3, max: 2, step: 0.05 },
-  { key: 'colWidth', label: '柱宽', min: 0.3, max: 2, step: 0.05 },
-  { key: 'colOpacity', label: '柱透明', min: 0, max: 1, step: 0.02 },
-];
-
 function SliderRow({ s, value }: { s: Slider; value: number }) {
   return (
     <label className="mb-1.5 block">
@@ -129,29 +61,12 @@ export default function RippleSpikePanel() {
 
       {open && (
         <div className="mt-1 max-h-[55vh] overflow-y-auto pr-0.5">
-          <div className="mb-1 text-[10px] uppercase tracking-wider text-white/30">波纹</div>
-          {RIPPLE_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
-
-          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">运动（球浮沉）</div>
-          {MOTION_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
-
-          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">深度模型（K3，需开开关）</div>
-          {DEPTH_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
-
-          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">球投影（K4，需开开关）</div>
-          {SHADOW_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
-
-          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">月光焦散（K5，需开开关）</div>
-          {CAUSTICS_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
-
-          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">水面缩放（K6，需开开关）</div>
-          {ZOOM_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
-
-          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">漂浮微光（K8，需开开关）</div>
-          {MOTES_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
-
-          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">水生植物（K9，需开开关）</div>
-          {PLANTS_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+          {SLIDER_GROUPS.map((g) => (
+            <div key={g.title}>
+              <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">{g.title}</div>
+              {g.sliders.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+            </div>
+          ))}
 
           <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">可见塘底（K10，需开开关）</div>
           {PONDFLOOR_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
@@ -171,11 +86,12 @@ export default function RippleSpikePanel() {
             ))}
           </div>
 
-          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">月光倒影（K11，需开开关）</div>
-          {MOONREFLECT_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
-
-          <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">水位标尺柱（K12，需开开关）</div>
-          {COLUMNS_SLIDERS.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+          {SLIDER_GROUPS_TAIL.map((g) => (
+            <div key={g.title}>
+              <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">{g.title}</div>
+              {g.sliders.map((s) => <SliderRow key={s.key} s={s} value={t[s.key]} />)}
+            </div>
+          ))}
 
           <div className="mt-2 flex gap-1.5">
             <button

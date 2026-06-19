@@ -155,7 +155,7 @@ export default function FloatingMotes({ waterZoom = false }: { waterZoom?: boole
     // 当 K6 参照。waterZoom 开 → zoom=1+(水位−0.5)·zoomAmount（同 WaterDistort）；
     // 关 → zoom≡1（与水面"不缩放=现状"一致，微光也不缩，避免比水更早动 = 假参照）。
     const zoom = waterZoom && t.zoomAmount > 0
-      ? 1 + (getWaterLevel() - 0.5) * t.zoomAmount
+      ? 1 + getWaterLevel() * t.zoomAmount // 同 shader/滴水：只放大(≥1)→ 微光与水面缩放一致、不缩出
       : 1;
     // 写 material 真身 uniforms（R3F 拷贝坑：改外部 uniforms 对象无效）
     mat.uniforms.uSize.value = t.motesSize;

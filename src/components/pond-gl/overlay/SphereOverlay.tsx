@@ -42,7 +42,8 @@ export default function SphereOverlay({ glSim, waterOn, depthModel = false }: { 
           sub = (subSmooth.current.get(n.id) ?? raw) * 0.85 + raw * 0.15;
           subSmooth.current.set(n.id, sub);
         }
-        el.style.transform = `translate(${n.x - n.radius}px, ${n.y - n.radius}px)`;
+        // 球浮动：整块 ×(1+_waveZ) → 编号/角标 + 命中热区随球同步变大/变小（transform-origin 默认居中=球心）
+        el.style.transform = `translate(${n.x - n.radius}px, ${n.y - n.radius}px) scale(${1 + (n._waveZ ?? 0)})`;
         // 别的球在播 → 完全隐藏（聚焦只剩播放球 + 日蚀）；否则没入淡出（水下仍留 0.4 锚点）
         el.style.opacity = dim ? '0' : String(Math.max(0.4, 1 - sub * 1.5));
         // 水下对象仍可点（H 规格）；别的球在播时让出交互（其他球已隐藏）

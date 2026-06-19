@@ -189,7 +189,7 @@ export default function WaterPlants({ waterZoom = false }: { waterZoom?: boolean
     const t = getRippleTuning();
     // K6 参照：waterZoom 开 → zoom=1+(水位−0.5)·zoomAmount（同 WaterDistort/FloatingMotes）；关 → ≡1（现状）
     const zoom = waterZoom && t.zoomAmount > 0
-      ? 1 + (getWaterLevel() - 0.5) * t.zoomAmount
+      ? 1 + getWaterLevel() * t.zoomAmount // 同 shader/滴水：只放大(≥1)→ 睡莲与水面缩放一致、不缩出
       : 1;
     mat.uniforms.uOpacity.value = t.plantsOpacity; // R3F 拷贝坑：写 material 真身
     const lilyCount = Math.max(0, Math.min(MAX_LILY, Math.round(t.plantsCount * MAX_LILY)));

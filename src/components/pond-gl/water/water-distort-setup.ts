@@ -60,7 +60,8 @@ export function makeCompositeScene(
     uDelta: { value: new Vector2(1 / resX, 1 / resY) },
     uPerturb: { value: 0.04 },
     uSpec: { value: 0.5 },
-    uWaterLevel: { value: 0 },
+    uWaterLevel: { value: 0 },    // 有效水位（没入判定）
+    uWaterLevelRaw: { value: 0 }, // 原始水位（K6 缩放/debug 横线）
     uViewport: { value: new Vector2(1, 1) },
     uSphereCount: { value: 0 },
     uSpheres: { value: spheresInit },
@@ -91,6 +92,10 @@ export function makeCompositeScene(
     // K11 月光倒影：uMoonReflect<0.5 时 shader 跳过 → 现状；uMoonReflectStrength 克制（≤0.5、偏一侧不盖球）
     uMoonReflect: { value: 0 },
     uMoonReflectStrength: { value: 0.4 },
+    // 月光对球增亮衰减（独立于强度）：水上 0.30 / 水下 0.15；+ 水下球波纹增强。面板可调
+    uBallLightAbove: { value: 0.3 },
+    uBallLightBelow: { value: 0.15 },
+    uWaveOnBall: { value: 0.6 },
   });
 }
 
@@ -139,6 +144,10 @@ export function applyTuning(
   // K11：moonReflect 开 → shader 叠大柔冷白月华倒影（被涟漪扭碎、随 K6 缩放）；关 → 0（跳过 = 现状）
   composite.mat.uniforms.uMoonReflect.value = moonReflect ? 1 : 0;
   composite.mat.uniforms.uMoonReflectStrength.value = t.moonReflectStrength;
+  // 月光对球增亮衰减（水上/水下，独立于强度）+ 水下球波纹增强
+  composite.mat.uniforms.uBallLightAbove.value = t.ballLightAbove;
+  composite.mat.uniforms.uBallLightBelow.value = t.ballLightBelow;
+  composite.mat.uniforms.uWaveOnBall.value = t.waveOnBall;
 }
 
 // 每球"遮罩可见度"（播放时非播放球→0），与 SphereInstances 的 dimLerp 同步（同 0.12 lerp）。
@@ -151,7 +160,8 @@ export function applySpheres(
   nodes: GlPhysNode[],
   w: number,
   h: number,
-  waterLevel: number,
+  waterLevelEff: number,  // 有效水位（没入判定：computeAbove/computeDepth/computeShadow）
+  waterLevelRaw: number,  // 原始水位 current（K6 缩放/debug 横线）
   playingId: string | null,
 ): void {
   const arr = composite.mat.uniforms.uSpheres.value as Vector4[];
@@ -166,9 +176,11 @@ export function applySpheres(
     sphereVis.set(node.id, v);
     vis[i] = v;
     // H5：用动态深度 displayZ（球浮沉后的实时深度），未启用浮沉时回退静态 z。半径恒满（×vis 在 shader 乘贡献，避缩）
-    arr[i].set(node.x ?? 0, node.y ?? 0, node.radius * 1.15, node.displayZ ?? node.z);
+    // 球浮动：水面遮罩半径 ×(1+_waveZ) → 随视觉球一起变大/小（遮挡/折射/没入与球身对齐）
+    arr[i].set(node.x ?? 0, node.y ?? 0, node.radius * 1.15 * (1 + (node._waveZ ?? 0)), node.displayZ ?? node.z);
   }
   composite.mat.uniforms.uSphereCount.value = n;
   (composite.mat.uniforms.uViewport.value as Vector2).set(w || 1, h || 1);
-  composite.mat.uniforms.uWaterLevel.value = waterLevel;
+  composite.mat.uniforms.uWaterLevel.value = waterLevelEff;
+  composite.mat.uniforms.uWaterLevelRaw.value = waterLevelRaw;
 }
