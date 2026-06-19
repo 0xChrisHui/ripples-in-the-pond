@@ -3,7 +3,7 @@
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useMemo } from 'react';
 import Test2Water from './Test2Water';
-import SphereInstances from '@/src/components/pond-gl/spheres/SphereInstances';
+import Test2SphereInstances from './Test2SphereInstances';
 import type { GlSim } from '@/src/components/pond-gl/spheres/use-gl-sim';
 
 /**
@@ -30,7 +30,7 @@ export default function Test2Canvas({ glSim }: { glSim: GlSim }) {
         </Suspense>
         {/* waterOn=false：球不随水位"没入淡出"。/test2 参考水是背景、不折射球，若 true 则水下半数球
             会淡到不可见="显示不全面"。关掉后 35 颗球全显示、叠在明亮参考水上感受"嵌在水里"。 */}
-        {glSim.ready && <SphereInstances glSim={glSim} waterOn={false} motionOn={false} />}
+        {glSim.ready && <Test2SphereInstances glSim={glSim} waterOn={false} motionOn={false} />}
       </Canvas>
     </div>
   );

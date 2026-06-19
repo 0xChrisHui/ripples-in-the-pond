@@ -3,11 +3,12 @@
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useGlSim } from '@/src/components/pond-gl/spheres/use-gl-sim';
-import { useWaterLevelControl, nudgeWaterLevel } from '@/src/components/pond-gl/water/water-level';
 import SphereOverlay from '@/src/components/pond-gl/overlay/SphereOverlay';
 import GlNav from '@/src/components/pond-gl/overlay/GlNav';
-import WaterLevelIndicator from '@/src/components/pond-gl/overlay/WaterLevelIndicator';
-import TunePanel from '@/src/components/pond-gl/overlay/TunePanel';
+// ↓↓ task 2：水位 / 调色 / 水位指示改走 /test2 专属副本 → 与 /test1 彻底解耦（球色、水位互不影响）↓↓
+import { useWaterLevelControl, nudgeWaterLevel } from './components/test2-water-level';
+import WaterLevelIndicator from './components/Test2WaterLevelIndicator';
+import TunePanel from './components/Test2TunePanel';
 
 // GL 渲染层全链路 next/dynamic + ssr:false：three/R3F 只进 /test2 异步 chunk（与 /test1 同纪律）
 const Test2Canvas = dynamic(() => import('./components/Test2Canvas'), { ssr: false });
