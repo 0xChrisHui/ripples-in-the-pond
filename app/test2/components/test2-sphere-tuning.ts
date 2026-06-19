@@ -19,9 +19,9 @@ export interface SphereTuning {
 export const DEFAULT_TUNING: SphereTuning = {
   brightness: 1,
   contrast: 1,
-  saturation: 1,
-  halo: 1,
-  fill: 1,
+  saturation: 1.5, // 用户指定
+  halo: 1.9,       // 用户指定
+  fill: 1.6,       // 用户指定
 };
 
 const KEY = 'test2-tune';
