@@ -24,6 +24,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '缺少或非法 tokenId' }, { status: 400 });
     }
 
+    // 2.5 存在性校验（P10-B P0-1）：tokenId ≡ tracks.week（隐式约定，见 review P3-13）
+    // 只验曲目存在、不验 published —— 收藏未发布曲目是现有正常功能（B/C 组 week 16-36 全 unpublished）
+    // 封死越权面：未来周次 / 任意大整数 / 不存在的 tokenId 一律 400，
+    // 越权面从"任意整数"缩到"首页本来就能收藏的曲目"
+    const { data: trackExists } = await supabaseAdmin
+      .from('tracks')
+      .select('id')
+      .eq('week', tokenId)
+      .limit(1)
+      .maybeSingle();
+
+    if (!trackExists) {
+      return NextResponse.json({ error: '曲目不存在' }, { status: 400 });
+    }
+
     const userId = auth.userId;
 
     // 3. 同一用户 + 同一素材不重复铸造（success 已存在 → 明确 409）
