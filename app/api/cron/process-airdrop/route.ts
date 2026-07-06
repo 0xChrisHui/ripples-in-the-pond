@@ -147,10 +147,10 @@ async function trySendNew(roundId: string) {
 
   if (!recipient) return null;
 
-  // CAS：pending → minting
+  // CAS：pending → minting；P1-3 同时盖 mint_attempted_at 戳（见下方 catch）
   const { data: claimed } = await supabaseAdmin
     .from("airdrop_recipients")
-    .update({ status: "minting", updated_at: new Date().toISOString() })
+    .update({ status: "minting", mint_attempted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
     .eq("id", recipient.id)
     .eq("status", "pending")
     .select("id")
@@ -158,7 +158,6 @@ async function trySendNew(roundId: string) {
 
   if (!claimed) return null;
 
-  // 严格区分：链上 send 失败（安全 reset）vs DB 写 tx_hash 失败（不能 reset 会重复空投）
   let txHash: `0x${string}`;
   try {
     txHash = await operatorWalletClient.writeContract({
@@ -168,8 +167,8 @@ async function trySendNew(roundId: string) {
       args: [recipient.wallet_address as `0x${string}`],
     });
   } catch (err) {
-    console.error("[process-airdrop] chain send failed:", err);
-    await resetToPending(recipient.id);
+    // ⚠ P1-3：不 resetToPending（RPC 超时 tx 可能已广播 → 会双空投），留 minting 交时间窗
+    console.error("[process-airdrop] chain send failed, left in minting:", err);
     return { result: "send_failed", recipientId: recipient.id };
   }
 
