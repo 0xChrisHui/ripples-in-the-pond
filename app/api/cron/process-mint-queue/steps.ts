@@ -17,6 +17,8 @@ import { markFailed, markSuccess, resetToPending } from './steps-helpers';
 
 // minting_onchain 无 tx_hash 超过 3 分钟视为卡住
 const STUCK_TIMEOUT_MS = 3 * 60 * 1000;
+// P1-4：有 tx_hash 但 receipt 超 15 分钟不出 → 僵尸 tx，转 manual_review
+const PENDING_TX_TIMEOUT_MS = 15 * 60 * 1000;
 
 /**
  * 查 minting_onchain 记录：
@@ -26,7 +28,7 @@ const STUCK_TIMEOUT_MS = 3 * 60 * 1000;
 export async function tryConfirmMinting() {
   const { data: job } = await supabaseAdmin
     .from('mint_queue')
-    .select('id, user_id, token_id, tx_hash, retry_count, updated_at')
+    .select('id, user_id, token_id, tx_hash, retry_count, updated_at, mint_attempted_at')
     .eq('status', 'minting_onchain')
     .order('updated_at', { ascending: true })
     .limit(1)
@@ -61,7 +63,19 @@ export async function tryConfirmMinting() {
     await resetToPending(job.id, job.retry_count);
     return { result: 'chain_failed', jobId: job.id };
   } catch {
-    // receipt 还没出来（pending tx）→ 等下次
+    // receipt 还没出来。P1-4：以 mint_attempted_at 为锚，超 15min 判僵尸 tx → manual_review；
+    // 否则 touch updated_at 让队首轮转（否则老 updated_at 的僵尸行永占队首）
+    const anchor = job.mint_attempted_at
+      ? new Date(job.mint_attempted_at).getTime()
+      : new Date(job.updated_at).getTime();
+    if (Date.now() - anchor > PENDING_TX_TIMEOUT_MS) {
+      await markFailed(job.id, 'manual_review', `tx ${job.tx_hash} pending >15min no receipt — chain state unknown`);
+      return { result: 'pending_timeout_review', jobId: job.id };
+    }
+    await supabaseAdmin
+      .from('mint_queue')
+      .update({ updated_at: new Date().toISOString() })
+      .eq('id', job.id);
     return null;
   }
 }
