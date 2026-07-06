@@ -7,42 +7,16 @@ import {
   MATERIAL_NFT_ADDRESS,
   MATERIAL_NFT_ABI,
 } from '@/src/lib/chain/contracts';
+import { markFailed, markSuccess, resetToPending } from './steps-helpers';
 
 /**
- * 素材 NFT 铸造的状态机 steps：
+ * 素材 NFT 铸造的状态机 steps（写库辅助函数见 steps-helpers.ts）：
  *   tryConfirmMinting  — 查已发 tx 的 receipt，推进或回退
  *   trySendNew         — 抢 pending + 发 tx + 存 hash（严格区分链上 vs DB 失败）
- *   markSuccess        — 先写 mint_events 再 CAS 推进 status（防并发/丢资产）
- *   resetToPending     — 仅在"链上未发"或"链上 revert"这种安全场景下调用
- *   markFailed         — Phase 6 A2：标 failed 时必须带 failure_kind（safe_retry / manual_review）
  */
 
-const MAX_RETRY = 3;
 // minting_onchain 无 tx_hash 超过 3 分钟视为卡住
 const STUCK_TIMEOUT_MS = 3 * 60 * 1000;
-
-type FailureKind = 'safe_retry' | 'manual_review';
-
-/**
- * 标记 failed 必须显式给出 failure_kind：
- * - safe_retry  → API 收到再次请求时可自动 reset 为 pending 重试
- * - manual_review → API 返 409 needsReview，ops 介入
- */
-async function markFailed(
-  jobId: string,
-  kind: FailureKind,
-  errorMsg: string,
-): Promise<void> {
-  await supabaseAdmin
-    .from('mint_queue')
-    .update({
-      status: 'failed',
-      failure_kind: kind,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', jobId);
-  console.error(`[mint-queue] markFailed ${kind} job=${jobId}: ${errorMsg}`);
-}
 
 /**
  * 查 minting_onchain 记录：
@@ -146,71 +120,4 @@ export async function trySendNew() {
   }
 
   return { result: 'sent', jobId: job.id, txHash };
-}
-
-async function markSuccess(
-  jobId: string, userId: string, tokenId: number, txHash: string,
-) {
-  const { data: track } = await supabaseAdmin
-    .from('tracks')
-    .select('id')
-    .eq('week', tokenId)
-    .single();
-
-  if (!track) {
-    await markFailed(
-      jobId,
-      'manual_review',
-      `track not found for week=${tokenId} — 需要补 track 数据`,
-    );
-    return;
-  }
-
-  // 1. 先写永久记录（UNIQUE(mint_queue_id) 保证 upsert 幂等）
-  const { error: eventErr } = await supabaseAdmin.from('mint_events').upsert(
-    {
-      mint_queue_id: jobId,
-      user_id: userId,
-      track_id: track.id,
-      token_id: tokenId,
-      tx_hash: txHash,
-    },
-    { onConflict: 'mint_queue_id' },
-  );
-
-  if (eventErr) {
-    // mint_events 未落盘 — 保持 minting_onchain，下次 cron 查 receipt 会再进 markSuccess
-    console.error(
-      `[mint-queue] mint_events 写入失败 job=${jobId}: ${eventErr.message}，保持 minting_onchain 待下次重试`,
-    );
-    throw new Error(`mint_events write failed: ${eventErr.message}`);
-  }
-
-  // 2. 永久记录已落盘后才推进状态（CAS 防并发重复标 success）
-  await supabaseAdmin
-    .from('mint_queue')
-    .update({ status: 'success', updated_at: new Date().toISOString() })
-    .eq('id', jobId)
-    .eq('status', 'minting_onchain');
-}
-
-/** retry 未耗尽 → reset 为 pending；已耗尽 → markFailed(safe_retry) */
-async function resetToPending(jobId: string, retryCount: number) {
-  if (retryCount + 1 >= MAX_RETRY) {
-    await markFailed(
-      jobId,
-      'safe_retry',
-      `retry exhausted (${retryCount + 1}/${MAX_RETRY})`,
-    );
-    return;
-  }
-  await supabaseAdmin
-    .from('mint_queue')
-    .update({
-      status: 'pending',
-      tx_hash: null,
-      retry_count: retryCount + 1,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', jobId);
 }
