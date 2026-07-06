@@ -110,23 +110,24 @@ export async function trySendNew() {
     return { result: 'no_user', jobId: job.id };
   }
 
-  // 严格区分：链上 send 失败（safe_retry）vs DB 写 tx_hash 失败（manual_review）
+  // P1-3 双发防御：发 tx 前盖 mint_attempted_at 戳（见下方 catch）
+  const stampIso = new Date().toISOString();
+  await supabaseAdmin
+    .from('mint_queue')
+    .update({ mint_attempted_at: stampIso, updated_at: stampIso })
+    .eq('id', job.id);
+
   let txHash: `0x${string}`;
   try {
     txHash = await operatorWalletClient.writeContract({
       address: MATERIAL_NFT_ADDRESS,
       abi: MATERIAL_NFT_ABI,
       functionName: 'mint',
-      args: [
-        user.evm_address as `0x${string}`,
-        BigInt(job.token_id),
-        1n,
-        '0x',
-      ],
+      args: [user.evm_address as `0x${string}`, BigInt(job.token_id), 1n, '0x'],
     });
   } catch (err) {
-    console.error('[mint-queue] chain send failed:', err);
-    await resetToPending(job.id, job.retry_count);
+    // ⚠ P1-3：不 resetToPending（RPC 超时 tx 可能已广播 → 会双铸），留 minting_onchain 交时间窗
+    console.error('[mint-queue] chain send failed, left in minting_onchain:', err);
     return { result: 'send_failed', jobId: job.id };
   }
 
