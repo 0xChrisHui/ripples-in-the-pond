@@ -11,6 +11,8 @@ import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
 import { extractTokenIdFromLogs } from './_shared';
 
 const ATTEMPT_WINDOW_MS = 10 * 60 * 1000;
+// P1-4：有 tx_hash 但 receipt 超 15 分钟不出 → 僵尸 tx，抛 CRITICAL 转 manual_review
+const RECEIPT_TIMEOUT_MS = 15 * 60 * 1000;
 
 /**
  * Step: minting_onchain → uploading_metadata（Phase 6 A1：拆步 + lease CAS）
@@ -97,6 +99,11 @@ export async function stepMintOnchain(
   try {
     receipt = await publicClient.getTransactionReceipt({ hash: txHash });
   } catch {
+    // P1-4：receipt 迟迟不出，以 mint_attempted_at 为锚超 15min → CRITICAL(route 转 manual_review)
+    const anchor = row.mint_attempted_at ? new Date(row.mint_attempted_at).getTime() : null;
+    if (anchor !== null && Date.now() - anchor > RECEIPT_TIMEOUT_MS) {
+      throw new Error(`CRITICAL: mintScore tx ${txHash} pending >15min no receipt, manual review`);
+    }
     return 'minting_onchain';
   }
 
