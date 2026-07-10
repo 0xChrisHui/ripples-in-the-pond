@@ -5,6 +5,8 @@ import { supabaseAdmin } from "../supabase";
 
 const ALG = "RS256" as const;
 const ISSUER = "ripples";
+// P10-B P3-1：绑定 audience，防同签名密钥签发的其它用途 token 被跨用
+const AUDIENCE = "ripples-app";
 const EXPIRATION = "7d";
 
 // 惰性缓存，避免构建期读不到环境变量就崩
@@ -54,6 +56,7 @@ export async function signJwt(payload: {
     .setProtectedHeader({ alg: ALG })
     .setSubject(payload.userId)
     .setIssuer(ISSUER)
+    .setAudience(AUDIENCE)
     .setJti(jti)
     .setIssuedAt()
     .setExpirationTime(EXPIRATION)
@@ -73,6 +76,7 @@ export async function verifyJwt(
     const key = await getPublicKey();
     const { payload } = await jwtVerify(token, key, {
       issuer: ISSUER,
+      audience: AUDIENCE,
     });
 
     const jti = payload.jti;
