@@ -10,6 +10,7 @@ import type {
   MintScoreResponse,
   KeyEvent,
 } from '@/src/types/jam';
+import { fetchWithAuth } from '@/src/lib/fetch-with-auth';
 
 /**
  * 合奏数据适配层 — 函数签名冻结
@@ -17,7 +18,7 @@ import type {
  */
 
 export async function fetchSounds(): Promise<Sound[]> {
-  const res = await fetch('/api/sounds');
+  const res = await fetchWithAuth('/api/sounds');
   if (!res.ok) throw new Error('Failed to fetch sounds');
   const data: SoundsListResponse = await res.json();
   return data.sounds;
@@ -27,7 +28,7 @@ export async function saveScore(
   token: string,
   data: SaveScoreRequest,
 ): Promise<SaveScoreResponse> {
-  const res = await fetch('/api/score/save', {
+  const res = await fetchWithAuth('/api/score/save', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -43,7 +44,7 @@ export async function saveScore(
 }
 
 export async function fetchMyScores(token: string): Promise<MyScoresResponse['scores']> {
-  const res = await fetch('/api/me/scores?light=1', {
+  const res = await fetchWithAuth('/api/me/scores?light=1', {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) return [];
@@ -55,7 +56,7 @@ export async function fetchMyScoreEvents(
   token: string,
   pendingScoreId: string,
 ): Promise<KeyEvent[]> {
-  const res = await fetch(`/api/me/scores/${pendingScoreId}/events`, {
+  const res = await fetchWithAuth(`/api/me/scores/${pendingScoreId}/events`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error('草稿事件加载失败');
@@ -64,7 +65,7 @@ export async function fetchMyScoreEvents(
 }
 
 export async function fetchMyScoreNFTs(token: string): Promise<OwnedScoreNFT[]> {
-  const res = await fetch('/api/me/score-nfts', {
+  const res = await fetchWithAuth('/api/me/score-nfts', {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) return [];
@@ -77,7 +78,7 @@ export async function mintScore(
   token: string,
   pendingScoreId: string,
 ): Promise<MintScoreResponse> {
-  const res = await fetch('/api/mint/score', {
+  const res = await fetchWithAuth('/api/mint/score', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -96,7 +97,7 @@ export async function fetchScorePreview(
   token: string,
   scoreId: string,
 ): Promise<ScorePreviewResponse | null> {
-  const res = await fetch(`/api/scores/${scoreId}/preview`, {
+  const res = await fetchWithAuth(`/api/scores/${scoreId}/preview`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (res.status === 404) return null;

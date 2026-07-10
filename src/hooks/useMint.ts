@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
+import { fetchWithAuth } from '@/src/lib/fetch-with-auth';
 
 type MintStatus = 'idle' | 'minting' | 'success' | 'error';
 
@@ -21,7 +22,7 @@ export function useMint() {
       const token = await getAccessToken();
       if (!token) throw new Error('无法获取 token');
 
-      const res = await fetch('/api/mint/material', {
+      const res = await fetchWithAuth('/api/mint/material', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

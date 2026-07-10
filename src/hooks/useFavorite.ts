@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { saveScore } from '@/src/data/jam-source';
+import { fetchWithAuth } from '@/src/lib/fetch-with-auth';
 import { getDrafts, removeDraft } from '@/src/lib/draft-store';
 
 type FavoriteStatus = 'idle' | 'success';
@@ -42,7 +43,7 @@ export function useFavorite(
         return;
       }
 
-      const mintRes = await fetch('/api/mint/material', {
+      const mintRes = await fetchWithAuth('/api/mint/material', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
