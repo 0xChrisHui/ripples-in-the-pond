@@ -44,10 +44,15 @@ export async function tryConfirmMinting() {
   if (!item) return null;
 
   if (!item.tx_hash) {
-    const age = Date.now() - new Date(item.updated_at).getTime();
+    // P3-6：无 attempted 戳 = 崩溃在发 tx 之前（stamp 在 writeContract 前一步）→ 安全 reset 重试
+    if (!item.mint_attempted_at) {
+      await resetToPending(item.id, item.retry_count);
+      return { result: "reset_before_send", recipientId: item.id };
+    }
+    // 有戳无 hash = 可能已发但 DB 没记 → 不能 reset（会重复空投），超时保守判 manual_review
+    const age = Date.now() - new Date(item.mint_attempted_at).getTime();
     if (age > STUCK_TIMEOUT_MS) {
-      // 不能安全 reset — 可能链上已发但 DB 没记 hash，reset 会重复空投
-      await markManualReview(item.id, `卡在 minting 无 tx_hash 已 ${age}ms — 链上状态未知，需核查 operator tx 历史`);
+      await markManualReview(item.id, `attempted 无 tx_hash 已 ${age}ms — 链上状态未知，需核查 operator tx 历史`);
       return { result: "stuck_needs_review", recipientId: item.id };
     }
     return null;
@@ -105,16 +110,22 @@ export async function trySendNew(roundId: string) {
 
   if (!recipient) return null;
 
-  // CAS：pending → minting；P1-3 同时盖 mint_attempted_at 戳（见下方 catch）
+  // CAS：pending → minting（不盖 mint_attempted_at，留给发送前独立一步 → P3-6 空判可辨"崩在发送前"）
   const { data: claimed } = await supabaseAdmin
     .from("airdrop_recipients")
-    .update({ status: "minting", mint_attempted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .update({ status: "minting", updated_at: new Date().toISOString() })
     .eq("id", recipient.id)
     .eq("status", "pending")
     .select("id")
     .maybeSingle();
 
   if (!claimed) return null;
+
+  // P1-3 双发防御：发 tx 前盖 mint_attempted_at 戳（见下方 catch）
+  await supabaseAdmin
+    .from("airdrop_recipients")
+    .update({ mint_attempted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .eq("id", recipient.id);
 
   let txHash: `0x${string}`;
   try {
