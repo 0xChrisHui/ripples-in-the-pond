@@ -3,6 +3,7 @@ import { cache } from 'react';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { resolveArUrl } from '@/src/lib/arweave';
 import { explorerTxUrl } from '@/src/lib/chain/chain-config';
+import { getScoreFromChain } from './score-fallback';
 import type { Track } from '@/src/types/tracks';
 
 /**
@@ -27,8 +28,12 @@ export interface ScorePageData {
   tokenId?: number;
   trackTitle: string;
   creatorAddress: string;
-  /** 底曲信息（PlayerProvider.toggle + useEventsPlayback 用）*/
-  track: Track;
+  /** 底曲信息（PlayerProvider.toggle + useEventsPlayback 用）；链上灾备降级态无此字段 */
+  track?: Track;
+  /** 链上灾备降级态：decoder 自包含播放器 URL，页面改嵌 iframe（无 track 时用）*/
+  animationUrl?: string;
+  /** true = 链上灾备降级态（DB miss 时从链上+Arweave 直读）*/
+  degraded?: boolean;
   coverUrl: string;
   /** 已上链 tx hash — 未上链时 undefined */
   txHash?: string;
@@ -68,13 +73,14 @@ async function getScoreByTokenId(
     .limit(1)
     .maybeSingle();
 
+  // DB 抖动/miss → 链上灾备（P10-C）：数字 tokenId 可从链上 tokenURI + Arweave 重建降级页
   if (error) {
-    console.error('[score-source] tokenId → queue lookup failed:', error);
-    return null;
+    console.error('[score-source] tokenId → queue lookup failed, try chain fallback:', error);
+    return getScoreFromChain(tokenId);
   }
-  if (!queueRow) return null;
+  if (!queueRow) return getScoreFromChain(tokenId);
 
-  return getScoreByQueueId(queueRow.id);
+  return (await getScoreByQueueId(queueRow.id)) ?? getScoreFromChain(tokenId);
 }
 
 /** B8 主路径：queue.id 直接查（含未上链中间态 / 失败态）

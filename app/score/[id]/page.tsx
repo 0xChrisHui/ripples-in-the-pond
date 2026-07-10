@@ -76,11 +76,26 @@ export default async function ScorePage({ params }: Props) {
           )}
         </div>
 
-        <ScorePlayer
-          scoreId={score.id}
-          track={score.track}
-          eventCount={score.eventCount}
-        />
+        {score.track ? (
+          <ScorePlayer
+            scoreId={score.id}
+            track={score.track}
+            eventCount={score.eventCount}
+          />
+        ) : score.animationUrl ? (
+          // 链上灾备降级态：DB 不可用，嵌 decoder 自包含播放器 iframe
+          <div className="space-y-2">
+            <iframe
+              src={score.animationUrl}
+              title="Ripples 播放器"
+              className="aspect-square w-full rounded-lg border border-white/10"
+              allow="autoplay"
+            />
+            <p className="text-center text-xs text-white/30">
+              数据库暂时不可用，正从链上 + Arweave 直读（降级模式）
+            </p>
+          </div>
+        ) : null}
 
         <ShareBar id={score.id} tokenId={score.tokenId ?? null} trackTitle={score.trackTitle} />
 
