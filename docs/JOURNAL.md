@@ -790,20 +790,20 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 
 **分享/海报**：可提前放 P10，/score/[id] 本来就要重设计一起做；海报钱包地址缩写放不起眼位置。
 
-**关于本段**：此决策原在 2026-06-04 会话 `07ffae75` 当场写入 STATUS/TASKS/JOURNAL，但后续一次 `git reset --hard 12d45ef` 把已跟踪文件的改动冲掉（未跟踪的 `playbook/phase-8/overview.md` 幸存）。2026-06-11 据该会话逐字原文恢复并补 `playbook/roadmap-P8-P16.md`。
+**关于本段**：此决策原在 2026-06-04 会话 `07ffae75` 当场写入 STATUS/TASKS/JOURNAL，但后续一次 `git reset --hard 12d45ef` 把已跟踪文件的改动冲掉（未跟踪的 `playbook/phase-8/00-overview.md` 幸存）。2026-06-11 据该会话逐字原文恢复并补 `playbook/roadmap-P8-P16.md`。
 
 ## 2026-06-12 — P8-D 色彩方向冻结（推翻同日 11 套主题方案）
 
 - **推翻 2026-06-12 早些时候拍板的 pondThemeA–K 11 套主题开关方案**：经 D0 外部预览粗筛（提示词 → Claude 客户端生成单文件 HTML 预览器，离线对比 11 套完整效果），用户对 A–K 全部不满意 → P8-D 整 track 冻结，暂不放入工作计划
   - 原因：与其写完 11 套 flag/CSS 块/球色板再淘汰，不如一次性 HTML 预览先杀方向——D0 用 0 行项目代码淘汰了整个 track 的实施量
   - 影响：P8 期间默认配色保持现状星空配色，水塘感全部由质感/动效/氛围效果（8-A/B/C/E/F）承担；8-B 的 `--pond-*` token 维持 `:root` 兼容值但体系保留（为重启留接口）；色彩重启需重新调研新方向 + 新一轮 D0，不沿用 A–K
-  - 流程沉淀：D0「外部 HTML 预览粗筛」保留为配色类决策的标准前置步（`p8-d-color-preview-prompt.md` 留档作模板）
+  - 流程沉淀：D0「外部 HTML 预览粗筛」保留为配色类决策的标准前置步（`41-d-color-preview-prompt.md` 留档作模板）
 - **P8 全计划关联审查（13 条跨 track 接缝问题修订入各 playbook）**
   - 起因：用户要求 review P8 计划并排查"两个功能各自正确、碰到一起出事"的关联问题（例：滚轮归属）
   - 核心发现：① 涟漪配额超订（8+ 生产者 vs MAX_TOTAL=8）→ 8-B S1 升级为三级优先调度器；② `.zoom-large .ripple-c` 暂停语义会冻结一次性涟漪 → 新建 `.ripple-once` class；③ perspective 翻默认连带切换滚轮 zoom 渲染路径与 pan 行为（use-sphere-zoom v84 分叉）→ S3 补全链路验收；④ 氛围层需标注水面层/镜头层（zoom 穿帮）；⑤ bobbing 与 d3 参数水化此前无 flag 无归属 → 立项 8-B §2.18 `bobbing`、8-C C5 `viscous`
   - 影响：广撒网玩法的接缝税在文档期付清，避免 /test 期撞鬼画面再回溯
 - **P8 并行执行拍板：跑法一 + 铁律临时松绑**
-  - 决定：P8 冲刺采用"主会话调度 + 5 条 lane worktree 子代理"并行（Wave 0 基建串行 → Wave 1 五 lane 并行 → Wave 2 收口拍板）；AGENTS.md"一次只做一件事/每步等'继续'"临时改为"lane 内自动继续、按波集中验收"，执行手册 `playbook/phase-8/p8-parallel-guide.md`
+  - 决定：P8 冲刺采用"主会话调度 + 5 条 lane worktree 子代理"并行（Wave 0 基建串行 → Wave 1 五 lane 并行 → Wave 2 收口拍板）；AGENTS.md"一次只做一件事/每步等'继续'"临时改为"lane 内自动继续、按波集中验收"，执行手册 `playbook/phase-8/01-parallel-guide.md`
   - 原因：P8 功能 ≈25-30 个闭环但绝大部分是"新文件+挂载行+flag 行"，真冲突只在 4 个热点文件；并行可把墙钟压到约 1/3，且沙盒铁律（默认全 false）不变 = 提速不增加线上风险
   - 边界：松绑仅限 P8 冲刺期，收尾后自动失效；simplex-noise（C2）未批跳过
 
@@ -837,7 +837,7 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **P0 止血（本次）**：glSpheres=1 时 SVG sim 层【整层退场】——scoped `<style>` 隐整个 SphereCanvas `svg.cursor-grab`（球+连接线+彗星）+ portal-to-body 日食层（给 `EclipseLayer` 加纯标识属性 `data-eclipse-layer`，零渲染影响=首页零变化，本次唯一的共享文件最小触碰）；Canvas `key` 切 mode 干净重挂（antialias）。结果：屏幕只剩 GL 一套，错位消除，可干净验收 GL 纯球。
 - **色差根因（④）= three 色彩管理 + 自定义 shader**：开 ColorManagement 时 `Color('#hex')` 把 sRGB 转 linear 存，但自定义 fragment shader 不经 three 的 `colorspace_fragment`（内置材质才有）→ 屏幕直接显示 linear 数值，暗近一半（用户取色实测 SVG `#A04546` → GL `#562222`，后者≈前者的 linear 化）。`flat`（NoToneMapping）不是真因（自定义 shader 也不走 tonemapping include），已移除。**坑：模块级 `ColorManagement.enabled = false` 无效**——R3F 初始化 Canvas 时强制把它设回 `true`，时机在球 `Color` 创建之前。**真正修法：`SphereInstances` 手动 `hexToSRGB(hex)` 解析球色,完全绕过 three 的 `Color`/`ColorManagement`**，shader 直接拿原始 sRGB 0-1 值输出，canvas 原样显示,半透明混合也在 sRGB 空间（与 SVG/CSS 一致）；basetone 输出硬编码值同理不经 Color，不受影响。
 - **已知保留项（P0 后、待 P2）**：glSpheres=1 暂时无连接线 / 无滚轮缩放 / 播放无日食（均待 P2 搬进 GL）；SVG sim 的 d3 tick 仍在跑（display:none 不卸载）→ 帧率对照偏保守，GL 单独跑会更高，P2 卸载 SVG 后才是真实帧率。
-- **P2 待办（先验收 P0 → 再更新 phase-8-g-gl-water.md 写方向 A 新范围 → 再做）**：连接线 / 滚轮缩放（并入 G6 水位）/ 日食播放叙事 / 氛围层逐个评估搬进 GL。
+- **P2 待办（先验收 P0 → 再更新 99-archive-g-gl-water-spike.md 写方向 A 新范围 → 再做）**：连接线 / 滚轮缩放（并入 G6 水位）/ 日食播放叙事 / 氛围层逐个评估搬进 GL。
 
 ## 2026-06-13 — P8-G G5 GL 水面（程序化）+ 视觉控制台 + 背景图 + R3F uniforms 大坑
 
@@ -854,7 +854,7 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **K1 涟漪正圆，方案三次演进，最终定"照搬参考"**：① 先按宽高比校正滴水/拉普拉斯的距离度量（各向异性补偿）→ 修了全局椭圆但留残差（连续介质近似在 256² 粗网格 + 1.78× 大各向异性下被离散色散打偏，过冲成"略竖"）。② 推翻补偿路线，改**照搬 flower-water-ripples 的根本做法：高度场按屏幕宽高比建格**（`RES_Y=256`、`RES_X=round(256·W/H)`）→ 屏上正方格 → 各向同性传播天然正圆，撤回所有 aspect 数学补偿（只保留滴水那一处 UV→正圆的校正，因滴水仍按 UV 定义）。③ 仍呈"圆角方形"→ 定位为 **5 点拉普拉斯的网格各向异性**（参考靠重阻尼+亮照片掩盖、暗塘把它暴露），换 **9 点各向同性拉普拉斯**（核 [1,4,1;4,-20,4;1,4,1]/6）收口。教训：**别用数学补偿去救几何问题，让网格几何本身对**。
 - **K1 已知保留**：FBO 在页面**载入时**按窗口比例定，大幅改窗口比例需重载重适配（动态 resize 留后续——参考是 CPU 网格重建很便宜，我们是 GPU FBO 要多管线）。合成折射位移仍在 UV 空间施加、横向略残留（次要，待评估）。
 - **K2 划水丝滑**：指针涟漪从"16ms 时间节流单点"改**路径插值 + 按位移触发**（上帧↔当前补点连线）。`dropMove` 默认 0.012→0.008（单笔多滴 → 调小单滴免快划过强）。
-- **K8 推水效果定调（但先不做、排 K 线后面）**：用户指参考"拖鼠标像把水推走"想复刻。核机制查明 = **漂浮物被水面高度梯度推动**（`v += grad·k` + 阻尼 + 自转），**参考水波本身对称、无方向动量**，方向感全靠被推的花瓣。决定：**首批漂浮元素 = 花瓣**；走**路线 A 新粒子层**（不动球/布局/红线）；v1 用指针拖拽速度近似、v2 升真梯度（需 GPU 高度场降采样回读）。详见 phase-8-k.md K8。
+- **K8 推水效果定调（但先不做、排 K 线后面）**：用户指参考"拖鼠标像把水推走"想复刻。核机制查明 = **漂浮物被水面高度梯度推动**（`v += grad·k` + 阻尼 + 自转），**参考水波本身对称、无方向动量**，方向感全靠被推的花瓣。决定：**首批漂浮元素 = 花瓣**；走**路线 A 新粒子层**（不动球/布局/红线）；v1 用指针拖拽速度近似、v2 升真梯度（需 GPU 高度场降采样回读）。详见 90-k-visual-deepening.md K8。
 - **K4 投影改"物理软投影"模型（用户要把"层级差"在投影里充分显现）**：旧版 `rise=clamp(air/0.12)` 在 air=0.12 早饱和 → 差 15 层/30 层的球影几乎一样。新版按**悬空物在水面投影的物理因素**重设计（`computeShadowMask`）。完整因素清单（供后续调参/扩展参考）：
   - **光源(月光)**：①方位角→偏移方向 ②仰角→偏移长度(offset∝h/tanθ) ③角直径(+大气散射=面光源)→半影增宽速率 ④强度/色温(冷白暗) ⑤天空补光→影永不全黑(ambient floor)。
   - **离水面高度 h(核心)**：⑥视差偏移∝h ⑦半影增宽/本影收缩(h 够大=整团模糊盘) ⑧对比衰减(h↑→淡) ⑨接触硬化(h→0 锐/深/重合)。
@@ -869,7 +869,7 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
   - **K6 降水位涟漪突然变亮**：曾加 `hd=uDelta/zoom` 让折射尺度更准，但 zoom<1 → gmag 整体放大 → 全屏高光被点亮。**撤回**，梯度恒用 `uDelta`(缩放只改位置/大小、不改亮度)；±20% 小缩放折射尺度误差可忽略。
   - **K6 缩放难感知 → 加"参照系"**：缩放只作用无定形涟漪、球又不缩放(红线) → 没标尺看不出。需"有结构 + 跟水一起缩放"的参照。用户要**抽象**(非实物) → 选**悬浮微光点阵**(密集小点的光流扩散收拢=最强缩放线索)。
   - **微光 ≡ K8 漂浮物(合并定案)**：二者本质同类"水面漂浮物"。**合并成一个组件 = K8**，同层挂两种行为:①跟 K6 缩放联动(参照) ②随涟漪轻漂+被推(原 R9 手感)。关键辨析:**光漂≠显示缩放**——必须显式让位置/大小跟缩放挂钩；缩放为主、漂移克制免糊。
-  - **新增 K9–K11(超出 R1–R9 的新组件，均跟 K6 缩放联动当参照)**：K9 水生植物(睡莲叶/荷叶+边缘芦苇水草，框构图) / K10 可见塘底(静止暗纹，水面动 vs 底不动=视差，物理最强纵深) / K11 月光倒影(柔亮冷白、被涟漪扭、跟缩放放缩、点题)。详见 phase-8-k.md。
+  - **新增 K9–K11(超出 R1–R9 的新组件，均跟 K6 缩放联动当参照)**：K9 水生植物(睡莲叶/荷叶+边缘芦苇水草，框构图) / K10 可见塘底(静止暗纹，水面动 vs 底不动=视差，物理最强纵深) / K11 月光倒影(柔亮冷白、被涟漪扭、跟缩放放缩、点题)。详见 90-k-visual-deepening.md。
 
 ## 2026-06-18 续 — P8-K K9–K12 落地 + 塘底"亮底"重做 + 跨切修复 + K 线收尾
 
@@ -879,3 +879,36 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **跨切修复①播放暗斑**：播放时非当前球虽在 sphere-shader 里 `discard`，但合成 shader 的 `uSpheres` 仍含其水面遮罩 → 月光被压出"暗洞"。先试 `radius×vis` 致**收缩痕迹** → 改 `uSphereVis[]` uniform 原地淡出遮罩**贡献**(不缩半径)。
 - **跨切修复②月光均匀**：`moonGate=mix(0.7,1.0,sub)` 让水上水下高光/焦散/倒影一致受月光眷顾，不再水下偏暗。
 - **K 线收尾**：K1–K12 全部实现、均在 /test1 沙盒、ScenePanel 开关门控、默认关=现状、tsc+eslint 全绿。**待用户逐开关浏览器验收 + 调美拍板**(K4 留哪个投影模式、各塘底配色浓度)→ 定稿后挑选入生产(J 线迁移上首页)。
+
+## 2026-07-05 — P8-L 需求打磨定稿（无序而和谐）+ 收尾项冻结
+
+- **收尾项冻结（用户拍板）**：K 线验收 / J 线迁移 deferred / Wave 2 / 悬空 TODO 等收尾规划**先冻结不管**——用户认为之前的收尾规划可能有错，之后重新设计收尾方案。当前工作 = L 线。
+- **P8-L 从一句话立项 → 10 模块 spec**（`playbook/phase-8/95-l-life-sense.md` 已建）。目标：**增加整体运动的无序化，但保持和谐**。用户 5 条需求 + Claude 5 条追加提案**全采纳**；沙盒 = **/test3**（/test1 冻结基线）。
+- **用户 5 条需求 → 落点**：①滚轮升降去同步（现 `shift` 全局单值→全体同速；**幅度差+时滞差两参数都上**，幅度差带极限收敛保"滚到底必全沉"）②视差去同步（每球增益+方向微偏，存 node 字段、project/unproject 对称=拖球命中红线）③透明度时隐时现（走现成 `aParams.z dim` 通道 CPU 乘入；无理数频率+长亮短隐整形；播放/hover 豁免）④wake 扰动花瓣+水下球（花瓣半边已有 `petalDrag/petalSens` 不新做；球侧新活=采样**花瓣 CPU 场** `petalGradAt` 当力源，不读 GPU FBO；注意 stepPetalWater 单一推进权）⑤能量球边缘（角度调制半径 signed 双谐波=**同时外凸内凹**[用户图示只内凹、明确要双向]+虚化；halo 保持正圆；per-instance `aSeed` attribute）。
+- **Claude 5 条追加提案（全采纳）**：⭐扰动激励边缘（被碰→边缘波瞬时剧烈再平息，④⑤打通）/ 流场游移（curl-noise，原 L2"轨迹"本体，现 drift 只是无记忆抖动）/ 光晕呼吸（`aParams.y` 通道）/ 偶发颤动（泊松事件，同构 sphere-motion）/ 果冻感（速度压扁拉伸，成本最高最后做、验收不过可弃）。
+- **"无序但和谐"四纪律（全模块统一）**：确定性种子（mulberry32(node.id)，禁每帧 random）/ 无理数频率族（黄金比例）/ **全局呼吸包络**（超慢正弦乘所有无序幅度=个体乱在集体节奏里，和谐的关键）/ 小幅度多层叠（单项 5–20%）。
+- **工程约定**：10 flag 默认全 false（沙盒铁律）+ ScenePanel「生命感」折叠组；参数全进 ripple-tuning + RippleSpikePanel「生命感」组；新代码进 `pond-gl-test3/life/` 子目录（避 root 8 文件硬线）；reduced-motion 全静；verify = 逐文件 tsc+eslint（dev 常开不跑 build）。
+- **L1（20 首音乐）不在本 spec**：涉及 tracks/Arweave/球数，等艺术家素材 + 收尾方案重设计后另行规划。
+- **同日自审修订（逐文件核对 /test3 代码后重写 playbook）**：① 原稿"L2-1 保持 isScrolling 语义护 sphere-motion"是错的——/test3 sphere-motion v3 已去滚轮耦合，isScrolling/getScrollExtremity 零消费者；② renderDepth 有 15 处调用点×8 文件且第二参正被传废弃 _waveZ → 新增 **L0b 零视觉管道重构**（depthOf/displayDepthOf + project/unproject/applyFloat 改收 node + 迁移清单），L2 全线挂其上；③ 透明度隐现必须 `n._lifeDim` 同步 SphereOverlay 标题/角标 opacity（否则球隐标题飘）+ 下限 0.12 防"可点不可见"；④ 花瓣场 alloc/事件喂入/step 全锁在 WaterPetals useEffect → L4 拆 **L4-1a 场驱动器**（refcount acquire/release、每帧单次 step）；wake 与花瓣共享注入端触发倍率=记录的耦合限制；⑤ 220 硬线实测：SphereInstances 217/220 → L0b 先拆 writeFrame 到 `sphere-frame.ts`；RippleSpikePanel 207 + ripple-tuning 181 → L 参数走独立 `life-tuning.ts` store + `LifePanel.tsx`；⑥ 能量球边缘两条数学红线：edgeWaveFreq 必须整数（sin(kθ) 在 θ=±π 接缝 k∉ℤ 会裂缝）+ 总振幅 clamp ≤0.15≈(1/bodyRatio−1) 防波峰顶进 halo 区被 discard 切平。白捡确认：dim/halo 通道每帧 CPU 写 + hover/playing ref 现成（L5 白捡）；`_gvx/_gvy` 滑行通道 + wavePush depthAtten 口径 = L4 力的理想注入口；writeFrame 是唯一每帧 CPU hub（L2-3/L2-4/L4 同构挂入）。
+
+## 2026-07-05 续 — 后端整体 review + P10 范围收窄定稿
+
+- **后端整体 review 落盘**：`reviews/2026-07-05-backend-review.md`（4 条并行子代理逐文件读：非cron API+认证 / cron队列+链+Arweave / Solidity合约 / DB schema+基础设施）。核心结论：防双铸主线扎实、`/me/*` 无越权、私钥暴露面控制好；问题集中在 ①mint 越权铸造 tokenId（P0-1，唯一活漏洞）②mint/airdrop 老队列没吸收 score 队列改进（广播歧义双铸/悬挂tx队首阻塞/airdrop无retry上限）③主网切换日集中爆发的运维欠账（全库零RLS / 无备份 / 告警没接邮件 / .env.example滞后 / verify不跑测试 / 合约部署脚本硬编码Testnet+admin单步移交）。带勾选框完整清单 P0-1~P3-14 + 合约 CT-1~CT-15。
+- **P10 范围收窄（用户拍板，取代旧 P10 定义）**：P10 **仅含 4 块** = /score/[id] 分享转发（Twitter/X、微博、复制链接）+ 海报/link 下载 + 债务收口 + 修上述后端 bug。**原 P10 的「组件功能升级 / 小球 36→35 / 特殊小球 / 5大球 / 音频补齐」全部作废**，如需重排另立 Phase。
+- **playbook 建档**：`playbook/phase-10/`（00-overview 权威定义 + 10-a-share-poster / 20-b-backend-fixes / 30-c-debt 三份分步手册）。roadmap-P8-P16.md 的 P10 段加作废批注保留历史；STATUS.md / TASKS.md 两处 P10 口径同步收窄。
+- **边界约定**：合约改动本 Phase 只改脚本+补测试+写 diff 不部署（部署归 P12）；债务里的运营类项（operator 主网充值/换 CRON_SECRET/Turbo 换钱包/Resend 接线/备份预案）只做准备与文档化，实际主网执行归 P12；分享/海报只做功能不做 /score 整页视觉重设计（那是 P11）。
+
+## 2026-07-05 续续 — P8-L 生命感 L 线全部实现（一口气 10 模块 + 2 基建）
+
+- **L0b 管道重构的形状**：`project`/`unproject` 加可选 `node` 参（视差去同步逐球读 `_parGain`/`_parAng`），`applyFloat` 从收 `wz` 改收 `node`（内部读 `_waveZ`+顺带 L2-4 颤动屏幕位移 `_shivX/Y`），新增 per-node `depthOf`/`displayDepthOf`（在 `renderDepth` 基础上叠每球 `_shiftOff`）。**保留旧 `renderDepth` 不删**（水线对齐等无 node 场景）。理由：五消费方（GL球/命中层/水面遮罩/花瓣/日蚀）经同一管道 → 任何逐球偏移天然五处对齐；`unproject` 与 `project` 写成严格互逆（同 node 的视差旋转/增益项抵消）→ 拖球命中在任意 `parallaxDesync` 参数下不偏。
+- **life flags 用 `life` 对象下传，不用 singleton**：`pickLifeFlags(flags)` 打包 10 flag 经 PondGL→SphereInstances→`sphere-frame`。因 `sphere-frame` 是唯一每帧写节点字段的枢纽，其余消费方只读 `node._xxx ?? 中性值` → 不需要 flag 到处传（`writeFrame` 拆出后所有逐帧 CPU 逻辑长在这）。
+- **L4-1a 把涟漪场生命周期抽成 refcount 单例 `life/wake-field.ts`**：原本 alloc/事件监听/`stepPetalWater` 全锁在 WaterPetals useEffect 里 → `flowerPetals` 关则场死、wake 没输入。抽出后花瓣层与尾波扰球共享同一场、唯一 rAF 每帧 step 一次；两者各自 acquire/release（含 wakeSpheres 走 `useWakeField` hook）。**已知限制**：drop 触发倍率（petalDrag/Click/Wave）在注入端 → `petalDrag=0` 时拖尾对球也无扰动（LifePanel 标注共享）。
+- **四条和谐纪律落地**：确定性 6 种子 `lifeSeeds(id)`（hashStr 派生、禁 Math.random）；无理比双频（黄金比族）；全局呼吸包络 `lifeEnv(t)` 乘在流场/颤动/隐现/光晕呼吸幅度上；`prefersReducedMotion` → 运动/隐现/光晕全冻结、边缘波停转（形状保留）。
+- **偏差记录**：因账号 session rate-limit，subagent 跑不动（L0a 后 L0b subagent 返 0 token）→ 从 L0b 起全部主会话直接实现，未走"多 agent 并行"。功能与验收标准不受影响；沙盒铁律（全关=像素级现状）靠"10 flag 默认 false + 15 幅度参数默认 0"结构性保证。
+- 待用户：10 flag 逐开关浏览器验收（⏸ 项，含拖球命中对称专项 + 和谐压测）后拍板各幅度上限。L3-3 果冻感成本最高、验收不过可弃（playbook 已授权）。
+
+## 2026-07-05 续³ — L 线八角度 review（10 finding）+ 前 5 项修复
+
+- **多 agent review 收获 5 个真 bug 已修**：①`_excite` 衰减原在 `if(edgeOn)` 内而注入方（ripple-feed 穿越/wake 力/拖拽）不看 flag → 关灯时棘轮涨到 1、后开 flag 全场幽灵爆发——改为激励维护恒跑、只有 GPU 写 buffer 留在 edgeOn 内；②③④⑤补齐红线豁免：shiver 豁免 hover 球、shiver 中途被拖拽立即中止、jelly 与 wake 补 reduced-motion 冻结。
+- **否决的最大簇（4 个 finder 撞车）**："浮动脉冲期间花瓣抠洞/拖尾/拖球命中与视觉球错位" ——核查 HEAD 后确认全部源于上会话 sphere-motion v3 解耦（浮动刻意不进深度轴，playbook L0b 已明文"pre-existing 不一致，L 线不扩大战线"），非本次引入；仅顺手修了 ripple-feed/WaterPetals 两处失实注释（还写着"含球浮动"）。
+- **留给用户拍板的 5 项**（review 报告 6-10，未动代码）：「扰动激励」单开无效果（spec 即设计成依赖「能量球边缘」，仅缺 UI 提示）/ wakeSpheres 开但推力=0 时白跑 CPU 波动方程网格 / renderDepth≡effDepth 重复+过时注释 / writeFrame 13 位置参数数据泥团 / dropScreen 在 wake-field 与 WaterPetals 双份。

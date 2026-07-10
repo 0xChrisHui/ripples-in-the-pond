@@ -10,13 +10,13 @@
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（当前）= 水塘视觉重设计（首页星空 → 水塘）
-  - **Phase 9** = 按键动画优化
-  - **Phase 10** = 组件功能升级 + 小球数量 36→35 + 分享/海报/5 大球
+  - **Phase 9** = 按键动画 WebGL 重设计（26 个按键水塘风格）
+  - **Phase 10** = 分享转发（/score 加 X/微博/复制链接）+ 海报/link 下载 + 债务收口 + 后端 bug 修复（**2026-07-05 范围收窄**：原「组件升级/小球 36→35/特殊小球」已作废，详见 `playbook/phase-10/00-overview.md`）
   - **Phase 11** = 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
   - **Phase 12** = OP Mainnet 上线准备与部署
-  - **Phase 13** = 混音系统 + RemixNFT
-  - **Phase 14** = 音效系统扩展
-  - **Phase 15** = Semi 音乐 NFT 生态合作（待你和社区商量后定）
+  - **Phase 13** = Semi 音乐 NFT 生态合作
+  - **Phase 14** = 混音系统 + RemixNFT
+  - **Phase 15** = 音效系统扩展
   - **Phase 16** = 原生钱包 + 多链 / ETH Mainnet（往后排）
 **P7 Completion Review**: `reviews/2026-05-16-phase-7-completion-review.md`（commit `5a2211a`，结论：Phase 7 完结，deferred 项挂 Phase 10）
 **P7 三方 review**：`reviews/2026-05-13-phase-7-playbook-review.md`（Claude 自审 + 2 个 Codex review，16 项必修已全部落地）
@@ -35,9 +35,10 @@
     - **结构性拆分**（撞 220 行/8 文件硬线自决）：effects-config → 拆 config/effects-presets + config/effects-meta；pond-effects.css → 拆 pond-effects-motion.css；Archipelago 氛围挂载 → 抽 AmbientLayers.tsx；新建 config//forces//sphere//hooks-pond//ambient-pond/ 子目录。
     - **待 Wave 2**：splashIntro 入场编排（依赖已合并的 bobbing 内层 g）；S8/F9 默认值删减拍板 + 移动端最小水塘集；真机 FPS 压测（单球四层滤镜）。
   - **Wave 2 待办**：splashIntro + 用户 /test 集中验收 + S8/F9 默认值拍板 + 真机压测。
-  - **P8-G 已立项（2026-06-12，取代旧 P8-W gate）**：/test1 GL 渲染层 spike。`three` + `@react-three/fiber` + `@react-three/drei` 已批进白名单并登记 STACK.md（G3 才实际装包）；路线 G1-G7：/test1 克隆 / → 默认关 1 点透视（仅 /test1，页面级 override，不动共享代码）→ GL 球 instanced + DOM 命中层 → 高度场水面（深色基调 + 月光 specular，不加背景图）→ 滚轮水位三态（水上/贴面/水下，与 zoom fx 互斥）→ 对比验收拍板去留。playbook：`playbook/phase-8/phase-8-g-gl-water.md`。与 Wave 2 零文件冲突可并行。**G1-G3 已完成（2026-06-12）**：/test1 克隆 / + 默认关透视（`?perspective=1` 可临回）+ GL 基调层骨架（装 three^0.184/R3F^9.6/drei^10.7，PondGL 走 dynamic ssr:false，artDir deep|black 两档，glBase=0 回 G2 现状）；首页 First Load JS +89B≈零增量，verify.sh 全绿。**G4 已完成**（commit `744b64d`：GL 球 instanced + DOM 命中层 + 方向A止血 + TunePanel）。**G5 已完成**（commit `eb5e11d`：程序化水面——原 ping-pong 在本环境跑不起来→改解析式；+视觉控制台+背景图）。**G6-1 已实现**（`water-level.ts` 水位 store + 滚轮缓动 + wheelMode 互斥 + 球淡出覆盖 + 右缘水位指示；工作树，含 matRef 修 uniform 通道）。**2026-06-14 方向再拍板**：水面从"叠层/滤镜"改为**动态扭曲**（对标 sirxemic/jquery.ripples 全屏扭曲 + 水位为全局变量 + 鼠标交互）→ **2026-06-14 重组为 G/H/I 三线**（G 地基✅ / H 水面子系统[全屏动态扭曲] / I 去SVG+全新组件；收口线并入 I、原 G7 去留拍板取消），G6-1 淡出覆盖降级兜底。**H1–H3 已完成（2026-06-14）**：H1 RTT+ping-pong spike 跑通（commit `a8b8adb`，离屏渲染在本环境可行 + 波纹参数面板 spike）→ H2 扭曲水面整合进真场景（`7bd678c`，全屏折射真实塘，接管渲染循环）→ H3 水位深度遮罩（`1210c4c`，球的位置/半径/深度当 uniform 数组逐像素算水上清晰/水下扭、滚轮升降、防鬼影；离屏 z 图+换材质方案在 R3F+InstancedMesh 不稳已弃）。**H4 ✅**（涟漪交互全集 `191d34a`：sim 单滴→`uDrops[12]` 数组 + `ripple-feed.ts` 拖球尾迹/穿越溅起/单帧>6 合并限流/常驻微波；浏览器验收通过）。**H5 ✅**（对象运动模型 `2065e25` + 修复 `9892be1`：`sphere-motion.ts` 公式契约 `depth=f(time,waterLevel,nodeAttrs,params)` + 球自驱浮沉[自漂+播放浮出焦点] + 动态深度 `node.displayZ`；验收修了 DOM/GL 水上判定阈值统一、水下球可点可见、自漂幅度；ScenePanel 加「球浮沉」开关）。**H6 ✅ = H 线总验收完成**（A `baddee8`：参数板布局[调色+波纹/运动同栏堆叠不重叠]+运动参数板[浮沉幅度/频率/焦点露出]+reduced-motion+遮罩调试开关；B `a170029`：高折射色斑修复 高度场 Nearest→Linear 双线性平滑）。规格 v1 逐条过：主体全达；**deferred 4 项**：pinch + 性能降级参数(分辨率/DPR)→移动端那拍 / 默认水位滑块→按需 / 每实例 min/max+种子→I 线一起。**H 线全完**。**I 线进行中**：I1 ✅（去 SVG：/test1 卸 Archipelago + 停后台 sim + GlNav 切组 `7469ae4`）+ I2 ✅（GL 日蚀 `add5a2f`：播放球叠日蚀焦点 + 其他球完全隐去；新 `GlEclipse.tsx` 移植 SVG EclipseLayer 视觉、DOM overlay 不被折射、点击穿透暂停）。I3 ⏸ 暂缓（新组件待用户定）。**2026-06-16 方向拍板：GL 替换 SVG 首页**→ 新立 **J 线（生产化迁移）`playbook/phase-8/phase-8-j-migration.md`**：**J1 ✅**（WebGL 兜底 `4abc882`+修复 `967b66a`：无 WebGL/崩了/context lost 铺 CSS 夜塘不白屏 + 修「切球/强制兜底重挂 Canvas 漏 context 丢球」→ Canvas 全程只挂一次）/ **J2 ✅ 代码完成**（resize/转屏对齐 `723419a` 桌面已验[相机每帧跟随 sizeRef + resizeGlSim 等比缩放节点/锚点]；触控 `911b702` 双指捏合控水位 + 触控拖点**待真机验**——用户触控板非触屏，挂 push 后手机验）/ **J3 ✅ 机制就位**（自动降配 `eb59ab3`+日志 `58dce2e`：AutoDpr 低 FPS 降 DPR/滞回，桌面已确认触发 fire；DPR 减 GPU 像素、CPU 节流救不回，真效果验真机）/ **J4 ✅**（加载提示+失败重试+预热 `efe1dd2`：use-gl-sim res.ok+error+retry + GlLoading「唤醒水塘…」/失败重试 + 音频预热）。**J 线本期 J1–J4 全完 ✅ = GL 沙盒「生产级靠谱」**。deferred 已铸造记号/生产化清理/手感定稿/正式替换+删 SVG（红线：换稳前 SVG 不删、共享 sphere-config 不删）。**J 线本期已 push**。**K 线（水塘视觉/手感深化）— K1–K12 全部实现 ✅（2026-06-18；均在 /test1 沙盒、ScenePanel 开关门控、默认关=现状、红线全守、verify 用 tsc+eslint）**:K1 涟漪正圆(高度场按屏幕比例建格→屏上正方格 + 9 点各向同性拉普拉斯) / K2 划水路径插值(按位移触发、连点成线) / K3 深度三层模型(修 R4:扭曲水面下水下球保持可见、靠折射体现深度) / K4 浮出球投影(远光源软影、水面感扭碎,4 模式:暗影/挡月光/反光晕/接触影) / K5 月光焦散(流动网纹) / K6 水面缩放(镜像平铺无真空回弹、滴水位置 inverse-zoom 对齐、降水位不变亮) / K7 /test2 参考水实验页(球全显+调色板) / K8 漂浮微光层(自缩放=K6 参照) / K9 睡莲水生植物 / K10 可见塘底「亮底」(mix 替换暗底、亮度阈值护球,5 套差异化花纹:暗矿/亮沙/虹彩/莲花/星河,style 选择按钮) / K11 月光倒影(被涟漪扭碎、随缩放) / K12 水位标尺柱(礁石圆钝巨石/水晶柱、一点透视、水线随水位移动)。**跨切修复**:播放时其他球"暗斑"(合成球遮罩随淡出原地淡出、不缩半径)、月光均匀眷顾水上水下(moonGate)。新组件在 `src/components/pond-gl/decor/`(FloatingMotes/WaterPlants/WaterColumns)+ 花纹库 `shaders/pond-floor-shaders.ts`;参数全进 RippleSpikePanel、开关进 ScenePanel。playbook 收口线已到 K1–K12。**下一步 = 用户逐开关浏览器验收 + 调美/拍板（K4 投影留哪个模式、各塘底配色浓度等）→ 定稿后挑选入生产（J 线迁移上首页，红线:换稳前不删共享 SVG/sphere-config）**。**待真机验清单**:J2 触控 + J3 降配真效果。见 `playbook/phase-8/phase-8-i.md` + `phase-8-j-migration.md`；总伞 `phase-8-g.md`。
+  - **P8-G 已立项（2026-06-12，取代旧 P8-W gate）**：/test1 GL 渲染层 spike。`three` + `@react-three/fiber` + `@react-three/drei` 已批进白名单并登记 STACK.md（G3 才实际装包）；路线 G1-G7：/test1 克隆 / → 默认关 1 点透视（仅 /test1，页面级 override，不动共享代码）→ GL 球 instanced + DOM 命中层 → 高度场水面（深色基调 + 月光 specular，不加背景图）→ 滚轮水位三态（水上/贴面/水下，与 zoom fx 互斥）→ 对比验收拍板去留。playbook：`playbook/phase-8/99-archive-g-gl-water-spike.md`。与 Wave 2 零文件冲突可并行。**G1-G3 已完成（2026-06-12）**：/test1 克隆 / + 默认关透视（`?perspective=1` 可临回）+ GL 基调层骨架（装 three^0.184/R3F^9.6/drei^10.7，PondGL 走 dynamic ssr:false，artDir deep|black 两档，glBase=0 回 G2 现状）；首页 First Load JS +89B≈零增量，verify.sh 全绿。**G4 已完成**（commit `744b64d`：GL 球 instanced + DOM 命中层 + 方向A止血 + TunePanel）。**G5 已完成**（commit `eb5e11d`：程序化水面——原 ping-pong 在本环境跑不起来→改解析式；+视觉控制台+背景图）。**G6-1 已实现**（`water-level.ts` 水位 store + 滚轮缓动 + wheelMode 互斥 + 球淡出覆盖 + 右缘水位指示；工作树，含 matRef 修 uniform 通道）。**2026-06-14 方向再拍板**：水面从"叠层/滤镜"改为**动态扭曲**（对标 sirxemic/jquery.ripples 全屏扭曲 + 水位为全局变量 + 鼠标交互）→ **2026-06-14 重组为 G/H/I 三线**（G 地基✅ / H 水面子系统[全屏动态扭曲] / I 去SVG+全新组件；收口线并入 I、原 G7 去留拍板取消），G6-1 淡出覆盖降级兜底。**H1–H3 已完成（2026-06-14）**：H1 RTT+ping-pong spike 跑通（commit `a8b8adb`，离屏渲染在本环境可行 + 波纹参数面板 spike）→ H2 扭曲水面整合进真场景（`7bd678c`，全屏折射真实塘，接管渲染循环）→ H3 水位深度遮罩（`1210c4c`，球的位置/半径/深度当 uniform 数组逐像素算水上清晰/水下扭、滚轮升降、防鬼影；离屏 z 图+换材质方案在 R3F+InstancedMesh 不稳已弃）。**H4 ✅**（涟漪交互全集 `191d34a`：sim 单滴→`uDrops[12]` 数组 + `ripple-feed.ts` 拖球尾迹/穿越溅起/单帧>6 合并限流/常驻微波；浏览器验收通过）。**H5 ✅**（对象运动模型 `2065e25` + 修复 `9892be1`：`sphere-motion.ts` 公式契约 `depth=f(time,waterLevel,nodeAttrs,params)` + 球自驱浮沉[自漂+播放浮出焦点] + 动态深度 `node.displayZ`；验收修了 DOM/GL 水上判定阈值统一、水下球可点可见、自漂幅度；ScenePanel 加「球浮沉」开关）。**H6 ✅ = H 线总验收完成**（A `baddee8`：参数板布局[调色+波纹/运动同栏堆叠不重叠]+运动参数板[浮沉幅度/频率/焦点露出]+reduced-motion+遮罩调试开关；B `a170029`：高折射色斑修复 高度场 Nearest→Linear 双线性平滑）。规格 v1 逐条过：主体全达；**deferred 4 项**：pinch + 性能降级参数(分辨率/DPR)→移动端那拍 / 默认水位滑块→按需 / 每实例 min/max+种子→I 线一起。**H 线全完**。**I 线进行中**：I1 ✅（去 SVG：/test1 卸 Archipelago + 停后台 sim + GlNav 切组 `7469ae4`）+ I2 ✅（GL 日蚀 `add5a2f`：播放球叠日蚀焦点 + 其他球完全隐去；新 `GlEclipse.tsx` 移植 SVG EclipseLayer 视觉、DOM overlay 不被折射、点击穿透暂停）。I3 ⏸ 暂缓（新组件待用户定）。**2026-06-16 方向拍板：GL 替换 SVG 首页**→ 新立 **J 线（生产化迁移）`playbook/phase-8/85-j-migration.md`**：**J1 ✅**（WebGL 兜底 `4abc882`+修复 `967b66a`：无 WebGL/崩了/context lost 铺 CSS 夜塘不白屏 + 修「切球/强制兜底重挂 Canvas 漏 context 丢球」→ Canvas 全程只挂一次）/ **J2 ✅ 代码完成**（resize/转屏对齐 `723419a` 桌面已验[相机每帧跟随 sizeRef + resizeGlSim 等比缩放节点/锚点]；触控 `911b702` 双指捏合控水位 + 触控拖点**待真机验**——用户触控板非触屏，挂 push 后手机验）/ **J3 ✅ 机制就位**（自动降配 `eb59ab3`+日志 `58dce2e`：AutoDpr 低 FPS 降 DPR/滞回，桌面已确认触发 fire；DPR 减 GPU 像素、CPU 节流救不回，真效果验真机）/ **J4 ✅**（加载提示+失败重试+预热 `efe1dd2`：use-gl-sim res.ok+error+retry + GlLoading「唤醒水塘…」/失败重试 + 音频预热）。**J 线本期 J1–J4 全完 ✅ = GL 沙盒「生产级靠谱」**。deferred 已铸造记号/生产化清理/手感定稿/正式替换+删 SVG（红线：换稳前 SVG 不删、共享 sphere-config 不删）。**J 线本期已 push**。**K 线（水塘视觉/手感深化）— K1–K12 全部实现 ✅（2026-06-18；均在 /test1 沙盒、ScenePanel 开关门控、默认关=现状、红线全守、verify 用 tsc+eslint）**:K1 涟漪正圆(高度场按屏幕比例建格→屏上正方格 + 9 点各向同性拉普拉斯) / K2 划水路径插值(按位移触发、连点成线) / K3 深度三层模型(修 R4:扭曲水面下水下球保持可见、靠折射体现深度) / K4 浮出球投影(远光源软影、水面感扭碎,4 模式:暗影/挡月光/反光晕/接触影) / K5 月光焦散(流动网纹) / K6 水面缩放(镜像平铺无真空回弹、滴水位置 inverse-zoom 对齐、降水位不变亮) / K7 /test2 参考水实验页(球全显+调色板) / K8 漂浮微光层(自缩放=K6 参照) / K9 睡莲水生植物 / K10 可见塘底「亮底」(mix 替换暗底、亮度阈值护球,5 套差异化花纹:暗矿/亮沙/虹彩/莲花/星河,style 选择按钮) / K11 月光倒影(被涟漪扭碎、随缩放) / K12 水位标尺柱(礁石圆钝巨石/水晶柱、一点透视、水线随水位移动)。**跨切修复**:播放时其他球"暗斑"(合成球遮罩随淡出原地淡出、不缩半径)、月光均匀眷顾水上水下(moonGate)。新组件在 `src/components/pond-gl/decor/`(FloatingMotes/WaterPlants/WaterColumns)+ 花纹库 `shaders/pond-floor-shaders.ts`;参数全进 RippleSpikePanel、开关进 ScenePanel。playbook 收口线已到 K1–K12。**下一步 = 用户逐开关浏览器验收 + 调美/拍板（K4 投影留哪个模式、各塘底配色浓度等）→ 定稿后挑选入生产（J 线迁移上首页，红线:换稳前不删共享 SVG/sphere-config）**。**待真机验清单**:J2 触控 + J3 降配真效果。见 `playbook/phase-8/80-i-desvg-components.md` + `85-j-migration.md`；总伞 `70-g-gl-water.md`。
 （过程教训：I2 前用户只提问+表达不满那轮，Claude 擅自改 dim 违"无指令不行动"+猜反方向，已强化 memory `feedback_no_action_without_order`。）**已知挂 H6**：折射调很高时 256² 高度场块状梯度把球色打散成色斑（待 512²/梯度平滑）。
-  - 执行手册：`playbook/phase-8/p8-parallel-guide.md`；新 flag 桌面/移动默认全 false（沙盒铁律）。
+  - **P8-L 已立项（2026-06-30）→ 需求打磨定稿（2026-07-05）**：水塘生命感深化（无序而和谐）。原 L2/L3/L4 重定义为 **10 个独立模块**（用户 5 条需求 + 5 条追加提案全采纳）：L0 基建（每球种子+全局呼吸包络）/ L2 运动线（滚轮去同步[幅度差+时滞差两参数] / 视差去同步 / 流场游移 / 偶发颤动）/ L3 形态线（能量球边缘[三角函数双向调制+虚化] / 扰动激励 / 果冻感）/ L4 涟漪耦合（wake 连续扰动水下球，复用花瓣 CPU 场）/ L5 呈现线（透明度时隐时现 / 光晕呼吸）。全部独立 flag 默认 false + 参数进 RippleSpikePanel「生命感」组；沙盒 = **/test3**（/test1 冻结基线不碰）。L1（20 首音乐）另行规划。playbook：`playbook/phase-8/95-l-life-sense.md` ✅ 已建。**2026-07-05 用户拍板：K 线验收/J 线迁移/Wave 2 等收尾项先冻结，收尾方案将重新设计；当前工作 = L 线。** **2026-07-05 L 线全部实现 ✅**（L0a 脚手架 + L0b 管道重构 + L2 运动[滚轮去同步·两参/视差去同步/流场游移/偶发颤动] + L3 形态[能量球边缘/扰动激励/果冻感] + L4 尾波扰球 + L5 呈现[隐现/光晕呼吸]；参数进新建 `life/LifePanel`（非 RippleSpikePanel，原稿口径修正）；10 flag 默认 false=像素级现状；逐文件 tsc+eslint 全绿；`life/` 5 文件 + `spheres/` 8 文件、各文件≤220；**下一步 = 用户逐开关浏览器验收 ⏸ + 和谐压测拍板**）。
+  - 执行手册：`playbook/phase-8/01-parallel-guide.md`；新 flag 桌面/移动默认全 false（沙盒铁律）。
 
 **Track 依赖图（修订）**：
 - A3+A12 → 阻塞 A14/A15（cron 状态机改完才能稳定 polling）；不再阻塞 C1
@@ -50,16 +51,16 @@
 **用户说"开始 A1"** → AI 进 A1 概念简报 → slow mode 实施。
 
 **Phase 8-16 计划（2026-06-04 新定）**:
-  - Phase 8 = 水塘视觉重设计（首页从星空改水塘）
-  - Phase 9 = 按键动画优化
-  - Phase 10 = 组件功能升级 + 小球数量 36→35 + 分享/海报/5 大球
+  - Phase 8 = 水塘视觉重设计（首页从星空改水塘，含 P8-L 生命感深化）
+  - Phase 9 = 按键动画 WebGL 重设计（26 个按键水塘风格）
+  - Phase 10 = 分享转发 + 海报/link 下载 + 债务收口 + 后端 bug 修复（2026-07-05 收窄，原组件/小球/特殊球作废）
   - Phase 11 = 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
   - Phase 12 = OP Mainnet 上线准备与部署
-  - Phase 13 = 混音系统 + RemixNFT
-  - Phase 14 = 音效系统扩展
-  - Phase 15 = Semi 音乐 NFT 生态合作（待你和社区商量后定）
+  - Phase 13 = Semi 音乐 NFT 生态合作
+  - Phase 14 = 混音系统 + RemixNFT
+  - Phase 15 = 音效系统扩展
   - Phase 16 = 原生钱包 + 多链 / ETH Mainnet（往后排）
-  - 详细 roadmap：`playbook/roadmap-P8-P16.md` + `playbook/phase-8/overview.md`
+  - 详细 roadmap：`playbook/roadmap-P8-P16.md` + `playbook/phase-8/00-overview.md`
 
 **已实质完成的步骤**：
 - Phase 7 Track A：A1 ✅ / A2 ✅ / A3+A12+A8 ✅ / A6（15 曲）✅ / A4 ✅ / A14 ✅ / A15 ✅ / A9 ✅ / A10 ✅ / A13 ✅ / A16 ✅（TTL 120s + Lua heartbeat 能力；heartbeat 接入长 cron step 挂 P10） / A17 ✅（2026-05-16 工程修复完结）/ A5 暂挂 P10 / A7 挂 P10
@@ -176,6 +177,12 @@
 
 ## 上次成功验证
 
+- 验证: **P8-L 生命感深化 L 线全部实现（10 模块 + 2 基建步，沙盒 /test3）**
+- 时间: 2026-07-05
+- 改动: **L0a 脚手架**（新建 `life/`：life-tuning[25 参数 store] / life-core[6 确定性种子 lifeSeeds + 全局呼吸 lifeEnv + 各步进] / LifePanel[25 滑块分 5 组]；gl-flags +10 flag + `pickLifeFlags`；ScenePanel +10 开关）；**L0b 管道重构**（per-node `depthOf`/`displayDepthOf` 叠 `_shiftOff`；`project`/`unproject` 收可选 node 做视差去同步、严格互逆；`applyFloat` 改收 node；`writeFrame` 拆到 `spheres/sphere-frame.ts`；16 处调用点迁移）；**L2 运动**（滚轮去同步·幅度+时滞两参 / 视差去同步 / 流场游移 curl-noise `flow-field.ts` / 偶发颤动泊松）；**L3 形态**（能量球边缘 GLSL 双频调制 + `aSeed` attribute / 扰动激励 `_excite` 拖拽·穿越·尾波三源注入 / 果冻感速度拉伸矩阵）；**L4 尾波**（`wake-field.ts` refcount 抽涟漪场 + 水下球采样场梯度推 `_gvx`）；**L5 呈现**（隐现 pow(w,3) 长亮短隐 + DOM 标题同步 / 光晕呼吸）
+- 验证证据: 逐文件 `npx tsc --noEmit` 0 error + `npm run lint` 0 error（仅 3 项 pre-existing warning：comet-system/use-layer-wave）；10 flag 默认 false + 15 幅度参数默认 0 → 全关与改前像素级一致（结构性保证）；所有涉改文件 ≤220 行、`life/` 5 文件、`spheres/` 8 文件（硬线内）；未跑 build（dev 常开，dev/build 共用 .next 互踩，见 memory）。**八角度 review（2026-07-05）10 finding：前 5 真 bug 已修**（_excite 棘轮泄漏改恒衰减 / shiver 补 hover 豁免+拖拽中止 / jelly+wake 补 reduced-motion），修后 tsc+eslint 复绿；6-10（扰动激励单开无效果[spec 即依赖能量球边缘，缺 UI 提示]/wake 空转 CPU/renderDepth 重复/writeFrame 参数泥团/dropScreen 双份）留用户拍板，详 JOURNAL 2026-07-05 续³
+- 下一步: **用户逐开关浏览器验收（⏸ 项）**：逐个开生命感开关 + 拉 LifePanel 滑块调美；专项验拖球命中在任意 flag 组合下不偏（L2-1/L2-2 unproject 对称）、播放/hover 恒亮、reduced-motion 全静止；**和谐压测**（全 flag 同开 + 建议值"活而不乱"）后拍板各幅度上限；L3-3 果冻感验收不过可弃
+
 - 验证: **P8-G H 线全完（H4–H6）+ I 线 I1/I2 落地**——/test1 成干净 GL 水塘页（涟漪交互全集 + 球自驱浮沉 + 波纹/运动参数板 + 去 SVG + GL 日蚀），逐步浏览器验收通过
 - 时间: 2026-06-15
 - 改动:
@@ -185,7 +192,7 @@
   - **I1** 去 SVG：卸 Archipelago + 停后台 d3 sim + 移除 SvgAnimationLayer/BackgroundRipples + `overlay/GlNav.tsx` 切组（`7469ae4`）
   - **I2** `overlay/GlEclipse.tsx`：播放球叠日蚀焦点（移植 SVG EclipseLayer 视觉，DOM overlay 不被折射）+ 其他球完全隐去（`add5a2f`）
 - 验证证据: 本会话每步 tsc + eslint 全绿（逐文件）；用户浏览器逐步验收（拖尾/溅起/浮沉/播放浮出/日蚀/切组/折射平滑/无麻点）。⚠ 未跑 `next build`——dev 在 3001 跑着，build/dev 共用 `.next` 会互踩（见 memory）
-- 下一步: **I3 新组件首批（⏸ 暂缓，2026-06-15 用户未定首批组件，先收口）**——待用户定鱼/贴图/新动效等逐个；做法见 `playbook/phase-8/phase-8-i.md` I3（挂 H5 运动框架 + 控制台开关 + 逐个浏览器验收）
+- 下一步: **I3 新组件首批（⏸ 暂缓，2026-06-15 用户未定首批组件，先收口）**——待用户定鱼/贴图/新动效等逐个；做法见 `playbook/phase-8/80-i-desvg-components.md` I3（挂 H5 运动框架 + 控制台开关 + 逐个浏览器验收）
 
 ### 上一轮成功验证（2026-05-15 Phase 7 Track B，保留）
 
