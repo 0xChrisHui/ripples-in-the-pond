@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { verifyCronSecret } from '@/src/lib/auth/cron-auth';
-import { acquireOpLock, releaseOpLock } from '@/src/lib/chain/operator-lock';
+import { acquireOpLock, releaseOpLock, heartbeatOpLock } from '@/src/lib/chain/operator-lock';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { sendAlert } from '@/src/lib/alerts/resend';
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
@@ -40,6 +40,9 @@ export async function GET(req: NextRequest) {
   if (!(await acquireOpLock(opHolder))) {
     return NextResponse.json({ result: 'busy', processed: 0 });
   }
+
+  // P2-2/A16：Arweave 上传等长步骤可能超 120s lease → 60s 心跳续期，防锁过期后另一 cron 拿锁 nonce race
+  const heartbeat = setInterval(() => void heartbeatOpLock(opHolder), 60_000);
 
   let claimedId: string | null = null;
   let claimedRetry = 0;
@@ -165,6 +168,7 @@ export async function GET(req: NextRequest) {
       { status: 500 },
     );
   } finally {
+    clearInterval(heartbeat);
     await releaseOpLock(opHolder);
   }
 }
