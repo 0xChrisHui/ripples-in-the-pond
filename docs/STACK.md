@@ -63,6 +63,9 @@
 ### 开发工具（devDependencies，不进生产）
 - `tsx` — 一次性脚本的 TS 运行器（Phase 3 `scripts/upload-*.ts` / `verify-arweave-cors.ts` 用）。仅 devDependency，不进 Next.js 生产 bundle，生产运行时对它零依赖。
 
+### 海报 / 分享
+- `qrcode`（Phase 10-A 登记，2026-07-11 用户批准）— 纯 JS QR 生成器（pngjs 渲染，无 native 依赖，MIT，~50KB）。仅服务端 `/score/[id]/poster` route 用，生成指向 score 的二维码 dataURL 塞进 next/og `<img>`；前端/首页 bundle 零增量。配套 `@types/qrcode`（devDependency）。
+
 ### 部署
 - Vercel Hobby（Phase 0-1 免费）
 - Vercel Cron（每分钟最快）
@@ -125,6 +128,9 @@
 
 ### Phase 8-G（2026-06-12 登记，G3 步骤才实际安装）
 新增：`three`, `@react-three/fiber`, `@react-three/drei`（/test1 GL 渲染层，用户批准；playbook `phase-8/70-g-gl-water.md`）
+
+### Phase 10-A（2026-07-11 登记 + 安装）
+新增：`qrcode` + `@types/qrcode`（海报二维码，用户批准；playbook `phase-10/10-a-share-poster.md` A2）
 
 ---
 

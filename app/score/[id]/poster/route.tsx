@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import QRCode from 'qrcode';
 import { getScoreById } from '@/src/data/score-source';
 
 /**
@@ -43,6 +44,20 @@ export async function GET(_req: Request, { params }: Props) {
   const shortAddr = score.creatorAddress
     ? `${score.creatorAddress.slice(0, 6)}...${score.creatorAddress.slice(-4)}`
     : '';
+
+  // 二维码：指向 score 完整链接，dataURL 塞进 next/og <img>。失败降级只印短链。
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://pond-ripple.xyz';
+  const fullUrl = `${base.replace(/\/$/, '')}/score/${slug}`;
+  let qrDataUrl: string | null = null;
+  try {
+    qrDataUrl = await QRCode.toDataURL(fullUrl, {
+      margin: 1,
+      width: 220,
+      color: { dark: '#ffffff', light: '#00000000' },
+    });
+  } catch {
+    // QR 生成失败 → 只印短链
+  }
 
   return new ImageResponse(
     (
@@ -97,9 +112,15 @@ export async function GET(_req: Request, { params }: Props) {
           </div>
         </div>
 
-        {/* 底部短链（二维码首版留白，后续接入） */}
-        <div style={{ fontSize: 30, opacity: 0.45, fontFamily: 'monospace' }}>
-          {displayHost()}/score/{slug}
+        {/* 底部：二维码（扫码进 score 页）+ 短链文字 */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+          {qrDataUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={qrDataUrl} alt="" width={200} height={200} style={{ opacity: 0.85 }} />
+          )}
+          <div style={{ fontSize: 30, opacity: 0.45, fontFamily: 'monospace' }}>
+            {displayHost()}/score/{slug}
+          </div>
         </div>
       </div>
     ),
