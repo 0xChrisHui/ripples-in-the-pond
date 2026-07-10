@@ -59,6 +59,8 @@ export async function GET(req: NextRequest) {
 
     const tracksByWeek = new Map<number, OwnedNFT['track']>();
     if (pendingTokenIds.length > 0) {
+      // ⚠ P3-13 隐式约定：material tokenId ≡ tracks.week（全仓一致，见 mint 入队 + steps.markSuccess）。
+      //   若将来 tokenId 与 week 语义分叉，这里会显示错曲目 —— 届时需引入显式关联列。
       const { data: tracks } = await supabaseAdmin
         .from('tracks')
         .select('id, title, week, audio_url, cover, island, created_at')

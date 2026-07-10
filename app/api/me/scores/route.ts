@@ -47,7 +47,12 @@ export async function GET(req: NextRequest) {
 
     if (enqueuedIds.length > 0) {
       // PostgREST 语法：not.in.(uuid1,uuid2)；UUID 字面量不需要引号
-      query = query.not('id', 'in', `(${enqueuedIds.join(',')})`);
+      // P3-11：拼接前断言 UUID（id 来自 DB 本不可注入，纯防御，非 UUID 直接剔除）
+      const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const safeIds = enqueuedIds.filter((x: string) => UUID_RE.test(x));
+      if (safeIds.length > 0) {
+        query = query.not('id', 'in', `(${safeIds.join(',')})`);
+      }
     }
 
     const { data: scores, error } = await query.order('created_at', {

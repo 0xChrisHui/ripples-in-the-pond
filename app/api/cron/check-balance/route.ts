@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyCronSecret } from "@/src/lib/auth/cron-auth";
 import { supabaseAdmin } from "@/src/lib/supabase";
-import { publicClient } from "@/src/lib/chain/operator-wallet";
+import { operatorWalletClient, publicClient } from "@/src/lib/chain/operator-wallet";
 import { SCORE_ACTIVE_STATUSES } from "@/src/types/jam";
 import { sendAlert } from "@/src/lib/alerts/resend";
 import { formatEther } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
 
 /**
  * GET /api/cron/check-balance?secret=xxx
@@ -25,12 +24,9 @@ export async function GET(req: NextRequest) {
   const alerts: string[] = [];
 
   try {
-    // 1. 检查运营钱包余额
-    const account = privateKeyToAccount(
-      process.env.OPERATOR_PRIVATE_KEY as `0x${string}`,
-    );
+    // 1. 检查运营钱包余额（P3-14：复用已绑定的钱包 client，不再二次触碰私钥）
     const balance = await publicClient.getBalance({
-      address: account.address,
+      address: operatorWalletClient.account.address,
     });
     const ethBalance = parseFloat(formatEther(balance));
 

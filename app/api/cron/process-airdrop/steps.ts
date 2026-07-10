@@ -146,8 +146,16 @@ export async function trySendNew(roundId: string) {
   return { result: "sent", recipientId: recipient.id, txHash };
 }
 
-function parseTokenId(logs: readonly { topics: readonly `0x${string}`[] }[]): number | null {
-  const log = logs.find((l) => l.topics[0] === TRANSFER_TOPIC);
+function parseTokenId(
+  logs: readonly { address: string; topics: readonly `0x${string}`[] }[],
+): number | null {
+  // P3-12：只信 AIRDROP_NFT_ADDRESS 出的 Transfer（对齐 score _shared.ts，避免误匹配其它 event）
+  const log = logs.find(
+    (l) =>
+      l.topics.length >= 4 &&
+      l.topics[0] === TRANSFER_TOPIC &&
+      l.address.toLowerCase() === AIRDROP_NFT_ADDRESS.toLowerCase(),
+  );
   const raw = log?.topics[3] ? parseInt(log.topics[3], 16) : null;
   return raw != null && !isNaN(raw) ? raw : null;
 }
