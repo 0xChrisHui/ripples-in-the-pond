@@ -65,6 +65,5 @@
 
 ## 待用户执行（生产）
 
-1. 🔧 **cron-job.org 五个 job 全走 Bearer**（P3-2 已禁生产 query secret，否则 401）
-2. 生产库执行 migration **043/044/045/046**（041/042 已执行）
-3. 已执行前须：043 先 `select distinct status from mint_queue` 清脏
+1. 🔧 **cron-job.org 五个 job 全走 Bearer**（P3-2 已禁生产 query secret，否则 401）— **部署上线日做**
+2. ~~生产库执行 migration 043/044/045/046~~ ✅ **已执行（2026-07-11）**；041/042 更早已执行 ✅
