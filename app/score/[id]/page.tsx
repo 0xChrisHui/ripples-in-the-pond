@@ -4,6 +4,7 @@ import { getScoreById } from '@/src/data/score-source';
 import { explorerAddressUrl } from '@/src/lib/chain/chain-config';
 import ScorePlayer from './ScorePlayer';
 import FallbackShell from './FallbackShell';
+import ShareBar from './ShareBar';
 
 /**
  * /score/[id] — ScoreNFT 公开回放页（B8 重设：路由 ID 兼容 tokenId / queue.id UUID）
@@ -80,6 +81,8 @@ export default async function ScorePage({ params }: Props) {
           track={score.track}
           eventCount={score.eventCount}
         />
+
+        <ShareBar id={score.id} tokenId={score.tokenId ?? null} trackTitle={score.trackTitle} />
 
         <section className="mt-8 space-y-2 border-t border-white/10 pt-6 font-mono text-xs text-white/30">
           {score.tokenId != null && (
