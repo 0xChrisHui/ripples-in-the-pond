@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "@/src/lib/supabase";
 import { operatorWalletClient, publicClient } from "@/src/lib/chain/operator-wallet";
 import { AIRDROP_NFT_ADDRESS, AIRDROP_NFT_ABI } from "@/src/lib/chain/contracts";
+import { sendAlert } from "@/src/lib/alerts/resend";
 
 /**
  * 空投队列状态机 steps（route.ts 只保留 GET 编排；P10-B P1-4 让位拆出）：
@@ -15,6 +16,20 @@ const PENDING_TX_TIMEOUT_MS = 15 * 60 * 1000;
 // P1-5：链上 revert 重试上限（对齐 mint/score 队列）
 const MAX_RETRY = 3;
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
+/** minting 行转终局 manual_review + 邮件告警（P2-4）。CAS 校验仍是 minting 防重复标。 */
+async function markManualReview(recipientId: string, reason: string) {
+  await supabaseAdmin
+    .from("airdrop_recipients")
+    .update({ status: "failed", failure_kind: "manual_review", updated_at: new Date().toISOString() })
+    .eq("id", recipientId)
+    .eq("status", "minting");
+  console.error(`[process-airdrop] manual_review recipient=${recipientId}: ${reason}`);
+  void sendAlert({
+    subject: "airdrop_recipients manual_review",
+    body: [`recipientId: ${recipientId}`, `reason: ${reason}`].join("\n"),
+  });
+}
 
 /** 查 minting 记录 → 有 tx_hash 查链上 → 完成或回退 */
 export async function tryConfirmMinting() {
@@ -32,14 +47,7 @@ export async function tryConfirmMinting() {
     const age = Date.now() - new Date(item.updated_at).getTime();
     if (age > STUCK_TIMEOUT_MS) {
       // 不能安全 reset — 可能链上已发但 DB 没记 hash，reset 会重复空投
-      console.error(
-        `[process-airdrop] CRITICAL: recipient ${item.id} 卡在 minting 无 tx_hash 已 ${age}ms — 链上状态未知，标记 failed 等人工核查 operator tx 历史`,
-      );
-      await supabaseAdmin
-        .from("airdrop_recipients")
-        .update({ status: "failed", updated_at: new Date().toISOString() })
-        .eq("id", item.id)
-        .eq("status", "minting");
+      await markManualReview(item.id, `卡在 minting 无 tx_hash 已 ${age}ms — 链上状态未知，需核查 operator tx 历史`);
       return { result: "stuck_needs_review", recipientId: item.id };
     }
     return null;
@@ -73,14 +81,7 @@ export async function tryConfirmMinting() {
       ? new Date(item.mint_attempted_at).getTime()
       : new Date(item.updated_at).getTime();
     if (Date.now() - anchor > PENDING_TX_TIMEOUT_MS) {
-      console.error(
-        `[process-airdrop] CRITICAL: recipient ${item.id} tx ${item.tx_hash} pending >15min no receipt — 转 manual_review`,
-      );
-      await supabaseAdmin
-        .from("airdrop_recipients")
-        .update({ status: "failed", failure_kind: "manual_review", updated_at: new Date().toISOString() })
-        .eq("id", item.id)
-        .eq("status", "minting");
+      await markManualReview(item.id, `tx ${item.tx_hash} pending >15min no receipt`);
       return { result: "pending_timeout_review", recipientId: item.id };
     }
     await supabaseAdmin
@@ -154,11 +155,7 @@ function parseTokenId(logs: readonly { topics: readonly `0x${string}`[] }[]): nu
 async function resetToPending(recipientId: string, retryCount: number) {
   // P1-5：超 MAX_RETRY 转终局 manual_review，不再无限重试
   if (retryCount + 1 >= MAX_RETRY) {
-    console.error(`[process-airdrop] recipient ${recipientId} retry 耗尽(${retryCount + 1}/${MAX_RETRY}) → manual_review`);
-    await supabaseAdmin
-      .from("airdrop_recipients")
-      .update({ status: "failed", failure_kind: "manual_review", updated_at: new Date().toISOString() })
-      .eq("id", recipientId);
+    await markManualReview(recipientId, `retry 耗尽(${retryCount + 1}/${MAX_RETRY})`);
     return;
   }
   await supabaseAdmin

@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { sendAlert } from '@/src/lib/alerts/resend';
 
 /**
  * mint_queue 状态机的写库辅助函数（从 steps.ts 拆出，P10-B P1-4 让位）：
@@ -30,6 +31,14 @@ export async function markFailed(
     })
     .eq('id', jobId);
   console.error(`[mint-queue] markFailed ${kind} job=${jobId}: ${errorMsg}`);
+
+  // P2-4：manual_review 不可自动恢复 → 发邮件告警（对齐 score 队列；未配 env 静默 log）
+  if (kind === 'manual_review') {
+    void sendAlert({
+      subject: 'mint_queue manual_review',
+      body: [`jobId: ${jobId}`, `error: ${errorMsg}`].join('\n'),
+    });
+  }
 }
 
 export async function markSuccess(
