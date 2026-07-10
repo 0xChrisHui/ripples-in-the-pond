@@ -87,10 +87,11 @@ export async function GET(req: NextRequest) {
         throw new Error(`unexpected status: ${row.status}`);
     }
 
-    // 推进 status：CAS 只校验 (仍是我 + lease 未过期)；终态清 lease
+    // 推进 status：CAS 只校验 (仍是我 + lease 未过期)
     // A12 修复（2026-05-16）：去掉 `.eq('status', row.status)` —— step 不再内部跃迁 status，
     // pending→uploading_events 这种跃迁也由本 route 统一推；status CAS 反而让"自己 vs 自己"假失败。
-    const isFinal = newStatus === 'success' || newStatus === 'failed';
+    // P2-5 吞吐：每步成功推进后即清 lease（副作用已 CAS 落库，清锁安全），下一 cron 立刻接手，
+    //   不必等 5min lease 过期 → 单枚 NFT 全流水线从 ~25min 降到 ~5min。
     const nowIso = new Date().toISOString();
     const { data: updated } = await supabaseAdmin
       .from('score_nft_queue')
@@ -98,9 +99,8 @@ export async function GET(req: NextRequest) {
         status: newStatus,
         updated_at: nowIso,
         last_error: null,
-        ...(isFinal
-          ? { locked_by: null, lease_expires_at: null }
-          : {}),
+        locked_by: null,
+        lease_expires_at: null,
       })
       .eq('id', claimedId)
       .eq('locked_by', leaseOwner)
