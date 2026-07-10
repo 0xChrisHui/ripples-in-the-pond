@@ -17,13 +17,16 @@ export const HALO_R = 1.16;
 export const sphereVertexShader = /* glsl */ `
   attribute vec3 aColor;
   attribute vec4 aParams;
+  attribute vec2 aSeed;
   varying vec2 vUv;
   varying vec3 vColor;
   varying vec4 vParams;
+  varying vec2 vSeed;
   void main() {
     vUv = uv;
     vColor = aColor;
     vParams = aParams;
+    vSeed = aSeed;
     // instanceMatrix 由 three 在 InstancedMesh 下自动注入
     gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);
   }
@@ -34,11 +37,21 @@ export const sphereFragmentShader = /* glsl */ `
   varying vec2 vUv;
   varying vec3 vColor;
   varying vec4 vParams;
+  varying vec2 vSeed; // L3：x=相位种子 φᵢ，y=激励值
   // G4 调色面板（TunePanel）实时写入，1 = 原样
   uniform float uBrightness;
   uniform float uContrast;
   uniform float uSaturation;
   uniform float uBodyRatio; // body 边界（原 aParams.w 常量，腾出 .w 给景深 blurAmt）
+  // L3 能量球边缘（uEdgeAmp=0 → 正圆现状；k1/k2 必须整数保 θ 接缝连续）
+  uniform float uEdgeAmp;
+  uniform float uEdgeK1;
+  uniform float uEdgeK2;
+  uniform float uEdgeW1;
+  uniform float uEdgeW2;
+  uniform float uEdgeSoft;
+  uniform float uExciteGain;
+  uniform float uTime;
   void main() {
     float fillOpacity = vParams.x;
     float haloPeak    = vParams.y;
@@ -50,11 +63,19 @@ export const sphereFragmentShader = /* glsl */ `
     float d = length(vUv - vec2(0.5)) * 2.0;
     if (d > 1.0) discard;
 
-    // body：d < bodyRatio 实色，边缘抗锯齿；景深失焦 → 轻微加粗边缘 = 软散景（只柔边、不碰颜色）
-    float aa = 0.012 + blurAmt * 0.15;
-    float bodyMask = 1.0 - smoothstep(bodyRatio - aa, bodyRatio + aa, d);
+    // L3 能量球边缘：按极角 θ 双向正弦调制 body 边界（k1/k2 整数保 θ=±π 接缝连续）；激励 vSeed.y 放大幅度。
+    // 总幅 clamp≤0.15、调制半径 clamp≤0.98（防波峰顶进 halo 区 / 被 d>1 discard 切平）。uEdgeAmp=0 → body=bodyRatio 现状。
+    float th = atan(vUv.y - 0.5, vUv.x - 0.5);
+    float w1 = sin(uEdgeK1 * th + vSeed.x + uTime * uEdgeW1);
+    float w2 = sin(uEdgeK2 * th - uTime * uEdgeW2 + vSeed.x * 1.7);
+    float eamp = min(uEdgeAmp * (1.0 + uExciteGain * vSeed.y), 0.15);
+    float body = min(0.98, bodyRatio * (1.0 + eamp * (0.7 * w1 + 0.3 * w2)));
 
-    // halo：从 body 边缘的 haloPeak 平滑衰减到 quad 边的 0（对标 halo-soft 渐变尾巴）
+    // body：d < body 实色，边缘抗锯齿 + 边缘虚化 uEdgeSoft；景深失焦 → 轻微加粗边缘 = 软散景（只柔边、不碰颜色）
+    float aa = 0.012 + blurAmt * 0.15 + uEdgeSoft;
+    float bodyMask = 1.0 - smoothstep(body - aa, body + aa, d);
+
+    // halo：保持正圆（能量包膜感）→ 仍用 bodyRatio，从 body 边缘的 haloPeak 平滑衰减到 quad 边的 0
     float halo = haloPeak * (1.0 - smoothstep(bodyRatio - 0.02, 1.0, d));
 
     // 合成：body 区取 fillOpacity（球体本体），halo 区取 halo；再乘整体 dim（播放淡出）。

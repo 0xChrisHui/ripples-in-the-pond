@@ -45,9 +45,20 @@ export type GlPhysNode = SimNode & {
   _dragLoose?: boolean;
   displayZ?: number;
   _focusLerp?: number;
-  _waveZ?: number; // /test3：球浮动「层级波动」的 effDepth 域深度偏移（sphere-motion 写、renderDepth 读）
+  _waveZ?: number; // /test3：球浮动「层级波动」的 effDepth 域深度偏移（sphere-motion 写、applyFloat 读）
   _gvx?: number;   // 涟漪推"滑行"速度（独立于 d3 velocityDecay，慢衰减→惯性收尾，见 gl-sim-waves stepSphereGlide）
   _gvy?: number;
+  // P8-L 生命感逐球状态（各模块每帧写；flag 关时不写 → 读方用 ?? 中性值 = 现状）
+  _shiftOff?: number; // L2-1 滚轮去同步：叠加到深度的每球偏移
+  _lagShift?: number; // L2-1 每球私有缓动值（时滞差）
+  _parGain?: number;  // L2-2 视差幅度增益（缺省视作 1）
+  _parAng?: number;   // L2-2 视差方向偏转弧度（缺省视作 0）
+  _shivX?: number;    // L2-4 偶发颤动屏幕位移 x
+  _shivY?: number;    // L2-4 偶发颤动屏幕位移 y
+  _excite?: number;   // L3-2 扰动激励值（边缘剧烈度）
+  _lifeDim?: number;  // L5-1 透明度隐现系数（缺省视作 1）
+  _jelVx?: number;    // L3-3 果冻感平滑速度 x
+  _jelVy?: number;    // L3-3 果冻感平滑速度 y
 };
 
 /** tracksToShow → 节点 + 链接（复刻 SphereCanvas.tsx:64-83 的建点逻辑，含 baseLayer/lw/radius/z） */

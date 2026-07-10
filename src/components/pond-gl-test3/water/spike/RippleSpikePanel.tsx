@@ -21,6 +21,7 @@ type Slider = { key: keyof RippleTuning; label: string; min: number; max: number
 
 const RIPPLE_SLIDERS: ReadonlyArray<Slider> = [
   { key: 'damping', label: '阻尼(持续)', min: 0.95, max: 0.999, step: 0.001 },
+  { key: 'waveProp', label: '水波速度', min: 0.05, max: 0.5, step: 0.01 }, // 高度场波传播/位移移速（0.5=原速，越小越缓）
   { key: 'refract', label: '折射强度', min: 0, max: 3, step: 0.05 },
   { key: 'dropMove', label: '滴水·移动', min: 0, max: 0.05, step: 0.001 },
   { key: 'dropClick', label: '滴水·点击', min: 0, max: 0.4, step: 0.005 },

@@ -5,8 +5,8 @@ import { usePlayer } from '@/src/components/player/PlayerProvider';
 import type { GlSim } from '../spheres/use-gl-sim';
 import { setNodeDrag, endNodeDrag, type GlPhysNode } from '../spheres/gl-sim-setup';
 import { getSubmerge, getEffectiveWaterLevel } from '../water/water-level';
-import { project, unproject, type ProjCtx } from '../sphere-projection';
-import { getPointerFx, getCameraFx, renderDepth } from '../pointer-fx';
+import { project, unproject, applyFloat, type ProjCtx } from '../sphere-projection';
+import { getPointerFx, getCameraFx, depthOf, displayDepthOf } from '../pointer-fx';
 
 /**
  * G4 — DOM 命中层：每球一个绝对定位 div，承载标题/角标/点击播放/拖拽/hover。
@@ -46,21 +46,20 @@ export default function SphereOverlay({ glSim, waterOn, depthModel = false }: { 
         const dim = pid != null && n.id !== pid;
         // G6 没入：球被水波盖住时同步淡出标题/命中（否则标题会浮在水面上）；>0.7 视为已没入、不可点
         // H5：读动态深度 displayZ → 球浮沉/播放浮出时标题随之淡入淡出
-        const dz = n.displayZ ?? n.z;
-        const raw = waterOn ? getSubmerge(renderDepth(dz, n._waveZ ?? 0)) : 0;
+        const raw = waterOn ? getSubmerge(displayDepthOf(n)) : 0;
         // K3 修 R4：depthModel 开时对没入度加阻尼（lerp）→ 浮沉小幅脉动不再让标题闪烁
         let sub = raw;
         if (depthModel) {
           sub = (subSmooth.current.get(n.id) ?? raw) * 0.85 + raw * 0.15;
           subSmooth.current.set(n.id, sub);
         }
-        // /test3：与 GL 实例同款投影（renderDepth：层模型 + 滚轮集体偏移 + 球浮动层级波动 _waveZ）→ 命中层随球一起变大/小/移
-        const p = project(n.x, n.y, renderDepth(n.z, n._waveZ ?? 0), ctx);
+        // /test3：与 GL 实例同款投影 + applyFloat（同一套呼吸/径向轻浮）→ 命中层(编号·角标)随浮动球一起变大/小/移、不分离
+        const p = applyFloat(project(n.x, n.y, depthOf(n), ctx, n), n, ctx.cx, ctx.cy);
         el.style.transform = `translate(${p.sx - n.radius}px, ${p.sy - n.radius}px) scale(${p.scale})`;
         // 失焦球的标题/角标一并虚化（移植 /test 的 CSS blur），与 GL 散景同向
         el.style.filter = p.blurAmt > 0.02 ? `blur(${(p.blurAmt * 3).toFixed(2)}px)` : '';
         // 别的球在播 → 完全隐藏（聚焦只剩播放球 + 日蚀）；否则没入淡出（水下仍留 0.4 锚点）
-        el.style.opacity = dim ? '0' : String(Math.max(0.4, 1 - sub * 1.5));
+        el.style.opacity = dim ? '0' : String(Math.max(0.4, 1 - sub * 1.5) * (n._lifeDim ?? 1)); // L5-1 隐现：标题/角标与球同步
         // 水下对象仍可点（H 规格）；别的球在播时让出交互（其他球已隐藏）
         el.style.pointerEvents = dim ? 'none' : 'auto';
       }
@@ -115,7 +114,7 @@ function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
       glSim.simRef.current?.alphaTarget(0.08).restart(); // 拖动期间升温 sim 跟手
     }
     // /test3 task 4：把光标(屏幕)逆投影回 sim 坐标 → 球的投影位置正好落在光标处（缩放/视差/层级波动下仍跟手）。
-    const { x, y } = unproject(e.clientX, e.clientY, renderDepth(node.z, node._waveZ ?? 0), currentCtx());
+    const { x, y } = unproject(e.clientX, e.clientY, depthOf(node), currentCtx(), node);
     setNodeDrag(node, x, y);
   };
   const onUp = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -168,7 +167,7 @@ function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
         {node.track.title}
       </span>
 
-      {/* 角标圆 + play/pause（hover 或播放时显示） */}
+      {/* 角标圆 + play/pause（hover 或播放时显示；与浮动球一起移动） */}
       <svg
         width={26}
         height={26}

@@ -48,6 +48,7 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="GL 球" checked={glFlags.glSpheres} onChange={(v) => onGl({ glSpheres: v })} />
           <Row label="球浮动" checked={glFlags.sphereMotion} onChange={(v) => onGl({ sphereMotion: v })} />
           <Row label="球飘动+涟漪推" checked={glFlags.sphereDrift} onChange={(v) => onGl({ sphereDrift: v })} />
+          <Row label="黑色圆圈（播放日蚀）" checked={glFlags.glEclipse} onChange={(v) => onGl({ glEclipse: v })} />
           <Row label="扭曲水面" checked={glFlags.waterFx} onChange={(v) => onGl({ waterFx: v })} />
           <Row label="月光焦散" checked={glFlags.caustics} onChange={(v) => onGl({ caustics: v })} />
           <Row label="可见塘底" checked={glFlags.pondFloor} onChange={(v) => onGl({ pondFloor: v })} />
@@ -60,6 +61,18 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="鼠标视差" checked={glFlags.parallax} onChange={(v) => onGl({ parallax: v })} />
           <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">性能</div>
           <Row label="自动降配" checked={glFlags.autoDegrade} onChange={(v) => onGl({ autoDegrade: v })} />
+          <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">生命感</div>
+          <Row label="滚轮去同步" checked={glFlags.wheelDesync} onChange={(v) => onGl({ wheelDesync: v })} />
+          <Row label="视差去同步" checked={glFlags.parallaxDesync} onChange={(v) => onGl({ parallaxDesync: v })} />
+          <Row label="流场游移" checked={glFlags.flowDrift} onChange={(v) => onGl({ flowDrift: v })} />
+          <Row label="偶发颤动" checked={glFlags.shiver} onChange={(v) => onGl({ shiver: v })} />
+          {/* 激励是边缘波幅的乘性放大（shader: uEdgeAmp×(1+激励)），单开无效果 → 双向联动防死开关 */}
+          <Row label="能量球边缘" checked={glFlags.edgeWave} onChange={(v) => onGl(v ? { edgeWave: true } : { edgeWave: false, edgeExcite: false })} />
+          <Row label="扰动激励(联动边缘)" checked={glFlags.edgeExcite} onChange={(v) => onGl(v ? { edgeExcite: true, edgeWave: true } : { edgeExcite: false })} />
+          <Row label="果冻感" checked={glFlags.jelly} onChange={(v) => onGl({ jelly: v })} />
+          <Row label="尾波扰球" checked={glFlags.wakeSpheres} onChange={(v) => onGl({ wakeSpheres: v })} />
+          <Row label="时隐时现" checked={glFlags.alphaFlicker} onChange={(v) => onGl({ alphaFlicker: v })} />
+          <Row label="光晕呼吸" checked={glFlags.haloBreath} onChange={(v) => onGl({ haloBreath: v })} />
         </>
       )}
     </div>

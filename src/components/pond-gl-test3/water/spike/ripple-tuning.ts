@@ -9,6 +9,7 @@
  */
 export interface RippleTuning {
   damping: number;    // sim 阻尼（越大涟漪持续越久；0.995 起）
+  waveProp: number;   // 水波速度：高度场波传播/位移移速（拉普拉斯回复力系数；0.5=原速，越小越缓）
   refract: number;    // 折射强度（位移 ∝ 高度梯度×此值，clamp 上限；旧 perturb 改名换标度，老存档自动回默认）
   dropMove: number;   // 滴水强度·鼠标移动
   dropClick: number;  // 滴水强度·点击
@@ -67,6 +68,7 @@ export interface RippleTuning {
 // /test3 默认参数（用户 2026-06-19 指定整组；打开网页/push 都推这一组）。未提到的字段保留原默认。
 export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   damping: 0.96,
+  waveProp: 0.5,     // 水波速度（0.5=原速；越小越缓，实测后再定）
   refract: 0.8,
   dropMove: 0.016,
   dropClick: 0.1,

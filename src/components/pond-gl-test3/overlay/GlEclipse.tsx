@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 import type { GlSim } from '../spheres/use-gl-sim';
-import { project } from '../sphere-projection';
-import { getPointerFx, getCameraFx, renderDepth } from '../pointer-fx';
+import { project, applyFloat } from '../sphere-projection';
+import { getPointerFx, getCameraFx, depthOf } from '../pointer-fx';
 import { getEffectiveWaterLevel } from '../water/water-level';
 
 /**
@@ -29,7 +29,9 @@ export default function GlEclipse({ glSim }: { glSim: GlSim }) {
           // /test3 task 4：与 GL 实例/命中层同款投影 → 日蚀盘贴着投影后的播放球（缩放/视差下不偏移）。
           const { mx, my } = getPointerFx();
           const c = getCameraFx();
-          const p = project(pn.x, pn.y, renderDepth(pn.z, pn._waveZ ?? 0), { cx: window.innerWidth / 2, cy: window.innerHeight / 2, mx, my, focusZ: getEffectiveWaterLevel(), dof: c.dof, perspective: c.perspective, parallax: c.parallax });
+          const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+          // applyFloat：日蚀盘跟随浮动的播放球（同 GL 球/命中层那套呼吸+径向轻浮）→ 不再被甩在原位
+          const p = applyFloat(project(pn.x, pn.y, depthOf(pn), { cx, cy, mx, my, focusZ: getEffectiveWaterLevel(), dof: c.dof, perspective: c.perspective, parallax: c.parallax }, pn), pn, cx, cy);
           g.setAttribute('transform', `translate(${p.sx},${p.sy}) scale(${(pn.radius * p.scale) / 50})`);
           g.style.opacity = '1';
         } else {

@@ -38,6 +38,13 @@ export function petalDrop(gx: number, gy: number, radius: number, strength: numb
   }
 }
 
+/** 屏幕坐标(sx,sy) + 视口(w,h) → 花瓣网格注入一滴（strength<=0 跳过）。wake-field / WaterPetals 共用，
+ *  屏幕→网格映射的唯一出处（改分辨率/映射只此一处，两消费方永不走偏）。 */
+export function petalDropScreen(sx: number, sy: number, w: number, h: number, radius: number, strength: number): void {
+  if (strength <= 0) return;
+  petalDrop((sx / Math.max(1, w)) * NX, (sy / Math.max(1, h)) * petalNY(), radius, strength);
+}
+
 /** 推进一帧波动方程（damp 0.979），ping-pong 交换 */
 export function stepPetalWater(): void {
   const damp = 0.979;

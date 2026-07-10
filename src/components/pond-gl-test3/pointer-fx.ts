@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { getRippleTuning } from './water/spike/ripple-tuning';
+import type { GlPhysNode } from './spheres/gl-sim-setup';
 
 /**
  * /test3 — 指针交互单例：滚轮 → 球**集体深度偏移** shift（层模型）、鼠标 → 视差位移。
@@ -10,10 +11,11 @@ import { getRippleTuning } from './water/spike/ripple-tuning';
  * 过程中穿过固定水面（层 50）产生出入水交互。层模型：
  *   base z∈[0,1] → 默认层 35-65（effDepth = 0.35 + z·0.30，绕水面 50）；
  *   滚轮叠 shift∈[-0.35,+0.35] → 球最近抵层 70-100（全部出水、近/大）、最远层 1-30（全部入水、远/小）。
- * 范式同 water-level（模块级 let + rAF 缓动 + 直读，不触发 React 重渲染）。读方每帧调 effDepth()/getPointerFx()。
+ * 范式同 water-level（模块级 let + rAF 缓动 + 直读，不触发 React 重渲染）。读方每帧调 depthOf()/getPointerFx()。
  */
 
-const SHIFT_MIN = -0.35, SHIFT_MAX = 0.35; // 集体深度偏移范围（默认 0 = 球 35-65 层）
+const SHIFT_MIN = -0.35;
+export const SHIFT_MAX = 0.35; // 集体深度偏移范围（默认 0 = 球 35-65 层）；L2-1 滚轮去同步读它算极限趋近度
 const SHIFT_SENS = 0.0015;                 // 滚轮灵敏度（每 deltaY 单位的 shift 变化）
 // 单次滚轮事件封顶 = 运动参数面板的 scrollStep（默认 0.05）→ 不论设备 deltaY 大小（含像素级/触控板惯性），
 // 一格滚轮最多移 scrollStep 深度 → 球逐颗出入水（band 0.30 ÷ scrollStep ≈ 滚几次）。随时面板可调。
@@ -34,15 +36,15 @@ export function getPointerFx(): { mx: number; my: number } {
   return { mx, my };
 }
 
-/** base 深度 z∈[0,1] → 层模型有效深度：默认 0.35-0.65(层 35-65)，叠滚轮集体偏移 shift；clamp[0,1]=层 0-100。 */
-export function effDepth(zBase: number): number {
-  const d = D_LO + zBase * D_SPAN + shift;
+/** per-node 渲染深度：base 深度 z + 滚轮集体偏移 shift + 每球偏移 _shiftOff（L2-1）。
+ *  层模型默认 0.35-0.65（层 35-65），clamp[0,1]=层 0-100；球浮动已与深度解耦（走投影端 applyFloat，不进 d）。 */
+export function depthOf(n: GlPhysNode): number {
+  const d = D_LO + n.z * D_SPAN + shift + (n._shiftOff ?? 0);
   return d < 0 ? 0 : d > 1 ? 1 : d;
 }
-
-/** 渲染深度 = effDepth(zBase) + 球浮动「层级波动」偏移 waveZ（effDepth 域）。投影/没入判定用它（含滚轮 shift + 浮动）。 */
-export function renderDepth(zBase: number, waveZ: number): number {
-  const d = D_LO + zBase * D_SPAN + shift + waveZ;
+/** per-node 没入判定深度：用动态深度 displayZ（H5 浮沉）+ 滚轮 shift + _shiftOff（L2-1）。 */
+export function displayDepthOf(n: GlPhysNode): number {
+  const d = D_LO + (n.displayZ ?? n.z) * D_SPAN + shift + (n._shiftOff ?? 0);
   return d < 0 ? 0 : d > 1 ? 1 : d;
 }
 
@@ -56,6 +58,10 @@ export function getScrollExtremity(): number {
 export function isScrolling(): boolean {
   return shift !== shiftTarget;
 }
+
+/** L2-1 滚轮去同步：读全局已缓动 shift 与滚轮目标 shiftTarget，life-core 据此算每球 _shiftOff。 */
+export function getShift(): number { return shift; }
+export function getShiftTarget(): number { return shiftTarget; }
 
 export function usePointerFx(active: boolean): void {
   useEffect(() => {

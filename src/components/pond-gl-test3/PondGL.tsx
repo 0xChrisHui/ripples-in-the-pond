@@ -2,7 +2,8 @@
 
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Component, Suspense, useMemo, useRef, useState, type ReactNode } from 'react';
-import { isWebGLAvailable, type GLFlags } from './gl-flags';
+import { isWebGLAvailable, pickLifeFlags, type GLFlags } from './gl-flags';
+import { useWakeField } from './life/wake-field';
 import { baseToneVertexShader, baseToneFragmentShader } from './base-tone-shader';
 import SphereInstances from './spheres/SphereInstances';
 import WaterSurface from './water/WaterSurface';
@@ -112,6 +113,7 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
   // 但重挂会新建/泄漏 WebGL context（多次切球 → context 累积被浏览器丢弃 → 球闪一下就没）。
   const gl = useMemo(() => ({ antialias: true, alpha: false }), []);
   const [lost, setLost] = useState(false); // J1：context lost 期间盖兜底，restored 后撤
+  useWakeField(flags.wakeSpheres && flags.glSpheres && !!glSim); // L4：尾波扰球开 → 挂涟漪场（与花瓣层 refcount 共享）
   if (!active) return null;
   // J1：真没 WebGL → 不挂 Canvas，直接铺夜塘兜底（不白屏）
   if (!isWebGLAvailable()) {
@@ -160,7 +162,7 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           {(flags.reefStones || flags.crystalPillars) && <WaterColumns reefStones={flags.reefStones} crystalPillars={flags.crystalPillars} />}
           {/* waterOn 只认旧「水面」(G6 没入淡到全透明=水波盖住球)。扭曲水面(waterFx)下球**不淡出**：
               红线「水下不压黑/不虚化」→ 水下球保持可见、靠合成 pass 的深度折射(K3 d^a)体现浮沉，不消失。 */}
-          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} sphereDrift={flags.sphereDrift} />}
+          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} sphereDrift={flags.sphereDrift} life={pickLifeFlags(flags)} />}
           {/* H1 spike：RTT 验证全屏盖在最上（renderOrder 10），隔离实验、默认关 */}
           {flags.rtt && <RttSpike />}
           {/* H2/H3：扭曲水面——渲真场景进 FBO 全屏折射扭曲 + 水位遮罩（接管渲染循环，返回 null） */}

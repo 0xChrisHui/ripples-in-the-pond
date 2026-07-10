@@ -19,8 +19,8 @@ import { quadVert, simFrag } from './spike/ripple-spike-shaders';
 import type { RippleTuning } from './spike/ripple-tuning';
 import { compositeMaskFrag, MAX_SPHERES } from './water-distort-shaders';
 import type { GlPhysNode } from '../spheres/gl-sim-setup';
-import { project, type ProjCtx } from '../sphere-projection';
-import { renderDepth } from '../pointer-fx';
+import { project, applyFloat, type ProjCtx } from '../sphere-projection';
+import { depthOf, displayDepthOf } from '../pointer-fx';
 
 export interface QuadScene {
   scene: Scene;
@@ -44,6 +44,7 @@ export function makeSimScene(resX: number, resY: number, dropSlots: Vector4[]): 
     uDrops: { value: dropSlots },
     uDropCount: { value: 0 },
     uDamping: { value: 0.995 },
+    uWaveSpeed: { value: 0.5 }, // 水波传播速度（参数板 waveProp，每帧刷新）
     uAspect: { value: 1 }, // K1：每帧由画布宽高比刷新（见 WaterDistort useFrame），校正滴水为正圆
   });
 }
@@ -117,6 +118,7 @@ export function applyTuning(
   moonReflect: boolean,
 ): void {
   sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z）
+  sim.mat.uniforms.uWaveSpeed.value = t.waveProp; // 水波传播速度（越小波扩散/位移越缓）
   sim.mat.uniforms.uAspect.value = aspect;     // K1：高度场方形被拉满宽屏 → 按宽高比校正滴水为正圆
   composite.mat.uniforms.uPerturb.value = t.refract;
   composite.mat.uniforms.uSpec.value = t.specular;
@@ -180,9 +182,10 @@ export function applySpheres(
     vis[i] = v;
     // /test3：位置/半径走 project()，深度用 effDepth(node.z)（层模型 + 滚轮集体偏移）→ 与渲染进 FBO 的球对齐；
     // 没入判定深度用 effDepth(displayZ)（含浮沉），滚轮集体下潜/上浮时水上清晰/水下扭曲随之整体变。
-    const dz = renderDepth(node.displayZ ?? node.z, node._waveZ ?? 0);
-    const p = project(node.x ?? 0, node.y ?? 0, renderDepth(node.z, node._waveZ ?? 0), proj);
-    arr[i].set(p.sx, p.sy, node.radius * 1.15 * p.scale, dz); // 位置/半径/深度都含层级波动 _waveZ → 遮罩随球变大/小/移
+    const dz = displayDepthOf(node); // 没入判定深度（displayZ 浮沉 + 滚轮 + _shiftOff）
+    // 位置/半径经 applyFloat 跟随浮动（与 GL 球/命中层同一套）→ 水面遮罩贴着浮动后的球，不分离
+    const p = applyFloat(project(node.x ?? 0, node.y ?? 0, depthOf(node), proj, node), node, proj.cx, proj.cy);
+    arr[i].set(p.sx, p.sy, node.radius * 1.15 * p.scale, dz);
   }
   composite.mat.uniforms.uSphereCount.value = n;
   (composite.mat.uniforms.uViewport.value as Vector2).set(w || 1, h || 1);

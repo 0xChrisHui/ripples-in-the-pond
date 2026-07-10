@@ -16,7 +16,7 @@ import type { Track, TracksListResponse } from '@/src/types/tracks';
 import { buildGlNodes, setupGlSimulation, resizeGlSim, type GlPhysNode } from './gl-sim-setup';
 import type { BgWave } from './gl-sim-waves';
 import { alignWaterLineTo } from '../water/water-level';
-import { renderDepth } from '../pointer-fx';
+import { depthOf } from '../pointer-fx';
 
 /** 数组中位数（空→0.5）：建点后把默认水线对齐到球渲染深度中位数用（零死区：任一方向滚轮即穿越水面）。 */
 function medianOf(vals: number[]): number {
@@ -33,7 +33,7 @@ function medianOf(vals: number[]): number {
  * 与 SphereOverlay（DOM 命中层）共享。playingId 走 ref（R3F Canvas 拿不到外部 context）。
  *
  * 已知限制：切组只跟键盘（与首页 Archipelago 并行，初始同为 A）；nav 点击 GL 不跟随
- * —— 这是"不碰 Archipelago"红线的固有代价（详见 phase-8-g-gl-water.md G4 段）。
+ * —— 这是"不碰 Archipelago"红线的固有代价（详见 99-archive-g-gl-water-spike.md G4 段）。
  */
 export interface GlSim {
   ready: boolean;
@@ -128,7 +128,7 @@ export function useGlSim(active: boolean): GlSim {
     sizeRef.current = { w, h };
     const show = padTracksToTarget(getGroupTracks(groupId, tracks), getGroupTargetCount(groupId));
     const { nodes: built, links, assignment } = buildGlNodes(show, groupId);
-    alignWaterLineTo(medianOf(built.map((n) => renderDepth(n.z, 0)))); // 默认水线对齐球渲染深度中位数 → 滚轮移球任一方向即穿越(零死区)
+    alignWaterLineTo(medianOf(built.map((n) => depthOf(n)))); // 默认水线对齐球渲染深度中位数 → 滚轮移球任一方向即穿越(零死区)
     simRef.current?.stop();
     const { sim, anchors } = setupGlSimulation(built, links, assignment, w, h);
     simRef.current = sim;

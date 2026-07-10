@@ -2,56 +2,24 @@
 
 import { useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import {
-  DoubleSide,
-  InstancedMesh,
-  InstancedBufferAttribute,
-  Matrix4,
-  OrthographicCamera,
-  ShaderMaterial,
-} from 'three';
-import { sphereVertexShader, sphereFragmentShader, HALO_R } from './sphere-shader';
-import type { GlPhysNode } from './gl-sim-setup';
-import { pushGlSpheresByWaves, driftSpheres, stepSphereGlide, type BgWave } from './gl-sim-waves';
+import { DoubleSide, InstancedMesh, OrthographicCamera, ShaderMaterial } from 'three';
+import { sphereVertexShader, sphereFragmentShader } from './sphere-shader';
 import { getTuning, type SphereTuning } from './sphere-tuning';
-import { getRippleTuning } from '../water/spike/ripple-tuning';
-import { getSubmerge, getEffectiveWaterLevel } from '../water/water-level';
-import { stepSphereMotion } from './sphere-motion';
-import { project, type ProjCtx } from '../sphere-projection';
-import { getPointerFx, getCameraFx, renderDepth } from '../pointer-fx';
+import { getEffectiveWaterLevel } from '../water/water-level';
+import { type ProjCtx } from '../sphere-projection';
+import { getPointerFx, getCameraFx } from '../pointer-fx';
+import { getLifeTuning } from '../life/life-tuning';
+import { prefersReducedMotion } from '../reduced-motion';
+import { writeFrame, hexToSRGB, BODY_RATIO, type InstanceBuf } from './sphere-frame';
+import type { LifeFlags } from '../gl-flags';
 import type { GlSim } from './use-gl-sim';
-
-// 球色：手动解析 hex → sRGB 0-1，**绕过 three 的 Color/ColorManagement**。
-// 为什么不用 new Color('#hex')：R3F 初始化时强制把 ColorManagement.enabled 设回 true（覆盖模块级设置），
-// 于是 Color 把 hex 转成 linear 存；而我们的自定义 shader 不经 three 的 colorspace_fragment，
-// three 不会把输出再编码回 sRGB → "linear 值被当 sRGB 直接显示" → 球色暗掉近一半
-// （用户实测 SVG #A04546 → GL #562222/#581B1F）。手动 sRGB 直通后：shader 输出 = 原始 sRGB 值，
-// canvas 原样显示，半透明混合也在 sRGB 空间（与 SVG/CSS 一致）。
-function hexToSRGB(hex: string): readonly [number, number, number] {
-  const n = parseInt(hex.replace('#', ''), 16);
-  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
-}
-const WHITE: readonly [number, number, number] = [1, 1, 1];
 
 /**
  * G4 — 35/36 球 InstancedMesh（一次 draw call）。
  *
- * 每帧从 d3 sim 读 node.x/y 写 instance 矩阵 + 颜色 + 参数；播放淡出/hover 放大/球色高亮都在此算。
- * 正交相机配成屏幕像素 1:1（world (x,y)∈[0,w]×[0,h]，y 向下）→ sim 坐标直接当世界坐标，零换算。
- * 命令式写入（mutate 相机 / GPU buffer / sim 节点）全部放在**模块级函数**里，避开 react-hooks
- * 的 immutability 规则（它只约束组件/hook 体内改 prop / hook 返回值）。
+ * 每帧 CPU 逻辑（writeFrame + InstanceBuf + hexToSRGB）已拆到 ./sphere-frame（L0b）；本组件只剩组件壳：
+ * per-instance 缓冲 + 调色 uniform + 相机跟随 sizeRef。正交相机配成屏幕像素 1:1（world (x,y)∈[0,w]×[0,h]）。
  */
-
-const BODY_RATIO = 1 / HALO_R; // body 边界占 quad 半宽的比例（≈0.862）
-const tmpMatrix = new Matrix4();
-
-interface InstanceBuf {
-  aColor: Float32Array;
-  aParams: Float32Array;
-  baseColors: ReadonlyArray<readonly [number, number, number]>;
-  hoverLerp: Float32Array;
-  dimLerp: Float32Array;
-}
 
 interface SphereUniforms {
   uBrightness: { value: number };
@@ -62,17 +30,28 @@ interface SphereUniforms {
 }
 
 /**
- * 把调色 store 同步到 shader uniform。
- *
- * ★必须写 material 真身的 uniforms（matRef.current.uniforms.X.value）——R3F 把 uniforms prop
- * 拷贝进 material，改外部那个 useMemo 对象到不了 shader（血泪踩坑 #1，WaterSurface 同此修法）。
- * 之前球色/淡出/白球能动是因为它们走逐实例 attribute（aColor/aParams），不依赖 uniform 通道。
- * 模块级函数：命令式写 GPU uniform，避开 react-hooks/immutability。
+ * 把调色 store 同步到 shader uniform 真身（matRef.current.uniforms.X.value）——R3F 把 uniforms prop
+ * 拷贝进 material，改外部 useMemo 对象到不了 shader（血泪踩坑 #1，WaterSurface 同此修法）。
  */
 function applyTuningUniforms(mat: ShaderMaterial, t: SphereTuning): void {
   mat.uniforms.uBrightness.value = t.brightness;
   mat.uniforms.uContrast.value = t.contrast;
   mat.uniforms.uSaturation.value = t.saturation;
+}
+
+/** L3 边缘波 + 激励 uniform（每帧写 matRef 真身；flag 关 → uEdgeAmp/uExciteGain=0 = 正圆现状）。 */
+function applyEdgeUniforms(mat: ShaderMaterial, life: LifeFlags, timeSec: number): void {
+  const lt = getLifeTuning();
+  const k1 = Math.round(lt.edgeWaveFreq);
+  const w = prefersReducedMotion() ? 0 : lt.edgeWaveSpeed; // reduced-motion → 停转（形状保留）
+  mat.uniforms.uEdgeAmp.value = life.edgeWave ? lt.edgeWaveAmp : 0;
+  mat.uniforms.uEdgeK1.value = k1;
+  mat.uniforms.uEdgeK2.value = k1 + 3; // 非倍数、不合拍
+  mat.uniforms.uEdgeW1.value = w;
+  mat.uniforms.uEdgeW2.value = w * 1.618;
+  mat.uniforms.uEdgeSoft.value = life.edgeWave ? lt.edgeSoft : 0;
+  mat.uniforms.uExciteGain.value = life.edgeExcite ? lt.exciteGain : 0;
+  mat.uniforms.uTime.value = timeSec;
 }
 
 /** /test3：屏幕中心灭点（视口像素）→ project 用的灭点。sizeRef = 画布像素尺寸（与命中层同口径）。 */
@@ -90,77 +69,13 @@ function configurePixelCamera(cam: OrthographicCamera, w: number, h: number): vo
   cam.updateProjectionMatrix();
 }
 
-/** 每帧把 sim 状态写进 InstancedMesh（矩阵 + 颜色 + params + 涟漪推球 + 平滑 lerp） */
-function writeFrame(
-  mesh: InstancedMesh,
-  nodes: GlPhysNode[],
-  buf: InstanceBuf,
-  wavesRef: React.RefObject<BgWave[]>,
-  playingId: string | null,
-  hoverId: string | null,
-  tuning: SphereTuning,
-  waterOn: boolean,
-  motionOn: boolean,
-  proj: ProjCtx,
-  drift: boolean,
-  waveSpeed: number,
-): void {
-  const now = performance.now();
-  stepSphereMotion(nodes, now / 1000, motionOn); // 球浮动层级波动 → 写 node._waveZ
-  wavesRef.current = wavesRef.current.filter((w) => now - w.spawnTime < w.duration);
-  const rt = getRippleTuning();
-  if (drift) driftSpheres(nodes, now / 1000, rt.drift); // 飘动:随机走 x/y(与沉浮深度正交→和谐)
-  pushGlSpheresByWaves(nodes, wavesRef.current, playingId, now, getEffectiveWaterLevel(), drift, rt.wavePush, rt.wavePushDepth, waveSpeed);
-  stepSphereGlide(nodes); // 涟漪推的惯性滑行收尾（_gvx 慢衰减加到位置）→ 波过后丝滑滑停
-
-  const anyPlaying = playingId != null;
-  const { aColor, aParams, baseColors, hoverLerp, dimLerp } = buf;
-
-  for (let i = 0; i < nodes.length; i++) {
-    const n = nodes[i];
-    if (n.x == null || n.y == null) continue;
-    const isPlaying = n.id === playingId;
-    const isHover = n.id === hoverId;
-
-    // 平滑：hover 放大（≈SVG r 0.22s）+ 播放淡出（≈SVG opacity 0.5s），逐帧 lerp 近似
-    hoverLerp[i] += ((isHover ? 1 : 0) - hoverLerp[i]) * 0.18;
-    dimLerp[i] += ((anyPlaying && !isPlaying ? 0 : 1) - dimLerp[i]) * 0.12;
-
-    // /test3：渲染深度 = effDepth(n.z) + 球浮动「层级波动」偏移 _waveZ（滚轮集体 shift + 单球缓慢波动）。
-    // 球随波动平滑变大/变小 + 一点透视位移（perspScale/spread 都吃这个 d）。同一 project() 也喂命中层/水面遮罩 → 三者对齐。
-    const p = project(n.x, n.y, renderDepth(n.z, n._waveZ ?? 0), proj);
-    const diameter = 2 * n.radius * HALO_R * (1 + hoverLerp[i] * 0.09) * p.scale;
-    tmpMatrix.makeScale(diameter, diameter, 1);
-    tmpMatrix.setPosition(p.sx, p.sy, 0);
-    mesh.setMatrixAt(i, tmpMatrix);
-
-    // 播放球 / hover 且有人在播 → 白；否则球色（复刻 SphereNode renderFill）
-    const c = isPlaying || (isHover && anyPlaying) ? WHITE : baseColors[i];
-    aColor[i * 3] = c[0]; aColor[i * 3 + 1] = c[1]; aColor[i * 3 + 2] = c[2];
-
-    let fill = 0.52 + n.importance * 0.36;        // 复刻 baseOpacity
-    if (isPlaying) fill = Math.min(0.95, fill + 0.2);
-    // G6 没入淡出：水位升过球 → 球淡出，露出下方铺满全屏的水波（= 水波盖住球）。
-    // 折叠进整体不透明度 dim，shader 端无需改动；水关时 submerge=0 不影响。H5：读动态深度 displayZ。
-    const submerge = waterOn ? getSubmerge(renderDepth(n.displayZ ?? n.z, n._waveZ ?? 0)) : 0;
-    aParams[i * 4] = Math.min(1, fill * tuning.fill);          // 浓度（fillOpacity × 调参）
-    aParams[i * 4 + 1] = (isHover ? 0.5 : 0.3) * tuning.halo;  // haloPeak（halo-strong/soft × 调参）
-    aParams[i * 4 + 2] = dimLerp[i] * (1 - submerge);
-    aParams[i * 4 + 3] = p.blurAmt * rt.dofStrength;          // /test3 景深失焦度 ×强度倍率（面板 dofStrength，往小=更弱）
-  }
-
-  mesh.instanceMatrix.needsUpdate = true;
-  (mesh.geometry.getAttribute('aColor') as InstancedBufferAttribute).needsUpdate = true;
-  (mesh.geometry.getAttribute('aParams') as InstancedBufferAttribute).needsUpdate = true;
-}
-
 export default function SphereInstances(
-  { glSim, waterOn, motionOn, sphereDrift }: { glSim: GlSim; waterOn: boolean; motionOn: boolean; sphereDrift: boolean },
+  { glSim, waterOn, motionOn, sphereDrift, life }: { glSim: GlSim; waterOn: boolean; motionOn: boolean; sphereDrift: boolean; life: LifeFlags },
 ) {
   const { nodes, sizeRef } = glSim;
   const count = nodes.length;
   const meshRef = useRef<InstancedMesh>(null);
-  const matRef = useRef<ShaderMaterial>(null); // 写 uniform 走真身（见 applySphereUniforms）
+  const matRef = useRef<ShaderMaterial>(null); // 写 uniform 走真身（见 applyTuningUniforms）
   const camera = useThree((s) => s.camera);
   const lastSize = useRef({ w: 0, h: 0 }); // J2：相机跟随 sizeRef 的上次值（变了才重配像素相机）
 
@@ -168,6 +83,7 @@ export default function SphereInstances(
   const buf = useMemo<InstanceBuf>(() => ({
     aColor: new Float32Array(count * 3),
     aParams: new Float32Array(count * 4),
+    aSeed: new Float32Array(count * 2),
     baseColors: nodes.map((n) => hexToSRGB(n.color)),
     hoverLerp: new Float32Array(count),
     dimLerp: new Float32Array(count).fill(1),
@@ -179,6 +95,14 @@ export default function SphereInstances(
     uContrast: { value: 1 },
     uSaturation: { value: 1 },
     uBodyRatio: { value: BODY_RATIO }, // /test3：原 aParams.w 常量，腾出 .w 给逐球景深失焦度
+    uEdgeAmp: { value: 0 },   // L3 能量球边缘（0 = 正圆现状）
+    uEdgeK1: { value: 5 },
+    uEdgeK2: { value: 8 },
+    uEdgeW1: { value: 0 },
+    uEdgeW2: { value: 0 },
+    uEdgeSoft: { value: 0 },
+    uExciteGain: { value: 0 },
+    uTime: { value: 0 },
   }), []);
 
   useFrame(() => {
@@ -193,8 +117,12 @@ export default function SphereInstances(
     }
     const tuning = getTuning();
     applyTuningUniforms(mat, tuning);
+    applyEdgeUniforms(mat, life, performance.now() / 1000); // L3 边缘波/激励 uniform
     const proj = makeProjCtx(sz.w || 1, sz.h || 1);
-    writeFrame(mesh, nodes, buf, glSim.wavesRef, glSim.playingIdRef.current, glSim.hoverIdRef.current, tuning, waterOn, motionOn, proj, sphereDrift, 0.2 * (sz.h || 900));
+    writeFrame(mesh, buf, {
+      nodes, wavesRef: glSim.wavesRef, playingId: glSim.playingIdRef.current, hoverId: glSim.hoverIdRef.current,
+      tuning, waterOn, motionOn, proj, drift: sphereDrift, life, waveSpeed: 0.2 * (sz.h || 900),
+    });
   });
 
   if (count === 0) return null;
@@ -203,6 +131,7 @@ export default function SphereInstances(
       <planeGeometry args={[1, 1]}>
         <instancedBufferAttribute attach="attributes-aColor" args={[buf.aColor, 3]} />
         <instancedBufferAttribute attach="attributes-aParams" args={[buf.aParams, 4]} />
+        <instancedBufferAttribute attach="attributes-aSeed" args={[buf.aSeed, 2]} />
       </planeGeometry>
       <shaderMaterial
         ref={matRef}

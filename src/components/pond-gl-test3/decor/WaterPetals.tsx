@@ -2,12 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import {
-  NX, allocPetalSim, petalNY, petalDrop, stepPetalWater, syncPetals, updatePetals, drawPetals, type Petal,
+  syncPetals, updatePetals, drawPetals, petalDropScreen, type Petal,
 } from './water-petals-sim';
+import { acquireWakeField, releaseWakeField } from '../life/wake-field';
 import { getRippleTuning } from '../water/spike/ripple-tuning';
 import { getSubmerge, getEffectiveWaterLevel } from '../water/water-level';
 import { project, type ProjCtx } from '../sphere-projection';
-import { renderDepth, getPointerFx, getCameraFx } from '../pointer-fx';
+import { depthOf, displayDepthOf, getPointerFx, getCameraFx } from '../pointer-fx';
 import { prefersReducedMotion } from '../reduced-motion';
 import type { GlSim } from '../spheres/use-gl-sim';
 
@@ -37,34 +38,16 @@ export default function WaterPetals({ glSim }: { glSim?: GlSim }) {
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       cv.style.width = `${W}px`; cv.style.height = `${H}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      allocPetalSim(W, H);
       petals.length = 0; // 清空 → loop 里按当前 W/H + petalCount 重建（尺寸随屏）
     };
     resize();
     window.addEventListener('resize', resize);
 
-    // 喂涟漪场（屏幕坐标 → 网格）：GL 水面同源的"各类波纹"都注入 → 花瓣随波走。
-    // 每来源触发强度走参数板倍率（petalDrag/Click/Wave/Splash，1=默认、0=该来源不影响花瓣）。
-    const dropScreen = (sx: number, sy: number, radius: number, strength: number) => {
-      if (strength <= 0) return;
-      petalDrop((sx / Math.max(1, W)) * NX, (sy / Math.max(1, H)) * petalNY(), radius, strength);
-    };
+    // 涟漪场生命周期（alloc/resize + 指针/涟漪监听喂 drop + 每帧 stepPetalWater）已抽到 life/wake-field
+    // （refcount 单例，花瓣层 / 尾波扰球共享一场）→ 本组件挂载时 acquire、卸载时 release。
+    acquireWakeField();
+    // 球出入水 splash 注入仍属花瓣专属（petalSplash）→ 保留穿越检测；注入走共享 petalDropScreen。
     const prevSub = new Map<string, number>(); // 球出入水穿越检测：每球上帧没入度
-    let lastMove = 0;
-    const onMove = (e: PointerEvent) => {
-      const now = performance.now();
-      if (now - lastMove < 28) return; // 节流（同 GL 划水手感）
-      lastMove = now;
-      dropScreen(e.clientX, e.clientY, 3, 0.16 * getRippleTuning().petalDrag);
-    };
-    const onDown = (e: PointerEvent) => dropScreen(e.clientX, e.clientY, 5, 0.6 * getRippleTuning().petalClick);
-    const onWave = (e: Event) => {
-      const d = (e as CustomEvent<{ x: number; y: number }>).detail;
-      if (d && typeof d.x === 'number') dropScreen(d.x, d.y, 5, 0.5 * getRippleTuning().petalWave);
-    };
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerdown', onDown);
-    window.addEventListener('bg-ripple:wave', onWave);
 
     const loop = () => {
       if (cancelled) return;
@@ -78,24 +61,23 @@ export default function WaterPetals({ glSim }: { glSim?: GlSim }) {
       const { mx, my } = getPointerFx();
       const c = getCameraFx();
       const proj: ProjCtx = { cx: W / 2, cy: H / 2, mx, my, focusZ: getEffectiveWaterLevel(), dof: c.dof, perspective: c.perspective, parallax: c.parallax };
-      // 球出入水：球穿过水面（没入度跨 0.5，含球浮动/滚轮层级，与遮挡同口径 renderDepth）→ 在**投影后**球处给花瓣场注入涟漪。
+      // 球出入水：球穿过水面（没入度跨 0.5，滚轮层级 + 每球 _shiftOff，与遮挡同口径 displayDepthOf）→ 在**投影后**球处给花瓣场注入涟漪。
       // 每帧限 5 滴防"滚轮一片球齐穿越"时的水花风暴（同 ripple-feed 限流思路）。
       if (nodes && tn.petalSplash > 0) {
         let splashes = 0;
         for (const n of nodes) {
           if (n.x == null || n.y == null) continue;
-          const sub = getSubmerge(renderDepth(n.displayZ ?? n.z, n._waveZ ?? 0));
+          const sub = getSubmerge(displayDepthOf(n));
           const prev = prevSub.get(n.id);
           prevSub.set(n.id, sub);
           if (prev != null && (prev < 0.5) !== (sub < 0.5) && splashes < 5) {
-            const pr = project(n.x, n.y, renderDepth(n.z, n._waveZ ?? 0), proj);
-            dropScreen(pr.sx, pr.sy, 5, 0.6 * tn.petalSplash);
+            const pr = project(n.x, n.y, depthOf(n), proj, n);
+            petalDropScreen(pr.sx, pr.sy, W, H, 5, 0.6 * tn.petalSplash);
             splashes++;
           }
         }
       }
       syncPetals(petals, Math.max(0, Math.round(tn.petalCount)), W, H, dpr); // 数量即时增删
-      stepPetalWater();
       if (!prefersReducedMotion()) updatePetals(petals, dt, t, tn.petalSens);
       ctx.clearRect(0, 0, W, H);
       drawPetals(ctx, petals, t, W, H, dpr, tn.petalSens, tn.petalSize);
@@ -107,9 +89,9 @@ export default function WaterPetals({ glSim }: { glSim?: GlSim }) {
         ctx.fillStyle = '#000';
         for (const n of nodes) {
           if (n.x == null || n.y == null) continue;
-          const emerged = 1 - getSubmerge(renderDepth(n.displayZ ?? n.z, n._waveZ ?? 0));
+          const emerged = 1 - getSubmerge(displayDepthOf(n));
           if (emerged <= 0.01) continue;
-          const pr = project(n.x, n.y, renderDepth(n.z, n._waveZ ?? 0), proj); // 投影后屏幕位置 + 透视缩放
+          const pr = project(n.x, n.y, depthOf(n), proj, n); // 投影后屏幕位置 + 透视缩放
           ctx.globalAlpha = emerged;
           ctx.beginPath();
           ctx.arc(pr.sx, pr.sy, n.radius * pr.scale, 0, Math.PI * 2); // 抠洞 = 视觉球（位置/大小与 GL 球一致）
@@ -125,9 +107,7 @@ export default function WaterPetals({ glSim }: { glSim?: GlSim }) {
       cancelled = true;
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerdown', onDown);
-      window.removeEventListener('bg-ripple:wave', onWave);
+      releaseWakeField();
     };
   }, []);
 

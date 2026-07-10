@@ -1,5 +1,5 @@
 import type { GlPhysNode } from './gl-sim-setup';
-import { renderDepth } from '../pointer-fx';
+import { depthOf } from '../pointer-fx';
 
 /**
  * 背景涟漪经过球时给球加 outward velocity（快照自 sphere-sim-setup.ts:145-175，去掉 _perturb）。
@@ -58,7 +58,7 @@ export function pushGlSpheresByWaves(
     if (n.id === playingId || n.fx != null || n.fy != null || n.x == null || n.y == null) continue;
     let atten = 1;
     if (depthAtten) {
-      const below = waterLevel - renderDepth(n.z, n._waveZ ?? 0); // >0 = 在水下（层模型有效深度，含球浮动）
+      const below = waterLevel - depthOf(n); // >0 = 在水下（层模型有效深度 + _shiftOff）
       if (below <= 0) continue;                                   // 出水球不被水波推（"水中的球"）
       atten = Math.max(0, 1 - below / Math.max(0.001, pushDepth)) * pushScale; // 离面越远越小
       if (atten <= 0) continue;

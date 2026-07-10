@@ -17,6 +17,7 @@ import GlLoading from '@/src/components/pond-gl-test3/overlay/GlLoading';
 import TunePanel from '@/src/components/pond-gl-test3/overlay/TunePanel';
 import ScenePanel from '@/src/components/pond-gl-test3/overlay/ScenePanel';
 import RippleSpikePanel from '@/src/components/pond-gl-test3/water/spike/RippleSpikePanel';
+import LifePanel from '@/src/components/pond-gl-test3/life/LifePanel';
 
 // GL 渲染层：全链路 next/dynamic + ssr:false，three/R3F 只进 /test3 异步 chunk → 首页 bundle 零增量
 const PondGL = dynamic(() => import('@/src/components/pond-gl-test3/PondGL'), { ssr: false });
@@ -84,13 +85,14 @@ function Test3PageInner() {
       )}
 
       {/* I2：GL 日蚀层（z-20，播放球叠日蚀焦点；其他球已隐去）；J1：兜底时隐 */}
-      {glFlags.glSpheres && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
+      {glFlags.glSpheres && glFlags.glEclipse && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
 
       {/* /test3：水面已固定，水位指示无意义 → 不挂 WaterLevelIndicator */}
 
       {/* 右下角参数板栏：调色 + 波纹/运动 同栏从下往上堆叠（不重叠） */}
       <div className="pointer-events-none fixed bottom-3 right-3 z-50 flex flex-col-reverse items-end gap-2">
         {glFlags.glSpheres && <TunePanel />}
+        {glFlags.glSpheres && <LifePanel />}
         {(glFlags.rtt || glFlags.waterFx || glFlags.floatMotes || glFlags.waterPlants || glFlags.reefStones || glFlags.crystalPillars) && <RippleSpikePanel />}
       </div>
 

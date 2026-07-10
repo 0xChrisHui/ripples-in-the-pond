@@ -24,6 +24,7 @@ export interface GLFlags {
   waterDbg: boolean;      // H3 扭曲水面遮罩调试
   sphereMotion: boolean;  // H5 球浮沉（/test3「球浮动」开关）
   sphereDrift: boolean;   // 球飘动+涟漪推：随机游走(x/y) + 水中球被点击/切组涟漪推动（与沉浮正交，可同开）
+  glEclipse: boolean;     // 播放日蚀焦点层（黑盘+白环+日冕 = 用户说的"黑色圆圈"）开关
   depthModel: boolean;    // K3 深度三层模型
   sphereShadow: boolean;  // K4 浮出球水面投影·暗影
   shadowOcclude: boolean; // K4-B 投影挡月光
@@ -44,6 +45,17 @@ export interface GLFlags {
   dof: boolean;           // 焦平面景深（失焦虚化，对焦面=水线）
   perspective: boolean;   // 一点透视（深度尺寸 + 滚轮绕中心聚散缩放）
   parallax: boolean;      // 鼠标视差（按深度分层位移）
+  // ↓↓ P8-L 生命感 10 模块（默认全 false = 像素级现状；见文件末 LIFE_FLAG_KEYS/pickLifeFlags）↓↓
+  wheelDesync: boolean;   // 滚轮升降去同步（每球幅度/时滞差）
+  parallaxDesync: boolean;// 鼠标视差去同步（每球幅度/方向差）
+  flowDrift: boolean;     // 流场游移（暗流带动球缓慢漂移）
+  shiver: boolean;        // 偶发颤动（球不定时轻颤一下）
+  edgeWave: boolean;      // 能量球边缘波（球轮廓周期性起伏）
+  edgeExcite: boolean;    // 扰动激励（涟漪/交互激起球的临时形变）
+  jelly: boolean;         // 果冻感（球运动时的弹性拉伸）
+  wakeSpheres: boolean;   // 尾波扰球（涟漪尾波推动水下球）
+  alphaFlicker: boolean;  // 时隐时现（球透明度缓慢起伏）
+  haloBreath: boolean;    // 光晕呼吸（球光晕幅度周期性起伏）
 }
 
 /** /test3 默认：控制台只暴露 11 项（7 视觉层 + 球浮动 + 相机三效），其余常驻行为在此定死。仅 fork 生效。 */
@@ -59,6 +71,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   waterDbg: false,
   sphereMotion: true,    // 球浮动默认开（用户指定）
   sphereDrift: true,     // 球飘动+涟漪推：默认开（移自 /test1；只动 x/y，与沉浮和谐共存）
+  glEclipse: true,       // 播放日蚀焦点默认开（黑色圆圈）
   depthModel: true,      // 水下按深度折射
   sphereShadow: false,
   shadowOcclude: false,
@@ -78,6 +91,16 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   dof: true,             // 景深默认开
   perspective: true,     // 一点透视默认开
   parallax: true,        // 鼠标视差默认开
+  wheelDesync: false,    // P8-L 生命感 10 模块全默认关（像素级现状）
+  parallaxDesync: false,
+  flowDrift: false,
+  shiver: false,
+  edgeWave: false,
+  edgeExcite: false,
+  jelly: false,
+  wakeSpheres: false,
+  alphaFlicker: false,
+  haloBreath: false,
 };
 
 /** URL bool 解析：'1'/'true'→true、'0'/'false'→false、其余→默认（与原逐字段写法语义一致）。 */
@@ -106,6 +129,7 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
     waterDbg: parseBool(searchParams, 'waterDbg', d.waterDbg),
     sphereMotion: parseBool(searchParams, 'sphereMotion', d.sphereMotion),
     sphereDrift: parseBool(searchParams, 'sphereDrift', d.sphereDrift),
+    glEclipse: parseBool(searchParams, 'glEclipse', d.glEclipse),
     depthModel: parseBool(searchParams, 'depthModel', d.depthModel),
     sphereShadow: parseBool(searchParams, 'sphereShadow', d.sphereShadow),
     shadowOcclude: parseBool(searchParams, 'shadowOcclude', d.shadowOcclude),
@@ -125,6 +149,16 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
     dof: parseBool(searchParams, 'dof', d.dof),
     perspective: parseBool(searchParams, 'perspective', d.perspective),
     parallax: parseBool(searchParams, 'parallax', d.parallax),
+    wheelDesync: parseBool(searchParams, 'wheelDesync', d.wheelDesync),
+    parallaxDesync: parseBool(searchParams, 'parallaxDesync', d.parallaxDesync),
+    flowDrift: parseBool(searchParams, 'flowDrift', d.flowDrift),
+    shiver: parseBool(searchParams, 'shiver', d.shiver),
+    edgeWave: parseBool(searchParams, 'edgeWave', d.edgeWave),
+    edgeExcite: parseBool(searchParams, 'edgeExcite', d.edgeExcite),
+    jelly: parseBool(searchParams, 'jelly', d.jelly),
+    wakeSpheres: parseBool(searchParams, 'wakeSpheres', d.wakeSpheres),
+    alphaFlicker: parseBool(searchParams, 'alphaFlicker', d.alphaFlicker),
+    haloBreath: parseBool(searchParams, 'haloBreath', d.haloBreath),
   };
 }
 
@@ -142,4 +176,20 @@ export function isWebGLAvailable(): boolean {
     webglCached = false;
   }
   return webglCached;
+}
+
+/** P8-L 生命感 10 模块 flag 键（默认全 false = 像素级现状）。 */
+export const LIFE_FLAG_KEYS = [
+  'wheelDesync', 'parallaxDesync', 'flowDrift', 'shiver', 'edgeWave',
+  'edgeExcite', 'jelly', 'wakeSpheres', 'alphaFlicker', 'haloBreath',
+] as const;
+export type LifeFlagKey = (typeof LIFE_FLAG_KEYS)[number];
+export type LifeFlags = Pick<GLFlags, LifeFlagKey>;
+/** 从完整 GLFlags 抽出 10 个生命感 flag（打包成一个 life 对象下传，防 prop 爆炸）。 */
+export function pickLifeFlags(f: GLFlags): LifeFlags {
+  return {
+    wheelDesync: f.wheelDesync, parallaxDesync: f.parallaxDesync, flowDrift: f.flowDrift,
+    shiver: f.shiver, edgeWave: f.edgeWave, edgeExcite: f.edgeExcite, jelly: f.jelly,
+    wakeSpheres: f.wakeSpheres, alphaFlicker: f.alphaFlicker, haloBreath: f.haloBreath,
+  };
 }

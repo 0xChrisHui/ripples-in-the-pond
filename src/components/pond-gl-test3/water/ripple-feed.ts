@@ -2,7 +2,7 @@
 
 import { Vector4, type ShaderMaterial } from 'three';
 import { getSubmerge } from './water-level';
-import { renderDepth } from '../pointer-fx';
+import { depthOf, displayDepthOf } from '../pointer-fx';
 import { project, type ProjCtx } from '../sphere-projection';
 import { MAX_DROPS } from './spike/ripple-spike-shaders';
 import { prefersReducedMotion } from '../reduced-motion';
@@ -57,7 +57,7 @@ function trailDrops(nodes: GlPhysNode[], w: number, h: number, t: RippleTuning, 
     const last = trailAt.get(n.id);
     if (last && Math.hypot(n.x - last.x, n.y - last.y) < TRAIL_MIN) continue;
     trailAt.set(n.id, { x: n.x, y: n.y }); // 节流用 sim 坐标
-    const p = project(n.x, n.y, renderDepth(n.z, n._waveZ ?? 0), proj); // 落点用投影后屏幕坐标 → 尾迹贴视觉球
+    const p = project(n.x, n.y, depthOf(n), proj, n); // 落点用投影后屏幕坐标 → 尾迹贴视觉球
     const [ux, uy] = toUv(p.sx, p.sy, w, h);
     out.push({ ux, uy, radius: t.dropRadius, strength: t.trail });
   }
@@ -68,13 +68,14 @@ function trailDrops(nodes: GlPhysNode[], w: number, h: number, t: RippleTuning, 
 function splashDrops(nodes: GlPhysNode[], w: number, h: number, t: RippleTuning, proj: ProjCtx): Drop[] {
   const crossed: { x: number; y: number }[] = [];
   for (const n of nodes) {
-    // 用渲染深度（effDepth + 球浮动 _waveZ）→ 滚轮集体 **和** 球浮动层级波动穿过水面时都触发"出水/入水"溅起
-    const sub = getSubmerge(renderDepth(n.displayZ ?? n.z, n._waveZ ?? 0));
+    // 用没入判定深度（displayZ + 滚轮 shift + _shiftOff；浮动 _waveZ 已解耦不进深度）→ 滚轮集体/逐球错开穿过水面时触发溅起
+    const sub = getSubmerge(displayDepthOf(n));
     const prev = prevSub.get(n.id);
     prevSub.set(n.id, sub);
     if (prev == null || n.x == null || n.y == null) continue;   // 首帧/重建后只建基线，不溅
     if ((prev < CROSS) !== (sub < CROSS)) {
-      const p = project(n.x, n.y, renderDepth(n.z, n._waveZ ?? 0), proj); // 溅起落在投影后的视觉球位置
+      n._excite = Math.min(1, (n._excite ?? 0) + 0.6); // L3-2 出入水穿越 → 边缘激励瞬时 +（edgeExcite 关时 uExciteGain=0 无视觉）
+      const p = project(n.x, n.y, depthOf(n), proj, n); // 溅起落在投影后的视觉球位置
       crossed.push({ x: p.sx, y: p.sy });
     }
   }
