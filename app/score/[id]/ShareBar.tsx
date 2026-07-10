@@ -10,13 +10,16 @@ import { useState } from 'react';
 
 type Props = { id: string; tokenId: number | null; trackTitle: string };
 
-/** canonical：已上链优先用数字 tokenId 路由（更短、永久有效），否则用 UUID */
+/** canonical slug：已上链优先用数字 tokenId（更短、永久有效），否则用 UUID */
+function slugOf(id: string, tokenId: number | null): string {
+  return tokenId != null ? String(tokenId) : id;
+}
+
 function shareUrl(id: string, tokenId: number | null): string {
   const base =
     process.env.NEXT_PUBLIC_APP_URL ??
     (typeof window !== 'undefined' ? window.location.origin : '');
-  const slug = tokenId != null ? String(tokenId) : id;
-  return `${base}/score/${slug}`;
+  return `${base}/score/${slugOf(id, tokenId)}`;
 }
 
 function shareText(trackTitle: string, tokenId: number | null): string {
@@ -80,6 +83,8 @@ export default function ShareBar({ id, tokenId, trackTitle }: Props) {
     if (ok) window.setTimeout(() => setCopyLabel('复制链接'), 2000);
   };
 
+  const slug = slugOf(id, tokenId);
+
   return (
     <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-xs text-white/30">
       <button onClick={onTwitter} className="transition-colors hover:text-white/70">
@@ -95,6 +100,14 @@ export default function ShareBar({ id, tokenId, trackTitle }: Props) {
       >
         {copyLabel}
       </button>
+      <a
+        href={`/score/${slug}/poster`}
+        download={`ripples-${slug}.png`}
+        className="transition-colors hover:text-white/70"
+        title="下载竖版海报"
+      >
+        下载海报
+      </a>
     </div>
   );
 }
