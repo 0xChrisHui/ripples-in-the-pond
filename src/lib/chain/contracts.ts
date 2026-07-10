@@ -146,8 +146,11 @@ export const ORCHESTRATOR_ABI = [
 // getAddress 标准化 checksum，避免 viem 拒绝大小写不严格的地址
 import { getAddress } from 'viem';
 
-export const AIRDROP_NFT_ADDRESS = getAddress(
-  process.env.NEXT_PUBLIC_AIRDROP_NFT_ADDRESS as `0x${string}`,
+// SR-P1-24：原本模块顶层 getAddress()，env 缺失即抛 → 连累所有 import contracts.ts 的路由
+// （mint/score 队列全崩）。改惰性：未配置 airdrop（如主网不部署）时不抛，取用时再 checksum。
+const _rawAirdrop = process.env.NEXT_PUBLIC_AIRDROP_NFT_ADDRESS;
+export const AIRDROP_NFT_ADDRESS = (
+  _rawAirdrop ? getAddress(_rawAirdrop as `0x${string}`) : ('0x' as `0x${string}`)
 );
 
 export const AIRDROP_NFT_ABI = [
