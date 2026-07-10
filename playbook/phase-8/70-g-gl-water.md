@@ -3,10 +3,10 @@
 > **立项**：2026-06-12 用户拍板（取代 overview 旧 `P8-W` gate）。**装包批准**：`three` / `@react-three/fiber` / `@react-three/drei` 已进 `docs/STACK.md` 白名单（2026-06-12）。
 > **定位演进（2026-06-14 重定）**：本 track 已从"**试探 GL 能否替代 SVG 的 spike**"毕业为"**在 /test1 上用 GL 正式重建水塘、持续优化**"。GL 方向已定，**取消去留拍板（原 G7）**；水面方向从"程序化叠层"改为"**全屏动态扭曲**"（对标 [sirxemic/jquery.ripples](https://sirxemic.github.io/jquery.ripples/)）。
 > **本文 = 总伞 + G 线**：红线 / 编号 / 架构 / 执行模式 / 弃用记录在此。详细子文档：
-> - **H 线 · 水面子系统** → [`phase-8-h.md`](./phase-8-h.md)（核心：动态扭曲水面 + 水位 + 运动模型）
-> - **I 线 · 去 SVG + 新组件** → [`phase-8-i.md`](./phase-8-i.md)
-> - **RTT 技术调研** → [`phase-8-g5d-rtt-research.md`](./phase-8-g5d-rtt-research.md)（H 线实施圣经）
-> - **旧版存档（复盘对比）** → [`phase-8-g-gl-water.md`](./phase-8-g-gl-water.md)（spike 时期原貌：G1-G7 + P2 对等 + 去留拍板 + 折射三态）
+> - **H 线 · 水面子系统** → [`74-h-water-surface.md`](./74-h-water-surface.md)（核心：动态扭曲水面 + 水位 + 运动模型）
+> - **I 线 · 去 SVG + 新组件** → [`80-i-desvg-components.md`](./80-i-desvg-components.md)
+> - **RTT 技术调研** → [`72-g-rtt-research.md`](./72-g-rtt-research.md)（H 线实施圣经）
+> - **旧版存档（复盘对比）** → [`99-archive-g-gl-water-spike.md`](./99-archive-g-gl-water-spike.md)（spike 时期原貌：G1-G7 + P2 对等 + 去留拍板 + 折射三态）
 
 ---
 
@@ -45,15 +45,15 @@
 ═══ G 线 · GL 地基　✅ 已完成（本文 §3）═══════════════════════
   G1 /test1 克隆   G2 关透视   G3 装包+Canvas+基调   G4 GL球 instanced + DOM命中层
 
-═══ H 线 · 水面子系统（核心，进行中）→ phase-8-h.md ════════════
+═══ H 线 · 水面子系统（核心，进行中）→ 74-h-water-surface.md ════════════
   H1 RTT spike  H2 整合扭曲  H3 水位遮罩  H4 涟漪交互  H5 运动模型  H6 参数板
 
-═══ I 线 · 去 SVG + 全新组件（开放）→ phase-8-i.md ═════════════
+═══ I 线 · 去 SVG + 全新组件（开放）→ 80-i-desvg-components.md ═════════════
   I1 去 SVG + GL nav   I2 日蚀 GL 重做   I3 新组件首批   ── 收口线（并入 I）──
 ```
 
 **老编号 → 新编号 对照**（防混）：
-- 旧 `G5-D`（含 `G5-D0` spike）/ `GW0–GW5` → **H1–H6**（[`phase-8-h.md`](./phase-8-h.md)）
+- 旧 `G5-D`（含 `G5-D0` spike）/ `GW0–GW5` → **H1–H6**（[`74-h-water-surface.md`](./74-h-water-surface.md)）
 - 旧"阶段三 / GP（SVG 对等）" / 旧 `P2-a…f` → **I 线**（改为"去 SVG + 重设计"，不再追平 SVG）
 - 旧 `G5`（程序化水面 `eb5e11d`）/ `G6`（折射三态）/ `G6-1`（淡出覆盖）→ **弃用/兜底**，水全走 H 线（见 §8）
 - 旧 `G7`（去留拍板）→ **取消**
@@ -138,11 +138,11 @@ app/test1/{layout,page}.tsx   # I1：page 从"克隆首页+GL叠加"重写为"�
 
 ---
 
-## 4. H 线 · 水面子系统 → 见 [`phase-8-h.md`](./phase-8-h.md)
+## 4. H 线 · 水面子系统 → 见 [`74-h-water-surface.md`](./74-h-water-surface.md)
 
 > 核心：全屏动态扭曲水面（RTT + ping-pong）+ 水位深度遮罩 + 涟漪交互 + 对象运动模型 + 参数板。含**需求规格 v1（锁定锚点）**与 H1–H6 详细步骤。**起手前先 commit 归档 G6-1**（见 §6）。
 
-## 5. I 线 · 去 SVG + 全新组件 → 见 [`phase-8-i.md`](./phase-8-i.md)
+## 5. I 线 · 去 SVG + 全新组件 → 见 [`80-i-desvg-components.md`](./80-i-desvg-components.md)
 
 > 去 SVG（/test1 卸载、不删共享码）+ 日蚀 GL 重做 + 新组件首批；**收口线**并入此线。I1 可从 H1–H3 稳定后并行。
 
@@ -174,8 +174,8 @@ app/test1/{layout,page}.tsx   # I1：page 从"克隆首页+GL叠加"重写为"�
 | 旧条目 | 状态 | 说明 |
 |---|---|---|
 | 旧 G5 程序化水面（commit `eb5e11d`） | **弃用** | 当时手搓 ping-pong 离屏渲染没跑通 → 落地的是**纯解析涟漪**（`use-ripple-fbo.ts` 的 `MAX_RIPPLES` 向量存储，**非 FBO**）；H1 重新挑战 RTT+ping-pong（调研已证可行）取代之 |
-| 旧 G6 折射三态（z>L+0.06 / 折射≤8px / 变暗×0.6 / 青蓝 tint） | **弃用** | 改为 H3"水上清晰 / 水下被全屏涟漪扭"；明确**不要**变暗滤镜（见 [`phase-8-h.md`](./phase-8-h.md) 需求规格 v1 第 4 项） |
+| 旧 G6 折射三态（z>L+0.06 / 折射≤8px / 变暗×0.6 / 青蓝 tint） | **弃用** | 改为 H3"水上清晰 / 水下被全屏涟漪扭"；明确**不要**变暗滤镜（见 [`74-h-water-surface.md`](./74-h-water-surface.md) 需求规格 v1 第 4 项） |
 | 旧 G6-1 球淡出覆盖（工作树/将归档） | **降级兜底** | 扭曲跑通后由 H 线取代；保留代码作 RTT 不稳时退路 |
 | 旧 G7 去留拍板（a/b/c） | **取消** | GL 方向已定；/test1 持续优化，上首页是更远将来另立 track |
 | 旧 P2 / GP（SVG 视觉对等、卸载 SVG） | **重构为 I 线** | 不再"追平 SVG"，改"去 SVG + 全新设计"；其中"卸载 SVG" → I1，"日食搬 GL" → I2 |
-| 旧"水下折射三态表 / 滴水注入表 / artDir 两档" | **部分留作参考** | 月光/常驻微波/穿越限流的语义沿用；折射"变暗+tint"那套作废；完整旧表见旧版存档 [`phase-8-g-gl-water.md`](./phase-8-g-gl-water.md) |
+| 旧"水下折射三态表 / 滴水注入表 / artDir 两档" | **部分留作参考** | 月光/常驻微波/穿越限流的语义沿用；折射"变暗+tint"那套作废；完整旧表见旧版存档 [`99-archive-g-gl-water-spike.md`](./99-archive-g-gl-water-spike.md) |

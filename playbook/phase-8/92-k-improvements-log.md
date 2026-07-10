@@ -1,7 +1,7 @@
 # P8 改进需求清单（/test1 GL 水塘 · Phase 8 后续）
 
 > 收集 GL 水塘的进一步改进需求,逐条记录(需求**细节**库)。来源:2026-06-16 起与用户逐条对齐。
-> **2026-06-16 已打包**:R1–R9 全部确认要做 → 转成**可执行 playbook** [`phase-8-k.md`](./phase-8-k.md)(K1–K8)。本文件留作需求细节参考;执行看 phase-8-k。
+> **2026-06-16 已打包**:R1–R9 全部确认要做 → 转成**可执行 playbook** [`90-k-visual-deepening.md`](./90-k-visual-deepening.md)(K1–K8)。本文件留作需求细节参考;执行看 90-k-visual-deepening。
 
 ---
 

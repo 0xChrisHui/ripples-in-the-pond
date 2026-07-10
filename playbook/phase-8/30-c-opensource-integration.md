@@ -3,7 +3,7 @@
 > **定位**：把 2026-06-12 三路开源调研（原 `p8-opensource-candidates.md`，已整理并入本文件）变成可逐步执行的引入 track。每个引入项 = 一个 `EffectsConfig` flag，/test 可手动开关。
 > **前置**：与 P8-A/B 基本无文件冲突，可并行；唯 C1 的 displacement 联动信号要等 P8-A S1 的 `use-water-field.ts` 存在。
 > **状态**：待用户说"开始 P8-C"。C2 需用户先批准装包。
-> **铁律**：沿用 8-B 的抽象铁律 + 沙盒铁律 + flag 五件套（`phase-8-b-effects-migration.md` §0）；P8 全局模块化铁律见 `overview.md`。
+> **铁律**：沿用 8-B 的抽象铁律 + 沙盒铁律 + flag 五件套（`20-b-effects-migration.md` §0）；P8 全局模块化铁律见 `00-overview.md`。
 
 ---
 

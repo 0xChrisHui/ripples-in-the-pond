@@ -1,6 +1,6 @@
 # P8-J — J 线 · GL 替换 SVG 首页（生产化迁移）
 
-> **属 Phase-8-G 伞下的「另立 track」**（I 线收口线预告：搬上首页 = 更远将来、另立 track）。红线 / 编号系统 / 执行模式见总文档 [`phase-8-g.md`](./phase-8-g.md)；H 线见 [`phase-8-h.md`](./phase-8-h.md)、I 线见 [`phase-8-i.md`](./phase-8-i.md)。
+> **属 Phase-8-G 伞下的「另立 track」**（I 线收口线预告：搬上首页 = 更远将来、另立 track）。红线 / 编号系统 / 执行模式见总文档 [`70-g-gl-water.md`](./70-g-gl-water.md)；H 线见 [`74-h-water-surface.md`](./74-h-water-surface.md)、I 线见 [`80-i-desvg-components.md`](./80-i-desvg-components.md)。
 > **commit scope**：`feat(p8-j): J1 …`；结尾 `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`。
 > **本文档依据**：2026-06-16 一次并行代码审计落实（各步附「审计实况」file:line）。审计 J1 那路 agent 卡在 StructuredOutput 重试循环被中止，J1 现状由主会话直接核 `PondGL.tsx` 补；critic（漏网坑）那步未跑完，「迁移坑清单」由主会话补。
 

@@ -1,8 +1,8 @@
 # P8-K — K 线 · 水塘视觉/手感深化（R1–R9 打包）
 
-> **属 Phase-8-G 伞下**。红线 / 架构蓝图 / 编号系统 / 执行模式见总文档 [`phase-8-g.md`](./phase-8-g.md);前序:H(水面子系统 `phase-8-h.md`)、I(去 SVG + 日蚀 `phase-8-i.md`)、J(生产迁移 `phase-8-j-migration.md`)。
+> **属 Phase-8-G 伞下**。红线 / 架构蓝图 / 编号系统 / 执行模式见总文档 [`70-g-gl-water.md`](./70-g-gl-water.md);前序:H(水面子系统 `74-h-water-surface.md`)、I(去 SVG + 日蚀 `80-i-desvg-components.md`)、J(生产迁移 `85-j-migration.md`)。
 > **commit scope**:`feat(p8-k): K1 …`;结尾 `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`。
-> **来源**:[`phase-8-improvements.md`](./phase-8-improvements.md) 的 R1–R9(2026-06-16 与用户逐条对齐、确认全做)。需求细节看 improvements;本文件是**可执行步骤**。
+> **来源**:[`92-k-improvements-log.md`](./92-k-improvements-log.md) 的 R1–R9(2026-06-16 与用户逐条对齐、确认全做)。需求细节看 improvements;本文件是**可执行步骤**。
 
 ## 总则
 

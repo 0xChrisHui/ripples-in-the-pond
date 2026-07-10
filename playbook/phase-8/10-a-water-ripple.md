@@ -1,7 +1,7 @@
 # Phase 8-A — 水波效果（水下折射动效）
 
 > **定位**：Phase 8「水塘视觉重设计」的第一个落地子track。先做"小球在水里晃动/折射"的动效骨架，是 P8 最核心的体感（贴合 Ripples in the Pond）。
-> **前置**：`playbook/phase-8/overview.md`（P8 总览）+ `playbook/roadmap-P8-P16.md`
+> **前置**：`playbook/phase-8/00-overview.md`（P8 总览）+ `playbook/roadmap-P8-P16.md`
 > **状态**：方案已拍板（2026-06-11），等"开始 P8-A"信号逐 step 实施。
 
 ---
@@ -82,7 +82,7 @@
 - **落地（2026-06-12 关联审查修订）**：`export const` 无法被运行时覆盖——`render-helpers.ts` 给 `POND_TILT_RATIO_DEFAULT = 1.0`，slider 值经 React context（或 CSS 变量 `--pond-tilt`）运行时广播；**所有消费者必须响应式读取**（背景涟漪 / 球涟漪 / waterWake / dragWake / pondShadow / cursorRing 等），任何一处在模块加载时读死常量，slider 一动就出现"一半元素压扁一半没压"——恰好违反本常量存在的唯一目的（全场景统一机位）。禁止各处写死数值。
 - **模块化**：slider 是 /test 面板的体验工具，比例 ≠1.0 的视觉只有用户手动滑动（或未来拍板改默认）才会出现。
 
-## 补充二：动效语言——从"飘在太空"到"浮在水上"（自 p8-s1 §三 收编）
+## 补充二：动效语言——从"飘在太空"到"浮在水上"（自 06-s1-visual-research §三 收编）
 
 水感成立的三条关键原则（本 track 各 step 的动效判断基准）：
 
@@ -93,8 +93,8 @@
 落地架构（与 d3-force 零冲突）：
 
 - d3 继续每 tick 写**外层** `<g>` 的 x/y（大尺度位置）；bobbing 用 CSS keyframe 挂**内层** `<g>`（translateY 0→-4~8px→0，3–6s + 双轴不可通约周期 + ±1.5° 微旋，hash 错峰 delay）——不同元素不同坐标系，CSS 在合成线程跑，不占 rAF 预算。
-- d3 参数方向：削弱 forceManyBody / forceLink（去星系结构感）、调高 velocityDecay（黏滞如水）、anchor 弹簧化（欠阻尼回摆 → phase-8-c `springBack`）、可选噪声微流 force（→ phase-8-c `flow`）。
-- 音乐 × 水：点击播放 = "一滴音落水"（球心涟漪 + 推开邻球）；播放中按节拍发周期涟漪、displacement scale 轻微脉动（→ phase-8-c `audioPulse` / `beatRipple`）。
+- d3 参数方向：削弱 forceManyBody / forceLink（去星系结构感）、调高 velocityDecay（黏滞如水）、anchor 弹簧化（欠阻尼回摆 → 30-c `springBack`）、可选噪声微流 force（→ 30-c `flow`）。
+- 音乐 × 水：点击播放 = "一滴音落水"（球心涟漪 + 推开邻球）；播放中按节拍发周期涟漪、displacement scale 轻微脉动（→ 30-c `audioPulse` / `beatRipple`）。
 - **模块化铁律**：本 track 及 P8 全部动效改动，每一项都必须挂 `EffectsConfig` flag，在 /test 面板可手动单独开关。
 
 ## 补充三：光源锚点 `MOON_ANCHOR`（2026-06-12 收编，8-B 各光元素共用）
@@ -106,6 +106,6 @@
 - **归属**：常量本体随 8-B S1 与 `POND_TILT_RATIO` 一并建立（同文件同模式）；各光元素接线随 8-B 对应 step（S2 waterDrop 高光 / S5 pondLights 碎光带 / S7.5 waterMoon）。
 - **唯一允许的例外（2026-06-12 关联审查）**：8-F `lightFollow`（月光寻声）只许移动 moonPath / 环境月光斑这类**环境光斑**，**球体高光方位永远锚定 MOON_ANCHOR 不动**（与"球本体保持正圆"同属风格化混合透视）；waterMoon 与 lightFollow 同开时两者必须同源汇合于播放球——画面里不得出现两个各自为政的月光源。
 
-## 与 overview.md 的关系
+## 与 00-overview.md 的关系
 
-`overview.md` 的 P8-S4「Archipelago 动效改造」= 本 track。P8-A 是它的**具体落地方案 + 路线决策**。overview 其余板块（颜色体系 / 球体质感 / 背景水面 / 导航）为 P8 的并行子track，P8-A 完成后按用户节奏推进。
+`00-overview.md` 的 P8-S4「Archipelago 动效改造」= 本 track。P8-A 是它的**具体落地方案 + 路线决策**。overview 其余板块（颜色体系 / 球体质感 / 背景水面 / 导航）为 P8 的并行子track，P8-A 完成后按用户节奏推进。

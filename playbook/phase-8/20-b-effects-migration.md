@@ -1,11 +1,11 @@
 # Phase 8-B — 特效体系水塘化迁移（13 开关去留落地）
 
-> **定位**：把 `p8-s1-visual-research.md` 第四节「13 个 effect 开关去留映射表」变成可逐步执行的实施手册。AI 拿到本文档 + 拍板结果即可动手。
-> **前置**：P8-A（水波折射，`phase-8-a-water-ripple.md`）完成——本 track 与 P8-A 在 `SphereNode.tsx` / `SphereGlowDefs.tsx` / `effects-config.ts` 有文件交集，必须排在其后避免冲突。色彩方向**不再阻塞本 track**（2026-06-12 拍板：token 默认现状兼容值，三方向做成 8-D 的主题开关）。
+> **定位**：把 `06-s1-visual-research.md` 第四节「13 个 effect 开关去留映射表」变成可逐步执行的实施手册。AI 拿到本文档 + 拍板结果即可动手。
+> **前置**：P8-A（水波折射，`10-a-water-ripple.md`）完成——本 track 与 P8-A 在 `SphereNode.tsx` / `SphereGlowDefs.tsx` / `effects-config.ts` 有文件交集，必须排在其后避免冲突。色彩方向**不再阻塞本 track**（2026-06-12 拍板：token 默认现状兼容值，三方向做成 8-D 的主题开关）。
 > **状态**：等"开始 P8-B"信号。
 > **抽象铁律（2026-06-12 用户定）**：氛围元素**禁止任何具象形态**——鱼、水黾、落叶、莲叶、花一律不做，只用光、波、斑、雾、痕这类抽象形态表达。原"水黾/游鱼/落叶/莲叶"降为运动节奏的意象参考，抽象版落地规格见 2.8-2.12。
 > **沙盒铁律（2026-06-12 用户定）**：所有新效果先在 `/test` 页可开关体验——新 flag 桌面/移动默认**全 false**，EffectsPanel 自动出复选框，用户充分体验后才在 S8 拍板默认值。任何效果不经 /test 体验不得改线上默认视觉。
-> **命名备注**：`phase-8-a-water-ripple.md` 里提过的"可选 Phase 8-B = WebGL 背景 gate"自本文档起改称 **P8-W（WebGL gate）**，"P8-B"名号归本 track。下次改动 phase-8-a 文档时同步该称呼。
+> **命名备注**：`10-a-water-ripple.md` 里提过的"可选 Phase 8-B = WebGL 背景 gate"自本文档起改称 **P8-W（WebGL gate）**，"P8-B"名号归本 track。下次改动 10-a-water-ripple 文档时同步该称呼。
 
 ---
 
@@ -20,19 +20,19 @@
    - 需要降级的进 S8 的 `DEGRADATION_ORDER`
 3. **性能纪律**（v87 已付过学费，不许回退）：动画只用 transform/opacity（合成线程）；禁止动画化 stroke-width / filter 属性（globals.css:81-96 的 Z2 注释就是教训，唯一豁免：≤8 个的一次性 bg-ripple-manual）；SVG filter 必须收紧 region；禁止逐帧改 feTurbulence 的 baseFrequency / seed。
 4. **行数硬线**：单个代码文件 ≤200 行（CONVENTIONS 硬线，hooks 强制；旧 phase 文档写的 220 以 CONVENTIONS 为准）。`SphereNode.tsx` 现 137 行，P8-A 还要加东西——S2 改它前先看当时行数，预计超线就把水珠图层拆成 `SphereDropLayers.tsx` 子组件。
-5. **目录硬线**：单层目录 ≤8 个文件。**2026-06-12 拍板（随 8-F 立项）：新建 `effects/ambient/pond/` 子目录**——本 track 与 8-F 全部新增环境组件统一入此，本文档正文写 `effects/ambient/xxx.tsx` 的一律落到 `effects/ambient/pond/xxx.tsx`。配额：本 track 5 个（caustics-layer/film-grain/pond-lights/drops-layer/pond-shadow）+ 8-F 3 个（sky-reflection/moon-path/pond-edge）= 8 顶满，再加 = 先删后加（详见 `phase-8-f-effects-pool.md` 目录方案）。旧组件 aurora/stars/fog 留 ambient/ 根。§2.15 的 water-moon 仍走 EclipseLayer 内分支实现（或 S8 删旧组件后再议）。
+5. **目录硬线**：单层目录 ≤8 个文件。**2026-06-12 拍板（随 8-F 立项）：新建 `effects/ambient/pond/` 子目录**——本 track 与 8-F 全部新增环境组件统一入此，本文档正文写 `effects/ambient/xxx.tsx` 的一律落到 `effects/ambient/pond/xxx.tsx`。配额：本 track 5 个（caustics-layer/film-grain/pond-lights/drops-layer/pond-shadow）+ 8-F 3 个（sky-reflection/moon-path/pond-edge）= 8 顶满，再加 = 先删后加（详见 `60-f-effects-pool.md` 目录方案）。旧组件 aurora/stars/fog 留 ambient/ 根。§2.15 的 water-moon 仍走 EclipseLayer 内分支实现（或 S8 删旧组件后再议）。
 6. **一次性涟漪独立 class（2026-06-12 关联审查）**：`.zoom-large .ripple-c` 的"暂停"语义只适用于无限循环的球涟漪圈；P8 所有**一次性**涟漪（waterWake/dragWake 微涟漪、echoRipple 等）一律用新 class `.ripple-once`——同款 transform/opacity 动画但不进暂停规则，zoom>1.5 时的处理 = 提前结束并移除，**绝不暂停冻结残留在屏上**。
 7. **挂载分层标注（2026-06-12 关联审查）**：现 ambient 层挂 zoomG 之外、不随滚轮缩放——星空世界观成立（远景天空），但水面元素会穿帮（zoom 拉近球放大 5×、水面纹理不动）。每个新氛围层立项必须标注**水面层（随 zoom）/ 镜头层（不随 zoom）**。当前划分：pondShadow = 水面层（进 zoomG 或镜像）；waterMoon = 水面层（走 EclipseLayer 现成 eclipseZoomG 镜像）；waterWake/dragWake/球涟漪 = 水面层（本就随球坐标）；caustics/filmGrain/fog/pondEdge/pondLights/skyReflection/moonPath = 镜头层（全屏滤镜随 zoom 重渲染成本不可接受，读作镜头叠加层可接受）；BackgroundRipples 维持镜头层（现状先例 + 改造成本高，S8 真机评估 zoom 深处体验后再议）。
 8. 每步完成：`bash scripts/verify.sh` → 6 行汇报 → 等"继续"。非显然决定追加 `docs/JOURNAL.md`。
 
 ---
 
-## 1. 色彩 token（S1 一并建立，全 track 共用；方向值归 phase-8-d）
+## 1. 色彩 token（S1 一并建立，全 track 共用；方向值归 40-d）
 
-`app/globals.css` 的 `:root`（现 18-25 行）追加 6 个变量。**模块化原则（2026-06-12 修订）：`:root` 里给"现状兼容值"（白色系，= 视觉零变化），三套水塘方向值放 `.theme-pond-a/b/c` 类覆盖**——由 `pondThemeA/B/C` 三个 flag 控制（见 `phase-8-d-color-direction.md`）。这样 8-B 任何效果单开时仍是现状配色，勾选某个主题 flag 才整体换对应方向的皮：
+`app/globals.css` 的 `:root`（现 18-25 行）追加 6 个变量。**模块化原则（2026-06-12 修订）：`:root` 里给"现状兼容值"（白色系，= 视觉零变化），三套水塘方向值放 `.theme-pond-a/b/c` 类覆盖**——由 `pondThemeA/B/C` 三个 flag 控制（见 `40-d-color-direction.md`）。这样 8-B 任何效果单开时仍是现状配色，勾选某个主题 flag 才整体换对应方向的皮：
 
 ```css
-/* Phase 8-B — 水塘色 token（:root = 现状兼容值；三方向值见 phase-8-d 的 .theme-pond-a/b/c） */
+/* Phase 8-B — 水塘色 token（:root = 现状兼容值；三方向值见 40-d 的 .theme-pond-a/b/c） */
 :root {
   --pond-bg: #07070f;          /* = 现 --background */
   --pond-ripple: #ffffff;      /* 涟漪描边（现状白） */
@@ -45,7 +45,7 @@
 
 > **8-D 已冻结（2026-06-12，A–K 11 套经 D0 预览粗筛全部淘汰）**：`.theme-pond-*` 覆盖块暂不实现，`:root` 兼容值即当前唯一值——token 体系本身**保留不变**（本 track 各效果仍一律引用 `--pond-*`，为未来配色重启留接口，效果代码零改动即可换肤）。
 >
-> 注意：`--background` 本体的替换（星夜黑→水塘底色）归 phase-8-d（已冻结，即不动），本 track 不动；本 track 所有新效果只引用 `--pond-*`。SVG attribute 不认 CSS 变量的地方（如 JS createElement 设置 stroke）用 `getComputedStyle(document.documentElement).getPropertyValue('--pond-ripple')` 读一次缓存，或直接在 TSX 里 `style={{ stroke: 'var(--pond-ripple)' }}`（style 属性认变量）。
+> 注意：`--background` 本体的替换（星夜黑→水塘底色）归 40-d（已冻结，即不动），本 track 不动；本 track 所有新效果只引用 `--pond-*`。SVG attribute 不认 CSS 变量的地方（如 JS createElement 设置 stroke）用 `getComputedStyle(document.documentElement).getPropertyValue('--pond-ripple')` 读一次缓存，或直接在 TSX 里 `style={{ stroke: 'var(--pond-ripple)' }}`（style 属性认变量）。
 
 ---
 
@@ -78,7 +78,7 @@
 - **性能**：零增量。
 - **验收**：默认机位下涟漪圈与现状一致，slider <1.0 时变球脚下扁椭圆；36 球仍错峰；zoom>1.5 仍暂停。
 
-> **共享机位常量**：`POND_TILT_RATIO` 的概念、拍板与 slider 设计见 `phase-8-a-water-ripple.md` 补充一。**默认 1.0 = 垂直视角正圆（用户 2026-06-12 拍板）**，默认状态零视觉变化；本文档所有出现 `× POND_TILT_RATIO` 的地方在 1.0 时即等于现状圆形。所有水面元素统一引用该常量，禁止写死数值；slider（0.25–1.0）在 /test 供体验。
+> **共享机位常量**：`POND_TILT_RATIO` 的概念、拍板与 slider 设计见 `10-a-water-ripple.md` 补充一。**默认 1.0 = 垂直视角正圆（用户 2026-06-12 拍板）**，默认状态零视觉变化；本文档所有出现 `× POND_TILT_RATIO` 的地方在 1.0 时即等于现状圆形。所有水面元素统一引用该常量，禁止写死数值；slider（0.25–1.0）在 /test 供体验。
 
 ### 2.3 gradientGlow → 新 flag `waterDrop` 水珠质感【S2】
 
@@ -169,7 +169,7 @@
   2. **碎光**：24 条 `<rect width=1.2-3 height=0.18 rx=0.09>` fill `var(--pond-glow)`，y 分布在 viewBox 8-35（月光带），x 随机；动画只有 opacity 闪烁 `0.05↔0.5`、2-4s、随机 delay。无位移（碎光是水面镜面反射，原地闪）。
   3. 生灭节奏：沿用 stars 的 1s tick + 30% spawn/despawn 模式但仅对碎光（浮光数量恒定，渐显渐隐不突兀）；`document.hidden` 跳过逻辑照抄（stars-background.tsx:54）。
 - **flag**：新增 `pondLights`。stars 原样保留，S8 拍板默认值。
-- **性能**：低（38 个元素 < 现 80 颗星；动画全 opacity/transform）。**亮度封顶纪律**：浮光/碎光峰值 opacity 必须低于球高光（暗水面上最亮的只许是球和月光，见 p8-s1 §三）。
+- **性能**：低（38 个元素 < 现 80 颗星；动画全 opacity/transform）。**亮度封顶纪律**：浮光/碎光峰值 opacity 必须低于球高光（暗水面上最亮的只许是球和月光，见 06-s1-visual-research §三）。
 - **验收**：`?pondLights=1&stars=0` 浮光缓慢游走呼吸、碎光在上方水带闪烁；同屏元素 ≤45；FPS 无跌幅。
 
 ### 2.9 comet → 新 flag `waterWake` 水痕（抽象掠水扰动）【S6】
@@ -319,6 +319,6 @@
 
 ## 6. 参考
 
-- 设计依据：`playbook/phase-8/p8-s1-visual-research.md`（三套色板 hex / 动效三原则 / 技术纪律全文）
-- 提示词快照：`playbook/phase-8/visual-research-prompt.md`
-- 兄弟 track：`playbook/phase-8/phase-8-a-water-ripple.md`（waterRipple flag 与 displacement 滤镜在那边落地）
+- 设计依据：`playbook/phase-8/06-s1-visual-research.md`（三套色板 hex / 动效三原则 / 技术纪律全文）
+- 提示词快照：`playbook/phase-8/05-visual-research-prompt.md`
+- 兄弟 track：`playbook/phase-8/10-a-water-ripple.md`（waterRipple flag 与 displacement 滤镜在那边落地）

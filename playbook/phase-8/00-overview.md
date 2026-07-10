@@ -87,13 +87,15 @@
 
 | Track | 文件 | 内容 |
 |---|---|---|
-| **P8-A** | `phase-8-a-water-ripple.md` | 水波折射动效 + 水面机位常量（默认正圆 1.0 + /test slider）+ 动效语言三原则 |
-| **P8-B** | `phase-8-b-effects-migration.md` | 13 特效开关水塘化迁移（waterDrop / caustics / pondLights / waterWake / drops / pondShadow / waterMoon 水中月）+ S8 移动端最小水塘集拍板 |
-| **P8-C** | `phase-8-c-opensource-integration.md` | 开源方案引入（audioPulse / beatRipple / flow / springBack / gooey） |
-| **P8-D** | `phase-8-d-color-direction.md` | ❄️ **已冻结（2026-06-12）**：色彩方向 A–K 11 套经 D0 外部 HTML 预览粗筛全部淘汰，暂不排期；P8 期间默认配色保持现状。重启先做新一轮 D0 粗筛 |
-| **P8-E** | `phase-8-e-orchestration.md` | 入场转场与收尾（splashIntro 入场落水 / groupWave 切组涟漪转场 / navPond 导航顶栏水塘化）；依赖 8-B S1 先行（2026-06-12 立项） |
-| **P8-F** | `phase-8-f-effects-pool.md` | 效果候选池：15 个广撒网 flag（播放叙事 4 / 交互反馈 2 / 氛围 7 / 编排 2）+ F0 /test 面板分组与预设按钮 + ambient/pond/ 子目录方案 + F9 统一删减拍板（2026-06-12 立项） |
-| **P8-G** | `phase-8-g.md`（+ `phase-8-h.md` / `phase-8-i.md`；旧版存档 `phase-8-g-gl-water.md`） | /test1 用 GL 重建水塘（2026-06-12 立项，2026-06-14 重组为 G/H/I 三线、从 spike 毕业为正式重建）：G 地基✅（克隆/关透视/GL球+命中层）→ H 水面子系统（全屏动态扭曲 RTT + 水位全局变量 + 运动模型）→ I 去SVG+全新组件（含日蚀 GL 重做）。开关走 /test1 独立 gl-flags，不碰共享热点文件 |
+| **P8-A** | `10-a-water-ripple.md` | 水波折射动效 + 水面机位常量（默认正圆 1.0 + /test slider）+ 动效语言三原则 |
+| **P8-B** | `20-b-effects-migration.md` | 13 特效开关水塘化迁移（waterDrop / caustics / pondLights / waterWake / drops / pondShadow / waterMoon 水中月）+ S8 移动端最小水塘集拍板 |
+| **P8-C** | `30-c-opensource-integration.md` | 开源方案引入（audioPulse / beatRipple / flow / springBack / gooey） |
+| **P8-D** | `40-d-color-direction.md` | ❄️ **已冻结（2026-06-12）**：色彩方向 A–K 11 套经 D0 外部 HTML 预览粗筛全部淘汰，暂不排期；P8 期间默认配色保持现状。重启先做新一轮 D0 粗筛 |
+| **P8-E** | `50-e-orchestration.md` | 入场转场与收尾（splashIntro 入场落水 / groupWave 切组涟漪转场 / navPond 导航顶栏水塘化）；依赖 8-B S1 先行（2026-06-12 立项） |
+| **P8-F** | `60-f-effects-pool.md` | 效果候选池：15 个广撒网 flag（播放叙事 4 / 交互反馈 2 / 氛围 7 / 编排 2）+ F0 /test 面板分组与预设按钮 + ambient/pond/ 子目录方案 + F9 统一删减拍板（2026-06-12 立项） |
+| **P8-G** | `70-g-gl-water.md`（+ `74-h-water-surface.md` / `80-i-desvg-components.md`；旧版存档 `99-archive-g-gl-water-spike.md`） | /test1 用 GL 重建水塘（2026-06-12 立项，2026-06-14 重组为 G/H/I 三线、从 spike 毕业为正式重建）：G 地基✅（克隆/关透视/GL球+命中层）→ H 水面子系统（全屏动态扭曲 RTT + 水位全局变量 + 运动模型）→ I 去SVG+全新组件（含日蚀 GL 重做）。开关走 /test1 独立 gl-flags，不碰共享热点文件 |
+
+> **文件命名与排序约定（2026-06-20 整理）**：本目录用 `NN-槽位.md` 两位数字前缀强制排序——`00` 总览 / `01` 并行执行指南 / `05–06` 视觉调研（输入→产出）/ `10–90` 子 track A–K（**按十进位留空，中间插新 track 用空号如 15/25，永不重排**）/ `9x` 附属记录（如 `92-k-improvements-log`）/ `99-archive-*` 废弃存档。**字母仍是 track 身份**（P8-A…K、commit scope `feat(p8-x)` 都不变），数字只管文件排序。
 
 **P8 全局铁律（每个 track 都适用）**：
 
@@ -117,9 +119,9 @@
 
 **Phase 8 工时**：约 4 天（单步串行估，实际可按用户节奏走）
 
-> **P8-S4「Archipelago 动效改造」已细化为独立子track**：`playbook/phase-8/phase-8-a-water-ripple.md`（水波折射动效，路线 A = 纯 SVG `feDisplacementMap`，5 步，2026-06-11 拍板）。
+> **P8-S4「Archipelago 动效改造」已细化为独立子track**：`playbook/phase-8/10-a-water-ripple.md`（水波折射动效，路线 A = 纯 SVG `feDisplacementMap`，5 步，2026-06-11 拍板）。
 >
-> **P8-S5 的「导航 / 顶栏」部分已归 P8-E**（2026-06-12 用户拍板开 8-E）：见 `phase-8-e-orchestration.md` E3（navPond）。
+> **P8-S5 的「导航 / 顶栏」部分已归 P8-E**（2026-06-12 用户拍板开 8-E）：见 `50-e-orchestration.md` E3（navPond）。
 >
 > **P8-S2「颜色体系重设计」随 8-D 冻结（2026-06-12）暂不排期**——P8 期间默认配色保持现状，水塘感由质感/动效/氛围效果承担。
 
@@ -135,7 +137,7 @@
 
 ## 工作流
 
-> **⚡ 并行执行模式（2026-06-12 用户拍板，优先级高于下方串行流程）**：P8 采用"跑法一"并行冲刺——主会话调度 + 5 条 lane worktree 子代理，铁律"每步等'继续'"临时改为"lane 内自动继续、按波集中验收"。**执行手册：`p8-parallel-guide.md`**（用户说"跑 Phase 8"即按该指南自动开始）。P8 收尾后松绑失效，回归下方串行流程。
+> **⚡ 并行执行模式（2026-06-12 用户拍板，优先级高于下方串行流程）**：P8 采用"跑法一"并行冲刺——主会话调度 + 5 条 lane worktree 子代理，铁律"每步等'继续'"临时改为"lane 内自动继续、按波集中验收"。**执行手册：`01-parallel-guide.md`**（用户说"跑 Phase 8"即按该指南自动开始）。P8 收尾后松绑失效，回归下方串行流程。
 
 按 AGENTS.md 铁律"一次只做一件事"，P8 逐 Step 推进：
 
@@ -170,7 +172,7 @@
 
 用户说"开始 P8" → AI 做的第一件事：
 
-1. 读 `playbook/phase-8/overview.md`
+1. 读 `playbook/phase-8/00-overview.md`
 2. 调研水塘视觉方向（颜色/质感/动效），产出一页方案描述 + 参考关键词
 3. 等用户预览确认方向
 4. 从 P8-S1 开始逐 step 实施

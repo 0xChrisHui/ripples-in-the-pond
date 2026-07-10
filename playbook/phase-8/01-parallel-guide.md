@@ -10,7 +10,7 @@
 
 **主会话（调度者）**：AGENTS.md → STATUS.md → docs/CONVENTIONS.md §1-§3 → docs/STACK.md → `playbook/phase-8/` 全部文件（overview / 8-A / 8-B / 8-C / 8-E / 8-F；8-D 已冻结跳过）。
 
-**每个 lane 子代理**（写进其 prompt）：必读 docs/CONVENTIONS.md §1-§3 + `phase-8-b-effects-migration.md` §0（通用工程规则）+ 本 lane 对应的 track 文档章节 + 8-A 补充一/二/三（机位/动效语言/光源锚点）。**实施前先勘探真实代码**——playbook 规格里标"方向性"的条目以现场代码为准。
+**每个 lane 子代理**（写进其 prompt）：必读 docs/CONVENTIONS.md §1-§3 + `20-b-effects-migration.md` §0（通用工程规则）+ 本 lane 对应的 track 文档章节 + 8-A 补充一/二/三（机位/动效语言/光源锚点）。**实施前先勘探真实代码**——playbook 规格里标"方向性"的条目以现场代码为准。
 
 ## 1. 不变的铁律（松绑只松"等继续"，其余全部有效）
 

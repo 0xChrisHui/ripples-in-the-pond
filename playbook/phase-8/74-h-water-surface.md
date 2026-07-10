@@ -1,12 +1,12 @@
 # P8-H — H 线 · 水面子系统（动态扭曲水面）
 
-> **属 Phase-8-G 伞下**。**红线 / 架构蓝图 / 编号系统 / 执行模式 / 弃用记录**见总文档 [`phase-8-g.md`](./phase-8-g.md)；**RTT 技术实施圣经**见 [`phase-8-g5d-rtt-research.md`](./phase-8-g5d-rtt-research.md)（逐行 GLSL + 上次翻车原因 + 风险阀梯）。
+> **属 Phase-8-G 伞下**。**红线 / 架构蓝图 / 编号系统 / 执行模式 / 弃用记录**见总文档 [`70-g-gl-water.md`](./70-g-gl-water.md)；**RTT 技术实施圣经**见 [`72-g-rtt-research.md`](./72-g-rtt-research.md)（逐行 GLSL + 上次翻车原因 + 风险阀梯）。
 > **commit scope**：`feat(p8-g): H1 …`（`p8-g` 当 GL 总伞）；结尾 `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`。
-> **起手硬前置**：开 H1 前先 `git commit` 归档 G6-1（见 [`phase-8-g.md`](./phase-8-g.md) §6）。
+> **起手硬前置**：开 H1 前先 `git commit` 归档 G6-1（见 [`70-g-gl-water.md`](./70-g-gl-water.md) §6）。
 
 ## 总则
 
-水面 = 一块透镜，把"水位以下的一切层"按涟漪**实时扭曲**（对标 [sirxemic/jquery.ripples](https://sirxemic.github.io/jquery.ripples/) 全屏扭曲），再叠水位深度 + 鼠标交互。**唯一真风险 = 离屏渲染（RTT/ping-pong）在本环境稳不稳**（上次手搓没跑通）→ H1 半天 spike 先烧掉它。实施逐行参考 [`phase-8-g5d-rtt-research.md`](./phase-8-g5d-rtt-research.md)。
+水面 = 一块透镜，把"水位以下的一切层"按涟漪**实时扭曲**（对标 [sirxemic/jquery.ripples](https://sirxemic.github.io/jquery.ripples/) 全屏扭曲），再叠水位深度 + 鼠标交互。**唯一真风险 = 离屏渲染（RTT/ping-pong）在本环境稳不稳**（上次手搓没跑通）→ H1 半天 spike 先烧掉它。实施逐行参考 [`72-g-rtt-research.md`](./72-g-rtt-research.md)。
 
 ---
 
@@ -26,7 +26,7 @@
 5. **涟漪来源/交互** — 常驻微波 + 鼠标移动/点击扩散涟漪 + 对象动作喂涟漪（拖球尾迹 / 穿越溅起 / 单帧 >6 合并限流）。**DOM 标题/命中层不被扭** → 点击/拖拽精准；球交互全保留；**水下对象仍可点**（点击走 GL 原始坐标、**不反解扭曲偏移**；DOM overlay 在 canvas 之上、不进 shader，命中恒精准）。
 6. **调试/参数板** — 新增"波纹/运动参数板"（仿 `TunePanel`），实时调涟漪扩散/阻尼/强度、扭曲幅度、月光、浮沉幅度/频率等；**默认水位**作为一项放进去。
 7. **性能/平台** — 优先桌面；移动端未来再议。性能大头是那道全屏扭曲 pass（与对象/公式数量无关）；降级（高度场分辨率/DPR）参数板可调。
-8. **约束/非目标** — ❌ 球不加时间衰减/染色滤镜（始终原色）/ ❌ 水位不用全屏半透明色膜（要梯度折射+扭曲）/ ❌ 涟漪不是静态法线纹理卷动（必须实时 sim + 鼠标/对象交互）。红线见 [`phase-8-g.md`](./phase-8-g.md) §0。
+8. **约束/非目标** — ❌ 球不加时间衰减/染色滤镜（始终原色）/ ❌ 水位不用全屏半透明色膜（要梯度折射+扭曲）/ ❌ 涟漪不是静态法线纹理卷动（必须实时 sim + 鼠标/对象交互）。红线见 [`70-g-gl-water.md`](./70-g-gl-water.md) §0。
 9. **质感** — 夜塘 deep + 月光；涟漪要 jquery.ripples / water-sim 那种细腻、会扩散。
 10. **悬置/待定**（到对应步拍）— 每实例参数 min/max + 随机种子（H5/H6）· 公式粒度"每类+参数 vs 每实例独立"（H5）· 球自驱浮沉触发"自漂/播放浮出/两者"（H5）· reduced-motion（H6）。
 
@@ -98,4 +98,4 @@
 
 ---
 
-> **H 线完 → I 线**（[`phase-8-i.md`](./phase-8-i.md)）：去 SVG + 日蚀 GL 重做 + 新组件，I1 可从 H1–H3 稳定后并行。
+> **H 线完 → I 线**（[`80-i-desvg-components.md`](./80-i-desvg-components.md)）：去 SVG + 日蚀 GL 重做 + 新组件，I1 可从 H1–H3 稳定后并行。

@@ -9,7 +9,7 @@ import { MOON_ANCHOR } from '../../../render/render-helpers';
  * ~14 个浮光光点（少而大，缓慢游走 + 呼吸明灭，fill var(--pond-accent)，纯抽象不做萤火虫具象）
  * + ~24 条水面碎光短横线（聚在 MOON_ANCHOR 派生的上 1/3"月光带"，原地闪烁，fill var(--pond-glow)）。
  *
- * 亮度封顶纪律（§0/p8-s1 §三）：浮光/碎光峰值 opacity 低于球高光（暗水面最亮只许是球和月光）。
+ * 亮度封顶纪律（§0/06-s1-visual-research §三）：浮光/碎光峰值 opacity 低于球高光（暗水面最亮只许是球和月光）。
  * 性能：38 个元素 < 现 80 颗星；动画全 opacity/transform。生灭节奏仅对碎光（浮光数量恒定）。
  * document.hidden 跳过（抄 stars-background）。
  */

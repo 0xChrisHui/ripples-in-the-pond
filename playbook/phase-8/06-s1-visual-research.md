@@ -1,9 +1,9 @@
 # P8-S1 视觉方向调研 — 三套水塘设计方案
 
-> **产出自**：`visual-research-prompt.md`（主视觉全量快照提示词）+ 3 路并行网络调研（色彩方向 / 纯 SVG 技术 / 动效语言）。
+> **产出自**：`05-visual-research-prompt.md`（主视觉全量快照提示词）+ 3 路并行网络调研（色彩方向 / 纯 SVG 技术 / 动效语言）。
 > **日期**：2026-06-12。**状态**：等用户拍板方向。
 > **口径**（用户 2026-06-12 更新）：弱化宇宙感**和 3D 感**；球体质感 = 池塘中的典型事物（不限于水珠）。
-> **抽象口径**（2026-06-12 二次更新）：氛围元素**禁止具象形态**（鱼/水黾/落叶/莲叶等一律不做），全部抽象为光、波、斑、雾、痕；本文档中的具象映射（水黾/游鱼/落叶/莲叶）仅作运动节奏与角色的意象参考，抽象版落地规格见 `phase-8-b-effects-migration.md` §2.8-2.12。所有新效果先在 /test 页做成独立开关供用户体验。
+> **抽象口径**（2026-06-12 二次更新）：氛围元素**禁止具象形态**（鱼/水黾/落叶/莲叶等一律不做），全部抽象为光、波、斑、雾、痕；本文档中的具象映射（水黾/游鱼/落叶/莲叶）仅作运动节奏与角色的意象参考，抽象版落地规格见 `20-b-effects-migration.md` §2.8-2.12。所有新效果先在 /test 页做成独立开关供用户体验。
 
 ---
 
@@ -122,7 +122,7 @@ region 显式收紧 x/y/width/height      位移后加 feGaussianBlur 0.4 修边
 
 ## 七、给用户的拍板问题
 
-1. ~~方向 A / B / C 选哪套~~ → 2026-06-12 用户拍板：默认配色保持不动，三方向各做成一个 effect 开关（`pondThemeA/B/C`，见 `phase-8-d-color-direction.md`），做出来在 /test 看效果后再定最终方向。（主推 A 墨绿深潭；B 的"播放球 halation 暖晕"建议无论选谁都吸收）
+1. ~~方向 A / B / C 选哪套~~ → 2026-06-12 用户拍板：默认配色保持不动，三方向各做成一个 effect 开关（`pondThemeA/B/C`，见 `40-d-color-direction.md`），做出来在 /test 看效果后再定最终方向。（主推 A 墨绿深潭；B 的"播放球 halation 暖晕"建议无论选谁都吸收）
 2. ~~水黾还是游鱼~~ ~~莲叶要不要~~ → 已由 2026-06-12 抽象口径取代：彗星化身 = 抽象"水痕"（`waterWake`，只见涟漪串不见身体）；莲叶 = 抽象"浮影暗斑"（`pondShadow`）；落叶 = 抽象"落滴"（`drops`）。全部做成 /test 独立开关，用户体验后再定去留。
 
 主要参考源：Smashing《SVG Displacement Filtering 深潜》、Codrops feTurbulence 系列、CSS-Tricks 玻璃球、teamLab《Koi and People》、Monet 橘园《绿色倒影》、Cinestill 800T halation、Smashing Ambient Animations 两篇、ABZU GDC《Creating the Art of ABZU》。完整链接见三份调研原文（agent 输出）。
