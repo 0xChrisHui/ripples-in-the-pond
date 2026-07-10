@@ -32,7 +32,7 @@ function medianOf(vals: number[]): number {
  * 与 SphereOverlay（DOM 命中层）共享。playingId 走 ref（R3F Canvas 拿不到外部 context）。
  *
  * 已知限制：切组只跟键盘（与首页 Archipelago 并行，初始同为 A）；nav 点击 GL 不跟随
- * —— 这是"不碰 Archipelago"红线的固有代价（详见 phase-8-g-gl-water.md G4 段）。
+ * —— 这是"不碰 Archipelago"红线的固有代价（详见 99-archive-g-gl-water-spike.md G4 段）。
  */
 export interface GlSim {
   ready: boolean;

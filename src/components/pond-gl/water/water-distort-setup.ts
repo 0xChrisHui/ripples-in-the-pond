@@ -42,6 +42,7 @@ export function makeSimScene(resX: number, resY: number, dropSlots: Vector4[]): 
     uDrops: { value: dropSlots },
     uDropCount: { value: 0 },
     uDamping: { value: 0.995 },
+    uWaveSpeed: { value: 0.5 }, // 水波传播速度（参数板 waveProp，每帧刷新）
     uAspect: { value: 1 }, // K1：每帧由画布宽高比刷新（见 WaterDistort useFrame），校正滴水为正圆
   });
 }
@@ -115,6 +116,7 @@ export function applyTuning(
   moonReflect: boolean,
 ): void {
   sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z）
+  sim.mat.uniforms.uWaveSpeed.value = t.waveProp; // 水波传播速度（越小波扩散/位移越缓）
   sim.mat.uniforms.uAspect.value = aspect;     // K1：高度场方形被拉满宽屏 → 按宽高比校正滴水为正圆
   composite.mat.uniforms.uPerturb.value = t.refract;
   composite.mat.uniforms.uSpec.value = t.specular;

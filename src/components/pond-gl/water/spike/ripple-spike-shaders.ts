@@ -65,6 +65,7 @@ export const simFrag = /* glsl */ `
   uniform vec4  uDrops[${MAX_DROPS}]; // 每滴 (uv.x, uv.y, 半径, 强度)
   uniform int   uDropCount; // 本帧有效滴数（其余槽忽略）
   uniform float uDamping;   // 阻尼（参数板可调，0.995 起）
+  uniform float uWaveSpeed; // 水波传播速度（拉普拉斯回复力系数；0.5=原速，越小波扩散/位移越缓）
   uniform float uAspect;    // K1：屏幕宽高比 W/H，仅用于滴水注入的正圆距离度量（传播由屏上正方格保证）
   const float PI = 3.141592653589793;
   void main() {
@@ -84,7 +85,7 @@ export const simFrag = /* glsl */ `
     float dBL = texture2D(uPrev, vUv - ex + ey).r;
     float dBR = texture2D(uPrev, vUv + ex + ey).r;
     float lap = (4.0 * (aL + aR + aT + aB) + (dTL + dTR + dBL + dBR) - 20.0 * info.r) / 6.0;
-    info.g += lap * 0.5;              // 速度 += 拉普拉斯回复力（系数 0.5 沿用原波速）
+    info.g += lap * uWaveSpeed;       // 速度 += 拉普拉斯回复力（系数=水波速度，参数板可调；0.5=原速）
     info.g *= uDamping;               // 阻尼（唯一能量损耗）
     info.r += info.g;                 // 高度 += 速度（半隐式欧拉）
     for (int i = 0; i < ${MAX_DROPS}; i++) {  // 多滴注入：升余弦凸包逐滴叠加
