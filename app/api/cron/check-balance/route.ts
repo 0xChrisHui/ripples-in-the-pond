@@ -3,6 +3,7 @@ import { verifyCronSecret } from "@/src/lib/auth/cron-auth";
 import { supabaseAdmin } from "@/src/lib/supabase";
 import { publicClient } from "@/src/lib/chain/operator-wallet";
 import { SCORE_ACTIVE_STATUSES } from "@/src/types/jam";
+import { sendAlert } from "@/src/lib/alerts/resend";
 import { formatEther } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
@@ -78,6 +79,17 @@ export async function GET(req: NextRequest) {
         },
         { onConflict: "key" },
       );
+
+      // P2-3：低余额/积压告警接邮件（sendAlert 内部自带 try/catch + 未配 env 静默 log）
+      void sendAlert({
+        subject: "运营钱包/队列告警",
+        body: [
+          ...alerts,
+          `ethBalance: ${ethBalance.toFixed(6)}`,
+          `mintBacklog: ${mintBacklog ?? 0}`,
+          `scoreBacklog: ${scoreBacklog ?? 0}`,
+        ].join("\n"),
+      });
     }
 
     return NextResponse.json({
