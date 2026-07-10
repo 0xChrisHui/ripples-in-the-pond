@@ -132,6 +132,20 @@ else
 fi
 echo ""
 
+# 7. 合约测试（P10-B P3-4）—— 有 forge + foundry.toml 才跑，无则跳过（CI/无 Foundry 机器不误伤）
+echo "── 7. 合约测试（forge test）──"
+if command -v forge >/dev/null 2>&1 && [ -f "contracts/foundry.toml" ]; then
+  if (cd contracts && forge test); then
+    echo "$OK forge test 通过"
+  else
+    echo "$FAIL forge test 失败"
+    EXIT_CODE=1
+  fi
+else
+  echo "$INFO 没有 forge 或 contracts/foundry.toml，跳过合约测试"
+fi
+echo ""
+
 echo "================================================"
 if [ "$EXIT_CODE" -eq 0 ]; then
   echo "  $OK 所有验证通过"
