@@ -37,16 +37,23 @@ export async function tryConfirmMinting() {
   if (!job) return null;
 
   if (!job.tx_hash) {
-    const age = Date.now() - new Date(job.updated_at).getTime();
+    // P3-6：mint_attempted_at 为空 = 崩溃在发 tx 之前（stamp 在 writeContract 前一步），
+    //   链上必定没发 → 安全 reset 重试，不冤判 manual_review。
+    if (!job.mint_attempted_at) {
+      await resetToPending(job.id, job.retry_count);
+      return { result: 'reset_before_send', jobId: job.id };
+    }
+    // 有 attempted 戳但无 tx_hash = 可能已广播 → 超时保守判 manual_review（链上状态未知）
+    const age = Date.now() - new Date(job.mint_attempted_at).getTime();
     if (age > STUCK_TIMEOUT_MS) {
       await markFailed(
         job.id,
         'manual_review',
-        `stuck in minting_onchain without tx_hash for ${age}ms — chain state unknown, check operator wallet history`,
+        `attempted but no tx_hash for ${age}ms — chain state unknown, check operator wallet history`,
       );
       return { result: 'stuck_needs_review', jobId: job.id };
     }
-    return null; // 正在发送中，等下次
+    return null; // 窗口内，等下次
   }
 
   // 有 tx_hash → 查链上结果
