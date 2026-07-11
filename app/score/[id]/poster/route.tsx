@@ -113,7 +113,7 @@ export async function GET(_req: Request, { params }: Props) {
             {shortAddr && (
               <div style={{ fontSize: 28, opacity: 0.35, fontFamily: 'monospace', marginTop: 8 }}>{shortAddr}</div>
             )}
-            <div style={{ fontSize: 28, opacity: 0.3, marginTop: 8 }}>{score.eventCount} events</div>
+            <div style={{ fontSize: 28, opacity: 0.3, marginTop: 8 }}>{`${score.eventCount} events`}</div>
           </div>
         </div>
 
@@ -124,7 +124,7 @@ export async function GET(_req: Request, { params }: Props) {
             <img src={qrDataUrl} alt="" width={200} height={200} style={{ opacity: 0.85 }} />
           )}
           <div style={{ fontSize: 30, opacity: 0.45, fontFamily: 'monospace' }}>
-            {displayHost()}/score/{slug}
+            {`${displayHost()}/score/${slug}`}
           </div>
         </div>
       </div>

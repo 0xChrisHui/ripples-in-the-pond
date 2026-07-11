@@ -106,7 +106,7 @@ export default async function OgImage({ params }: Props) {
             {score.trackTitle}
           </div>
           <div style={{ fontSize: 18, opacity: 0.35, marginTop: 8 }}>
-            {score.eventCount} events
+            {`${score.eventCount} events`}
           </div>
         </div>
       </div>
