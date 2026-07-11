@@ -28,14 +28,19 @@ export async function GET(_req: Request, { params }: Props) {
     return new Response('score not found', { status: 404 });
   }
 
-  // 预取封面：Satori <img> 内部 fetch 失败会整个崩，先手动 fetch，成功才传 src。
+  // 预取封面：Satori <img> 内部 fetch 失败会整个崩，先手动 fetch。
+  // ⚠ 必须校验 content-type 是图片：Arweave 网关不稳，偶尔 200 返回 HTML 错误页，
+  //   把吐 HTML 的 URL 当 <img> 喂给 Satori 会崩整个 worker（返回空响应/下载失败）。
   let coverSrc: string | null = null;
   if (score.coverUrl) {
     try {
       const resp = await fetch(score.coverUrl, { signal: AbortSignal.timeout(4000) });
-      if (resp.ok) coverSrc = score.coverUrl;
+      const ct = resp.headers.get('content-type') ?? '';
+      // 必须是图片：Arweave 网关不稳，偶尔 200 返回 HTML 错误页，把吐 HTML 的 URL
+      // 当 <img> 喂给 Satori 会崩。content-type 是图片才放行（含 svg）。
+      if (resp.ok && ct.startsWith('image/')) coverSrc = score.coverUrl;
     } catch {
-      // 网络不可达 → 降级色块
+      // 网络不可达 / 超时 → 降级色块
     }
   }
 
