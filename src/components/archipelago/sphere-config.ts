@@ -113,9 +113,10 @@ export function getGroupTracks(gid: GroupId, allTracks: Track[]): Track[] {
   return allTracks.filter((t) => t.week >= 1 && t.week <= 36);
 }
 
-// A 组 15 球（P7 A6.1 扩容；artist 给 10 首新曲 No.6-15）/ B/C 组 36 球
+// A 组 = 全部 published 真实曲目数（P6 B6=5 → P7 A6.1=15 → 本次 +20 首新曲=35）/ B/C 组 36 球
+// ⚠️ 每次新增 published 曲目都要同步这个数字，否则 padTracksToTarget 会 slice 截断、A tab 看不到新歌
 export function getGroupTargetCount(gid: GroupId): number {
-  return gid === 'A' ? 15 : 36;
+  return gid === 'A' ? 35 : 36;
 }
 
 // DB < target 时循环 padding；改 week 1..target 让颜色/size 各异；id 加后缀避 React key 冲突
