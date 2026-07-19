@@ -912,3 +912,23 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **多 agent review 收获 5 个真 bug 已修**：①`_excite` 衰减原在 `if(edgeOn)` 内而注入方（ripple-feed 穿越/wake 力/拖拽）不看 flag → 关灯时棘轮涨到 1、后开 flag 全场幽灵爆发——改为激励维护恒跑、只有 GPU 写 buffer 留在 edgeOn 内；②③④⑤补齐红线豁免：shiver 豁免 hover 球、shiver 中途被拖拽立即中止、jelly 与 wake 补 reduced-motion 冻结。
 - **否决的最大簇（4 个 finder 撞车）**："浮动脉冲期间花瓣抠洞/拖尾/拖球命中与视觉球错位" ——核查 HEAD 后确认全部源于上会话 sphere-motion v3 解耦（浮动刻意不进深度轴，playbook L0b 已明文"pre-existing 不一致，L 线不扩大战线"），非本次引入；仅顺手修了 ripple-feed/WaterPetals 两处失实注释（还写着"含球浮动"）。
 - **留给用户拍板的 5 项**（review 报告 6-10，未动代码）：「扰动激励」单开无效果（spec 即设计成依赖「能量球边缘」，仅缺 UI 提示）/ wakeSpheres 开但推力=0 时白跑 CPU 波动方程网格 / renderDepth≡effDepth 重复+过时注释 / writeFrame 13 位置参数数据泥团 / dropScreen 在 wake-field 与 WaterPetals 双份。
+
+## 2026-07-19 — Phase 12 B-0 合约决策 gate 九项全拍板 + 开工前隐患收口
+
+- **B-0 九项一次定死**（主网合约不可升级，承接 P10 停点 4 移交；权威锁定块见 `playbook/phase-12/20-b` §1）：①版税不做 ②供应上限不设(链下监控) ③印死不可升级 ④加 mintScore 幂等键 ⑤加 URI 空串防御 ⑥加 MaterialNFT freezeURI ⑦ScoreNFT 名 `Ripples in the Pond`/`RPIP` ⑧admin 独立钱包(≠热钱包) ⑨AirdropNFT 不部署(→全流程 3 合约)。
+- **为什么"印死"**：可升级=区块链黑客最爱的攻击口，单人项目简单即安全；代价是其余 8 项必须一次对。**明确否掉"以后换合约当退路"**——换新合约=已铸 NFT 全部搁浅旧合约(真金白银藏品)，等于抛弃用户，不是回滚。
+- **版税/上限不做的取舍**：版税以后永久加不了但接受；硬上限与"每人录一段铸一枚"模型冲突(天然无固定总量)→改链下监控异常增发。
+- **freezeURI 加的理由**：admin 走独立普通钱包(非硬件/多签)防护偏软，而 MaterialNFT 是 ERC1155 单条全局 URI、admin 随时可改 → 加一次性封条防"钥匙泄露后批量篡改所有素材 NFT metadata"。ScoreNFT 的 per-token URI 已 `_uriSet` 写一次锁死不受影响。
+- **名字去版本号**：`.v1` 进永久合约名会后悔(名字焊死+暗示 v2)，用干净 `RPIP`。
+- **admin 独立钱包默认**：红线 admin≠铸造热钱包(热钱包=服务器天天用，泄露即治理权被接管)；升硬件/Safe/renounce 部署后再定。
+- **开工前隐患收口**：决策关已清；剩①环境关=本机 `forge` 缺失→B track 动不了(装回 Foundry)②P10 生产(migration 043-046 已跑✅；**cron Bearer 未确认**——没切则生产 cron 可能已 401)。**订正:先前"锁 Node 20"是误判**——next/og 出图崩与 Node 版本无关(真凶=Satori 多子节点 div 缺 display:flex，2026-07-11 已修，见 memory `project_nextog_satori_multichild`)，无需锁 Node，仅保留 OG/海报生产复验轻检。曲名/建 admin 钱包/DB 快照=部署日关卡，不挡开工。
+- **执行约定**：本会话只固化决策不开工；用户将**开新进程**执行 P12（B 前置=装 Foundry + 锁 Node 20）。两轮 review(自审 11 + Codex gpt-5.5 4 P0)已加固 playbook 14 处，见 commit `91d11aa`。
+
+## 2026-07-19 续 — P12 执行开工：Foundry 复活 + admin 钱包定案 + A/B 代码落地
+
+- **Foundry 阻塞解除**：本机 `forge 1.5.1` 可跑（verify.sh 第 7 节真跑，24→42 tests 全绿）。此前 memory/playbook 记的"forge 阻塞、B 动不了"已过期——B track 当场解锁，本会话即"开新进程执行"。
+- **admin 钱包定案（修订 B-0 #8）**：用户拍板 = **独立普通钱包**（≠ 铸造热钱包），私钥存本地电脑、需要时靠 Claude 逐步操作（"我自己记不住"）。不升级硬件/多签/冷钱包 → runbook 必须把 admin 操作写成可照抄命令，"找你就行"才成立。
+- **D3"换合约=灾难"框定放宽**：用户明确接受"不可升级 + 日后要改就重部署新合约、前端兼容新老"。故 CT-3 弃用重型 `AccessControlDefaultAdminRules`，改脚本级护栏（先 grant 链上验成功再 revoke）。
+- **红线入代码**：新建 `contracts/script/DeployBase.s.sol`，`_assertMainnetRoles` 把"admin 绝不等于热钱包"写成主网 `require(admin != minter)`（+ admin/minter ≠ deployer、非零），6 条确定性单测护住；三个主网部署脚本（Score/Material/Orchestrator）共用之。
+- **A-track（停在上传前）**：解码器数量无关化 + 音效表 v2 三格式兼容 + postMessage 协议 v1（70-f）一次实现并本地 http 测试父页验过；换血脚本改按内容 hash 判变（堵 Codex P0 静默 skip）+ env-sync 纳入 server-only 白名单。🛑 A-1/F-1 = 用户浏览器验收 + Arweave 上传（永久，未做）。
+- **B 代码全绿（停在部署）**：CT-1 名参数化+主网硬失败 / CT-5 MaterialNFT 补测 / CT-7 空串防御 / CT-8 freezeURI+事件 / CT-2+CT-3 部署脚本主网护栏 / CT-12+B-0#9 主网禁部署护栏 / CT-15 URI 参数化 / **CT-4 mintScore 幂等键**（orderId=队列 row.id 的 keccak256，合约+ABI+cron 三层同批，forge+tsc 双绿，避开 Codex P0"只改合约则主网全 revert"）。forge 42 tests / tsc / eslint 全绿。剩 B3 顺路批(CT-11 pin/CT-13/14 评估留档) + B4 runbook 增补 + 🛑B-1 测试网回归。
