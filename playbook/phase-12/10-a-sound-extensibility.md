@@ -59,6 +59,8 @@ metadata 上 Arweave 不可改 + 合约 `_uriSet` 只许写一次 → **已铸 N
   `{id: txid}`（v1 平铺）/ `{id: {txId}}`（现有对象式）/ **v2 `{version, sounds: {id: {txId, name}}}`**
   —— 判别：`raw.version && raw.sounds` 则取 `raw.sounds`，否则整个 raw 当映射（向后兼容）
 - 不变红线：零依赖单文件 vanilla JS / 深色 / `ARWEAVE_GATEWAYS` 两网关 fallback / demo 模式保留
+- **postMessage 控制接口 v1**（2026-07-11 追加，P13 Semi 全局迷你条依赖）：与本步同批实施、
+  一次重传；规范权威 = `../phase-10/70-f-decoder-postmessage.md` D-F1，本步验证时其验证清单一并过
 - 上传：`npx tsx scripts/arweave/upload-decoder.ts` → 新 txid →
   `.env.local` + Vercel 三环境 `SCORE_DECODER_AR_TX_ID`（`npm run env-sync`）
 - **老 NFT 一律不迁移不修复**（钉旧版是 by design，不是遗留问题）
@@ -130,6 +132,9 @@ metadata 上 Arweave 不可改 + 合约 `_uriSet` 只许写一次 → **已铸 N
 5. **换血窗口**：a-z 的音频绑定在**主网开放铸造前**允许最后一次整体换血（= A4）；开铸后按规则 1 冻结
 
 ## 5. 停点
+
+> 进度注（2026-07-19）：A1/A2/F 代码已完成（分支 `feat/p12-mainnet-prep`）。用户拍板：
+> 先做**解码器 UI 优化轮**，再走 A-1 验收与 Arweave 上传——txid 未定稿前不切 env，不卡 B/C 施工。
 
 | 停点 | 时机 | 需要用户做什么 |
 |---|---|---|

@@ -932,3 +932,10 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **红线入代码**：新建 `contracts/script/DeployBase.s.sol`，`_assertMainnetRoles` 把"admin 绝不等于热钱包"写成主网 `require(admin != minter)`（+ admin/minter ≠ deployer、非零），6 条确定性单测护住；三个主网部署脚本（Score/Material/Orchestrator）共用之。
 - **A-track（停在上传前）**：解码器数量无关化 + 音效表 v2 三格式兼容 + postMessage 协议 v1（70-f）一次实现并本地 http 测试父页验过；换血脚本改按内容 hash 判变（堵 Codex P0 静默 skip）+ env-sync 纳入 server-only 白名单。🛑 A-1/F-1 = 用户浏览器验收 + Arweave 上传（永久，未做）。
 - **B 代码全绿（停在部署）**：CT-1 名参数化+主网硬失败 / CT-5 MaterialNFT 补测 / CT-7 空串防御 / CT-8 freezeURI+事件 / CT-2+CT-3 部署脚本主网护栏 / CT-12+B-0#9 主网禁部署护栏 / CT-15 URI 参数化 / **CT-4 mintScore 幂等键**（orderId=队列 row.id 的 keccak256，合约+ABI+cron 三层同批，forge+tsc 双绿，避开 Codex P0"只改合约则主网全 revert"）。forge 42 tests / tsc / eslint 全绿。剩 B3 顺路批(CT-11 pin/CT-13/14 评估留档) + B4 runbook 增补 + 🛑B-1 测试网回归。
+
+## 2026-07-19 续² — C-0 三项拍板 + 执行路径固化 + B-1 启动
+
+- **C-0 拍板（用户）**：①Semi 主网策略=**维持现状**（PoC JWT 双通道先上线，正式化放 P13；C7 仍做回归+kill switch）②DB 备份=**方案③手动周期导出+部署日全量快照**（零成本；数据涨后再评估 Pro）③免费额度=**不升级**（C6 盘点仍核对一遍，硬阻塞再回禀）。
+- **A-1 插入 UI 优化轮**：用户拍板解码器先优化 UI 再验收上传（"这版用很多年"标准不变）；txid 未定稿前不切 env，不卡 B/C 施工。
+- **B-1 保留并执行**：用户曾问"测试网不用了要不就不搞"——说服保留：这是唯一**免费**验证"新 ABI + 部署脚本 + admin 授权链路真能在真链上跑"的机会，主网不可回滚+真钱，跳过=拿没上过任何真链的合约直接上主网。简化模式重部署 3 合约 OP Sepolia + 角色验收 + 幂等键重发拒绝 + **本地 env** 指新合约两通路 e2e（现网 Vercel env 不动，沿 20-b §3 步骤 0 优先项）。
+- **执行路径固化**（进 00-overview §8）：B-1 → C 施工 → A-1 UI 轮+上传 → D-1 内容冻结（曲名+admin/deployer 钱包+快照）→ 🛑D-0 排期 → D 部署日 → 🛑D-gate。用户"D 就今天"已说明不可行（前置未清）。

@@ -45,7 +45,7 @@
       占位名曲目要么改完、要么不开放铸造、要么明示接受占位名永久
 - [ ] B track：forge test 绿 + 停点 B-1 回归过 + runbook 增补完 + admin 演练（B5）完成
 - [ ] C track：CRON_SECRET 已换 + Turbo 新钱包就绪 + operator 主网 ETH 到账 + 告警邮件实测过
-      + Node pin/OG/海报生产实测过（C10）+ DB 快照 ≤24h
+      + OG/海报生产复验过（C10）+ DB 快照 ≤24h
 - [ ] **env 三项硬校验**（都是"错了就永久"级，Codex P0/P1）：
       ① `NEXT_PUBLIC_APP_URL=https://pond-ripple.xyz` 生产读回确认（每枚 NFT external_url 来源）
       ② `SCORE_DECODER_AR_TX_ID` / `SOUNDS_MAP_AR_TX_ID` 三环境读回一致（server-only，

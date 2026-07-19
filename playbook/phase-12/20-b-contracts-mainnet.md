@@ -22,7 +22,23 @@ binary / scoop / WSL，预留半天缓冲，不算进施工工时。
 
 ## 1. 🛑 停点 B-0 — 合约决策 gate（承接 P10 停点 4，错过永久不可加）
 
-主网合约是全新部署 = 最后一次改设计的机会。逐项拍板并记 `docs/JOURNAL.md`：
+主网合约是全新部署 = 最后一次改设计的机会。逐项已拍板（2026-07-19）并记 `docs/JOURNAL.md`。
+
+### ✅ B-0 最终结论（本块为准，新进程照此执行）
+
+| # | 决策 | 最终结论 |
+|---|---|---|
+| 1 | ERC2981 版税 | **不做**（接受永久无版税） |
+| 2 | 供应上限 | **不设链上上限**，改链下监控告警 |
+| 3 | 可升级性 | **印死（不可升级）**——故其余项必须一次定对；"换合约"不是退路（等于抛弃已铸 NFT，见 40-d D3） |
+| 4 | mintScore 幂等键 | **加**（合约+ABI+cron 三层同改，见 B2） |
+| 5 | URI 空串防御 | **加** |
+| 6 | MaterialNFT freezeURI + 事件 | **加**（防 admin 钥匙泄露后批量篡改素材 NFT metadata；素材 NFT = 收藏的曲目，ERC1155 全局 URI 现可被 admin 随时改） |
+| 7 | ScoreNFT name / symbol | **`Ripples in the Pond` / `RPIP`**（去 Testnet、无版本号） |
+| 8 | admin 钱包 | **独立钱包（≠ 铸造热钱包）**；部署后再定升硬件/Safe/renounce。红线：admin 绝不等于热钱包 |
+| 9 | AirdropNFT | **不部署** → 全流程"4 合约"一律改读 **3 合约**（Material/Score/Orchestrator） |
+
+下方原始决策表保留追溯上下文。
 
 | # | 决策 | 背景 | 默认建议 |
 |---|---|---|---|
@@ -49,7 +65,8 @@ binary / scoop / WSL，预留半天缓冲，不算进施工工时。
 - [ ] **CT-5 MaterialNFT 补测试** — 新建 `contracts/test/MaterialNFT.t.sol` 对齐 ScoreNFT.t.sol
 
 ### B2 拍板产物施工（按 B-0 结果展开）
-- [ ] ERC2981 / MAX_SUPPLY / 幂等键 / URI 防御 / freezeURI —— 凡拍板"加"的：改合约 + 补测试
+- [ ] **本次拍板"加"的三项**：mintScore 幂等键(B4) + ScoreNFT URI 空串防御(B5) +
+      MaterialNFT freezeURI+事件(B6) —— 改合约 + 补测试；**不做** ERC2981、**不设** MAX_SUPPLY(B1/B2)
 - [ ] **CT-4 若采纳 = 三层同批改**：合约 + `src/lib/chain/contracts.ts` ABI（现单参
       `mintScore(to)`）+ `steps-mint.ts` 传稳定 orderId（用 `row.id`）；补"重复 orderId 拒绝"
       测试；B-1 测试网端到端为**硬验收**——只改合约不改 app = 主网铸造全 revert（Codex P0）

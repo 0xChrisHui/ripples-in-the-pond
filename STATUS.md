@@ -35,12 +35,12 @@
 - **B track（合约主网化）代码全完成**：CT-1~15 全落（名参数化 / mintScore 幂等键 / URI 空串防御 / MaterialNFT freezeURI / 部署红线护栏 `require(admin!=minter)` / 主网禁部署护栏）+ CT-11 编译器 pin（cancun，非 forge 默认 prague）+ B4 runbook 全面重写（3 合约 / admin 独立钱包 / verify-contract / admin 操作手册）。→ 停在 🛑 **B-1**（测试网重部署回归）。
 - **关键决策**：Foundry 阻塞解除；admin = 独立普通钱包(≠热钱包，存本地，靠 Claude 操作)；合约不可升级但可重部署（详 `docs/JOURNAL.md` 2026-07-19；memory `project_p12_admin_wallet`）。
 
-**下一步（P12 剩余，按 gate）**：
-1. 🛑 **A-1/F-1**（用户）：浏览器验收新解码器（"这版用很多年"）+ 换血素材到位后上传 Arweave 切 env。
-2. 🛑 **B-1**（用户/部署）：新合约上 OP Sepolia 回归（收藏→Material / 草稿→Score 两通路 + 幂等键重发拒绝验证）。
-3. **C track（基建安全）**：🛑 C-0 三拍板（Semi 策略 / DB 备份 / 额度）；C1 secrets 轮换 + cron Bearer；C2/C3 充值（真钱，报数确认再执行）；C8/C9 纯代码可先做。
-4. **D track（部署日）**：🛑 D-0 数据处置 + 排期 → 部署日执行 → 🛑 D-gate 开铸放行（对照 overview §3 永久性清单）。
-5. **E track（软 gate，性能）**：不阻塞开铸，公开宣传前做；首页项等 P8 定稿。
+**下一步（2026-07-19 执行路径已固化 = `playbook/phase-12/00-overview.md` §8；C-0 已拍板：Semi 维持/备份手动导出+部署日快照/额度不升级）**：
+1. **B-1 测试网回归**（进行中）：简化模式重部署 3 合约 OP Sepolia + 角色验收 + 幂等键重发拒绝 + 本地 env 两通路 e2e（Vercel env 不动）。
+2. **C 施工**：C1 CRON_SECRET+Bearer 合并切 / C2 Turbo 换钱包 / C3 operator 主网 ETH（报数确认）/ C4 告警 / C5 首次快照 / C8-C10。
+3. **A-1 解码器 UI 优化轮**（用户 2026-07-19 提出）→ 验收 → Arweave 上传 → 三环境切 env。
+4. **D-1 内容冻结**：正式曲名落库 + admin 独立钱包 + deployer 钱包 + DB 快照 ≤24h → 🛑 D-0 排期 → D 部署日 → 🛑 D-gate 开铸。
+5. **E 性能**（软 gate）随时穿插不阻塞。
 
 ---
 

@@ -6,7 +6,17 @@
 
 ---
 
-## 0. 🛑 停点 C-0 — 三项开工拍板
+## 0. ✅ 停点 C-0 — 已拍板（2026-07-19 用户）
+
+### C-0 最终结论（本块为准）
+
+| # | 决策 | 最终结论 |
+|---|---|---|
+| 1 | Semi 主网策略 | **① 维持现状**（PoC JWT 双通道先上线；正式化放 P13 生态合作一并谈。C7 仍做主网回归 + kill switch） |
+| 2 | DB 备份方案 | **③ 手动周期导出 + 部署日全量快照**（零成本纪律型起步；主网数据增长后再评估 Supabase Pro/PITR） |
+| 3 | 免费额度升级 | **不升级**（C6 盘点仍跑一遍核对；发现硬阻塞再回禀用户，否则全线维持免费档） |
+
+下方原始决策表保留追溯上下文。
 
 | # | 决策 | 选项 | 默认建议 |
 |---|---|---|---|
@@ -82,20 +92,23 @@
 - [ ] SR-P1-2 `mint_score_enqueue` 错误信息友好度
 - [ ] SR-P1-14 `scripts/load-env.ps1` 多行 value 支持（TURBO_WALLET_JWK 受害者，C2 换钱包正好用上）
 
-## 10. C10 — Node 版本 pin + OG/海报生产实测（memory 已知雷）
+## 10. C10 — OG/海报出图生产复验（Satori 坑已修，上线前再确认一次）
 
-- 已知：`next/og` ImageResponse 在 Node 24 下 **dev+生产都崩**（failed-to-pipe，memory 记录）；
-  `opengraph-image.tsx` 与海报 `poster/route.tsx` 都用它；`package.json` 现**无 `engines` 字段**
-- [ ] pin Node 20 LTS：`package.json` `engines.node` + Vercel 项目设置 Node 版本核对一致
-- [ ] 生产实测：`/score/<id>/opengraph-image` 与海报路由直接请求 → 200 + 出图内容正确
-- [ ] 本机 dev 对策记录（无 nvm）：装 nvm-windows 或接受"本地出图不可用、只验生产"并留档
+- **订正（2026-07-19）**：先前把出图崩归因于 Node 24 是**误判**。真凶=Satori 要求"多子节点
+  `<div>` 显式 `display:flex`"（"变量+文字"混排会被拆成多子节点），**与 Node 版本无关**；
+  `poster/route.tsx` 与 `opengraph-image.tsx` 已于 2026-07-11 用"合成模板字符串"修复
+  （见 memory `project_nextog_satori_multichild`）。**无需 pin Node，也无需改 `engines`。**
+- [ ] 生产实测（上线前一次）：直接请求 `/score/<id>/opengraph-image` 与海报路由
+      → 200 + 出图内容正确（封面/标题/二维码/短链齐）
+- [ ] 回归防线（改出图 JSX 时守三条，同 memory）：多子节点 div 必 `display:flex` /
+      变量+文字合成单模板串 / 外链图预取校验 `content-type` 以 `image/` 开头
 
 ## 11. 完成标准
 
 - [ ] C1-C5 全落地且各自验证过（含真实告警邮件 ≥ 3 封、备份恢复演练 1 次）
 - [ ] C6 承载表产出、C-0 三项拍板落 JOURNAL
 - [ ] C7 按拍板执行完（含 Semi kill switch 就位）；C8 评估结论留档；C9 三小项落地；
-      C10 Node pin + OG/海报生产实测通过
+      C10 OG/海报生产复验通过
 - [ ] verify.sh 全绿；产出 `reviews/2026-XX-XX-phase-12-infra.md` 逐项记录
 
 ## 12. 红线
