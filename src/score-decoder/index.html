@@ -30,6 +30,7 @@
     background: rgba(255,255,255,0.7); transition: width 0.1s linear; }
   .meta { margin-top: 28px; font-size: 11px; opacity: 0.32;
     letter-spacing: 0.03em; line-height: 1.5; font-family: ui-monospace, monospace; }
+  /* 列数由 JS 按实际音效数量设置（buildKeyDisplay）；此处仅作无 JS 时的兜底 */
   .keys { margin-top: 26px; display: grid;
     grid-template-columns: repeat(13, 1fr); gap: 4px; font-family: ui-monospace, monospace; }
   .key { padding: 8px 0; font-size: 11px;
@@ -153,6 +154,47 @@ async function fetchWithFallback(input, asJson) {
 }
 
 // ─────────────────────────────────────────────────
+// postMessage 控制接口 v1（规范权威 = playbook/phase-10/70-f-decoder-postmessage.md D-F1）
+// 开铸后此协议逐 NFT 永久钉死；只增不改，v2 才允许扩 seek/音量。
+// ─────────────────────────────────────────────────
+let isReady = false; // ready 之前收到的入站命令一律忽略（父页职责是等 ready，不排队）
+
+// 只在被嵌入 iframe 时（window.parent !== window）向父页发事件；裸开（OpenSea 等）零副作用
+function emit(type, payload) {
+  if (window.parent === window) return;
+  try {
+    const msg = Object.assign({ source: "ripples-decoder", v: 1, type: type }, payload || {});
+    window.parent.postMessage(msg, "*"); // 事件无敏感数据，targetOrigin '*'
+  } catch (e) {
+    // 跨域 postMessage 理论不抛，兜底吞掉不影响播放
+  }
+}
+
+// state 是父页迷你条的唯一真相源（D-F3）：手点/命令/自然播完全部收敛到这里
+function emitState(playing, positionMs) {
+  emit("state", {
+    playing: playing,
+    positionMs: Math.max(0, Math.round(positionMs || 0)),
+    durationMs: Math.round(totalDurationMs || 0),
+  });
+}
+
+// 入站命令：source 不符或未知 type 一律静默忽略；不校验 origin（D-F1：嵌入方控自己 iframe，无危害面）
+window.addEventListener("message", function (e) {
+  const d = e.data;
+  if (!d || d.source !== "ripples-parent") return;
+  if (!isReady) return; // ready 前忽略
+  if (d.type === "play") {
+    if (activeSources.length === 0) play();
+  } else if (d.type === "pause") {
+    if (activeSources.length > 0) stopPlayback();
+  } else if (d.type === "toggle") {
+    togglePlay();
+  }
+  // 其余 type 静默忽略（v1 无 seek/音量）
+});
+
+// ─────────────────────────────────────────────────
 // Audio engine
 // ─────────────────────────────────────────────────
 let ctx = null;
@@ -163,6 +205,7 @@ let activeSources = [];
 let startedAt = 0;
 let totalDurationMs = 0;
 let rafId = null;
+let lastStateEmit = 0; // 播放中 state 事件的 250ms 节流时钟（单位 ms，用 elapsed 计）
 
 function setStatus(text, isErr) {
   const el = document.getElementById("status");
@@ -174,6 +217,9 @@ function buildKeyDisplay(soundsMap) {
   const keysEl = document.getElementById("keys");
   keysEl.innerHTML = "";
   const keys = Object.keys(soundsMap).sort();
+  // 数量无关化：26 沿用 13 列（2 行，与历史布局一致）；50+ 时按 3 行左右自适应，仍可读
+  const cols = keys.length <= 26 ? 13 : Math.ceil(keys.length / 3);
+  keysEl.style.gridTemplateColumns = "repeat(" + cols + ", 1fr)";
   for (const k of keys) {
     const span = document.createElement("div");
     span.className = "key";
@@ -206,14 +252,16 @@ async function loadAll(eventsInput, baseInput, soundsInput) {
   events.sort((a, b) => a.time - b.time);
 
   // 2. sounds map: URL 参数 OR demo 内嵌
+  //    三格式兼容：v1 平铺 {id: txid} / 对象式 {id: {txId}} / v2 {version, sounds: {id: {txId, name}}}
+  //    判别：raw.version && raw.sounds 则取 raw.sounds，否则整个 raw 当映射（向后兼容老 NFT 的音效表）
   let soundsMap;
   if (soundsInput) {
     setStatus("Loading sounds map...");
     const raw = await fetchWithFallback(soundsInput, true);
-    // 兼容两种格式：{key: txid} 或 {key: {txId: ...}}
+    const table = raw && raw.version && raw.sounds ? raw.sounds : raw;
     soundsMap = {};
-    for (const k of Object.keys(raw)) {
-      const v = raw[k];
+    for (const k of Object.keys(table)) {
+      const v = table[k];
       soundsMap[k] = typeof v === "string" ? v : v.txId;
     }
   } else {
@@ -221,9 +269,9 @@ async function loadAll(eventsInput, baseInput, soundsInput) {
   }
   buildKeyDisplay(soundsMap);
 
-  // 3. 加载并解码所有音效（并行）
-  setStatus("Decoding 26 sound effects...");
+  // 3. 加载并解码所有音效（并行）—— 数量由实际音效表决定，不写死 26
   const soundEntries = Object.entries(soundsMap);
+  setStatus("Decoding " + soundEntries.length + " sound effects...");
   await Promise.all(
     soundEntries.map(async ([k, txid]) => {
       const buf = await fetchWithFallback("ar://" + txid, false);
@@ -251,13 +299,19 @@ async function loadAll(eventsInput, baseInput, soundsInput) {
 }
 
 function play() {
-  // 浏览器 autoplay policy：用户点击后 resume
-  if (ctx.state === "suspended") ctx.resume();
+  // 浏览器 autoplay policy：用户点击后 resume；被拦则如实发 error + state(playing:false)，不重试不绕过（D-F2）
+  if (ctx.state === "suspended") {
+    ctx.resume().catch(function () {
+      emit("error", { message: "AudioContext resume failed" });
+      emitState(false, 0);
+    });
+  }
 
   stopInternal();
 
   const startTime = ctx.currentTime + 0.1; // 100ms 缓冲，避免第一个 event 卡顿
   startedAt = startTime;
+  lastStateEmit = 0;
 
   // 调度底曲
   const baseSrc = ctx.createBufferSource();
@@ -290,6 +344,12 @@ function play() {
       nextIdx++;
     }
 
+    // 播放中每 250ms 节流发一次 state（进度同步给父页迷你条）
+    if (elapsed - lastStateEmit >= 250) {
+      emitState(true, elapsed);
+      lastStateEmit = elapsed;
+    }
+
     if (elapsed < totalDurationMs) {
       rafId = requestAnimationFrame(tick);
     } else {
@@ -297,6 +357,9 @@ function play() {
       document.getElementById("playBtn").classList.remove("playing");
       document.getElementById("playBtn").textContent = "▶";
       setStatus("Done · click ▶ to replay");
+      // 自然播完：先发终态 state 再发 ended（D-F3 唯一真相源）
+      emitState(false, totalDurationMs);
+      emit("ended");
     }
   };
   rafId = requestAnimationFrame(tick);
@@ -304,6 +367,7 @@ function play() {
   document.getElementById("playBtn").classList.add("playing");
   document.getElementById("playBtn").textContent = "■";
   setStatus("Playing...");
+  emitState(true, 0);
 }
 
 function stopInternal() {
@@ -315,13 +379,19 @@ function stopInternal() {
   activeSources = [];
 }
 
+// 手动停止 / pause 命令共用：停播 + UI 复位 + 发 state(playing:false)
+function stopPlayback() {
+  stopInternal();
+  document.getElementById("playBtn").classList.remove("playing");
+  document.getElementById("playBtn").textContent = "▶";
+  document.getElementById("bar").style.width = "0%";
+  setStatus("Stopped · click ▶ to replay");
+  emitState(false, 0);
+}
+
 function togglePlay() {
   if (activeSources.length > 0) {
-    stopInternal();
-    document.getElementById("playBtn").classList.remove("playing");
-    document.getElementById("playBtn").textContent = "▶";
-    document.getElementById("bar").style.width = "0%";
-    setStatus("Stopped · click ▶ to replay");
+    stopPlayback();
   } else {
     play();
   }
@@ -335,9 +405,13 @@ function togglePlay() {
   document.getElementById("playBtn").addEventListener("click", togglePlay);
   try {
     await loadAll(params.events, params.base, params.sounds);
+    // 资源全部加载完、▶ 可点 → 开放入站命令 + 通知父页 ready
+    isReady = true;
+    emit("ready", { durationMs: Math.round(totalDurationMs) });
   } catch (e) {
     console.error(e);
     setStatus("Failed: " + (e && e.message ? e.message : String(e)), true);
+    emit("error", { message: e && e.message ? e.message : String(e) });
   }
 })();
 </script>
