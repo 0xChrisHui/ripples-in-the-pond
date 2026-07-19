@@ -112,6 +112,20 @@ contract ScoreNFTTest is Test {
         nft.setTokenURI(999, "ar://notexist");
     }
 
+    function testSetTokenURIRejectsEmpty() public {
+        // CT-7：空串会把 tokenURI 永久焊成空；且拒绝后不能消耗唯一写入槽（下方非空仍可写）
+        vm.prank(minter);
+        uint256 id = nft.mint(user);
+
+        vm.prank(minter);
+        vm.expectRevert("ScoreNFT: empty URI");
+        nft.setTokenURI(id, "");
+
+        vm.prank(minter);
+        nft.setTokenURI(id, "ar://valid");
+        assertEq(nft.tokenURI(id), "ar://valid", "slot still writable after empty rejected");
+    }
+
     // ───────── supportsInterface ─────────
 
     function testSupportsInterface() public view {

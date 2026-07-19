@@ -30,6 +30,10 @@ contract MintOrchestrator is AccessControl {
     /// 永久绑定的 ScoreNFT 工厂地址，构造时定死避免误改
     IScoreNFT public immutable scoreNft;
 
+    // CT-4：orderId → tokenId 幂等映射。cron 用稳定 orderId（= 队列 row.id 的 hash）去重，
+    // 防后端重试 / lease 竞态导致同一录制双铸。tokenId 从 1 起，值为 0 = 该 orderId 未用过。
+    mapping(bytes32 => uint256) public tokenIdByOrderId;
+
     event ScoreMinted(address indexed to, uint256 indexed tokenId);
 
     constructor(address scoreNftAddress) {
@@ -41,10 +45,14 @@ contract MintOrchestrator is AccessControl {
 
     /// 唯一对外受理的"铸造请求"入口
     /// 调用方需要先在 ScoreNFT 上 grantRole(MINTER_ROLE, address(this))
+    /// CT-4：orderId 幂等——同 orderId 二次调用 revert，防后端重试双铸
     function mintScore(
-        address to
+        address to,
+        bytes32 orderId
     ) external onlyRole(MINTER_ROLE) returns (uint256 tokenId) {
+        require(tokenIdByOrderId[orderId] == 0, "orderId used");
         tokenId = scoreNft.mint(to);
+        tokenIdByOrderId[orderId] = tokenId;
         emit ScoreMinted(to, tokenId);
     }
 }

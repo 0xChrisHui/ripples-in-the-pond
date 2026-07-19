@@ -17,6 +17,8 @@ import "../src/AirdropNFT.sol";
  */
 contract DeployAirdropNFT is Script {
     function run() external {
+        // B-0 #9：主网首版不部署 AirdropNFT（省 gas 省面，将来要用再单独部署）；只保留测试网可用
+        require(block.chainid != 10, "AirdropNFT: not deployed on mainnet (B-0 #9)");
         uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
         address deployer = vm.addr(deployerKey);
         address admin = vm.envOr("ADMIN_ADDRESS", deployer);

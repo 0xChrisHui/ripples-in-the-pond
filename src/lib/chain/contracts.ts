@@ -101,25 +101,23 @@ export const ORCHESTRATOR_ADDRESS = process.env
 
 export const ORCHESTRATOR_ABI = [
   {
+    // CT-4：加 orderId 幂等参数，同 orderId 二次铸造合约会 revert（防后端重试双铸）
     name: 'mintScore',
     type: 'function',
     stateMutability: 'nonpayable',
-    inputs: [{ name: 'to', type: 'address' }],
+    inputs: [
+      { name: 'to', type: 'address' },
+      { name: 'orderId', type: 'bytes32' },
+    ],
     outputs: [{ name: 'tokenId', type: 'uint256' }],
   },
   {
-    name: 'tbaEnabled',
+    // CT-4：orderId → tokenId getter（丢 tx_hash 时可反查是否已铸，返回 0 = 未铸）
+    name: 'tokenIdByOrderId',
     type: 'function',
     stateMutability: 'view',
-    inputs: [],
-    outputs: [{ name: '', type: 'bool' }],
-  },
-  {
-    name: 'setTbaEnabled',
-    type: 'function',
-    stateMutability: 'nonpayable',
-    inputs: [{ name: 'enabled', type: 'bool' }],
-    outputs: [],
+    inputs: [{ name: '', type: 'bytes32' }],
+    outputs: [{ name: '', type: 'uint256' }],
   },
   {
     name: 'scoreNft',

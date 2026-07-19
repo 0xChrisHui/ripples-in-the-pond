@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "forge-std/Script.sol";
+import "./DeployBase.s.sol";
 import "../src/ScoreNFT.sol";
 import "../src/MintOrchestrator.sol";
 
@@ -23,12 +23,12 @@ import "../src/MintOrchestrator.sol";
  *
  * 主网 admin 手动授权命令见 docs/MAINNET-RUNBOOK.md。
  */
-contract DeployOrchestrator is Script {
+contract DeployOrchestrator is DeployBase {
     function run() external {
         uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
         address deployer = vm.addr(deployerKey);
-        address admin = vm.envOr("ADMIN_ADDRESS", deployer);
-        address minter = vm.envOr("MINTER_ADDRESS", deployer);
+        // CT-2/CT-3：主网强制 admin/minter 显式且互不相同、都 ≠ deployer（红线在 _resolveRoles）
+        (address admin, address minter) = _resolveRoles(deployer);
         address scoreNftAddr = vm.envAddress("SCORE_NFT_ADDRESS");
 
         vm.startBroadcast(deployerKey);
@@ -38,14 +38,15 @@ contract DeployOrchestrator is Script {
         console.log("MintOrchestrator:", address(orchestrator));
 
         // 2. 修正 Orchestrator 自身的 admin / minter
+        //    minter：先 grant 链上验成功再 revoke deployer（避免 grant 未生效却弃权 → 铸造全断）
         if (minter != deployer) {
-            orchestrator.grantRole(orchestrator.MINTER_ROLE(), minter);
-            orchestrator.revokeRole(orchestrator.MINTER_ROLE(), deployer);
+            bytes32 mRole = orchestrator.MINTER_ROLE();
+            orchestrator.grantRole(mRole, minter);
+            require(orchestrator.hasRole(mRole, minter), "grant minter failed");
+            orchestrator.revokeRole(mRole, deployer);
         }
-        if (admin != deployer) {
-            orchestrator.grantRole(orchestrator.DEFAULT_ADMIN_ROLE(), admin);
-            orchestrator.revokeRole(orchestrator.DEFAULT_ADMIN_ROLE(), deployer);
-        }
+        // CT-3：admin 移交走共享安全护栏（先 grant 验成功再 revoke deployer）
+        _handoverAdmin(address(orchestrator), deployer, admin);
 
         // 3. 把 ScoreNFT 的 MINTER_ROLE 授权给 Orchestrator
         //    注意：需要 deployer 仍持有 ScoreNFT.DEFAULT_ADMIN_ROLE

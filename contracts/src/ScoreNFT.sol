@@ -52,6 +52,8 @@ contract ScoreNFT is ERC721URIStorage, AccessControl {
     ) external onlyRole(MINTER_ROLE) {
         _requireMinted(tokenId);
         require(!_uriSet[tokenId], "ScoreNFT: URI already set");
+        // CT-7：空串也是永久首写，会把 tokenURI 焊成空。放在置位前，空串被拒后不消耗唯一写入槽。
+        require(bytes(uri).length > 0, "ScoreNFT: empty URI");
         _uriSet[tokenId] = true;
         _setTokenURI(tokenId, uri);
     }
