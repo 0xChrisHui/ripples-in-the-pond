@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 7 已完结**（2026-05-16，completion review `5a2211a`）→ **Phase 8 当前**：水塘视觉重设计（首页从星空改水塘）
+**Phase**: **Phase 12 当前**（OP Mainnet 上线准备与部署，2026-07-19 执行中；与 P8-P11 前端迭代**解耦并行**）。P7 已完结 / P8-L 实现待验收(冻结) / P10 已完结 / P9·P11 未开始。**权威"下一步"见下方「P12 执行进度」块。**
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（当前）= 水塘视觉重设计（首页星空 → 水塘）
@@ -24,7 +24,27 @@
 **P6 Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`（16/19 通过 + 0 P0 + 0 P1）
 **stakeholder 反馈**：艺术家 5 条反馈已收到（→ Phase 8）；投资人催 Semi demo（→ P7 Track B PoC-only）
 
-## 当前进度
+---
+
+## P12 执行进度（2026-07-19，权威"下一步"看这里）
+
+**Phase 12 = OP Mainnet 上线准备与部署**，与 P8-P11 前端迭代**解耦并行**（用户策略：后端先做好→提前上主网→前端音效慢慢修；P12 不依赖 P8/P9/P11 完成，前端可重部署、零链上影响）。权威 playbook：`playbook/phase-12/`（00-overview + 5 track A-E）。
+
+**已完成（本会话 2026-07-19，分支 `feat/p12-mainnet-prep`，`verify.sh` 全绿 / forge 42 tests）**：
+- **A track（音效/解码器）代码完成**：解码器数量无关化 + 音效表 v2 三格式兼容 + postMessage 协议 v1（70-f）；换血脚本按内容 hash 判变（堵 Codex P0）；env-sync 补 server-only 白名单。→ 停在 🛑 **A-1/F-1**（用户浏览器验收 + Arweave 上传，永久）。
+- **B track（合约主网化）代码全完成**：CT-1~15 全落（名参数化 / mintScore 幂等键 / URI 空串防御 / MaterialNFT freezeURI / 部署红线护栏 `require(admin!=minter)` / 主网禁部署护栏）+ CT-11 编译器 pin（cancun，非 forge 默认 prague）+ B4 runbook 全面重写（3 合约 / admin 独立钱包 / verify-contract / admin 操作手册）。→ 停在 🛑 **B-1**（测试网重部署回归）。
+- **关键决策**：Foundry 阻塞解除；admin = 独立普通钱包(≠热钱包，存本地，靠 Claude 操作)；合约不可升级但可重部署（详 `docs/JOURNAL.md` 2026-07-19；memory `project_p12_admin_wallet`）。
+
+**下一步（P12 剩余，按 gate）**：
+1. 🛑 **A-1/F-1**（用户）：浏览器验收新解码器（"这版用很多年"）+ 换血素材到位后上传 Arweave 切 env。
+2. 🛑 **B-1**（用户/部署）：新合约上 OP Sepolia 回归（收藏→Material / 草稿→Score 两通路 + 幂等键重发拒绝验证）。
+3. **C track（基建安全）**：🛑 C-0 三拍板（Semi 策略 / DB 备份 / 额度）；C1 secrets 轮换 + cron Bearer；C2/C3 充值（真钱，报数确认再执行）；C8/C9 纯代码可先做。
+4. **D track（部署日）**：🛑 D-0 数据处置 + 排期 → 部署日执行 → 🛑 D-gate 开铸放行（对照 overview §3 永久性清单）。
+5. **E track（软 gate，性能）**：不阻塞开铸，公开宣传前做；首页项等 P8 定稿。
+
+---
+
+## 当前进度（⚠ 以下为 P8 era 历史记录，P12 口径以上方「P12 执行进度」块为准）
 
 **做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1 已完整完成**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`（commit `65516d0`）；**B1-vercel 用户 2026-05-15 已在 Vercel 三环境添加完成**。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**Track C 全套（C1-C9）已收口**（详见上一轮验证）。**2026-05-15 A2 已上链 + Vercel + 归档**：AirdropNFT v2 部署 OP Sepolia `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`。**2026-05-15 Track D D1-D3 已完成**：LoginModal 默认 Semi + 邮箱直跳 Privy；SemiLogin 两阶段深色布局 + 6 格 PinInput；`/me` 顶栏按 `authSource` 切「← 首页」/「↗ 社区钱包」。verify.sh 全绿。**D4 剩余**：用户本机浏览器 7 步实测确认。**2026-05-16 A3+A12+A8 score queue 状态机修复包已 commit `a48f4de` + push + 端到端真实数据验证通过**（migration 032 加 mint/uri_attempted_at + token_id partial unique；route 去掉 status CAS；steps-mint/set-uri 三刀盖戳；A8 Resend fire-and-forget；/api/health 加 scoreQueueManualReview）。验证副产物：发现 Vercel `NEXT_PUBLIC_SCORE_NFT_ADDRESS` 被错配为 AirdropNFT 地址，已修；两个历史 NFT（tokenId 21/22）经手动数据修复 → cron 自动跑完 setTokenURI。**2026-05-16 A6.1+A6.2 完成**：tracks 表 INSERT week 6-15（migration 033）+ sphere-config 5→15 + SphereNode badge 双位数适配 + 10 首 mp3 上 Arweave 回写 arweave_url（week 6-15 全部就绪）。verify.sh 全绿。
 
