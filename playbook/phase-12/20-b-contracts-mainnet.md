@@ -76,8 +76,13 @@ binary / scoop / WSL，预留半天缓冲，不算进施工工时。
 - [ ] CT-10 测试覆盖缺口（角色管理/移交序列/非 receiver/_safeMint/空串 URI/supportsInterface）
 - [ ] CT-11 foundry.toml pin solc/evm_version/optimizer（主网 verify 复现一致性）
 - [ ] CT-12 TestMintOrchestrator 加 `require(block.chainid != 10)` 主网护栏
-- [ ] CT-13 Orchestrator setTokenURI 覆盖评估（热钱包权限面；可结论=接受现状+记录）
-- [ ] CT-14 contractURI / ERC1155Supply 评估（合集级 metadata；可不做，记录）
+- [x] CT-13 ✅ 评估留档（2026-07-24）：**接受现状**。Orchestrator 本体无 setTokenURI 通道
+      （仅 mint/mintScore，代码核实）；setTokenURI 由热钱包直调 ScoreNFT，被 `_uriSet`
+      写一次锁死——热钱包泄露最多抢写**未设 URI 的新铸 token**，改不了任何已定稿 NFT；
+      无限增发风险已由 B-0 #2（链下监控）承接
+- [x] CT-14 ✅ 评估留档（2026-07-24）：**不做**。两合约均无 contractURI/ERC1155Supply（核实）；
+      集合级展示走 OpenSea 等市场后台认领编辑（无需链上 contractURI）；totalSupply 对
+      app 无用（DB 是真相源）。且 B-1 已回归——现在加合约功能 = 推翻回归重来，违背 B-0 极简
 - [ ] CT-15 Deploy.s.sol placeholder URI env 参数化
 
 ### B4 runbook 增补（`docs/MAINNET-RUNBOOK.md`）
