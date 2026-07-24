@@ -15,6 +15,26 @@ import { formatEther } from "viem";
 
 const LOW_BALANCE_ETH = 0.05;
 const QUEUE_BACKLOG_LIMIT = 50;
+// P12 C4：活跃行超过 30 分钟无更新 = 管道卡死（正常 cron 每分钟都会 touch 行）
+const STUCK_AGE_MS = 30 * 60 * 1000;
+
+/** 查队列最老活跃行的"未更新时长"，超阈值返回告警文案（无活跃行/未超时返回 null） */
+async function checkStuckAge(
+  table: "mint_queue" | "score_nft_queue",
+  activeStatuses: readonly string[],
+): Promise<string | null> {
+  const { data: oldest } = await supabaseAdmin
+    .from(table)
+    .select("id, updated_at")
+    .in("status", activeStatuses as string[])
+    .order("updated_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (!oldest) return null;
+  const ageMs = Date.now() - new Date(oldest.updated_at).getTime();
+  if (ageMs <= STUCK_AGE_MS) return null;
+  return `${table} 疑似卡死: 行 ${oldest.id} 已 ${Math.round(ageMs / 60000)} 分钟无更新 (阈值 30 分钟)`;
+}
 
 export async function GET(req: NextRequest) {
   if (!verifyCronSecret(req)) {
@@ -58,6 +78,18 @@ export async function GET(req: NextRequest) {
       const msg = `score_nft_queue 积压: ${scoreBacklog} 件 (阈值 ${QUEUE_BACKLOG_LIMIT})`;
       console.error(`[check-balance] ${msg}`);
       alerts.push(msg);
+    }
+
+    // 3.5 P12 C4：卡龄检测（数量正常但行卡死时，上面两项抓不到）
+    const stuckMsgs = await Promise.all([
+      checkStuckAge("mint_queue", ["pending", "minting_onchain"]),
+      checkStuckAge("score_nft_queue", SCORE_ACTIVE_STATUSES),
+    ]);
+    for (const msg of stuckMsgs) {
+      if (msg) {
+        console.error(`[check-balance] ${msg}`);
+        alerts.push(msg);
+      }
     }
 
     // 4. 有告警 → 写 system_kv

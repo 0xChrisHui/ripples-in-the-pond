@@ -6,7 +6,11 @@ import SemiLogin from './SemiLogin';
 
 /**
  * Phase 7 Track D D1 — 全站登录 modal，默认走 Semi 社区钱包。
+ * P12 C7 — Semi kill switch：NEXT_PUBLIC_SEMI_DISABLED=1 时隐藏 Semi、邮箱(Privy)转正，
+ * 上线周 Semi API 波动可一键保住新用户登录（改 env + redeploy 即生效，零代码回滚）。
  */
+
+const SEMI_DISABLED = process.env.NEXT_PUBLIC_SEMI_DISABLED === '1';
 
 // 模块级 store + React useSyncExternalStore 标准三件套（subscribe / getSnapshot / getServerSnapshot）。
 // 选模块级而非 Context：① modal 是全站单例 ② 任意非 React 代码也能调 openLoginModal ③ 避免新增
@@ -79,19 +83,35 @@ export default function LoginModal() {
           </button>
         </div>
 
-        <SemiLogin onSuccess={closeLoginModal} />
+        {SEMI_DISABLED ? (
+          <button
+            type="button"
+            onClick={() => {
+              closeLoginModal();
+              privyLogin();
+            }}
+            disabled={!privyReady}
+            className="flex w-full items-center justify-center rounded-xl bg-white py-3 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {privyReady ? '✉ 用邮箱登录' : '邮箱登录加载中…'}
+          </button>
+        ) : (
+          <>
+            <SemiLogin onSuccess={closeLoginModal} />
 
-        <button
-          type="button"
-          onClick={() => {
-            closeLoginModal();
-            privyLogin();
-          }}
-          disabled={!privyReady}
-          className="mt-5 flex w-full items-center justify-end gap-1 text-xs text-white/40 transition-colors hover:text-white/70 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          {privyReady ? '✉ 用邮箱登录' : '邮箱登录加载中…'}
-        </button>
+            <button
+              type="button"
+              onClick={() => {
+                closeLoginModal();
+                privyLogin();
+              }}
+              disabled={!privyReady}
+              className="mt-5 flex w-full items-center justify-end gap-1 text-xs text-white/40 transition-colors hover:text-white/70 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {privyReady ? '✉ 用邮箱登录' : '邮箱登录加载中…'}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

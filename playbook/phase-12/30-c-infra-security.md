@@ -51,11 +51,11 @@
 
 ## 4. C4 — 告警接线（A8 基础设施 + P2-3/P2-4）
 
-现状：Resend manual_review 邮件已接（P7 `a48f4de`）；低余额/queue stuck 仍只写 system_kv 无邮件。
-- [ ] Resend 发信配置生产化：团队邮箱/发信域名核实（C-defer 项），收件人=用户
-- [ ] `check-balance` 低余额（operator ETH + Turbo winc 双阈值）→ Resend 邮件
-- [ ] queue stuck（oldestAgeSeconds 超阈值）→ Resend 邮件（复用 manual_review 通道，fire-and-forget 同款防御）
-- 验证：**每类告警人为触发一封真实邮件收到**（阈值临时调高触发法），记录进 review
+现状订正（2026-07-24 核实）：低余额+双队列积压 → 邮件 **P10 P2-3 已接**（先前"仍无邮件"的现状描述过时）。
+- [ ] Resend 发信配置生产化：`RESEND_API_KEY`/`ALERT_TO_EMAIL`/`ALERT_FROM_EMAIL` 本地三项全未配，Vercel 待确认（C-defer 项），收件人=用户
+- [x] `check-balance` 低余额 → Resend 邮件（P10 P2-3 已在；Turbo winc 阈值挂 C2 换钱包后补）
+- [x] queue stuck → Resend 邮件（2026-07-24 补 `checkStuckAge`：活跃行 >30min 无 updated_at 更新即告警，抓"数量正常但管道卡死"盲区）
+- 验证：**每类告警人为触发一封真实邮件收到**（阈值临时调高触发法），记录进 review——待 Resend env 配好执行
 
 ## 5. C5 — DB 备份落地（按 C-0 #2 拍板执行）
 
@@ -75,22 +75,25 @@
 
 ## 7. C7 — Semi 主网策略执行（按 C-0 #1 拍板）
 
-- 选 ① 维持：登录路径主网回归一遍（SemiLogin 7 步实测脚本复用 `docs/SEMI-DEMO-SCRIPT.md`）+ 风险记录
-- 选 ②/③：另立子步骤（涉及 semi-client.ts / SIWE 新组件，工作量另估）
-- [ ] **无论选哪个：Semi 故障 kill switch**（Codex P2）——LoginModal 默认入口可一键回退
-      Privy / 隐藏 Semi（env flag 或配置常量即可）；上线周 Semi API 波动时保新用户能登录
+- 选 ① 维持（✅ C-0 已拍板）：登录路径主网回归一遍（SemiLogin 7 步实测脚本复用 `docs/SEMI-DEMO-SCRIPT.md`）+ 风险记录——挂 D 部署日后
+- [x] **Semi 故障 kill switch**（Codex P2）——✅ 2026-07-24：`NEXT_PUBLIC_SEMI_DISABLED=1`
+      → LoginModal 隐藏 Semi、邮箱(Privy)转正主按钮；`.env.example` 已登记
 
 ## 8. C8 — localStorage JWT → httpOnly 评估
 
-- [ ] 安全评估文档化：现状（localStorage `ripples_auth_jwt`，XSS 可读）vs httpOnly cookie 改造成本
-      （涉及 useAuth/client-jwt/中间件三层）；**允许结论 = 维持现状 + 理由留档**，不强制改造
-- [ ] 结论进 JOURNAL；若拍板改造则挂独立 step 排期
+- [x] 安全评估文档化 ✅ 2026-07-24：**结论 = 维持现状 + 理由留档**（XSS 面窄无 UGC 富文本 /
+      被窃 JWT 爆炸半径不含资金 / 改造 1-1.5 天三层回归不划算）；触发升级条件 = 引入 UGC
+      富文本 / P13 Semi 正式化 / 出现链下资产。全文见 `reviews/2026-07-24-phase-12-infra.md` C8 段
+- [x] 结论进 JOURNAL ✅（2026-07-24 段）
 
 ## 9. C9 — P10 边际清尾（三小项，一批 commit）
 
-- [ ] SR-P1-1 `save_score_atomic` exception null check（SQL 小修）
-- [ ] SR-P1-2 `mint_score_enqueue` 错误信息友好度
-- [ ] SR-P1-14 `scripts/load-env.ps1` 多行 value 支持（TURBO_WALLET_JWK 受害者，C2 换钱包正好用上）
+- [x] SR-P1-1 `save_score_atomic` exception null check ✅ 2026-07-24 —— 迁移
+      `supabase/migrations/phase-12/048_save_score_atomic_null_check.sql`（**待用户生产执行**）
+- [x] SR-P1-2 `mint_score_enqueue` 错误信息友好度 ✅ —— 不动 SQL，API 边界拆文案
+      （already enqueued→409 已在铸造 / status=→已过期 / 其余→不存在或不属于你）
+- [x] SR-P1-14 `scripts/load-env.ps1` 多行 value 支持 ✅ —— 引号未闭合续读至闭合；
+      注：本地实际用 TURBO_WALLET_PATH 单行，此项属未来防御（C2 换钱包用 JWK 时生效）
 
 ## 10. C10 — OG/海报出图生产复验（Satori 坑已修，上线前再确认一次）
 
@@ -98,8 +101,9 @@
   `<div>` 显式 `display:flex`"（"变量+文字"混排会被拆成多子节点），**与 Node 版本无关**；
   `poster/route.tsx` 与 `opengraph-image.tsx` 已于 2026-07-11 用"合成模板字符串"修复
   （见 memory `project_nextog_satori_multichild`）。**无需 pin Node，也无需改 `engines`。**
-- [ ] 生产实测（上线前一次）：直接请求 `/score/<id>/opengraph-image` 与海报路由
-      → 200 + 出图内容正确（封面/标题/二维码/短链齐）
+- [x] 生产实测 ✅ 2026-07-24：`/score/12/opengraph-image` **200 image/png 53KB** +
+      `/score/12/poster` **200 image/png 132KB**（探测记录进 `reviews/2026-07-24-phase-12-infra.md`）；
+      内容人眼复核（封面/标题/二维码/短链）挂 E3 上线检查一并看
 - [ ] 回归防线（改出图 JSX 时守三条，同 memory）：多子节点 div 必 `display:flex` /
       变量+文字合成单模板串 / 外链图预取校验 `content-type` 以 `image/` 开头
 

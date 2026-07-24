@@ -948,3 +948,11 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **D-0 硬证据**：新合约 tokenId=2 撞 `uq_score_queue_token_id`（旧行占 2-23）→ 管道死。清链衍生表从"推荐"升"硬需求"。中毒行弃置 + 21 枚占位垫计数 + 克隆行完成回归。
 - **环境坑（本机）**：Turbo 上传必须走系统代理而 Next 不给第三方 SDK 的 fetch 挂代理 → dev server 必须 `NODE_USE_ENV_PROXY=1` 启动；Upstash 走代理被重置由 bug① fail-open 兜住。Alchemy 测试网当日间歇 TLS 抖动 + gas 估算抽风（cast 显式 --gas-limit 绕过）。
 - **附带发现**：生产 cron 活着（sync 游标 2.5min 新），"Bearer 未切则 401"担忧不成立——C1 剩余量待用户看面板回报。
+
+## 2026-07-24 — C track 独立项一波清完（C4半/C7/C8/C9/C10）
+
+- **C8 拍板留档**：JWT 维持 localStorage 不改 httpOnly——XSS 面窄（无 UGC 富文本）、被窃令牌爆炸半径不含资金（链上资产无私钥在我方、铸造免费）、三层改造 1-1.5 天回归风险 > 上线前收益。触发升级条件：UGC 富文本 / P13 Semi 正式化 / 链下资产出现。评估全文 `reviews/2026-07-24-phase-12-infra.md`。
+- **C9 决策**：SR-P1-2 错误友好度**不动 SQL**、在 API 边界拆文案（RPC 错误码是机器契约，文案是产品层；拆在边界零迁移零风险）——already enqueued 单独说清（409「已经在铸造中」），这是真实用户最常撞的。SR-P1-1 用 048 迁移补 raise（待用户生产执行）；SR-P1-14 多行值支持属未来防御（本地实为 TURBO_WALLET_PATH 单行）。
+- **C4 现状订正**：playbook 写"低余额/stuck 仍无邮件"已过时——P10 P2-3 早接好低余额+积压邮件；本次只补**卡龄检测**（活跃行 >30min 无更新即告警，B-1 那种"upsert 死循环数量不涨"正是它的猎物）。配置半（Resend 三 env）本地全未配，待用户。
+- **C7 kill switch 形态**：env flag 而非配置常量——故障时改 Vercel env + redeploy 即回退，不用动代码不用等 build 排查；`NEXT_PUBLIC_SEMI_DISABLED=1` 时邮箱升主按钮（不是藏在角落的小字链接，故障场景它就是唯一入口）。
+- **C10 生产实锤**：/score/12 OG 卡 200·PNG·53KB + 海报 200·PNG·132KB——Satori 多子节点修复在生产有效，"pin Node"彻底翻篇。
