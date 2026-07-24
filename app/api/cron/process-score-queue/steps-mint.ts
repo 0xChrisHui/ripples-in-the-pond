@@ -119,7 +119,7 @@ export async function stepMintOnchain(
   console.log(`[score-cron] mint confirmed, tokenId=${tokenId}`);
 
   const nowIso = new Date().toISOString();
-  const { data: dbOk } = await supabaseAdmin
+  const { data: dbOk, error: dbErr } = await supabaseAdmin
     .from('score_nft_queue')
     .update({ token_id: tokenId, updated_at: nowIso })
     .eq('id', row.id)
@@ -128,6 +128,11 @@ export async function stepMintOnchain(
     .select('id')
     .maybeSingle();
 
+  // P12 B-1 发现：DB error（如 token_id 撞唯一约束）被误判成 lease 丢失 → 无限空转。
+  // 抛普通错误走 retry/failed 通道（链上已铸，token_id 可从 receipt 幂等重取，safe）
+  if (dbErr) {
+    throw new Error(`DB error writing tokenId=${tokenId}: ${dbErr.message}`);
+  }
   if (!dbOk) {
     console.warn(`[score-cron] lease lost when writing tokenId for ${row.id}`);
     return 'minting_onchain';

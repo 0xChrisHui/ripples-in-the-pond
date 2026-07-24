@@ -36,7 +36,7 @@
 - **关键决策**：Foundry 阻塞解除；admin = 独立普通钱包(≠热钱包，存本地，靠 Claude 操作)；合约不可升级但可重部署（详 `docs/JOURNAL.md` 2026-07-19；memory `project_p12_admin_wallet`）。
 
 **下一步（2026-07-19 执行路径已固化 = `playbook/phase-12/00-overview.md` §8；C-0 已拍板：Semi 维持/备份手动导出+部署日快照/额度不升级）**：
-1. **B-1 测试网回归**（进行中）：简化模式重部署 3 合约 OP Sepolia + 角色验收 + 幂等键重发拒绝 + 本地 env 两通路 e2e（Vercel env 不动）。
+1. ✅ **B-1 测试网回归**（2026-07-23 完成）：3 合约重部署（Material `0xe335..13c0` / Score `0xE0fA..DB23` / Orch `0x970b..01FA`）+ 角色 6/6 + 幂等键链上拒绝 + CT-7/8 链上全验 + 两通路 e2e 全通（乐谱 tokenId 24 归户）。揪出并修复 3 个管道真 bug（op-lock 裸 500 / tokenId 写入吞错 / **mint_events 部分索引 upsert 必挂——现存生产 main，随 P12 合并即修**）+ D-0 清表实证。详见 `reviews/phase-6-deprecated-contracts.md` 2026-07-23 补记。
 2. **C 施工**：C1 CRON_SECRET+Bearer 合并切 / C2 Turbo 换钱包 / C3 operator 主网 ETH（报数确认）/ C4 告警 / C5 首次快照 / C8-C10。
 3. **A-1 解码器 UI 优化轮**（用户 2026-07-19 提出）→ 验收 → Arweave 上传 → 三环境切 env。
 4. **D-1 内容冻结**：正式曲名落库 + admin 独立钱包 + deployer 钱包 + DB 快照 ≤24h → 🛑 D-0 排期 → D 部署日 → 🛑 D-gate 开铸。

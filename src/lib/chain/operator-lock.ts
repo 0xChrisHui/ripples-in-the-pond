@@ -42,8 +42,19 @@ export async function acquireOpLock(holder: string): Promise<boolean> {
     console.warn('[op-lock] Upstash 未配置，本地开发 fail-open（跳过锁）');
     return true;
   }
-  const result = await r.set(LOCK_KEY, holder, { nx: true, px: LEASE_MS });
-  return result === 'OK';
+  try {
+    const result = await r.set(LOCK_KEY, holder, { nx: true, px: LEASE_MS });
+    return result === 'OK';
+  } catch (err) {
+    // P12 B-1 发现：Upstash 网络抖动时这里裸抛，而调用方在路由 try 之外 → cron 裸 500。
+    // 与"未配置"分支同哲学：生产 fail-closed（返 busy 等下轮），开发 fail-open（单机无并发风险）
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[op-lock] Upstash 网络错误，生产 fail-closed 拒绝加锁:', err);
+      return false;
+    }
+    console.warn('[op-lock] Upstash 网络错误，本地开发 fail-open（跳过锁）:', err);
+    return true;
+  }
 }
 
 export async function releaseOpLock(holder: string): Promise<void> {

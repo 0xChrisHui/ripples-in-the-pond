@@ -939,3 +939,12 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **A-1 插入 UI 优化轮**：用户拍板解码器先优化 UI 再验收上传（"这版用很多年"标准不变）；txid 未定稿前不切 env，不卡 B/C 施工。
 - **B-1 保留并执行**：用户曾问"测试网不用了要不就不搞"——说服保留：这是唯一**免费**验证"新 ABI + 部署脚本 + admin 授权链路真能在真链上跑"的机会，主网不可回滚+真钱，跳过=拿没上过任何真链的合约直接上主网。简化模式重部署 3 合约 OP Sepolia + 角色验收 + 幂等键重发拒绝 + **本地 env** 指新合约两通路 e2e（现网 Vercel env 不动，沿 20-b §3 步骤 0 优先项）。
 - **执行路径固化**（进 00-overview §8）：B-1 → C 施工 → A-1 UI 轮+上传 → D-1 内容冻结（曲名+admin/deployer 钱包+快照）→ 🛑D-0 排期 → D 部署日 → 🛑D-gate。用户"D 就今天"已说明不可行（前置未清）。
+
+## 2026-07-23 — B-1 测试网回归收官：两通路全通 + 3 个管道真 bug + D-0 硬证据
+
+- **链层**：3 合约简化模式重部署 OP Sepolia（对照表进 `reviews/phase-6-deprecated-contracts.md`）；角色 6/6；幂等键真链验证（同 orderId 重发 revert `orderId used`）；CT-7 空串拒后槽位未烧、CT-8 freezeURI 封条链上 revert `URI frozen`——全过。
+- **app 层 e2e**（用户浏览器真流程 + 本地 cron 新 ABI）：素材通路 → 新 MaterialNFT confirmed；乐谱通路 5 步全走通 → tokenId 24 归真实用户 + tokenURI 上链 + mint_events 记账 ✓。
+- **3 个真 bug 当场修**：① `acquireOpLock` 网络错误裸抛（调用点在路由 try 外）→ cron 空 body 500；改生产 fail-closed / 开发 fail-open。② steps-mint 写 tokenId 吞 DB error 误判 lease lost → 无限空转；补 error throw。③ **mint_events upsert 撞 016h 部分唯一索引**（PostgREST onConflict 匹配不了带 WHERE 的索引）→ 乐谱铸造最后一步必挂；A17 之前被静默吞错掩盖（假成功），本次是 A17 后首铸即触雷；改"查后插"。**bug③ 现存生产 main**——P12 合并即修，期间生产铸谱会 failed（NFT 已上链）。
+- **D-0 硬证据**：新合约 tokenId=2 撞 `uq_score_queue_token_id`（旧行占 2-23）→ 管道死。清链衍生表从"推荐"升"硬需求"。中毒行弃置 + 21 枚占位垫计数 + 克隆行完成回归。
+- **环境坑（本机）**：Turbo 上传必须走系统代理而 Next 不给第三方 SDK 的 fetch 挂代理 → dev server 必须 `NODE_USE_ENV_PROXY=1` 启动；Upstash 走代理被重置由 bug① fail-open 兜住。Alchemy 测试网当日间歇 TLS 抖动 + gas 估算抽风（cast 显式 --gas-limit 绕过）。
+- **附带发现**：生产 cron 活着（sync 游标 2.5min 新），"Bearer 未切则 401"担忧不成立——C1 剩余量待用户看面板回报。

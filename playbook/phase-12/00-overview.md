@@ -104,8 +104,9 @@ E 性能（软 gate，随时并行，不卡 D）
 > 用户问"D 就今天行不行"→ 不行：B-1/C/曲名/钱包/快照全是硬前置。按下列顺序走，
 > 每步完成勾掉；A4 换血素材若一直不到，按 `10-a` fallback（现音冻结创世版）不卡 D。
 
-1. **B-1 测试网回归**（1-2h）：简化模式重部署 3 合约到 OP Sepolia + 角色验收 +
-   幂等键重发拒绝 + **本地 env** 指新合约走两通路 e2e（现网 Vercel env 不动）
+1. ✅ **B-1 测试网回归**（2026-07-23 完成）：3 合约重部署 + 角色 6/6 + 幂等键链上拒绝 +
+   两通路 e2e 全通（tokenId 24）；揪出 3 个管道真 bug 当场修（详见
+   `reviews/phase-6-deprecated-contracts.md` 补记）——其一（mint_events upsert 必挂）现存生产 main
 2. **C 施工**（半天）：C1 CRON_SECRET 换新+cron Bearer 合并切 / C2 Turbo 换钱包 /
    C3 operator 主网 ETH（报数确认）/ C4 告警接线 / C5 首次全量快照 / C8-C10 杂项
 3. **A-1 解码器 UI 优化轮**（用户提出 2026-07-19）→ 浏览器验收 → Arweave 上传 →

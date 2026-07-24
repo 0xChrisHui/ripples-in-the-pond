@@ -94,7 +94,12 @@ binary / scoop / WSL，预留半天缓冲，不算进施工工时。
 - [ ] 签名流程演练一次：拿测试网 grantRole calldata 实操（Safe UI 或 hardware 签名）
 - [ ] 演练不过 = 部署日 3.3.1 授权卡死（Orchestrator 拿不到 MINTER_ROLE，铸造全断）
 
-## 3. 🛑 停点 B-1 — 测试网全量回归
+## 3. ✅ 停点 B-1 — 测试网全量回归（2026-07-23 完成）
+
+> 结果：3 合约简化模式重部署 OP Sepolia + 角色 6/6 + 幂等键链上重发拒绝 + CT-7/CT-8 链上
+> 状态机全验 + 两通路 app 层 e2e 全通（素材 & 乐谱 tokenId 24）。揪出 3 个管道真 bug 当场修
+> （op-lock 裸 500 / tokenId 写入吞错 / mint_events 部分索引 upsert 必挂——第三个现存生产 main）。
+> 全记录：`reviews/phase-6-deprecated-contracts.md` 2026-07-19 段 + 2026-07-23 补记。原步骤留档：
 
 合约本体若有任何改动（ERC2981/幂等键/AccessControl 等），**必须先上 OP Sepolia 走完整链路**：
 0. 环境选择：**优先本地 env 指向新测试合约**做回归（现网不动、测试 NFT 不消失）；
