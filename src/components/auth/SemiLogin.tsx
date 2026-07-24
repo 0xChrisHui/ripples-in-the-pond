@@ -5,10 +5,28 @@ import { setSemiJwt } from '@/src/lib/auth/client-jwt';
 import PinInput from './PinInput';
 
 const COUNTDOWN_SECONDS = 60;
+const SEMI_REGISTER_URL = 'https://semi.ntdao.xyz/';
 
 function maskPhone(phone: string): string {
   if (phone.length <= 7) return phone;
   return `${phone.slice(0, 3)}...${phone.slice(-4)}`;
+}
+
+/** 未注册提示 + 跳转 Semi 注册按钮 */
+function RegisterPrompt() {
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-xs text-red-400">该手机号尚未注册 Semi 钱包，请先注册后再登录</p>
+      <a
+        href={SEMI_REGISTER_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm tracking-[0.2em] text-white transition-colors hover:bg-white/20"
+      >
+        前往注册 Semi 钱包
+      </a>
+    </div>
+  );
 }
 
 type Phase = 'phone' | 'code';
@@ -21,6 +39,7 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
   const [code, setCode] = useState('');
   const [phase, setPhase] = useState<Phase>('phone');
   const [error, setError] = useState<string | null>(null);
+  const [needRegister, setNeedRegister] = useState(false);
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
@@ -40,6 +59,7 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
       return;
     }
     setError(null);
+    setNeedRegister(false);
     setLoading(true);
     try {
       const res = await fetch('/api/auth/community/send-code', {
@@ -49,6 +69,10 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if (data.code === 'SEMI_NOT_REGISTERED') {
+          setNeedRegister(true);
+          return;
+        }
         throw new Error(data.error || '发送验证码失败，请稍后重试');
       }
       setPhase('code');
@@ -67,6 +91,7 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
       return;
     }
     setError(null);
+    setNeedRegister(false);
     setLoading(true);
     try {
       const res = await fetch('/api/auth/community', {
@@ -79,6 +104,10 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
       }
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if (data.code === 'SEMI_NOT_REGISTERED') {
+          setNeedRegister(true);
+          return;
+        }
         throw new Error(data.error || '登录失败，请稍后重试');
       }
       const data = await res.json();
@@ -121,7 +150,7 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
           {loading ? '发送中…' : '下 一 步'}
         </button>
 
-        {error && <p className="text-xs text-red-400">{error}</p>}
+        {needRegister ? <RegisterPrompt /> : error && <p className="text-xs text-red-400">{error}</p>}
       </div>
     );
   }
@@ -154,7 +183,7 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
         {loading ? '登录中…' : '验  证'}
       </button>
 
-      {error && <p className="text-xs text-red-400">{error}</p>}
+      {needRegister ? <RegisterPrompt /> : error && <p className="text-xs text-red-400">{error}</p>}
     </div>
   );
 }

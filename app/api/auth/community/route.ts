@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAddress } from "viem";
-import { verifySemiCode, getSemiUser } from "@/src/lib/auth/semi-client";
+import { verifySemiCode, getSemiUser, SEMI_NOT_REGISTERED } from "@/src/lib/auth/semi-client";
 import { supabaseAdmin } from "@/src/lib/supabase";
 import { signJwt } from "@/src/lib/auth/jwt";
 
@@ -78,6 +78,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "验证码无效或已过期" },
         { status: 401 },
+      );
+    }
+
+    // 验证码对但 Semi 侧没钱包（send-code 前置检查 fail-open 漏过来的兜底）→ 引导注册
+    if (msg === SEMI_NOT_REGISTERED) {
+      return NextResponse.json(
+        { error: "该手机号尚未注册 Semi 钱包", code: SEMI_NOT_REGISTERED },
+        { status: 403 },
       );
     }
 

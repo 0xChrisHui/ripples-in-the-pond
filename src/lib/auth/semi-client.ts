@@ -26,6 +26,34 @@ export interface SemiUser {
   phone: string;
 }
 
+/** 标记错误：手机号未注册 Semi（或注册了但没在 Semi App 建钱包，evm 地址为空） */
+export const SEMI_NOT_REGISTERED = "SEMI_NOT_REGISTERED";
+
+/**
+ * 登录前置检查：手机号是否已注册 Semi 且有钱包地址。
+ * 💭 为什么发码前查：Semi /signin 会对任意号码自动建空用户，空用户没有 evm 地址，
+ * 走到 /get_me 才发现登不进 — 提前查可以不浪费短信、即刻引导用户去注册。
+ * @returns true=可登录 / false=未注册或没钱包 / null=查询失败（fail-open，验证阶段兜底）
+ */
+export async function checkSemiRegistered(phone: string): Promise<boolean | null> {
+  try {
+    const res = await fetch(
+      `${getBaseUrl()}/get_by_handle?handle=${encodeURIComponent(phone)}`,
+      { signal: AbortSignal.timeout(TIMEOUT_MS) },
+    );
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      if (text.includes("User Not Found")) return false;
+      return null; // 其它错误当查询失败处理，不拦登录
+    }
+    const data = await res.json();
+    return Boolean(data.evm_chain_address);
+  } catch (err) {
+    console.error("[semi-client] get_by_handle 查询失败（fail-open 放行）:", err instanceof Error ? err.message : err);
+    return null;
+  }
+}
+
 /** 发送短信验证码 */
 export async function sendSemiCode(phone: string): Promise<void> {
   const res = await fetch(`${getBaseUrl()}/send_sms`, {
@@ -81,8 +109,12 @@ export async function getSemiUser(authToken: string): Promise<SemiUser> {
 
   const data = await res.json();
 
-  if (!data.id || !data.evm_chain_address) {
-    throw new Error("Semi /get_me 缺少 id 或 evm_chain_address");
+  if (!data.id) {
+    throw new Error("Semi /get_me 缺少 id");
+  }
+  // 验证码对了但从未在 Semi App 建过钱包（signin 自动建的空用户）→ 引导注册
+  if (!data.evm_chain_address) {
+    throw new Error(SEMI_NOT_REGISTERED);
   }
 
   return {
