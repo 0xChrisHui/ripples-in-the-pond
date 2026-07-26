@@ -30,13 +30,19 @@
   （`src/lib/auth/cron-auth.ts:29`）而生产 cron 同步游标持续新鲜（实测 74 秒前刚更新）
   → **各 job 早已在用 Bearer**，P10 那条"待切 Bearer"待办实际早已完成。
   故 C1 只需换密钥**值**（面板里改 header 的 value），不涉及鉴权方式迁移
-- [ ] **CRON_SECRET 换新**（2026-05-08 调试时在聊天泄露）：生成新值 → Vercel 三环境 →
-      cron-job.org 各 job 改 Authorization Bearer（顺手完成 Bearer 切换）→ 旧值调用返 401 验证
-- [ ] **主网 cron 口径定死**：active job = **4**（mint / score / sync / balance）；
-      `process-airdrop` job **删除或 inactive**，单独验证"不可触发"（与 overview 红线对齐）
-- [ ] **ADMIN_TOKEN 评估顺换**（同批操作成本最低）
-- [ ] 顺手：清理 `.env.local` 重复 CRON_SECRET 定义（第二行覆盖第一行，STATUS 悬空 TODO）
-- 验证：换后 active cron 全绿 ≥ 10 分钟 + `/api/health` Bearer 正常
+- [x] **CRON_SECRET 换新** ✅ 2026-07-26：新值 43 字符（`RNGCryptoServiceProvider` 32 字节 base64url）；
+      cron-job.org 各 job header 先换 → Vercel 后换 + redeploy（此序=部分完成时仅个别 job 断，
+      非全断）→ 本地 `.env.local` 同步。**验证三连**：新值 200 / 旧值 401 / 本地值 200
+      - ⚠ **交付方式（避免重蹈泄露覆辙）**：密钥写用户桌面文件 + `Set-Clipboard`，**全程不进聊天**
+      - ⚠ **踩坑**：第一次验证 100% 反相（新 401 / 旧 200）= Vercel redeploy 未生效；
+        env 改动**必须 redeploy 且跑完**才算数（历史坑复现，非新问题）
+- [x] **主网 cron 口径**：`process-airdrop` 用户本次一并换了 header —— ✅ **已核实无害**：
+      `app/api/cron/process-airdrop/route.ts:26` 有代码级 kill switch，`AIRDROP_ENABLED !== 'true'`
+      即刻返回 `{result:'disabled'}`，早于锁与任何铸造逻辑。主网口径不变（删除或 inactive，D 部署日执行）
+- [ ] **ADMIN_TOKEN 顺换** —— 本轮未做，与 Alchemy key 轮换（调试期泄露）合并为下一次操作
+- [x] ~~清理 `.env.local` 重复 CRON_SECRET~~ ✅ 已核实只有 1 条定义，该 TODO 作废（STATUS 悬空项可删）
+- [x] 验证 ✅：active cron 全绿（`sync-chain-events` 换后 97 秒内成功更新游标）+
+      `/api/health` Bearer 200（db ok / lockProvider upstash / 队列 0 failed 0 stuck）
 
 ## 2. C2 — A5 换 Turbo wallet
 

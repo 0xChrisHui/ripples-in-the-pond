@@ -37,7 +37,7 @@
 
 **下一步（2026-07-19 执行路径已固化 = `playbook/phase-12/00-overview.md` §8；C-0 已拍板：Semi 维持/备份手动导出+部署日快照/额度不升级）**：
 1. ✅ **B-1 测试网回归**（2026-07-23 完成）：3 合约重部署（Material `0xe335..13c0` / Score `0xE0fA..DB23` / Orch `0x970b..01FA`）+ 角色 6/6 + 幂等键链上拒绝 + CT-7/8 链上全验 + 两通路 e2e 全通（乐谱 tokenId 24 归户）。揪出并修复 3 个管道真 bug（op-lock 裸 500 / tokenId 写入吞错 / **mint_events 部分索引 upsert 必挂——现存生产 main，随 P12 合并即修**）+ D-0 清表实证。详见 `reviews/phase-6-deprecated-contracts.md` 2026-07-23 补记。
-2. **C 施工（2026-07-24 独立项已清）**：✅ C4 代码半（stuck 卡龄告警补齐；低余额/积压邮件 P10 已在）/ ✅ C7 Semi kill switch（`NEXT_PUBLIC_SEMI_DISABLED`）/ ✅ C8 评估留档（维持现状）/ ✅ C9 三小修（048 迁移**待用户生产执行**）/ ✅ C10 生产出图复验（OG 53KB + 海报 132KB 全 200）。**剩余全需用户配合**：C1 secrets+Bearer 面板 / C2 Turbo 充值 / C3 主网 ETH / C4 配置半（Resend 三 env 未配）/ C5 快照 / C6 额度盘点。记录：`reviews/2026-07-24-phase-12-infra.md`。
+2. **C 施工**：✅ **C1 CRON_SECRET 轮换完成**（2026-07-26；新值 200/旧值 401/cron 97 秒恢复/health 全绿；密钥走桌面文件+剪贴板不进聊天；P10 遗留"cron 切 Bearer"经反证早已完成）/ ✅ C4 代码半 + Resend env 已配（告警邮件收信待用户确认）/ ✅ C7 Semi kill switch / ✅ C8 评估留档 / ✅ C9 三小修（048 迁移用户已在生产执行）/ ✅ C10 生产出图复验。**剩余需用户配合**：C1 尾巴（ADMIN_TOKEN + Alchemy key 轮换）/ C2 Turbo 充值 / C3 主网 ETH / C5 快照 / C6 额度盘点。记录：`reviews/2026-07-24-phase-12-infra.md`。
 3. **A-1 解码器 UI 优化轮**（用户 2026-07-19 提出）→ 验收 → Arweave 上传 → 三环境切 env。
 4. **D-1 内容冻结**：正式曲名落库 + admin 独立钱包 + deployer 钱包 + DB 快照 ≤24h → 🛑 D-0 排期 → D 部署日 → 🛑 D-gate 开铸。
 5. **E 性能**（软 gate）随时穿插不阻塞。

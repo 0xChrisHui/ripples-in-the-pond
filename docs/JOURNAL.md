@@ -956,3 +956,13 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **C4 现状订正**：playbook 写"低余额/stuck 仍无邮件"已过时——P10 P2-3 早接好低余额+积压邮件；本次只补**卡龄检测**（活跃行 >30min 无更新即告警，B-1 那种"upsert 死循环数量不涨"正是它的猎物）。配置半（Resend 三 env）本地全未配，待用户。
 - **C7 kill switch 形态**：env flag 而非配置常量——故障时改 Vercel env + redeploy 即回退，不用动代码不用等 build 排查；`NEXT_PUBLIC_SEMI_DISABLED=1` 时邮箱升主按钮（不是藏在角落的小字链接，故障场景它就是唯一入口）。
 - **C10 生产实锤**：/score/12 OG 卡 200·PNG·53KB + 海报 200·PNG·132KB——Satori 多子节点修复在生产有效，"pin Node"彻底翻篇。
+
+## 2026-07-26 — C1 密钥轮换完成 + 一条"别在修泄露时再泄露一次"的操作纪律
+
+- **C1 ✅**：CRON_SECRET 换新（43 字符 CSPRNG）。验证三连——新值 200 / 旧值 401 / 本地同步后 200；cron 97 秒内恢复（sync 游标更新）；`/api/health` Bearer 200 全绿。
+- **密钥交付方式定为纪律**：新密钥写用户桌面文件 + 塞剪贴板，**全程不进聊天**。本次轮换的起因就是 2026-05-08 把 CRON_SECRET 打进了聊天记录——修复泄露的操作本身绝不能再泄露一次。今后所有 secret 类交付照此办理。
+- **换序定为 cron-job.org 先、Vercel 后**：此序下"改一个断一个、没改的还在跑"（优雅降级）；反序是 4 个 job 同时全断再逐个恢复。停机窗口相近但故障面小得多。
+- **反证省掉一次排查**：用户不知道去哪看 job 的鉴权方式，我用「生产 `?secret=` 被 `cron-auth.ts:29` 硬拒 + 生产游标 74 秒前刚更新」两条反推出**各 job 早已在用 Bearer**——P10 那条挂了很久的"待切 Bearer"待办其实早就完成，只是没人核实过。C1 因此从"迁移+换值"缩成"换值"。
+- **验证反相的诊断价值**：第一次验证新值 401 / 旧值 200 —— 这个"全反"信号干净地指向 **Vercel redeploy 未生效**（若是密钥抄错，新旧都会 401）。env 改动必须 redeploy 且构建跑完。
+- **process-airdrop 被一并改了 header**：核实无害——`route.ts:26` 代码级 kill switch（`AIRDROP_ENABLED !== 'true'` 即刻 disabled）早于锁与铸造逻辑。主网口径不变（删除或 inactive）。
+- **清账**：`.env.local` 重复 CRON_SECRET（STATUS 悬空 TODO）核实只有 1 条，作废。
