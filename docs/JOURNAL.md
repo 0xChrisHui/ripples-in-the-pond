@@ -966,3 +966,11 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **验证反相的诊断价值**：第一次验证新值 401 / 旧值 200 —— 这个"全反"信号干净地指向 **Vercel redeploy 未生效**（若是密钥抄错，新旧都会 401）。env 改动必须 redeploy 且构建跑完。
 - **process-airdrop 被一并改了 header**：核实无害——`route.ts:26` 代码级 kill switch（`AIRDROP_ENABLED !== 'true'` 即刻 disabled）早于锁与铸造逻辑。主网口径不变（删除或 inactive）。
 - **清账**：`.env.local` 重复 CRON_SECRET（STATUS 悬空 TODO）核实只有 1 条，作废。
+
+## 2026-07-26 续 — 管道三修热修上线 main（`56d72a9`），刻意不带合约耦合
+
+- **用户拍板 A（提前合 main）**。做法是**摘取而非合并分支**：只取 3 处管道修复，P12 的合约/playbook 一律不上线。
+- **摘取时发现的陷阱（差点酿祸）**：`steps-mint.ts` 在 P12 分支上**同时**含 CT-4 幂等键（`mintScore(to, orderId)` 两参数）和本次要修的 DB 错误检查。整文件 checkout 过去 = 线上用两参数调**旧合约**（单参数）→ 铸造全 revert。故该文件**只手工打那一处补丁**，另两文件（operator-lock / steps-set-uri）经 diff 确认纯净才整取。**教训：热修摘取必须逐文件 diff，不能按 commit 或按文件名整取。**
+- **安全检查作为流程**：推送前显式验 `git diff origin/main | grep -c 'orderId\|keccak256'` 均为 0 + `args:` 仍是单参数，再跑 verify.sh（24 forge tests = 旧合约套件，符合基线）。
+- **用户未提交工作的处理**：工作区有用户的 Semi 登录 WIP（4 文件）挡住切分支。做法 = 先 `git diff` 全量备份到 scratchpad → stash → 热修 → 还原 → **逐字节比对备份确认一致（12518 字节完全相同）**。不用 worktree 是因为新 worktree 无 node_modules 跑不了 verify，而 junction 有删主树依赖的历史坑。
+- **线上验证**：health 200（db ok / upstash / 队列 0 failed 0 stuck）+ 首页 200。**完整证明需一次真实铸造**——线上仍指测试网合约，用户在 pond-ripple.xyz 录一段铸造即可零成本端到端验证该修复。

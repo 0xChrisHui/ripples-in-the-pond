@@ -35,6 +35,8 @@
 - **B track（合约主网化）代码全完成**：CT-1~15 全落（名参数化 / mintScore 幂等键 / URI 空串防御 / MaterialNFT freezeURI / 部署红线护栏 `require(admin!=minter)` / 主网禁部署护栏）+ CT-11 编译器 pin（cancun，非 forge 默认 prague）+ B4 runbook 全面重写（3 合约 / admin 独立钱包 / verify-contract / admin 操作手册）。→ 停在 🛑 **B-1**（测试网重部署回归）。
 - **关键决策**：Foundry 阻塞解除；admin = 独立普通钱包(≠热钱包，存本地，靠 Claude 操作)；合约不可升级但可重部署（详 `docs/JOURNAL.md` 2026-07-19；memory `project_p12_admin_wallet`）。
 
+**🔥 生产热修已上线（2026-07-26，`56d72a9` on main）**：乐谱铸造管道三修（mint_events 部分索引 upsert 必挂 / tokenId 写入吞 DB 错 / op-lock 网络错误裸抛）。**刻意只摘管道修复，不含 CT-4 合约耦合**——线上仍是旧合约，两参数 mintScore 会全 revert。完整证明待一次真实铸造（线上指测试网，零成本）。
+
 **下一步（2026-07-19 执行路径已固化 = `playbook/phase-12/00-overview.md` §8；C-0 已拍板：Semi 维持/备份手动导出+部署日快照/额度不升级）**：
 1. ✅ **B-1 测试网回归**（2026-07-23 完成）：3 合约重部署（Material `0xe335..13c0` / Score `0xE0fA..DB23` / Orch `0x970b..01FA`）+ 角色 6/6 + 幂等键链上拒绝 + CT-7/8 链上全验 + 两通路 e2e 全通（乐谱 tokenId 24 归户）。揪出并修复 3 个管道真 bug（op-lock 裸 500 / tokenId 写入吞错 / **mint_events 部分索引 upsert 必挂——现存生产 main，随 P12 合并即修**）+ D-0 清表实证。详见 `reviews/phase-6-deprecated-contracts.md` 2026-07-23 补记。
 2. **C 施工**：✅ **C1 CRON_SECRET 轮换完成**（2026-07-26；新值 200/旧值 401/cron 97 秒恢复/health 全绿；密钥走桌面文件+剪贴板不进聊天；P10 遗留"cron 切 Bearer"经反证早已完成）/ ✅ C4 代码半 + Resend env 已配（告警邮件收信待用户确认）/ ✅ C7 Semi kill switch / ✅ C8 评估留档 / ✅ C9 三小修（048 迁移用户已在生产执行）/ ✅ C10 生产出图复验。**剩余需用户配合**：C1 尾巴（ADMIN_TOKEN + Alchemy key 轮换）/ C2 Turbo 充值 / C3 主网 ETH / C5 快照 / C6 额度盘点。记录：`reviews/2026-07-24-phase-12-infra.md`。
