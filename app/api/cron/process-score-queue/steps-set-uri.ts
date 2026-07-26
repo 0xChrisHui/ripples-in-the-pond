@@ -134,8 +134,20 @@ export async function stepSetTokenUri(
     throw new Error(`pending_score not found: ${row.pending_score_id}`);
   }
 
-  const { error: upsertErr } = await supabaseAdmin.from('mint_events').upsert(
-    {
+  // P12 B-1 发现：016h 的唯一索引是部分索引（WHERE score_queue_id IS NOT NULL），
+  // PostgREST onConflict 无法把它选作仲裁 → upsert 必报 "no unique constraint"。
+  // A17 之前该错误被静默吞掉（假成功），A17 加 throw 后第一次真实铸造即触雷。
+  // 改为查后插：行级单写者由 lease CAS + 运营全局锁保证；部分唯一索引仍是兜底防线。
+  const { data: existed, error: checkErr } = await supabaseAdmin
+    .from('mint_events')
+    .select('id')
+    .eq('score_queue_id', row.id)
+    .maybeSingle();
+  if (checkErr) {
+    throw new Error(`mint_events check failed for queue ${row.id}: ${checkErr.message}`);
+  }
+  if (!existed) {
+    const { error: insertErr } = await supabaseAdmin.from('mint_events').insert({
       mint_queue_id: null,
       user_id: row.user_id,
       track_id: row.track_id,
@@ -145,11 +157,10 @@ export async function stepSetTokenUri(
       score_nft_token_id: row.token_id,
       metadata_ar_tx_id: row.metadata_ar_tx_id,
       score_queue_id: row.id,
-    },
-    { onConflict: 'score_queue_id' },
-  );
-  if (upsertErr) {
-    throw new Error(`mint_events upsert failed for queue ${row.id}: ${upsertErr.message}`);
+    });
+    if (insertErr) {
+      throw new Error(`mint_events insert failed for queue ${row.id}: ${insertErr.message}`);
+    }
   }
 
   console.log(`[score-cron] success, tokenId=${row.token_id}`);
