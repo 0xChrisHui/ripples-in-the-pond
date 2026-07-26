@@ -26,8 +26,10 @@
 
 ## 1. C1 — secrets 轮换（与 P10 遗留 Bearer 切换**合并为一次操作**）
 
-- ⚠ 前置现状：P10 已禁生产 query secret，而 cron-job.org 各 job 尚未切 Bearer（P10 待办）——
-  **先去面板确认生产 cron 是不是已经在 401**；两件事合并成一次编辑，别让用户改两遍
+- ✅ **前置已澄清（2026-07-26 反证，无需再去面板确认）**：生产 `?secret=` 被硬拒
+  （`src/lib/auth/cron-auth.ts:29`）而生产 cron 同步游标持续新鲜（实测 74 秒前刚更新）
+  → **各 job 早已在用 Bearer**，P10 那条"待切 Bearer"待办实际早已完成。
+  故 C1 只需换密钥**值**（面板里改 header 的 value），不涉及鉴权方式迁移
 - [ ] **CRON_SECRET 换新**（2026-05-08 调试时在聊天泄露）：生成新值 → Vercel 三环境 →
       cron-job.org 各 job 改 Authorization Bearer（顺手完成 Bearer 切换）→ 旧值调用返 401 验证
 - [ ] **主网 cron 口径定死**：active job = **4**（mint / score / sync / balance）；
