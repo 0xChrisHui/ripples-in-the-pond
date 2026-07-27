@@ -249,3 +249,44 @@ cast call <MaterialNFT> "uriFrozen()(bool)" --rpc-url $ALCHEMY_RPC_URL
 - 前端可随时 Vercel instant rollback，链上分毫不动。
 - ⚠ env 回切 ≠ 数据恢复：链衍生数据（队列/唱片页）若已清，回切 env 也回不去 → 真正的回滚保险 =
   部署日步骤 0 的 **DB 快照 + Vercel env 快照**（详见 `playbook/phase-12/40-d-cutover-week1.md` D2/D3）。
+
+---
+
+## 9. DB 快照与恢复（P12 C5；C-0 #2 拍板方案③=手动导出 + 部署日全量快照）
+
+**为什么不是 pg_dump**：本机无 PostgreSQL 客户端，且 Supabase Free 无 PITR。改用
+service-role key 走 PostgREST 全表导出 JSON —— 表结构本就在 `supabase/migrations/`（git 里），
+**结构（git）+ 数据（JSON）合起来 = 完整可恢复备份**。
+
+### 9.1 执行快照
+
+```bash
+python <脚本> "$NEXT_PUBLIC_SUPABASE_URL" "$SUPABASE_SERVICE_ROLE_KEY" "C:/Users/Hui/ripples-backups/<时间戳>"
+```
+
+- 脚本逻辑：14 张表逐表 `select=*`，每页 1000 行翻页到底，逐表写 `<表名>.json` +
+  `_manifest.json`（行数汇总 + 失败清单）
+- 覆盖表：`users` / `auth_identities` / `tracks` / `sounds` / `mint_queue` / `mint_events` /
+  `pending_scores` / `score_nft_queue` / `score_covers` / `chain_events` / `system_kv` /
+  `jwt_blacklist` / `airdrop_rounds` / `airdrop_recipients`
+- **产物必须落在仓库外**（现用 `C:\Users\Hui\ripples-backups\`）——内含用户数据，绝不进 git
+
+### 9.2 恢复方法
+
+结构先行、数据后灌：① 按 `supabase/migrations/` 顺序重建 schema →
+② 按依赖序 `POST /rest/v1/<表>`（service-role key）灌回 JSON 数组。
+依赖序：`users` → `auth_identities` → `tracks`/`sounds`/`score_covers` → `pending_scores` →
+`mint_queue`/`score_nft_queue` → `mint_events`/`chain_events` → 其余。
+生成列（如 `pending_scores.event_count`）灌入前必须剔除，否则 428C9 报错。
+
+### 9.3 恢复演练（2026-07-27 已做，**通过**）
+
+"没演练过的备份 = 没有备份"。演练用**自建测试行**（不碰用户数据）走完整闭环：
+`system_kv` 造行 → 捕获 → DELETE 模拟丢失 → 确认消失 → 从捕获数据 POST 恢复 →
+**逐字段比对一致** → 清理测试行。结果：**restore path PROVEN**。
+
+### 9.4 快照节奏
+
+- 首次全量：2026-07-27 已做（338 行 / 14 表）
+- **部署日前 24h 内必须再做一份**（D1 检查表引用）
+- **清链衍生表之前必须确认快照可恢复**（D2 步骤 0 硬前置，非可选）

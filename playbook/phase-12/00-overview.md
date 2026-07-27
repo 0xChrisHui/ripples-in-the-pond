@@ -40,7 +40,7 @@
 | 3 | admin 冷钱包地址（DEFAULT_ADMIN 移交后热钱包无治理权） | 钱包形态拍板 + CT-3 两步移交 | B |
 | 4 | 每枚 NFT 的解码器版本（animation_url 钉死） | 数量无关化 + 重传 + 验收 | A |
 | 5 | 每枚 NFT 的音效表版本（同上） | v2 格式 + 换血 26 音效 | A |
-| 6 | 每枚 NFT 的 metadata 全文（**曲名**/描述/封面/底曲/事件快照；现 5 首曲名是数字占位） | D1 内容冻结：正式曲名落库 + 就绪面确认 | D |
+| 6 | 每枚 NFT 的 metadata 全文（**曲名**/描述/封面/底曲/事件快照）——⚠ **2026-07-27 实测订正：不是"5 首"，是 35 首全部**为数字占位名且全部 published + 可铸造；影响 description 与 `attributes.Track`（`name` 用 `Ripples #id` 不受影响） | D1 内容冻结：正式曲名落库 + 就绪面确认 | D |
 | 7 | metadata `external_url`（`NEXT_PUBLIC_APP_URL` 写进每枚 NFT） | D1 env 读回预检 + 域名长期持有承诺 | D |
 | 8 | 音效 id ↔ 音频绑定规则 | `10-a` §4 五条规则拍板 | A |
 
