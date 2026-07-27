@@ -974,3 +974,10 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **安全检查作为流程**：推送前显式验 `git diff origin/main | grep -c 'orderId\|keccak256'` 均为 0 + `args:` 仍是单参数，再跑 verify.sh（24 forge tests = 旧合约套件，符合基线）。
 - **用户未提交工作的处理**：工作区有用户的 Semi 登录 WIP（4 文件）挡住切分支。做法 = 先 `git diff` 全量备份到 scratchpad → stash → 热修 → 还原 → **逐字节比对备份确认一致（12518 字节完全相同）**。不用 worktree 是因为新 worktree 无 node_modules 跑不了 verify，而 junction 有删主树依赖的历史坑。
 - **线上验证**：health 200（db ok / upstash / 队列 0 failed 0 stuck）+ 首页 200。**完整证明需一次真实铸造**——线上仍指测试网合约，用户在 pond-ripple.xyz 录一段铸造即可零成本端到端验证该修复。
+
+## 2026-07-28 — 三项省钱/省事的实测结论 + 曲名拍板
+
+- **曲名 ✅ 拍板：35 首就叫 1-35**（用户定）。即数字**就是正式名**，不是占位——曲目本按周编号发布，数字名与 catalog 语义自洽。D-1 该项不再阻塞部署日。遗留美化项：description 里 `A live jam on "17"` 的引号让数字像加载失败，建议改成 `Track 17`（一行）。
+- **C2 省钱**：旧 Turbo 钱包仍有 **1.84 GiB** 额度（每枚 NFT 只写几 KB → 够几万枚），**不需要充值**。但换钱包仍必须做——查到 P7 记录：**旧 Turbo 私钥曾在调试记录中暴露**（与 CRON_SECRET 同性质），主网前硬门槛。方案：turbo-sdk v1.41 有 `shareCredits`，可让新钱包花旧额度 → **C2 全程零成本**（残余风险：旧私钥持有者可 revoke，但额度是沉没成本，可接受）。
+- **C3 金额下修**：实测 OP 主网 gas = **0.001 gwei**，按 B-1 实测 mint gas 123,116 算，每枚 NFT 即便悲观估也仅约 0.0000018 ETH → **0.02 ETH ≈ 1 万枚**，0.05 ≈ 2.7 万枚。runbook 的 0.05 是未实测的保守值。建议转 0.02 并把 `check-balance` 阈值从 0.05 下调，否则会天天误报低余额。
+- **operator 私钥安全性核实**（充值前必查）：无泄露记录，2026-07-05 后端 review 明确"暴露面控制良好（仅 operator-wallet.ts + check-balance，带 server-only）"。故 `0x306D3A44...1633` 可安全充值，主网继续用作 minter（runbook §1 口径）。

@@ -44,9 +44,12 @@
 
 - [ ] A track：音效换血完成（`10-a` A4）**或已拍板放弃换血窗口**（现音冻结为创世版）；
       解码器/音效表 txid 定稿
-- [ ] **metadata 内容冻结**（Codex P1）⚠ **2026-07-27 实测订正：占位名是 35 首全部**（非"5 首"），
-      且全部 published + 全部有 arweave_url（=全部可铸造）；影响 description 与 `attributes.Track`。
-      三条路择一：改名 / 缩小开放铸造范围 / 明示接受永久占位
+- [x] **metadata 内容冻结 — 曲名 ✅ 已拍板（2026-07-28 用户）：采用「明示接受」，35 首就叫 1-35**
+      （数字即正式名，非占位）。理由：曲目本就是按周编号发布，数字名与"第 N 周"catalog 语义自洽。
+      ⚠ 2026-07-27 实测订正：占位名是 35 首**全部**（非文档原写的"5 首"），且全部 published +
+      全部有 arweave_url；影响 `description` 与 `attributes.Track`（`name` 用 `Ripples #id` 不受影响）。
+      **本项不再阻塞部署日**。遗留待办：description 措辞 `A live jam on "17"` 的引号让数字看着
+      像加载失败，建议改 `Track 17` 让编号读起来是刻意的（一行改动，见 `steps-upload.ts:127`）
       ：正式曲名已 UPDATE（现 5 首为数字占位，STATUS 悬空
       TODO；`track.title` 永久写进每枚 NFT 的 name/description/attributes）；封面池/描述过审；
       占位名曲目要么改完、要么不开放铸造、要么明示接受占位名永久
