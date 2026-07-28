@@ -42,16 +42,19 @@
 ## 2. 部署前准备
 
 ### 2.1 钱包准备
-- [ ] **admin 钱包**：新建一个独立普通 EOA（如 MetaMask 新账户），记好地址 = `ADMIN_ADDRESS`；私钥留本地
-- [ ] **minter 钱包**：= 现运营热钱包（`OPERATOR_PRIVATE_KEY` 派生），OP Mainnet ETH ≥ 0.05
-- [ ] **deployer 钱包**：新建 + 充值 OP Mainnet ETH ≥ 0.04（够 3 次部署 + 移交）
-- [ ] 三者地址两两不同（脚本会强校验，此处先自查）
+
+> **2026-07-28 已生成**（`cast wallet new`，私钥存 `C:\Users\Hui\.ripples-secrets\`，不进 git/env/聊天；已 verify 私钥派生地址一致）。三者两两不同已自查通过。
+
+- [x] **admin 钱包** = `0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722`（`admin-wallet.json`；私钥留本地，deploy 日靠 `cast send --private-key` 手操）
+- [ ] **minter 钱包** = `0x306D3A445b1fc7a789639fa9115e308a34231633`（现运营热钱包 = `OPERATOR_PRIVATE_KEY` 派生）；OP Mainnet ETH ≥ 0.005（2026-07-28 已转 0.01）
+- [ ] **deployer 钱包** = `0x96aAfd4817BCF9971B54B5aC180D20a47F462162`（`deployer-wallet.json`）；deploy 日充值 OP Mainnet ETH ≥ 0.04（够 3 次部署 + 移交），用后销毁
+- [x] 三者地址两两不同（脚本会强校验，此处已自查）
 
 ### 2.2 环境变量（`.env.local`，部署机本地）
 ```
-DEPLOYER_PRIVATE_KEY=0x...      # 一次性部署钱包私钥
-ADMIN_ADDRESS=0x...             # 独立普通钱包地址（只填地址，私钥不进这里）
-MINTER_ADDRESS=0x...            # 运营热钱包地址（= OPERATOR_PRIVATE_KEY 派生地址，须一致）
+DEPLOYER_PRIVATE_KEY=0x...      # 一次性部署钱包私钥（从 .ripples-secrets\deployer-wallet.json 取，deploy 日临时填，§4.4 用后删）
+ADMIN_ADDRESS=0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722   # 独立普通钱包地址（只填地址，私钥不进这里）
+MINTER_ADDRESS=0x306D3A445b1fc7a789639fa9115e308a34231633  # 运营热钱包地址（= OPERATOR_PRIVATE_KEY 派生地址，须一致）
 ALCHEMY_RPC_URL=https://opt-mainnet.g.alchemy.com/v2/...
 NEXT_PUBLIC_CHAIN_ID=10         # OP Mainnet
 # CT-1：ScoreNFT 永久 name/symbol（主网缺这两个 → DeployScore 直接 revert，防焊错名）

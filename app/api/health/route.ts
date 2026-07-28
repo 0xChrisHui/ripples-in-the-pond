@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
     const eth = parseFloat(formatEther(balance));
     result.walletBalance = eth.toFixed(6);
     if (eth < 0.001) result.wallet = 'critical';
-    else if (eth < 0.05) result.wallet = 'low';
+    else if (eth < 0.005) result.wallet = 'low';
 
     // 3. mint_queue 积压
     const { count: mintPending } = await supabaseAdmin

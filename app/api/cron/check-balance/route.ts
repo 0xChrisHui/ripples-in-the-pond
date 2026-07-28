@@ -13,7 +13,7 @@ import { formatEther } from "viem";
  * 未来接 Telegram（Phase 5），当前只做检查 + 记录
  */
 
-const LOW_BALANCE_ETH = 0.05;
+const LOW_BALANCE_ETH = 0.005;
 const QUEUE_BACKLOG_LIMIT = 50;
 // P12 C4：活跃行超过 30 分钟无更新 = 管道卡死（正常 cron 每分钟都会 touch 行）
 const STUCK_AGE_MS = 30 * 60 * 1000;
