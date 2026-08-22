@@ -188,6 +188,8 @@ export interface OwnedScoreNFT {
   queueId: string;
   /** 链上 tokenId — 已上链才有 */
   tokenId?: number;
+  /** 队列真实状态；failed 必须与仍在处理中的状态区分显示 */
+  status: ScoreMintStatus;
   trackTitle: string;
   coverUrl: string;
   eventCount: number;

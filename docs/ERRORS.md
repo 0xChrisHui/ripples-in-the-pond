@@ -85,6 +85,20 @@
 
 ---
 
+### E005 — 失败的 ScoreNFT 队列永久显示“上链中”
+
+- 📅 2026-08-22 / P12 上线前真实铸造 smoke
+
+- 😱 两条 7 月 23 日卡片长期显示“上链中”；新 smoke 链上交易成功后也转成失败。
+
+- 🧠 `/api/me/score-nfts` 没返回队列 `status`，前端只用 `tokenId == null` 推断“正在处理”，把 `failed` 也纳入无限轮询。新 smoke 的另一层原因是测试网跨合约沿用同一数据库，旧合约和新合约都会从较小 tokenId 起步，而唯一约束只认 `token_id`、不认合约地址。
+
+- 🔧 接口补传 `status`；失败卡改为明确终态并禁止进入假等待详情；轮询排除 `failed`。数据库历史数据保留，等待 D-0 或单独批准的数据方案。
+
+- 💡 “结果字段为空”不等于“任务仍在运行”；异步任务 UI 和轮询都必须以状态机终态为准。链数据唯一性还必须包含链与合约时代。
+
+---
+
 ## 🏷 错误索引（按类型）
 
 随着错误积累，AI 会在这里维护一份按类型分类的索引：
@@ -96,15 +110,16 @@
 - E001 Tailwind v4 扫描 `.claude/logs/` 导致 Invalid code point
 - E002 Cursor autoSave 覆盖外部修改
 - E004 useSyncExternalStore getSnapshot 引用不稳致死循环
+- E005 failed 队列误判为待处理并无限轮询
 
 ### TypeScript
 - （空）
 
 ### 数据库 / Supabase
-- （空）
+- E005 测试网跨合约 tokenId 唯一约束冲突
 
 ### 区块链 / viem
-- （空）
+- E005 旧测试合约与新测试合约 tokenId 命名空间碰撞
 
 ### 网络 / API
 - （空）

@@ -24,6 +24,14 @@
 **P6 Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`（16/19 通过 + 0 P0 + 0 P1）
 **stakeholder 反馈**：艺术家 5 条反馈已收到（→ Phase 8）；投资人催 Semi demo（→ P7 Track B PoC-only）
 
+## 独立热修：历史 ScoreNFT 失败误显“上链中”（2026-08-22）
+
+- **分支 / 工作树**：`codex/fix-stuck-score-mints` / `E:\Projects\nft-music-stuck-score-mints`，与 P12 主工作树隔离。
+- **上次完成**：`/api/me/score-nfts` 返回真实队列状态；失败记录显示“上链失败”，不再可点击进入假等待页；轮询只关注未失败的待处理记录。
+- **根因补充**：7 月 23 日记录本身已是 `failed`；本次真实 smoke 已成功在旧测试合约铸出 tokenId 24，但数据库与旧合约时代的 tokenId 24 撞唯一约束后转为 `failed`。
+- **验证**：`scripts/verify.sh` 全绿（TypeScript、lint、硬线扫描、生产构建、Foundry 24 tests）。
+- **下一步**：先提交并部署本热修；测试网历史链数据如何清理或按合约地址隔离，另行确认后执行，当前未改生产数据库。
+
 ## 当前进度
 
 **做到哪**：Phase 6 v2 完结 + Phase 7 启动准备 commit `346d526` 完成。**2026-05-14 A1 已提交 `e0084db`**：chain 配置单一来源完成。**B1 已完整完成**：`.env.local` + `.env.example` 已加 `SEMI_API_URL=https://semi-production.fly.dev`（commit `65516d0`）；**B1-vercel 用户 2026-05-15 已在 Vercel 三环境添加完成**。**C1 Lighthouse baseline 已产出**：`reviews/2026-05-14-phase-7-perf-baseline.md`。**Track C 全套（C1-C9）已收口**（详见上一轮验证）。**2026-05-15 A2 已上链 + Vercel + 归档**：AirdropNFT v2 部署 OP Sepolia `0xC5923BEc5C79a203b0cf4ab7c82567c8E20eEF65`。**2026-05-15 Track D D1-D3 已完成**：LoginModal 默认 Semi + 邮箱直跳 Privy；SemiLogin 两阶段深色布局 + 6 格 PinInput；`/me` 顶栏按 `authSource` 切「← 首页」/「↗ 社区钱包」。verify.sh 全绿。**D4 剩余**：用户本机浏览器 7 步实测确认。**2026-05-16 A3+A12+A8 score queue 状态机修复包已 commit `a48f4de` + push + 端到端真实数据验证通过**（migration 032 加 mint/uri_attempted_at + token_id partial unique；route 去掉 status CAS；steps-mint/set-uri 三刀盖戳；A8 Resend fire-and-forget；/api/health 加 scoreQueueManualReview）。验证副产物：发现 Vercel `NEXT_PUBLIC_SCORE_NFT_ADDRESS` 被错配为 AirdropNFT 地址，已修；两个历史 NFT（tokenId 21/22）经手动数据修复 → cron 自动跑完 setTokenURI。**2026-05-16 A6.1+A6.2 完成**：tracks 表 INSERT week 6-15（migration 033）+ sphere-config 5→15 + SphereNode badge 双位数适配 + 10 首 mp3 上 Arweave 回写 arweave_url（week 6-15 全部就绪）。verify.sh 全绿。

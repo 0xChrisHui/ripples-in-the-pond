@@ -912,3 +912,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **多 agent review 收获 5 个真 bug 已修**：①`_excite` 衰减原在 `if(edgeOn)` 内而注入方（ripple-feed 穿越/wake 力/拖拽）不看 flag → 关灯时棘轮涨到 1、后开 flag 全场幽灵爆发——改为激励维护恒跑、只有 GPU 写 buffer 留在 edgeOn 内；②③④⑤补齐红线豁免：shiver 豁免 hover 球、shiver 中途被拖拽立即中止、jelly 与 wake 补 reduced-motion 冻结。
 - **否决的最大簇（4 个 finder 撞车）**："浮动脉冲期间花瓣抠洞/拖尾/拖球命中与视觉球错位" ——核查 HEAD 后确认全部源于上会话 sphere-motion v3 解耦（浮动刻意不进深度轴，playbook L0b 已明文"pre-existing 不一致，L 线不扩大战线"），非本次引入；仅顺手修了 ripple-feed/WaterPetals 两处失实注释（还写着"含球浮动"）。
 - **留给用户拍板的 5 项**（review 报告 6-10，未动代码）：「扰动激励」单开无效果（spec 即设计成依赖「能量球边缘」，仅缺 UI 提示）/ wakeSpheres 开但推力=0 时白跑 CPU 波动方程网格 / renderDepth≡effDepth 重复+过时注释 / writeFrame 13 位置参数数据泥团 / dropScreen 在 wake-field 与 WaterPetals 双份。
+
+## 2026-08-22 — ScoreNFT 历史失败记录展示热修
+
+- **现象不是链仍在等待**：7 月 23 日的异常记录数据库状态已经是 `failed`，但 `/me` 接口漏传 `status`，前端又把所有 `tokenId == null` 都推断成“上链中”，因此失败记录被永久误显并持续轮询。
+- **修复边界**：状态作为唯一真理来源；失败卡显示“上链失败 / 需处理”，不进入详情页，轮询排除 `failed`。本热修不修改队列、不重发交易，也不改变合约架构。
+- **测试网数据决定暂缓**：新 smoke 已在旧测试合约成功铸出 tokenId 24，但数据库中旧合约时代已有 tokenId 24，触发 `uq_score_queue_token_id`。主网上线前 D-0 会清理测试数据；在用户确认前不做任何生产数据库删除或手工回填。
