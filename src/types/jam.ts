@@ -11,7 +11,7 @@
 
 import type { Track } from './tracks';
 
-/** sounds 表的一行 — 26 个键盘音效之一 */
+/** 一个键盘音效定义 */
 export interface Sound {
   id: string;
   /** tokenId 109-134 */
@@ -24,13 +24,13 @@ export interface Sound {
   duration_ms: number;
   /** 分类 */
   category: 'percussion' | 'melody' | 'effect';
-  /** 对应键盘键（a-z） */
+  /** 对应键盘键（a-z、3-8 或 space） */
   key: string;
 }
 
 /** 单次按键事件 */
 export interface KeyEvent {
-  /** 按的键（a-z） */
+  /** 按的键（a-z、3-8 或 space） */
   key: string;
   /** 距离录制开始的时间（毫秒） */
   time: number;

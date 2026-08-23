@@ -1,12 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useCallback, useState } from 'react';
-import { fetchSounds } from '@/src/data/jam-source';
-import type { Sound } from '@/src/types/jam';
 
 interface UseJamReturn {
-  sounds: Sound[];
-  /** mp3 ArrayBuffer 已下载完毕（fetch 阶段完成）*/
+  /** 本地 MP3 ArrayBuffer 已下载完毕 */
   ready: boolean;
   /** A13: AudioBuffer 已解码完毕，可安全开始事件时钟 */
   decodeReady: boolean;
@@ -15,8 +12,11 @@ interface UseJamReturn {
   triggerDecode: () => void;
 }
 
+const LOCAL_SOUND_KEYS = [...'abcdefghijklmnopqrstuvwxyz', 'space', ...'345678'];
+const LOCAL_SOUND_FILES = LOCAL_SOUND_KEYS.map((key) => [key, `/sounds/${key}.mp3`] as const);
+
 /**
- * 合奏音效引擎 — 预加载 26 个音效，按键即播放
+ * 合奏音效引擎 — 预加载 33 个本地 MP3，按键即播放
  *
  * 核心设计：
  * 1. 页面加载时只 fetch mp3 为 ArrayBuffer（纯网络 IO，无需 AudioContext）
@@ -24,7 +24,6 @@ interface UseJamReturn {
  * 3. 每次按键创建新的 BufferSource，同一键可重叠播放
  */
 export function useJam(): UseJamReturn {
-  const [sounds, setSounds] = useState<Sound[]>([]);
   const [ready, setReady] = useState(false);
   const [decodeReady, setDecodeReady] = useState(false);
   const ctxRef = useRef<AudioContext | null>(null);
@@ -37,20 +36,16 @@ export function useJam(): UseJamReturn {
   // 解码期间排队的按键，完成后批量重放
   const pendingKeysRef = useRef<string[]>([]);
 
-  // 页面加载：fetch 音效列表 + 下载 mp3 为 ArrayBuffer
+  // 页面加载：按固定映射下载本地 MP3 为 ArrayBuffer
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      const list = await fetchSounds();
-      if (cancelled) return;
-      setSounds(list);
-
       const entries = await Promise.all(
-        list.map(async (s) => {
-          const res = await fetch(s.audio_url);
+        LOCAL_SOUND_FILES.map(async ([key, url]) => {
+          const res = await fetch(url);
           const ab = await res.arrayBuffer();
-          return [s.key, ab] as const;
+          return [key, ab] as const;
         }),
       );
 
@@ -127,5 +122,5 @@ export function useJam(): UseJamReturn {
     if (decodeStateRef.current === 'idle') ensureDecoded();
   }, [ensureDecoded]);
 
-  return { sounds, ready, decodeReady, playSound, triggerDecode };
+  return { ready, decodeReady, playSound, triggerDecode };
 }

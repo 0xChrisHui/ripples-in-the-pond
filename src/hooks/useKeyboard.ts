@@ -3,7 +3,7 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
 
 interface UseKeyboardReturn {
-  /** 当前正在按住的键（a-z） */
+  /** 当前正在按住的键（a-z、3-8、space） */
   pressedKeys: Set<string>;
 }
 
@@ -16,10 +16,21 @@ interface UseKeyboardOptions {
   enabled?: boolean;
 }
 
-const VALID_KEYS = new Set('abcdefghijklmnopqrstuvwxyz'.split(''));
+const VALID_KEYS = new Set([... 'abcdefghijklmnopqrstuvwxyz', ...'345678']);
+
+function normalizeKey(e: KeyboardEvent): string | null {
+  if (e.key === ' ' || e.code === 'Space') return 'space';
+  const key = e.key.toLowerCase();
+  return VALID_KEYS.has(key) ? key : null;
+}
+
+function isEditableTarget(target: EventTarget | null): boolean {
+  const element = target as HTMLElement | null;
+  return element?.tagName === 'INPUT' || element?.tagName === 'TEXTAREA' || Boolean(element?.isContentEditable);
+}
 
 /**
- * 键盘输入 hook — 监听 a-z 按键，过滤重复 keydown
+ * 键盘输入 hook — 监听 a-z、3-8 和空格键，过滤重复 keydown
  * 只在用户手势（真实按键）时触发，忽略自动重复
  */
 export function useKeyboard(options: UseKeyboardOptions = {}): UseKeyboardReturn {
@@ -31,9 +42,10 @@ export function useKeyboard(options: UseKeyboardOptions = {}): UseKeyboardReturn
   useEffect(() => { onKeyUpRef.current = onKeyUp; }, [onKeyUp]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.repeat) return;
-    const key = e.key.toLowerCase();
-    if (!VALID_KEYS.has(key)) return;
+    if (e.repeat || isEditableTarget(e.target)) return;
+    const key = normalizeKey(e);
+    if (!key) return;
+    if (key === 'space') e.preventDefault();
 
     setPressedKeys((prev) => {
       const next = new Set(prev);
@@ -44,8 +56,8 @@ export function useKeyboard(options: UseKeyboardOptions = {}): UseKeyboardReturn
   }, []);
 
   const handleKeyUp = useCallback((e: KeyboardEvent) => {
-    const key = e.key.toLowerCase();
-    if (!VALID_KEYS.has(key)) return;
+    const key = normalizeKey(e);
+    if (!key) return;
 
     setPressedKeys((prev) => {
       const next = new Set(prev);

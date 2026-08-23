@@ -15,6 +15,7 @@ const MAX_EVENTS = 500;
 const MAX_TIME_MS = 60_000;
 const MAX_DURATION_MS = 5_000;
 const MAX_BODY_KB = 100;
+const VALID_KEY_RE = /^(?:[a-z]|[3-8]|space)$/;
 
 /** 验证单个 KeyEvent 的字段范围 */
 function isValidEvent(e: unknown): e is KeyEvent {
@@ -22,7 +23,7 @@ function isValidEvent(e: unknown): e is KeyEvent {
   const ev = e as Record<string, unknown>;
   return (
     typeof ev.key === 'string' &&
-    /^[a-z]$/.test(ev.key) &&
+    VALID_KEY_RE.test(ev.key) &&
     typeof ev.time === 'number' &&
     ev.time >= 0 &&
     ev.time <= MAX_TIME_MS &&
