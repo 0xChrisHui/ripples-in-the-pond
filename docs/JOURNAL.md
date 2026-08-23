@@ -1038,6 +1038,12 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **决定**：上线前不升级 Vercel、Supabase、Upstash、Alchemy、cron-job.org、Resend，也不主动降频。主网 App 与测试网分开后仍使用 Alchemy 账户共享 30M CU。
 - **观察线**：Upstash 500K commands/月是六项中最可能先遇到的软上限；软启动期每周看一次，达到 70% 再决定关闭 ratelimit analytics、降频或升级。Vercel/Resend 的 Sensitive/账单明细不为盘点而降低密钥边界。
 
+## 2026-08-23 — MaterialNFT 永久 metadata 在主网广播前补齐
+
+- **发现**：测试网 CT-8 只用 `ar://b1-material-final` 假值验证 freeze，主网没有可永久冻结的素材 metadata；占位 URI 上链会让 35 类 MaterialNFT 永久无有效展示层。
+- **决定**：按用户批准生成 35 张波纹 SVG 封面 + 35 份 ERC-1155 metadata；曲名严格为 1-35，音频复用既有 Arweave txid，manifest URI 为 `ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/{id}.json`。
+- **执行纪律**：文件名采用 ERC-1155 规定的 64 位小写十六进制 token id；构造时直接写最终 URI，链上读回后再 freeze，省掉一次可出错的 setURI 交易。上传状态与 SHA-256 留在仓库外，35+35 项均完成，备用网关已读回样本。
+
 ## 2026-08-23 — P8-L 偶发颤动改为“开启即验收”
 
 - **问题**：原实现先等待间隔、再随机命中可用球；与持续浮动叠加后，用户设置 5 秒/0.12 并观察 30 秒仍可能看不到效果。

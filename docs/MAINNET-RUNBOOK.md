@@ -45,9 +45,9 @@
 
 > **2026-07-28 已生成**（`cast wallet new`，私钥存 `C:\Users\Hui\.ripples-secrets\`，不进 git/env/聊天；已 verify 私钥派生地址一致）。三者两两不同已自查通过。
 
-- [x] **admin 钱包** = `0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722`（`admin-wallet.json`；私钥留本地，deploy 日靠 `cast send --private-key` 手操）
-- [ ] **minter 钱包** = `0x306D3A445b1fc7a789639fa9115e308a34231633`（现运营热钱包 = `OPERATOR_PRIVATE_KEY` 派生）；OP Mainnet ETH ≥ 0.005（2026-07-28 已转 0.01）
-- [ ] **deployer 钱包** = `0x96aAfd4817BCF9971B54B5aC180D20a47F462162`（`deployer-wallet.json`）；deploy 日充值 OP Mainnet ETH ≥ 0.04（够 3 次部署 + 移交），用后销毁
+- [x] **admin 钱包** = `0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722`（`admin-wallet.json`）；2026-08-23 已到账 0.00005 OP ETH
+- [x] **minter 钱包** = `0x306D3A445b1fc7a789639fa9115e308a34231633`（现运营热钱包 = `OPERATOR_PRIVATE_KEY` 派生）；已到账 0.01 OP ETH
+- [x] **deployer 钱包** = `0x96aAfd4817BCF9971B54B5aC180D20a47F462162`（`deployer-wallet.json`）；按实时全费估算已到账 0.0001 OP ETH，用后销毁
 - [x] 三者地址两两不同（脚本会强校验，此处已自查）
 
 ### 2.2 环境变量（`.env.local`，部署机本地）
@@ -60,8 +60,8 @@ NEXT_PUBLIC_CHAIN_ID=10         # OP Mainnet
 # CT-1：ScoreNFT 永久 name/symbol（主网缺这两个 → DeployScore 直接 revert，防焊错名）
 SCORE_NFT_NAME=Ripples in the Pond
 SCORE_NFT_SYMBOL=RPIP
-# CT-15：MaterialNFT 初始 URI（可留空用脚本默认占位；部署后 admin setURI 到最终值再 freeze）
-MATERIAL_URI=https://placeholder.ripples/{id}.json
+# CT-15：35 份永久 metadata 的 Arweave manifest；构造时直接焊入，admin 核对后 freeze
+MATERIAL_URI=ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/{id}.json
 ```
 > ⚠ `MINTER_ADDRESS` 必须 == `OPERATOR_PRIVATE_KEY` 派生地址。不一致则 hasRole 验收全过、
 > 但 cron 发交易全 revert（cron 用 OPERATOR 私钥签，合约认 MINTER_ADDRESS）。用
@@ -217,18 +217,18 @@ cast send <ScoreNFT> "grantRole(bytes32,address)" \
 ```
 验收：§3.3.2 第 2 条 hasRole = true。
 
-### 6.2 MaterialNFT 定稿 URI 并封条（CT-8，开铸前做）
+### 6.2 MaterialNFT 核对最终 URI 并封条（CT-8，开铸前做）
 ```bash
-# ① 把素材 metadata URI 指到最终 Arweave（示例，换成实际值）
-cast send <MaterialNFT> "setURI(string)" "ar://<最终素材 metadata>" \
-  --rpc-url $ALCHEMY_RPC_URL --private-key <ADMIN_PRIVATE_KEY>
+# ① 构造时已写最终值；先读 token 1，必须精确等于 $MATERIAL_URI
+cast call <MaterialNFT> "uri(uint256)(string)" 1 --rpc-url $ALCHEMY_RPC_URL
 # ② 一次性封条：此后任何人（含 admin）都改不了素材 NFT metadata
 cast send <MaterialNFT> "freezeURI()" \
   --rpc-url $ALCHEMY_RPC_URL --private-key <ADMIN_PRIVATE_KEY>
 # ③ 确认已封 → 期望 true
 cast call <MaterialNFT> "uriFrozen()(bool)" --rpc-url $ALCHEMY_RPC_URL
 ```
-> 顺序不可颠倒：freeze 后 setURI 永久 revert。freeze 前务必确认 URI 是最终值。
+> `MATERIAL_URI` 已于 2026-08-23 生成并上传：35 个 SVG 封面 + 35 份 metadata；
+> 样本 metadata、封面、音频已在 Arweave 网关读回。freeze 前仍须逐字核对链上返回值。
 
 ### 6.3（可选，将来）admin 升级 / 交权 / renounce
 - 升 Safe/硬件：把 `DEFAULT_ADMIN_ROLE` grant 给新 admin、再从旧 admin revoke（先 grant 验成功再 revoke）。
