@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "forge-std/Script.sol";
+import "./DeployBase.s.sol";
 import "../src/MaterialNFT.sol";
 
 /**
@@ -14,24 +14,21 @@ import "../src/MaterialNFT.sol";
  *   forge script script/Deploy.s.sol \
  *     --rpc-url $ALCHEMY_RPC_URL --broadcast -vv
  */
-contract Deploy is Script {
+contract Deploy is DeployBase {
     function run() external {
         uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
         address deployer = vm.addr(deployerKey);
-        address admin = vm.envOr("ADMIN_ADDRESS", deployer);
-        address minter = vm.envOr("MINTER_ADDRESS", deployer);
+        // CT-2/CT-3：主网强制 admin/minter 显式且互不相同、都 ≠ deployer（红线在 _resolveRoles）
+        (address admin, address minter) = _resolveRoles(deployer);
+        // CT-15：初始 URI 参数化。部署后 admin setURI 到最终 Arweave 再 freezeURI（MaterialNFT CT-8）
+        string memory materialUri = vm.envOr("MATERIAL_URI", string("https://placeholder.ripples/{id}.json"));
 
         vm.startBroadcast(deployerKey);
 
-        MaterialNFT nft = new MaterialNFT(
-            "https://placeholder.ripples/{id}.json",
-            minter
-        );
+        MaterialNFT nft = new MaterialNFT(materialUri, minter);
 
-        if (admin != deployer) {
-            nft.grantRole(nft.DEFAULT_ADMIN_ROLE(), admin);
-            nft.revokeRole(nft.DEFAULT_ADMIN_ROLE(), deployer);
-        }
+        // CT-3：移交 DEFAULT_ADMIN_ROLE（先 grant 链上验成功、再 revoke deployer）
+        _handoverAdmin(address(nft), deployer, admin);
 
         vm.stopBroadcast();
 

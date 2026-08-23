@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "forge-std/Script.sol";
+import "./DeployBase.s.sol";
 import "../src/ScoreNFT.sol";
 
 /**
@@ -22,26 +22,31 @@ import "../src/ScoreNFT.sol";
  *
  * 详细 runbook：docs/MAINNET-RUNBOOK.md
  */
-contract DeployScore is Script {
+contract DeployScore is DeployBase {
     function run() external {
         uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
         address deployer = vm.addr(deployerKey);
-        address admin = vm.envOr("ADMIN_ADDRESS", deployer);
-        address minter = vm.envOr("MINTER_ADDRESS", deployer);
+        // CT-2/CT-3：主网强制 admin/minter 显式且互不相同、都 ≠ deployer（红线在 _resolveRoles）
+        (address admin, address minter) = _resolveRoles(deployer);
+
+        // CT-1：name/symbol 参数化。ERC721 name 部署后永久不可改，主网（chainid 10）
+        // 必须显式提供 SCORE_NFT_NAME / SCORE_NFT_SYMBOL，缺失即 revert——
+        // 防止把 "(Testnet)" 或占位名永久焊进主网合约。主网值取 B-0 #7：Ripples in the Pond / RPIP。
+        // 测试网留空则回退带 (Testnet) 的名字，零配置照旧。
+        bool isMainnet = block.chainid == 10;
+        string memory nftName = isMainnet
+            ? vm.envString("SCORE_NFT_NAME")
+            : vm.envOr("SCORE_NFT_NAME", string("Ripples in the Pond Score (Testnet)"));
+        string memory nftSymbol = isMainnet
+            ? vm.envString("SCORE_NFT_SYMBOL")
+            : vm.envOr("SCORE_NFT_SYMBOL", string("RIPS"));
 
         vm.startBroadcast(deployerKey);
 
-        ScoreNFT nft = new ScoreNFT(
-            "Ripples in the Pond Score (Testnet)",
-            "RIPS",
-            minter
-        );
+        ScoreNFT nft = new ScoreNFT(nftName, nftSymbol, minter);
 
-        // 主网模式：admin 与 deployer 不同，移交 DEFAULT_ADMIN_ROLE
-        if (admin != deployer) {
-            nft.grantRole(nft.DEFAULT_ADMIN_ROLE(), admin);
-            nft.revokeRole(nft.DEFAULT_ADMIN_ROLE(), deployer);
-        }
+        // CT-3：移交 DEFAULT_ADMIN_ROLE（先 grant 链上验成功、再 revoke deployer）
+        _handoverAdmin(address(nft), deployer, admin);
         // 💭 minter 已在构造函数 _grantRole；deployer 默认无 MINTER_ROLE 不用 revoke
 
         vm.stopBroadcast();

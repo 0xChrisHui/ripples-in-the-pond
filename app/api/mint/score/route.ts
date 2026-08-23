@@ -59,8 +59,21 @@ export async function POST(req: NextRequest) {
         );
       }
       if (msg.includes('INVALID_SCORE')) {
+        // P12 C9 (SR-P1-2)：按 RPC 报错后缀拆分文案，最常见的"重复点铸造"单独说清
+        if (msg.includes('already enqueued')) {
+          return NextResponse.json(
+            { error: '这段旋律已经在铸造中了，稍等片刻去「我的」页查看' },
+            { status: 409 },
+          );
+        }
+        if (msg.includes('status=')) {
+          return NextResponse.json(
+            { error: '草稿已过期或状态异常，请重新录制保存后再试' },
+            { status: 400 },
+          );
+        }
         return NextResponse.json(
-          { error: '草稿无效（不存在/已铸造/不属于你）' },
+          { error: '草稿不存在或不属于当前账号' },
           { status: 400 },
         );
       }

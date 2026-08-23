@@ -85,7 +85,7 @@
 
 ---
 
-### E005 — 失败的 ScoreNFT 队列永久显示“上链中”
+### 独立热修 — 失败的 ScoreNFT 队列永久显示“上链中”
 
 - 📅 2026-08-22 / P12 上线前真实铸造 smoke
 
@@ -96,6 +96,124 @@
 - 🔧 接口补传 `status`；失败卡改为明确终态并禁止进入假等待详情；轮询排除 `failed`。数据库历史数据保留，等待 D-0 或单独批准的数据方案。
 
 - 💡 “结果字段为空”不等于“任务仍在运行”；异步任务 UI 和轮询都必须以状态机终态为准。链数据唯一性还必须包含链与合约时代。
+
+---
+
+### E005 — Arweave 瞬时 404 导致解码器整页失败
+
+- 📅 2026-08-22 / Phase 12 A-1
+
+- 😱 `Failed: https://ario.permagate.io/<sound-txid> → HTTP 404` —— 旧格式回归首次加载失败，刷新后恢复。
+
+- 🧠 链上音效表与本地 txid 完全一致；随后直接请求两个网关均返回 200、文件 59,597 bytes，证明不是数据写错，而是网关瞬时错误。当前 `fetchWithFallback` 对每个网关只尝试一次，任一音效两路同轮失败就让 26 音效的 `Promise.all` 整体失败。
+
+- 🔧 已修：两个候选地址同轮全失败后等待 400ms，再完整尝试一轮；最多两轮，仍失败继续抛出具体资源错误。`verify.sh` 全绿，用户无参数 Demo 浏览器复验通过。
+
+- 💡 去中心化存储不等于每个网关随时可靠；永久播放器既要多网关，也要对瞬时故障做有界重试。
+
+---
+
+### E006 — 旧音效索引缺 hash 会误触发 26 个 mp3 全量上传
+
+- 📅 2026-08-22 / Phase 12 C2
+
+- 😱 上传前 dry-run 审查发现：`data/sounds-ar-map.json` 只有 `{ txId, url }`，升级后的增量脚本无法证明文件未变化，会把 26 项全部当成待上传。
+
+- 🧠 内容 hash 是新索引才有的字段；对旧索引直接执行“hash 不同即上传”，会把“没有 hash”误解为“内容变化”。
+
+- 🔧 普通模式遇旧索引缺 hash 时 fail-closed；新增 `--map-only` 显式复用已有 txid，并用 `--dry-run` 在付费前验证 v2 表。实测上传 0、扣费 0。
+
+- 💡 涉及付费或不可逆操作时，“无法判断”必须等于“停止”，不能等于“全部重做”。
+
+---
+
+### E007 — PowerShell `$home` 撞只读系统变量 `$HOME`
+
+- 📅 2026-08-22 / Phase 12 A-1 生产检查
+- 😱 `Cannot overwrite variable HOME because it is read-only or constant.`
+- 🧠 PowerShell 变量名不区分大小写，`$home` 与系统 `$HOME` 是同一个变量。
+- 🔧 改用任务专属变量 `$homepageResponse`，并启用 `$ErrorActionPreference='Stop'` 后重跑，首页与 health 均 200。
+- 💡 脚本变量必须使用任务专属名称，尤其不要复用 HOME、PATH 等系统名。
+
+---
+
+### E008 — `env-sync` 缺少 API token，但 Vercel CLI 已登录
+
+- 📅 2026-08-22 / Phase 12 A-1 三环境验收
+- 😱 `缺少 VERCEL_TOKEN 或 VERCEL_PROJECT_ID，请加到 .env.local`
+- 🧠 `scripts/vercel-env-sync.ts` 只认显式 API token；`vercel whoami` 的 CLI 登录态是另一套凭证，脚本不会自动复用。
+- 🔧 本轮用已登录 Vercel CLI 完成三环境更新、逐环境内存读回与精准 Production redeploy；未为一次性校验新增长期 token。
+- 💡 “CLI 已登录”不等于“自写 API 脚本有 token”；部署工具的认证来源必须分开检查。
+
+---
+
+### E009 — PowerShell 请求 Arweave 偶发 SSL 握手失败
+
+- 📅 2026-08-23 / Phase 12 A-1 最终 smoke 核验
+- 😱 `Invoke-WebRequest: The SSL connection could not be established`
+- 🧠 本机 PowerShell/.NET 到 `arweave.net` 的 TLS 通道偶发被本地网络安全层影响；同一地址随后由 Node `fetch` 返回 200，内容哈希与备用网关一致，因此不是 Arweave 内容丢失。
+- 🔧 换独立 Node `fetch` 客户端复验，并同时比较 HTTP 状态、字节数与 SHA-256，避免把客户端握手问题误判为资源故障。
+- 💡 永久资源验收不能只依赖一个本地 HTTP 客户端；状态、内容哈希和第二网关要交叉验证。
+
+---
+
+### E010 — 使用文档缩写地址调用到空合约
+
+- 📅 2026-08-23 / Phase 12 B5 admin 签名演练
+- 😱 `The contract function "hasRole" returned no data ("0x")`
+- 🧠 初次检查把 STATUS 中供人阅读的 `0xE0fA..DB23` 缩写按记忆补成了错误完整地址；该地址没有目标合约代码，因此 `hasRole` 返回空数据。
+- 🔧 停止手工补地址，直接从 `.env.local` 读取 `NEXT_PUBLIC_SCORE_NFT_ADDRESS` / `NEXT_PUBLIC_ORCHESTRATOR_ADDRESS`，并先用 chainId=11155420 护栏确认 OP Sepolia 后再广播。
+- 💡 交易地址只能来自权威 env 或部署记录的完整值；展示用缩写永远不能反推成执行参数。
+
+---
+
+### E011 — npm 全局安装后当前 PowerShell 找不到 Alchemy CLI
+
+- 📅 2026-08-23 / P12 主网 Alchemy App
+- 😱 `The term 'alchemy' is not recognized`
+- 🧠 npm 已把 CLI 安装到用户级全局目录，但当前 Codex PowerShell 进程的 PATH 没有刷新该目录。
+- 🔧 用 `npm prefix -g` 定位 `C:\Users\Hui\AppData\Roaming\npm\alchemy.cmd`，后续显式调用绝对路径。
+- 💡 Windows 全局 CLI 安装成功不代表既有 shell 立即能解析命令；先查 npm prefix，不要重复安装。
+
+---
+
+### E012 — Alchemy CLI Admin 命令完成后触发 UV assertion
+
+- 📅 2026-08-23 / P12 主网 Alchemy App
+- 😱 `Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c`
+- 🧠 CLI v0.23.0 在 Windows 退出阶段关闭异步句柄时崩溃；API 请求此前已完成，因此退出码非零不等于创建失败。
+- 🔧 不重试 create；先用 `app list --search` 查重，确认账户中恰有一个目标 App，再用 RPC chainId 验收。
+- 💡 外部创建命令遇到“请求后崩溃”必须先读回外部状态，盲重试会制造重复资源。
+
+---
+
+### E013 — Etherscan 免费 key 的 OP 普通 API 被拒绝
+
+- 📅 2026-08-23 / P12 合约验证凭证
+- 😱 OP Mainnet `eth_blockNumber` 返回 `Free API access is not supported for this chain`。
+- 🧠 Etherscan 免费套餐不开放 OP 的普通链数据 API，但合约源码与 ABI 类接口对免费套餐开放；用错探针会把有效 key 误判为无效。
+- 🔧 改用部署真正依赖的 `getsourcecode` 和验证状态端点验收；两者均通过鉴权，无需升级套餐。
+- 💡 凭证验收必须贴近实际用途，不能用一个无关端点概括整套权限。
+
+---
+
+### E014 — Vercel Hobby 无法通过 CLI 读取精确 Usage
+
+- 📅 2026-08-23 / P12 C6 额度盘点
+- 😱 `vercel usage --format json` 返回 `Costs not found (404)`；metrics 查询要求 Observability Plus。
+- 🧠 项目确认是 Hobby，但账单 CLI 与高级 metrics 没有返回 Hobby 的实际消耗。
+- 🔧 不把 404 当零用量；改用官方硬上限 + 4 个 cron 全按 1min 的保守月调用上界做承载判断。
+- 💡 精确数字拿不到时，保守上界比猜测更适合上线 gate。
+
+---
+
+### E015 — Vercel Sensitive env 不能注入本地 Resend 查询
+
+- 📅 2026-08-23 / P12 C6 额度盘点
+- 😱 `vercel env run -e production` 仍只加载现有 `.env.local`，Resend API 返回 400；生产 Sensitive 值未导出。
+- 🧠 Vercel 对 Sensitive env 保持不可读边界，不能为了盘点把生产 Resend key 拉回本机。
+- 🔧 停止重试；改用已验证的 C4 收信记录、告警触发上界与官方 100/day、3,000/month 限制判断。
+- 💡 配额盘点不值得降低 secret 安全等级；能用行为上界证明就不搬运生产密钥。
 
 ---
 
@@ -120,12 +238,21 @@
 
 ### 区块链 / viem
 - E005 旧测试合约与新测试合约 tokenId 命名空间碰撞
+- E010 使用文档缩写地址调用到空合约
 
 ### 网络 / API
-- （空）
+- E005 Arweave 瞬时 404 导致解码器整页失败
+- E006 旧音效索引缺 hash 会误触发 26 个 mp3 全量上传
+- E009 PowerShell 请求 Arweave 偶发 SSL 握手失败
 
 ### Git / 工具链
-- （空）
+- E007 PowerShell `$home` 撞只读系统变量 `$HOME`
+- E008 `env-sync` 缺少 API token，但 Vercel CLI 已登录
+- E011 npm 全局安装后当前 PowerShell 找不到 Alchemy CLI
+- E012 Alchemy CLI Admin 命令完成后触发 UV assertion
+- E013 Etherscan 免费 key 的 OP 普通 API 被拒绝
+- E014 Vercel Hobby 无法通过 CLI 读取精确 Usage
+- E015 Vercel Sensitive env 不能注入本地 Resend 查询
 
 ### JWT / 认证
 
@@ -156,3 +283,10 @@
 - **怎么修**：把 PEM 读取从模块顶层移到函数内部（惰性读取），构建时不触发
 - **学到了什么**：Next.js 构建时会加载所有 server 模块做类型检查，环境变量可能未设置。服务端模块里的全局初始化要做成惰性的
 - **相关文件**：`src/lib/auth/jwt.ts`
+
+#### PowerShell 找不到 `bash`，导致验证脚本无法启动
+- **报错原文**：`The term 'bash' is not recognized as a name of a cmdlet`
+- **为什么**：Git Bash 已安装在 `D:\DevTools\Git\bin\bash.exe`，但该目录没有加入当前 PowerShell 的 PATH。
+- **怎么修**：使用绝对路径 `& 'D:\DevTools\Git\bin\bash.exe' scripts/verify.sh`，完整验证通过。
+- **学到了什么**：Windows 上命令不在 PATH 不代表工具未安装；先从 `git.exe` 所在工具目录定位配套 Bash，再按项目规定运行原脚本。
+- **相关文件**：`scripts/verify.sh`

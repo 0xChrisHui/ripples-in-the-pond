@@ -10,6 +10,10 @@ import { join } from 'node:path';
 
 const ROOT = process.cwd();
 
+// 钉进每枚 NFT 的永久 server-only 值：非 NEXT_PUBLIC_ 但三环境必须一致，
+// 否则新铸 NFT 指错解码器/音效表。C 类默认只查 NEXT_PUBLIC_*（这两个是盲区，Codex P1）→ 显式纳入白名单。
+const CRITICAL_SERVER_ONLY = new Set(['SCORE_DECODER_AR_TX_ID', 'SOUNDS_MAP_AR_TX_ID']);
+
 function parseLocalEnv(): Map<string, string> {
   const path = join(ROOT, '.env.local');
   const result = new Map<string, string>();
@@ -67,15 +71,21 @@ async function main() {
   const aOnly = [...localKeys].filter(k => !vercelKeys.has(k));
   const bOnly = [...vercelKeys].filter(k => !localKeys.has(k));
   const cMismatch: { key: string; local: string; vercel: string }[] = [];
+  const criticalUncompared: string[] = []; // 关键 server-only 但 Vercel 隐藏了值（加密）→ 无法比对，提示手动读回
   for (const key of localKeys) {
-    if (!key.startsWith('NEXT_PUBLIC_') || !vercelKeys.has(key)) continue;
+    const comparable = key.startsWith('NEXT_PUBLIC_') || CRITICAL_SERVER_ONLY.has(key);
+    if (!comparable || !vercelKeys.has(key)) continue;
     const vercelVal = vercelMap.get(key) ?? '';
     const localVal = localEnv.get(key) ?? '';
-    if (vercelVal && localVal !== vercelVal) cMismatch.push({ key, local: localVal, vercel: vercelVal });
+    if (!vercelVal) {
+      if (CRITICAL_SERVER_ONLY.has(key)) criticalUncompared.push(key);
+      continue;
+    }
+    if (localVal !== vercelVal) cMismatch.push({ key, local: localVal, vercel: vercelVal });
   }
 
   console.log('\n=== Vercel Env Sync ===\n');
-  if (aOnly.length === 0 && bOnly.length === 0 && cMismatch.length === 0) {
+  if (aOnly.length === 0 && bOnly.length === 0 && cMismatch.length === 0 && criticalUncompared.length === 0) {
     console.log('✅ .env.local 与 Vercel env 完全一致'); process.exit(0);
   }
   if (aOnly.length > 0) {
@@ -87,10 +97,14 @@ async function main() {
     bOnly.forEach(k => console.log(`  - ${k}`));
   }
   if (cMismatch.length > 0) {
-    console.log('\n🔴 C 类：NEXT_PUBLIC_* 值不一致：');
+    console.log('\n🔴 C 类：值不一致（NEXT_PUBLIC_* + 关键 server-only）：');
     cMismatch.forEach(({ key, local, vercel }) => {
       console.log(`  ${key}\n    本地:  ${local}\n    Vercel: ${vercel}`);
     });
+  }
+  if (criticalUncompared.length > 0) {
+    console.log('\n🟠 关键 server-only 变量 Vercel 未返回值（加密），无法自动比对，请逐环境手动读回确认：');
+    criticalUncompared.forEach(k => console.log(`  - ${k}`));
   }
   const hasError = aOnly.length > 0 || cMismatch.length > 0;
   console.log(hasError ? '\n❌ 存在 A/C 差异，修复后再部署' : '\n⚠️  仅 B 类差异，不阻止部署');

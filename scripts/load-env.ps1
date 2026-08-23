@@ -14,16 +14,29 @@ if (-not (Test-Path $envFile)) {
 }
 
 $count = 0
-foreach ($line in Get-Content $envFile -Encoding UTF8) {
-    $trimmed = $line.Trim()
+$lines = @(Get-Content $envFile -Encoding UTF8)
+for ($i = 0; $i -lt $lines.Count; $i++) {
+    $trimmed = $lines[$i].Trim()
     if (-not $trimmed -or $trimmed.StartsWith('#')) { continue }
     $eq = $trimmed.IndexOf('=')
     if ($eq -lt 1) { continue }
     $key = $trimmed.Substring(0, $eq).Trim()
     $val = $trimmed.Substring($eq + 1).Trim()
-    if (($val.StartsWith('"') -and $val.EndsWith('"')) -or
-        ($val.StartsWith("'") -and $val.EndsWith("'"))) {
-        $val = $val.Substring(1, $val.Length - 2)
+
+    # P12 C9 (SR-P1-14)：带引号但同行未闭合 = 多行值（如 TURBO_WALLET_JWK 整段 JSON），
+    # 续读后续行直到闭合引号；与 Next.js dotenv 的多行语义对齐
+    if ($val.Length -ge 1 -and ($val[0] -eq '"' -or $val[0] -eq "'")) {
+        $quote = $val[0]
+        $closed = ($val.Length -ge 2 -and $val.EndsWith($quote))
+        while (-not $closed -and $i + 1 -lt $lines.Count) {
+            $i++
+            $val += "`n" + $lines[$i]
+            $closed = $val.TrimEnd().EndsWith($quote)
+        }
+        $val = $val.Trim()
+        if ($val.Length -ge 2 -and $val.EndsWith($quote)) {
+            $val = $val.Substring(1, $val.Length - 2)
+        }
     }
     Set-Item -Path "Env:$key" -Value $val
     $count++

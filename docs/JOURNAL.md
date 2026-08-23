@@ -918,3 +918,128 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **现象不是链仍在等待**：7 月 23 日的异常记录数据库状态已经是 `failed`，但 `/me` 接口漏传 `status`，前端又把所有 `tokenId == null` 都推断成“上链中”，因此失败记录被永久误显并持续轮询。
 - **修复边界**：状态作为唯一真理来源；失败卡显示“上链失败 / 需处理”，不进入详情页，轮询排除 `failed`。本热修不修改队列、不重发交易，也不改变合约架构。
 - **测试网数据决定暂缓**：新 smoke 已在旧测试合约成功铸出 tokenId 24，但数据库中旧合约时代已有 tokenId 24，触发 `uq_score_queue_token_id`。主网上线前 D-0 会清理测试数据；在用户确认前不做任何生产数据库删除或手工回填。
+
+## 2026-07-19 — Phase 12 B-0 合约决策 gate 九项全拍板 + 开工前隐患收口
+
+- **B-0 九项一次定死**（主网合约不可升级，承接 P10 停点 4 移交；权威锁定块见 `playbook/phase-12/20-b` §1）：①版税不做 ②供应上限不设(链下监控) ③印死不可升级 ④加 mintScore 幂等键 ⑤加 URI 空串防御 ⑥加 MaterialNFT freezeURI ⑦ScoreNFT 名 `Ripples in the Pond`/`RPIP` ⑧admin 独立钱包(≠热钱包) ⑨AirdropNFT 不部署(→全流程 3 合约)。
+- **为什么"印死"**：可升级=区块链黑客最爱的攻击口，单人项目简单即安全；代价是其余 8 项必须一次对。**明确否掉"以后换合约当退路"**——换新合约=已铸 NFT 全部搁浅旧合约(真金白银藏品)，等于抛弃用户，不是回滚。
+- **版税/上限不做的取舍**：版税以后永久加不了但接受；硬上限与"每人录一段铸一枚"模型冲突(天然无固定总量)→改链下监控异常增发。
+- **freezeURI 加的理由**：admin 走独立普通钱包(非硬件/多签)防护偏软，而 MaterialNFT 是 ERC1155 单条全局 URI、admin 随时可改 → 加一次性封条防"钥匙泄露后批量篡改所有素材 NFT metadata"。ScoreNFT 的 per-token URI 已 `_uriSet` 写一次锁死不受影响。
+- **名字去版本号**：`.v1` 进永久合约名会后悔(名字焊死+暗示 v2)，用干净 `RPIP`。
+- **admin 独立钱包默认**：红线 admin≠铸造热钱包(热钱包=服务器天天用，泄露即治理权被接管)；升硬件/Safe/renounce 部署后再定。
+- **开工前隐患收口**：决策关已清；剩①环境关=本机 `forge` 缺失→B track 动不了(装回 Foundry)②P10 生产(migration 043-046 已跑✅；**cron Bearer 未确认**——没切则生产 cron 可能已 401)。**订正:先前"锁 Node 20"是误判**——next/og 出图崩与 Node 版本无关(真凶=Satori 多子节点 div 缺 display:flex，2026-07-11 已修，见 memory `project_nextog_satori_multichild`)，无需锁 Node，仅保留 OG/海报生产复验轻检。曲名/建 admin 钱包/DB 快照=部署日关卡，不挡开工。
+- **执行约定**：本会话只固化决策不开工；用户将**开新进程**执行 P12（B 前置=装 Foundry + 锁 Node 20）。两轮 review(自审 11 + Codex gpt-5.5 4 P0)已加固 playbook 14 处，见 commit `91d11aa`。
+
+## 2026-07-19 续 — P12 执行开工：Foundry 复活 + admin 钱包定案 + A/B 代码落地
+
+- **Foundry 阻塞解除**：本机 `forge 1.5.1` 可跑（verify.sh 第 7 节真跑，24→42 tests 全绿）。此前 memory/playbook 记的"forge 阻塞、B 动不了"已过期——B track 当场解锁，本会话即"开新进程执行"。
+- **admin 钱包定案（修订 B-0 #8）**：用户拍板 = **独立普通钱包**（≠ 铸造热钱包），私钥存本地电脑、需要时靠 Claude 逐步操作（"我自己记不住"）。不升级硬件/多签/冷钱包 → runbook 必须把 admin 操作写成可照抄命令，"找你就行"才成立。
+- **D3"换合约=灾难"框定放宽**：用户明确接受"不可升级 + 日后要改就重部署新合约、前端兼容新老"。故 CT-3 弃用重型 `AccessControlDefaultAdminRules`，改脚本级护栏（先 grant 链上验成功再 revoke）。
+- **红线入代码**：新建 `contracts/script/DeployBase.s.sol`，`_assertMainnetRoles` 把"admin 绝不等于热钱包"写成主网 `require(admin != minter)`（+ admin/minter ≠ deployer、非零），6 条确定性单测护住；三个主网部署脚本（Score/Material/Orchestrator）共用之。
+- **A-track（停在上传前）**：解码器数量无关化 + 音效表 v2 三格式兼容 + postMessage 协议 v1（70-f）一次实现并本地 http 测试父页验过；换血脚本改按内容 hash 判变（堵 Codex P0 静默 skip）+ env-sync 纳入 server-only 白名单。🛑 A-1/F-1 = 用户浏览器验收 + Arweave 上传（永久，未做）。
+- **B 代码全绿（停在部署）**：CT-1 名参数化+主网硬失败 / CT-5 MaterialNFT 补测 / CT-7 空串防御 / CT-8 freezeURI+事件 / CT-2+CT-3 部署脚本主网护栏 / CT-12+B-0#9 主网禁部署护栏 / CT-15 URI 参数化 / **CT-4 mintScore 幂等键**（orderId=队列 row.id 的 keccak256，合约+ABI+cron 三层同批，forge+tsc 双绿，避开 Codex P0"只改合约则主网全 revert"）。forge 42 tests / tsc / eslint 全绿。剩 B3 顺路批(CT-11 pin/CT-13/14 评估留档) + B4 runbook 增补 + 🛑B-1 测试网回归。
+
+## 2026-07-19 续² — C-0 三项拍板 + 执行路径固化 + B-1 启动
+
+- **C-0 拍板（用户）**：①Semi 主网策略=**维持现状**（PoC JWT 双通道先上线，正式化放 P13；C7 仍做回归+kill switch）②DB 备份=**方案③手动周期导出+部署日全量快照**（零成本；数据涨后再评估 Pro）③免费额度=**不升级**（C6 盘点仍核对一遍，硬阻塞再回禀）。
+- **A-1 插入 UI 优化轮**：用户拍板解码器先优化 UI 再验收上传（"这版用很多年"标准不变）；txid 未定稿前不切 env，不卡 B/C 施工。
+- **B-1 保留并执行**：用户曾问"测试网不用了要不就不搞"——说服保留：这是唯一**免费**验证"新 ABI + 部署脚本 + admin 授权链路真能在真链上跑"的机会，主网不可回滚+真钱，跳过=拿没上过任何真链的合约直接上主网。简化模式重部署 3 合约 OP Sepolia + 角色验收 + 幂等键重发拒绝 + **本地 env** 指新合约两通路 e2e（现网 Vercel env 不动，沿 20-b §3 步骤 0 优先项）。
+- **执行路径固化**（进 00-overview §8）：B-1 → C 施工 → A-1 UI 轮+上传 → D-1 内容冻结（曲名+admin/deployer 钱包+快照）→ 🛑D-0 排期 → D 部署日 → 🛑D-gate。用户"D 就今天"已说明不可行（前置未清）。
+
+## 2026-07-23 — B-1 测试网回归收官：两通路全通 + 3 个管道真 bug + D-0 硬证据
+
+- **链层**：3 合约简化模式重部署 OP Sepolia（对照表进 `reviews/phase-6-deprecated-contracts.md`）；角色 6/6；幂等键真链验证（同 orderId 重发 revert `orderId used`）；CT-7 空串拒后槽位未烧、CT-8 freezeURI 封条链上 revert `URI frozen`——全过。
+- **app 层 e2e**（用户浏览器真流程 + 本地 cron 新 ABI）：素材通路 → 新 MaterialNFT confirmed；乐谱通路 5 步全走通 → tokenId 24 归真实用户 + tokenURI 上链 + mint_events 记账 ✓。
+- **3 个真 bug 当场修**：① `acquireOpLock` 网络错误裸抛（调用点在路由 try 外）→ cron 空 body 500；改生产 fail-closed / 开发 fail-open。② steps-mint 写 tokenId 吞 DB error 误判 lease lost → 无限空转；补 error throw。③ **mint_events upsert 撞 016h 部分唯一索引**（PostgREST onConflict 匹配不了带 WHERE 的索引）→ 乐谱铸造最后一步必挂；A17 之前被静默吞错掩盖（假成功），本次是 A17 后首铸即触雷；改"查后插"。**bug③ 现存生产 main**——P12 合并即修，期间生产铸谱会 failed（NFT 已上链）。
+- **D-0 硬证据**：新合约 tokenId=2 撞 `uq_score_queue_token_id`（旧行占 2-23）→ 管道死。清链衍生表从"推荐"升"硬需求"。中毒行弃置 + 21 枚占位垫计数 + 克隆行完成回归。
+- **环境坑（本机）**：Turbo 上传必须走系统代理而 Next 不给第三方 SDK 的 fetch 挂代理 → dev server 必须 `NODE_USE_ENV_PROXY=1` 启动；Upstash 走代理被重置由 bug① fail-open 兜住。Alchemy 测试网当日间歇 TLS 抖动 + gas 估算抽风（cast 显式 --gas-limit 绕过）。
+- **附带发现**：生产 cron 活着（sync 游标 2.5min 新），"Bearer 未切则 401"担忧不成立——C1 剩余量待用户看面板回报。
+
+## 2026-07-24 — C track 独立项一波清完（C4半/C7/C8/C9/C10）
+
+- **C8 拍板留档**：JWT 维持 localStorage 不改 httpOnly——XSS 面窄（无 UGC 富文本）、被窃令牌爆炸半径不含资金（链上资产无私钥在我方、铸造免费）、三层改造 1-1.5 天回归风险 > 上线前收益。触发升级条件：UGC 富文本 / P13 Semi 正式化 / 链下资产出现。评估全文 `reviews/2026-07-24-phase-12-infra.md`。
+- **C9 决策**：SR-P1-2 错误友好度**不动 SQL**、在 API 边界拆文案（RPC 错误码是机器契约，文案是产品层；拆在边界零迁移零风险）——already enqueued 单独说清（409「已经在铸造中」），这是真实用户最常撞的。SR-P1-1 用 048 迁移补 raise（待用户生产执行）；SR-P1-14 多行值支持属未来防御（本地实为 TURBO_WALLET_PATH 单行）。
+- **C4 现状订正**：playbook 写"低余额/stuck 仍无邮件"已过时——P10 P2-3 早接好低余额+积压邮件；本次只补**卡龄检测**（活跃行 >30min 无更新即告警，B-1 那种"upsert 死循环数量不涨"正是它的猎物）。配置半（Resend 三 env）本地全未配，待用户。
+- **C7 kill switch 形态**：env flag 而非配置常量——故障时改 Vercel env + redeploy 即回退，不用动代码不用等 build 排查；`NEXT_PUBLIC_SEMI_DISABLED=1` 时邮箱升主按钮（不是藏在角落的小字链接，故障场景它就是唯一入口）。
+- **C10 生产实锤**：/score/12 OG 卡 200·PNG·53KB + 海报 200·PNG·132KB——Satori 多子节点修复在生产有效，"pin Node"彻底翻篇。
+
+## 2026-07-26 — C1 密钥轮换完成 + 一条"别在修泄露时再泄露一次"的操作纪律
+
+- **C1 ✅**：CRON_SECRET 换新（43 字符 CSPRNG）。验证三连——新值 200 / 旧值 401 / 本地同步后 200；cron 97 秒内恢复（sync 游标更新）；`/api/health` Bearer 200 全绿。
+- **密钥交付方式定为纪律**：新密钥写用户桌面文件 + 塞剪贴板，**全程不进聊天**。本次轮换的起因就是 2026-05-08 把 CRON_SECRET 打进了聊天记录——修复泄露的操作本身绝不能再泄露一次。今后所有 secret 类交付照此办理。
+- **换序定为 cron-job.org 先、Vercel 后**：此序下"改一个断一个、没改的还在跑"（优雅降级）；反序是 4 个 job 同时全断再逐个恢复。停机窗口相近但故障面小得多。
+- **反证省掉一次排查**：用户不知道去哪看 job 的鉴权方式，我用「生产 `?secret=` 被 `cron-auth.ts:29` 硬拒 + 生产游标 74 秒前刚更新」两条反推出**各 job 早已在用 Bearer**——P10 那条挂了很久的"待切 Bearer"待办其实早就完成，只是没人核实过。C1 因此从"迁移+换值"缩成"换值"。
+- **验证反相的诊断价值**：第一次验证新值 401 / 旧值 200 —— 这个"全反"信号干净地指向 **Vercel redeploy 未生效**（若是密钥抄错，新旧都会 401）。env 改动必须 redeploy 且构建跑完。
+- **process-airdrop 被一并改了 header**：核实无害——`route.ts:26` 代码级 kill switch（`AIRDROP_ENABLED !== 'true'` 即刻 disabled）早于锁与铸造逻辑。主网口径不变（删除或 inactive）。
+- **清账**：`.env.local` 重复 CRON_SECRET（STATUS 悬空 TODO）核实只有 1 条，作废。
+
+## 2026-07-26 续 — 管道三修热修上线 main（`56d72a9`），刻意不带合约耦合
+
+- **用户拍板 A（提前合 main）**。做法是**摘取而非合并分支**：只取 3 处管道修复，P12 的合约/playbook 一律不上线。
+- **摘取时发现的陷阱（差点酿祸）**：`steps-mint.ts` 在 P12 分支上**同时**含 CT-4 幂等键（`mintScore(to, orderId)` 两参数）和本次要修的 DB 错误检查。整文件 checkout 过去 = 线上用两参数调**旧合约**（单参数）→ 铸造全 revert。故该文件**只手工打那一处补丁**，另两文件（operator-lock / steps-set-uri）经 diff 确认纯净才整取。**教训：热修摘取必须逐文件 diff，不能按 commit 或按文件名整取。**
+- **安全检查作为流程**：推送前显式验 `git diff origin/main | grep -c 'orderId\|keccak256'` 均为 0 + `args:` 仍是单参数，再跑 verify.sh（24 forge tests = 旧合约套件，符合基线）。
+- **用户未提交工作的处理**：工作区有用户的 Semi 登录 WIP（4 文件）挡住切分支。做法 = 先 `git diff` 全量备份到 scratchpad → stash → 热修 → 还原 → **逐字节比对备份确认一致（12518 字节完全相同）**。不用 worktree 是因为新 worktree 无 node_modules 跑不了 verify，而 junction 有删主树依赖的历史坑。
+- **线上验证**：health 200（db ok / upstash / 队列 0 failed 0 stuck）+ 首页 200。**完整证明需一次真实铸造**——线上仍指测试网合约，用户在 pond-ripple.xyz 录一段铸造即可零成本端到端验证该修复。
+
+## 2026-07-28 — 三项省钱/省事的实测结论 + 曲名拍板
+
+- **曲名 ✅ 拍板：35 首就叫 1-35**（用户定）。即数字**就是正式名**，不是占位——曲目本按周编号发布，数字名与 catalog 语义自洽。D-1 该项不再阻塞部署日。遗留美化项：description 里 `A live jam on "17"` 的引号让数字像加载失败，建议改成 `Track 17`（一行）。
+- **C2 省钱**：旧 Turbo 钱包仍有 **1.84 GiB** 额度（每枚 NFT 只写几 KB → 够几万枚），**不需要充值**。但换钱包仍必须做——查到 P7 记录：**旧 Turbo 私钥曾在调试记录中暴露**（与 CRON_SECRET 同性质），主网前硬门槛。方案：turbo-sdk v1.41 有 `shareCredits`，可让新钱包花旧额度 → **C2 全程零成本**（残余风险：旧私钥持有者可 revoke，但额度是沉没成本，可接受）。
+- **C3 金额下修**：实测 OP 主网 gas = **0.001 gwei**，按 B-1 实测 mint gas 123,116 算，每枚 NFT 即便悲观估也仅约 0.0000018 ETH → **0.02 ETH ≈ 1 万枚**，0.05 ≈ 2.7 万枚。runbook 的 0.05 是未实测的保守值。建议转 0.02 并把 `check-balance` 阈值从 0.05 下调，否则会天天误报低余额。
+- **operator 私钥安全性核实**（充值前必查）：无泄露记录，2026-07-05 后端 review 明确"暴露面控制良好（仅 operator-wallet.ts + check-balance，带 server-only）"。故 `0x306D3A44...1633` 可安全充值，主网继续用作 minter（runbook §1 口径）。
+
+## 2026-08-22 — A-1 解码器视觉定稿：月下档案唱片
+
+- **选日本极简（Ma）的档案唱片方向，不搬 test3 WebGL**：解码器会永久钉进 NFT，优先保证零依赖单 HTML 跨市场长期可运行；视觉采用近黑墨蓝、骨白、单一冰蓝强调与不对称留白。
+- **播放/停止图标改用 CSS 几何绘制**：浏览器字体的 `▶` 与唱片轴孔叠加会形成歪斜“吃豆人”；隐藏字符视觉、按 `.playing` 状态画标准三角/方块，协议与音频逻辑不变。
+- **用户 2026-08-22 浏览器验收满意；三组参数回归全过**：测试网 tokenId 24 旧格式 / 本地真实 txid v2 包装 / 无参数 Demo 均进入 Ready 且正常播放。旧格式首次加载曾遇两个网关链路瞬时 404、刷新恢复；永久上传前仍需决定是否加一轮短重试。
+- **瞬时 404 选择修而非接受**：两个候选地址同轮全失败后等待 400ms，再完整尝试最后一轮；正常路径零额外等待，永久坏地址最多两轮后如实报错，不无限重试。用户浏览器复验通过后才将本地版标为定稿。
+
+## 2026-08-22 — C2 上传脚本采用显式 map-only + 付费操作 fail-closed
+
+- **不自动把旧索引当成“全部音频已变化”**：现有 `sounds-ar-map.json` 是旧格式，没有内容 hash；若继续走增量逻辑，会把 26 个 mp3 全部误判为变化并产生不必要上传。普通模式发现旧索引缺 hash 时现在直接拒绝执行。
+- **为本次上线增加 `--map-only`**：明确复用 26 个已有音频 txid，只生成并上传 v2 音效表；`--dry-run` 仅允许搭配该模式，先验证 txid、名称与输出，不连接付费上传路径。实测 2558 bytes / 26 sounds、上传 0、扣费 0。
+- **C2 选干净新钱包路线**：本次两份定稿物成本只有几分钱，不为复用已泄露钱包的旧额度引入 `paidBy` 长期耦合。下一步经用户确认后转 0.001 Base ETH 到新 Turbo 钱包。
+
+## 2026-08-22 — A-1/C2 永久上传与三环境切换完成
+
+- **充值**：用户明确确认后，将新钱包的 0.0009 Base ETH 充值 Turbo；链上 tx `0xae380101fb62eac810bfed42203915e7583169a5c5a9a41b064a38a98919e4ec`，到账 623,213,389,830 winc，保留约 0.00009987 Base ETH 作 gas。
+- **永久资源**：decoder `NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0`（23362 bytes，SHA-256 `399f94...e4f05`）；v2 音效表 `NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8`（2558 bytes / 26 sounds，SHA-256 `df59a2...8fb9`）。`arweave.net` 比 `ario.permagate.io` 晚约 7 分钟传播，最终两网关字节完全一致。
+- **环境切换**：`.env.local` 改新钱包路径与两个新 txid；Vercel Development/Preview/Production 均切新 txid，Production/Preview 的 `TURBO_WALLET_JWK` 切新钱包。
+- **不部署 P12 分支**：当前分支含两参数 `mintScore`，直接部署会撞现网旧合约。改为精准 redeploy 当前线上 `dpl_EVGD...F9SL9`，生成 `dpl_Gc9G...ctKh` 并重新绑定 `pond-ripple.xyz`；首页与鉴权 health 均 200。完整 Track A DoD 还差用户真实铸一枚测试网 smoke。
+
+## 2026-08-23 — A-1 真实铸造 smoke 通过，Track A 收口
+
+- **最终样本**：`Ripples #26`（OP Sepolia tokenId 26）。mint tx `0x1201...7cce` 与 setTokenURI tx `0x85eb...af87` 均 success；链上 `tokenURI=ar://C2fL...S1PI` 与数据库一致。
+- **永久快照核验**：animation_url 使用 decoder `NMCj...Zmb0`、events `XYQu...poAU`、base `fTgp...4X8`、sounds `NQsg..._kl8`；events=15，sounds v2=26。metadata / decoder / base / sounds 在双网关均 200 且 SHA-256 一致。
+- **备用 events 404 不阻塞**：刚上传的 events 在 `arweave.net` 已 200，`ario.permagate.io` 仍处传播期 404；这是 A-1 已专门实现并经浏览器验收的双网关有界 fallback 场景，不重复上传、不修改 NFT。Track A DoD 全达，下一步 B5 admin 测试网签名演练。
+
+## 2026-08-23 — B5 admin OP Sepolia 签名演练通过
+
+- **演练方式**：B-1 测试合约采用简化模式，原 operator 仍是 DEFAULT_ADMIN。先给独立 admin 充值 0.0002 OP Sepolia ETH，再由 operator 授予其 DEFAULT_ADMIN_ROLE；随后独立 admin 用本地私钥亲自签 grantRole，把 MINTER_ROLE 临时授给自己，并立即签 revokeRole 清理。
+- **结果**：四笔 tx 均 status=1（fund `0x51f1...be48` / grant admin `0x0466...1947` / admin grant `0x3ae2...efa7` / admin revoke `0x42ce...1424`）；最终新 admin DEFAULT_ADMIN_ROLE=true、临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true，现有铸造链路零变化。
+- **决定**：保留新 admin 在测试 ScoreNFT 的治理角色，方便部署日前继续演练；operator 的测试网 admin 不撤销，避免破坏既有测试环境。主网仍严格按 runbook 由 deployer 移交独立 admin，三角色不得混用。
+
+## 2026-08-23 — Optimism Mainnet Alchemy App 改由官方 CLI 创建
+
+- **结果**：安装官方 `@alchemy/cli` v0.23.0，经 device-code 浏览器授权后创建 `Ripples OP Mainnet`（App ID `w609pakm9kk1b07g`），网络白名单仅 `OPT_MAINNET`。CLI RPC 实测 `eth_chainId=0xa`，直接用配置内 key 请求也返回 chainId 10。
+- **密钥边界**：API key 只保存在仓库外 `C:\Users\Hui\.config\alchemy\config.json`，未打印、未写 `.env.local`、未进聊天；部署日由本地进程读取并临时注入，避免用户手抄。
+- **Windows CLI 缺陷**：部分 Admin API 命令完成请求后在退出阶段触发 `UV_HANDLE_CLOSING` assertion 并返回非零码。创建后必须用 `app list` 按名称查重，不能因退出码盲目重试；本次确认只创建 1 个 App。
+
+## 2026-08-23 — Etherscan 免费 key 按合约端点验收，不升级付费
+
+- **现象**：统一 Etherscan V2 key 请求 OP Mainnet `eth_blockNumber` 返回“Free API access is not supported for this chain”。
+- **验收**：同一 key 请求 OP Mainnet `getsourcecode` 返回 `status=1/OK`，验证状态端点也通过鉴权并进入 GUID 参数校验，证明部署所需合约接口可用。
+- **决定**：不为无关的普通链数据 API 升级套餐；部署日继续用 Foundry + Etherscan V2 完成三个合约源码验证。key 仅保存在仓库外的用户配置目录，运行时临时注入。
+
+## 2026-08-23 — C6 六服务全部维持免费档
+
+- **证据**：Alchemy 本月 275,096 / 30M CU（0.92%）；Supabase 14 表 349 行 / 应用用户 9；Upstash PING 正常 / 56 keys；Vercel 为 Hobby，4 job 全按每分钟计算也仅占 100 万 invocations 的 17.3%；cron-job.org 与 Resend 的最坏常驻量均低于硬限制。
+- **决定**：上线前不升级 Vercel、Supabase、Upstash、Alchemy、cron-job.org、Resend，也不主动降频。主网 App 与测试网分开后仍使用 Alchemy 账户共享 30M CU。
+- **观察线**：Upstash 500K commands/月是六项中最可能先遇到的软上限；软启动期每周看一次，达到 70% 再决定关闭 ratelimit analytics、降频或升级。Vercel/Resend 的 Sensitive/账单明细不为盘点而降低密钥边界。
+
+## 2026-08-23 — P8-L 偶发颤动改为“开启即验收”
+
+- **问题**：原实现先等待间隔、再随机命中可用球；与持续浮动叠加后，用户设置 5 秒/0.12 并观察 30 秒仍可能看不到效果。
+- **决定**：视觉开关开启时立即让一颗大球短促三摆，之后严格按参数间隔轮换；慢浮动不再阻断颤动，播放、hover、拖拽仍优先并可立即中止颤动。
+- **理由**：验收入口必须让用户直接判断效果好不好，不能要求用户理解或等待内部随机调度。

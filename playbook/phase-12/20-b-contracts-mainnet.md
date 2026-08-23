@@ -22,7 +22,23 @@ binary / scoop / WSL，预留半天缓冲，不算进施工工时。
 
 ## 1. 🛑 停点 B-0 — 合约决策 gate（承接 P10 停点 4，错过永久不可加）
 
-主网合约是全新部署 = 最后一次改设计的机会。逐项拍板并记 `docs/JOURNAL.md`：
+主网合约是全新部署 = 最后一次改设计的机会。逐项已拍板（2026-07-19）并记 `docs/JOURNAL.md`。
+
+### ✅ B-0 最终结论（本块为准，新进程照此执行）
+
+| # | 决策 | 最终结论 |
+|---|---|---|
+| 1 | ERC2981 版税 | **不做**（接受永久无版税） |
+| 2 | 供应上限 | **不设链上上限**，改链下监控告警 |
+| 3 | 可升级性 | **印死（不可升级）**——故其余项必须一次定对；"换合约"不是退路（等于抛弃已铸 NFT，见 40-d D3） |
+| 4 | mintScore 幂等键 | **加**（合约+ABI+cron 三层同改，见 B2） |
+| 5 | URI 空串防御 | **加** |
+| 6 | MaterialNFT freezeURI + 事件 | **加**（防 admin 钥匙泄露后批量篡改素材 NFT metadata；素材 NFT = 收藏的曲目，ERC1155 全局 URI 现可被 admin 随时改） |
+| 7 | ScoreNFT name / symbol | **`Ripples in the Pond` / `RPIP`**（去 Testnet、无版本号） |
+| 8 | admin 钱包 | **独立钱包（≠ 铸造热钱包）**；部署后再定升硬件/Safe/renounce。红线：admin 绝不等于热钱包 |
+| 9 | AirdropNFT | **不部署** → 全流程"4 合约"一律改读 **3 合约**（Material/Score/Orchestrator） |
+
+下方原始决策表保留追溯上下文。
 
 | # | 决策 | 背景 | 默认建议 |
 |---|---|---|---|
@@ -49,7 +65,8 @@ binary / scoop / WSL，预留半天缓冲，不算进施工工时。
 - [ ] **CT-5 MaterialNFT 补测试** — 新建 `contracts/test/MaterialNFT.t.sol` 对齐 ScoreNFT.t.sol
 
 ### B2 拍板产物施工（按 B-0 结果展开）
-- [ ] ERC2981 / MAX_SUPPLY / 幂等键 / URI 防御 / freezeURI —— 凡拍板"加"的：改合约 + 补测试
+- [ ] **本次拍板"加"的三项**：mintScore 幂等键(B4) + ScoreNFT URI 空串防御(B5) +
+      MaterialNFT freezeURI+事件(B6) —— 改合约 + 补测试；**不做** ERC2981、**不设** MAX_SUPPLY(B1/B2)
 - [ ] **CT-4 若采纳 = 三层同批改**：合约 + `src/lib/chain/contracts.ts` ABI（现单参
       `mintScore(to)`）+ `steps-mint.ts` 传稳定 orderId（用 `row.id`）；补"重复 orderId 拒绝"
       测试；B-1 测试网端到端为**硬验收**——只改合约不改 app = 主网铸造全 revert（Codex P0）
@@ -59,8 +76,13 @@ binary / scoop / WSL，预留半天缓冲，不算进施工工时。
 - [ ] CT-10 测试覆盖缺口（角色管理/移交序列/非 receiver/_safeMint/空串 URI/supportsInterface）
 - [ ] CT-11 foundry.toml pin solc/evm_version/optimizer（主网 verify 复现一致性）
 - [ ] CT-12 TestMintOrchestrator 加 `require(block.chainid != 10)` 主网护栏
-- [ ] CT-13 Orchestrator setTokenURI 覆盖评估（热钱包权限面；可结论=接受现状+记录）
-- [ ] CT-14 contractURI / ERC1155Supply 评估（合集级 metadata；可不做，记录）
+- [x] CT-13 ✅ 评估留档（2026-07-24）：**接受现状**。Orchestrator 本体无 setTokenURI 通道
+      （仅 mint/mintScore，代码核实）；setTokenURI 由热钱包直调 ScoreNFT，被 `_uriSet`
+      写一次锁死——热钱包泄露最多抢写**未设 URI 的新铸 token**，改不了任何已定稿 NFT；
+      无限增发风险已由 B-0 #2（链下监控）承接
+- [x] CT-14 ✅ 评估留档（2026-07-24）：**不做**。两合约均无 contractURI/ERC1155Supply（核实）；
+      集合级展示走 OpenSea 等市场后台认领编辑（无需链上 contractURI）；totalSupply 对
+      app 无用（DB 是真相源）。且 B-1 已回归——现在加合约功能 = 推翻回归重来，违背 B-0 极简
 - [ ] CT-15 Deploy.s.sol placeholder URI env 参数化
 
 ### B4 runbook 增补（`docs/MAINNET-RUNBOOK.md`）
@@ -73,11 +95,16 @@ binary / scoop / WSL，预留半天缓冲，不算进施工工时。
       external_url 来源，runbook 现在漏列，漏配即第一枚 smoke NFT 永久写错域名）
 
 ### B5 admin 冷钱包就绪演练（B-0 #8 拍板后、部署日前完成，Codex P1）
-- [ ] OP Mainnet 上创建/确认 admin 钱包（Safe 则建好 + owner 确认 + 备 gas）
-- [ ] 签名流程演练一次：拿测试网 grantRole calldata 实操（Safe UI 或 hardware 签名）
-- [ ] 演练不过 = 部署日 3.3.1 授权卡死（Orchestrator 拿不到 MINTER_ROLE，铸造全断）
+- [x] 独立 admin 钱包创建、地址派生与第二处备份确认；主网 gas 按部署日清单充值
+- [x] 2026-08-23 OP Sepolia 实操 grantRole calldata：新 admin 亲自签 grant + revoke 均 success
+- [x] 清理验收：临时 MINTER_ROLE=false；Orchestrator MINTER_ROLE=true；admin DEFAULT_ADMIN_ROLE=true
 
-## 3. 🛑 停点 B-1 — 测试网全量回归
+## 3. ✅ 停点 B-1 — 测试网全量回归（2026-07-23 完成）
+
+> 结果：3 合约简化模式重部署 OP Sepolia + 角色 6/6 + 幂等键链上重发拒绝 + CT-7/CT-8 链上
+> 状态机全验 + 两通路 app 层 e2e 全通（素材 & 乐谱 tokenId 24）。揪出 3 个管道真 bug 当场修
+> （op-lock 裸 500 / tokenId 写入吞错 / mint_events 部分索引 upsert 必挂——第三个现存生产 main）。
+> 全记录：`reviews/phase-6-deprecated-contracts.md` 2026-07-19 段 + 2026-07-23 补记。原步骤留档：
 
 合约本体若有任何改动（ERC2981/幂等键/AccessControl 等），**必须先上 OP Sepolia 走完整链路**：
 0. 环境选择：**优先本地 env 指向新测试合约**做回归（现网不动、测试 NFT 不消失）；

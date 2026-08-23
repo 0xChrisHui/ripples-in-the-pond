@@ -76,6 +76,62 @@
 
 ---
 
+## 2026-07-19 — P12 B-1 测试网回归重部署（OP Sepolia）
+
+> ⚠ 本次为 **B-1 回归专用**：只切**本地 `.env.local`**，Vercel 生产 env **未动**
+> （现网继续用下表"旧"列合约直到 D 部署日）。主网将按 `docs/MAINNET-RUNBOOK.md`
+> 全新部署，非沿用本批地址。
+
+| 合约 | 旧（现网仍在用）| 新（B-1 回归版，本地生效）| 关键变化 |
+|---|---|---|---|
+| MaterialNFT | `0x99F808bdE8E92f167830E4b9C62f92b81c664b7C`（2026-04-09 Phase 1）| `0xe335f9d89442B980db1B673D0439B8fE49c413c0` | CT-8 `freezeURI` 单向封条 + URIUpdated/URIFrozen 事件 |
+| ScoreNFT | `0x1C478F9F5b66302A35a0178e07df67BA343c832F`（v2, 2026-04-25）| `0xE0fAed842283F3D689AA8619CBb0ccc232A1DB23`（v3）| CT-7 setTokenURI 空串防御（置位前拦截） |
+| MintOrchestrator | `0x8A6Dd0Ecf108797358CC369bC6F263D2C89BC3a8`（v2, 2026-04-25）| `0x970bCb2F6a8CD215173D8BC8c19286F4740601FA`（v3）| **CT-4 mintScore(to, orderId) 幂等键** + tokenIdByOrderId getter |
+
+### 链上回归记录（全部通过）
+
+- 部署者（简化模式 deployer = admin = minter）：`0x306D3A445b1fc7a789639fa9115e308a34231633`
+- 角色验收 6/6：Orchestrator 持 ScoreNFT MINTER / deployer 持三合约 admin+minter / scoreNft 绑定正确
+- **幂等键**：orderId `..b1` 首铸 tokenId 1（tx `0xd900095aae085abdde4dcd68669fef625bbf30ad496c07e138623111727b9a0a`）→
+  同 orderId 重发 revert `orderId used` → `tokenIdByOrderId` 反查 = 1
+- **CT-7 URI 状态机**：`setTokenURI(1,"")` revert（空串拒）→ 拒后写 `ar://b1-regression-test` 成功
+  （**槽位未烧**）→ 二次覆盖 revert `URI already set` → 终值正确
+- **CT-8 封条**：setURI 定稿 → freezeURI 成功 → 再 setURI **链上 revertReason `MaterialNFT: URI frozen`** →
+  `uriFrozen()=true`
+- 编译器：solc 0.8.33 / evm cancun / optimizer 200（CT-11 pin 后首次真链部署验证）
+- broadcast 记录：`contracts/broadcast/{Deploy,DeployScore,DeployOrchestrator}.s.sol/11155420/run-latest.json`
+- 已知环境噪声：Alchemy OP Sepolia 间歇 TLS 抖动 + `intrinsic gas too high` 估算抽风
+  （显式 `--gas-limit` 绕过即成功，与合约无关）
+
+### 2026-07-23 补记 — B-1 两通路 app 层 e2e 完成 + 揪出 3 个管道真 bug
+
+**e2e 结果（本地 dev + 共享 Supabase，生产 cron 两 job 暂停期间）**：
+- 素材通路：queue `ea0c0c15` → cron 新 ABI → 新 MaterialNFT tx
+  `0x1e50ad20823903100bb65c29e111e864a1556262d3d0f473bbab557001f04b45` confirmed → success ✓
+- 乐谱通路：queue `ee6ab320`（克隆行，见下）→ 5 步状态机全走通 → 新 Orchestrator mint tx
+  `0xa0101fa6d0853fad7237d919445fc309f23c32ef320ca90d4cbe464fe1cc8958` →
+  **tokenId 24** → `ownerOf` = 用户钱包 `0x19da4b17...bA54` → `tokenURI = ar://_1Levmve...ytY4`
+  → mint_events 记账行落库 ✓（该记账历史上从未真正成功过，见 bug 3）
+
+**3 个管道真 bug（全部当场修复在 `feat/p12-mainnet-prep`）**：
+1. **operator-lock 网络错误裸抛** → cron 空 body 500（`acquireOpLock` 调用点在路由 try 之外）。
+   修复：网络错误生产 fail-closed（返 busy 下轮重试）/ 开发 fail-open，与"未配置"分支同哲学
+2. **steps-mint tokenId 写入吞 DB error** → 误判"lease lost"无限空转烧 RPC。修复：补 error 检查并 throw
+3. **mint_events upsert 撞部分唯一索引**（016h `WHERE score_queue_id IS NOT NULL`，PostgREST
+   `onConflict` 无法匹配部分索引为仲裁）→ **生产乐谱铸造最后一步必挂**。A17（2026-05-16）之前该
+   错误被静默吞掉（假成功+记账悄悄丢失），A17 加 throw 后第一次真实铸造（=本次）即触雷。
+   修复：改"查后插"（行级单写者由 lease+全局锁保证），部分索引留作兜底。⚠ **此 bug 现存于
+   生产 main 分支**——主网前随 P12 合并即修；期间生产如有真实铸谱会在最后一步 failed（NFT 已上链）
+
+**D-0 硬证据（本次最大收获）**：新合约 tokenId 从 1 重数 → tokenId=2 撞
+`uq_score_queue_token_id`（旧合约时代 2-23 已占）→ 管道卡死。中毒行 `e7eaafb9` 弃置
+（链上 tokenId 2 无 URI，测试弃子）；为完成回归用 21 枚占位 token 垫高计数至 23 后克隆行走通。
+**主网切换不清链衍生表 = 第一枚 NFT 同一处死亡**——`40-d` D-0 方案①由"推荐"升级"硬需求"。
+
+**本机 dev e2e 环境备忘**：dev server 必须 `NODE_USE_ENV_PROXY=1 npm run dev`
+（Turbo 上传必须走系统代理，Next 只给自家 fetch 挂代理、不管第三方 SDK 的裸 undici fetch；
+Upstash 走代理会被重置 → 由 bug1 修复的 fail-open 兜住）。
+
 ## 旧合约后续处置
 
 - **测试网**：v1 合约地址保留在链上（Solidity 不可删除）。前端不再读取 v1，相关 NFT 不展示。

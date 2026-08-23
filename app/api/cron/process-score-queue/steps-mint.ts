@@ -9,6 +9,7 @@ import {
 } from '@/src/lib/chain/contracts';
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
 import { extractTokenIdFromLogs } from './_shared';
+import { keccak256, stringToHex } from 'viem';
 
 const ATTEMPT_WINDOW_MS = 10 * 60 * 1000;
 // P1-4：有 tx_hash 但 receipt 超 15 分钟不出 → 僵尸 tx，抛 CRITICAL 转 manual_review
@@ -66,12 +67,15 @@ export async function stepMintOnchain(
       return 'minting_onchain';
     }
 
+    // CT-4：稳定 orderId = 队列 row.id 的 keccak256。合约按 orderId 幂等去重，
+    // 同一录制即便重试 / lease 竞态也不会双铸（同 orderId 二次调用合约 revert）。
+    const orderId = keccak256(stringToHex(row.id));
     console.log(`[score-cron] sending mintScore tx → ${user.evm_address}`);
     txHash = await operatorWalletClient.writeContract({
       address: ORCHESTRATOR_ADDRESS,
       abi: ORCHESTRATOR_ABI,
       functionName: 'mintScore',
-      args: [user.evm_address as `0x${string}`],
+      args: [user.evm_address as `0x${string}`, orderId],
     });
 
     const nowIso = new Date().toISOString();

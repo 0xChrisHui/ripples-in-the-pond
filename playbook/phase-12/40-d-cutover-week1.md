@@ -20,6 +20,10 @@
 | `score_covers` 使用计数 | 绑测试网铸造 | 随上行方案同步重置 |
 | `users` / `tracks` / `sounds` / `pending_scores` | 链无关（账号/资产/草稿） | 保留不动 |
 
+> **B-1 实证（2026-07-23）：方案① 由"推荐"升级为硬需求**。本地回归中新合约 tokenId=2 撞
+> `uq_score_queue_token_id`（旧行占 2-23）→ 铸造管道最后一步卡死。不清链衍生表，主网第一枚
+> NFT 就会在同一处死亡；`uq_score_queue_pending_score`（一草稿一铸）同理要求从零。
+
 - **方案 ①（推荐）**：清链衍生表 → 主网从零开始。测试网唱片页全部 404（藏品本就不带入主网，
   合约都是新的）；清库前先做全量快照留底（C5 备份流程）。
   细节：清 `score_nft_queue` 后，部署日前 24h 内入队的草稿会在 /me"复活"
@@ -40,12 +44,18 @@
 
 - [ ] A track：音效换血完成（`10-a` A4）**或已拍板放弃换血窗口**（现音冻结为创世版）；
       解码器/音效表 txid 定稿
-- [ ] **metadata 内容冻结**（Codex P1）：正式曲名已 UPDATE（现 5 首为数字占位，STATUS 悬空
+- [x] **metadata 内容冻结 — 曲名 ✅ 已拍板（2026-07-28 用户）：采用「明示接受」，35 首就叫 1-35**
+      （数字即正式名，非占位）。理由：曲目本就是按周编号发布，数字名与"第 N 周"catalog 语义自洽。
+      ⚠ 2026-07-27 实测订正：占位名是 35 首**全部**（非文档原写的"5 首"），且全部 published +
+      全部有 arweave_url；影响 `description` 与 `attributes.Track`（`name` 用 `Ripples #id` 不受影响）。
+      **本项不再阻塞部署日**。遗留待办：description 措辞 `A live jam on "17"` 的引号让数字看着
+      像加载失败，建议改 `Track 17` 让编号读起来是刻意的（一行改动，见 `steps-upload.ts:127`）
+      ：正式曲名已 UPDATE（现 5 首为数字占位，STATUS 悬空
       TODO；`track.title` 永久写进每枚 NFT 的 name/description/attributes）；封面池/描述过审；
       占位名曲目要么改完、要么不开放铸造、要么明示接受占位名永久
 - [ ] B track：forge test 绿 + 停点 B-1 回归过 + runbook 增补完 + admin 演练（B5）完成
 - [ ] C track：CRON_SECRET 已换 + Turbo 新钱包就绪 + operator 主网 ETH 到账 + 告警邮件实测过
-      + Node pin/OG/海报生产实测过（C10）+ DB 快照 ≤24h
+      + OG/海报生产复验过（C10）+ DB 快照 ≤24h
 - [ ] **env 三项硬校验**（都是"错了就永久"级，Codex P0/P1）：
       ① `NEXT_PUBLIC_APP_URL=https://pond-ripple.xyz` 生产读回确认（每枚 NFT external_url 来源）
       ② `SCORE_DECODER_AR_TX_ID` / `SOUNDS_MAP_AR_TX_ID` 三环境读回一致（server-only，
