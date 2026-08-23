@@ -310,6 +310,14 @@
 
 ---
 
+### Alchemy CLI Admin API
+
+- **是什么**：官方 CLI 通过浏览器设备授权管理 Alchemy 账户，可以创建 App、设置网络白名单、查询用量并直接调用 RPC。
+- **类比**：把网页后台变成可审计的命令清单；先 dry-run 看申请表，再正式提交并用 chainId 验收。
+- **第一次出现**：P12 主网凭证准备，用 `alchemy app create --networks OPT_MAINNET` 创建生产 App，并实测 chainId 10。
+
+---
+
 ## 🗓 历史归档
 
 每个月末，AI 会把超过 30 天的条目归档到本文件末尾。

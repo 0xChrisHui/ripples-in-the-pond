@@ -1013,3 +1013,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **演练方式**：B-1 测试合约采用简化模式，原 operator 仍是 DEFAULT_ADMIN。先给独立 admin 充值 0.0002 OP Sepolia ETH，再由 operator 授予其 DEFAULT_ADMIN_ROLE；随后独立 admin 用本地私钥亲自签 grantRole，把 MINTER_ROLE 临时授给自己，并立即签 revokeRole 清理。
 - **结果**：四笔 tx 均 status=1（fund `0x51f1...be48` / grant admin `0x0466...1947` / admin grant `0x3ae2...efa7` / admin revoke `0x42ce...1424`）；最终新 admin DEFAULT_ADMIN_ROLE=true、临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true，现有铸造链路零变化。
 - **决定**：保留新 admin 在测试 ScoreNFT 的治理角色，方便部署日前继续演练；operator 的测试网 admin 不撤销，避免破坏既有测试环境。主网仍严格按 runbook 由 deployer 移交独立 admin，三角色不得混用。
+
+## 2026-08-23 — Optimism Mainnet Alchemy App 改由官方 CLI 创建
+
+- **结果**：安装官方 `@alchemy/cli` v0.23.0，经 device-code 浏览器授权后创建 `Ripples OP Mainnet`（App ID `w609pakm9kk1b07g`），网络白名单仅 `OPT_MAINNET`。CLI RPC 实测 `eth_chainId=0xa`，直接用配置内 key 请求也返回 chainId 10。
+- **密钥边界**：API key 只保存在仓库外 `C:\Users\Hui\.config\alchemy\config.json`，未打印、未写 `.env.local`、未进聊天；部署日由本地进程读取并临时注入，避免用户手抄。
+- **Windows CLI 缺陷**：部分 Admin API 命令完成请求后在退出阶段触发 `UV_HANDLE_CLOSING` assertion 并返回非零码。创建后必须用 `app list` 按名称查重，不能因退出码盲目重试；本次确认只创建 1 个 App。

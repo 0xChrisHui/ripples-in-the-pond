@@ -153,6 +153,26 @@
 
 ---
 
+### E011 — npm 全局安装后当前 PowerShell 找不到 Alchemy CLI
+
+- 📅 2026-08-23 / P12 主网 Alchemy App
+- 😱 `The term 'alchemy' is not recognized`
+- 🧠 npm 已把 CLI 安装到用户级全局目录，但当前 Codex PowerShell 进程的 PATH 没有刷新该目录。
+- 🔧 用 `npm prefix -g` 定位 `C:\Users\Hui\AppData\Roaming\npm\alchemy.cmd`，后续显式调用绝对路径。
+- 💡 Windows 全局 CLI 安装成功不代表既有 shell 立即能解析命令；先查 npm prefix，不要重复安装。
+
+---
+
+### E012 — Alchemy CLI Admin 命令完成后触发 UV assertion
+
+- 📅 2026-08-23 / P12 主网 Alchemy App
+- 😱 `Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c`
+- 🧠 CLI v0.23.0 在 Windows 退出阶段关闭异步句柄时崩溃；API 请求此前已完成，因此退出码非零不等于创建失败。
+- 🔧 不重试 create；先用 `app list --search` 查重，确认账户中恰有一个目标 App，再用 RPC chainId 验收。
+- 💡 外部创建命令遇到“请求后崩溃”必须先读回外部状态，盲重试会制造重复资源。
+
+---
+
 ## 🏷 错误索引（按类型）
 
 随着错误积累，AI 会在这里维护一份按类型分类的索引：
@@ -182,6 +202,8 @@
 ### Git / 工具链
 - E007 PowerShell `$home` 撞只读系统变量 `$HOME`
 - E008 `env-sync` 缺少 API token，但 Vercel CLI 已登录
+- E011 npm 全局安装后当前 PowerShell 找不到 Alchemy CLI
+- E012 Alchemy CLI Admin 命令完成后触发 UV assertion
 
 ### JWT / 认证
 

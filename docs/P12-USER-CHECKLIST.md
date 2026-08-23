@@ -129,15 +129,14 @@ Production/Preview 已切新钱包 JWK，本地与 Vercel 三环境已切新 txi
 
 **成功标志**：私钥已备份到第二处；部署日钱包里有 gas。
 
-### ☐ 主网 Alchemy App + OP Etherscan key（2026-07-28 新增前置，都免费）
+### ◑ 主网 Alchemy App ✅ + OP Etherscan key ☐（都免费）
 
 **为什么**：`.env.local` 现有 Alchemy 是 **opt-sepolia（测试网）**；部署日 `ALCHEMY_RPC_URL`
 必须指 **opt-mainnet**。合约 verify（runbook §5）需要 OP Etherscan API key，现在没有。
 
-**你做**（都是免费注册，非充值）：
-1. [dashboard.alchemy.com](https://dashboard.alchemy.com) → 新建一个 **Optimism Mainnet** App → 复制 HTTPS URL
-2. [optimistic.etherscan.io](https://optimistic.etherscan.io) → 注册 → 拿一个免费 **API key**
-3. 两个都发我（key 走桌面文件不进聊天的老流程），我在部署日填进 env / verify 命令
+**✅ Alchemy 已完成（2026-08-23）**：官方 CLI v0.23.0 创建 `Ripples OP Mainnet`（App ID `w609pakm9kk1b07g`），仅允许 `OPT_MAINNET`；RPC 实测 `eth_chainId=10` 和最新区块成功。认证保存在仓库外的 Alchemy CLI 配置，API key 未进聊天或 git。
+
+**⬜ 你还要做**：到 [optimistic.etherscan.io](https://optimistic.etherscan.io) 注册并取得免费 API key。部署日我会把 Alchemy key 从 CLI 配置安全读入 env，并用 Etherscan key执行三个合约 verify。
 
 **成功标志**：部署日 `ALCHEMY_RPC_URL` 是 mainnet；三个合约 verify 出绿勾。
 
@@ -191,7 +190,7 @@ C5 快照 ─┼─→ C1尾巴 → C2/C3 充值 → A-1 UI轮 → D-1 曲名 �
 ### 你亲手做（我没法代劳）
 | # | 事项 | 类别 | 时机 |
 |---|---|---|---|
-| U2 | **主网 Alchemy App** 建好 + 拿 HTTPS URL（现在是测试网） | 免费注册 | 部署日前 |
+| U2 | ✅ **主网 Alchemy App**（CLI 创建并验证 chainId 10） | 已完成 | 2026-08-23 |
 | U3 | **OP Etherscan API key** 注册一个（合约 verify 要） | 免费注册 | 部署日前 |
 | U4 | **C6 免费额度盘点**：六后台各抄一眼用量给我 | 盘点 | 现在就能做 |
 | U5 | 部署日给 **deployer** 转 ≈0.04 ETH、给 **admin** 转 ≈0.005 ETH（OP 主网 gas） | 充值 | 部署日 |
@@ -215,4 +214,4 @@ C5 快照 ─┼─→ C1尾巴 → C2/C3 充值 → A-1 UI轮 → D-1 曲名 �
 
 **削掉了什么**（不必要/已了结，别再纠结）：C1 ADMIN_TOKEN 轮换（未泄露）、Alchemy 测试网 key 轮换（无资产风险）、C2 那 15 美元（mp3 无需重传）、曲名大改（1-35 即正式名）。
 
-**下一个动作建议**：完成 U2/U3——创建 Optimism Mainnet Alchemy App 并取得 OP Etherscan API key；同时可做 U4 六服务额度盘点。
+**下一个动作建议**：完成 U3——取得 OP Etherscan API key；同时可做 U4 六服务额度盘点。
