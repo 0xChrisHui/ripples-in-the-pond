@@ -1019,3 +1019,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **结果**：安装官方 `@alchemy/cli` v0.23.0，经 device-code 浏览器授权后创建 `Ripples OP Mainnet`（App ID `w609pakm9kk1b07g`），网络白名单仅 `OPT_MAINNET`。CLI RPC 实测 `eth_chainId=0xa`，直接用配置内 key 请求也返回 chainId 10。
 - **密钥边界**：API key 只保存在仓库外 `C:\Users\Hui\.config\alchemy\config.json`，未打印、未写 `.env.local`、未进聊天；部署日由本地进程读取并临时注入，避免用户手抄。
 - **Windows CLI 缺陷**：部分 Admin API 命令完成请求后在退出阶段触发 `UV_HANDLE_CLOSING` assertion 并返回非零码。创建后必须用 `app list` 按名称查重，不能因退出码盲目重试；本次确认只创建 1 个 App。
+
+## 2026-08-23 — Etherscan 免费 key 按合约端点验收，不升级付费
+
+- **现象**：统一 Etherscan V2 key 请求 OP Mainnet `eth_blockNumber` 返回“Free API access is not supported for this chain”。
+- **验收**：同一 key 请求 OP Mainnet `getsourcecode` 返回 `status=1/OK`，验证状态端点也通过鉴权并进入 GUID 参数校验，证明部署所需合约接口可用。
+- **决定**：不为无关的普通链数据 API 升级套餐；部署日继续用 Foundry + Etherscan V2 完成三个合约源码验证。key 仅保存在仓库外的用户配置目录，运行时临时注入。

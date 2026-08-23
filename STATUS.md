@@ -32,14 +32,14 @@
 
 **已完成（本会话 2026-07-19，分支 `feat/p12-mainnet-prep`，`verify.sh` 全绿 / forge 42 tests）**：
 - **A track（音效/解码器）✅ 全完成**：解码器数量无关化 + 音效表 v2 三格式兼容 + postMessage v1 + 两网关有界重试；用户验收「月下档案唱片」UI及旧格式 / v2 / Demo / 重试版播放。2026-08-22 新 Turbo 钱包充值 0.0009 Base ETH；decoder `NMCj...Zmb0`（23362 bytes）与 v2 表 `NQsg..._kl8`（2558 bytes / 26 sounds）上传成功，双网关 SHA-256 一致；本地 + Vercel Development/Preview/Production txid 已切，新钱包 JWK 已切 Production/Preview，并用原线上部署重建到 `dpl_Gc9G...ctKh`。**2026-08-23 真实 smoke `Ripples #26` 通过**：OP Sepolia mint + setTokenURI 均 success，链上 `tokenURI=ar://C2fL...S1PI`；metadata 的 animation_url 精确钉入新 decoder / events / base / v2 sounds，15 events / 26 sounds；metadata、decoder、base、sounds 双网关 200 且哈希一致。新 events 在主网关 200、备用网关尚传播 404，由已验收的双网关 fallback 吸收，不阻塞。
-- **B track（合约主网化）代码、B-1 回归与 B5 admin 演练均完成**：CT-1~15 全落 + CT-11 编译器 pin + B4 runbook；2026-08-23 新 admin 在 OP Sepolia 完成 grantRole / revokeRole 演练。Optimism Mainnet Alchemy App `Ripples OP Mainnet`（ID `w609pakm9kk1b07g`）已由官方 CLI 创建并实测 chainId=10。→ **剩余硬前置：OP Etherscan API key**。
+- **B track（合约主网化）代码、B-1 回归与 B5 admin 演练均完成**：CT-1~15 全落 + CT-11 编译器 pin + B4 runbook；2026-08-23 新 admin 在 OP Sepolia 完成 grantRole / revokeRole 演练。Optimism Mainnet Alchemy App `Ripples OP Mainnet`（ID `w609pakm9kk1b07g`）已由官方 CLI 创建并实测 chainId=10；Etherscan V2 key 已创建，OP Mainnet 源码/验证状态接口实测可用。**主网 RPC 与合约验证凭证均已就绪**。
 - **关键决策**：Foundry 阻塞解除；admin = 独立普通钱包(≠热钱包，存本地，靠 Claude 操作)；合约不可升级但可重部署（详 `docs/JOURNAL.md` 2026-07-19；memory `project_p12_admin_wallet`）。
 
 **🔥 生产热修已上线并实证（2026-07-26 `56d72a9`；2026-08-23 `Ripples #26`）**：乐谱铸造管道三修（mint_events 部分索引 upsert 必挂 / tokenId 写入吞 DB 错 / op-lock 网络错误裸抛）。**刻意只摘管道修复，不含 CT-4 合约耦合**——线上仍是旧合约，两参数 mintScore 会全 revert；#26 已完整证明旧合约生产管道可成功走到 tokenURI。
 
 **下一步（2026-07-19 执行路径已固化 = `playbook/phase-12/00-overview.md` §8；C-0 已拍板：Semi 维持/备份手动导出+部署日快照/额度不升级）**：
 1. ✅ **B-1 测试网回归**（2026-07-23 完成）：3 合约重部署（Material `0xe335..13c0` / Score `0xE0fA..DB23` / Orch `0x970b..01FA`）+ 角色 6/6 + 幂等键链上拒绝 + CT-7/8 链上全验 + 两通路 e2e 全通（乐谱 tokenId 24 归户）。揪出并修复 3 个管道真 bug（op-lock 裸 500 / tokenId 写入吞错 / **mint_events 部分索引 upsert 必挂——现存生产 main，随 P12 合并即修**）+ D-0 清表实证。详见 `reviews/phase-6-deprecated-contracts.md` 2026-07-23 补记。
-2. **C 施工**：✅ CRON_SECRET 轮换 / ✅ C2 Turbo 新钱包与永久上传 / ✅ C3 operator OP Mainnet 0.01 ETH / ✅ C4 告警基础 / ✅ C5 快照恢复演练 / ✅ C7-C10 / ✅ Optimism Mainnet Alchemy App（2026-08-23 CLI 创建，chainId 10 实测）。**剩余需用户配合**：OP Etherscan API key、C6 额度盘点；部署日前 24h 重跑 C5。
+2. **C 施工**：✅ CRON_SECRET 轮换 / ✅ C2 Turbo 新钱包与永久上传 / ✅ C3 operator OP Mainnet 0.01 ETH / ✅ C4 告警基础 / ✅ C5 快照恢复演练 / ✅ C7-C10 / ✅ Optimism Mainnet Alchemy App / ✅ Etherscan V2 合约验证 key。**当前下一项：C6 六服务额度盘点**；部署日前 24h 重跑 C5。
 3. **A-1 解码器 ✅ 全完成**：UI / 三组参数 / 网关重试 / 永久上传 / 三环境切换 / `Ripples #26` 真实 smoke 全过。
 4. **B5 admin 签名演练 ✅ 完成（2026-08-23）**：测试网 funding `0x51f1...be48`；既有 admin 授权新 admin `0x0466...1947`；新 admin 签 grant `0x3ae2...efa7`、revoke `0x42ce...1424`；清理后临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true。
 5. **D-1 内容冻结**：曲名 1-35 ✅ / admin+deployer 钱包 ✅ / admin 私钥备份 ✅ / DB 恢复演练 ✅。待主网凭证与额度盘点 → 🛑 D-0 排期；部署日前 24h 新快照 + admin/deployer 主网充值 → D 部署日。

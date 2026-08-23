@@ -175,24 +175,28 @@ cast call <MaterialNFT> "hasRole(bytes32,address)(bool)" \
 
 ## 5. 合约 verify（SR-P1-13，每个合约部署后做）
 
-编译器已 pin（§2.3），verify 用同一套设置复现字节码。构造参数需 abi-encode：
+编译器已 pin（§2.3），verify 用同一套设置复现字节码。Etherscan V2 key 存在仓库外；部署日由 Codex 读取后只注入当前 shell，禁止 `echo`。构造参数需 abi-encode：
 ```bash
+# Git Bash：从仓库外读取，退出当前 shell 后变量失效
+ETHERSCAN_API_KEY="$(tr -d '\r\n' < /c/Users/Hui/.config/ripples-in-the-pond/etherscan-api-key.txt)"
+test -n "$ETHERSCAN_API_KEY"
+
 # MaterialNFT(string uri_, address minter)
 cast abi-encode "constructor(string,address)" "$MATERIAL_URI" <MINTER_ADDRESS>
 forge verify-contract <MaterialNFT> src/MaterialNFT.sol:MaterialNFT \
-  --chain optimism --etherscan-api-key <OP_ETHERSCAN_KEY> \
+  --chain optimism --etherscan-api-key "$ETHERSCAN_API_KEY" \
   --constructor-args <上一步输出> --watch
 
 # ScoreNFT(string name_, string symbol_, address minter)
 cast abi-encode "constructor(string,string,address)" "Ripples in the Pond" "RPIP" <MINTER_ADDRESS>
 forge verify-contract <ScoreNFT> src/ScoreNFT.sol:ScoreNFT \
-  --chain optimism --etherscan-api-key <OP_ETHERSCAN_KEY> \
+  --chain optimism --etherscan-api-key "$ETHERSCAN_API_KEY" \
   --constructor-args <上一步输出> --watch
 
 # MintOrchestrator(address scoreNftAddress)
 cast abi-encode "constructor(address)" <ScoreNFT>
 forge verify-contract <MintOrchestrator> src/MintOrchestrator.sol:MintOrchestrator \
-  --chain optimism --etherscan-api-key <OP_ETHERSCAN_KEY> \
+  --chain optimism --etherscan-api-key "$ETHERSCAN_API_KEY" \
   --constructor-args <上一步输出> --watch
 ```
 > verify 失败最常见 = 构造参数没对上，或 foundry.toml 的 pin 被改动。三个都 verify 成功

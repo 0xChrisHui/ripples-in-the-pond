@@ -173,6 +173,16 @@
 
 ---
 
+### E013 — Etherscan 免费 key 的 OP 普通 API 被拒绝
+
+- 📅 2026-08-23 / P12 合约验证凭证
+- 😱 OP Mainnet `eth_blockNumber` 返回 `Free API access is not supported for this chain`。
+- 🧠 Etherscan 免费套餐不开放 OP 的普通链数据 API，但合约源码与 ABI 类接口对免费套餐开放；用错探针会把有效 key 误判为无效。
+- 🔧 改用部署真正依赖的 `getsourcecode` 和验证状态端点验收；两者均通过鉴权，无需升级套餐。
+- 💡 凭证验收必须贴近实际用途，不能用一个无关端点概括整套权限。
+
+---
+
 ## 🏷 错误索引（按类型）
 
 随着错误积累，AI 会在这里维护一份按类型分类的索引：
@@ -204,6 +214,7 @@
 - E008 `env-sync` 缺少 API token，但 Vercel CLI 已登录
 - E011 npm 全局安装后当前 PowerShell 找不到 Alchemy CLI
 - E012 Alchemy CLI Admin 命令完成后触发 UV assertion
+- E013 Etherscan 免费 key 的 OP 普通 API 被拒绝
 
 ### JWT / 认证
 

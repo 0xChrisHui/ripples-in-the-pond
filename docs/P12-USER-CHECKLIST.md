@@ -6,7 +6,7 @@
 >
 > **已完成的不在这里**（C1 密钥轮换 / C4 告警 / C7 / C8 / C9 / C10 / B-1 回归 / 生产热修）。
 >
-> **2026-07-28 状态更新**：C1 尾巴**拍板跳过**（ADMIN_TOKEN 未泄露不换；Alchemy 测试网 key 泄露无资产风险不换，主网另建新 App）/ C3 **✅ 已转 0.01**（阈值代码已下修 0.005）/ C5 **✅ 已做**（2026-07-27，恢复演练通过；部署日前 24h 重跑）/ admin + deployer + 新 Turbo 三钱包 **✅ 已生成**（地址已进 runbook §2.1）/ D-1 曲名 **✅ 已定**（1-35 即正式名）。**新增前置**：主网 Alchemy App + OP Etherscan API key（见分组四补充）。最新待办以本文件末尾「最终清单」为准。
+> **2026-08-23 状态更新**：C1 尾巴**拍板跳过**（ADMIN_TOKEN 未泄露不换；Alchemy 测试网 key 泄露无资产风险不换，主网另建新 App）/ C3 **✅ 已转 0.01**（阈值代码已下修 0.005）/ C5 **✅ 已做**（2026-07-27，恢复演练通过；部署日前 24h 重跑）/ admin + deployer + 新 Turbo 三钱包 **✅ 已生成**（地址已进 runbook §2.1）/ D-1 曲名 **✅ 已定**（1-35 即正式名）/ 主网 Alchemy App + Etherscan V2 合约验证 key **✅ 已就绪**。最新待办以本文件末尾「最终清单」为准。
 
 ---
 
@@ -129,14 +129,14 @@ Production/Preview 已切新钱包 JWK，本地与 Vercel 三环境已切新 txi
 
 **成功标志**：私钥已备份到第二处；部署日钱包里有 gas。
 
-### ◑ 主网 Alchemy App ✅ + OP Etherscan key ☐（都免费）
+### ✅ 主网 Alchemy App + Etherscan V2 合约验证 key
 
 **为什么**：`.env.local` 现有 Alchemy 是 **opt-sepolia（测试网）**；部署日 `ALCHEMY_RPC_URL`
-必须指 **opt-mainnet**。合约 verify（runbook §5）需要 OP Etherscan API key，现在没有。
+必须指 **opt-mainnet**。合约 verify（runbook §5）需要 Etherscan V2 API key。
 
 **✅ Alchemy 已完成（2026-08-23）**：官方 CLI v0.23.0 创建 `Ripples OP Mainnet`（App ID `w609pakm9kk1b07g`），仅允许 `OPT_MAINNET`；RPC 实测 `eth_chainId=10` 和最新区块成功。认证保存在仓库外的 Alchemy CLI 配置，API key 未进聊天或 git。
 
-**⬜ 你还要做**：到 [optimistic.etherscan.io](https://optimistic.etherscan.io) 注册并取得免费 API key。部署日我会把 Alchemy key 从 CLI 配置安全读入 env，并用 Etherscan key执行三个合约 verify。
+**✅ Etherscan 已完成（2026-08-23）**：统一 V2 key 已创建。OP Mainnet 普通链数据 API 在免费套餐会返回拒绝，但部署所需的 `getsourcecode` 与验证状态接口实测可用，因此不升级付费。key 已移到仓库外 `C:\Users\Hui\.config\ripples-in-the-pond\etherscan-api-key.txt`，未进聊天或 git。
 
 **成功标志**：部署日 `ALCHEMY_RPC_URL` 是 mainnet；三个合约 verify 出绿勾。
 
@@ -191,7 +191,7 @@ C5 快照 ─┼─→ C1尾巴 → C2/C3 充值 → A-1 UI轮 → D-1 曲名 �
 | # | 事项 | 类别 | 时机 |
 |---|---|---|---|
 | U2 | ✅ **主网 Alchemy App**（CLI 创建并验证 chainId 10） | 已完成 | 2026-08-23 |
-| U3 | **OP Etherscan API key** 注册一个（合约 verify 要） | 免费注册 | 部署日前 |
+| U3 | ✅ **Etherscan V2 合约验证 key**（OP 合约接口实测可用） | 已完成 | 2026-08-23 |
 | U4 | **C6 免费额度盘点**：六后台各抄一眼用量给我 | 盘点 | 现在就能做 |
 | U5 | 部署日给 **deployer** 转 ≈0.04 ETH、给 **admin** 转 ≈0.005 ETH（OP 主网 gas） | 充值 | 部署日 |
 | U6 | **D-0 挑部署日**：连续 2-3 小时、精神好的时段 | 排期 | 定 |
@@ -214,4 +214,4 @@ C5 快照 ─┼─→ C1尾巴 → C2/C3 充值 → A-1 UI轮 → D-1 曲名 �
 
 **削掉了什么**（不必要/已了结，别再纠结）：C1 ADMIN_TOKEN 轮换（未泄露）、Alchemy 测试网 key 轮换（无资产风险）、C2 那 15 美元（mp3 无需重传）、曲名大改（1-35 即正式名）。
 
-**下一个动作建议**：完成 U3——取得 OP Etherscan API key；同时可做 U4 六服务额度盘点。
+**下一个动作建议**：完成 U4——六服务额度盘点。
