@@ -47,7 +47,7 @@
 
 **成功标志**：`/api/health` 200 + cron 10 分钟内正常跑过。
 
-### ☐ C2 换 Turbo 钱包（2026-07-28 修订：成本≈0，决策挂 A-1）
+### ✅ C2 换 Turbo 钱包（2026-08-22 完成）
 
 **为什么**：旧 Turbo 钱包（`0xdE78..Fba8`）私钥在调试记录里泄露过，必须换。新钱包已生成：
 `0xD9AEDeAd70F4Cd7532163C4FACBEc77b127B4582`（`.ripples-secrets\turbo-wallet-v2.json`）。
@@ -57,6 +57,15 @@ Arweave 上无需重传，原"15 美元"作废。两条路等 A-1 定稿要上�
 - **干净（推荐）**：往新地址转一丢丢 Base ETH（≈1-2 美元），跑 `topup-turbo.ts`，彻底弃旧
 - **省转账**：`shareCredits` 借旧钱包 1.84 GiB 额度——但需改 `core.ts` 加 `paidBy`（SDK 不会
   自动用共享额度），且每次上传永久引用已泄露钱包 = 治标，不推荐
+
+**脚本状态**：`upload-sounds.ts --map-only` 会复用 26 个现有音频 txid，只上传 v2 音效表；
+旧索引缺 hash 时普通模式默认拒绝执行，防止误传 26 个 mp3。`--map-only --dry-run` 已通过：
+2558 bytes / 26 sounds，上传 0、扣费 0。新钱包收到 **0.001 ETH（Base 网络）**，其中
+**0.0009 ETH** 已充值为 623,213,389,830 winc；Base 余额约 0.00009987 ETH。
+
+**上传结果**：decoder `NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0`；v2 音效表
+`NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8`。两个网关均 200 且 SHA-256 一致；
+Production/Preview 已切新钱包 JWK，本地与 Vercel 三环境已切新 txid。
 
 **成功标志**：新钱包成功上传 decoder + 音效表并扣费；三环境 env 切新 txid。
 
@@ -81,7 +90,7 @@ Arweave 上无需重传，原"15 美元"作废。两条路等 A-1 定稿要上�
 
 ## 分组三：需要你的审美/内容决策
 
-### ☐ A-1 解码器 UI 优化轮
+### ✅ A-1 解码器 UI 优化轮与永久上传
 
 **为什么**：解码器 = 买家点开 NFT 时看到的播放器。**这版定稿后，主网铸出的每一枚 NFT 永远用这版**（地址焊死进 NFT，改不了）。
 
@@ -91,7 +100,8 @@ Arweave 上无需重传，原"15 美元"作废。两条路等 A-1 定稿要上�
 3. 我改 → 你看 → 循环到满意
 4. 你点头定稿 → 我做三组参数回归验证 → 上传 Arweave → 切三环境 env
 
-**成功标志**：你说"就这样"，且三组参数（旧格式 / 新音效表 / 无参数 demo）都播放正常。
+**完成**：用户已拍板 UI；三组参数 + 重试复验通过；永久上传与双网关哈希通过；三环境已切换。
+**Track A DoD 已完成**：`Ripples #26` 真实铸造成功，链上 metadata 已确认引用两个新 txid。
 
 ### ☐ D-1 曲名定稿（**永久，最容易后悔的一项**）
 
@@ -108,15 +118,14 @@ Arweave 上无需重传，原"15 美元"作废。两条路等 A-1 定稿要上�
 
 ## 分组四：钱包准备（部署日前必须完成）
 
-### ◑ admin 独立钱包（合约的"房产证"）——2026-07-28 已生成，剩 2 项人工
+### ◑ admin 独立钱包（合约的"房产证"）——私钥已备份，剩部署日充值
 
 **为什么**：admin 钱包持有合约治理权。红线是 **admin ≠ 铸造热钱包**（热钱包在服务器上天天用，泄露就等于治理权被接管）。
 
 **✅ 我已做**：`cast wallet new` 生成 → `admin` = `0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722`，
 私钥存 `C:\Users\Hui\.ripples-secrets\admin-wallet.json`（仓库外，已 verify 派生一致，不进 git/Vercel/聊天），地址已进 runbook §2.1。
-**⬜ 你还要做**：
-1. **把私钥另抄一份到安全的地方**（密码管理器）——丢了 = 合约永久失去治理权
-2. 部署日给这个地址转一点点 OP 链 ETH 当 gas（约 0.005 ETH 够用）
+**✅ 已完成（2026-08-22）**：私钥已另存密码管理器。
+**⬜ 你还要做**：部署日给这个地址转一点点 OP 链 ETH 当 gas（约 0.005 ETH 够用）。
 
 **成功标志**：私钥已备份到第二处；部署日钱包里有 gas。
 
@@ -132,12 +141,11 @@ Arweave 上无需重传，原"15 美元"作废。两条路等 A-1 定稿要上�
 
 **成功标志**：部署日 `ALCHEMY_RPC_URL` 是 mainnet；三个合约 verify 出绿勾。
 
-### ☐ B5 admin 签名演练
+### ✅ B5 admin 签名演练（2026-08-23 完成）
 
 **为什么**：部署日要用 admin 钱包做一次授权（不做的话 Orchestrator 拿不到铸造权，整条链路瘫痪）。**没演练过就上阵 = 部署日卡死**。
 
-**我做**：在**测试网**上带你走一遍完全相同的授权操作。
-**成功标志**：测试网上 admin 钱包成功发出一笔授权交易。
+**完成证据**：OP Sepolia 给 admin 充值 tx `0x51f1...be48`；既有测试 admin 授予新 admin 治理权 tx `0x0466...1947`；新 admin 亲自签出 grantRole tx `0x3ae2...efa7`，随后签 revokeRole tx `0x42ce...1424` 清理临时 MINTER_ROLE。最终 admin DEFAULT_ADMIN_ROLE=true、临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true；admin 测试网余额约 0.00019993 ETH。
 
 ### ◑ deployer 一次性钱包——2026-07-28 已生成
 
@@ -183,7 +191,6 @@ C5 快照 ─┼─→ C1尾巴 → C2/C3 充值 → A-1 UI轮 → D-1 曲名 �
 ### 你亲手做（我没法代劳）
 | # | 事项 | 类别 | 时机 |
 |---|---|---|---|
-| U1 | **备份 admin 私钥**到密码管理器（`admin-wallet.json` 里那串）——丢=永久失治理权 | 安全 | 现在就能做 |
 | U2 | **主网 Alchemy App** 建好 + 拿 HTTPS URL（现在是测试网） | 免费注册 | 部署日前 |
 | U3 | **OP Etherscan API key** 注册一个（合约 verify 要） | 免费注册 | 部署日前 |
 | U4 | **C6 免费额度盘点**：六后台各抄一眼用量给我 | 盘点 | 现在就能做 |
@@ -193,8 +200,8 @@ C5 快照 ─┼─→ C1尾巴 → C2/C3 充值 → A-1 UI轮 → D-1 曲名 �
 ### 需要你我配合（我主导，你到场）
 | # | 事项 | 说明 |
 |---|---|---|
-| P1 | **A-1 decoder UI 定稿** | 我改你看循环 → 定稿 → 上传 Arweave（顺带落定 C2 新 Turbo 钱包）→ 切三环境 env |
-| P2 | **B5 admin 签名演练**（测试网） | 部署日 grantRole 那步先在测试网走一遍，避免当天卡死 |
+| P1 | **A-1 decoder 收口** | ✅ `Ripples #26` 真实 smoke 已完成；链上 tokenURI、metadata、新 decoder 与 v2 sounds 全部核验通过 |
+| P2 | **B5 admin 签名演练**（测试网） | ✅ grant / revoke 实操与权限清理均已完成 |
 | P3 | **曲名描述文案**（一行）：`"17"` → `Track 17`，改不改你拍 | 永久写进 NFT，问一句 |
 
 ### 部署日当天（照 runbook，我全程给命令）
@@ -208,4 +215,4 @@ C5 快照 ─┼─→ C1尾巴 → C2/C3 充值 → A-1 UI轮 → D-1 曲名 �
 
 **削掉了什么**（不必要/已了结，别再纠结）：C1 ADMIN_TOKEN 轮换（未泄露）、Alchemy 测试网 key 轮换（无资产风险）、C2 那 15 美元（mp3 无需重传）、曲名大改（1-35 即正式名）。
 
-**下一个动作建议**：U1（备份私钥，1 分钟）→ 然后 P1 或 P2 任你挑，我来开工。
+**下一个动作建议**：完成 U2/U3——创建 Optimism Mainnet Alchemy App 并取得 OP Etherscan API key；同时可做 U4 六服务额度盘点。

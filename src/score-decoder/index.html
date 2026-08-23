@@ -6,49 +6,132 @@
 <meta name="color-scheme" content="dark" />
 <title>Ripples in the Pond — Score Decoder</title>
 <style>
+  :root { --ink: #06070c; --paper: #ded9cf; --muted: #797b87;
+    --line: rgba(222,217,207,0.14); --blue: #9bc7e8; --blue-soft: rgba(155,199,232,0.16); }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; background: #000; color: #fff;
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    -webkit-font-smoothing: antialiased; }
-  body { display: flex; align-items: center; justify-content: center; padding: 24px; }
-  .stage { width: 100%; max-width: 520px; text-align: center; user-select: none; }
-  h1 { font-weight: 200; font-size: 18px; letter-spacing: 0.08em;
-    text-transform: uppercase; opacity: 0.65; margin-bottom: 6px; }
-  .subtitle { font-size: 13px; opacity: 0.4; margin-bottom: 40px; }
-  #playBtn { width: 120px; height: 120px; border-radius: 50%;
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18);
-    color: #fff; font-size: 42px; cursor: pointer; transition: all .2s ease;
-    display: inline-flex; align-items: center; justify-content: center; }
-  #playBtn:hover:not(:disabled) { background: rgba(255,255,255,0.12);
-    border-color: rgba(255,255,255,0.4); transform: scale(1.04); }
-  #playBtn:disabled { opacity: 0.3; cursor: not-allowed; }
-  #playBtn.playing { background: rgba(255,255,255,0.18); }
-  #status { margin-top: 24px; font-size: 13px; opacity: 0.55; min-height: 18px; }
-  .progress { margin-top: 18px; width: 100%; height: 2px;
-    background: rgba(255,255,255,0.1); border-radius: 1px; overflow: hidden; }
-  .progress-bar { height: 100%; width: 0%;
-    background: rgba(255,255,255,0.7); transition: width 0.1s linear; }
-  .meta { margin-top: 28px; font-size: 11px; opacity: 0.32;
-    letter-spacing: 0.03em; line-height: 1.5; font-family: ui-monospace, monospace; }
-  /* 列数由 JS 按实际音效数量设置（buildKeyDisplay）；此处仅作无 JS 时的兜底 */
-  .keys { margin-top: 26px; display: grid;
-    grid-template-columns: repeat(13, 1fr); gap: 4px; font-family: ui-monospace, monospace; }
-  .key { padding: 8px 0; font-size: 11px;
-    background: rgba(255,255,255,0.04); border-radius: 3px;
-    opacity: 0.35; transition: all .12s ease; }
-  .key.flash { background: #fff; color: #000; opacity: 1; transform: scale(1.18); }
-  .err { color: #ff6b6b; opacity: 0.85; }
+  html { min-height: 100%; background: var(--ink); }
+  body { min-height: 100vh; color: var(--paper); overflow-x: hidden; position: relative;
+    font-family: "Azeret Mono", "SFMono-Regular", Consolas, monospace;
+    -webkit-font-smoothing: antialiased;
+    background: radial-gradient(circle at 78% 22%, #151b29 0, #090b13 30%, transparent 54%),
+      linear-gradient(135deg, #0a0b12 0%, #05060a 56%, #090b12 100%); }
+  body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.17;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light; }
+  body::after { content: ""; position: fixed; width: 46vw; height: 46vw; min-width: 360px;
+    min-height: 360px; right: -17vw; top: -21vw; border-radius: 50%; pointer-events: none;
+    border: 1px solid rgba(207,222,237,0.08); box-shadow: 0 0 120px rgba(116,151,184,0.08),
+      inset 0 0 90px rgba(198,220,239,0.025); }
+  .stage { width: min(100%, 1180px); min-height: 100vh; margin: 0 auto; padding: 28px 22px 24px;
+    display: grid; grid-template-rows: auto 1fr auto; gap: 38px; user-select: none; }
+  .masthead { display: flex; align-items: flex-start; justify-content: space-between;
+    border-top: 1px solid var(--line); padding-top: 12px; }
+  .mark { color: var(--paper); font: 600 13px/1 Arial, sans-serif; letter-spacing: -0.08em; }
+  .folio { color: var(--muted); font-size: 9px; line-height: 1.55; letter-spacing: 0.18em;
+    text-align: right; text-transform: uppercase; }
+  .composition { display: grid; gap: 38px; align-items: center; }
+  .intro { align-self: end; padding-bottom: 12px; }
+  .eyebrow { color: var(--blue); font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase;
+    margin-bottom: 18px; }
+  h1 { color: var(--paper); font-family: "Iowan Old Style", Baskerville, "Times New Roman", serif;
+    font-size: clamp(48px, 14vw, 82px); font-weight: 400; line-height: 0.86; letter-spacing: -0.055em; }
+  h1 span, h1 em { display: block; }
+  h1 em { color: #aeb4c1; font-weight: 400; margin-left: 0.62em; }
+  .subtitle { color: var(--muted); max-width: 410px; margin-top: 30px; font-size: 16px;
+    line-height: 1.65; letter-spacing: -0.025em; }
+  .intro-rule { width: 54px; height: 1px; margin-top: 26px; background: var(--blue); opacity: 0.72; }
+  .player { min-width: 0; display: flex; flex-direction: column; align-items: center; }
+  .disc-wrap { width: min(82vw, 390px); aspect-ratio: 1; position: relative; display: grid;
+    place-items: center; }
+  .disc-wrap::before { content: ""; position: absolute; inset: 5%; border: 1px solid var(--line);
+    border-radius: 50%; transform: translate(-9px, 8px); }
+  .disc-wrap::after { content: "ARCHIVE / 01"; position: absolute; right: -13px; top: 50%;
+    color: var(--muted); font-size: 8px; letter-spacing: 0.22em; transform: rotate(90deg) translateX(50%);
+    transform-origin: right top; }
+  #playBtn { width: 78%; aspect-ratio: 1; border: 0; border-radius: 50%; color: transparent;
+    position: relative; isolation: isolate; cursor: pointer; font-size: 0;
+    background: repeating-radial-gradient(circle, transparent 0 11px, rgba(212,218,229,0.045) 12px 13px),
+      radial-gradient(circle at 38% 31%, #202a3a 0, #111620 26%, #090b11 64%, #030407 100%);
+    box-shadow: -28px 35px 70px rgba(0,0,0,0.52), 18px -20px 70px rgba(117,153,187,0.08),
+      inset 0 0 0 1px rgba(223,229,237,0.12); transition: transform .55s ease, box-shadow .55s ease; }
+  #playBtn::before { content: ""; position: absolute; z-index: 0; inset: 37%; border-radius: 50%;
+    background: radial-gradient(circle, #0a0c12 0 18%, var(--paper) 19% 100%);
+    box-shadow: 0 0 0 9px rgba(222,217,207,0.05); }
+  #playBtn::after { content: ""; position: absolute; z-index: 1; left: 50%; top: 50%; width: 0; height: 0;
+    border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+    border-left: 11px solid var(--paper); transform: translate(-38%, -50%); }
+  #playBtn:hover:not(:disabled) { transform: rotate(-2deg) scale(1.018);
+    box-shadow: -32px 40px 76px rgba(0,0,0,0.6), 20px -22px 78px rgba(134,177,216,0.14),
+      inset 0 0 0 1px rgba(223,229,237,0.2); }
+  #playBtn:focus-visible { outline: 1px solid var(--blue); outline-offset: 9px; }
+  #playBtn:disabled { cursor: wait; opacity: 0.48; }
+  #playBtn.playing { animation: disc-breathe 3.6s ease-in-out infinite; }
+  #playBtn.playing::after { width: 11px; height: 11px; border: 0; background: var(--paper);
+    transform: translate(-50%, -50%); }
+  .transport { width: min(100%, 460px); margin-top: 20px; }
+  .status-line { display: flex; align-items: center; gap: 12px; }
+  .status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blue);
+    box-shadow: 0 0 12px var(--blue); }
+  #status { color: #a9abb4; min-height: 18px; font-size: 11px; letter-spacing: 0.08em; }
+  .progress { width: 100%; height: 1px; margin-top: 13px; overflow: hidden; background: var(--line); }
+  .progress-bar { width: 0%; height: 100%; background: var(--blue); box-shadow: 0 0 10px var(--blue);
+    transition: width 0.1s linear; }
+  .score { border-top: 1px solid var(--line); padding-top: 12px; }
+  .score-head { display: flex; align-items: baseline; justify-content: space-between; gap: 18px;
+    margin-bottom: 14px; color: var(--muted); font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; }
+  .meta { text-align: right; line-height: 1.5; white-space: nowrap; }
+  /* 列数由 JS 按音效数量设置；26 键保持两行，扩容后自动约三行。 */
+  .keys { display: grid; grid-template-columns: repeat(13, 1fr); gap: 3px; }
+  .key { min-width: 0; height: 30px; display: grid; place-items: center; color: #6f727e;
+    font-family: "Iowan Old Style", Baskerville, serif; font-size: 13px; font-style: italic;
+    border-top: 1px solid rgba(222,217,207,0.08); transition: color .18s ease, border-color .18s ease,
+      background .18s ease, transform .18s ease; }
+  .key.flash { color: var(--paper); border-color: var(--blue); background: linear-gradient(180deg,
+      rgba(155,199,232,0.14), transparent); transform: translateY(-2px); }
+  .err { color: #e2a9a9 !important; }
+  @keyframes disc-breathe { 50% { box-shadow: -30px 38px 74px rgba(0,0,0,0.58),
+      20px -24px 90px rgba(125,171,212,0.2), inset 0 0 0 1px rgba(223,229,237,0.2); } }
+  @media (min-width: 760px) {
+    .stage { padding: 34px 48px 30px; gap: 28px; }
+    .composition { grid-template-columns: minmax(300px, 0.86fr) minmax(420px, 1.14fr); gap: 72px; }
+    .intro { align-self: center; padding: 0 0 28px 7%; }
+    h1 { font-size: clamp(66px, 7vw, 102px); }
+    .player { padding-right: 5%; }
+    .disc-wrap { width: min(42vw, 430px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #playBtn, #playBtn.playing, .key { animation: none; transition: none; }
+  }
 </style>
 </head>
 <body>
 <div class="stage">
-  <h1>Ripples in the Pond</h1>
-  <div class="subtitle">Score Decoder · Web Audio Player</div>
-  <button id="playBtn" disabled aria-label="Play">▶</button>
-  <div id="status">Loading audio assets...</div>
-  <div class="progress"><div id="bar" class="progress-bar"></div></div>
-  <div id="keys" class="keys"></div>
-  <div id="meta" class="meta"></div>
+  <header class="masthead">
+    <div class="mark" aria-label="Ripples in the Pond">R/P</div>
+    <div class="folio">On-chain score decoder<br />Permanent audio object</div>
+  </header>
+  <main class="composition">
+    <section class="intro">
+      <div class="eyebrow">Recorded in a single moment</div>
+      <h1><span>Ripples in</span><em>the Pond</em></h1>
+      <p class="subtitle">A score held in time, reconstructed from its original gestures every time you listen.</p>
+      <div class="intro-rule" aria-hidden="true"></div>
+    </section>
+    <section class="player" aria-label="Audio player">
+      <div class="disc-wrap">
+        <button id="playBtn" disabled aria-label="Play">▶</button>
+      </div>
+      <div class="transport">
+        <div class="status-line"><span class="status-dot" aria-hidden="true"></span>
+          <div id="status">Loading audio assets...</div></div>
+        <div class="progress"><div id="bar" class="progress-bar"></div></div>
+      </div>
+    </section>
+  </main>
+  <footer class="score">
+    <div class="score-head"><span>Performance events / A—Z</span><div id="meta" class="meta"></div></div>
+    <div id="keys" class="keys"></div>
+  </footer>
 </div>
 
 <script>
@@ -61,6 +144,8 @@ const ARWEAVE_GATEWAYS = [
   "https://arweave.net",
   "https://ario.permagate.io",
 ];
+const FETCH_ROUNDS = 2;
+const FETCH_RETRY_DELAY_MS = 400;
 
 // 内嵌默认数据（Demo 模式 / 无 URL 参数时使用）
 // Demo events 是手工编排的 8s 演示乐句
@@ -138,16 +223,22 @@ async function fetchWithFallback(input, asJson) {
   const urls = resolveUrls(input);
   if (urls.length === 0) throw new Error("empty input");
   let lastErr;
-  for (const url of urls) {
-    try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        lastErr = new Error(url + " → HTTP " + res.status);
-        continue;
+  for (let round = 0; round < FETCH_ROUNDS; round++) {
+    for (const url of urls) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) {
+          lastErr = new Error(url + " → HTTP " + res.status);
+          continue;
+        }
+        return asJson ? await res.json() : await res.arrayBuffer();
+      } catch (e) {
+        lastErr = e;
       }
-      return asJson ? res.json() : res.arrayBuffer();
-    } catch (e) {
-      lastErr = e;
+    }
+    // 两路同轮失败更像瞬时网关故障；仅补一轮，避免永久坏地址无限等待。
+    if (round + 1 < FETCH_ROUNDS) {
+      await new Promise((resolve) => setTimeout(resolve, FETCH_RETRY_DELAY_MS));
     }
   }
   throw lastErr || new Error("all gateways failed for " + input);

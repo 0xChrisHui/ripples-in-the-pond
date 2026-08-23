@@ -981,3 +981,35 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **C2 省钱**：旧 Turbo 钱包仍有 **1.84 GiB** 额度（每枚 NFT 只写几 KB → 够几万枚），**不需要充值**。但换钱包仍必须做——查到 P7 记录：**旧 Turbo 私钥曾在调试记录中暴露**（与 CRON_SECRET 同性质），主网前硬门槛。方案：turbo-sdk v1.41 有 `shareCredits`，可让新钱包花旧额度 → **C2 全程零成本**（残余风险：旧私钥持有者可 revoke，但额度是沉没成本，可接受）。
 - **C3 金额下修**：实测 OP 主网 gas = **0.001 gwei**，按 B-1 实测 mint gas 123,116 算，每枚 NFT 即便悲观估也仅约 0.0000018 ETH → **0.02 ETH ≈ 1 万枚**，0.05 ≈ 2.7 万枚。runbook 的 0.05 是未实测的保守值。建议转 0.02 并把 `check-balance` 阈值从 0.05 下调，否则会天天误报低余额。
 - **operator 私钥安全性核实**（充值前必查）：无泄露记录，2026-07-05 后端 review 明确"暴露面控制良好（仅 operator-wallet.ts + check-balance，带 server-only）"。故 `0x306D3A44...1633` 可安全充值，主网继续用作 minter（runbook §1 口径）。
+
+## 2026-08-22 — A-1 解码器视觉定稿：月下档案唱片
+
+- **选日本极简（Ma）的档案唱片方向，不搬 test3 WebGL**：解码器会永久钉进 NFT，优先保证零依赖单 HTML 跨市场长期可运行；视觉采用近黑墨蓝、骨白、单一冰蓝强调与不对称留白。
+- **播放/停止图标改用 CSS 几何绘制**：浏览器字体的 `▶` 与唱片轴孔叠加会形成歪斜“吃豆人”；隐藏字符视觉、按 `.playing` 状态画标准三角/方块，协议与音频逻辑不变。
+- **用户 2026-08-22 浏览器验收满意；三组参数回归全过**：测试网 tokenId 24 旧格式 / 本地真实 txid v2 包装 / 无参数 Demo 均进入 Ready 且正常播放。旧格式首次加载曾遇两个网关链路瞬时 404、刷新恢复；永久上传前仍需决定是否加一轮短重试。
+- **瞬时 404 选择修而非接受**：两个候选地址同轮全失败后等待 400ms，再完整尝试最后一轮；正常路径零额外等待，永久坏地址最多两轮后如实报错，不无限重试。用户浏览器复验通过后才将本地版标为定稿。
+
+## 2026-08-22 — C2 上传脚本采用显式 map-only + 付费操作 fail-closed
+
+- **不自动把旧索引当成“全部音频已变化”**：现有 `sounds-ar-map.json` 是旧格式，没有内容 hash；若继续走增量逻辑，会把 26 个 mp3 全部误判为变化并产生不必要上传。普通模式发现旧索引缺 hash 时现在直接拒绝执行。
+- **为本次上线增加 `--map-only`**：明确复用 26 个已有音频 txid，只生成并上传 v2 音效表；`--dry-run` 仅允许搭配该模式，先验证 txid、名称与输出，不连接付费上传路径。实测 2558 bytes / 26 sounds、上传 0、扣费 0。
+- **C2 选干净新钱包路线**：本次两份定稿物成本只有几分钱，不为复用已泄露钱包的旧额度引入 `paidBy` 长期耦合。下一步经用户确认后转 0.001 Base ETH 到新 Turbo 钱包。
+
+## 2026-08-22 — A-1/C2 永久上传与三环境切换完成
+
+- **充值**：用户明确确认后，将新钱包的 0.0009 Base ETH 充值 Turbo；链上 tx `0xae380101fb62eac810bfed42203915e7583169a5c5a9a41b064a38a98919e4ec`，到账 623,213,389,830 winc，保留约 0.00009987 Base ETH 作 gas。
+- **永久资源**：decoder `NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0`（23362 bytes，SHA-256 `399f94...e4f05`）；v2 音效表 `NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8`（2558 bytes / 26 sounds，SHA-256 `df59a2...8fb9`）。`arweave.net` 比 `ario.permagate.io` 晚约 7 分钟传播，最终两网关字节完全一致。
+- **环境切换**：`.env.local` 改新钱包路径与两个新 txid；Vercel Development/Preview/Production 均切新 txid，Production/Preview 的 `TURBO_WALLET_JWK` 切新钱包。
+- **不部署 P12 分支**：当前分支含两参数 `mintScore`，直接部署会撞现网旧合约。改为精准 redeploy 当前线上 `dpl_EVGD...F9SL9`，生成 `dpl_Gc9G...ctKh` 并重新绑定 `pond-ripple.xyz`；首页与鉴权 health 均 200。完整 Track A DoD 还差用户真实铸一枚测试网 smoke。
+
+## 2026-08-23 — A-1 真实铸造 smoke 通过，Track A 收口
+
+- **最终样本**：`Ripples #26`（OP Sepolia tokenId 26）。mint tx `0x1201...7cce` 与 setTokenURI tx `0x85eb...af87` 均 success；链上 `tokenURI=ar://C2fL...S1PI` 与数据库一致。
+- **永久快照核验**：animation_url 使用 decoder `NMCj...Zmb0`、events `XYQu...poAU`、base `fTgp...4X8`、sounds `NQsg..._kl8`；events=15，sounds v2=26。metadata / decoder / base / sounds 在双网关均 200 且 SHA-256 一致。
+- **备用 events 404 不阻塞**：刚上传的 events 在 `arweave.net` 已 200，`ario.permagate.io` 仍处传播期 404；这是 A-1 已专门实现并经浏览器验收的双网关有界 fallback 场景，不重复上传、不修改 NFT。Track A DoD 全达，下一步 B5 admin 测试网签名演练。
+
+## 2026-08-23 — B5 admin OP Sepolia 签名演练通过
+
+- **演练方式**：B-1 测试合约采用简化模式，原 operator 仍是 DEFAULT_ADMIN。先给独立 admin 充值 0.0002 OP Sepolia ETH，再由 operator 授予其 DEFAULT_ADMIN_ROLE；随后独立 admin 用本地私钥亲自签 grantRole，把 MINTER_ROLE 临时授给自己，并立即签 revokeRole 清理。
+- **结果**：四笔 tx 均 status=1（fund `0x51f1...be48` / grant admin `0x0466...1947` / admin grant `0x3ae2...efa7` / admin revoke `0x42ce...1424`）；最终新 admin DEFAULT_ADMIN_ROLE=true、临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true，现有铸造链路零变化。
+- **决定**：保留新 admin 在测试 ScoreNFT 的治理角色，方便部署日前继续演练；operator 的测试网 admin 不撤销，避免破坏既有测试环境。主网仍严格按 runbook 由 deployer 移交独立 admin，三角色不得混用。

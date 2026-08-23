@@ -95,9 +95,9 @@ binary / scoop / WSL，预留半天缓冲，不算进施工工时。
       external_url 来源，runbook 现在漏列，漏配即第一枚 smoke NFT 永久写错域名）
 
 ### B5 admin 冷钱包就绪演练（B-0 #8 拍板后、部署日前完成，Codex P1）
-- [ ] OP Mainnet 上创建/确认 admin 钱包（Safe 则建好 + owner 确认 + 备 gas）
-- [ ] 签名流程演练一次：拿测试网 grantRole calldata 实操（Safe UI 或 hardware 签名）
-- [ ] 演练不过 = 部署日 3.3.1 授权卡死（Orchestrator 拿不到 MINTER_ROLE，铸造全断）
+- [x] 独立 admin 钱包创建、地址派生与第二处备份确认；主网 gas 按部署日清单充值
+- [x] 2026-08-23 OP Sepolia 实操 grantRole calldata：新 admin 亲自签 grant + revoke 均 success
+- [x] 清理验收：临时 MINTER_ROLE=false；Orchestrator MINTER_ROLE=true；admin DEFAULT_ADMIN_ROLE=true
 
 ## 3. ✅ 停点 B-1 — 测试网全量回归（2026-07-23 完成）
 

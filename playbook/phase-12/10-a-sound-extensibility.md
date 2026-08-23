@@ -135,6 +135,16 @@ metadata 上 Arweave 不可改 + 合约 `_uriSet` 只许写一次 → **已铸 N
 
 > 进度注（2026-07-19）：A1/A2/F 代码已完成（分支 `feat/p12-mainnet-prep`）。用户拍板：
 > 先做**解码器 UI 优化轮**，再走 A-1 验收与 Arweave 上传——txid 未定稿前不切 env，不卡 B/C 施工。
+> **2026-08-22 更新**：UI 已定稿；旧格式 / v2 / 无参数 Demo 三组均正常播放。旧格式首次加载
+> 出现一次网关瞬时 404、刷新恢复；已补两网关有界重试（2 轮、间隔 400ms）并经用户浏览器
+> 复验通过。上传脚本已补 `--map-only` / `--dry-run` 与旧索引 fail-closed 护栏。C2 新钱包
+> 已充值 0.0009 Base ETH；decoder `NMCj...Zmb0` 与 v2 表 `NQsg..._kl8` 已上传，两个网关
+> 200 且 SHA-256 一致；本地 + Vercel 三环境 txid 与 Production/Preview 新钱包 JWK 已切。
+> 原线上代码安全重建并绑定 `pond-ripple.xyz`，首页/health 200。**2026-08-23 `Ripples #26`
+> 真实 smoke 通过**：OP Sepolia mint / setTokenURI success；链上 tokenURI 指向 `C2fL...S1PI`，
+> animation_url 精确包含新 decoder `NMCj...Zmb0` 与 v2 sounds `NQsg..._kl8`，15 events / 26 sounds。
+> metadata、decoder、base、sounds 双网关字节一致；新 events 主网关 200，备用网关传播期 404 由 fallback 吸收。
+> **Track A Definition of Done 全达；B5 admin 测试网签名演练也已于 2026-08-23 完成。**
 
 | 停点 | 时机 | 需要用户做什么 |
 |---|---|---|

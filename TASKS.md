@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 12 主网准备进行中**（2026-07-19，分支 `feat/p12-mainnet-prep`）：**A track 代码完成**（停 🛑 A-1/F-1 用户浏览器验收 + Arweave 上传）+ **B track 合约代码全完成，forge 42 tests 绿**（CT-1~15 + CT-11 pin + B4 runbook；停 🛑 B-1 测试网回归）。**权威"下一步"见 `STATUS.md`「P12 执行进度」块。** P12 剩余：C track（🛑 C-0 三拍板 + secrets 轮换 + C2/C3 充值）/ D 部署日 / E 性能软 gate。与 P8-P11 前端**解耦并行**（用户策略：后端先上主网、前端慢慢修）。
+- **Phase 12 主网准备进行中**（2026-08-23，分支 `feat/p12-mainnet-prep`）：A-1/C2 + `Ripples #26` 真实 smoke ✅；B-1 回归 ✅；B5 admin OP Sepolia 签名演练与临时权限清理 ✅。**当前唯一 Now（人工硬前置）：用户创建 Optimism Mainnet Alchemy App，并取得 OP Etherscan API key**；可并行做 C6 六服务额度盘点。权威口径见 `STATUS.md`「P12 执行进度」。
 
 - **（历史·2026-07-05 冻结）Phase 8-L**：Wave 0+1 已合并入 main（35 个新 flag 默认 false）。两条待办线由用户定先后：
   - ① **Wave 2 收口**：splashIntro + /test 集中验收 + S8/F9 默认值拍板 + 真机压测

@@ -26,23 +26,24 @@
 
 ---
 
-## P12 执行进度（2026-07-19，权威"下一步"看这里）
+## P12 执行进度（更新至 2026-08-23，权威"下一步"看这里）
 
 **Phase 12 = OP Mainnet 上线准备与部署**，与 P8-P11 前端迭代**解耦并行**（用户策略：后端先做好→提前上主网→前端音效慢慢修；P12 不依赖 P8/P9/P11 完成，前端可重部署、零链上影响）。权威 playbook：`playbook/phase-12/`（00-overview + 5 track A-E）。
 
 **已完成（本会话 2026-07-19，分支 `feat/p12-mainnet-prep`，`verify.sh` 全绿 / forge 42 tests）**：
-- **A track（音效/解码器）代码完成**：解码器数量无关化 + 音效表 v2 三格式兼容 + postMessage 协议 v1（70-f）；换血脚本按内容 hash 判变（堵 Codex P0）；env-sync 补 server-only 白名单。→ 停在 🛑 **A-1/F-1**（用户浏览器验收 + Arweave 上传，永久）。
-- **B track（合约主网化）代码全完成**：CT-1~15 全落（名参数化 / mintScore 幂等键 / URI 空串防御 / MaterialNFT freezeURI / 部署红线护栏 `require(admin!=minter)` / 主网禁部署护栏）+ CT-11 编译器 pin（cancun，非 forge 默认 prague）+ B4 runbook 全面重写（3 合约 / admin 独立钱包 / verify-contract / admin 操作手册）。→ 停在 🛑 **B-1**（测试网重部署回归）。
+- **A track（音效/解码器）✅ 全完成**：解码器数量无关化 + 音效表 v2 三格式兼容 + postMessage v1 + 两网关有界重试；用户验收「月下档案唱片」UI及旧格式 / v2 / Demo / 重试版播放。2026-08-22 新 Turbo 钱包充值 0.0009 Base ETH；decoder `NMCj...Zmb0`（23362 bytes）与 v2 表 `NQsg..._kl8`（2558 bytes / 26 sounds）上传成功，双网关 SHA-256 一致；本地 + Vercel Development/Preview/Production txid 已切，新钱包 JWK 已切 Production/Preview，并用原线上部署重建到 `dpl_Gc9G...ctKh`。**2026-08-23 真实 smoke `Ripples #26` 通过**：OP Sepolia mint + setTokenURI 均 success，链上 `tokenURI=ar://C2fL...S1PI`；metadata 的 animation_url 精确钉入新 decoder / events / base / v2 sounds，15 events / 26 sounds；metadata、decoder、base、sounds 双网关 200 且哈希一致。新 events 在主网关 200、备用网关尚传播 404，由已验收的双网关 fallback 吸收，不阻塞。
+- **B track（合约主网化）代码、B-1 回归与 B5 admin 演练均完成**：CT-1~15 全落 + CT-11 编译器 pin + B4 runbook；2026-08-23 新 admin 在 OP Sepolia 获得测试 ScoreNFT 治理角色，亲自签出 grantRole / revokeRole 两笔成功交易，临时 MINTER_ROLE 已清理，Orchestrator 权限保持 true。→ **剩余硬前置：主网 Alchemy App URL + OP Etherscan API key**。
 - **关键决策**：Foundry 阻塞解除；admin = 独立普通钱包(≠热钱包，存本地，靠 Claude 操作)；合约不可升级但可重部署（详 `docs/JOURNAL.md` 2026-07-19；memory `project_p12_admin_wallet`）。
 
-**🔥 生产热修已上线（2026-07-26，`56d72a9` on main）**：乐谱铸造管道三修（mint_events 部分索引 upsert 必挂 / tokenId 写入吞 DB 错 / op-lock 网络错误裸抛）。**刻意只摘管道修复，不含 CT-4 合约耦合**——线上仍是旧合约，两参数 mintScore 会全 revert。完整证明待一次真实铸造（线上指测试网，零成本）。
+**🔥 生产热修已上线并实证（2026-07-26 `56d72a9`；2026-08-23 `Ripples #26`）**：乐谱铸造管道三修（mint_events 部分索引 upsert 必挂 / tokenId 写入吞 DB 错 / op-lock 网络错误裸抛）。**刻意只摘管道修复，不含 CT-4 合约耦合**——线上仍是旧合约，两参数 mintScore 会全 revert；#26 已完整证明旧合约生产管道可成功走到 tokenURI。
 
 **下一步（2026-07-19 执行路径已固化 = `playbook/phase-12/00-overview.md` §8；C-0 已拍板：Semi 维持/备份手动导出+部署日快照/额度不升级）**：
 1. ✅ **B-1 测试网回归**（2026-07-23 完成）：3 合约重部署（Material `0xe335..13c0` / Score `0xE0fA..DB23` / Orch `0x970b..01FA`）+ 角色 6/6 + 幂等键链上拒绝 + CT-7/8 链上全验 + 两通路 e2e 全通（乐谱 tokenId 24 归户）。揪出并修复 3 个管道真 bug（op-lock 裸 500 / tokenId 写入吞错 / **mint_events 部分索引 upsert 必挂——现存生产 main，随 P12 合并即修**）+ D-0 清表实证。详见 `reviews/phase-6-deprecated-contracts.md` 2026-07-23 补记。
-2. **C 施工**：✅ **C1 CRON_SECRET 轮换完成**（2026-07-26；新值 200/旧值 401/cron 97 秒恢复/health 全绿；密钥走桌面文件+剪贴板不进聊天；P10 遗留"cron 切 Bearer"经反证早已完成）/ ✅ C4 代码半 + Resend env 已配（告警邮件收信待用户确认）/ ✅ C7 Semi kill switch / ✅ C8 评估留档 / ✅ C9 三小修（048 迁移用户已在生产执行）/ ✅ C10 生产出图复验。**剩余需用户配合**：C1 尾巴（ADMIN_TOKEN + Alchemy key 轮换）/ C2 Turbo 充值 / C3 主网 ETH / C5 快照 / C6 额度盘点。记录：`reviews/2026-07-24-phase-12-infra.md`。
-3. **A-1 解码器 UI 优化轮**（用户 2026-07-19 提出）→ 验收 → Arweave 上传 → 三环境切 env。
-4. **D-1 内容冻结**：正式曲名落库 + admin 独立钱包 + deployer 钱包 + DB 快照 ≤24h → 🛑 D-0 排期 → D 部署日 → 🛑 D-gate 开铸。
-5. **E 性能**（软 gate）随时穿插不阻塞。
+2. **C 施工**：✅ CRON_SECRET 轮换 / ✅ C2 Turbo 新钱包与永久上传 / ✅ C3 operator OP Mainnet 0.01 ETH / ✅ C4 告警基础 / ✅ C5 快照恢复演练 / ✅ C7-C10。**剩余需用户配合**：新建 Optimism Mainnet Alchemy App + OP Etherscan API key、C6 额度盘点；部署日前 24h 重跑 C5。
+3. **A-1 解码器 ✅ 全完成**：UI / 三组参数 / 网关重试 / 永久上传 / 三环境切换 / `Ripples #26` 真实 smoke 全过。
+4. **B5 admin 签名演练 ✅ 完成（2026-08-23）**：测试网 funding `0x51f1...be48`；既有 admin 授权新 admin `0x0466...1947`；新 admin 签 grant `0x3ae2...efa7`、revoke `0x42ce...1424`；清理后临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true。
+5. **D-1 内容冻结**：曲名 1-35 ✅ / admin+deployer 钱包 ✅ / admin 私钥备份 ✅ / DB 恢复演练 ✅。待主网凭证与额度盘点 → 🛑 D-0 排期；部署日前 24h 新快照 + admin/deployer 主网充值 → D 部署日。
+6. **E 性能**（软 gate）随时穿插不阻塞。
 
 ---
 
