@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 12 主网准备进行中**（2026-08-23，分支 `feat/p12-mainnet-prep`）：A-1/C2 + smoke ✅；B-1/B5 ✅；Optimism Mainnet Alchemy App 与 Etherscan V2 合约验证 key ✅。**当前唯一 Now：C6 六服务额度盘点**。权威口径见 `STATUS.md`「P12 执行进度」。
+- **Phase 12 主网准备进行中**（2026-08-23，分支 `feat/p12-mainnet-prep`）：A/B/C 施工与 C6 六服务额度盘点均完成 ✅，全部免费档可承载。**当前唯一 Now（🛑 用户拍板）：D-0 确定部署日期与 2-3 小时维护窗口**。权威口径见 `STATUS.md`「P12 执行进度」。
 
 - **（历史·2026-07-05 冻结）Phase 8-L**：Wave 0+1 已合并入 main（35 个新 flag 默认 false）。两条待办线由用户定先后：
   - ① **Wave 2 收口**：splashIntro + /test 集中验收 + S8/F9 默认值拍板 + 真机压测

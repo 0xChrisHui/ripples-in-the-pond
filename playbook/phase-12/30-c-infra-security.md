@@ -77,13 +77,13 @@
 ## 6. C6 — 免费额度承载盘点（上线检查的基建半）
 
 逐服务查**当前**额度与超限行为（额度会变，不背历史数字），产出一张表进 review：
-- [ ] Vercel Hobby：带宽 / serverless 时长 / cron 限制（外部 cron-job.org 已绕）
-- [ ] Supabase Free：存储 / 连接数 / 项目暂停策略
-- [ ] Upstash 免费档：日命令数（rate limit 中间件依赖它，超限 fail-open 已知）
-- [ ] Alchemy 免费档：CU 额度；主网 RPC 与 `sync-chain-events` 10 区块/批的节奏复核
-- [ ] cron-job.org：频率/时长限制维持满足（1min job）
-- [ ] Resend 免费档：日发信额 vs 告警量预估
-- 输出：每行"够用 / 要升级 / 要降频"结论 → 回 C-0 #3 拍板
+- [x] Vercel Hobby：Hobby 实证；4 job 全按 1min 的保守上界 172,800 invocations/月 < 1M
+- [x] Supabase Free：14 表 349 行 / 应用用户 9，远低于 500MB / 50K MAU
+- [x] Upstash Free：PING 200 / 56 keys；现行上限为 500K commands/月（旧“10K/day”口径作废）
+- [x] Alchemy Free：275,096 / 30M CU（0.92%）；10 blocks/批无需降频
+- [x] cron-job.org：4 active jobs；1min 合法、代码目标 <5s 远低于 30s timeout
+- [x] Resend Free：100/day、3,000/month；小时级合并告警最坏 24/day
+- 输出：✅ 六项全部“够用 / 不升级 / 不降频”；Upstash commands 上线后周看，详 infra review C6
 
 ## 7. C7 — Semi 主网策略执行（按 C-0 #1 拍板）
 

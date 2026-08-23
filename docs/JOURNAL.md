@@ -1025,3 +1025,15 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **现象**：统一 Etherscan V2 key 请求 OP Mainnet `eth_blockNumber` 返回“Free API access is not supported for this chain”。
 - **验收**：同一 key 请求 OP Mainnet `getsourcecode` 返回 `status=1/OK`，验证状态端点也通过鉴权并进入 GUID 参数校验，证明部署所需合约接口可用。
 - **决定**：不为无关的普通链数据 API 升级套餐；部署日继续用 Foundry + Etherscan V2 完成三个合约源码验证。key 仅保存在仓库外的用户配置目录，运行时临时注入。
+
+## 2026-08-23 — C6 六服务全部维持免费档
+
+- **证据**：Alchemy 本月 275,096 / 30M CU（0.92%）；Supabase 14 表 349 行 / 应用用户 9；Upstash PING 正常 / 56 keys；Vercel 为 Hobby，4 job 全按每分钟计算也仅占 100 万 invocations 的 17.3%；cron-job.org 与 Resend 的最坏常驻量均低于硬限制。
+- **决定**：上线前不升级 Vercel、Supabase、Upstash、Alchemy、cron-job.org、Resend，也不主动降频。主网 App 与测试网分开后仍使用 Alchemy 账户共享 30M CU。
+- **观察线**：Upstash 500K commands/月是六项中最可能先遇到的软上限；软启动期每周看一次，达到 70% 再决定关闭 ratelimit analytics、降频或升级。Vercel/Resend 的 Sensitive/账单明细不为盘点而降低密钥边界。
+
+## 2026-08-23 — P8-L 偶发颤动改为“开启即验收”
+
+- **问题**：原实现先等待间隔、再随机命中可用球；与持续浮动叠加后，用户设置 5 秒/0.12 并观察 30 秒仍可能看不到效果。
+- **决定**：视觉开关开启时立即让一颗大球短促三摆，之后严格按参数间隔轮换；慢浮动不再阻断颤动，播放、hover、拖拽仍优先并可立即中止颤动。
+- **理由**：验收入口必须让用户直接判断效果好不好，不能要求用户理解或等待内部随机调度。

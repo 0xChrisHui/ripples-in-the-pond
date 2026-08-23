@@ -39,10 +39,10 @@
 
 **下一步（2026-07-19 执行路径已固化 = `playbook/phase-12/00-overview.md` §8；C-0 已拍板：Semi 维持/备份手动导出+部署日快照/额度不升级）**：
 1. ✅ **B-1 测试网回归**（2026-07-23 完成）：3 合约重部署（Material `0xe335..13c0` / Score `0xE0fA..DB23` / Orch `0x970b..01FA`）+ 角色 6/6 + 幂等键链上拒绝 + CT-7/8 链上全验 + 两通路 e2e 全通（乐谱 tokenId 24 归户）。揪出并修复 3 个管道真 bug（op-lock 裸 500 / tokenId 写入吞错 / **mint_events 部分索引 upsert 必挂——现存生产 main，随 P12 合并即修**）+ D-0 清表实证。详见 `reviews/phase-6-deprecated-contracts.md` 2026-07-23 补记。
-2. **C 施工**：✅ CRON_SECRET 轮换 / ✅ C2 Turbo 新钱包与永久上传 / ✅ C3 operator OP Mainnet 0.01 ETH / ✅ C4 告警基础 / ✅ C5 快照恢复演练 / ✅ C7-C10 / ✅ Optimism Mainnet Alchemy App / ✅ Etherscan V2 合约验证 key。**当前下一项：C6 六服务额度盘点**；部署日前 24h 重跑 C5。
+2. **C 施工 ✅**：CRON_SECRET / Turbo 永久上传 / operator 0.01 ETH / 告警 / 快照恢复演练 / C7-C10 / 主网 Alchemy / Etherscan key / **C6 六服务额度盘点全部完成**。C6 结论：六项维持免费档；Alchemy 0.92%、Supabase 349 行、Upstash 56 keys，均无临界风险。部署日前 24h 重跑 C5。
 3. **A-1 解码器 ✅ 全完成**：UI / 三组参数 / 网关重试 / 永久上传 / 三环境切换 / `Ripples #26` 真实 smoke 全过。
 4. **B5 admin 签名演练 ✅ 完成（2026-08-23）**：测试网 funding `0x51f1...be48`；既有 admin 授权新 admin `0x0466...1947`；新 admin 签 grant `0x3ae2...efa7`、revoke `0x42ce...1424`；清理后临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true。
-5. **D-1 内容冻结**：曲名 1-35 ✅ / admin+deployer 钱包 ✅ / admin 私钥备份 ✅ / DB 恢复演练 ✅。待主网凭证与额度盘点 → 🛑 D-0 排期；部署日前 24h 新快照 + admin/deployer 主网充值 → D 部署日。
+5. **D-1 内容冻结**：曲名 1-35 ✅ / admin+deployer 钱包 ✅ / admin 私钥备份 ✅ / DB 恢复演练 ✅ / 主网凭证 ✅ / 额度盘点 ✅。**当前下一步：🛑 D-0 确定部署日**；部署日前 24h 新快照 + admin/deployer 主网充值 → D 部署日。
 6. **E 性能**（软 gate）随时穿插不阻塞。
 
 ---
@@ -200,11 +200,11 @@
 
 ## 上次成功验证
 
-- 验证: **P8-L 生命感深化 L 线全部实现（10 模块 + 2 基建步，沙盒 /test3）**
-- 时间: 2026-07-05
-- 改动: **L0a 脚手架**（新建 `life/`：life-tuning[25 参数 store] / life-core[6 确定性种子 lifeSeeds + 全局呼吸 lifeEnv + 各步进] / LifePanel[25 滑块分 5 组]；gl-flags +10 flag + `pickLifeFlags`；ScenePanel +10 开关）；**L0b 管道重构**（per-node `depthOf`/`displayDepthOf` 叠 `_shiftOff`；`project`/`unproject` 收可选 node 做视差去同步、严格互逆；`applyFloat` 改收 node；`writeFrame` 拆到 `spheres/sphere-frame.ts`；16 处调用点迁移）；**L2 运动**（滚轮去同步·幅度+时滞两参 / 视差去同步 / 流场游移 curl-noise `flow-field.ts` / 偶发颤动泊松）；**L3 形态**（能量球边缘 GLSL 双频调制 + `aSeed` attribute / 扰动激励 `_excite` 拖拽·穿越·尾波三源注入 / 果冻感速度拉伸矩阵）；**L4 尾波**（`wake-field.ts` refcount 抽涟漪场 + 水下球采样场梯度推 `_gvx`）；**L5 呈现**（隐现 pow(w,3) 长亮短隐 + DOM 标题同步 / 光晕呼吸）
-- 验证证据: 逐文件 `npx tsc --noEmit` 0 error + `npm run lint` 0 error（仅 3 项 pre-existing warning：comet-system/use-layer-wave）；10 flag 默认 false + 15 幅度参数默认 0 → 全关与改前像素级一致（结构性保证）；所有涉改文件 ≤220 行、`life/` 5 文件、`spheres/` 8 文件（硬线内）；未跑 build（dev 常开，dev/build 共用 .next 互踩，见 memory）。**八角度 review（2026-07-05）10 finding：前 5 真 bug 已修**（_excite 棘轮泄漏改恒衰减 / shiver 补 hover 豁免+拖拽中止 / jelly+wake 补 reduced-motion），修后 tsc+eslint 复绿；6-10（扰动激励单开无效果[spec 即依赖能量球边缘，缺 UI 提示]/wake 空转 CPU/renderDepth 重复/writeFrame 参数泥团/dropScreen 双份）留用户拍板，详 JOURNAL 2026-07-05 续³
-- 下一步: **用户逐开关浏览器验收（⏸ 项）**：逐个开生命感开关 + 拉 LifePanel 滑块调美；专项验拖球命中在任意 flag 组合下不偏（L2-1/L2-2 unproject 对称）、播放/hover 恒亮、reduced-motion 全静止；**和谐压测**（全 flag 同开 + 建议值"活而不乱"）后拍板各幅度上限；L3-3 果冻感验收不过可弃
+- 验证: **P8-L 浏览器验收修复：固定切组水面/球层级归中 + 偶发颤动改为开启即见**
+- 时间: 2026-08-23
+- 改动: `/test3` 切组不再按上一组球深度重算水面，并清除滚轮层级偏移；偶发颤动开启后立即触发，首次优先大球，0.48 秒三次摆动，之后严格按面板间隔轮换；播放、hover、拖拽继续拥有交互优先级。
+- 验证证据: `scripts/verify.sh` 全通过（TypeScript 0 error、ESLint 0 error/3 条原有 warning、生产构建通过、forge 42/42）；相关代码文件均在硬线内；`http://localhost:3000/test3` 返回 200。
+- 下一步: **用户浏览器验收偶发颤动**：设间隔 5 秒、幅度 0.12，开启后应立即看到一次，随后每 5 秒看到一颗球短促三摆；通过后再单独落默认参数与“鼠标水波扰球”强度修复。
 
 - 验证: **P8-G H 线全完（H4–H6）+ I 线 I1/I2 落地**——/test1 成干净 GL 水塘页（涟漪交互全集 + 球自驱浮沉 + 波纹/运动参数板 + 去 SVG + GL 日蚀），逐步浏览器验收通过
 - 时间: 2026-06-15

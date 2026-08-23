@@ -183,6 +183,26 @@
 
 ---
 
+### E014 — Vercel Hobby 无法通过 CLI 读取精确 Usage
+
+- 📅 2026-08-23 / P12 C6 额度盘点
+- 😱 `vercel usage --format json` 返回 `Costs not found (404)`；metrics 查询要求 Observability Plus。
+- 🧠 项目确认是 Hobby，但账单 CLI 与高级 metrics 没有返回 Hobby 的实际消耗。
+- 🔧 不把 404 当零用量；改用官方硬上限 + 4 个 cron 全按 1min 的保守月调用上界做承载判断。
+- 💡 精确数字拿不到时，保守上界比猜测更适合上线 gate。
+
+---
+
+### E015 — Vercel Sensitive env 不能注入本地 Resend 查询
+
+- 📅 2026-08-23 / P12 C6 额度盘点
+- 😱 `vercel env run -e production` 仍只加载现有 `.env.local`，Resend API 返回 400；生产 Sensitive 值未导出。
+- 🧠 Vercel 对 Sensitive env 保持不可读边界，不能为了盘点把生产 Resend key 拉回本机。
+- 🔧 停止重试；改用已验证的 C4 收信记录、告警触发上界与官方 100/day、3,000/month 限制判断。
+- 💡 配额盘点不值得降低 secret 安全等级；能用行为上界证明就不搬运生产密钥。
+
+---
+
 ## 🏷 错误索引（按类型）
 
 随着错误积累，AI 会在这里维护一份按类型分类的索引：
@@ -215,6 +235,8 @@
 - E011 npm 全局安装后当前 PowerShell 找不到 Alchemy CLI
 - E012 Alchemy CLI Admin 命令完成后触发 UV assertion
 - E013 Etherscan 免费 key 的 OP 普通 API 被拒绝
+- E014 Vercel Hobby 无法通过 CLI 读取精确 Usage
+- E015 Vercel Sensitive env 不能注入本地 Resend 查询
 
 ### JWT / 认证
 
@@ -245,3 +267,10 @@
 - **怎么修**：把 PEM 读取从模块顶层移到函数内部（惰性读取），构建时不触发
 - **学到了什么**：Next.js 构建时会加载所有 server 模块做类型检查，环境变量可能未设置。服务端模块里的全局初始化要做成惰性的
 - **相关文件**：`src/lib/auth/jwt.ts`
+
+#### PowerShell 找不到 `bash`，导致验证脚本无法启动
+- **报错原文**：`The term 'bash' is not recognized as a name of a cmdlet`
+- **为什么**：Git Bash 已安装在 `D:\DevTools\Git\bin\bash.exe`，但该目录没有加入当前 PowerShell 的 PATH。
+- **怎么修**：使用绝对路径 `& 'D:\DevTools\Git\bin\bash.exe' scripts/verify.sh`，完整验证通过。
+- **学到了什么**：Windows 上命令不在 PATH 不代表工具未安装；先从 `git.exe` 所在工具目录定位配套 Bash，再按项目规定运行原脚本。
+- **相关文件**：`scripts/verify.sh`
