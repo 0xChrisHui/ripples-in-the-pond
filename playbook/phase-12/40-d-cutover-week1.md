@@ -86,6 +86,14 @@
 6. **deployer 私钥销毁**：runbook §4.4 三步
 7. **🛑 停点 D-gate**：对照 `00-overview.md` §3 永久性清单逐项勾 → 放行=进入软启动
 
+### 2026-08-23 执行记录
+
+- [x] 写冻结：cron-job.org 4 个 active job 已关闭，双队列非终态行均为 0。
+- [x] 冻结后快照：`C:\Users\Hui\ripples-backups\20260823-135447`，14 表 / 349 行 / 0 失败。
+- [x] 合约部署、权限验收、Material URI 冻结、三个合约 Etherscan 源码验证全部通过。
+- [ ] 数据切换：用户在 Supabase 生产执行清链衍生数据 SQL；`last_synced_block` 写 `155933187`。
+- [ ] Vercel env / main 部署 / cron 恢复 / 两通路真实 smoke。
+
 **中止预案**：任何一步验收不过 → 停在原地不硬推。合约部署到一半可弃（重新走 §3 部一组新的，
 测试网先复盘）；env 未切则线上仍是测试网原样，用户无感。
 

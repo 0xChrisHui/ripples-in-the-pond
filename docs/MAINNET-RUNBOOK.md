@@ -18,6 +18,18 @@
 | ScoreNFT | ERC-721（乐谱） | `script/DeployScore.s.sol` |
 | MintOrchestrator | ScoreNFT 前台薄壳 | `script/DeployOrchestrator.s.sol` |
 
+### 2026-08-23 OP Mainnet 部署记录
+
+| 合约 | 主网地址 | 部署区块 | 验证 |
+|---|---|---:|---|
+| MaterialNFT | `0x03504aeb95EbE3DC8c427b7b147f873F9948a299` | `155933141` | OP Etherscan 源码验证通过；永久 URI 已冻结 |
+| ScoreNFT | `0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA` | `155933187` | OP Etherscan 源码验证通过 |
+| MintOrchestrator | `0x406519962cDD1673D30fEcC13c4B6f7Af87Ba1dA` | `155933224` | OP Etherscan 源码验证通过 |
+
+最终权限已链上核验：admin 持三个合约的 `DEFAULT_ADMIN_ROLE`；operator 持
+MaterialNFT / MintOrchestrator 的 `MINTER_ROLE`；MintOrchestrator 持 ScoreNFT 的
+`MINTER_ROLE`；deployer 不再持任何 admin/minter 权限。
+
 **AirdropNFT 主网不部署**（B-0 #9：省 gas 省面，将来要用再单独部署）。`DeployAirdropNFT.s.sol`
 已加主网护栏（chainid 10 直接 revert）。`process-airdrop` cron 主网**不配置**、`AIRDROP_ENABLED` **不设**。
 

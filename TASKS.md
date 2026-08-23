@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 12 主网部署进行中**（2026-08-23，干净部署分支 `codex/p12-mainnet-deploy`）：T-1 全绿，永久 metadata 已上传。**当前唯一 Now：D2 写冻结 → 3 合约广播 → 角色/verify/env/smoke**。
+- **Phase 12 主网部署进行中**（2026-08-23，干净部署分支 `codex/p12-mainnet-deploy`）：写冻结、最终 349 行快照、OP Mainnet 三合约部署、权限收敛、Material URI 冻结与 Etherscan 源码验证均完成。**当前唯一 Now：用户执行 D2 清库 SQL（主网游标 `155933187`）→ Codex 切 Vercel 三环境、合并部署 main、恢复 cron、真实 smoke。**
 
 - **近期完成**：独立热修 commit `8ce2514` 已合入 `main` 并部署生产；失败的 ScoreNFT 记录不再误显“上链中”。
 

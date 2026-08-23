@@ -50,8 +50,9 @@
 2. **C 施工 ✅**：CRON_SECRET / Turbo 永久上传 / operator 0.01 ETH / 告警 / 快照恢复演练 / C7-C10 / 主网 Alchemy / Etherscan key / **C6 六服务额度盘点全部完成**。C6 结论：六项维持免费档；Alchemy 0.92%、Supabase 349 行、Upstash 56 keys，均无临界风险。部署日前 24h 重跑 C5。
 3. **A-1 解码器 ✅ 全完成**：UI / 三组参数 / 网关重试 / 永久上传 / 三环境切换 / `Ripples #26` 真实 smoke 全过。
 4. **B5 admin 签名演练 ✅ 完成（2026-08-23）**：测试网 funding `0x51f1...be48`；既有 admin 授权新 admin `0x0466...1947`；新 admin 签 grant `0x3ae2...efa7`、revoke `0x42ce...1424`；清理后临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true。
-5. **D-1/T-1 ✅**：曲名 1-35 / 三钱包充值 / admin 备份与演练 / 349 行新快照 / 主网凭证 / 额度盘点 / 35 份 MaterialNFT 永久 metadata 全完成。**当前：D2 部署日写冻结与主网广播进行中**。
-6. **E 性能**（软 gate）随时穿插不阻塞。
+5. **D-1/T-1 ✅**：曲名 1-35 / 三钱包充值 / admin 备份与演练 / 349 行新快照 / 主网凭证 / 额度盘点 / 35 份 MaterialNFT 永久 metadata 全完成。
+6. **D2 合约部署 ✅（2026-08-23）**：cron 写冻结完成；冻结后快照 `C:\Users\Hui\ripples-backups\20260823-135447`（14 表 / 349 行 / 0 失败）；OP Mainnet 三合约已部署并通过 Etherscan 源码验证：Material `0x0350...a299`（URI 已冻结）/ Score `0xAc3F...A4AA` / Orchestrator `0x4065...a1dA`。最终权限矩阵全绿，deployer 已退权。**当前唯一下一步：用户在 Supabase 生产执行 D2 清链衍生数据 SQL（游标 `155933187`）→ Codex 切 Vercel 三环境、部署 main、恢复 cron、真实 smoke。**
+7. **E 性能**（软 gate）随时穿插不阻塞。
 
 ---
 
