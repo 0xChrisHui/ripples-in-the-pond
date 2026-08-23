@@ -7,9 +7,9 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 12 主网部署进行中**（2026-08-23，干净部署分支 `codex/p12-mainnet-deploy`）：写冻结、最终 349 行快照、OP Mainnet 三合约部署、权限收敛、Material URI 冻结与 Etherscan 源码验证均完成。**当前唯一 Now：用户执行 D2 清库 SQL（主网游标 `155933187`）→ Codex 切 Vercel 三环境、合并部署 main、恢复 cron、真实 smoke。**
+- **Phase 12 软启动观察进行中（Day 0/7）**：OP Mainnet 三合约、数据切换、Vercel 主网生产、4 个 cron、Material/Score 两条真实铸造与 `/score/1` 浏览器播放均已通过；一次性 deployer 已退权、转回余额并销毁私钥。**当前唯一 Now：连续 7 天每日两次检查 `/api/health`、cron-job.org、Supabase 双队列与告警邮箱；无 P0 后完成 launch review 并结束 P12。**
 
-- **近期完成**：独立热修 commit `8ce2514` 已合入 `main` 并部署生产；失败的 ScoreNFT 记录不再误显“上链中”。
+- **近期完成**：P12 主网上线代码已在 `main@71872d8` 部署生产；Material #24/#7/#34 与 Score #1 主网 smoke 成功，公开页、OG、metadata、animation 播放通过。独立热修 commit `8ce2514` 已合入 `main`，失败的 ScoreNFT 记录不再误显“上链中”。
 
 - **（历史·2026-07-05 冻结）Phase 8-L**：Wave 0+1 已合并入 main（35 个新 flag 默认 false）。两条待办线由用户定先后：
   - ① **Wave 2 收口**：splashIntro + /test 集中验收 + S8/F9 默认值拍板 + 真机压测

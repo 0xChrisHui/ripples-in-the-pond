@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 12 当前**（OP Mainnet 上线准备与部署，2026-07-19 执行中；与 P8-P11 前端迭代**解耦并行**）。P7 已完结 / P8-L 实现待验收(冻结) / P10 已完结 / P9·P11 未开始。**权威"下一步"见下方「P12 执行进度」块。**
+**Phase**: **Phase 12 当前**（OP Mainnet 已上线，2026-08-23 进入 7 天软启动观察；与 P8-P11 前端迭代**解耦并行**）。P7 已完结 / P8-L 实现待验收(冻结) / P10 已完结 / P9·P11 未开始。**权威"下一步"见下方「P12 执行进度」块。**
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（当前）= 水塘视觉重设计（首页星空 → 水塘）
@@ -51,8 +51,9 @@
 3. **A-1 解码器 ✅ 全完成**：UI / 三组参数 / 网关重试 / 永久上传 / 三环境切换 / `Ripples #26` 真实 smoke 全过。
 4. **B5 admin 签名演练 ✅ 完成（2026-08-23）**：测试网 funding `0x51f1...be48`；既有 admin 授权新 admin `0x0466...1947`；新 admin 签 grant `0x3ae2...efa7`、revoke `0x42ce...1424`；清理后临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true。
 5. **D-1/T-1 ✅**：曲名 1-35 / 三钱包充值 / admin 备份与演练 / 349 行新快照 / 主网凭证 / 额度盘点 / 35 份 MaterialNFT 永久 metadata 全完成。
-6. **D2 合约部署 ✅（2026-08-23）**：cron 写冻结完成；冻结后快照 `C:\Users\Hui\ripples-backups\20260823-135447`（14 表 / 349 行 / 0 失败）；OP Mainnet 三合约已部署并通过 Etherscan 源码验证：Material `0x0350...a299`（URI 已冻结）/ Score `0xAc3F...A4AA` / Orchestrator `0x4065...a1dA`。最终权限矩阵全绿，deployer 已退权。**当前唯一下一步：用户在 Supabase 生产执行 D2 清链衍生数据 SQL（游标 `155933187`）→ Codex 切 Vercel 三环境、部署 main、恢复 cron、真实 smoke。**
-7. **E 性能**（软 gate）随时穿插不阻塞。
+6. **D2 主网上线 ✅ 完成（2026-08-23）**：冻结后快照 `C:\Users\Hui\ripples-backups\20260823-135447`（14 表 / 349 行 / 0 失败）；OP Mainnet 三合约部署、Etherscan 验证、权限收敛、Material URI 冻结完成；链衍生数据已清零并把游标设为 `155933187`；Vercel 三环境与 `main@71872d8` 已切主网；4 个 cron 已恢复，airdrop 保持关闭。真实 smoke：Material #24/#7/#34 全部 success，Score #1 mint + setTokenURI success，`/score/1` 页面、OG、metadata 与浏览器播放全部通过。
+7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
+8. **当前唯一下一步：D4 软启动观察（Day 0/7）**。每天两次看 `/api/health`、cron-job.org、Supabase 双队列与告警邮箱；7 天无 P0 后完成 launch review，Phase 12 才正式完结。E 性能仍是软 gate，不阻塞。
 
 ---
 

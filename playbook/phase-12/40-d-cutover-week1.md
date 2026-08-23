@@ -56,15 +56,15 @@
 - [x] B track：forge test 42/42 + 停点 B-1 回归 + runbook + admin 演练（B5）完成
 - [x] C track：CRON_SECRET 已换 + Turbo 新钱包就绪 + operator 主网 ETH 到账 + 告警邮件实测过
       + OG/海报生产复验过（C10）+ DB 快照 ≤24h
-- [ ] **env 三项硬校验**（都是"错了就永久"级，Codex P0/P1）：
+- [x] **env 三项硬校验**（都是"错了就永久"级，Codex P0/P1）：
       ① `NEXT_PUBLIC_APP_URL=https://pond-ripple.xyz` 生产读回确认（每枚 NFT external_url 来源）
       ② `SCORE_DECODER_AR_TX_ID` / `SOUNDS_MAP_AR_TX_ID` 三环境读回一致（server-only，
       env-sync 默认不查，见 `10-a` A2）
       ③ `OPERATOR_PRIVATE_KEY` 派生地址 == 部署用 `MINTER_ADDRESS`（不一致则 hasRole
       验收全过、cron 发交易全 revert）
-- [ ] **P10 用户线下待办清零**：migration 043-046 已在生产执行 + cron Bearer 已随 C1 完成
+- [x] **P10 用户线下待办清零**：migration 043-046 已在生产执行 + cron Bearer 已随 C1 完成
 - [x] 铸造范围口径：35 首全部 `published=true` 且都有 `arweave_url`
-- [ ] 主网 env 值全部备妥未启用（B4 清单）；`AIRDROP_ENABLED` 确认**不设**
+- [x] 主网 env 值全部备妥并启用（B4 清单）；`AIRDROP_ENABLED` 确认**不设**
 - [x] 用户侧：已发出“开始部署” + admin 独立钱包可签（B5 已演练）
 
 ## 2. D2 — 部署日时序（T-0）
@@ -91,8 +91,13 @@
 - [x] 写冻结：cron-job.org 4 个 active job 已关闭，双队列非终态行均为 0。
 - [x] 冻结后快照：`C:\Users\Hui\ripples-backups\20260823-135447`，14 表 / 349 行 / 0 失败。
 - [x] 合约部署、权限验收、Material URI 冻结、三个合约 Etherscan 源码验证全部通过。
-- [ ] 数据切换：用户在 Supabase 生产执行清链衍生数据 SQL；`last_synced_block` 写 `155933187`。
-- [ ] Vercel env / main 部署 / cron 恢复 / 两通路真实 smoke。
+- [x] 数据切换：用户在 Supabase 生产执行清链衍生数据 SQL；`last_synced_block` 写 `155933187`，四张链衍生表与封面使用计数均清零。
+- [x] Vercel 三环境切 OP Mainnet，`main@71872d8` 生产部署 READY；4 个 cron 恢复，airdrop 保持关闭。
+- [x] Material smoke：#24/#7/#34 均 success，三笔链上 receipt 均成功且用户余额为 1。
+- [x] Score smoke：tokenId 1 的 mint / setTokenURI 均成功，链事件同步入库；metadata、OG、`/score/1` 与浏览器播放通过。
+- [x] deployer 收口：余额转回 operator（tx `0x1b7b...ef00`），13 项权限/冻结复核全绿，一次性私钥文件已销毁；admin 备份保留。
+
+**D-gate 结论**：部署日硬 gate 全部通过，2026-08-23 进入 D4 七天软启动观察；Phase 12 在观察期结束前保持进行中。
 
 **中止预案**：任何一步验收不过 → 停在原地不硬推。合约部署到一半可弃（重新走 §3 部一组新的，
 测试网先复盘）；env 未切则线上仍是测试网原样，用户无感。

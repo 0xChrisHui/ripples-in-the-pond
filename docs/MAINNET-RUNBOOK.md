@@ -154,34 +154,35 @@ cast call <MaterialNFT> "hasRole(bytes32,address)(bool)" \
 ## 4. 部署后
 
 ### 4.1 `.env.local` + Vercel env 同步（每枚 NFT 永久值，务必读回确认）
-- [ ] `NEXT_PUBLIC_SCORE_NFT_ADDRESS` = ScoreNFT 新地址
-- [ ] `NEXT_PUBLIC_ORCHESTRATOR_ADDRESS` = Orchestrator 新地址
-- [ ] `NEXT_PUBLIC_MATERIAL_NFT_ADDRESS` = MaterialNFT 新地址
-- [ ] `NEXT_PUBLIC_CHAIN_ID=10`
-- [ ] **`NEXT_PUBLIC_APP_URL=https://pond-ripple.xyz`**（每枚 NFT 的 `external_url` 来源；
+- [x] `NEXT_PUBLIC_SCORE_NFT_ADDRESS` = ScoreNFT 新地址
+- [x] `NEXT_PUBLIC_ORCHESTRATOR_ADDRESS` = Orchestrator 新地址
+- [x] `NEXT_PUBLIC_MATERIAL_NFT_ADDRESS` = MaterialNFT 新地址
+- [x] `NEXT_PUBLIC_CHAIN_ID=10`
+- [x] **`NEXT_PUBLIC_APP_URL=https://pond-ripple.xyz`**（每枚 NFT 的 `external_url` 来源；
       漏配即第一枚 smoke NFT 永久写错域名。Codex 发现 runbook 旧版漏列此项）
-- [ ] server-only 三项**逐环境读回确认**（`npm run env-sync` 现已把这些纳入白名单可比对）：
+- [x] server-only 三项**逐环境读回确认**（`npm run env-sync` 现已把这些纳入白名单可比对）：
       `SCORE_DECODER_AR_TX_ID` / `SOUNDS_MAP_AR_TX_ID`（钉进每枚 NFT，三环境须一致）
-- [ ] ~~`AIRDROP_NFT_ADDRESS`~~ 不设（不部署 AirdropNFT）。代码读的 env 名是
+- [x] ~~`AIRDROP_NFT_ADDRESS`~~ 不设（不部署 AirdropNFT）。代码读的 env 名是
       `NEXT_PUBLIC_AIRDROP_NFT_ADDRESS`（旧 runbook 写错为 `AIRDROP_NFT_ADDRESS`）——留空即可，
       `contracts.ts` 已惰性处理不抛错
-- [ ] Vercel Production env 全部同步 → **Redeploy（不带 Build Cache）**
+- [x] Vercel Production env 全部同步 → **Redeploy（不带 Build Cache）**
 
 ### 4.2 cron-job.org 验证（4 个 active，≥5 分钟全绿）
-- [ ] process-mint-queue
-- [ ] process-score-queue
-- [ ] sync-chain-events
-- [ ] check-balance
-- [ ] **process-airdrop：不存在 / 保持暂停**（验证不可触发）
+- [x] process-mint-queue
+- [x] process-score-queue
+- [x] sync-chain-events
+- [x] check-balance
+- [x] **process-airdrop：不存在 / 保持暂停**（验证不可触发）
 
 ### 4.3 端到端 smoke（真 gas）
-- [ ] 真实账号登录 → 收藏素材 → 1 分钟内 /me 显示 success（MaterialNFT 通路）
-- [ ] 草稿铸造 → 4 步 cron 推进 → /score/[id] 公开页可播放（ScoreNFT 通路）
-- [ ] /score/[id] 分享 OG 卡片正常；metadata `external_url` 指生产域名；animation_url 播放正常
+- [x] 真实账号登录 → 收藏素材 → /me 显示 success（MaterialNFT #24/#7/#34）
+- [x] 草稿铸造 → 4 步 cron 推进 → `/score/1` 公开页可播放（ScoreNFT tokenId 1）
+- [x] `/score/1` 分享 OG 图片 200；metadata `external_url` 指生产域名；animation_url 浏览器播放正常
 
 ### 4.4 销毁 deployer 私钥
-- [ ] `DEPLOYER_PRIVATE_KEY` 从 `.env.local` 删除 + 从 Vercel env 删除（若配过）
-- [ ] deployer 钱包剩余 ETH 转出
+- [x] 确认一次性 deployer 私钥未进入 Vercel；部署时仅从仓库外钱包文件临时读取
+- [x] deployer 剩余 `0.000098861219548476 ETH` 转回 operator（tx `0x1b7b...ef00`），保留约 `0.000000999038 ETH` 尘埃
+- [x] 完整权限矩阵与 `uriFrozen` 复核通过后，删除 `C:\Users\Hui\.ripples-secrets\deployer-wallet.json`；admin 钱包备份未动
 
 ---
 
