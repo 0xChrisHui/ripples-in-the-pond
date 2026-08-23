@@ -85,7 +85,7 @@ function TestJamDesktop() {
   return (
     <section className="flex flex-col items-start gap-3">
       <p className="text-[10px] uppercase tracking-[0.14em] text-white/40">
-        按下键盘 A-Z 演奏
+        按下键盘 A-Z、3-8 或空格演奏
         {recording && <span className="ml-2 text-red-400/70">● 录制中</span>}
       </p>
 
