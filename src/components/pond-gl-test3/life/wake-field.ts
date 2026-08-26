@@ -25,6 +25,8 @@ let raf = 0;
 let W = 1;
 let H = 1;
 let lastMove = 0;
+// CPU 场梯度是极小无量纲值，转成球的屏幕滑行速度必须显式标定；否则滑块拉满也不可见。
+const WAKE_FORCE_GAIN = 32;
 
 function onResize(): void {
   W = window.innerWidth;
@@ -41,8 +43,22 @@ function onDown(e: PointerEvent): void {
   petalDropScreen(e.clientX, e.clientY, W, H, 5, 0.6 * getRippleTuning().petalClick);
 }
 function onWave(e: Event): void {
-  const d = (e as CustomEvent<{ x: number; y: number }>).detail;
-  if (d && typeof d.x === 'number') petalDropScreen(d.x, d.y, W, H, 5, 0.5 * getRippleTuning().petalWave);
+  const d = (e as CustomEvent<{ x: number; y: number; petalStrength?: number }>).detail;
+  if (d && typeof d.x === 'number') {
+    const keyGain = d.petalStrength == null ? 1 : 1 + d.petalStrength * 2.2;
+    petalDropScreen(d.x, d.y, W, H, 5, 0.5 * getRippleTuning().petalWave * keyGain);
+  }
+}
+function onKeyFx(e: Event): void {
+  const d = (e as CustomEvent<{ family?: string; x?: number; y?: number }>).detail;
+  if (d?.family !== 'petals' || d.x == null || d.y == null) return;
+  const x = d.x * W, y = (1 - d.y) * H;
+  const angle = Math.atan2(y - H / 2, x - W / 2) + 0.72;
+  const gain = getRippleTuning().petalWave;
+  for (let i = -2; i <= 2; i++) {
+    petalDropScreen(x + Math.cos(angle) * i * 34, y + Math.sin(angle) * i * 34,
+      W, H, 4, 0.22 * gain * (1 - Math.abs(i) * 0.08));
+  }
 }
 function loop(): void {
   stepPetalWater(); // 每帧仅此一处推进场
@@ -58,6 +74,7 @@ export function acquireWakeField(): void {
   window.addEventListener('pointermove', onMove);
   window.addEventListener('pointerdown', onDown);
   window.addEventListener('bg-ripple:wave', onWave);
+  window.addEventListener('jam:key-fx', onKeyFx);
   raf = requestAnimationFrame(loop);
 }
 /** 释放；归零则拆除监听 + rAF。 */
@@ -68,6 +85,7 @@ export function releaseWakeField(): void {
   window.removeEventListener('pointermove', onMove);
   window.removeEventListener('pointerdown', onDown);
   window.removeEventListener('bg-ripple:wave', onWave);
+  window.removeEventListener('jam:key-fx', onKeyFx);
   cancelAnimationFrame(raf);
   raf = 0;
 }
@@ -80,7 +98,7 @@ export function useWakeField(active: boolean): void {
   }, [active]);
 }
 
-/** L4-1b 尾波扰球：波扫过哪颗水下球哪颗被荡开。非播放/非拖拽球，用投影后屏幕位采样场梯度 →
+/** L4-1b 鼠标水波扰球：鼠标轨迹波扫过哪颗水下球，哪颗被荡开。非播放/非拖拽球，用投影后屏幕位采样场梯度 →
  *  喂 _gvx/_gvy 滑行通道（自带封顶/衰减 + cluster 回位 = 分散漂游再归位）。
  *  刚没入最强、深球≈0、出水球不动（atten 随 below/wakeDepthFalloff 衰减）。乘全局呼吸包络。 */
 export function stepWakeSpheres(nodes: GlPhysNode[], proj: ProjCtx, playingId: string | null, nowSec: number, on: boolean): void {
@@ -100,7 +118,7 @@ export function stepWakeSpheres(nodes: GlPhysNode[], proj: ProjCtx, playingId: s
     if (atten <= 0) continue;
     const p = project(n.x, n.y, depthOf(n), proj, n); // 屏幕位（波是屏幕空间的 → 视觉上波扫过哪颗动）
     const [gx, gy] = petalGradAt((p.sx / Math.max(1, W2)) * NX, (p.sy / Math.max(1, H2)) * ny);
-    const k = wakeSphereForce * atten * env;
+    const k = wakeSphereForce * WAKE_FORCE_GAIN * atten * env;
     n._gvx = (n._gvx ?? 0) + gx * k;
     n._gvy = (n._gvy ?? 0) + gy * k;
     n._excite = Math.min(1, (n._excite ?? 0) + Math.min(0.05, Math.hypot(gx, gy) * k * 2)); // L3-2 尾波力 → 边缘激励

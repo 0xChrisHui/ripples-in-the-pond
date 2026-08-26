@@ -1,6 +1,6 @@
 /**
  * /test3 水面「光照/遮罩」GLSL 片段（从 water-distort-shaders 抽出腾行数；注入同一 shader，引用其 uniform）。
- * 含：K4 投影 computeShadowMask / K5 焦散 computeCaustics / K11 倒影 moonReflectTex / 球几何遮罩 ballMask。
+ * 含：K4 投影 computeShadowMask / K5 焦散 computeCaustics / K11 倒影 moonReflectTex。
  * 以函数形式注入（接 maxSpheres 拼循环上限）→ 不与 water-distort-shaders 的 MAX_SPHERES 形成循环 import。
  */
 export function waterLightGlsl(maxSpheres: number): string {
@@ -24,7 +24,7 @@ export function waterLightGlsl(maxSpheres: number): string {
       vec2 dd = (px + warp - ctr) / vec2(s.z, s.z * 0.55);                   // ②大小≈恒定（远光源平行光无放大；纵压扁=斜投椭圆）
       float umbra = 0.85 - 0.3 * t;            // 仅温和变软（天空环境光填半影）：贴面 0.85 → 高处 0.55
       float spot = 1.0 - smoothstep(umbra, 1.0, length(dd));
-      shadow = max(shadow, spot * (1.0 - 0.35 * t) * uSphereVis[i]); // ③温和变淡（环境补光）：高处 ×0.65；×vis 淡出球不投影
+      shadow = max(shadow, spot * (1.0 - 0.35 * t) * uVisualDim[i]); // ③温和变淡（环境补光）：高处 ×0.65；×可见度淡出球不投影
     }
     // 水光网纹打碎（亮处被光"打穿" → 水面感、平水也活），四种投影模式共用此 mask。
     float sAspect = uViewport.x / max(1.0, uViewport.y);
@@ -58,22 +58,5 @@ export function waterLightGlsl(maxSpheres: number): string {
     return band * vert * clamp(shimmer, 0.0, 1.0);
   }
 
-  // 球几何遮罩：vec2(cover, aboveW)。cover=球覆盖(不论深浅, edge×vis)；aboveW=其中"出水"加权(×depthMask)。
-  // → aboveW/cover = 该球像素的出水比例(0 水下 .. 1 水上)，用于在水上/水下衰减间插值。与 computeAbove 同 edge/depthMask 阈值。
-  vec2 ballMask(vec2 uv) {
-    vec2 px = vec2(uv.x, 1.0 - uv.y) * uViewport;
-    float cover = 0.0;
-    float aboveW = 0.0;
-    for (int i = 0; i < ${maxSpheres}; i++) {
-      if (i >= uSphereCount) break;
-      vec4 s = uSpheres[i];
-      float edge = (1.0 - smoothstep(s.z * 0.82, s.z, distance(px, s.xy))) * uSphereVis[i];
-      float st = clamp((uWaterLevel - s.w + 0.02) / 0.12, 0.0, 1.0);
-      float depthMask = 1.0 - st * st * (3.0 - 2.0 * st); // 1=出水, 0=水下
-      cover = max(cover, edge);
-      aboveW = max(aboveW, edge * depthMask);
-    }
-    return vec2(cover, aboveW);
-  }
 `;
 }

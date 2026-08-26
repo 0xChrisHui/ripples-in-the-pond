@@ -11,7 +11,7 @@
 import { hashStr } from '@/src/components/archipelago/sphere-config';
 import { getLifeTuning } from './life-tuning';
 import type { GlPhysNode } from '../spheres/gl-sim-setup';
-import { getShift, getShiftTarget, SHIFT_MAX, displayDepthOf } from '../pointer-fx';
+import { getShift, SHIFT_MAX, displayDepthOf } from '../pointer-fx';
 import { prefersReducedMotion } from '../reduced-motion';
 import { getSubmerge } from '../water/water-level';
 import { flowAt } from './flow-field';
@@ -54,11 +54,11 @@ export function lifeEnv(tSec: number): number {
 /* ===================== L2 运动无序：每帧步进（sphere-frame 调用） ===================== */
 
 /** L2-1 滚轮升降去同步：每球私有缓动(时滞差 s0) + 幅度差(s1，随滚轮极限收敛) → 写 _shiftOff（叠加进 depthOf）。
+ *  目标必须跟随已经限速的全局 shift；不能直接追 shiftTarget，否则会绕过滚轮最高速度/加减速参数。
  *  flag 关 / reduced-motion → _shiftOff 缓动归 0（不跳变）、_lagShift 贴回 shift（重开不跳）。 */
 export function stepWheelDesync(nodes: GlPhysNode[], on: boolean): void {
   const { wheelAmpVar, wheelLagVar } = getLifeTuning();
   const shift = getShift();
-  const shiftTarget = getShiftTarget();
   const e = Math.min(1, Math.abs(shift) / SHIFT_MAX);
   const e2 = e * e;
   const off = !on || prefersReducedMotion();
@@ -72,25 +72,29 @@ export function stepWheelDesync(nodes: GlPhysNode[], on: boolean): void {
     const s = lifeSeeds(n.id);
     const k = Math.max(0.3, 1 + (s[0] - 0.5) * 2 * wheelLagVar);
     if (n._lagShift == null) n._lagShift = shift;
-    n._lagShift += (shiftTarget - n._lagShift) * 0.12 * k;
+    n._lagShift += (shift - n._lagShift) * 0.12 * k;
     const g = 1 + (s[1] - 0.5) * 2 * wheelAmpVar;
     const gAdj = g * (1 - e2) + e2; // mix(g,1,e²)：滚到底必全沉、滚到顶必全出
     n._shiftOff = (n._lagShift - shift) + shift * (gAdj - 1);
   }
 }
 
-/** L2-2 视差去同步：每球从种子派生 _parGain(幅度 s2)/_parAng(转角 s3)，project/unproject 读它。关 → 中性 1/0。 */
+/** L2-2 视差去同步：每球从种子派生 _parGain(幅度 s2)/_parAng(转角 s3)。
+ *  最小视觉半径附近的小球在幅度拉满时仅保留 2%–10% 视差；关闭 / reduced-motion 时平滑回中。 */
 export function stepParallax(nodes: GlPhysNode[], on: boolean): void {
   const { parVarAmp, parVarAngle } = getLifeTuning();
+  const off = !on || prefersReducedMotion();
+  let minRadius = Infinity;
+  for (const n of nodes) minRadius = Math.min(minRadius, n.radius);
+  const nearStillCutoff = minRadius + 2.5;
   for (const n of nodes) {
-    if (!on) {
-      if (n._parGain !== 1) n._parGain = 1;
-      if (n._parAng !== 0) n._parAng = 0;
-      continue;
-    }
     const s = lifeSeeds(n.id);
-    n._parGain = 1 + (s[2] - 0.5) * 2 * parVarAmp;
-    n._parAng = (s[3] - 0.5) * 2 * parVarAngle;
+    const variedGain = 1 + (s[2] - 0.5) * 2 * parVarAmp;
+    const nearStillGain = 1 + (0.02 + s[2] * 0.08 - 1) * parVarAmp;
+    const targetGain = off ? 1 : n.radius <= nearStillCutoff ? nearStillGain : variedGain;
+    const targetAngle = off ? 0 : (s[3] - 0.5) * 2 * parVarAngle;
+    n._parGain = (n._parGain ?? 1) + (targetGain - (n._parGain ?? 1)) * 0.15;
+    n._parAng = (n._parAng ?? 0) + (targetAngle - (n._parAng ?? 0)) * 0.15;
   }
 }
 
@@ -110,38 +114,60 @@ export function stepFlowDrift(nodes: GlPhysNode[], nowSec: number, playingId: st
   }
 }
 
-/** L2-4 偶发颤动：每隔 ~shiverInterval 秒挑一颗球轻颤 0.3s（高频小幅衰减）→ 写 _shivX/_shivY
- *  （applyFloat 内叠到屏幕位 → GL球/命中层/遮罩/日蚀同步颤）。豁免播放/拖拽/正在浮沉球；reduced-motion 全禁。
- *  确定性挑球：用时段序号 hash（避每帧 Math.random）；方向/间隔抖动同源。 */
+/** L2-4 偶发颤动：开启立即反馈，之后以 shiverInterval 为平均值随机抖动间隔；短促三摆后归位。 */
+const SHIVER_DURATION = 0.48;
+const SHIVER_CYCLES = 3;
+const SHIVER_GAIN = 2.5;
 const shivers = new Map<string, { start: number; dirX: number; dirY: number }>();
 let nextShiverAt = 0;
+let shiverWasOn = false;
+let shiverCursor = 0;
+
+/** 由事件序号和球种子派生 0.55–1.45 倍间隔；确定性随机，刷新后仍保持可复现。 */
+function shiverIntervalFactor(eventIndex: number, seed: number): number {
+  const raw = Math.sin((eventIndex + 1) * 12.9898 + seed * 78.233) * 43758.5453;
+  const unit = raw - Math.floor(raw);
+  return 0.55 + unit * 0.9;
+}
+
 export function stepShiver(nodes: GlPhysNode[], nowMs: number, playingId: string | null, hoverId: string | null, on: boolean): void {
   const { shiverInterval, shiverAmp } = getLifeTuning();
   if (!on || prefersReducedMotion() || nodes.length === 0) {
     if (shivers.size) shivers.clear();
     for (const n of nodes) { if (n._shivX || n._shivY) { n._shivX = 0; n._shivY = 0; } }
     nextShiverAt = 0;
+    shiverWasOn = false;
+    shiverCursor = 0;
     return;
   }
-  if (nextShiverAt === 0) nextShiverAt = nowMs + shiverInterval * 1000;
-  if (nowMs >= nextShiverAt) {
-    const epoch = Math.floor(nowMs / 100);
-    const cand = nodes[hashStr('shv' + epoch) % nodes.length];
-    if (cand && cand.id !== playingId && cand.id !== hoverId && cand.fx == null && cand.fy == null && (cand._waveZ ?? 0) === 0 && !shivers.has(cand.id)) {
-      const ang = lifeSeeds(cand.id)[4] * Math.PI * 2;
+  // 用户主动打开开关时立即展示一次；幅度从 0 调高后同样无需再等完整间隔。
+  if (!shiverWasOn) { shiverWasOn = true; nextShiverAt = nowMs; }
+  if (nowMs >= nextShiverAt && shiverAmp > 0) {
+    const available = nodes
+      .filter((n) => n.id !== playingId && n.id !== hoverId && n.fx == null && n.fy == null)
+      .sort((a, b) => b.radius - a.radius); // 首次优先大球，方便肉眼验收；之后逐球轮换
+    const cand = available[shiverCursor % Math.max(1, available.length)];
+    if (cand) {
+      const seeds = lifeSeeds(cand.id);
+      const ang = seeds[4] * Math.PI * 2;
       shivers.set(cand.id, { start: nowMs, dirX: Math.cos(ang), dirY: Math.sin(ang) });
+      shiverCursor++;
+      const factor = shiverIntervalFactor(shiverCursor - 1, seeds[5]);
+      nextShiverAt = nowMs + Math.max(0.1, shiverInterval * factor) * 1000;
+    } else {
+      nextShiverAt = nowMs + 250; // 暂时都在交互中：短延迟重试，不让本次机会消失
     }
-    const jitter = 0.5 + (hashStr('jit' + epoch) % 1000) / 1000; // 0.5..1.5
-    nextShiverAt = nowMs + shiverInterval * 1000 * jitter;
   }
   const env = lifeEnv(nowMs / 1000);
   for (const n of nodes) {
     const sh = shivers.get(n.id);
     if (!sh) { if (n._shivX || n._shivY) { n._shivX = 0; n._shivY = 0; } continue; }
     const dt = (nowMs - sh.start) / 1000;
-    // 到期 / 颤动中途被抓起拖拽（红线⑥：拖拽中不受 shiver 推动，且 unproject 不逆算 _shiv → 命中会偏）→ 立即中止
-    if (dt >= 0.3 || n.fx != null || n.fy != null) { shivers.delete(n.id); n._shivX = 0; n._shivY = 0; continue; }
-    const a = shiverAmp * n.radius * Math.sin(dt * 40) * Math.exp(-dt / 0.1) * env;
+    const protectedNow = n.id === playingId || n.id === hoverId || n.fx != null || n.fy != null;
+    if (dt >= SHIVER_DURATION || protectedNow) { shivers.delete(n.id); n._shivX = 0; n._shivY = 0; continue; }
+    const p = dt / SHIVER_DURATION;
+    const envelope = Math.sin(Math.PI * p); // 0→1→0，起止都准确回到原位
+    const a = shiverAmp * n.radius * SHIVER_GAIN * Math.sin(Math.PI * 2 * SHIVER_CYCLES * p) * envelope * env;
     n._shivX = a * sh.dirX;
     n._shivY = a * sh.dirY;
   }

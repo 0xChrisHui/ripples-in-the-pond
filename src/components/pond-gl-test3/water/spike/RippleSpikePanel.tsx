@@ -38,7 +38,10 @@ const MOTION_SLIDERS: ReadonlyArray<Slider> = [
   { key: 'waveSpeedMin', label: '速度·下限', min: 0.2, max: 4, step: 0.05 }, // 球浮动：单次沉浮速度区间（越大越快=时长越短）
   { key: 'waveSpeedMax', label: '速度·上限', min: 0.2, max: 4, step: 0.05 },
   { key: 'bobScale', label: '触发频率', min: 0.2, max: 3, step: 0.1 },       // 多久有一颗球开始波动
-  { key: 'scrollStep', label: '滚轮步长', min: 0.01, max: 0.2, step: 0.005 }, // /test3 单次滚轮深度位移封顶（小=出入水更慢更分明）
+  { key: 'scrollStep', label: '滚轮·目标步长', min: 0.01, max: 0.2, step: 0.005 }, // 只改变目标距离，不直接决定画面速度
+  { key: 'scrollMaxSpeed', label: '滚轮·最高速度', min: 0.02, max: 2.5, step: 0.01 }, // shift 单位/秒，越大完成越快
+  { key: 'scrollAcceleration', label: '滚轮·开始加速', min: 0.05, max: 10, step: 0.05 }, // shift 单位/秒²
+  { key: 'scrollDeceleration', label: '滚轮·停止减速', min: 0.05, max: 12, step: 0.05 }, // shift 单位/秒²
 ];
 
 const DRIFT_SLIDERS: ReadonlyArray<Slider> = [
@@ -70,7 +73,6 @@ const MOONREFLECT_SLIDERS: ReadonlyArray<Slider> = [
 ];
 
 const MOONBALL_SLIDERS: ReadonlyArray<Slider> = [
-  { key: 'ballLightAbove', label: '水上球衰减', min: 0, max: 1, step: 0.02 }, // 月光(焦散/倒影取高者)对水上球增亮，0–100%
   { key: 'ballLightBelow', label: '水下球衰减', min: 0, max: 1, step: 0.02 }, // 对水下球增亮，0–100%
   { key: 'waveOnBall', label: '水下球波纹', min: 0, max: 1.5, step: 0.05 },   // 水下球水面波纹强度（提升水下感）
 ];

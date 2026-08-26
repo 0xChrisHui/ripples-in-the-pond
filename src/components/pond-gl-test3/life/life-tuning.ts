@@ -4,8 +4,8 @@
  * P8-L 生命感参数 store（范式同 ripple-tuning：单例 + pub/sub + localStorage）。
  *
  * L 线各生命感模块每帧读 getLifeTuning() 取幅度/频率/衰减等系数；LifePanel 用 useSyncExternalStore
- * 订阅渲染滑块。localStorage key = 'test3-life'（无 legacy 迁移，直接 load 默认+存档）。
- * 本步（L0a 基建）所有默认值皆中性（幅度类 = 0 → 与改前像素级一致），滑块暂无消费方。
+ * 订阅渲染滑块。localStorage key = 'test3-life-v2'（无 legacy 迁移，直接 load 默认+存档）。
+ * 默认值由用户在 /test3 调参并保存后的视觉定稿同步而来；localStorage 仍优先覆盖默认值。
  */
 export interface LifeTuning {
   lifeEnvAmount: number;   // 全局呼吸包络深度（0=恒1无呼吸；乘在所有无序项幅度上）
@@ -35,37 +35,37 @@ export interface LifeTuning {
   haloBreathSpeed: number; // 光晕呼吸·速度
 }
 
-/** L0a 基建默认：幅度类全 0（中性 → 像素级现状），仅频率/尺度/衰减取合理常量。 */
+/** 用户 2026-08-25 在 /test3 保存的生命感定稿参数。 */
 export const DEFAULT_LIFE_TUNING: LifeTuning = {
-  lifeEnvAmount: 0,        // 全局呼吸包络深度（0=无呼吸）
-  lifeEnvPeriod: 24,       // 全局呼吸周期（秒）
-  wheelAmpVar: 0,          // 滚轮升降·每球幅度差
-  wheelLagVar: 0,          // 滚轮升降·每球时滞差
-  parVarAmp: 0,            // 鼠标视差·每球幅度差
-  parVarAngle: 0,          // 鼠标视差·每球方向偏转（弧度）
-  flowStrength: 0,         // 流场游移·力度
-  flowScale: 0.008,        // 流场空间尺度（越小暗流越大团）
-  flowSpeed: 0.1,          // 流场演化速度
-  shiverInterval: 30,      // 偶发颤动·平均间隔（秒）
-  shiverAmp: 0,            // 偶发颤动·幅度（×半径）
-  edgeWaveAmp: 0,          // 能量球边缘波·幅度
-  edgeWaveFreq: 5,         // 能量球边缘波·波数（整数）
-  edgeWaveSpeed: 0.6,      // 能量球边缘波·转速
-  edgeSoft: 0,             // 能量球边缘·虚化
-  exciteGain: 0,           // 扰动激励·增益
-  exciteDecay: 0.8,        // 扰动激励·衰减时间常数（秒）
-  jellyAmount: 0,          // 果冻感·拉伸量
-  wakeSphereForce: 0,      // 尾波扰动水下球·推力
-  wakeDepthFalloff: 0.46,  // 尾波推力随深度衰减深
-  flickerAmount: 0,        // 透明度时隐时现·幅度
-  flickerSpeed: 0.2,       // 透明度时隐时现·速度
-  flickerDepthBias: 0,     // 隐现·深度加权（水下更隐）
-  haloBreathAmp: 0,        // 光晕呼吸·幅度
-  haloBreathSpeed: 0.3,    // 光晕呼吸·速度
+  lifeEnvAmount: 0.6,
+  lifeEnvPeriod: 60,
+  wheelAmpVar: 0.6,
+  wheelLagVar: 0.8,
+  parVarAmp: 1,
+  parVarAngle: 0.55,
+  flowStrength: 0.275,
+  flowScale: 0.02,
+  flowSpeed: 0.23,
+  shiverInterval: 5,
+  shiverAmp: 0.08,
+  edgeWaveAmp: 0.1,
+  edgeWaveFreq: 3,
+  edgeWaveSpeed: 1.1,
+  edgeSoft: 0,
+  exciteGain: 2.45,
+  exciteDecay: 3,
+  jellyAmount: 0.02,
+  wakeSphereForce: 0.08,
+  wakeDepthFalloff: 0.98,
+  flickerAmount: 0.84,
+  flickerSpeed: 0.05,
+  flickerDepthBias: 0,
+  haloBreathAmp: 0.5,
+  haloBreathSpeed: 0.31,
 };
 
-// /test3 专属键（无 legacy 迁移；直接 load 默认+存档）。
-const KEY = 'test3-life';
+// v2：参数已进入视觉定稿，换键避免旧的全零存档覆盖新版默认。
+const KEY = 'test3-life-v2';
 
 function load(): LifeTuning {
   if (typeof window === 'undefined') return { ...DEFAULT_LIFE_TUNING };

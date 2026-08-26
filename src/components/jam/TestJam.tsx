@@ -5,6 +5,7 @@ import { useKeyboard } from '@/src/hooks/useKeyboard';
 import { useJam } from '@/src/hooks/useJam';
 import { useRecorder } from '@/src/hooks/useRecorder';
 import { saveDraft } from '@/src/lib/draft-store';
+import { emitShowcaseFx } from '@/src/components/pond-gl-test3/showcase/showcase-state';
 
 /**
  * TestJam — /test 沙箱专用 jam 组件（移除 useKeyVisual 旧动画）。
@@ -67,7 +68,7 @@ function TestJamDesktop() {
   const { pressedKeys } = useKeyboard({
     enabled: ready,
     onKeyDown: (key) => {
-      // 关键差异：不调 triggerVisual（旧动画关闭）— SvgAnimationLayer 走自己的 keydown
+      emitShowcaseFx(key); // 旧10效入口冻结；A–E 只在播放日食存在时进入新共享状态。
       playSound(key);
       recordKeyDown(key);
     },
@@ -85,7 +86,7 @@ function TestJamDesktop() {
   return (
     <section className="flex flex-col items-start gap-3">
       <p className="text-[10px] uppercase tracking-[0.14em] text-white/40">
-        按下键盘 A-Z、3-8 或空格演奏
+        播放音乐圆后按 A–E 预览新动效；其余键仍可演奏
         {recording && <span className="ml-2 text-red-400/70">● 录制中</span>}
       </p>
 

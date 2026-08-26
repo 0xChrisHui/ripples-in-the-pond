@@ -6,11 +6,11 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 12 当前**（OP Mainnet 上线准备与部署，2026-07-19 执行中；与 P8-P11 前端迭代**解耦并行**）。P7 已完结 / P8-L 实现待验收(冻结) / P10 已完结 / P9·P11 未开始。**权威"下一步"见下方「P12 执行进度」块。**
+**Phase**: **Phase 9 当前**（P8 于 2026-08-26 正式完结；P12 已迁移 OP Mainnet并进入软启动观察）。P7 / P8 / P10 / P12 已完结，P9 音效与按键编舞进行中，P11 未开始。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
-  - **Phase 8**（当前）= 水塘视觉重设计（首页星空 → 水塘）
-  - **Phase 9** = 按键动画 WebGL 重设计（26 个按键水塘风格）
+  - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）
+  - **Phase 9** = 日食合奏按键动画（45 个候选经双轮键位集中筛选）
   - **Phase 10** = 分享转发（/score 加 X/微博/复制链接）+ 海报/link 下载 + 债务收口 + 后端 bug 修复（**2026-07-05 范围收窄**：原「组件升级/小球 36→35/特殊小球」已作废，详见 `playbook/phase-10/00-overview.md`）
   - **Phase 11** = 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
   - **Phase 12** = OP Mainnet 上线准备与部署
@@ -18,32 +18,57 @@
   - **Phase 14** = 混音系统 + RemixNFT
   - **Phase 15** = 音效系统扩展
   - **Phase 16** = 原生钱包 + 多链 / ETH Mainnet（往后排）
+**P8 综合系统性 Review**：`reviews/2026-08-25-phase-8-consolidated-review.md`（汇总 Kimi K3 + Codex 并完成交叉验证；严格排除其他 Phase、媒体与 commit 收束。结论：0 个 P0、3 个 P1、7 个 P2。**3 个 P1、7 个 P2、死文件、文档契约、双树清单与自动浏览器回归均已完成**：专项代码与每步完整 `verify.sh` 全绿；Edge 实测四路由、fallback/context、wheel、拖拽取消、键盘、reduced-motion、横竖屏、DPR `2→1.5→2` 与 waterFx 连续切换全部通过。证据见 `reviews/2026-08-26-phase-8-browser-regression.md` 与 `reviews/2026-08-26-phase-8-dual-tree-inventory.md`。**2026-08-26 用户已确认 R3 与 L 线“活而不乱”最终目验通过，并明确让当前 `/test3` 替代首页；默认 `/` 已切为 GL 水塘，沙盒工具仅留 `/test3`/`/test4`，旧 SVG 由 `/v1` 保留。**原始 Kimi 报告保留在 `reviews/2026-08-25-phase-8-review.md`。）
 **P7 Completion Review**: `reviews/2026-05-16-phase-7-completion-review.md`（commit `5a2211a`，结论：Phase 7 完结，deferred 项挂 Phase 10）
 **P7 三方 review**：`reviews/2026-05-13-phase-7-playbook-review.md`（Claude 自审 + 2 个 Codex review，16 项必修已全部落地）
 **Phase 6 Completion**: `reviews/2026-05-08-phase-6-completion-review.md`（含旧 10 项硬阻塞清单，已在 P7 Track A 里重新拆分归宿）
 **P6 Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`（16/19 通过 + 0 P0 + 0 P1）
 **stakeholder 反馈**：艺术家 5 条反馈已收到（→ Phase 8）；投资人催 Semi demo（→ P7 Track B PoC-only）
 
+**P9 当前（2026-08-26）**：33 个本地 MP3 与 `A-Z + 3-8 + Space` 输入已生产上线；P9 权威 playbook 已建立为 `playbook/phase-9/00-overview.md`。用户拍板采用三段式：Track A 在 `/test3` 一口气做出 45 个候选（普通 A–Z + 大写 A–S），Track B 集中审阅删改，Track C 清码并冻结正式动画。旧 10 效继续冻结；五效预演结论为 E 月影过境冻结标杆、B 微光交换保留精修、A 黑盘偏心重做、C 旧花瓣实现淘汰、D 安静波重做。**下一步：启动 Track A0，锁定浏览器基线并建立 45 效共享编舞骨架。**
+
+**P8-L 动态验收微调（2026-08-23）**：视差/流场上限微调已完成。真透明 R3 最终维修已完成浏览器自动复验：球网格改为挂载时绑定独立 FBO layer，水上实体主体最后覆盖湿背景，水下球保留水纹；完全出水球中心点击时涟漪只绕过主体，`alphaFlicker` 开启后主体覆盖仍稳定。**2026-08-26 用户最终目验确认 R3 与 L 线“活而不乱”合适，验收门已关闭。**
+
+**P8-L 默认行为微调（2026-08-25）**：滚轮默认步长按用户输入 `0.`075 解释为 `0.075`，旧 `.025/.05/.1/.75` 存档自动迁移；生命感 10 项中除果冻感外全部默认开启。`/test3` 继续作为沙盒验收页。
+
+**P8-L 滚轮丝滑缓动（2026-08-25）**：滚轮深度位移改为临界阻尼弹簧模型，开始和停止都经过连续加速/减速，保留 `0.075` 默认步长和现有生命感开关。
+
+**P8-L 滚轮速度护栏（2026-08-25）**：在用户手动将 `SHIFT_SPRING` 调为 `0.1` 的基础上，新增最高速度限制，层级变化速度封顶为当前模型理论峰值的 60%。
+
+**P8-L 滚轮输入/视觉速度脱钩（2026-08-25）**：最终改为独立速度制；`0.075` 只累计目标位置，画面以 `0.35 shift/秒` 为最高速度，并按独立加速度/刹车距离继续完成剩余移动。
+
+**P8-L 滚轮运动参数面板化（2026-08-25）**：目标步长、最高速度、开始加速、停止减速均已进入 `/test3` 波纹/运动参数面板，提供宽范围实时调试并可保存。
+
+**P8-L 滚轮去同步限速修复（2026-08-25）**：修复生命感“滚轮升降去同步”直接追 `shiftTarget`、绕过最高速度/加减速参数的问题；每球滞后现在跟随已限速的 `shift`。下一步：用户在 `/test3` 用最高速度 `0.02`、开始加速 `0.05`、停止减速 `0.05` 复验滚轮停止后是否继续缓慢完成移动。
+
+**P8-L 滚轮与隐现默认值更新（2026-08-25）**：默认目标步长 `0.06`、最高速度 `2.5`、开始加速 `10`、停止减速 `0.05`、隐现深度偏置 `0`。已有 localStorage 参数仍优先，点击 `/test3` 面板“重置”即可使用这组默认值。
+
 ---
 
-## P12 执行进度（更新至 2026-08-23，权威"下一步"看这里）
+## P12 执行进度（部署阶段已完成，更新至 2026-08-24）
 
-**Phase 12 = OP Mainnet 上线准备与部署**，与 P8-P11 前端迭代**解耦并行**（用户策略：后端先做好→提前上主网→前端音效慢慢修；P12 不依赖 P8/P9/P11 完成，前端可重部署、零链上影响）。权威 playbook：`playbook/phase-12/`（00-overview + 5 track A-E）。
+**Phase 12 部署阶段已完成**：主网合约、生产环境、数据库、cron 和真实铸造均已闭环。P12 与 P8/P9 解耦，后续视觉和音效改动不会改变已铸造 NFT 或主网合约。
+
+**主网部署结果**：MaterialNFT `0x03504aeb95EbE3DC8c427b7b147f873F9948a299`、ScoreNFT `0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA`、MintOrchestrator `0x406519962cDD1673D30fEcC13c4B6f7Af87Ba1dA`；三份源码均通过 OP Etherscan 验证，Material URI 已冻结。
+
+**生产验收结果**：Vercel 三环境已切 Chain ID 10；4 个生产 cron 已恢复，空投保持关闭；数据库已切主网游标；Material #24/#7/#34 与 Score #1 真实铸造成功；`/score/1` 页面、OG、metadata 和浏览器播放正常。deployer 已退权、转回余额并销毁一次性私钥。
 
 **已完成（本会话 2026-07-19，分支 `feat/p12-mainnet-prep`，`verify.sh` 全绿 / forge 42 tests）**：
 - **A track（音效/解码器）✅ 全完成**：解码器数量无关化 + 音效表 v2 三格式兼容 + postMessage v1 + 两网关有界重试；用户验收「月下档案唱片」UI及旧格式 / v2 / Demo / 重试版播放。2026-08-22 新 Turbo 钱包充值 0.0009 Base ETH；decoder `NMCj...Zmb0`（23362 bytes）与 v2 表 `NQsg..._kl8`（2558 bytes / 26 sounds）上传成功，双网关 SHA-256 一致；本地 + Vercel Development/Preview/Production txid 已切，新钱包 JWK 已切 Production/Preview，并用原线上部署重建到 `dpl_Gc9G...ctKh`。**2026-08-23 真实 smoke `Ripples #26` 通过**：OP Sepolia mint + setTokenURI 均 success，链上 `tokenURI=ar://C2fL...S1PI`；metadata 的 animation_url 精确钉入新 decoder / events / base / v2 sounds，15 events / 26 sounds；metadata、decoder、base、sounds 双网关 200 且哈希一致。新 events 在主网关 200、备用网关尚传播 404，由已验收的双网关 fallback 吸收，不阻塞。
 - **B track（合约主网化）代码、B-1 回归与 B5 admin 演练均完成**：CT-1~15 全落 + CT-11 编译器 pin + B4 runbook；2026-08-23 新 admin 在 OP Sepolia 完成 grantRole / revokeRole 演练。Optimism Mainnet Alchemy App `Ripples OP Mainnet`（ID `w609pakm9kk1b07g`）已由官方 CLI 创建并实测 chainId=10；Etherscan V2 key 已创建，OP Mainnet 源码/验证状态接口实测可用。**主网 RPC 与合约验证凭证均已就绪**。
 - **关键决策**：Foundry 阻塞解除；admin = 独立普通钱包(≠热钱包，存本地，靠 Claude 操作)；合约不可升级但可重部署（详 `docs/JOURNAL.md` 2026-07-19；memory `project_p12_admin_wallet`）。
 
-**🔥 生产热修已上线并实证（2026-07-26 `56d72a9`；2026-08-23 `Ripples #26`）**：乐谱铸造管道三修（mint_events 部分索引 upsert 必挂 / tokenId 写入吞 DB 错 / op-lock 网络错误裸抛）。**刻意只摘管道修复，不含 CT-4 合约耦合**——线上仍是旧合约，两参数 mintScore 会全 revert；#26 已完整证明旧合约生产管道可成功走到 tokenURI。
+**🔥 生产铸造管道已在主网实证**：此前的队列状态机、mint_events、tokenId 写入和 operator-lock 修复已随生产部署运行；Score #1 已完整走通主网 mint → setTokenURI → chain event → 公开页播放。
 
-**下一步（2026-07-19 执行路径已固化 = `playbook/phase-12/00-overview.md` §8；C-0 已拍板：Semi 维持/备份手动导出+部署日快照/额度不升级）**：
+**历史部署序列（已归档，不再是当前下一步）**：
 1. ✅ **B-1 测试网回归**（2026-07-23 完成）：3 合约重部署（Material `0xe335..13c0` / Score `0xE0fA..DB23` / Orch `0x970b..01FA`）+ 角色 6/6 + 幂等键链上拒绝 + CT-7/8 链上全验 + 两通路 e2e 全通（乐谱 tokenId 24 归户）。揪出并修复 3 个管道真 bug（op-lock 裸 500 / tokenId 写入吞错 / **mint_events 部分索引 upsert 必挂——现存生产 main，随 P12 合并即修**）+ D-0 清表实证。详见 `reviews/phase-6-deprecated-contracts.md` 2026-07-23 补记。
 2. **C 施工 ✅**：CRON_SECRET / Turbo 永久上传 / operator 0.01 ETH / 告警 / 快照恢复演练 / C7-C10 / 主网 Alchemy / Etherscan key / **C6 六服务额度盘点全部完成**。C6 结论：六项维持免费档；Alchemy 0.92%、Supabase 349 行、Upstash 56 keys，均无临界风险。部署日前 24h 重跑 C5。
 3. **A-1 解码器 ✅ 全完成**：UI / 三组参数 / 网关重试 / 永久上传 / 三环境切换 / `Ripples #26` 真实 smoke 全过。
 4. **B5 admin 签名演练 ✅ 完成（2026-08-23）**：测试网 funding `0x51f1...be48`；既有 admin 授权新 admin `0x0466...1947`；新 admin 签 grant `0x3ae2...efa7`、revoke `0x42ce...1424`；清理后临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true。
 5. **D-1 内容冻结**：曲名 1-35 ✅ / admin+deployer 钱包 ✅ / admin 私钥备份 ✅ / DB 恢复演练 ✅ / 主网凭证 ✅ / 额度盘点 ✅。**当前下一步：🛑 D-0 确定部署日**；部署日前 24h 新快照 + admin/deployer 主网充值 → D 部署日。
 6. **E 性能**（软 gate）随时穿插不阻塞。
+
+**当前权威下一步**：P12 部署阶段关闭；保留 7 天软启动观察（health、cron、双队列、告警），开发主线回到 P8-L / P9 的浏览器验收与音效动画迭代。
 
 ---
 
@@ -200,11 +225,59 @@
 
 ## 上次成功验证
 
-- 验证: **P8-L 浏览器验收修复：固定切组水面/球层级归中 + 偶发颤动改为开启即见**
+- 验证: **P8-L 用户保存的生命感参数已同步为代码默认值**
+- 时间: 2026-08-25
+- 改动: `DEFAULT_LIFE_TUNING` 已同步 `/test3` 保存的 25 项参数；当前 LifePanel 滑块范围全部覆盖这些默认值，localStorage 仍优先保留用户后续保存。
+- 验证证据: `scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、forge 42/42）；`http://localhost:3000/test3` 返回 200。
+- 下一步: **用户硬刷新 `/test3`，点击“重置”确认面板显示这组定稿值；之后可继续浏览器视觉验收。**
+
+- 验证: **P8-L 滚轮与生命感默认行为微调**
+- 时间: 2026-08-25
+- 改动: `scrollStep` 默认值改为 `0.075`，滑块上限恢复为 `0.2`；9 个生命感模块默认开启，`jelly` 保持关闭；旧滚轮默认存档自动迁移。
+- 验证证据: `scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、forge 42/42）。
+- 下一步: **用户硬刷新 `/test3`，观察一次滚轮跨深度和生命感叠加后的整体观感。**
+
+- 验证: **P8-L 滚轮默认值修正为 0.075**
+- 时间: 2026-08-25
+- 改动: 按用户更正，将滚轮默认步长从 `0.75` 改为 `0.075`；已保存的 `0.75` 会自动迁移到 `0.075`。
+- 验证证据: `scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、forge 42/42）。
+- 下一步: **用户硬刷新 `/test3`，确认滚轮步幅恢复为细步长。**
+
+- 验证: **P8-L 滚轮位移改为丝滑加减速**
+- 时间: 2026-08-25
+- 改动: `pointer-fx.ts` 用临界阻尼速度模型替换每帧直接追目标的位置插值；滚轮目标、步长和生命感参数不变。
+- 验证证据: `scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、forge 42/42）。
+- 下一步: **用户硬刷新 `/test3`，连续滚动并观察启动、减速和停下是否自然。**
+
+- 验证: **P8-L 滚轮层级变化最高速度限制为 60%**
+- 时间: 2026-08-25
+- 改动: `pointer-fx.ts` 保留用户设定的 `SHIFT_SPRING = 0.1`，新增 `SHIFT_SPEED_RATIO = 0.6`，只限制 `shiftVelocity` 峰值，不改变最终目标位置。
+- 验证证据: `scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、forge 42/42）。
+- 下一步: **用户硬刷新 `/test3`，连续滚轮观察层级变化速度是否足够柔和。**
+
+- 验证: **P8-L 滚轮输入步长与视觉移动速度脱钩**
+- 时间: 2026-08-25
+- 改动: `pointer-fx.ts` 由独立 `shift` 单位/秒速度推进目标；滚轮停止后仍继续移动，`0.075` 不再决定画面速度。
+- 验证证据: `scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、forge 42/42）。
+- 下一步: **用户硬刷新 `/test3`，滚轮输入 1 秒后松开，观察层级是否继续丝滑完成。**
+
+- 验证: **P8-L 滚轮最高速度与加减速参数面板化**
+- 时间: 2026-08-25
+- 改动: `RippleSpikePanel` 新增滚轮目标步长、最高速度、开始加速、停止减速 4 个滑块；`pointer-fx.ts` 每帧读取 store，保存/重置均生效。
+- 验证证据: `scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、forge 42/42）。
+- 下一步: **用户硬刷新 `/test3`，在“波纹/运动参数”面板中调试 4 个滚轮参数。**
+
+- 验证: **P8-L 真透明 R3 最终维修：水上实体球严格覆盖水面**
+- 时间: 2026-08-24
+- 改动: 修复 `InstancedMesh` 异步挂载后未进入球体 layer 的根因；水上/水下真实 FBO 恢复分流，水上主体强制实体 alpha，光晕保留透明，水下球继续接受折射和受限水光。
+- 验证证据: Edge 1920×1080 将点击中心放在最大水上球内部，0.45s/1.10s/1.95s 连拍确认涟漪绕过主体；`waterDbg=1` 混合水位红/绿分流，完全出水及 `alphaFlicker=1` 均为纯绿主体且无蓝色 Alpha 失配；`scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、forge 42/42）。
+- 下一步: **用户在 `/test3` 按 `111221.mp4` 同款滚轮浮出 + 点击动作最终目验**；若仍失败，按 R3 止损线回退，不再增加 R4。
+
+- 验证: **P9 `/test3` 首枚 WebGL 按键动画：R「深层压力花」**
 - 时间: 2026-08-23
-- 改动: `/test3` 切组不再按上一组球深度重算水面，并清除滚轮层级偏移；偶发颤动开启后立即触发，首次优先大球，0.48 秒三次摆动，之后严格按面板间隔轮换；播放、hover、拖拽继续拥有交互优先级。
-- 验证证据: `scripts/verify.sh` 全通过（TypeScript 0 error、ESLint 0 error/3 条原有 warning、生产构建通过、forge 42/42）；相关代码文件均在硬线内；`http://localhost:3000/test3` 返回 200。
-- 下一步: **用户浏览器验收偶发颤动**：设间隔 5 秒、幅度 0.12，开启后应立即看到一次，随后每 5 秒看到一颗球短促三摆；通过后再单独落默认参数与“鼠标水波扰球”强度修复。
+- 改动: 新建 `key-fx/` 事件总线、压力花 shader 与 R3F 渲染层；`R` 按键按其高能量、约 210ms 攻击特征生成冷玉三层等深线和月金内核，并进入现有 WaterDistort 合成。reduced-motion 下禁用。
+- 验证证据: `scripts/verify.sh` 全通过（TypeScript、ESLint、文件/目录硬线、生产构建、forge 42/42）；Edge 1440×900 触发 `R` 实拍确认动画可见、受水体合成且不遮 UI。
+- 下一步: **用户在本地 `/test3` 按 `R` 试听/目验压力花**；通过后再按音频频谱挑下一种动画家族，不批量复制同一效果。
 
 - 验证: **P8-G H 线全完（H4–H6）+ I 线 I1/I2 落地**——/test1 成干净 GL 水塘页（涟漪交互全集 + 球自驱浮沉 + 波纹/运动参数板 + 去 SVG + GL 日蚀），逐步浏览器验收通过
 - 时间: 2026-06-15

@@ -15,10 +15,10 @@ export interface SphereTuning {
 }
 
 export const DEFAULT_TUNING: SphereTuning = {
-  brightness: 1,
+  brightness: 1.2,
   contrast: 1,
   saturation: 1,
-  halo: 1.9,  // 用户指定
+  halo: 1.2,
   fill: 1.6,  // 用户指定
 };
 
@@ -35,7 +35,12 @@ function load(): SphereTuning {
       if (legacy) { localStorage.setItem(KEY, legacy); raw = legacy; }
     }
     if (!raw) return { ...DEFAULT_TUNING };
-    return { ...DEFAULT_TUNING, ...(JSON.parse(raw) as Partial<SphereTuning>) };
+    const saved = JSON.parse(raw) as Partial<SphereTuning>;
+    const merged = { ...DEFAULT_TUNING, ...saved };
+    // 一次性升级旧默认值；用户其他主动保存的参数全部保留。
+    if (saved.brightness === 1) merged.brightness = DEFAULT_TUNING.brightness;
+    if (saved.halo === 1.9) merged.halo = DEFAULT_TUNING.halo;
+    return merged;
   } catch {
     return { ...DEFAULT_TUNING };
   }

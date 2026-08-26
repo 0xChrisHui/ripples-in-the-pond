@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
 import type { GlSim } from '../spheres/use-gl-sim';
 import { setNodeDrag, endNodeDrag, type GlPhysNode } from '../spheres/gl-sim-setup';
@@ -31,7 +31,7 @@ export default function SphereOverlay({ glSim, waterOn, depthModel = false }: { 
   const { nodes, playingIdRef } = glSim;
   const { playing, currentTrack } = usePlayer();
   const playingId = playing && currentTrack ? currentTrack.id : null;
-  const elsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+  const elsRef = useRef<Map<string, HTMLButtonElement>>(new Map());
   const subSmooth = useRef<Map<string, number>>(new Map()); // K3 修 R4：没入度逐节点阻尼，消标题闪烁
 
   // 每帧把每个 hit-div 移到对应球的 sim 坐标（div 左上角对齐 (x-r, y-r) → 中心落在球心）
@@ -91,7 +91,7 @@ interface HitProps {
   node: GlPhysNode;
   glSim: GlSim;
   isPlaying: boolean;
-  register: (el: HTMLDivElement | null) => void;
+  register: (el: HTMLButtonElement | null) => void;
 }
 
 function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
@@ -100,12 +100,22 @@ function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
   const r = node.radius;
   const show = hovered || isPlaying;
   const titleSize = r * ((node.track.title?.length ?? 1) >= 2 ? 1.0 : 1.26);
+  const togglePlayback = useCallback(() => { void glSim.toggle(node.track); }, [glSim, node.track]);
+  const finishDrag = useCallback(() => {
+    const d = drag.current;
+    if (!d.down && !d.moved) return;
+    endNodeDrag(node);
+    glSim.simRef.current?.alphaTarget(0.008);
+    drag.current = { down: false, moved: false, x: 0, y: 0 };
+  }, [glSim.simRef, node]);
 
-  const onDown = (e: React.PointerEvent<HTMLDivElement>) => {
+  useEffect(() => () => finishDrag(), [finishDrag]);
+
+  const onDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     e.currentTarget.setPointerCapture(e.pointerId);
     drag.current = { down: true, moved: false, x: e.clientX, y: e.clientY };
   };
-  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+  const onMove = (e: React.PointerEvent<HTMLButtonElement>) => {
     const d = drag.current;
     if (!d.down) return;
     if (!d.moved) {
@@ -117,30 +127,41 @@ function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
     const { x, y } = unproject(e.clientX, e.clientY, depthOf(node), currentCtx(), node);
     setNodeDrag(node, x, y);
   };
-  const onUp = (e: React.PointerEvent<HTMLDivElement>) => {
+  const onUp = (e: React.PointerEvent<HTMLButtonElement>) => {
     const d = drag.current;
-    e.currentTarget.releasePointerCapture(e.pointerId);
-    if (d.moved) {
-      endNodeDrag(node);
-      glSim.simRef.current?.alphaTarget(0.008);
-    } else {
-      void glSim.toggle(node.track); // 没拖动 = 点击播放
-    }
-    drag.current.down = false;
+    if (!d.down) return;
+    const shouldToggle = !d.moved;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+    finishDrag();
+    if (shouldToggle) togglePlayback(); // 没拖动 = 点击播放
+  };
+  const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    togglePlayback();
   };
 
   return (
-    <div
+    <button
+      type="button"
       ref={register}
+      aria-label={`${isPlaying ? '暂停' : '播放'} ${node.track.title}`}
+      aria-pressed={isPlaying}
       onPointerDown={onDown}
       onPointerMove={onMove}
       onPointerUp={onUp}
+      onPointerCancel={finishDrag}
+      onLostPointerCapture={finishDrag}
+      onKeyDown={onKeyDown}
       onPointerEnter={() => { setHovered(true); glSim.setHover(node.id); }}
       onPointerLeave={() => { setHovered(false); glSim.setHover(null); }}
       style={{
         position: 'absolute',
         width: r * 2,
         height: r * 2,
+        padding: 0,
+        border: 0,
+        background: 'transparent',
         cursor: 'pointer',
         willChange: 'transform',
         transition: 'opacity 0.4s ease',
@@ -184,6 +205,6 @@ function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
         <circle r={13} fill="rgba(0,0,0,0.55)" stroke="rgba(255,255,255,0.22)" strokeWidth={1} />
         <path d={isPlaying ? PAUSE_PATH : PLAY_PATH} fill="white" />
       </svg>
-    </div>
+    </button>
   );
 }

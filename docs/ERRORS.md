@@ -237,6 +237,7 @@
 - E013 Etherscan 免费 key 的 OP 普通 API 被拒绝
 - E014 Vercel Hobby 无法通过 CLI 读取精确 Usage
 - E015 Vercel Sensitive env 不能注入本地 Resend 查询
+- E016 PowerShell 直接启动 Edge headless 未生成截图
 
 ### JWT / 认证
 
@@ -274,3 +275,120 @@
 - **怎么修**：使用绝对路径 `& 'D:\DevTools\Git\bin\bash.exe' scripts/verify.sh`，完整验证通过。
 - **学到了什么**：Windows 上命令不在 PATH 不代表工具未安装；先从 `git.exe` 所在工具目录定位配套 Bash，再按项目规定运行原脚本。
 - **相关文件**：`scripts/verify.sh`
+
+#### Next.js 生产构建拿不到 `.next/lock`
+- **报错原文**：`Unable to acquire lock at E:\Projects\nft-music\.next\lock, is another instance of next build running?`
+- **为什么**：localhost 的 `next dev` 正在使用同一个 `.next` 目录，`verify.sh` 的 `next build` 无法并发取得锁；不是代码编译错误。
+- **怎么修**：先正常停止 dev session，运行完整 `scripts/verify.sh`，全部通过后再启动 `npm run dev` 并确认 `/test3` 返回 200。
+- **学到了什么**：本项目 dev/build 共用 `.next`；完整验证前要释放 dev 锁，验证后恢复用户的预览环境。
+- **相关文件**：`scripts/verify.sh`
+
+#### 新路由加入后 TypeScript 读取了旧 `.next` 路由类型
+- **报错原文**：`.next/dev/types/validator.ts` 将 `/test4` 判定为不属于旧的 `LayoutRoutes`。
+- **为什么**：开发服务器生成的 `.next/dev/types` 与旧生产类型缓存同时存在，二者路由集合不一致。
+- **怎么修**：先运行 `npm run build` 重新生成当前路由类型，再运行 `npx tsc --noEmit`；随后类型检查通过。
+- **学到了什么**：Next.js 新增路由后，不能只依赖旧开发缓存判断类型结果，应先让构建刷新 `.next` 类型产物。
+- **相关文件**：`app/test4/page.tsx`、`app/test4/layout.tsx`
+
+#### PowerShell 直接启动 Edge headless 未生成截图
+- **报错现象**：直接用 PowerShell 调用 `msedge.exe --headless` 立即返回 0，但没有生成目标截图。
+- **为什么**：GUI 子系统进程的启动/参数转交没有形成当前终端可等待的 headless 进程；首次复用的 profile 也可能留下启动竞争。
+- **怎么修**：使用独立临时 profile，并在同一 `cmd` 进程内调用 Edge 的 8.3 可执行路径；命令会等待到输出“bytes written to file”。
+- **学到了什么**：Windows 上做浏览器视觉回归要同时隔离 profile、确保调用进程可等待，并核对截图文件实际存在，不能只看退出码。
+- **相关文件**：`/test4` 视觉回归流程（不涉及产品代码）
+
+---
+
+### E017 — 解析圆形遮罩无法修复水上球串水纹
+
+- 📅 2026-08-23 / Phase 8 P8-L R1 真透明维修
+
+- 😱 用户动态复验：水上球依然出现涟漪，浅色球依然严重曝光；静态截图曾被误判为已修复。
+
+- 🧠 单张 `sphereTarget` 只有最终 RGBA，不保存像素来自水上球还是水下球。合成 shader 后算的圆形遮罩与真实球体抗锯齿边、生命感形变和重叠关系不一致；同时，半透明球即使最后绘制也会透出下面的动态水纹。
+
+- 🔧 每个 instance 写入 `aSubmerge`，同一球材质分两次输出水下与水上 target；只有水下 target 接受折射和水光，水上 target 的真实 alpha 负责最终覆盖与主体静态背景揭示。曝光继续使用预乘 headroom 限幅。
+
+- 💡 需要严格图层语义时，身份必须在 draw 时保留；不能在颜色已经合并后靠几何近似把身份猜回来。
+
+---
+
+### E018 — 球体实际没有进入水上/水下 FBO
+
+- 📅 2026-08-23 / Phase 8 P8-L R3 真透明最终维修
+
+- 😱 表现：R1/R2 修改了 alpha、遮罩与三层合成，但用户视频里水上球仍被涟漪穿过并爆白；真实 target 调试最初只有黑色，最终画面却仍有彩色球。
+
+- 🧠 根因：`SphereInstances` 用 `useLayoutEffect([separatePass])` 设置 Three.js layer。网格尚未挂载时 effect 直接返回，随后 ref 出现但依赖不变，effect 不会重跑；球一直落在背景 layer 0，先被水面 shader 烘进湿背景，两个球体 FBO 都是空的。
+
+- 🔧 修复：改用 callback ref，在 `InstancedMesh` 真正挂载和 `separatePass` 变化时同步设置 layer。调试结果恢复为混合水位红/绿分流、完全出水纯绿、无蓝色预乘 Alpha 失配。
+
+- 💡 看到最终画面有对象，不代表对象进入了预期的中间 pass；多 pass 问题必须先检查真实 render target，再讨论 shader 公式。
+
+### E019 — 开发服务器并发改写 `.next/dev/types` 导致临时类型语法错误
+
+- 📅 2026-08-23 / R3 验证
+
+- 😱 报错：`.next/dev/types/routes.d.ts` 出现 `TS1128`、`TS1160` 等不完整声明错误。
+
+- 🧠 原因：独立 `tsc` 与正在运行的 Turbopack 同时读取/改写生成类型，读到了生成中的半文件；错误位置全部位于 `.next/dev/types`，不在源码。
+
+- 🔧 处理：停止开发服务器后再运行项目规定的完整 `scripts/verify.sh`，避免 dev/build/typecheck 共用 `.next` 时互相竞争。
+
+- 💡 生成目录里的“语法错误”应先检查写入竞争；不能据此修改业务源码救火。
+
+### E020 — 生产构建无法获取 Google Fonts
+
+- 📅 2026-08-24 / 最终验证
+
+- 😱 报错：`next/font` 无法从 `https://fonts.googleapis.com` 下载 `Azeret Mono`，导致 `next build` 失败。
+
+- 🧠 类型检查、Lint 和 Foundry 合约测试均已通过；当前失败点是生产构建的外部字体请求，不是 Bash 或业务 TypeScript 错误。
+
+- 🔧 本次未修改字体配置，先停在真实错误处，避免把网络问题和源码改动混在一起。
+
+- 💡 生产构建依赖外部字体网络；要保证离线或受限网络下稳定构建，应把字体改为本地资源或采用已有的构建缓存策略。
+
+### E021 — ESLint 扫描并行 Edge QA 临时目录时遇到文件锁
+
+- 📅 2026-08-25 / P8 综合 Review 文档验证
+
+- 😱 报错：ESLint 读取 `.tmp-p9-edge-qa/Default/Extensions/.../1089.24319cd46457e9ad60ef.js` 时返回 `EPERM: operation not permitted`。
+
+- 🧠 原因：另一个工作线留下或正在使用 Edge QA 临时浏览器目录，其中的扩展文件被系统锁定；失败路径不属于本次 P8 文档或 P8 源码。
+
+- 🔧 用户确认这些目录是 P9 浏览器 QA 临时 profile 后，在 `.gitignore` 与 `eslint.config.mjs` 精确忽略 `.tmp-p9-edge-qa*`；随后完整 `verify.sh` 通过。
+
+- 💡 多工作线共享同一工作区时，浏览器 profile 等临时目录可能干扰全仓扫描；应由拥有该工作线的进程关闭/收束资源，而不是由无关 Phase 擅自清理。
+
+### E022 — effect 内同步上报 GL 不可用状态触发 lint
+
+- 📅 2026-08-25 / P8-RUN-02
+- 😱 报错：`react-hooks/set-state-in-effect` 指向 `reportHealth('unavailable')`。
+- 🧠 原因：状态初值本来就是 unavailable，却又在 effect 主体同步触发内部与父级 setState。
+- 🔧 修复：删除冗余 effect；Canvas reporter 只在真实外部生命周期事件中上报 healthy/lost/error。
+- 💡 能由初始 state 表达的状态不要再用 effect 回写。
+
+### E023 — 并行 Next.js 进程占用生产构建锁
+
+- 📅 2026-08-26 / P8-RUN-02 验证
+- 😱 报错：`Unable to acquire lock at .next/lock`。
+- 🧠 原因：另一个本项目 Next.js 进程仍持有构建锁，与本次源码无关。
+- 🔧 修复：用户只结束命令行指向本工作区的 Next.js 进程，并清理遗留单个 lock；重跑完整验证通过。
+- 💡 不要用 `taskkill /IM node.exe` 误杀其他 Node/Codex 进程，应按工作区命令行精准结束。
+
+### E024 — 浏览器 QA 脚本把 DOM 对象当 JSON 返回
+
+- 📅 2026-08-26 / P8 浏览器回归
+- 😱 前 17 项通过后，CDP 返回 `Object reference chain is too long`；第二轮又因复用刚取消拖拽的命中目标而拿不到 pointerId。
+- 🧠 原因：临时脚本的表达式最后返回了 Canvas DOM 对象，而 `Runtime.evaluate(returnByValue)` 只能序列化普通值；lost-capture 用例也没有在新按压前重新定位鼠标。
+- 🔧 修复：赋值后显式返回布尔值；lost-capture 改用另一颗球并先移动鼠标到最新包围盒。第三轮完整矩阵全绿。
+- 💡 浏览器测试夹具失败要与产品失败分开记录；先看已通过断言和 fatal 位置，不能据此修改业务代码。
+
+### E025 — 执行层阻止递归删除临时 Edge profile
+
+- 📅 2026-08-26 / P8 浏览器回归清理
+- 😱 已确认临时 Edge 进程数为 0、目录位于工作区内，但 `Remove-Item -Recurse -Force` 仍被执行层 policy 拒绝。
+- 🧠 原因：这是 Codex 执行层对浏览器数据目录递归删除的保护，不是 Windows 文件占用或项目权限错误。
+- 🔧 处理：没有绕过安全拦截；删除本次 QA 脚本，保留已被 Git/ESLint 精确忽略的自动生成 profile。
+- 💡 “进程已关”与“执行层允许递归删除”是两件事；遇到 policy 拦截应保留忽略目录或交给用户手动清理，不能换壳绕过。

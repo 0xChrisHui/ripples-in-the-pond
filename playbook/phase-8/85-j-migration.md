@@ -68,12 +68,12 @@
 
 ---
 
-## Deferred（记录在案，本期不做）
+## Deferred 与最终裁决
 
 - **已铸造记号**（原 M4）：GL 全树无 minted 概念（`use-gl-sim` 不调 `fetchMyNFTs`、`GlPhysNode` 无 minted 字段、`SphereInstances`/`SphereOverlay` 不显示）。播放/铸造**动作**走全局 `PlayerProvider`（两页共享、GL 已能用），缺的是球上「已铸造」**视觉**。补法：`useGlSim` 取 `fetchMyNFTs`→mintedIds，球上加标识。
-- **生产化清理**（原 M6）：/test1 dev chrome **全无条件渲染、无 NODE_ENV 门控**（pond-gl 全树 grep `NODE_ENV/process.env` 零命中）。要清：剥/门控调试面板（ScenePanel/TunePanel/RippleSpikePanel/遮罩/RTT）、GL flags 生产默认、标题 sandbox 后缀（`app/test1/page.tsx:53-55`）、noindex（layout）、`ssr:false` 首屏空白/SEO。
-- **手感/视觉定稿**（原 M7）：日蚀/水面/浮沉默认值 + 真机帧率压测。
-- **正式替换 + 删旧**（原 M8 = J 线收官）：`/` 换 GL（留 flag/URL 可回退 SVG）→ 验证 → 才删 SVG-only（`SphereCanvas`/`SphereNode`/`EclipseLayer`/`effects-config`/氛围层…）；**共享 `sphere-config` 不删**。
+- **生产化清理 ✅**：正式 `/` 隐藏 ScenePanel、TunePanel、LifePanel、RippleSpikePanel、PerfHUD 与 sandbox 标题；`/test3`、`/test4` 保留诊断能力并 noindex。
+- **手感/视觉定稿 ✅**：2026-08-26 用户确认 R3 与 L 线“活而不乱”合适。实体触屏 pinch 与弱 GPU 降 DPR 收益未取得物理设备数据，由用户在正式完结时接受为非阻塞跨设备观察项。
+- **正式替换 ✅**：`/` 已复用 `/test3` 的 GL 实现；旧 SVG 依用户决定保留为独立 `/v1`（noindex），因此“删除 SVG-only”不再是 P8 完结条件；**共享 `sphere-config` 保留**。
 - **I3 新组件首批**：仍 ⏸ 待用户定（鱼/贴图/动效）。
 
 ## 迁移坑清单（主会话补，审计 critic 未跑完）
@@ -87,4 +87,4 @@
 
 ## 收口线
 
-**J1–J4 ✅（2026-06-16 本期全完）= GL 沙盒「生产级靠谱」**（J2 触控 / J3 降配真效果 待真机验）；deferred（已铸造 / 生产化 / 定稿 / 替换）按需推进；**`/` 正式替换 + 删 SVG = J 线（及 Phase-8-G）真正收官**。
+**J1–J4、生产化清理、视觉定稿与正式替换全部完成 ✅。2026-08-26 用户明确要求正式完结 P8；`/` 为 GL 首页，`/v1` 为旧 SVG 存档，P8-J 收官。**已铸造记号与 I3 新组件属于未来产品增强，不再作为 P8 未完成项。

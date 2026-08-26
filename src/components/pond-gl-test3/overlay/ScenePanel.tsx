@@ -31,7 +31,7 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="pointer-events-auto fixed bottom-3 left-3 z-50 w-44 rounded border border-white/10 bg-black/85 p-3 text-[11px] text-white/70 backdrop-blur-sm">
+    <div data-pond-ui="true" className="pointer-events-auto fixed bottom-3 left-3 z-50 w-44 rounded border border-white/10 bg-black/85 p-3 text-[11px] text-white/70 backdrop-blur-sm">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -45,6 +45,7 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
         <>
           <div className="mb-1 mt-1 text-[10px] uppercase tracking-wider text-white/30">GL 层</div>
           <Row label="背景图" checked={glFlags.bgImage} onChange={(v) => onGl({ bgImage: v })} />
+          <Row label="图 1 调色" checked={glFlags.colorGrade} onChange={(v) => onGl({ colorGrade: v })} />
           <Row label="GL 球" checked={glFlags.glSpheres} onChange={(v) => onGl({ glSpheres: v })} />
           <Row label="球浮动" checked={glFlags.sphereMotion} onChange={(v) => onGl({ sphereMotion: v })} />
           <Row label="球飘动+涟漪推" checked={glFlags.sphereDrift} onChange={(v) => onGl({ sphereDrift: v })} />
@@ -70,7 +71,7 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="能量球边缘" checked={glFlags.edgeWave} onChange={(v) => onGl(v ? { edgeWave: true } : { edgeWave: false, edgeExcite: false })} />
           <Row label="扰动激励(联动边缘)" checked={glFlags.edgeExcite} onChange={(v) => onGl(v ? { edgeExcite: true, edgeWave: true } : { edgeExcite: false })} />
           <Row label="果冻感" checked={glFlags.jelly} onChange={(v) => onGl({ jelly: v })} />
-          <Row label="尾波扰球" checked={glFlags.wakeSpheres} onChange={(v) => onGl({ wakeSpheres: v })} />
+          <Row label="鼠标水波扰球" checked={glFlags.wakeSpheres} onChange={(v) => onGl({ wakeSpheres: v })} />
           <Row label="时隐时现" checked={glFlags.alphaFlicker} onChange={(v) => onGl({ alphaFlicker: v })} />
           <Row label="光晕呼吸" checked={glFlags.haloBreath} onChange={(v) => onGl({ haloBreath: v })} />
         </>

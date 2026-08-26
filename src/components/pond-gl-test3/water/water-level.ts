@@ -38,6 +38,12 @@ export function getWaterLevel(): number {
   return current;
 }
 
+/** /test3 固定水面：切组时强制回到场景中线，不继承球群层级。 */
+export function resetWaterLine(): void {
+  target = 0.5;
+  current = 0.5;
+}
+
 /** 没入判定专用的「有效水位」（current 线性拉伸到 [EFF_LOW, EFF_HIGH]，覆盖全 z 域两端余量）。 */
 export function getEffectiveWaterLevel(): number {
   return EFF_LOW + (EFF_HIGH - EFF_LOW) * current;

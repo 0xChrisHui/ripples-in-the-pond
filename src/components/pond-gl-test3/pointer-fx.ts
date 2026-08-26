@@ -11,17 +11,19 @@ import type { GlPhysNode } from './spheres/gl-sim-setup';
  * 过程中穿过固定水面（层 50）产生出入水交互。层模型：
  *   base z∈[0,1] → 默认层 35-65（effDepth = 0.35 + z·0.30，绕水面 50）；
  *   滚轮叠 shift∈[-0.35,+0.35] → 球最近抵层 70-100（全部出水、近/大）、最远层 1-30（全部入水、远/小）。
- * 范式同 water-level（模块级 let + rAF 缓动 + 直读，不触发 React 重渲染）。读方每帧调 depthOf()/getPointerFx()。
+ * 范式同 water-level（模块级 let + rAF 缓动 + 直读，不触发 React 重渲染）。滚轮采用临界阻尼弹簧，
+ * 让位移有连续的加速/减速过程。读方每帧调 depthOf()/getPointerFx()。
  */
 
 const SHIFT_MIN = -0.35;
 export const SHIFT_MAX = 0.35; // 集体深度偏移范围（默认 0 = 球 35-65 层）；L2-1 滚轮去同步读它算极限趋近度
 const SHIFT_SENS = 0.0015;                 // 滚轮灵敏度（每 deltaY 单位的 shift 变化）
-// 单次滚轮事件封顶 = 运动参数面板的 scrollStep（默认 0.05）→ 不论设备 deltaY 大小（含像素级/触控板惯性），
-// 一格滚轮最多移 scrollStep 深度 → 球逐颗出入水（band 0.30 ÷ scrollStep ≈ 滚几次）。随时面板可调。
+// 单次滚轮事件封顶 = 运动参数面板的 scrollStep（默认 0.075）→ 不论设备 deltaY 大小（含像素级/触控板惯性），
+// 默认以较细步长逐颗出入水；面板仍可调大以加快切换。
 const D_LO = 0.35, D_SPAN = 0.30;          // base z∈[0,1] → 默认层 35-65（band 跨度 0.30 = 入水先后差）
+// 滚轮输入步长（scrollStep）与画面移动速度彻底脱钩；速度参数由 RippleSpikePanel 实时读取。
 
-let shiftTarget = 0, shift = 0;
+let shiftTarget = 0, shift = 0, shiftVelocity = 0;
 let mxTarget = 0, myTarget = 0, mx = 0, my = 0;
 let inside = false;
 
@@ -63,6 +65,13 @@ export function isScrolling(): boolean {
 export function getShift(): number { return shift; }
 export function getShiftTarget(): number { return shiftTarget; }
 
+/** 切组时清除上一组遗留的层级位置，新球群从中性深度开始。 */
+export function resetDepthShift(): void {
+  shiftTarget = 0;
+  shift = 0;
+  shiftVelocity = 0;
+}
+
 export function usePointerFx(active: boolean): void {
   useEffect(() => {
     if (!active) return;
@@ -75,6 +84,8 @@ export function usePointerFx(active: boolean): void {
     // 一点透视开时滚轮接管 → 集体深度偏移（上滚 deltaY<0 → shift 增 → 球升出水面、靠近、变大）
     const onWheel = (e: WheelEvent) => {
       if (!cam.perspective) return; // 透视关 → 滚轮回归页面正常滚动
+      const target = e.target;
+      if (target instanceof Element && target.closest('[data-pond-ui]')) return;
       e.preventDefault();
       // 单次封顶（运动参数面板 scrollStep 可调）→ 大 deltaY 不再一步跨过整个 band，球逐颗入水
       const cap = getRippleTuning().scrollStep;
@@ -85,11 +96,39 @@ export function usePointerFx(active: boolean): void {
     window.addEventListener('pointerout', onLeave, { passive: true });
     window.addEventListener('wheel', onWheel, { passive: false });
     let raf = 0;
+    let lastFrameAt = performance.now();
     const loop = () => {
+      const now = performance.now();
+      const dt = Math.min(0.05, Math.max(0.001, (now - lastFrameAt) / 1000));
+      lastFrameAt = now;
       mx += ((inside ? mxTarget : 0) - mx) * 0.12;
       my += ((inside ? myTarget : 0) - my) * 0.12;
-      shift += (shiftTarget - shift) * 0.12;
-      if (Math.abs(shiftTarget - shift) < 0.0004) shift = shiftTarget; // 贴齐目标 → isScrolling() 能干净归 false
+      // 滚轮只改变目标；这里用独立的单位/秒速度推进，输入停止后仍会走完剩余距离。
+      const tuning = getRippleTuning();
+      const maxSpeed = Math.max(0.001, tuning.scrollMaxSpeed);
+      const accelerationRate = Math.max(0.001, tuning.scrollAcceleration);
+      const decelerationRate = Math.max(0.001, tuning.scrollDeceleration);
+      const error = shiftTarget - shift;
+      const distance = Math.abs(error);
+      const speed = Math.abs(shiftVelocity);
+      const movingTowardTarget = speed > 0 && Math.sign(shiftVelocity) === Math.sign(error);
+      const stoppingDistance = speed * speed / (2 * decelerationRate);
+      let acceleration = Math.sign(error) * accelerationRate;
+      if (distance < 0.00015 && speed > 0) acceleration = -Math.sign(shiftVelocity) * decelerationRate;
+      else if (movingTowardTarget && distance <= stoppingDistance) acceleration = -Math.sign(shiftVelocity) * decelerationRate;
+      shiftVelocity += acceleration * dt;
+      if (Math.abs(shiftVelocity) > maxSpeed) shiftVelocity = Math.sign(shiftVelocity) * maxSpeed;
+      const nextShift = shift + shiftVelocity * dt;
+      if (error !== 0 && Math.sign(shiftTarget - nextShift) !== Math.sign(error)) {
+        shift = shiftTarget;
+        shiftVelocity = 0;
+      } else {
+        shift = nextShift;
+        if (Math.abs(shiftTarget - shift) < 0.00015 && Math.abs(shiftVelocity) < 0.00015) {
+          shift = shiftTarget;
+          shiftVelocity = 0;
+        }
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -98,6 +137,7 @@ export function usePointerFx(active: boolean): void {
       window.removeEventListener('pointerout', onLeave);
       window.removeEventListener('wheel', onWheel);
       cancelAnimationFrame(raf);
+      shiftVelocity = 0;
     };
   }, [active]);
 }

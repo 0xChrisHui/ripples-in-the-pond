@@ -28,7 +28,10 @@ export interface RippleTuning {
   drift: number;         // 球飘动：随机游走幅度（每帧注入游走速度的强度；0=不漂）。只动 x/y，与沉浮正交
   wavePush: number;      // 涟漪推：点击/切组涟漪推水下球的推力倍率（0=不推）
   wavePushDepth: number; // 涟漪推：推力随深度衰减的深度（球离水面这么深→推力≈0，越小衰减越快）
-  scrollStep: number; // /test3 滚轮单次深度位移封顶（层模型；band 0.30÷此值≈滚几次出入水。越大每格跨越多颗球=越快）
+  scrollStep: number; // /test3 滚轮单次输入目标位移（默认 0.06）
+  scrollMaxSpeed: number; // /test3 层级视觉移动最高速度（shift 单位/秒）
+  scrollAcceleration: number; // /test3 开始移动加速度（shift 单位/秒²）
+  scrollDeceleration: number; // /test3 接近目标时停止减速度（shift 单位/秒²）
   dofStrength: number; // /test3 焦平面景深虚化整体倍率（×blurAmt；0=全清晰、1=当前默认。往小调=更弱虚化）
   pondDepth: number;  // K3 塘深：深度因子 d 的归一分母（越小越快到"最深"）
   refrExp: number;    // K3 折射随深度的指数 a（折射 ∝ d^a，近轻深重；越大近处越清晰）
@@ -54,7 +57,6 @@ export interface RippleTuning {
   plantsSway: number;   // K9 涟漪轻晃幅度（伪光流摇曳；克制——比 K8 更沉静、运动更小）
   pondFloorStrength: number; // K10 亮底 mix 浓度（0–1：暗塘底→塘底花纹的替换量；越大花纹越亮越显，球受亮度阈值保护不被覆盖）
   moonReflectStrength: number; // K11 月光倒影强度（≤0.5 克制；偏画面一侧、低不透明 → 氛围点睛、不盖过球）
-  ballLightAbove: number; // 月光(焦散/倒影取高者)对"水上球"的增亮衰减 0..1（独立于强度；调强度此比例不变）
   ballLightBelow: number; // 月光对"水下球"的增亮衰减 0..1
   waveOnBall: number;     // 水下球波纹增强：水面涟漪明暗乘性荡漾过水下球面，提升水下感（0=关，~0.6 起）
   pondFloorStyle: number; // K10 塘底花纹（0 暗矿 / 1 亮沙 / 2 虹彩 / 3 莲花 / 4 星河）
@@ -87,7 +89,10 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   drift: 0.1,          // 球飘动随机游走
   wavePush: 1.5,       // 涟漪推力倍率
   wavePushDepth: 0.46, // 推力衰减深度
-  scrollStep: 0.025,   // 滚轮单次深度位移封顶（小=出入水更慢更分明）
+  scrollStep: 0.06,     // 滚轮单次输入目标位移
+  scrollMaxSpeed: 2.5,   // 层级视觉移动最高速度
+  scrollAcceleration: 10, // 开始移动加速度
+  scrollDeceleration: 0.05, // 接近目标时停止减速度
   dofStrength: 0.3,    // 焦平面景深强度（小=更弱虚化）
   pondDepth: 1,        // K3 塘深
   refrExp: 3,          // K3 折射随深度指数
@@ -113,7 +118,6 @@ export const DEFAULT_RIPPLE_TUNING: RippleTuning = {
   plantsSway: 0.2,
   pondFloorStrength: 0.7,   // 可见塘底浓度
   moonReflectStrength: 0.4, // 月光倒影
-  ballLightAbove: 0.38,     // 月光对水上球增亮
   ballLightBelow: 0.16,     // 月光对水下球增亮
   waveOnBall: 0.3,          // 水下球波纹增强
   pondFloorStyle: 0,        // 默认暗矿
@@ -145,7 +149,11 @@ function load(): RippleTuning {
       if (legacy) { localStorage.setItem(KEY, legacy); raw = legacy; }
     }
     if (!raw) return { ...DEFAULT_RIPPLE_TUNING };
-    return { ...DEFAULT_RIPPLE_TUNING, ...(JSON.parse(raw) as Partial<RippleTuning>) };
+    const saved = JSON.parse(raw) as Partial<RippleTuning>;
+    const merged = { ...DEFAULT_RIPPLE_TUNING, ...saved };
+    // 一次性升级旧默认值；用户其他主动保存的参数全部保留。
+    if (saved.scrollStep === 0.025 || saved.scrollStep === 0.05 || saved.scrollStep === 0.1 || saved.scrollStep === 0.75) merged.scrollStep = DEFAULT_RIPPLE_TUNING.scrollStep;
+    return merged;
   } catch {
     return { ...DEFAULT_RIPPLE_TUNING };
   }

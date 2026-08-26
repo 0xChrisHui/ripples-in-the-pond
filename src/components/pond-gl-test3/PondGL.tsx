@@ -1,7 +1,7 @@
 'use client';
 
-import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { Component, Suspense, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Canvas, useThree } from '@react-three/fiber';
+import { Component, Suspense, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { isWebGLAvailable, pickLifeFlags, type GLFlags } from './gl-flags';
 import { useWakeField } from './life/wake-field';
 import { baseToneVertexShader, baseToneFragmentShader } from './base-tone-shader';
@@ -15,6 +15,7 @@ import WaterColumns from './decor/WaterColumns';
 import BgImage from './BgImage';
 import WaterPetals from './decor/WaterPetals';
 import type { GlSim } from './spheres/use-gl-sim';
+import AutoDpr from './auto-dpr';
 
 /**
  * GL 渲染层入口 — P8-G G3。
@@ -46,7 +47,13 @@ function BaseTone({ artDir }: { artDir: GLFlags['artDir'] }) {
 
 // React 错误边界：WebGL 创建失败 / 渲染抛错时渲染 fallback（J1 起 = GlFallback 夜塘，不再 null/白屏）。
 // class 是 React 唯一支持错误边界的形式（CONVENTIONS §4.2 的合理例外）。
-class GLErrorBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { failed: boolean }> {
+export type GlHealth = 'unavailable' | 'healthy' | 'lost' | 'error' | 'forced';
+
+class GLErrorBoundary extends Component<{
+  children: ReactNode;
+  fallback: ReactNode;
+  onError: () => void;
+}, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };
@@ -54,11 +61,30 @@ class GLErrorBoundary extends Component<{ children: ReactNode; fallback: ReactNo
   componentDidCatch(error: unknown) {
     // 不吞错误：留一条日志，便于排查 WebGL 不可用环境
     console.error('[PondGL] WebGL 渲染失败，回退兜底：', error);
+    this.props.onError();
   }
   render() {
     if (this.state.failed) return this.props.fallback;
     return this.props.children;
   }
+}
+
+/** Canvas 不重挂；只把 context 生命周期同步给内外两层 UI。 */
+function GlHealthReporter({ report }: { report: (health: GlHealth) => void }) {
+  const renderer = useThree((s) => s.gl);
+  useEffect(() => {
+    const canvas = renderer.domElement;
+    const onLost = (event: Event) => { event.preventDefault(); report('lost'); };
+    const onRestored = () => report('healthy');
+    canvas.addEventListener('webglcontextlost', onLost, false);
+    canvas.addEventListener('webglcontextrestored', onRestored, false);
+    report('healthy');
+    return () => {
+      canvas.removeEventListener('webglcontextlost', onLost, false);
+      canvas.removeEventListener('webglcontextrestored', onRestored, false);
+    };
+  }, [renderer, report]);
+  return null;
 }
 
 // J1 — 兜底夜塘（纯 CSS 径向渐晕，色值对齐 base-tone-shader 的 deep/black）。无 WebGL / 崩了 / context lost 时铺上，不白屏。
@@ -69,54 +95,33 @@ function GlFallback({ artDir }: { artDir: GLFlags['artDir'] }) {
   return <div className="absolute inset-0" style={{ background: bg }} aria-hidden="true" />;
 }
 
-// J3 — 低 FPS 自动降 DPR（最广的降配杠杆：DPR 减半 = 全管线像素减半，含水面 FBO）。
-// 每 1s 窗口测 FPS；持续 <40 → 降 0.5（到 1 为底），持续 >55 → 升回（到初始 DPR 为顶）。
-// 滞回：跌得快(2 窗)、回得慢(4 窗)，防来回抖。DPR-1 屏无 headroom → 不动（水面 RES 降配挂后续）。
-function AutoDpr() {
-  const gl = useThree((s) => s.gl);
-  const setDpr = useThree((s) => s.setDpr);
-  const s = useRef({ frames: 0, winStart: 0, last: 0, low: 0, high: 0, dpr: 0, maxDpr: 0 });
-  useFrame(() => {
-    const now = performance.now();
-    const st = s.current;
-    if (st.maxDpr === 0) { st.maxDpr = gl.getPixelRatio(); st.dpr = st.maxDpr; st.winStart = now; st.last = now; }
-    const dt = now - st.last;
-    st.last = now;
-    if (dt > 100) { st.winStart = now; st.frames = 0; return; } // tab 恢复跳过（rAF 暂停过）
-    st.frames++;
-    if (now - st.winStart < 1000) return;
-    const fps = (st.frames * 1000) / (now - st.winStart);
-    st.frames = 0;
-    st.winStart = now;
-    if (fps < 40) { st.low++; st.high = 0; } else if (fps > 55) { st.high++; st.low = 0; } else { st.low = 0; st.high = 0; }
-    // 可观测：降/升档时打日志（验收用——确认是否 fire；DPR 减的是 GPU 像素，CPU 受限时 FPS 未必回升）
-    if (st.low >= 2 && st.dpr > 1) {
-      st.dpr = Math.max(1, st.dpr - 0.5); setDpr(st.dpr); st.low = 0;
-      console.info(`[AutoDpr] 低 FPS(${Math.round(fps)}) → 降 DPR 到 ${st.dpr}`);
-    } else if (st.high >= 4 && st.dpr < st.maxDpr) {
-      st.dpr = Math.min(st.maxDpr, st.dpr + 0.5); setDpr(st.dpr); st.high = 0;
-      console.info(`[AutoDpr] FPS 回升(${Math.round(fps)}) → 升 DPR 到 ${st.dpr}`);
-    }
-  });
-  return null;
-}
-
 export interface PondGLProps {
   flags: GLFlags;
   glSim?: GlSim;
+  onHealthChange: (health: GlHealth) => void;
 }
 
-export default function PondGL({ flags, glSim }: PondGLProps) {
+export default function PondGL({ flags, glSim, onHealthChange }: PondGLProps) {
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production' && flags.rtt && flags.waterFx) {
+      console.warn('[PondGL] rtt 与 waterFx 同时开启：两个 priority-1 渲染器会互相覆盖，请关闭其中一个。');
+    }
+  }, [flags.rtt, flags.waterFx]);
   // 基调 / 球 / 水面 / 背景图 / RTT / 扭曲水面 / 漂浮微光 / 水生植物 任一开启都需要 Canvas；都关 = 卸载（回纯 SVG）
   const active = flags.glBase || flags.glSpheres || flags.water || flags.bgImage || flags.rtt || flags.waterFx || flags.floatMotes || flags.waterPlants || flags.reefStones || flags.crystalPillars;
   // J1：gl 对象恒定（AA 固定开）——不再随 glSpheres 变。原本为换 AA 用 key 重挂 Canvas，
   // 但重挂会新建/泄漏 WebGL context（多次切球 → context 累积被浏览器丢弃 → 球闪一下就没）。
   const gl = useMemo(() => ({ antialias: true, alpha: false }), []);
-  const [lost, setLost] = useState(false); // J1：context lost 期间盖兜底，restored 后撤
+  const [runtimeHealth, setRuntimeHealth] = useState<GlHealth>('unavailable');
+  const reportHealth = useCallback((health: GlHealth) => {
+    setRuntimeHealth(health);
+    onHealthChange(health);
+  }, [onHealthChange]);
+  const webGlAvailable = useMemo(() => isWebGLAvailable(), []);
   useWakeField(flags.wakeSpheres && flags.glSpheres && !!glSim); // L4：尾波扰球开 → 挂涟漪场（与花瓣层 refcount 共享）
   if (!active) return null;
   // J1：真没 WebGL → 不挂 Canvas，直接铺夜塘兜底（不白屏）
-  if (!isWebGLAvailable()) {
+  if (!webGlAvailable) {
     return (
       <div className="pointer-events-none fixed inset-0 z-0">
         <GlFallback artDir={flags.artDir} />
@@ -125,10 +130,10 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
   }
   // context lost（GPU 重置）或 forceFallback（测试）→ 盖兜底在 Canvas 之上（**不卸载 Canvas**，
   // 避免重挂丢球：早先 forceFallback 走 early-return 卸 Canvas，关掉后重挂 GL 球不回来）
-  const showFallback = lost || flags.forceFallback;
+  const showFallback = runtimeHealth !== 'healthy' || flags.forceFallback;
   return (
     <div className="pointer-events-none fixed inset-0 z-0">
-      <GLErrorBoundary fallback={<GlFallback artDir={flags.artDir} />}>
+      <GLErrorBoundary fallback={<GlFallback artDir={flags.artDir} />} onError={() => reportHealth('error')}>
         <Canvas
           orthographic
           // 球 / 水面 / RTT / 扭曲 需逐帧动画 → always；仅基调 / 背景图时 demand（只渲一次省帧）
@@ -138,13 +143,8 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           // manual:true 恒定——base/水面走裁剪空间不用相机；球开时 SphereInstances 自己配像素相机。
           // 不再随 glSpheres 改 key 重挂 Canvas（重挂泄漏 context），切球只挂/卸 SphereInstances 这个 mesh
           camera={{ manual: true, position: [0, 0, 10], near: -1000, far: 1000 }}
-          // J1：GPU 重置丢 context → 盖兜底 + preventDefault 允许浏览器恢复；restored → 撤兜底
-          onCreated={({ gl: renderer }) => {
-            const c = renderer.domElement;
-            c.addEventListener('webglcontextlost', (e) => { e.preventDefault(); setLost(true); }, false);
-            c.addEventListener('webglcontextrestored', () => setLost(false), false);
-          }}
         >
+          <GlHealthReporter report={reportHealth} />
           {/* 背景图（renderOrder -2，最底）与纯色基调互斥：bgImage 开时不画 BaseTone */}
           {flags.bgImage && (
             <Suspense fallback={null}>
@@ -154,25 +154,25 @@ export default function PondGL({ flags, glSim }: PondGLProps) {
           {flags.glBase && !flags.bgImage && <BaseTone artDir={flags.artDir} />}
           {/* 旧程序化水面（renderOrder -0.5）；waterFx 开时退役、由 WaterDistort 全屏扭曲取代 */}
           {flags.water && !flags.waterFx && <WaterSurface artDir={flags.artDir} />}
-          {/* K8：水面漂浮微光层（进 realScene 被合成扭曲；绕中心随 K6 缩放当参照 + 轻柔游走）。OFF=不挂载=现状 */}
-          {flags.floatMotes && <FloatingMotes waterZoom={flags.waterZoom} />}
+          {/* K8 + P9：常驻零绘制以接按键临时编舞；开关只决定静息态是否可见，不改用户保存参数。 */}
+          <FloatingMotes enabled={flags.floatMotes} waterZoom={flags.waterZoom} />
           {/* K9：水生植物层（俯视睡莲叶 + 边缘芦苇；进 realScene 被合成扭曲；绕中心随 K6 缩放当强参照 + 涟漪轻晃）。OFF=不挂载=现状 */}
           {flags.waterPlants && <WaterPlants waterZoom={flags.waterZoom} />}
           {/* K12：水位标尺柱（礁石/水晶簇）——钉死、水从其身上漫过=水位/深度参照 + 中心一点透视。OFF=不挂载=现状 */}
           {(flags.reefStones || flags.crystalPillars) && <WaterColumns reefStones={flags.reefStones} crystalPillars={flags.crystalPillars} />}
           {/* waterOn 只认旧「水面」(G6 没入淡到全透明=水波盖住球)。扭曲水面(waterFx)下球**不淡出**：
               红线「水下不压黑/不虚化」→ 水下球保持可见、靠合成 pass 的深度折射(K3 d^a)体现浮沉，不消失。 */}
-          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} sphereDrift={flags.sphereDrift} life={pickLifeFlags(flags)} />}
+          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} sphereDrift={flags.sphereDrift} separatePass={flags.waterFx} colorGrade={flags.colorGrade} life={pickLifeFlags(flags)} />}
           {/* H1 spike：RTT 验证全屏盖在最上（renderOrder 10），隔离实验、默认关 */}
           {flags.rtt && <RttSpike />}
           {/* H2/H3：扭曲水面——渲真场景进 FBO 全屏折射扭曲 + 水位遮罩（接管渲染循环，返回 null） */}
-          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} sphereDrift={flags.sphereDrift} depthModel={flags.depthModel} sphereShadow={flags.sphereShadow} shadowOcclude={flags.shadowOcclude} shadowGlow={flags.shadowGlow} shadowContact={flags.shadowContact} caustics={flags.caustics} waterZoom={flags.waterZoom} pondFloor={flags.pondFloor} moonReflect={flags.moonReflect} />}
+          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} glSpheres={flags.glSpheres} sphereDrift={flags.sphereDrift} depthModel={flags.depthModel} sphereShadow={flags.sphereShadow} shadowOcclude={flags.shadowOcclude} shadowGlow={flags.shadowGlow} shadowContact={flags.shadowContact} caustics={flags.caustics} waterZoom={flags.waterZoom} pondFloor={flags.pondFloor} moonReflect={flags.moonReflect} />}
           {/* J3：低 FPS 自动降 DPR 保流畅（仅测时长 + setDpr，不渲染） */}
           {flags.autoDegrade && <AutoDpr />}
         </Canvas>
       </GLErrorBoundary>
       {/* 水面花瓣层（2D overlay，z-10 在 GL 之上）：出水球用 project() 抠洞 → 球盖花瓣。headless 跟随同源涟漪 */}
-      {flags.flowerPetals && <WaterPetals glSim={glSim} />}
+      {runtimeHealth === 'healthy' && !flags.forceFallback && flags.flowerPetals && <WaterPetals glSim={glSim} />}
       {/* J1：context lost / forceFallback → 盖兜底夜塘（Canvas 仍在底下跑，撤掉即恢复） */}
       {showFallback && <GlFallback artDir={flags.artDir} />}
     </div>

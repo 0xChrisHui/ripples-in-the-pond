@@ -1,8 +1,8 @@
 /**
- * /test3 GL 沙盒开关（/test1 gl-flags 的 fork）。
+ * /test3 GL 控制台开关。
  *
  * URL 参数范式抄 effects-config，独立文件。每个功能可单独开关，关 = 回上一步现状。
- * /test3 改动：默认值按 task 4 调（见 DEFAULT_GL_FLAGS）；新增相机三效 dof/perspective/parallax；
+ * 默认值按 /test3 的正式视觉方案配置；新增相机三效 dof/perspective/parallax；
  * parseGLFlags 用 parseBool 收敛重复（仅 fork，语义与原逐字一致）。
  */
 
@@ -18,6 +18,7 @@ export interface GLFlags {
   glSpheres: boolean;     // G4 GL 球总开关
   water: boolean;         // G5 旧程序化水面
   bgImage: boolean;       // 背景图（public/test1-bg.png）
+  colorGrade: boolean;    // 图 1 风格调色（默认开）
   wheelMode: WheelMode;   // G6 滚轮模式（/test3 已不用，滚轮归 pointer-fx）
   rtt: boolean;           // H1 RTT 验证 spike
   waterFx: boolean;       // H2 扭曲水面（FBO 折射）
@@ -45,7 +46,7 @@ export interface GLFlags {
   dof: boolean;           // 焦平面景深（失焦虚化，对焦面=水线）
   perspective: boolean;   // 一点透视（深度尺寸 + 滚轮绕中心聚散缩放）
   parallax: boolean;      // 鼠标视差（按深度分层位移）
-  // ↓↓ P8-L 生命感 10 模块（默认全 false = 像素级现状；见文件末 LIFE_FLAG_KEYS/pickLifeFlags）↓↓
+  // ↓↓ P8-L 生命感 10 模块（默认除果冻感外全开；见文件末 LIFE_FLAG_KEYS/pickLifeFlags）↓↓
   wheelDesync: boolean;   // 滚轮升降去同步（每球幅度/时滞差）
   parallaxDesync: boolean;// 鼠标视差去同步（每球幅度/方向差）
   flowDrift: boolean;     // 流场游移（暗流带动球缓慢漂移）
@@ -54,17 +55,18 @@ export interface GLFlags {
   edgeExcite: boolean;    // 扰动激励（涟漪/交互激起球的临时形变）
   jelly: boolean;         // 果冻感（球运动时的弹性拉伸）
   wakeSpheres: boolean;   // 尾波扰球（涟漪尾波推动水下球）
-  alphaFlicker: boolean;  // 时隐时现（球透明度缓慢起伏）
+  alphaFlicker: boolean;  // 时隐时现（R3：只调光晕，水上主体覆盖保持稳定）
   haloBreath: boolean;    // 光晕呼吸（球光晕幅度周期性起伏）
 }
 
-/** /test3 默认：控制台只暴露 11 项（7 视觉层 + 球浮动 + 相机三效），其余常驻行为在此定死。仅 fork 生效。 */
+/** /test3 默认：控制台只暴露 11 项（7 视觉层 + 球浮动 + 相机三效），其余常驻行为在此定死。 */
 export const DEFAULT_GL_FLAGS: GLFlags = {
   glBase: true,
   artDir: 'deep',
   glSpheres: true,
   water: false,
   bgImage: false,
+  colorGrade: true,
   wheelMode: 'waterLevel',
   rtt: false,
   waterFx: true,         // 扭曲水面常驻
@@ -79,7 +81,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   shadowContact: false,
   caustics: true,        // 月光焦散默认开
   waterZoom: false,      // 水面自身不缩放；缩放交给相机一点透视
-  floatMotes: false,     // 漂浮微光默认关（用户指定）
+  floatMotes: true,      // 漂浮微光默认开（用户指定）
   flowerPetals: true,    // 水面花瓣默认开（用户指定）
   waterPlants: false,
   pondFloor: true,       // 可见塘底默认开
@@ -91,16 +93,16 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   dof: true,             // 景深默认开
   perspective: true,     // 一点透视默认开
   parallax: true,        // 鼠标视差默认开
-  wheelDesync: false,    // P8-L 生命感 10 模块全默认关（像素级现状）
-  parallaxDesync: false,
-  flowDrift: false,
-  shiver: false,
-  edgeWave: false,
-  edgeExcite: false,
+  wheelDesync: true,     // P8-L 默认开启；果冻感单独保持关闭
+  parallaxDesync: true,
+  flowDrift: true,
+  shiver: true,
+  edgeWave: true,
+  edgeExcite: true,
   jelly: false,
-  wakeSpheres: false,
-  alphaFlicker: false,
-  haloBreath: false,
+  wakeSpheres: true,
+  alphaFlicker: true,
+  haloBreath: true,
 };
 
 /** URL bool 解析：'1'/'true'→true、'0'/'false'→false、其余→默认（与原逐字段写法语义一致）。 */
@@ -124,6 +126,7 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
     glSpheres: parseBool(searchParams, 'glSpheres', d.glSpheres),
     water: parseBool(searchParams, 'water', d.water),
     bgImage: parseBool(searchParams, 'bgImage', d.bgImage),
+    colorGrade: parseBool(searchParams, 'colorGrade', d.colorGrade),
     rtt: parseBool(searchParams, 'rtt', d.rtt),
     waterFx: parseBool(searchParams, 'waterFx', d.waterFx),
     waterDbg: parseBool(searchParams, 'waterDbg', d.waterDbg),
@@ -178,7 +181,7 @@ export function isWebGLAvailable(): boolean {
   return webglCached;
 }
 
-/** P8-L 生命感 10 模块 flag 键（默认全 false = 像素级现状）。 */
+/** P8-L 生命感 10 模块 flag 键（当前默认 9 开、仅 jelly 关；全关仍回到基线）。 */
 export const LIFE_FLAG_KEYS = [
   'wheelDesync', 'parallaxDesync', 'flowDrift', 'shiver', 'edgeWave',
   'edgeExcite', 'jelly', 'wakeSpheres', 'alphaFlicker', 'haloBreath',

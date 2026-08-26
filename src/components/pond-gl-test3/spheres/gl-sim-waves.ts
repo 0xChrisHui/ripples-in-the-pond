@@ -1,5 +1,6 @@
 import type { GlPhysNode } from './gl-sim-setup';
 import { depthOf } from '../pointer-fx';
+import { prefersReducedMotion } from '../reduced-motion';
 
 /**
  * 背景涟漪经过球时给球加 outward velocity（快照自 sphere-sim-setup.ts:145-175，去掉 _perturb）。
@@ -14,10 +15,11 @@ export interface BgWave { x: number; y: number; size: number; spawnTime: number;
 /**
  * 球随机飘动：每帧给每个球注入一点缓慢准随机游走速度（两组不可公度正弦合成，x/y 各异）。
  * 注入速度而非直接挪位 → d3 的 velocityDecay 阻尼 + cluster 力会把游走约束在锚点附近（漂而不散）。
- * strength=0 直接跳过；拖拽中的球（fx/fy 锁定）不漂。
+ * strength=0 / reduced-motion 直接跳过；拖拽中的球（fx/fy 锁定）不漂。
+ * reduced-motion 不清零 d3 速度：停止注入后由既有阻尼自然停稳，避免打断用户刚触发的反馈。
  */
 export function driftSpheres(nodes: GlPhysNode[], timeSec: number, strength: number): void {
-  if (strength <= 0) return;
+  if (strength <= 0 || prefersReducedMotion()) return;
   for (const n of nodes) {
     if (n.fx != null || n.fy != null || n.x == null || n.y == null) continue;
     const lw = n.lw;

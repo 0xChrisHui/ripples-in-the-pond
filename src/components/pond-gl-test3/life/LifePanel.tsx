@@ -32,11 +32,11 @@ const GROUPS: ReadonlyArray<Group> = [
     sliders: [
       { key: 'wheelAmpVar', label: '滚轮·幅度差', min: 0, max: 0.6, step: 0.02 },
       { key: 'wheelLagVar', label: '滚轮·时滞差', min: 0, max: 0.8, step: 0.02 },
-      { key: 'parVarAmp', label: '视差·幅度差', min: 0, max: 0.5, step: 0.02 },
-      { key: 'parVarAngle', label: '视差·转角差', min: 0, max: 0.35, step: 0.01 },
-      { key: 'flowStrength', label: '流场强度', min: 0, max: 0.15, step: 0.005 },
-      { key: 'flowScale', label: '流场尺度', min: 0.002, max: 0.02, step: 0.001 },
-      { key: 'flowSpeed', label: '流场速度', min: 0.02, max: 0.3, step: 0.01 },
+      { key: 'parVarAmp', label: '视差·幅度差', min: 0, max: 1, step: 0.02 },
+      { key: 'parVarAngle', label: '视差·转角差', min: 0, max: 0.7, step: 0.01 },
+      { key: 'flowStrength', label: '流场强度', min: 0, max: 0.45, step: 0.005 },
+      { key: 'flowScale', label: '流场尺度', min: 0.002, max: 0.06, step: 0.001 },
+      { key: 'flowSpeed', label: '流场速度', min: 0.02, max: 0.9, step: 0.01 },
       { key: 'shiverInterval', label: '颤动间隔(秒)', min: 5, max: 120, step: 1 },
       { key: 'shiverAmp', label: '颤动幅度', min: 0, max: 0.12, step: 0.005 },
     ],
@@ -56,7 +56,7 @@ const GROUPS: ReadonlyArray<Group> = [
   {
     title: '涟漪耦合',
     sliders: [
-      { key: 'wakeSphereForce', label: '尾波推力', min: 0, max: 0.5, step: 0.02 },
+      { key: 'wakeSphereForce', label: '鼠标水波推力', min: 0, max: 0.5, step: 0.02 },
       { key: 'wakeDepthFalloff', label: '推力衰减深', min: 0.1, max: 1, step: 0.02 },
     ],
   },

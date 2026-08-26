@@ -57,6 +57,7 @@ export type GlPhysNode = SimNode & {
   _shivY?: number;    // L2-4 偶发颤动屏幕位移 y
   _excite?: number;   // L3-2 扰动激励值（边缘剧烈度）
   _lifeDim?: number;  // L5-1 透明度隐现系数（缺省视作 1）
+  _visualDim?: number; // P8-L A3：SphereInstances 写入的整体可见度，水面效果只读它
   _jelVx?: number;    // L3-3 果冻感平滑速度 x
   _jelVy?: number;    // L3-3 果冻感平滑速度 y
 };

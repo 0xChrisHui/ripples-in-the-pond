@@ -25,6 +25,7 @@ import { depthOf, displayDepthOf } from '../pointer-fx';
 export interface QuadScene {
   scene: Scene;
   mat: ShaderMaterial;
+  geometry: PlaneGeometry;
 }
 
 /** 全屏 quad（裁剪空间 2×2 平面）+ 给定 frag 的材质。uniforms 必须在此内部由对象字面量声明，
@@ -32,8 +33,26 @@ export interface QuadScene {
 export function makeQuadScene(frag: string, uniforms?: Record<string, IUniform>): QuadScene {
   const mat = new ShaderMaterial({ vertexShader: quadVert, fragmentShader: frag, uniforms });
   const scene = new Scene();
-  scene.add(new Mesh(new PlaneGeometry(2, 2), mat));
-  return { scene, mat };
+  const geometry = new PlaneGeometry(2, 2);
+  scene.add(new Mesh(geometry, mat));
+  return { scene, mat, geometry };
+}
+
+/** 只释放工厂手工创建、由当前 quad 独占的 GPU 资源。 */
+export function disposeQuadScene(quad: QuadScene): void {
+  quad.geometry.dispose();
+  quad.mat.dispose();
+}
+
+/** 纵向维持 256 预算，横向随 Canvas 比例变化，保证屏上网格近似正方形。 */
+export function getHeightFieldSize(width: number, height: number, maxTextureSize: number) {
+  const targetHeight = Math.max(1, Math.min(256, maxTextureSize));
+  const targetWidth = Math.max(1, Math.min(
+    maxTextureSize,
+    1024,
+    Math.max(64, Math.round(targetHeight * width / Math.max(1, height))),
+  ));
+  return { width: targetWidth, height: targetHeight };
 }
 
 /** sim 高度场材质：滴水/阻尼/宽高比校正（K1）。每帧由 useFrame 写 uDrops 后调本工厂建一次。 */
@@ -56,9 +75,13 @@ export function makeCompositeScene(
   resX: number,
   resY: number,
   spheresInit: Vector4[],
+  fragmentShader = compositeMaskFrag,
 ): QuadScene {
-  return makeQuadScene(compositeMaskFrag, {
-    uScene: { value: sceneTex },
+  return makeQuadScene(fragmentShader, {
+    uBackgroundScene: { value: sceneTex },
+    uSphereScene: { value: null },
+    uAboveSphereScene: { value: null },
+    uHasSpheres: { value: 0 },
     uHeight: { value: heightTex },
     uDelta: { value: new Vector2(1 / resX, 1 / resY) },
     uPerturb: { value: 0.04 },
@@ -68,7 +91,7 @@ export function makeCompositeScene(
     uViewport: { value: new Vector2(1, 1) },
     uSphereCount: { value: 0 },
     uSpheres: { value: spheresInit },
-    uSphereVis: { value: Array.from({ length: MAX_SPHERES }, () => 1) }, // 每球遮罩可见度（播放时非播放球→0；原地淡出不缩半径）
+    uVisualDim: { value: Array.from({ length: MAX_SPHERES }, () => 1) }, // P8-L：来自 SphereInstances 的单一整体可见度
     uDebug: { value: 0 },
     // K3 深度三层模型：uDepthModel<0.5 时 shader 调制系数恒 1 → 与现状逐字一致
     uDepthModel: { value: 0 },
@@ -95,10 +118,10 @@ export function makeCompositeScene(
     // K11 月光倒影：uMoonReflect<0.5 时 shader 跳过 → 现状；uMoonReflectStrength 克制（≤0.5、偏一侧不盖球）
     uMoonReflect: { value: 0 },
     uMoonReflectStrength: { value: 0.4 },
-    // 月光对球增亮衰减（独立于强度参数）：水上球 0.30 / 水下球 0.15；面板 0–1 可调（task 2/3）
-    uBallLightAbove: { value: 0.3 },
+    // 严格分层：水上球不吃水光；这里只保留水下球增亮与波纹参数。
     uBallLightBelow: { value: 0.15 },
     uWaveOnBall: { value: 0.6 }, // 水下球波纹增强（提升水下感；面板可调）
+    uQuietWave: { value: new Vector4(0.5, 0.5, 0, 0) }, // P9-D：中心xy / 扩张进度 / 静止能量
   });
 }
 
@@ -116,12 +139,14 @@ export function applyTuning(
   waterZoom: boolean,
   pondFloor: boolean,
   moonReflect: boolean,
+  keyFx: { water: number; moon: number },
+  quiet: { x: number; y: number; progress: number; energy: number },
 ): void {
-  sim.mat.uniforms.uDamping.value = t.damping; // 滴水半径改逐滴写（uDrops[i].z）
-  sim.mat.uniforms.uWaveSpeed.value = t.waveProp; // 水波传播速度（越小波扩散/位移越缓）
+  sim.mat.uniforms.uDamping.value = Math.min(0.995, t.damping + keyFx.water * 0.012); // 按键余韵只临时延长，不写回 store
+  sim.mat.uniforms.uWaveSpeed.value = t.waveProp * (1 + keyFx.water * 0.12);
   sim.mat.uniforms.uAspect.value = aspect;     // K1：高度场方形被拉满宽屏 → 按宽高比校正滴水为正圆
-  composite.mat.uniforms.uPerturb.value = t.refract;
-  composite.mat.uniforms.uSpec.value = t.specular;
+  composite.mat.uniforms.uPerturb.value = Math.min(3, t.refract + keyFx.water * 0.45);
+  composite.mat.uniforms.uSpec.value = Math.min(1.5, t.specular + keyFx.water * 0.35 + keyFx.moon * 0.3);
   composite.mat.uniforms.uDebug.value = debug ? 1 : 0;
   // K3：depthModel 开 → shader 按逐球水下深度 d 调制折射(深重)/月光(近强)；关 → 系数恒 1（现状）
   composite.mat.uniforms.uDepthModel.value = depthModel ? 1 : 0;
@@ -137,7 +162,7 @@ export function applyTuning(
   composite.mat.uniforms.uShadowHeight.value = t.shadowHeight; // K4 高度对投影影响的总增益
   // K5：caustics 开 → shader 叠冷白月光焦散光照（uTime 驱游走流光）；关 → 跳过（现状）
   composite.mat.uniforms.uCaustics.value = caustics ? 1 : 0;
-  composite.mat.uniforms.uCausticsStrength.value = t.causticsStrength;
+  composite.mat.uniforms.uCausticsStrength.value = Math.min(1, t.causticsStrength + keyFx.moon * 0.38);
   composite.mat.uniforms.uTime.value = time; // state.clock.getElapsedTime()：光池/光带每帧前进 → 静止也活
   // K6：waterZoom 开 → shader 按水位绕中心缩放高度场采样（升放大/降缩小）；关 → 0（缩放系数恒 1=现状）
   composite.mat.uniforms.uZoomAmount.value = waterZoom ? t.zoomAmount : 0;
@@ -147,16 +172,12 @@ export function applyTuning(
   composite.mat.uniforms.uPondFloorStyle.value = t.pondFloorStyle;
   // K11：moonReflect 开 → shader 叠大柔冷白月华倒影（被涟漪扭碎、随 K6 缩放）；关 → 0（跳过 = 现状）
   composite.mat.uniforms.uMoonReflect.value = moonReflect ? 1 : 0;
-  composite.mat.uniforms.uMoonReflectStrength.value = t.moonReflectStrength;
-  // 月光对球增亮衰减（水上/水下各一，独立于强度 → 调强度不改此比例）
-  composite.mat.uniforms.uBallLightAbove.value = t.ballLightAbove;
-  composite.mat.uniforms.uBallLightBelow.value = t.ballLightBelow;
-  composite.mat.uniforms.uWaveOnBall.value = t.waveOnBall; // 水下球波纹增强
+  composite.mat.uniforms.uMoonReflectStrength.value = Math.min(1, t.moonReflectStrength + keyFx.moon * 0.42);
+  // 水下球环境光独立于全局强度；水上球在 shader 中固定为零。
+  composite.mat.uniforms.uBallLightBelow.value = Math.min(1, t.ballLightBelow + keyFx.moon * 0.16);
+  composite.mat.uniforms.uWaveOnBall.value = Math.min(1.5, t.waveOnBall + keyFx.water * 0.42);
+  (composite.mat.uniforms.uQuietWave.value as Vector4).set(quiet.x, 1 - quiet.y, quiet.progress, quiet.energy);
 }
-
-// 每球"遮罩可见度"（播放时非播放球→0），与 SphereInstances 的 dimLerp 同步（同 0.12 lerp）。
-// 修暗斑：球淡出后其合成遮罩(压月光/折射撤销)若还在 → 月光水面上留暗洞。半径×vis 让遮罩随球一起消失。
-const sphereVis = new Map<string, number>();
 
 /** 把球数据写进 uniform 数组（位置/半径×可见度/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */
 export function applySpheres(
@@ -166,20 +187,14 @@ export function applySpheres(
   h: number,
   waterLevelEff: number,  // 有效水位（没入判定：computeAbove/computeDepth/computeShadow）
   waterLevelRaw: number,  // 原始水位 current（K6 缩放/debug 横线）
-  playingId: string | null,
   proj: ProjCtx,          // /test3 task 4：与 GL 实例/命中层同款投影 → 水位遮罩贴着投影后的球
 ): void {
   const arr = composite.mat.uniforms.uSpheres.value as Vector4[];
-  const vis = composite.mat.uniforms.uSphereVis.value as number[];
+  const visualDim = composite.mat.uniforms.uVisualDim.value as number[];
   const n = Math.min(nodes.length, MAX_SPHERES);
-  const anyPlaying = playingId != null;
   for (let i = 0; i < n; i++) {
     const node = nodes[i];
-    // 播放时非播放球遮罩淡出（与球视觉 dim 同 0.12 lerp）→ vis→0；shader 用它乘遮罩贡献=原地淡出（不缩半径，无收缩痕迹）
-    const target = anyPlaying && node.id !== playingId ? 0 : 1;
-    const v = (sphereVis.get(node.id) ?? 1) + (target - (sphereVis.get(node.id) ?? 1)) * 0.12;
-    sphereVis.set(node.id, v);
-    vis[i] = v;
+    visualDim[i] = node._visualDim ?? 1;
     // /test3：位置/半径走 project()，深度用 effDepth(node.z)（层模型 + 滚轮集体偏移）→ 与渲染进 FBO 的球对齐；
     // 没入判定深度用 effDepth(displayZ)（含浮沉），滚轮集体下潜/上浮时水上清晰/水下扭曲随之整体变。
     const dz = displayDepthOf(node); // 没入判定深度（displayZ 浮沉 + 滚轮 + _shiftOff）

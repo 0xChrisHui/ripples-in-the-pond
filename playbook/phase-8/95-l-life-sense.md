@@ -21,8 +21,8 @@
 
 ### 红线
 
-- 每个功能模块**独立 flag**（`gl-flags.ts` + ScenePanel「生命感」折叠组），默认 **false**，关 = 与现状**像素级一致**（沙盒铁律）。
-- 参数**不进** `ripple-tuning`（181/220 行放不下 24 个新字段）→ 新建 **`life/life-tuning.ts` 独立 store**（同款单例 + pub/sub + localStorage 范式，独立 key `test3-life`）+ **`life/LifePanel.tsx`** 滑块面板（挂在 RippleSpikePanel 旁 = 同一调参栏区域；RippleSpikePanel 207/220 塞不下）。
+- 每个功能模块**独立 flag**（`gl-flags.ts` + ScenePanel「生命感」折叠组）。初始施工时默认全 false；**2026-08-25 用户验收后当前默认改为 9 开、仅 `jelly` 关**。无论默认值如何，全关仍须与 L0a/L0b 基线像素级一致。
+- 参数**不进** `ripple-tuning`（181/220 行放不下 24 个新字段）→ 新建 **`life/life-tuning.ts` 独立 store**（同款单例 + pub/sub + localStorage 范式，独立 key `test3-life-v2`）+ **`life/LifePanel.tsx`** 滑块面板（挂在 RippleSpikePanel 旁 = 同一调参栏区域；RippleSpikePanel 207/220 塞不下）。
 - **五消费方深度/投影同源**：GL 球（SphereInstances）/ DOM 命中层（SphereOverlay）/ 水面遮罩（water-distort-setup）/ 花瓣层（WaterPetals）/ 日蚀（GlEclipse）全部经同一 `depthOf()`/`project()`/`applyFloat()` 管道 → 任何逐球偏移天然五处对齐；`unproject()` 与 `project()` 必须严格互逆（拖球命中红线）。
 - **播放球 + hover 球豁免**隐现/颤动类效果（`playingIdRef`/`hoverIdRef` 现成，见 SphereInstances.tsx:195）。
 - 全部尊重 `prefersReducedMotion`（`reduced-motion.ts` 现成）：reduced-motion → 所有无序项归零/冻结。
@@ -65,8 +65,8 @@
 - 做什么：
   - `lifeSeeds(id)`：`hashStr(id)` 位切出 4~6 个 [0,1) 种子，Map 缓存；
   - `lifeEnv(tSec) = 1 − lifeEnvAmount·(0.5+0.5·sin(2πt/lifeEnvPeriod))`；
-  - `life-tuning.ts`：全部 L 参数（见总表）+ localStorage key `test3-life` + 保存/重置（照抄 ripple-tuning 范式 158-181 行）；
-  - `gl-flags.ts`：10 个 flag 进 interface/DEFAULT（全 false）/parseGLFlags；
+  - `life-tuning.ts`：全部 L 参数（见总表）+ localStorage key `test3-life-v2` + 保存/重置（照抄 ripple-tuning 范式 158-181 行）；
+  - `gl-flags.ts`：10 个 flag 进 interface/DEFAULT/parseGLFlags；初始施工全 false，当前默认以 2026-08-25 拍板的 9 开、`jelly` 关为准；
   - ScenePanel「生命感」折叠组 10 开关；LifePanel 滑块分五组（全局/运动/形态/涟漪/呈现），带保存/重置。
 - 验收：flag 全关 → /test3 与改前像素级一致；面板可开合、滑块可动（暂无效果）；tsc + eslint 绿。
 - 回滚：整步纯新增 + 死参数，revert 即回。
@@ -112,15 +112,15 @@
 ### L2-2 视差去同步（flag `parallaxDesync`，依赖 L0b）
 
 - **审计实况**：sphere-projection.ts:40 `mx·TILT_PX·tiltCoef(d)`，同深度球位移完全一致；unproject:63 是严格逆运算。
-- 做什么：建点后（buildGlNodes 或 L0a lifeSeeds 首读时）写 `n._parGain = 1 + (s₃−0.5)·2·parVarAmp`、`n._parAng = (s₄−0.5)·2·parVarAngle`；project/unproject 的视差项改为 `rot(_parAng)·(mx,my)·TILT_PX·tc·_parGain`（L0b 已留 node 参口子）。flag 关 → 两字段视为 1/0。参数改动即时生效（每帧从 life-tuning 重算字段，或存种子每帧算——选后者，字段只存种子推导结果避免 localStorage 参数变更后不同步）。
-- 参数：`parVarAmp` 0（0–0.5）/ `parVarAngle` 0（0–0.35 rad）。
+- 做什么：建点后（buildGlNodes 或 L0a lifeSeeds 首读时）写 `n._parGain = 1 + (s₃−0.5)·2·parVarAmp`、`n._parAng = (s₄−0.5)·2·parVarAngle`；project/unproject 的视差项改为 `rot(_parAng)·(mx,my)·TILT_PX·tc·_parGain`（L0b 已留 node 参口子）。flag 关 → 两字段视为 1/0。参数改动即时生效；视觉半径最小的一组球在幅度拉满时把 `_parGain` 压到 0.02–0.10，形成少量近静止小球。
+- 参数：`parVarAmp` 0（0–1）/ `parVarAngle` 0（0–0.7 rad）。
 - 验收（⏸）：动鼠标 → 球群位移幅度/方向有微差、层次感增强不齐步；**拖任意球在鼠标大幅移动中命中仍准**（unproject 对称性专项验）；日蚀层随播放球的视差与球一致。
 
 ### L2-3 流场游移（flag `flowDrift`）——追加提案 2 = 原 L2「运动轨迹」本体
 
 - **审计实况**：现有 `driftSpheres`（gl-sim-waves.ts:19）= 每球**独立**双正弦随机游走（lw 种子已随机）→ 是"逐球抖动"，无空间结构。用户要的"轨迹感"缺的是**空间相干**：邻近球被同一股"暗流"带动。
 - 做什么：新建 `life/flow-field.ts`：`flowAt(x, y, t) = curl(Ψ)`，Ψ 用 2~3 个不同向/不同波长的正弦势场叠加（黄金比频率、不引库、解析求偏导）；sphere-frame 每帧对非拖拽/非播放球 `v += flowAt(n.x·flowScale, n.y·flowScale, t·flowSpeed)·flowStrength·lifeEnv(t)`（注入 d3 vx/vy，velocityDecay 0.5 + cluster 力天然约束 → 漂而不散，与 driftSpheres 同构）。与 `sphereDrift` 正交可同开：drift 管"个体抖"、flow 管"集体流"。
-- 参数：`flowStrength` 0（0–0.15）/ `flowScale`（0.002–0.02）/ `flowSpeed`（0.02–0.3）。
+- 参数：`flowStrength` 0（0–0.45）/ `flowScale`（0.002–0.06）/ `flowSpeed`（0.02–0.9）。
 - 验收（⏸）：静置 30s → 球缓慢"游"出可辨认弧线，**相邻球有同向趋势**（洋流感），群不散不聚；与 drift 同开不打架；关 flag 回现状。
 
 ### L2-4 偶发颤动（flag `shiver`）——追加提案 4
@@ -197,7 +197,7 @@
     - **下限保护**：`_lifeDim ≥ 0.12`（球可点但完全不可见 = 交互怪，floor 兜底；水下球可点已有先例，同口径）；
     - 豁免：`isPlaying || isHover || 拖拽中 → _lifeDim = 1`（缓动回 1 不跳变）；reduced-motion → 恒 1；
     - 可选深度加权 `flickerDepthBias`：水下乘额外系数 → 隐现与深度产生语义关联；
-  - GL：`aParams.z = dimLerp·(1−submerge)·n._lifeDim`；
+  - GL：按 R3 当前权威契约（`96-l-true-alpha-composite.md` §14），`aLifeDim` 只调制 halo；水上 body 继续使用 `playDim`，不得因生命感隐现而露出主体内水纹；
   - **DOM 同步**：SphereOverlay loop 的 opacity 乘 `(n._lifeDim ?? 1)`（一行）；
   - 记录：花瓣抠洞按 emerged 不按 dim——隐现中的出水球洞里是变淡的球，视觉成立，不改。
 - 参数：`flickerAmount` 0（0–0.85）/ `flickerSpeed`（0.05–0.6）/ `flickerDepthBias` 0（0–1）。
@@ -214,7 +214,7 @@
 
 ## flag / 参数总表
 
-| # | flag（gl-flags，默认全 false） | 参数（life-tuning，默认中性=无效果） | 步 | 依赖 |
+| # | flag（gl-flags；当前默认 9 开、仅 jelly 关） | 参数（life-tuning） | 步 | 依赖 |
 |---|---|---|---|---|
 | — | —（基建无 flag） | `lifeEnvAmount` 0（0–0.6）/ `lifeEnvPeriod` 24（8–60s） | L0a | — |
 | 1 | `wheelDesync` | `wheelAmpVar` 0 / `wheelLagVar` 0 | L2-1 | L0b |
@@ -232,14 +232,14 @@
 
 ## 完结标准（L 线本期收口 gate）
 
-- [ ] L0b 重构后全功能回归与改前逐项一致（滚轮/拖球/hover/播放/花瓣/遮罩/日蚀），任何视觉差异按 bug 修
-- [ ] 10 个 flag 全部可独立开关；**全关 = 与 L0a 之前像素级一致**
-- [ ] 参数全进 LifePanel（调参栏区域），实时可调 + 保存/重置生效（localStorage key `test3-life`）
-- [ ] 拖球命中在任意 flag 组合下不错位（L2-1/L2-2 的 unproject 对称专项）
-- [ ] 播放/hover 球在任意组合下恒亮不抖；reduced-motion 下全部静止/冻结
-- [ ] **和谐压力测试**：全 flag 同开 + 参数建议值 → 整体"活而不乱"（⏸ 用户拍板，必要时回调各幅度上限）
-- [ ] 逐文件 tsc + eslint 全绿；所有涉改文件 < 220 行、`life/` ≤ 8 文件
-- [ ] STATUS / TASKS / JOURNAL 同步
+- [x] L0b 重构后全功能回归与改前逐项一致（滚轮/拖球/hover/播放/花瓣/遮罩/日蚀）
+- [x] 10 个 flag 全部可独立开关；**全关 = 与 L0a 之前像素级一致**
+- [x] 参数全进 LifePanel（调参栏区域），实时可调 + 保存/重置生效（localStorage key `test3-life-v2`）
+- [x] 拖球命中在任意 flag 组合下不错位（浏览器 pointer cancel/capture 与统一投影回归通过）
+- [x] 播放/hover 球保持可用；reduced-motion 自动运动冻结回归通过
+- [x] **和谐压力测试**：2026-08-26 用户最终目验确认整体“活而不乱”合适
+- [x] 完整 `scripts/verify.sh` 全绿；所有涉改文件与目录硬线通过
+- [x] STATUS / TASKS / JOURNAL 同步
 
 ## 已知限制（记录在案，不阻塞）
 

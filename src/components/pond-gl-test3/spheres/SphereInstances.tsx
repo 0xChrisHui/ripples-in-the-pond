@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { DoubleSide, InstancedMesh, OrthographicCamera, ShaderMaterial } from 'three';
 import { sphereVertexShader, sphereFragmentShader } from './sphere-shader';
@@ -9,10 +9,13 @@ import { getEffectiveWaterLevel } from '../water/water-level';
 import { type ProjCtx } from '../sphere-projection';
 import { getPointerFx, getCameraFx } from '../pointer-fx';
 import { getLifeTuning } from '../life/life-tuning';
+import { lifeEnv } from '../life/life-core';
 import { prefersReducedMotion } from '../reduced-motion';
 import { writeFrame, hexToSRGB, BODY_RATIO, type InstanceBuf } from './sphere-frame';
 import type { LifeFlags } from '../gl-flags';
 import type { GlSim } from './use-gl-sim';
+import { BACKGROUND_LAYER, SPHERE_LAYER } from '../water/composite/render-passes';
+import { sampleKeyFx } from '../key-fx/key-fx-state';
 
 /**
  * G4 — 35/36 球 InstancedMesh（一次 draw call）。
@@ -25,6 +28,7 @@ interface SphereUniforms {
   uBrightness: { value: number };
   uContrast: { value: number };
   uSaturation: { value: number };
+  uColorGrade: { value: number };
   // 索引签名：让对象直接满足 R3F shaderMaterial 的 uniforms prop 类型（{ [k]: IUniform }）
   [key: string]: { value: unknown };
 }
@@ -33,24 +37,28 @@ interface SphereUniforms {
  * 把调色 store 同步到 shader uniform 真身（matRef.current.uniforms.X.value）——R3F 把 uniforms prop
  * 拷贝进 material，改外部 useMemo 对象到不了 shader（血泪踩坑 #1，WaterSurface 同此修法）。
  */
-function applyTuningUniforms(mat: ShaderMaterial, t: SphereTuning): void {
-  mat.uniforms.uBrightness.value = t.brightness;
+function applyTuningUniforms(mat: ShaderMaterial, t: SphereTuning, keyFxHalo: number, colorGrade: boolean): void {
+  mat.uniforms.uBrightness.value = t.brightness + keyFxHalo * 0.12;
   mat.uniforms.uContrast.value = t.contrast;
   mat.uniforms.uSaturation.value = t.saturation;
+  mat.uniforms.uColorGrade.value = colorGrade ? 1 : 0;
 }
 
-/** L3 边缘波 + 激励 uniform（每帧写 matRef 真身；flag 关 → uEdgeAmp/uExciteGain=0 = 正圆现状）。 */
-function applyEdgeUniforms(mat: ShaderMaterial, life: LifeFlags, timeSec: number): void {
+/** L3/L5 形态 uniform：边缘波、激励与光晕呼吸统一写 material 真身。 */
+function applyLifeUniforms(mat: ShaderMaterial, life: LifeFlags, timeSec: number, keyFxHalo: number): void {
   const lt = getLifeTuning();
   const k1 = Math.round(lt.edgeWaveFreq);
   const w = prefersReducedMotion() ? 0 : lt.edgeWaveSpeed; // reduced-motion → 停转（形状保留）
-  mat.uniforms.uEdgeAmp.value = life.edgeWave ? lt.edgeWaveAmp : 0;
+  mat.uniforms.uEdgeAmp.value = Math.max(life.edgeWave ? lt.edgeWaveAmp : 0, keyFxHalo * 0.045);
   mat.uniforms.uEdgeK1.value = k1;
   mat.uniforms.uEdgeK2.value = k1 + 3; // 非倍数、不合拍
   mat.uniforms.uEdgeW1.value = w;
   mat.uniforms.uEdgeW2.value = w * 1.618;
   mat.uniforms.uEdgeSoft.value = life.edgeWave ? lt.edgeSoft : 0;
   mat.uniforms.uExciteGain.value = life.edgeExcite ? lt.exciteGain : 0;
+  mat.uniforms.uHaloBreathAmp.value = Math.max(life.haloBreath && !prefersReducedMotion() ? lt.haloBreathAmp : 0, keyFxHalo * 0.16);
+  mat.uniforms.uHaloBreathSpeed.value = lt.haloBreathSpeed;
+  mat.uniforms.uLifeEnv.value = lifeEnv(timeSec);
   mat.uniforms.uTime.value = timeSec;
 }
 
@@ -70,7 +78,7 @@ function configurePixelCamera(cam: OrthographicCamera, w: number, h: number): vo
 }
 
 export default function SphereInstances(
-  { glSim, waterOn, motionOn, sphereDrift, life }: { glSim: GlSim; waterOn: boolean; motionOn: boolean; sphereDrift: boolean; life: LifeFlags },
+  { glSim, waterOn, motionOn, sphereDrift, separatePass = false, colorGrade = false, life }: { glSim: GlSim; waterOn: boolean; motionOn: boolean; sphereDrift: boolean; separatePass?: boolean; colorGrade?: boolean; life: LifeFlags },
 ) {
   const { nodes, sizeRef } = glSim;
   const count = nodes.length;
@@ -79,11 +87,18 @@ export default function SphereInstances(
   const camera = useThree((s) => s.camera);
   const lastSize = useRef({ w: 0, h: 0 }); // J2：相机跟随 sizeRef 的上次值（变了才重配像素相机）
 
+  const bindMesh = useCallback((mesh: InstancedMesh | null) => {
+    meshRef.current = mesh;
+    if (mesh) mesh.layers.set(separatePass ? SPHERE_LAYER : BACKGROUND_LAYER);
+  }, [separatePass]);
+
   // per-instance 缓冲（随 nodes 重建：切组时 count 变 → 整组重建）
   const buf = useMemo<InstanceBuf>(() => ({
     aColor: new Float32Array(count * 3),
     aParams: new Float32Array(count * 4),
     aSeed: new Float32Array(count * 2),
+    aSubmerge: new Float32Array(count),
+    aLifeDim: new Float32Array(count).fill(1),
     baseColors: nodes.map((n) => hexToSRGB(n.color)),
     hoverLerp: new Float32Array(count),
     dimLerp: new Float32Array(count).fill(1),
@@ -94,6 +109,7 @@ export default function SphereInstances(
     uBrightness: { value: 1 },
     uContrast: { value: 1 },
     uSaturation: { value: 1 },
+    uColorGrade: { value: 0 },
     uBodyRatio: { value: BODY_RATIO }, // /test3：原 aParams.w 常量，腾出 .w 给逐球景深失焦度
     uEdgeAmp: { value: 0 },   // L3 能量球边缘（0 = 正圆现状）
     uEdgeK1: { value: 5 },
@@ -102,7 +118,11 @@ export default function SphereInstances(
     uEdgeW2: { value: 0 },
     uEdgeSoft: { value: 0 },
     uExciteGain: { value: 0 },
+    uHaloBreathAmp: { value: 0 },
+    uHaloBreathSpeed: { value: 0.12 },
+    uLifeEnv: { value: 1 },
     uTime: { value: 0 },
+    uWaterPass: { value: 0 },
   }), []);
 
   useFrame(() => {
@@ -116,22 +136,25 @@ export default function SphereInstances(
       lastSize.current = { w: sz.w, h: sz.h };
     }
     const tuning = getTuning();
-    applyTuningUniforms(mat, tuning);
-    applyEdgeUniforms(mat, life, performance.now() / 1000); // L3 边缘波/激励 uniform
+    const keyFxHalo = sampleKeyFx(performance.now() / 1000).halo;
+    applyTuningUniforms(mat, tuning, keyFxHalo, colorGrade);
+    applyLifeUniforms(mat, life, performance.now() / 1000, keyFxHalo); // L3 边缘 + L5 光晕呼吸
     const proj = makeProjCtx(sz.w || 1, sz.h || 1);
     writeFrame(mesh, buf, {
       nodes, wavesRef: glSim.wavesRef, playingId: glSim.playingIdRef.current, hoverId: glSim.hoverIdRef.current,
-      tuning, waterOn, motionOn, proj, drift: sphereDrift, life, waveSpeed: 0.2 * (sz.h || 900),
+      tuning, waterOn, motionOn, proj, drift: sphereDrift, life, waveSpeed: 0.2 * (sz.h || 900), waterComposite: separatePass, keyFxHalo,
     });
   });
 
   if (count === 0) return null;
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, count]} frustumCulled={false}>
+    <instancedMesh ref={bindMesh} args={[undefined, undefined, count]} frustumCulled={false}>
       <planeGeometry args={[1, 1]}>
         <instancedBufferAttribute attach="attributes-aColor" args={[buf.aColor, 3]} />
         <instancedBufferAttribute attach="attributes-aParams" args={[buf.aParams, 4]} />
         <instancedBufferAttribute attach="attributes-aSeed" args={[buf.aSeed, 2]} />
+        <instancedBufferAttribute attach="attributes-aSubmerge" args={[buf.aSubmerge, 1]} />
+        <instancedBufferAttribute attach="attributes-aLifeDim" args={[buf.aLifeDim, 1]} />
       </planeGeometry>
       <shaderMaterial
         ref={matRef}
