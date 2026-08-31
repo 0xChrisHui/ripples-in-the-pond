@@ -511,3 +511,19 @@
 - 🔧 修复：只选择 URL 以验收站点基址开头的页面，再执行 33 键与压力测试。
 - ✅ 结果：全套浏览器审计通过，控制台异常为 0。
 - 💡 CDP 目标选择必须同时校验 target 类型和站点 URL，浏览器扩展页不能视为应用页。
+
+### E038 — 发布 worktree 的依赖目录联接被 Turbopack 拒绝
+
+- 📅 2026-09-01 / P9 v4.2 合并后完整验证
+- 😱 现象：TypeScript、ESLint、硬线与危险扫描通过，但生产构建报 `Symlink node_modules is invalid, it points out of the filesystem root`。
+- 🧠 原因：为复用主工作区依赖而创建的 Windows junction 指向发布 worktree 根目录之外，Turbopack 的文件系统边界检查会主动拒绝。
+- 🔧 修复：保留失败证据，移开临时 junction，并严格依据现有 `package-lock.json` 在发布 worktree 独立执行 `npm ci`；未改包清单、lockfile 或依赖版本。
+- 💡 Turbopack 发布验证不能复用根目录外的依赖符号链接；独立 worktree 应拥有自己的真实 `node_modules`。
+
+### E039 — 独立发布 worktree 缺少本地构建环境变量
+
+- 📅 2026-09-01 / P9 v4.2 合并后完整验证
+- 😱 现象：生产代码编译成功，但收集 `/api/cron/queue-status` 页面数据时报 `supabaseUrl is required`。
+- 🧠 原因：`.env.local` 按设计被 Git 忽略，新 worktree 不会自动获得主工作区的本地构建环境；不是合并冲突或线上变量丢失。
+- 🔧 修复：不打印任何密钥，只把现有 `.env.local` 复制到隔离发布 worktree 作为本地验证输入；文件继续被 Git 忽略，不进入提交。
+- 💡 新 worktree 的源码和依赖可以独立，但需要显式准备被忽略的本地构建环境。
