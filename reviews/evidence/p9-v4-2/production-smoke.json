@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-08-31T20:06:53.033Z",
+  "deployment": "fe179b0870dae85394ac7cbe42fac6ca3ddec095",
+  "page": {
+    "href": "https://pond-ripple.xyz/",
+    "title": "Ripples in the Pond",
+    "hudVisible": false,
+    "tuningPanelVisible": false,
+    "keyboardCopy": true,
+    "triggerLog": [
+      {
+        "id": "FX11",
+        "key": "k",
+        "accepted": true,
+        "reason": null
+      },
+      {
+        "id": "FX01",
+        "key": "a",
+        "accepted": false,
+        "reason": "no-eclipse"
+      }
+    ]
+  },
+  "errors": []
+}

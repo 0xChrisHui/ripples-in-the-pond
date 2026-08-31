@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 9 v4.2 发布中 + Phase 12 软启动并行观察**（P8 于 2026-08-26 正式完结；P12 已迁移 OP Mainnet）。P7 / P8 / P10 / P12 部署已完结，P9 工程 Gate 已完成并正在提升生产，P11 未开始。
+**Phase**: **Phase 9 v4.2 已完成并上线 + Phase 12 软启动并行观察**（P8 于 2026-08-26 正式完结；P12 已迁移 OP Mainnet）。P7 / P8 / P9 / P10 / P12 部署已完结，P11 未开始。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）
@@ -26,7 +26,7 @@
 **P6 Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`（16/19 通过 + 0 P0 + 0 P1）
 **stakeholder 反馈**：艺术家 5 条反馈已收到（→ Phase 8）；投资人催 Semi demo（→ P7 Track B PoC-only）
 
-**P9 当前（2026-09-01）**：v4.2 Review Fix Pack A+B+C 已完成，生产注册表收束为 33 键/33 音效/33 动画；`/` 与 `/test3` 共用同一 P9 演奏层，首页不显示 P9 状态浮窗，调参面板仍只留在 `/test3`。静态审计、浏览器 33 键扫描、复音/回收/reduced-motion/60 FPS 压测和完整 `scripts/verify.sh` 全绿，证据见 `reviews/2026-09-01-phase-9-v4-2-final-gate.md`。**下一步：合并最新 `main` 并完成生产部署与线上冒烟。**
+**P9 当前（2026-09-01）**：v4.2 Review Fix Pack A+B+C 已完成并部署 Production，生产注册表收束为 33 键/33 音效/33 动画；`/` 与 `/test3` 共用同一 P9 演奏层，首页不显示 P9 状态浮窗，调参面板仍只留在 `/test3`。静态审计、浏览器 33 键扫描、复音/回收/reduced-motion/60 FPS 压测、合并后完整 `scripts/verify.sh` 和 `pond-ripple.xyz` 线上冒烟全绿，证据见 `reviews/2026-09-01-phase-9-v4-2-final-gate.md`。**下一步：用户在生产首页进行最终体感体验；若无新增反馈，Phase 9 正式封存并进入下一阶段。**
 
 **P8-L 动态验收微调（2026-08-23）**：视差/流场上限微调已完成。真透明 R3 最终维修已完成浏览器自动复验：球网格改为挂载时绑定独立 FBO layer，水上实体主体最后覆盖湿背景，水下球保留水纹；完全出水球中心点击时涟漪只绕过主体，`alphaFlicker` 开启后主体覆盖仍稳定。**2026-08-26 用户最终目验确认 R3 与 L 线“活而不乱”合适，验收门已关闭。**
 
@@ -79,7 +79,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **当前唯一下一步：D4 软启动观察（Day 0/7）**。每天两次看 `/api/health`、cron-job.org、Supabase 双队列与告警邮箱；7 天无 P0 后完成 launch review，Phase 12 才正式完结。E 性能仍是软 gate，不阻塞。
 
-**当前权威下一步**：P9 v4.2 本地 Gate 已通过；将已验证提交合并最新 `main`、推送生产分支并在 `https://pond-ripple.xyz/` 完成首页/按键/浮窗线上冒烟。P12 仅保留 7 天软启动观察（health、cron、双队列、告警）。
+**当前权威下一步**：用户在 `https://pond-ripple.xyz/` 完成 P9 v4.2 最终体感体验；无新增反馈则封存 P9，再决定 Phase 11。P12 仅保留 7 天软启动观察（health、cron、双队列、告警）。
 
 ---
 

@@ -74,3 +74,22 @@
 2. 对合并结果再次完整运行 `scripts/verify.sh`；
 3. 非强推更新 `main`，等待 Vercel Production 完成；
 4. 对 `https://pond-ripple.xyz/`、`/api/ping`、首页 HUD 与键盘事件做线上冒烟。
+
+## 生产发布结果
+
+- 合并提交：`2c91db0`；Review Fix Pack 提交：`b4a0894`。
+- 首次 `7bedccd` 因同一 SHA 先推功能分支，被 Vercel 去重为 Preview；没有把 Preview 成功误判为生产上线。
+- 专用生产触发提交：`fe179b0870dae85394ac7cbe42fac6ca3ddec095`。
+- GitHub deployment：`6188616947`，environment=`Production`，Vercel 状态 `success`。
+- `https://pond-ripple.xyz/`：HTTP 200，部署后 `Age: 0`、`X-Vercel-Cache: PRERENDER`。
+- `https://pond-ripple.xyz/test3`：HTTP 200；`/api/ping`：`ok=true`。
+
+真实浏览器生产冒烟：
+
+- 页面标题 `Ripples in the Pond`，33 动画提示存在。
+- P9 状态浮窗不可见，首页 P9 调参面板不可见。
+- 无音乐按 K：FX11 accepted；按 A：FX01 正确返回 `no-eclipse`。
+- Runtime / console error：0。
+- 证据：`production-smoke.json`、`production-homepage.png`、`production-smoke.mjs`。
+
+**最终裁决：Phase 9 v4.2 工程、合并、Production 部署和线上冒烟全部通过。**
