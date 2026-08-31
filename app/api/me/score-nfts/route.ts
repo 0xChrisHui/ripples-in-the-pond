@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 import { resolveArUrl } from '@/src/lib/arweave';
-import type { MyScoreNFTsResponse, OwnedScoreNFT } from '@/src/types/jam';
+import type { MyScoreNFTsResponse, OwnedScoreNFT, ScoreMintStatus } from '@/src/types/jam';
 
 /**
  * GET /api/me/score-nfts
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     const { data: rows, error } = await supabaseAdmin
       .from('score_nft_queue')
       .select(`
-        id, token_id, cover_ar_tx_id, tx_hash, created_at,
+        id, status, token_id, cover_ar_tx_id, tx_hash, created_at,
         tracks(title),
         pending_scores(event_count)
       `)
@@ -42,6 +42,7 @@ export async function GET(req: NextRequest) {
         id: r.token_id != null ? String(r.token_id) : r.id,
         queueId: r.id,
         tokenId: r.token_id ?? undefined,
+        status: r.status as ScoreMintStatus,
         trackTitle: trackData?.title ?? '未知曲目',
         coverUrl: resolveArUrl(r.cover_ar_tx_id),
         eventCount: ps?.event_count ?? 0,

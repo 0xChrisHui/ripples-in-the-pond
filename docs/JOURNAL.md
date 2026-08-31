@@ -913,6 +913,12 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **否决的最大簇（4 个 finder 撞车）**："浮动脉冲期间花瓣抠洞/拖尾/拖球命中与视觉球错位" ——核查 HEAD 后确认全部源于上会话 sphere-motion v3 解耦（浮动刻意不进深度轴，playbook L0b 已明文"pre-existing 不一致，L 线不扩大战线"），非本次引入；仅顺手修了 ripple-feed/WaterPetals 两处失实注释（还写着"含球浮动"）。
 - **留给用户拍板的 5 项**（review 报告 6-10，未动代码）：「扰动激励」单开无效果（spec 即设计成依赖「能量球边缘」，仅缺 UI 提示）/ wakeSpheres 开但推力=0 时白跑 CPU 波动方程网格 / renderDepth≡effDepth 重复+过时注释 / writeFrame 13 位置参数数据泥团 / dropScreen 在 wake-field 与 WaterPetals 双份。
 
+## 2026-08-22 — ScoreNFT 历史失败记录展示热修
+
+- **现象不是链仍在等待**：7 月 23 日的异常记录数据库状态已经是 `failed`，但 `/me` 接口漏传 `status`，前端又把所有 `tokenId == null` 都推断成“上链中”，因此失败记录被永久误显并持续轮询。
+- **修复边界**：状态作为唯一真理来源；失败卡显示“上链失败 / 需处理”，不进入详情页，轮询排除 `failed`。本热修不修改队列、不重发交易，也不改变合约架构。
+- **测试网数据决定暂缓**：新 smoke 已在旧测试合约成功铸出 tokenId 24，但数据库中旧合约时代已有 tokenId 24，触发 `uq_score_queue_token_id`。主网上线前 D-0 会清理测试数据；在用户确认前不做任何生产数据库删除或手工回填。
+
 ## 2026-07-19 — Phase 12 B-0 合约决策 gate 九项全拍板 + 开工前隐患收口
 
 - **B-0 九项一次定死**（主网合约不可升级，承接 P10 停点 4 移交；权威锁定块见 `playbook/phase-12/20-b` §1）：①版税不做 ②供应上限不设(链下监控) ③印死不可升级 ④加 mintScore 幂等键 ⑤加 URI 空串防御 ⑥加 MaterialNFT freezeURI ⑦ScoreNFT 名 `Ripples in the Pond`/`RPIP` ⑧admin 独立钱包(≠热钱包) ⑨AirdropNFT 不部署(→全流程 3 合约)。
@@ -1031,6 +1037,12 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **证据**：Alchemy 本月 275,096 / 30M CU（0.92%）；Supabase 14 表 349 行 / 应用用户 9；Upstash PING 正常 / 56 keys；Vercel 为 Hobby，4 job 全按每分钟计算也仅占 100 万 invocations 的 17.3%；cron-job.org 与 Resend 的最坏常驻量均低于硬限制。
 - **决定**：上线前不升级 Vercel、Supabase、Upstash、Alchemy、cron-job.org、Resend，也不主动降频。主网 App 与测试网分开后仍使用 Alchemy 账户共享 30M CU。
 - **观察线**：Upstash 500K commands/月是六项中最可能先遇到的软上限；软启动期每周看一次，达到 70% 再决定关闭 ratelimit analytics、降频或升级。Vercel/Resend 的 Sensitive/账单明细不为盘点而降低密钥边界。
+
+## 2026-08-23 — MaterialNFT 永久 metadata 在主网广播前补齐
+
+- **发现**：测试网 CT-8 只用 `ar://b1-material-final` 假值验证 freeze，主网没有可永久冻结的素材 metadata；占位 URI 上链会让 35 类 MaterialNFT 永久无有效展示层。
+- **决定**：按用户批准生成 35 张波纹 SVG 封面 + 35 份 ERC-1155 metadata；曲名严格为 1-35，音频复用既有 Arweave txid，manifest URI 为 `ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/{id}.json`。
+- **执行纪律**：文件名采用 ERC-1155 规定的 64 位小写十六进制 token id；构造时直接写最终 URI，链上读回后再 freeze，省掉一次可出错的 setURI 交易。上传状态与 SHA-256 留在仓库外，35+35 项均完成，备用网关已读回样本。
 
 ## 2026-08-23 — P8-L 偶发颤动改为“开启即验收”
 
@@ -1290,3 +1302,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **清理决定**：用户授权 Track C 后，12 个冻结候选、旧 key-fx 事件总线与无消费者参数物理退出；正式注册表从“45 个历史条目筛 33 个”变为“生产只注册 33 个”。
 - **路由决定**：`/` 与 `/test3` 共用演奏能力与调参存档，P9 状态浮窗从两处移除，但 `/test3` 专属调参面板保留。
 - **发布决定**：为保护当前工作区内未提交的 P12/auth 改动，生产发布在独立 worktree 合并最新 `origin/main`，只将已审计 P9 提交推向生产。
+
+## 2026-08-23 — OP Mainnet 部署日硬 gate 全部通过
+
+- **上线结果**：三合约部署、源码验证、权限收敛、数据清切、Vercel 三环境、四个生产 cron 与两条真实铸造 smoke 全部通过；ScoreNFT tokenId 1 的公开页、OG、永久 metadata 与浏览器播放均验收成功。
+- **密钥收口**：deployer 剩余资金转回 operator 后，仅留约 0.000001 ETH 尘埃；13 项角色/冻结状态复核全绿才删除一次性 deployer 钱包文件，admin 备份保持不动。
+- **阶段决定**：D-gate 放行但暂不宣布 Phase 12 完结；先进入 7 天软启动，每日两次检查 health、cron、双队列与告警，7 天无 P0 后再完成 launch review。

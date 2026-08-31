@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 9 当前**（P8 于 2026-08-26 正式完结；P12 已迁移 OP Mainnet并进入软启动观察）。P7 / P8 / P10 / P12 已完结，P9 音效与按键编舞进行中，P11 未开始。
+**Phase**: **Phase 9 v4.2 发布中 + Phase 12 软启动并行观察**（P8 于 2026-08-26 正式完结；P12 已迁移 OP Mainnet）。P7 / P8 / P10 / P12 部署已完结，P9 工程 Gate 已完成并正在提升生产，P11 未开始。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）
@@ -44,6 +44,14 @@
 
 **P8-L 滚轮与隐现默认值更新（2026-08-25）**：默认目标步长 `0.06`、最高速度 `2.5`、开始加速 `10`、停止减速 `0.05`、隐现深度偏置 `0`。已有 localStorage 参数仍优先，点击 `/test3` 面板“重置”即可使用这组默认值。
 
+## 独立热修：历史 ScoreNFT 失败误显“上链中”（2026-08-22）
+
+- **分支 / 工作树**：`codex/fix-stuck-score-mints` / `E:\Projects\nft-music-stuck-score-mints`，与 P12 主工作树隔离。
+- **上次完成**：`/api/me/score-nfts` 返回真实队列状态；失败记录显示“上链失败”，不再可点击进入假等待页；轮询只关注未失败的待处理记录。热修 commit `8ce2514` 已于 2026-08-22 快进合入 `main`，Vercel 生产部署成功，`pond-ripple.xyz` 已加载新版前端资源。
+- **根因补充**：7 月 23 日记录本身已是 `failed`；本次真实 smoke 已成功在旧测试合约铸出 tokenId 24，但数据库与旧合约时代的 tokenId 24 撞唯一约束后转为 `failed`。
+- **验证**：`scripts/verify.sh` 全绿（TypeScript、lint、硬线扫描、生产构建、Foundry 24 tests）。
+- **下一步**：测试网历史链数据如何清理或按合约地址隔离，另行确认后执行；当前未改生产数据库。
+
 ---
 
 ## P12 执行进度（部署阶段已完成，更新至 2026-08-24）
@@ -66,8 +74,10 @@
 2. **C 施工 ✅**：CRON_SECRET / Turbo 永久上传 / operator 0.01 ETH / 告警 / 快照恢复演练 / C7-C10 / 主网 Alchemy / Etherscan key / **C6 六服务额度盘点全部完成**。C6 结论：六项维持免费档；Alchemy 0.92%、Supabase 349 行、Upstash 56 keys，均无临界风险。部署日前 24h 重跑 C5。
 3. **A-1 解码器 ✅ 全完成**：UI / 三组参数 / 网关重试 / 永久上传 / 三环境切换 / `Ripples #26` 真实 smoke 全过。
 4. **B5 admin 签名演练 ✅ 完成（2026-08-23）**：测试网 funding `0x51f1...be48`；既有 admin 授权新 admin `0x0466...1947`；新 admin 签 grant `0x3ae2...efa7`、revoke `0x42ce...1424`；清理后临时 MINTER_ROLE=false、Orchestrator MINTER_ROLE=true。
-5. **D-1 内容冻结**：曲名 1-35 ✅ / admin+deployer 钱包 ✅ / admin 私钥备份 ✅ / DB 恢复演练 ✅ / 主网凭证 ✅ / 额度盘点 ✅。**当前下一步：🛑 D-0 确定部署日**；部署日前 24h 新快照 + admin/deployer 主网充值 → D 部署日。
-6. **E 性能**（软 gate）随时穿插不阻塞。
+5. **D-1/T-1 ✅**：曲名 1-35 / 三钱包充值 / admin 备份与演练 / 349 行新快照 / 主网凭证 / 额度盘点 / 35 份 MaterialNFT 永久 metadata 全完成。
+6. **D2 主网上线 ✅ 完成（2026-08-23）**：冻结后快照 `C:\Users\Hui\ripples-backups\20260823-135447`（14 表 / 349 行 / 0 失败）；OP Mainnet 三合约部署、Etherscan 验证、权限收敛、Material URI 冻结完成；链衍生数据已清零并把游标设为 `155933187`；Vercel 三环境与 `main@71872d8` 已切主网；4 个 cron 已恢复，airdrop 保持关闭。真实 smoke：Material #24/#7/#34 全部 success，Score #1 mint + setTokenURI success，`/score/1` 页面、OG、metadata 与浏览器播放全部通过。
+7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
+8. **当前唯一下一步：D4 软启动观察（Day 0/7）**。每天两次看 `/api/health`、cron-job.org、Supabase 双队列与告警邮箱；7 天无 P0 后完成 launch review，Phase 12 才正式完结。E 性能仍是软 gate，不阻塞。
 
 **当前权威下一步**：P9 v4.2 本地 Gate 已通过；将已验证提交合并最新 `main`、推送生产分支并在 `https://pond-ripple.xyz/` 完成首页/按键/浮窗线上冒烟。P12 仅保留 7 天软启动观察（health、cron、双队列、告警）。
 

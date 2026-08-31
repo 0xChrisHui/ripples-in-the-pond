@@ -18,6 +18,18 @@
 | ScoreNFT | ERC-721（乐谱） | `script/DeployScore.s.sol` |
 | MintOrchestrator | ScoreNFT 前台薄壳 | `script/DeployOrchestrator.s.sol` |
 
+### 2026-08-23 OP Mainnet 部署记录
+
+| 合约 | 主网地址 | 部署区块 | 验证 |
+|---|---|---:|---|
+| MaterialNFT | `0x03504aeb95EbE3DC8c427b7b147f873F9948a299` | `155933141` | OP Etherscan 源码验证通过；永久 URI 已冻结 |
+| ScoreNFT | `0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA` | `155933187` | OP Etherscan 源码验证通过 |
+| MintOrchestrator | `0x406519962cDD1673D30fEcC13c4B6f7Af87Ba1dA` | `155933224` | OP Etherscan 源码验证通过 |
+
+最终权限已链上核验：admin 持三个合约的 `DEFAULT_ADMIN_ROLE`；operator 持
+MaterialNFT / MintOrchestrator 的 `MINTER_ROLE`；MintOrchestrator 持 ScoreNFT 的
+`MINTER_ROLE`；deployer 不再持任何 admin/minter 权限。
+
 **AirdropNFT 主网不部署**（B-0 #9：省 gas 省面，将来要用再单独部署）。`DeployAirdropNFT.s.sol`
 已加主网护栏（chainid 10 直接 revert）。`process-airdrop` cron 主网**不配置**、`AIRDROP_ENABLED` **不设**。
 
@@ -45,9 +57,9 @@
 
 > **2026-07-28 已生成**（`cast wallet new`，私钥存 `C:\Users\Hui\.ripples-secrets\`，不进 git/env/聊天；已 verify 私钥派生地址一致）。三者两两不同已自查通过。
 
-- [x] **admin 钱包** = `0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722`（`admin-wallet.json`；私钥留本地，deploy 日靠 `cast send --private-key` 手操）
-- [ ] **minter 钱包** = `0x306D3A445b1fc7a789639fa9115e308a34231633`（现运营热钱包 = `OPERATOR_PRIVATE_KEY` 派生）；OP Mainnet ETH ≥ 0.005（2026-07-28 已转 0.01）
-- [ ] **deployer 钱包** = `0x96aAfd4817BCF9971B54B5aC180D20a47F462162`（`deployer-wallet.json`）；deploy 日充值 OP Mainnet ETH ≥ 0.04（够 3 次部署 + 移交），用后销毁
+- [x] **admin 钱包** = `0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722`（`admin-wallet.json`）；2026-08-23 已到账 0.00005 OP ETH
+- [x] **minter 钱包** = `0x306D3A445b1fc7a789639fa9115e308a34231633`（现运营热钱包 = `OPERATOR_PRIVATE_KEY` 派生）；已到账 0.01 OP ETH
+- [x] **deployer 钱包** = `0x96aAfd4817BCF9971B54B5aC180D20a47F462162`（`deployer-wallet.json`）；按实时全费估算已到账 0.0001 OP ETH，用后销毁
 - [x] 三者地址两两不同（脚本会强校验，此处已自查）
 
 ### 2.2 环境变量（`.env.local`，部署机本地）
@@ -60,8 +72,8 @@ NEXT_PUBLIC_CHAIN_ID=10         # OP Mainnet
 # CT-1：ScoreNFT 永久 name/symbol（主网缺这两个 → DeployScore 直接 revert，防焊错名）
 SCORE_NFT_NAME=Ripples in the Pond
 SCORE_NFT_SYMBOL=RPIP
-# CT-15：MaterialNFT 初始 URI（可留空用脚本默认占位；部署后 admin setURI 到最终值再 freeze）
-MATERIAL_URI=https://placeholder.ripples/{id}.json
+# CT-15：35 份永久 metadata 的 Arweave manifest；构造时直接焊入，admin 核对后 freeze
+MATERIAL_URI=ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/{id}.json
 ```
 > ⚠ `MINTER_ADDRESS` 必须 == `OPERATOR_PRIVATE_KEY` 派生地址。不一致则 hasRole 验收全过、
 > 但 cron 发交易全 revert（cron 用 OPERATOR 私钥签，合约认 MINTER_ADDRESS）。用
@@ -142,34 +154,35 @@ cast call <MaterialNFT> "hasRole(bytes32,address)(bool)" \
 ## 4. 部署后
 
 ### 4.1 `.env.local` + Vercel env 同步（每枚 NFT 永久值，务必读回确认）
-- [ ] `NEXT_PUBLIC_SCORE_NFT_ADDRESS` = ScoreNFT 新地址
-- [ ] `NEXT_PUBLIC_ORCHESTRATOR_ADDRESS` = Orchestrator 新地址
-- [ ] `NEXT_PUBLIC_MATERIAL_NFT_ADDRESS` = MaterialNFT 新地址
-- [ ] `NEXT_PUBLIC_CHAIN_ID=10`
-- [ ] **`NEXT_PUBLIC_APP_URL=https://pond-ripple.xyz`**（每枚 NFT 的 `external_url` 来源；
+- [x] `NEXT_PUBLIC_SCORE_NFT_ADDRESS` = ScoreNFT 新地址
+- [x] `NEXT_PUBLIC_ORCHESTRATOR_ADDRESS` = Orchestrator 新地址
+- [x] `NEXT_PUBLIC_MATERIAL_NFT_ADDRESS` = MaterialNFT 新地址
+- [x] `NEXT_PUBLIC_CHAIN_ID=10`
+- [x] **`NEXT_PUBLIC_APP_URL=https://pond-ripple.xyz`**（每枚 NFT 的 `external_url` 来源；
       漏配即第一枚 smoke NFT 永久写错域名。Codex 发现 runbook 旧版漏列此项）
-- [ ] server-only 三项**逐环境读回确认**（`npm run env-sync` 现已把这些纳入白名单可比对）：
+- [x] server-only 三项**逐环境读回确认**（`npm run env-sync` 现已把这些纳入白名单可比对）：
       `SCORE_DECODER_AR_TX_ID` / `SOUNDS_MAP_AR_TX_ID`（钉进每枚 NFT，三环境须一致）
-- [ ] ~~`AIRDROP_NFT_ADDRESS`~~ 不设（不部署 AirdropNFT）。代码读的 env 名是
+- [x] ~~`AIRDROP_NFT_ADDRESS`~~ 不设（不部署 AirdropNFT）。代码读的 env 名是
       `NEXT_PUBLIC_AIRDROP_NFT_ADDRESS`（旧 runbook 写错为 `AIRDROP_NFT_ADDRESS`）——留空即可，
       `contracts.ts` 已惰性处理不抛错
-- [ ] Vercel Production env 全部同步 → **Redeploy（不带 Build Cache）**
+- [x] Vercel Production env 全部同步 → **Redeploy（不带 Build Cache）**
 
 ### 4.2 cron-job.org 验证（4 个 active，≥5 分钟全绿）
-- [ ] process-mint-queue
-- [ ] process-score-queue
-- [ ] sync-chain-events
-- [ ] check-balance
-- [ ] **process-airdrop：不存在 / 保持暂停**（验证不可触发）
+- [x] process-mint-queue
+- [x] process-score-queue
+- [x] sync-chain-events
+- [x] check-balance
+- [x] **process-airdrop：不存在 / 保持暂停**（验证不可触发）
 
 ### 4.3 端到端 smoke（真 gas）
-- [ ] 真实账号登录 → 收藏素材 → 1 分钟内 /me 显示 success（MaterialNFT 通路）
-- [ ] 草稿铸造 → 4 步 cron 推进 → /score/[id] 公开页可播放（ScoreNFT 通路）
-- [ ] /score/[id] 分享 OG 卡片正常；metadata `external_url` 指生产域名；animation_url 播放正常
+- [x] 真实账号登录 → 收藏素材 → /me 显示 success（MaterialNFT #24/#7/#34）
+- [x] 草稿铸造 → 4 步 cron 推进 → `/score/1` 公开页可播放（ScoreNFT tokenId 1）
+- [x] `/score/1` 分享 OG 图片 200；metadata `external_url` 指生产域名；animation_url 浏览器播放正常
 
 ### 4.4 销毁 deployer 私钥
-- [ ] `DEPLOYER_PRIVATE_KEY` 从 `.env.local` 删除 + 从 Vercel env 删除（若配过）
-- [ ] deployer 钱包剩余 ETH 转出
+- [x] 确认一次性 deployer 私钥未进入 Vercel；部署时仅从仓库外钱包文件临时读取
+- [x] deployer 剩余 `0.000098861219548476 ETH` 转回 operator（tx `0x1b7b...ef00`），保留约 `0.000000999038 ETH` 尘埃
+- [x] 完整权限矩阵与 `uriFrozen` 复核通过后，删除 `C:\Users\Hui\.ripples-secrets\deployer-wallet.json`；admin 钱包备份未动
 
 ---
 
@@ -217,18 +230,18 @@ cast send <ScoreNFT> "grantRole(bytes32,address)" \
 ```
 验收：§3.3.2 第 2 条 hasRole = true。
 
-### 6.2 MaterialNFT 定稿 URI 并封条（CT-8，开铸前做）
+### 6.2 MaterialNFT 核对最终 URI 并封条（CT-8，开铸前做）
 ```bash
-# ① 把素材 metadata URI 指到最终 Arweave（示例，换成实际值）
-cast send <MaterialNFT> "setURI(string)" "ar://<最终素材 metadata>" \
-  --rpc-url $ALCHEMY_RPC_URL --private-key <ADMIN_PRIVATE_KEY>
+# ① 构造时已写最终值；先读 token 1，必须精确等于 $MATERIAL_URI
+cast call <MaterialNFT> "uri(uint256)(string)" 1 --rpc-url $ALCHEMY_RPC_URL
 # ② 一次性封条：此后任何人（含 admin）都改不了素材 NFT metadata
 cast send <MaterialNFT> "freezeURI()" \
   --rpc-url $ALCHEMY_RPC_URL --private-key <ADMIN_PRIVATE_KEY>
 # ③ 确认已封 → 期望 true
 cast call <MaterialNFT> "uriFrozen()(bool)" --rpc-url $ALCHEMY_RPC_URL
 ```
-> 顺序不可颠倒：freeze 后 setURI 永久 revert。freeze 前务必确认 URI 是最终值。
+> `MATERIAL_URI` 已于 2026-08-23 生成并上传：35 个 SVG 封面 + 35 份 metadata；
+> 样本 metadata、封面、音频已在 Arweave 网关读回。freeze 前仍须逐字核对链上返回值。
 
 ### 6.3（可选，将来）admin 升级 / 交权 / renounce
 - 升 Safe/硬件：把 `DEFAULT_ADMIN_ROLE` grant 给新 admin、再从旧 admin revoke（先 grant 验成功再 revoke）。

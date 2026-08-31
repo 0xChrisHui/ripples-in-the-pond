@@ -12,7 +12,10 @@ import type { OwnedScoreNFT } from '@/src/types/jam';
  */
 export default function ScoreCard({ score }: { score: OwnedScoreNFT }) {
   const isOnchain = score.tokenId != null;
-  const title = isOnchain ? `Ripples #${score.tokenId}` : 'Ripples · 上链中';
+  const isFailed = score.status === 'failed';
+  const title = isOnchain
+    ? `Ripples #${score.tokenId}`
+    : isFailed ? 'Ripples · 上链失败' : 'Ripples · 上链中';
 
   // 用提交绝对时间避免 Date.now()（impure function lint 规则）
   const queuedAt = isOnchain
@@ -21,14 +24,17 @@ export default function ScoreCard({ score }: { score: OwnedScoreNFT }) {
         month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
       });
 
-  return (
-    <Link
-      href={`/score/${score.id}`}
-      className={[
-        'group flex gap-4 rounded-xl border border-white/10 p-4 transition-colors',
-        isOnchain ? 'bg-white/5 hover:bg-white/10' : 'bg-white/[0.03] opacity-70 hover:opacity-90',
-      ].join(' ')}
-    >
+  const className = [
+    'group flex gap-4 rounded-xl border p-4 transition-colors',
+    isOnchain
+      ? 'border-white/10 bg-white/5 hover:bg-white/10'
+      : isFailed
+        ? 'border-red-300/15 bg-red-950/10 opacity-80'
+        : 'border-white/10 bg-white/[0.03] opacity-70 hover:opacity-90',
+  ].join(' ');
+
+  const content = (
+    <>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={score.coverUrl}
@@ -46,13 +52,18 @@ export default function ScoreCard({ score }: { score: OwnedScoreNFT }) {
         <p className="mt-0.5 text-xs text-white/30">
           {isOnchain
             ? new Date(score.mintedAt).toLocaleDateString()
-            : `${queuedAt} 提交（通常 5-30 分钟）`}
+            : isFailed
+              ? `${queuedAt} 提交 · 已停止自动处理`
+              : `${queuedAt} 提交（通常 5-30 分钟）`}
         </p>
       </div>
 
-      <span className="self-center text-white/20 transition group-hover:text-white/50">
-        →
+      <span className="self-center text-xs text-white/20 transition group-hover:text-white/50">
+        {isFailed ? '需处理' : '→'}
       </span>
-    </Link>
+    </>
   );
+
+  if (isFailed) return <div className={className}>{content}</div>;
+  return <Link href={`/score/${score.id}`} className={className}>{content}</Link>;
 }

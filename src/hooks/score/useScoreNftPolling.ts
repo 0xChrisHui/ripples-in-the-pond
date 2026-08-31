@@ -24,7 +24,7 @@ export function useScoreNftPolling({
   const tokenRef = useRef(getAccessToken);
   useEffect(() => { tokenRef.current = getAccessToken; });
 
-  const hasPending = scoreNfts.some((s) => s.tokenId == null);
+  const hasPending = scoreNfts.some((s) => s.tokenId == null && s.status !== 'failed');
 
   useEffect(() => {
     if (!authenticated || !userId || !hasPending) return;
