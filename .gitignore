@@ -67,6 +67,10 @@ data/covers/
 # 临时工作目录（日志/规划草稿/编译缓存/大图，scratch 不入库）
 /.tmp/
 # P9 浏览器视觉验收使用的临时 Edge 用户配置
+/.tmp-p9-*/
 /.tmp-p9-edge-qa*/
+/.tmp-p9-cdp/
+/.tmp-p9-edge-2/
+/.tmp-p9-perf/
 # /test1 GL 沙盒背景图（测试用、2.4MB，仅本机；bgImage toggle 默认关）
 /public/test1-bg.png

@@ -18,6 +18,7 @@
   - **Phase 14** = 混音系统 + RemixNFT
   - **Phase 15** = 音效系统扩展
   - **Phase 16** = 原生钱包 + 多链 / ETH Mainnet（往后排）
+**P9 系统性 Review 最终稿**：`reviews/2026-09-01-phase-9-final-review.md`（交叉复核 DeepSeek v4 Pro、Kimi K3 与当前代码。结论：0 P0、3 P1、8 P2、6 P3；33/33/33 映射、13/20 门控、月光写入 0、33 唯一音频和完整工程验证均通过。E“引力透镜轨道”与 R“花瓣原地炸裂”是用户拍板后的当前真值，DeepSeek 的 E=P0 为旧 playbook 导致的误报；Kimi 漏掉 6 个可见但无效参数、R 缓存增长与 reduced-motion 绕行。Track C 前建议先做 Review Fix Pack A+B。）
 **P8 综合系统性 Review**：`reviews/2026-08-25-phase-8-consolidated-review.md`（汇总 Kimi K3 + Codex 并完成交叉验证；严格排除其他 Phase、媒体与 commit 收束。结论：0 个 P0、3 个 P1、7 个 P2。**3 个 P1、7 个 P2、死文件、文档契约、双树清单与自动浏览器回归均已完成**：专项代码与每步完整 `verify.sh` 全绿；Edge 实测四路由、fallback/context、wheel、拖拽取消、键盘、reduced-motion、横竖屏、DPR `2→1.5→2` 与 waterFx 连续切换全部通过。证据见 `reviews/2026-08-26-phase-8-browser-regression.md` 与 `reviews/2026-08-26-phase-8-dual-tree-inventory.md`。**2026-08-26 用户已确认 R3 与 L 线“活而不乱”最终目验通过，并明确让当前 `/test3` 替代首页；默认 `/` 已切为 GL 水塘，沙盒工具仅留 `/test3`/`/test4`，旧 SVG 由 `/v1` 保留。**原始 Kimi 报告保留在 `reviews/2026-08-25-phase-8-review.md`。）
 **P7 Completion Review**: `reviews/2026-05-16-phase-7-completion-review.md`（commit `5a2211a`，结论：Phase 7 完结，deferred 项挂 Phase 10）
 **P7 三方 review**：`reviews/2026-05-13-phase-7-playbook-review.md`（Claude 自审 + 2 个 Codex review，16 项必修已全部落地）
@@ -25,7 +26,7 @@
 **P6 Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`（16/19 通过 + 0 P0 + 0 P1）
 **stakeholder 反馈**：艺术家 5 条反馈已收到（→ Phase 8）；投资人催 Semi demo（→ P7 Track B PoC-only）
 
-**P9 当前（2026-08-26）**：33 个本地 MP3 与 `A-Z + 3-8 + Space` 输入已生产上线；P9 权威 playbook 已建立为 `playbook/phase-9/00-overview.md`。用户拍板采用三段式：Track A 在 `/test3` 一口气做出 45 个候选（普通 A–Z + 大写 A–S），Track B 集中审阅删改，Track C 清码并冻结正式动画。旧 10 效继续冻结；五效预演结论为 E 月影过境冻结标杆、B 微光交换保留精修、A 黑盘偏心重做、C 旧花瓣实现淘汰、D 安静波重做。**下一步：启动 Track A0，锁定浏览器基线并建立 45 效共享编舞骨架。**
+**P9 当前（2026-09-01）**：v4.2 Review Fix Pack A+B+C 已完成，生产注册表收束为 33 键/33 音效/33 动画；`/` 与 `/test3` 共用同一 P9 演奏层，首页不显示 P9 状态浮窗，调参面板仍只留在 `/test3`。静态审计、浏览器 33 键扫描、复音/回收/reduced-motion/60 FPS 压测和完整 `scripts/verify.sh` 全绿，证据见 `reviews/2026-09-01-phase-9-v4-2-final-gate.md`。**下一步：合并最新 `main` 并完成生产部署与线上冒烟。**
 
 **P8-L 动态验收微调（2026-08-23）**：视差/流场上限微调已完成。真透明 R3 最终维修已完成浏览器自动复验：球网格改为挂载时绑定独立 FBO layer，水上实体主体最后覆盖湿背景，水下球保留水纹；完全出水球中心点击时涟漪只绕过主体，`alphaFlicker` 开启后主体覆盖仍稳定。**2026-08-26 用户最终目验确认 R3 与 L 线“活而不乱”合适，验收门已关闭。**
 
@@ -68,7 +69,7 @@
 5. **D-1 内容冻结**：曲名 1-35 ✅ / admin+deployer 钱包 ✅ / admin 私钥备份 ✅ / DB 恢复演练 ✅ / 主网凭证 ✅ / 额度盘点 ✅。**当前下一步：🛑 D-0 确定部署日**；部署日前 24h 新快照 + admin/deployer 主网充值 → D 部署日。
 6. **E 性能**（软 gate）随时穿插不阻塞。
 
-**当前权威下一步**：P12 部署阶段关闭；保留 7 天软启动观察（health、cron、双队列、告警），开发主线回到 P8-L / P9 的浏览器验收与音效动画迭代。
+**当前权威下一步**：P9 v4.2 本地 Gate 已通过；将已验证提交合并最新 `main`、推送生产分支并在 `https://pond-ripple.xyz/` 完成首页/按键/浮窗线上冒烟。P12 仅保留 7 天软启动观察（health、cron、双队列、告警）。
 
 ---
 
@@ -224,6 +225,78 @@
 - `app/api/` 硬线豁免缺失：hook 只认 `src/app/api/`，当前 app/api/ 接近 8 上限，新 route 考虑复用现有子目录（见 S5.c 放 `cron/queue-status/`）
 
 ## 上次成功验证
+
+- 验证: **P9 三方系统性 review 最终交叉审查完成**
+- 时间: 2026-09-01
+- 改动: 保留 DeepSeek/Kimi 原报告，新建最终稿并逐项回到当前代码裁决；确认 E/R 当前实现不是回退，补出 6 个无效参数、R 缓存生命周期、reduced-motion、全局重音冷却与最终浏览器证据缺口。
+- 验证证据: 当前静态审计、33 音频哈希、参数引用/retrigger reachability、P9 全消费者链路；完整 `scripts/verify.sh` 通过，生产构建成功，Forge 42/42 通过。
+- 下一步: **等待用户授权执行 P9 Review Fix Pack A+B。**
+
+- 验证: **P9 默认参数收束 + F/K 共用 24 色完成**
+- 时间: 2026-09-01
+- 改动: GL 球亮度、E、3、Y 默认值按用户数值更新；7/H 已与目标一致所以保持；F 改为读取 K 同源的 `P9_PALETTE_24` 与平滑插值，删除失效的独立色相跨度参数。
+- 验证证据: 定向 TypeScript / ESLint 通过；完整 `scripts/verify.sh` 通过，生产构建成功，Forge 42/42 通过。
+- 下一步: **用户在 `/test3` 分别重置 GL 调色与 P9 v4 参数，再继续目验。**
+
+- 验证: **E 候选正式化 + R 复用 P 喷射完成**
+- 时间: 2026-09-01
+- 改动: FX05 正式改为 E 键“引力透镜轨道”并移除 `[ ] \\` 预演层；FX18 改为 R 键“花瓣原地炸裂”，以真实花瓣位置驱动 P 同款微光喷射，旧镁条燃烧绘制与参数已移除。
+- 验证证据: 静态审计 33 active / E→FX05 / R→FX18 / 月光写入 0；`/test3` HTTP 200；完整 `scripts/verify.sh` 通过，生产构建成功，Forge 42/42 通过。
+- 下一步: **用户目验正式 E 与新版 R。**
+
+- 验证: **P/R 生命周期修正 + E 三候选预演完成**
+- 时间: 2026-09-01
+- 改动: P 按单片花瓣管理吞没、休眠与随机异地重生；R 改为局部镁条燃烧；`[ ] \\` 增加三个只在 `/test3` 生效的 E 候选，正式 E 与 33 键映射保持不变。
+- 验证证据: 定向 TypeScript / ESLint 通过；代码文件与目录硬线通过；完整 `scripts/verify.sh` 通过，生产构建成功，Forge 42/42 通过。
+- 下一步: **用户目验 P、R，并在 `[ ] \\` 三个 E 候选中拍板。**
+
+- 验证: **P9 v4.1 目验后定向精修完成，进入 Stop V4.1**
+- 时间: 2026-08-31
+- 改动: E/R 默认提升 `7.5×`、F 直接染色、X 专属渐入渐出、P 遮盖事件触发并以 2× 尺寸/亮度喷射、T 巨浪与隐藏音乐球的补光/折射取样隔离。
+- 验证证据: E 实测 `scale(1)→1.25+` 且有强光扩散，F 出现高饱和动态色，T 五浪无白底回闪，X 双时点形成渐变，P 三阶段截图齐全；浏览器 0 异常；完整 `scripts/verify.sh` 与 Forge 42/42 全通过。详见 `reviews/2026-08-31-phase-9-v4-1.md`。
+- 下一步: **Stop V4.1 用户继续目验；未授权前不进入 Track C、不物理清理历史实现、不提升生产。**
+
+- 验证: **P9 v4 F0–F6 全部完成，进入 Stop V4**
+- 时间: 2026-08-31
+- 改动: 33 键/33 音效/33 动画一一映射、20/13 日食门控、速度冲量连击、多批并行、F/J/M/N/R/T 等第四轮修改、调参 v4 迁移与播放后焦点释放全部落地。
+- 验证证据: WAV/MP3 各 33 个且哈希唯一；静态审计 45 历史 / 33 active / 月光写入 0 / 水面白名单 T/U/V；浏览器无音乐 20/13、日食 33/33、A/Y 回落重按跳变量 0、B 六批、Space 六前线、56.52 fps、0 控制台异常；`scripts/verify.sh` 全通过。详见 `reviews/2026-08-31-phase-9-v4.md`。
+- 下一步: **Stop V4 用户第四轮集中目验；未授权前不进入 Track C、不物理清理历史实现、不提升生产。**
+
+- 验证: **P9 v3 R0–R6 全部完成，进入 Stop R**
+- 时间: 2026-08-28
+- 改动: 五类重触发策略、42 键第三轮重做、基础场景四项修复、第一组 12 色、K/P 24 色、参数真值与 v3 存储迁移全部落地。
+- 验证证据: 浏览器 42/42、B 六批并行、A 衰退重按跳变量 `-0.0391`、三枚无视觉键静默、前台 60.28 fps、0 控制台异常；静态审计 45 个唯一编号 / 42 可演奏 / 月光写入 0 / 水波白名单 3；隔离损坏的 `.next` 后 `scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、Forge 42/42）。详见 `reviews/2026-08-28-phase-9-v3.md`。
+- 下一步: **Stop R 用户第三轮集中审阅；未授权前不进入 Track C、不提升生产。**
+
+- 验证: **P9 第三版连击与物质因果 Playbook 冻结**
+- 时间: 2026-08-27
+- 改动: 新建 `playbook/phase-9/02-v3-retrigger-and-material-clarity.md`，登记第三轮全部反馈、五项拍板、五类重触发策略、基础场景修复、45 键状态表与 R0–R6 验收门。
+- 验证证据: FX01–FX45 状态表 45/45、无漏号重复；`git diff --check` 通过；`scripts/verify.sh` 全通过（TypeScript、ESLint 0 error、生产构建、forge 42/42）。
+- 下一步: **等待用户“开始 P9 v3”，从 R0 真值审计开始；本轮没有修改动画源码。**
+
+- 验证: **P9 v2 V0–V5 全部完成，进入 Stop V**
+- 时间: 2026-08-26
+- 改动: 家族共享 Mixer、月光/水波白名单、两层调参、43 个可演奏效果重做；Shift+R 按用户选择正式采用 A「微光群落聚散」。
+- 验证证据: 可见 Edge 前台 43/43、桌面与 390×844 均 60 fps、reduced-motion 命中、0 context loss、0 控制台错误、最长余韵后堆内存回落；`scripts/verify.sh` 全通过（构建 + forge 42/42）。详见 `reviews/2026-08-26-phase-9-v2.md`。
+- 下一步: **Stop V 用户集中审阅；逐键决定冻结 / 微调 / 删除，未授权前不进入 Track C。**
+
+- 验证: **P9 第二版共享状态优化 Playbook 冻结**
+- 时间: 2026-08-26
+- 改动: 新建 `playbook/phase-9/01-v2-shared-state-optimization.md`，完整登记 45 键反馈、五项拍板、共享 Mixer、月光/水波白名单、两层参数面板与 V0–V5 验收。
+- 验证证据: `git diff --check` 通过；`scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、forge 42/42）。
+- 下一步: **等待用户“开始 P9 v2”，从 V0 冻结基线与 registry 状态开始。**
+
+- 验证: **P9 Track A 45 个按键动画候选完成**
+- 时间: 2026-08-26
+- 改动: `/test3` 新增 FX01–45 共享 registry/runtime，并接入现有日食、微光、花瓣、水面和场景消费者；大小写只切视觉候选，音频仍走小写键。
+- 验证证据: Edge 扫描 45/45；压力输入、最长尾恢复、reduced-motion、全屏冷却与 390×844 移动端退化均有证据；`scripts/verify.sh` 全通过（TypeScript、ESLint、硬线、生产构建、forge 42/42）。
+- 下一步: **Stop A → 用户在 `/test3` 做 Track B 集中审阅，给候选标记保留 / 微调 / 重做 / 删除。**
+
+- 验证: **视觉原型与音频母版退出 `public/`**
+- 时间: 2026-08-26
+- 改动: `public/visual-prototypes/` 迁入 `references/visual-prototypes/`；两套 33 个 WAV 与第 36 首 Logic 工程迁入 `references/audio/`；`public/sounds/` 只保留运行时使用的 33 个 MP3。
+- 验证证据: 文件计数完整（视觉 26、编号 WAV 33、键位 WAV 33、Logic 工程 7）；`scripts/verify.sh` 全通过（TypeScript、ESLint、生产构建、forge 42/42）。
+- 下一步: **按用户指令收尾 P12 当前未提交文档；不混入 Semi 登录、Phase 9 或 Phase 13。**
 
 - 验证: **P8-L 用户保存的生命感参数已同步为代码默认值**
 - 时间: 2026-08-25

@@ -16,7 +16,9 @@ const eslintConfig = defineConfig([
     ".claude/hooks/**",
     "scripts/**",
     // P9 浏览器视觉验收使用的临时 Edge 用户配置
-    ".tmp-p9-edge-qa*/**",
+    ".tmp-p9-*/**",
+    // 项目统一临时目录（缓存隔离、诊断产物，不属于源码）
+    ".tmp/**",
     // Foundry 项目（Solidity + OZ 库自带的 JS 测试）
     "contracts/**",
     // 第三方参考代码（Patatap 等）

@@ -16,17 +16,17 @@ interface UseKeyboardOptions {
   enabled?: boolean;
 }
 
-const VALID_KEYS = new Set([... 'abcdefghijklmnopqrstuvwxyz', ...'345678']);
-
 function normalizeKey(e: KeyboardEvent): string | null {
-  if (e.key === ' ' || e.code === 'Space') return 'space';
-  const key = e.key.toLowerCase();
-  return VALID_KEYS.has(key) ? key : null;
+  if (e.code === 'Space') return 'space';
+  if (/^Key[A-Z]$/.test(e.code)) return e.code.slice(3).toLowerCase();
+  if (/^(Digit|Numpad)[3-8]$/.test(e.code)) return e.code.at(-1) ?? null;
+  return null;
 }
 
 function isEditableTarget(target: EventTarget | null): boolean {
   const element = target as HTMLElement | null;
-  return element?.tagName === 'INPUT' || element?.tagName === 'TEXTAREA' || Boolean(element?.isContentEditable);
+  return ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(element?.tagName ?? '')
+    || Boolean(element?.isContentEditable);
 }
 
 /**

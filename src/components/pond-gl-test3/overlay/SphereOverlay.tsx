@@ -27,7 +27,7 @@ function currentCtx(): ProjCtx {
   return { cx: window.innerWidth / 2, cy: window.innerHeight / 2, mx, my, focusZ: getEffectiveWaterLevel(), dof: c.dof, perspective: c.perspective, parallax: c.parallax };
 }
 
-export default function SphereOverlay({ glSim, waterOn, depthModel = false }: { glSim: GlSim; waterOn: boolean; depthModel?: boolean }) {
+export default function SphereOverlay({ glSim, waterOn, depthModel = false, showLabels = true }: { glSim: GlSim; waterOn: boolean; depthModel?: boolean; showLabels?: boolean }) {
   const { nodes, playingIdRef } = glSim;
   const { playing, currentTrack } = usePlayer();
   const playingId = playing && currentTrack ? currentTrack.id : null;
@@ -77,6 +77,7 @@ export default function SphereOverlay({ glSim, waterOn, depthModel = false }: { 
           node={n}
           glSim={glSim}
           isPlaying={playingId === n.id}
+          showLabels={showLabels}
           register={(el) => {
             if (el) elsRef.current.set(n.id, el);
             else elsRef.current.delete(n.id);
@@ -91,10 +92,11 @@ interface HitProps {
   node: GlPhysNode;
   glSim: GlSim;
   isPlaying: boolean;
+  showLabels: boolean;
   register: (el: HTMLButtonElement | null) => void;
 }
 
-function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
+function SphereHit({ node, glSim, isPlaying, showLabels, register }: HitProps) {
   const [hovered, setHovered] = useState(false);
   const drag = useRef({ down: false, moved: false, x: 0, y: 0 });
   const r = node.radius;
@@ -133,7 +135,10 @@ function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
     const shouldToggle = !d.moved;
     if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
     finishDrag();
-    if (shouldToggle) togglePlayback(); // 没拖动 = 点击播放
+    if (shouldToggle) {
+      togglePlayback(); // 没拖动 = 点击播放
+      e.currentTarget.blur(); // 鼠标点选后把键盘焦点交还给 33 键演奏层
+    }
   };
   const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -161,6 +166,7 @@ function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
         height: r * 2,
         padding: 0,
         border: 0,
+        outline: 'none',
         background: 'transparent',
         cursor: 'pointer',
         willChange: 'transform',
@@ -169,7 +175,7 @@ function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
       }}
     >
       {/* 标题：Modak 气球字，偏球心右下（复刻 SphereNode 的 0.55r 偏移） */}
-      <span
+      {showLabels && <span
         style={{
           position: 'absolute',
           left: r * 1.55,
@@ -186,7 +192,7 @@ function SphereHit({ node, glSim, isPlaying, register }: HitProps) {
         }}
       >
         {node.track.title}
-      </span>
+      </span>}
 
       {/* 角标圆 + play/pause（hover 或播放时显示；与浮动球一起移动） */}
       <svg

@@ -1,11 +1,3 @@
-/**
- * K3 — WaterDistort 的「场景工厂 + 每帧 helper」抽取。
- *
- * 从 WaterDistort.tsx 拆出来腾行数：①makeQuadScene 全屏 quad 材质工厂；②applyTuning/applySpheres
- * 两个模块级 helper（每帧写 material 真身 uniforms.X.value —— 避 react-hooks/immutability、躲 R3F
- * "拷贝 uniforms 对象"陷阱）。K3 在 composite 工厂里新增 4 个深度 uniform，并在 applyTuning 里逐帧赋值。
- */
-
 import {
   Scene,
   Mesh,
@@ -21,6 +13,7 @@ import { compositeMaskFrag, MAX_SPHERES } from './water-distort-shaders';
 import type { GlPhysNode } from '../spheres/gl-sim-setup';
 import { project, applyFloat, type ProjCtx } from '../sphere-projection';
 import { depthOf, displayDepthOf } from '../pointer-fx';
+import type { P9WaterUniform } from '../p9/consumers/p9-water';
 
 export interface QuadScene {
   scene: Scene;
@@ -121,7 +114,10 @@ export function makeCompositeScene(
     // 严格分层：水上球不吃水光；这里只保留水下球增亮与波纹参数。
     uBallLightBelow: { value: 0.15 },
     uWaveOnBall: { value: 0.6 }, // 水下球波纹增强（提升水下感；面板可调）
-    uQuietWave: { value: new Vector4(0.5, 0.5, 0, 0) }, // P9-D：中心xy / 扩张进度 / 静止能量
+    uQuietWaves: { value: Array.from({ length: 5 }, () => new Vector4(0.5, 0.5, 0, 0)) },
+    uP9Arcs: { value: Array.from({ length: 5 }, () => new Vector4(0, 0, 0, 0)) },
+    uP9Water: { value: new Vector4(0, 0, 0, 0) },
+    uP9Caustic: { value: new Vector4(0, 0, 0, 0) },
   });
 }
 
@@ -140,13 +136,14 @@ export function applyTuning(
   pondFloor: boolean,
   moonReflect: boolean,
   keyFx: { water: number; moon: number },
-  quiet: { x: number; y: number; progress: number; energy: number },
+  quiet: readonly { x: number; y: number; progress: number; energy: number }[],
+  p9Water: P9WaterUniform,
 ): void {
-  sim.mat.uniforms.uDamping.value = Math.min(0.995, t.damping + keyFx.water * 0.012); // 按键余韵只临时延长，不写回 store
-  sim.mat.uniforms.uWaveSpeed.value = t.waveProp * (1 + keyFx.water * 0.12);
+  sim.mat.uniforms.uDamping.value = Math.max(0.9, Math.min(0.995, t.damping + keyFx.water * 0.012));
+  sim.mat.uniforms.uWaveSpeed.value = Math.max(0.05, t.waveProp * (1 + keyFx.water * 0.12));
   sim.mat.uniforms.uAspect.value = aspect;     // K1：高度场方形被拉满宽屏 → 按宽高比校正滴水为正圆
-  composite.mat.uniforms.uPerturb.value = Math.min(3, t.refract + keyFx.water * 0.45);
-  composite.mat.uniforms.uSpec.value = Math.min(1.5, t.specular + keyFx.water * 0.35 + keyFx.moon * 0.3);
+  composite.mat.uniforms.uPerturb.value = Math.max(0, Math.min(3, t.refract + keyFx.water * 0.45));
+  composite.mat.uniforms.uSpec.value = Math.max(0, Math.min(1.5, t.specular + keyFx.water * 0.35 + keyFx.moon * 0.3));
   composite.mat.uniforms.uDebug.value = debug ? 1 : 0;
   // K3：depthModel 开 → shader 按逐球水下深度 d 调制折射(深重)/月光(近强)；关 → 系数恒 1（现状）
   composite.mat.uniforms.uDepthModel.value = depthModel ? 1 : 0;
@@ -162,7 +159,7 @@ export function applyTuning(
   composite.mat.uniforms.uShadowHeight.value = t.shadowHeight; // K4 高度对投影影响的总增益
   // K5：caustics 开 → shader 叠冷白月光焦散光照（uTime 驱游走流光）；关 → 跳过（现状）
   composite.mat.uniforms.uCaustics.value = caustics ? 1 : 0;
-  composite.mat.uniforms.uCausticsStrength.value = Math.min(1, t.causticsStrength + keyFx.moon * 0.38);
+  composite.mat.uniforms.uCausticsStrength.value = Math.max(0, Math.min(1, t.causticsStrength + keyFx.moon * 0.38));
   composite.mat.uniforms.uTime.value = time; // state.clock.getElapsedTime()：光池/光带每帧前进 → 静止也活
   // K6：waterZoom 开 → shader 按水位绕中心缩放高度场采样（升放大/降缩小）；关 → 0（缩放系数恒 1=现状）
   composite.mat.uniforms.uZoomAmount.value = waterZoom ? t.zoomAmount : 0;
@@ -172,11 +169,22 @@ export function applyTuning(
   composite.mat.uniforms.uPondFloorStyle.value = t.pondFloorStyle;
   // K11：moonReflect 开 → shader 叠大柔冷白月华倒影（被涟漪扭碎、随 K6 缩放）；关 → 0（跳过 = 现状）
   composite.mat.uniforms.uMoonReflect.value = moonReflect ? 1 : 0;
-  composite.mat.uniforms.uMoonReflectStrength.value = Math.min(1, t.moonReflectStrength + keyFx.moon * 0.42);
+  composite.mat.uniforms.uMoonReflectStrength.value = Math.max(0, Math.min(1, t.moonReflectStrength + keyFx.moon * 0.42));
   // 水下球环境光独立于全局强度；水上球在 shader 中固定为零。
   composite.mat.uniforms.uBallLightBelow.value = Math.min(1, t.ballLightBelow + keyFx.moon * 0.16);
   composite.mat.uniforms.uWaveOnBall.value = Math.min(1.5, t.waveOnBall + keyFx.water * 0.42);
-  (composite.mat.uniforms.uQuietWave.value as Vector4).set(quiet.x, 1 - quiet.y, quiet.progress, quiet.energy);
+  const quietUniforms = composite.mat.uniforms.uQuietWaves.value as Vector4[];
+  for (let index = 0; index < 5; index += 1) {
+    const item = quiet[index];
+    quietUniforms[index].set(item?.x ?? 0.5, item ? 1 - item.y : 0.5, item?.progress ?? 0, item?.energy ?? 0);
+  }
+  const arcUniforms = composite.mat.uniforms.uP9Arcs.value as Vector4[];
+  for (let index = 0; index < 5; index += 1) {
+    const item = p9Water.arcs[index];
+    arcUniforms[index].fromArray(item ?? [0, 0, 0, 0]);
+  }
+  (composite.mat.uniforms.uP9Water.value as Vector4).fromArray(p9Water.wave);
+  (composite.mat.uniforms.uP9Caustic.value as Vector4).fromArray(p9Water.caustic);
 }
 
 /** 把球数据写进 uniform 数组（位置/半径×可见度/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */

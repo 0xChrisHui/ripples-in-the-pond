@@ -19,6 +19,8 @@ import TunePanel from '@/src/components/pond-gl-test3/overlay/TunePanel';
 import ScenePanel from '@/src/components/pond-gl-test3/overlay/ScenePanel';
 import RippleSpikePanel from '@/src/components/pond-gl-test3/water/spike/RippleSpikePanel';
 import LifePanel from '@/src/components/pond-gl-test3/life/LifePanel';
+import P9TuningPanel from '@/src/components/pond-gl-test3/p9/tuning/P9TuningPanel';
+import { loadP9Tuning } from '@/src/components/pond-gl-test3/p9/tuning/p9-tuning-store';
 
 // GL 渲染层：全链路 next/dynamic + ssr:false，three/R3F 只进入异步 chunk。
 const PondGL = dynamic(() => import('@/src/components/pond-gl-test3/PondGL'), { ssr: false });
@@ -34,6 +36,8 @@ function Test3PageInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isSandbox = pathname === '/test3' || pathname === '/test4';
+  const isP9Sandbox = pathname === '/test3';
+  const p9Enabled = pathname === '/' || isP9Sandbox;
   // GL 层开关（初值取 URL）；背景氛围 fx 随 SVG 卸载移除，到 I3 用 GL 重做再加回
   const [glFlags, setGlFlags] = useState<GLFlags>(() => parseGLFlags(searchParams));
   const [runtimeGlHealth, setRuntimeGlHealth] = useState<GlHealth>('unavailable');
@@ -51,6 +55,7 @@ function Test3PageInner() {
   useEffect(() => {
     setCameraFx({ dof: glFlags.dof, perspective: glFlags.perspective, parallax: glFlags.parallax });
   }, [glFlags.dof, glFlags.perspective, glFlags.parallax]);
+  useEffect(() => { if (p9Enabled) loadP9Tuning(); }, [p9Enabled]);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black">
@@ -81,13 +86,13 @@ function Test3PageInner() {
       {/* 左侧 Jam UI（在 nav 下方） */}
       <div data-pond-ui="true" className="pointer-events-none fixed left-6 z-30" style={{ top: '14rem' }}>
         <div className="pointer-events-auto">
-          <TestJam />
+          <TestJam p9Enabled={p9Enabled} />
         </div>
       </div>
 
       {/* GL 球 DOM 命中层（z-10，接点击拖拽，在 nav/HUD 之下）；J1：兜底时隐 */}
       {glFlags.glSpheres && glSim.ready && glOk && (
-        <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} depthModel={glFlags.depthModel} />
+        <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} depthModel={glFlags.depthModel} showLabels={glFlags.sphereLabels} />
       )}
 
       {/* I2：GL 日蚀层（z-20，播放球叠日蚀焦点；其他球已隐去）；J1：兜底时隐 */}
@@ -98,6 +103,7 @@ function Test3PageInner() {
       {/* 右下角参数板栏：调色 + 波纹/运动 同栏从下往上堆叠（不重叠） */}
       {isSandbox && (
         <div data-pond-ui="true" className="pointer-events-none fixed bottom-3 right-3 z-50 flex flex-col-reverse items-end gap-2">
+          {isP9Sandbox && <P9TuningPanel />}
           {glFlags.glSpheres && <TunePanel />}
           {glFlags.glSpheres && <LifePanel />}
           {(glFlags.rtt || glFlags.waterFx || glFlags.floatMotes || glFlags.waterPlants || glFlags.reefStones || glFlags.crystalPillars) && <RippleSpikePanel />}

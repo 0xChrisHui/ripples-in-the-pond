@@ -21,7 +21,6 @@ import { stepWheelDesync, stepParallax, stepShiver, stepFlowDrift, stepFlicker, 
 import { getLifeTuning } from '../life/life-tuning';
 import { stepWakeSpheres } from '../life/wake-field';
 import { prefersReducedMotion } from '../reduced-motion';
-import { sampleSphereKeyFx } from '../key-fx/key-fx-sphere';
 
 // 球色：手动解析 hex → sRGB 0-1，绕过 three 的 Color/ColorManagement（R3F 强制 linear 会让球色暗掉近半）。
 // 自定义 shader 不经 three colorspace_fragment → 手动 sRGB 直通 = 原始值原样显示（与 SVG/CSS 一致）。
@@ -62,12 +61,11 @@ export interface FrameCtx {
   life: LifeFlags;
   waveSpeed: number;
   waterComposite: boolean;
-  keyFxHalo: number;
 }
 
 /** 每帧把 sim 状态写进 InstancedMesh（矩阵 + 颜色 + params + 涟漪推球 + 平滑 lerp）。 */
 export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx): void {
-  const { nodes, wavesRef, playingId, hoverId, tuning, waterOn, motionOn, proj, drift, life, waveSpeed, waterComposite, keyFxHalo } = ctx;
+  const { nodes, wavesRef, playingId, hoverId, tuning, waterOn, motionOn, proj, drift, life, waveSpeed, waterComposite } = ctx;
   const now = performance.now();
   stepSphereMotion(nodes, now / 1000, motionOn); // 球浮动层级波动 → 写 node._waveZ
   // L2 运动无序：滚轮去同步(写 _shiftOff) / 视差去同步(写 _parGain,_parAng) / 偶发颤动(写 _shivX,_shivY)
@@ -105,10 +103,7 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
 
     // 深度经 depthOf(含 L2-1 _shiftOff)；投影带 node(L2-2 视差去同步)；applyFloat 收 node(浮动+L2-4 颤动)
     const p = applyFloat(project(n.x, n.y, depthOf(n), proj, n), n, proj.cx, proj.cy);
-    const keyField = sampleSphereKeyFx(now / 1000, p.sx / (proj.cx * 2), p.sy / (proj.cy * 2));
-    const fxX = p.sx + keyField.dx * proj.cx * 2;
-    const fxY = p.sy + keyField.dy * proj.cy * 2;
-    const diameter = 2 * n.radius * HALO_R * (1 + hoverLerp[i] * 0.09) * p.scale * keyField.scale;
+    const diameter = 2 * n.radius * HALO_R * (1 + hoverLerp[i] * 0.09) * p.scale;
     // L3-3 果冻感：沿速度方向非均匀缩放（速度平滑 lerp 防抖）；关 / reduced-motion → 均匀缩放（现状）
     if (life.jelly && lt.jellyAmount > 0 && !reduce) {
       const jvx = (n._jelVx = (n._jelVx ?? 0) + ((n.vx ?? 0) + (n._gvx ?? 0) - (n._jelVx ?? 0)) * 0.2);
@@ -118,9 +113,9 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
       tmpMatrix.makeRotationZ(ang);
       tmpA.makeScale(diameter * (1 + e), diameter * (1 - e), 1);
       tmpB.makeRotationZ(-ang);
-      tmpMatrix.multiply(tmpA).multiply(tmpB).setPosition(fxX, fxY, 0);
+      tmpMatrix.multiply(tmpA).multiply(tmpB).setPosition(p.sx, p.sy, 0);
     } else {
-      tmpMatrix.makeScale(diameter, diameter, 1).setPosition(fxX, fxY, 0);
+      tmpMatrix.makeScale(diameter, diameter, 1).setPosition(p.sx, p.sy, 0);
     }
     mesh.setMatrixAt(i, tmpMatrix);
     // L3-2 激励维护**恒跑**（衰减 + 拖拽注入）：注入方 ripple-feed/wake-field 不看 flag，
@@ -149,9 +144,9 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
     aSubmerge[i] = waterSubmerge;
     aLifeDim[i] = lifeDim;
     n._visualDim = dimLerp[i] * (1 - submerge) * (waterComposite ? 1 : lifeDim);
-    aParams[i * 4] = Math.min(1, fill * tuning.fill + keyFxHalo * 0.08 + keyField.excite * 0.04);
+    aParams[i * 4] = Math.min(1, fill * tuning.fill);
     aParams[i * 4 + 1] = (isHover ? 0.5 : 0.3) * tuning.halo
-      * (1 + keyFxHalo * 1.5 + keyField.halo * 1.8);
+      * 1;
     aParams[i * 4 + 2] = dimLerp[i] * (1 - submerge); // 播放淡出；生命感透明由 aLifeDim 独立传入
     aParams[i * 4 + 3] = p.blurAmt * rt.dofStrength;          // /test3 景深失焦度 ×强度倍率
   }

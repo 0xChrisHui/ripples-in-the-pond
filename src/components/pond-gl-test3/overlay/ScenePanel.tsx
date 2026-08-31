@@ -47,6 +47,7 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="背景图" checked={glFlags.bgImage} onChange={(v) => onGl({ bgImage: v })} />
           <Row label="图 1 调色" checked={glFlags.colorGrade} onChange={(v) => onGl({ colorGrade: v })} />
           <Row label="GL 球" checked={glFlags.glSpheres} onChange={(v) => onGl({ glSpheres: v })} />
+          <Row label="圆圈数字" checked={glFlags.sphereLabels} onChange={(v) => onGl({ sphereLabels: v })} />
           <Row label="球浮动" checked={glFlags.sphereMotion} onChange={(v) => onGl({ sphereMotion: v })} />
           <Row label="球飘动+涟漪推" checked={glFlags.sphereDrift} onChange={(v) => onGl({ sphereDrift: v })} />
           <Row label="黑色圆圈（播放日蚀）" checked={glFlags.glEclipse} onChange={(v) => onGl({ glEclipse: v })} />

@@ -5,14 +5,14 @@ import { useKeyboard } from '@/src/hooks/useKeyboard';
 import { useJam } from '@/src/hooks/useJam';
 import { useRecorder } from '@/src/hooks/useRecorder';
 import { saveDraft } from '@/src/lib/draft-store';
-import { emitShowcaseFx } from '@/src/components/pond-gl-test3/showcase/showcase-state';
+import { triggerP9Effect } from '@/src/components/pond-gl-test3/p9/runtime/p9-state';
 
 /**
  * TestJam — /test 沙箱专用 jam 组件（移除 useKeyVisual 旧动画）。
  * 保留：键盘音效 + 录制 + 草稿存储。
  * 旧的 keyVisual 视觉反馈在此关闭，由 SvgAnimationLayer 接管视觉。
  */
-export default function TestJam() {
+export default function TestJam({ p9Enabled = false }: { p9Enabled?: boolean }) {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -42,10 +42,10 @@ export default function TestJam() {
     );
   }
 
-  return <TestJamDesktop />;
+  return <TestJamDesktop p9Enabled={p9Enabled} />;
 }
 
-function TestJamDesktop() {
+function TestJamDesktop({ p9Enabled }: { p9Enabled: boolean }) {
   const { ready, playSound } = useJam();
 
   const handleRecordComplete = useCallback(
@@ -68,7 +68,7 @@ function TestJamDesktop() {
   const { pressedKeys } = useKeyboard({
     enabled: ready,
     onKeyDown: (key) => {
-      emitShowcaseFx(key); // 旧10效入口冻结；A–E 只在播放日食存在时进入新共享状态。
+      if (p9Enabled) triggerP9Effect(key);
       playSound(key);
       recordKeyDown(key);
     },
@@ -86,7 +86,7 @@ function TestJamDesktop() {
   return (
     <section className="flex flex-col items-start gap-3">
       <p className="text-[10px] uppercase tracking-[0.14em] text-white/40">
-        播放音乐圆后按 A–E 预览新动效；其余键仍可演奏
+        {p9Enabled ? '按 A–Z、3–8 或空格演奏 33 个声音动画' : '按 A–Z、3–8 或空格演奏'}
         {recording && <span className="ml-2 text-red-400/70">● 录制中</span>}
       </p>
 

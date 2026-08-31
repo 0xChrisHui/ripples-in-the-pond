@@ -49,17 +49,6 @@ function onWave(e: Event): void {
     petalDropScreen(d.x, d.y, W, H, 5, 0.5 * getRippleTuning().petalWave * keyGain);
   }
 }
-function onKeyFx(e: Event): void {
-  const d = (e as CustomEvent<{ family?: string; x?: number; y?: number }>).detail;
-  if (d?.family !== 'petals' || d.x == null || d.y == null) return;
-  const x = d.x * W, y = (1 - d.y) * H;
-  const angle = Math.atan2(y - H / 2, x - W / 2) + 0.72;
-  const gain = getRippleTuning().petalWave;
-  for (let i = -2; i <= 2; i++) {
-    petalDropScreen(x + Math.cos(angle) * i * 34, y + Math.sin(angle) * i * 34,
-      W, H, 4, 0.22 * gain * (1 - Math.abs(i) * 0.08));
-  }
-}
 function loop(): void {
   stepPetalWater(); // 每帧仅此一处推进场
   raf = requestAnimationFrame(loop);
@@ -74,7 +63,6 @@ export function acquireWakeField(): void {
   window.addEventListener('pointermove', onMove);
   window.addEventListener('pointerdown', onDown);
   window.addEventListener('bg-ripple:wave', onWave);
-  window.addEventListener('jam:key-fx', onKeyFx);
   raf = requestAnimationFrame(loop);
 }
 /** 释放；归零则拆除监听 + rAF。 */
@@ -85,7 +73,6 @@ export function releaseWakeField(): void {
   window.removeEventListener('pointermove', onMove);
   window.removeEventListener('pointerdown', onDown);
   window.removeEventListener('bg-ripple:wave', onWave);
-  window.removeEventListener('jam:key-fx', onKeyFx);
   cancelAnimationFrame(raf);
   raf = 0;
 }

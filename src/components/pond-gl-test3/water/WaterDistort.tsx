@@ -24,20 +24,18 @@ import { collectObjectDrops, collectAmbientDrop, writeDrops, resetRippleFeed,
   pointerPathDrops, resetPointerPath, type Drop } from './ripple-feed';
 import type { GlSim } from '../spheres/use-gl-sim';
 import type { GlPhysNode } from '../spheres/gl-sim-setup';
-import { collectKeyFxDrops, sampleKeyFx } from '../key-fx/key-fx-state';
 import { getShowcasePose, sampleShowcase } from '../showcase/showcase-state';
+import { collectP9Drops } from '../p9/runtime/p9-drops';
+import { sampleP9 } from '../p9/runtime/p9-sampler';
+import { getP9QuietWaves, getP9WaterUniform } from '../p9/consumers/p9-water';
 
 /**
  * H2/H3/H4 — 全屏动态扭曲水面（真场景 + 水位深度遮罩 + 涟漪交互全集）。
  *
  * 渲真实 GL 场景（基调/背景/球）进内容 FBO → ping-pong 高度场 → 合成折射 pass 全屏扭（接管渲染循环、返回 null）。
- * H3：球体按逐实例没入值拆成水上/水下 FBO，合成时确定性恢复层级。
- * H4：一帧汇集多滴喂高度场——指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并，见 ripple-feed）
- * + 常驻微波，写进 sim 的 uDrops 数组。命中层是 canvas 之上的 DOM、不进 shader → 点击不受扭曲影响。
- * 注：sim/quadVert/参数 store 暂复用 water/spike/（H 线收尾、spike 退役时挪进 water/ 正式化）。
+ * 球体按没入值拆成水上/水下 FBO；同帧把交互、对象与按键滴水汇入高度场。
  */
 
-// Linear 平滑高度场梯度；sim 在 texel 中心采样，波动方程保持不变。
 const SIM_OPTS = {
   type: HalfFloatType,
   format: RGBAFormat,
@@ -167,9 +165,10 @@ export default function WaterDistort(
   useFrame((state) => {
     const t = getRippleTuning();
     const now = performance.now() / 1000;
-    const keyFx = sampleKeyFx(now);
-    const quiet = sampleShowcase('quiet', now);
     const showcasePose = getShowcasePose();
+    const p9 = sampleP9(now);
+    const p9Water = getP9WaterUniform(p9);
+    const p9Quiet = getP9QuietWaves(p9); const quiet = p9Quiet.length > 0 ? p9Quiet : [{ x: showcasePose.x, y: showcasePose.y, ...sampleShowcase('quiet', now) }];
     // K1：画布宽高比 → 滴水距离度量校正成正圆（仅度量，不动 sim 数学）
     // K3：depthModel prop 传进 helper → composite 的深度调制 uniform 每帧刷新
     // K4：sphereShadow prop 传进 helper → composite 的空中球投影 uniform 每帧刷新
@@ -177,7 +176,8 @@ export default function WaterDistort(
     // K6：waterZoom prop 传进 helper → composite 的 uZoomAmount（开=t.zoomAmount/关=0）每帧刷新
     // K10：pondFloor prop 传进 helper → composite 的 uPondFloor（开=1 混合静止亮底花纹/关=0 现状）每帧刷新
     // K11：moonReflect prop 传进 helper → composite 的 uMoonReflect（开=1 叠大柔月华倒影/关=0 现状）每帧刷新
-    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, { dark: sphereShadow, occlude: shadowOcclude, glow: shadowGlow, contact: shadowContact }, caustics, state.clock.getElapsedTime(), waterZoom, pondFloor, moonReflect, keyFx, { x: showcasePose.x, y: showcasePose.y, progress: quiet.progress, energy: quiet.energy });
+    const waterMod = { water: p9.channels.water, moon: p9.channels.moon };
+    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, { dark: sphereShadow, occlude: shadowOcclude, glow: shadowGlow, contact: shadowContact }, caustics, state.clock.getElapsedTime(), waterZoom, pondFloor, moonReflect, waterMod, quiet, p9Water);
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
     // /test3 task 4：水位遮罩用与 GL 实例/命中层同款投影 → 透视/视差/深度尺寸下，"水上清晰/水下扭曲"始终贴着球
     const pf = getPointerFx();
@@ -188,7 +188,7 @@ export default function WaterDistort(
     // 汇集本帧所有滴水：指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并）+ 常驻微波
     const drops = pending.current;
     pending.current = [];
-    drops.push(...collectKeyFxDrops(now));
+    drops.push(...collectP9Drops(now));
     if (nodes) drops.push(...collectObjectDrops(nodes, size.w, size.h, t, proj));
     const amb = collectAmbientDrop(t);
     if (amb) drops.push(amb);

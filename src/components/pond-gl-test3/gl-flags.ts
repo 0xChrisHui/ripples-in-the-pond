@@ -16,6 +16,7 @@ export interface GLFlags {
   glBase: boolean;        // G3 GL 基调层总开关
   artDir: ArtDir;         // G3 基调两档 deep/black
   glSpheres: boolean;     // G4 GL 球总开关
+  sphereLabels: boolean;  // 音乐圆圈右下角数字/标题
   water: boolean;         // G5 旧程序化水面
   bgImage: boolean;       // 背景图（public/test1-bg.png）
   colorGrade: boolean;    // 图 1 风格调色（默认开）
@@ -64,6 +65,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   glBase: true,
   artDir: 'deep',
   glSpheres: true,
+  sphereLabels: false,
   water: false,
   bgImage: false,
   colorGrade: true,
@@ -124,6 +126,7 @@ export function parseGLFlags(searchParams: URLSearchParams): GLFlags {
     wheelMode: wheelMode === 'waterLevel' || wheelMode === 'zoomFx' ? wheelMode : d.wheelMode,
     glBase: parseBool(searchParams, 'glBase', d.glBase),
     glSpheres: parseBool(searchParams, 'glSpheres', d.glSpheres),
+    sphereLabels: parseBool(searchParams, 'sphereLabels', d.sphereLabels),
     water: parseBool(searchParams, 'water', d.water),
     bgImage: parseBool(searchParams, 'bgImage', d.bgImage),
     colorGrade: parseBool(searchParams, 'colorGrade', d.colorGrade),

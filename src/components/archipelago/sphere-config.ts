@@ -3,9 +3,9 @@ import type { Track } from '@/src/types/tracks';
 
 /** sound-spheres 配置 + 节点/链接生成纯函数 */
 
-// v26 — 3 group palette 皆 8 色：A Portra 暖橙基底；B Cinestill 800T 夜景；C Ektar 100 鲜艳
+// P9 v3 — 仅 A 组扩成汇聚后的 12 色；B/C 保持各自原有 8 色。
 export const GROUP_PALETTES: string[][] = [
-  ['#D8A878','#7EA898','#A83A3A','#6A7898','#E8D8B8','#382828','#B8A8C8','#9AA878'],
+  ['#D8A878','#7EA898','#A83A3A','#6A7898','#E8D8B8','#382828','#B8A8C8','#9AA878','#C8504A','#888858','#D88A4A','#5A8868'],
   ['#D8A878','#7EA898','#E8D8B8','#382828','#B8A8C8','#9AA878','#C8504A','#888858'],
   ['#D8A878','#7EA898','#A83A3A','#6A7898','#E8D8B8','#9AA878','#D88A4A','#5A8868'],
 ];

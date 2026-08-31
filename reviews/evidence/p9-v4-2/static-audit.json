@@ -1,0 +1,68 @@
+{
+  "generatedAt": "2026-08-31T19:23:12.132Z",
+  "registry": 33,
+  "sounds": 33,
+  "requiresEclipse": 13,
+  "independent": 20,
+  "waterKeys": [
+    "T",
+    "U",
+    "V"
+  ],
+  "moonWriters": 0,
+  "retrigger": {
+    "velocity-impulse": [
+      "a",
+      "d",
+      "w",
+      "y"
+    ],
+    "spawn-batch": [
+      "b",
+      "s",
+      "t",
+      "v",
+      "space",
+      "z",
+      "8",
+      "5"
+    ],
+    "smooth-accumulate": [
+      "c",
+      "e",
+      "g",
+      "i",
+      "l",
+      "o",
+      "u"
+    ],
+    "palette-cycle": [
+      "f",
+      "k"
+    ],
+    "object-cycle": [
+      "j",
+      "n",
+      "q",
+      "r",
+      "7"
+    ],
+    "one-way-commit": [
+      "m",
+      "p"
+    ],
+    "bounded-envelope": [
+      "x",
+      "6",
+      "4",
+      "h",
+      "3"
+    ]
+  },
+  "parameters": {
+    "bStagger": 0.08,
+    "vLimit": 5,
+    "colonyLimit": 5,
+    "yDamping": 1.2
+  }
+}

@@ -1,19 +1,10 @@
 'use client';
-
-/**
- * 水面花瓣 + 投影 —— 复刻 references/flower-water-ripples 的机制（移植进 GL 沙盒、2D overlay 画）：
- *  ① CPU 涟漪场（粗网格波动方程）：喂与 GL 水面同源的指针/涟漪事件 → 有同样的波；
- *  ② 花瓣沿涟漪场梯度漂 + 随高度起伏/缩放 = "永远跟水面走"；
- *  ③ 程序化樱花瓣 sprite（贝塞尔）+ 沉影椭圆，画在 GL 之上的 2D canvas。
- * 模块级可变状态（场/网格）放这里（避 react-hooks/immutability，且需跨帧；范式同 ripple-feed）。
- */
-
 export const NX = 160;
 let NY = 160;
 let u = new Float32Array(NX * NY);
 let uPrev = new Float32Array(NX * NY);
+const hashVisual = (value: number): number => Math.abs(Math.sin(value * 73.17) * 43758.5453) % 1;
 
-/** 按画面宽高比重建网格（NY 随之变，端点 clamp） */
 export function allocPetalSim(w: number, h: number): void {
   NY = Math.max(90, Math.min(288, Math.round((NX * h) / Math.max(1, w))));
   u = new Float32Array(NX * NY);
@@ -21,7 +12,6 @@ export function allocPetalSim(w: number, h: number): void {
 }
 export function petalNY(): number { return NY; }
 
-/** 注入一滴（升余弦凸包）；gx/gy = 网格坐标 */
 export function petalDrop(gx: number, gy: number, radius: number, strength: number): void {
   const r2 = radius * radius;
   const x0 = Math.max(1, Math.floor(gx - radius)), x1 = Math.min(NX - 2, Math.ceil(gx + radius));
@@ -38,14 +28,11 @@ export function petalDrop(gx: number, gy: number, radius: number, strength: numb
   }
 }
 
-/** 屏幕坐标(sx,sy) + 视口(w,h) → 花瓣网格注入一滴（strength<=0 跳过）。wake-field / WaterPetals 共用，
- *  屏幕→网格映射的唯一出处（改分辨率/映射只此一处，两消费方永不走偏）。 */
 export function petalDropScreen(sx: number, sy: number, w: number, h: number, radius: number, strength: number): void {
   if (strength <= 0) return;
   petalDrop((sx / Math.max(1, w)) * NX, (sy / Math.max(1, h)) * petalNY(), radius, strength);
 }
 
-/** 推进一帧波动方程（damp 0.979），ping-pong 交换 */
 export function stepPetalWater(): void {
   const damp = 0.979;
   for (let y = 1; y < NY - 1; y++) {
@@ -59,7 +46,6 @@ export function stepPetalWater(): void {
   const t = u; u = uPrev; uPrev = t;
 }
 
-/** [gradX, gradY, height] at 网格 (gx,gy)（花瓣读它漂 + 起伏） */
 export function petalGradAt(gx: number, gy: number): [number, number, number] {
   const x = Math.max(1, Math.min(NX - 2, gx | 0));
   const y = Math.max(1, Math.min(NY - 2, gy | 0));
@@ -67,7 +53,6 @@ export function petalGradAt(gx: number, gy: number): [number, number, number] {
   return [u[i + 1] - u[i - 1], u[i + NX] - u[i - NX], u[i]];
 }
 
-/* ===================== 程序化樱花瓣 sprite ===================== */
 interface Pal { petal: string; edge: string; deep: string }
 const PALETTES: Pal[] = [
   { petal: '#bce8de', edge: '#e6f8f2', deep: '#9fd8cb' },
@@ -112,11 +97,24 @@ function makePetalSprite(px: number, pal: Pal, seed: number): HTMLCanvasElement 
   return cv;
 }
 
-/* ===================== 花瓣对象 + 更新 + 绘制 ===================== */
 export interface Petal {
   nx: number; ny: number; vx: number; vy: number;
   rot: number; vr: number; phase: number; px: number; sprite: HTMLCanvasElement;
+  lifeAlpha?: number; lifeScale?: number;
 }
+
+export interface PetalVisualCue {
+  mode: string;
+  energy: number;
+  progress: number;
+  selected: number;
+  count: number;
+  value: number;
+  lineWidth: number;
+  seed: number;
+  fadeIn: number; fadeOut: number;
+}
+export interface PetalVisualFx { cues: readonly PetalVisualCue[] }
 
 export function makePetal(i: number, w: number, h: number, dpr: number): Petal {
   const R = mulberry32(11 + i * 13);
@@ -129,13 +127,11 @@ export function makePetal(i: number, w: number, h: number, dpr: number): Petal {
   };
 }
 
-/** 把花瓣数组对齐到目标数量（数量滑块改动时增/删；增的现做、删的截断）。 */
 export function syncPetals(petals: Petal[], count: number, w: number, h: number, dpr: number): void {
   while (petals.length < count) petals.push(makePetal(petals.length, w, h, dpr));
   if (petals.length > count) petals.length = count;
 }
 
-/** 花瓣随涟漪场梯度漂 + 轻柔自漂 + 边缘软回拢（永远跟水面走）。sens=各种运动幅度倍率（边缘回拢/阻尼不缩，保稳定）。 */
 export function updatePetals(petals: Petal[], dt: number, t: number, sens: number): void {
   for (const p of petals) {
     const [dx, dy] = petalGradAt(p.nx * NX, p.ny * NY);
@@ -153,21 +149,40 @@ export function updatePetals(petals: Petal[], dt: number, t: number, sens: numbe
   }
 }
 
-/** 先画沉影（偏移椭圆）再画花瓣 sprite；随高度起伏 y/缩放 + 轻摇。sens=运动幅度倍率，sizeMul=大小倍率（含投影）。 */
 export function drawPetals(
   ctx: CanvasRenderingContext2D, petals: Petal[], t: number, w: number, h: number, dpr: number, sens: number, sizeMul: number,
+  fx?: PetalVisualFx,
 ): void {
-  for (const p of petals) {
+  for (const stitch of fx?.cues.filter((cue) => cue.mode === 'petal-stitch') ?? []) {
+    const a = petals[stitch.selected % petals.length], b = petals[(stitch.selected + 3) % petals.length];
+    if (!a || !b) continue;
+    const bend = Math.sin(t * 2.1 + stitch.seed) * 18 * stitch.energy;
+    ctx.save(); ctx.globalAlpha = Math.sin(stitch.progress * Math.PI) * stitch.energy;
+    ctx.strokeStyle = '#e7eee9'; ctx.lineWidth = stitch.lineWidth;
+    ctx.beginPath(); ctx.moveTo(a.nx * w, a.ny * h);
+    ctx.quadraticCurveTo((a.nx + b.nx) * w / 2 + bend, (a.ny + b.ny) * h / 2 - bend, b.nx * w, b.ny * h);
+    ctx.stroke(); ctx.restore();
+  }
+  for (const [index, p] of petals.entries()) {
     const gh = petalGradAt(p.nx * NX, p.ny * NY)[2];
     const px = p.px * sizeMul;
     const x = p.nx * w;
     const y = p.ny * h + gh * 3 * sens;
-    const sc = (1 + gh * 0.15 * sens) * sizeMul;
+    const sc = (1 + gh * 0.15 * sens) * sizeMul * (p.lifeScale ?? 1);
     const sw = p.sprite.width / dpr;
+    const cues = fx?.cues.filter((cue) => cue.mode === 'petal-multiply' ? index >= cue.selected : Array.from({ length: cue.count }, (_, at) => (cue.selected + at * 3) % petals.length).includes(index)) ?? [];
+    const multiply = cues.find((cue) => cue.mode === 'petal-multiply'); let visualAlpha = p.lifeAlpha ?? 1;
+    if (multiply) {
+      const delay = ((index * 17 + multiply.seed) % 23) / 100, dwell = multiply.lineWidth + hashVisual(index + multiply.seed) * (multiply.value - multiply.lineWidth);
+      const fadeIn = Math.max(0.03, multiply.fadeIn), fadeOut = Math.max(0.05, multiply.fadeOut);
+      const outAt = Math.min(0.96 - fadeOut, delay + fadeIn + dwell / 10);
+      const multiplyAlpha = multiply.progress < delay ? 0 : multiply.progress < delay + fadeIn ? (multiply.progress - delay) / fadeIn : multiply.progress > outAt ? 1 - (multiply.progress - outAt) / fadeOut : 1;
+      visualAlpha *= Math.max(0, Math.min(1, multiplyAlpha));
+    }
     ctx.save(); // 沉影
     ctx.translate(x + px * 0.16, y + px * 0.26);
     ctx.rotate(p.rot);
-    ctx.globalAlpha = 0.22;
+    ctx.globalAlpha = 0.22 * visualAlpha;
     ctx.fillStyle = 'rgba(95,125,155,0.6)';
     ctx.beginPath();
     ctx.ellipse(0, 0, px * 0.8, px * 0.42, 0, 0, Math.PI * 2);
@@ -176,7 +191,23 @@ export function drawPetals(
     ctx.save(); // 花瓣
     ctx.translate(x, y);
     ctx.rotate(p.rot + Math.sin(t * 1.1 + p.phase) * 0.04 * sens);
-    ctx.scale(sc, sc);
+    ctx.globalAlpha = visualAlpha;
+    const stretchFx = cues.find((cue) => cue.mode === 'petal-stretch');
+    if (stretchFx && stretchFx.progress > 0.34) {
+      const split = Math.min(1, (stretchFx.progress - 0.34) / 0.4);
+      const span = Math.max(w, h) * split * stretchFx.value;
+      const gap = span * split * 0.12;
+      ctx.globalAlpha = Math.max(0, 1 - split) * stretchFx.energy;
+      ctx.strokeStyle = '#edfdf7'; ctx.lineWidth = stretchFx.lineWidth;
+      ctx.beginPath(); ctx.moveTo(-gap, 0); ctx.lineTo(-span, 0); ctx.moveTo(gap, 0); ctx.lineTo(span, 0); ctx.stroke();
+      ctx.restore(); continue;
+    }
+    const stretch = stretchFx ? Math.min(1, stretchFx.progress / 0.34) * stretchFx.energy : 0;
+    ctx.scale(sc * (1 + stretch * 2.6), sc * (1 - stretch * 0.45));
+    const transform = cues.find((cue) => cue.mode === 'petal-transform');
+    if (transform) ctx.filter = `grayscale(${transform.progress}) brightness(${1 + transform.energy})`;
+    const ingest = cues.find((cue) => cue.mode === 'petal-ingest');
+    if (ingest) ctx.globalAlpha *= Math.max(0, 1 - ingest.progress * 1.25);
     ctx.drawImage(p.sprite, -sw / 2, -sw / 2, sw, sw);
     ctx.restore();
   }

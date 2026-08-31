@@ -15,7 +15,7 @@ export interface SphereTuning {
 }
 
 export const DEFAULT_TUNING: SphereTuning = {
-  brightness: 1.2,
+  brightness: 1.4,
   contrast: 1,
   saturation: 1,
   halo: 1.2,

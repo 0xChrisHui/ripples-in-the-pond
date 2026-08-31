@@ -12,8 +12,9 @@ import {
 } from 'three';
 import { getRippleTuning, ZOOM_MIN } from '../water/spike/ripple-tuning';
 import { getWaterLevel } from '../water/water-level';
-import { sampleKeyFx, sampleKeyFxField } from '../key-fx/key-fx-state';
 import { getShowcasePose, sampleShowcase, type ShowcasePose, type ShowcaseSample } from '../showcase/showcase-state';
+import { sampleP9, type P9Frame } from '../p9/runtime/p9-sampler';
+import { getP9MoteStyle, modulateP9Mote } from '../p9/consumers/p9-motes';
 
 /**
  * K8 — 水面漂浮微光层（夜塘冷调浮尘点阵）。
@@ -50,11 +51,15 @@ interface MoteUniforms {
 const motesVertex = /* glsl */ `
   uniform float uSize;
   attribute float aSeed;
+  attribute float aAlpha;
+  attribute float aScale;
   varying float vSeed;
+  varying float vAlpha;
   void main() {
     vSeed = aSeed;
+    vAlpha = aAlpha;
     gl_Position = vec4(position.xy, 0.0, 1.0);
-    gl_PointSize = uSize;
+    gl_PointSize = uSize * aScale;
   }
 `;
 
@@ -64,6 +69,7 @@ const motesFragment = /* glsl */ `
   uniform float uOpacity;
   uniform vec3 uColor;
   varying float vSeed;
+  varying float vAlpha;
   void main() {
     vec2 d = gl_PointCoord - vec2(0.5);
     float r = length(d);
@@ -71,7 +77,7 @@ const motesFragment = /* glsl */ `
     float a = smoothstep(0.5, 0.0, r);
     a *= a;                                   // 收紧核心，光晕更柔
     float twinkle = 0.7 + 0.3 * vSeed;        // 逐点亮度微差（静态，避免抢眼闪烁）
-    gl_FragColor = vec4(uColor, a * uOpacity * twinkle);
+    gl_FragColor = vec4(uColor, a * uOpacity * twinkle * vAlpha);
   }
 `;
 
@@ -107,14 +113,16 @@ function stepMotes(
   geom: BufferGeometry,
   st: MoteState,
   time: number,
-  now: number,
   zoom: number,
   drift: number,
   count: number,
   exchange: ShowcaseSample,
   target: ShowcasePose,
+  p9: P9Frame,
 ): void {
   const pos = geom.getAttribute('position') as BufferAttribute;
+  const alpha = geom.getAttribute('aAlpha') as BufferAttribute;
+  const scale = geom.getAttribute('aScale') as BufferAttribute;
   const arr = pos.array as Float32Array;
   for (let i = 0; i < count; i++) {
     const bx = st.base[i * 2];
@@ -123,20 +131,24 @@ function stepMotes(
     // 轻柔游走：极小振幅（≤~0.03 NDC）正弦漂移，x/y 错频 → 不规则缓动；drift=0 时无漂移
     const dx = Math.sin(time * 0.21 + ph) * 0.03 * drift;
     const dy = Math.cos(time * 0.17 + ph * 1.3) * 0.03 * drift;
-    const field = sampleKeyFxField(now, (bx + 1) * 0.5, (by + 1) * 0.5);
     // B 微光交换只选择固定少数点汇入日食；其余微光继续原有游走，避免满屏粒子齐飞。
     const pull = st.seed[i] < 0.18
       ? Math.sin(exchange.progress * Math.PI) * Math.min(0.94, exchange.energy * 0.88)
       : 0;
-    const px = (bx + dx + field.dx * 2) * zoom;
-    const py = (by + dy + field.dy * 2) * zoom;
+    const p9Point = modulateP9Mote(st.seed[i], bx, by, p9, target);
+    const px = (p9Point.x + dx) * zoom;
+    const py = (p9Point.y + dy) * zoom;
     const tx = target.x * 2 - 1;
     const ty = 1 - target.y * 2;
     arr[i * 3] = px + (tx - px) * pull;
     arr[i * 3 + 1] = py + (ty - py) * pull;
     arr[i * 3 + 2] = 0;
+    alpha.setX(i, p9Point.alpha);
+    scale.setX(i, p9Point.scale);
   }
   pos.needsUpdate = true;
+  alpha.needsUpdate = true;
+  scale.needsUpdate = true;
   geom.setDrawRange(0, count);
 }
 
@@ -150,6 +162,8 @@ export default function FloatingMotes({ enabled = false, waterZoom = false }: { 
     const g = new BufferGeometry();
     g.setAttribute('position', new BufferAttribute(new Float32Array(MAX_MOTES * 3), 3));
     g.setAttribute('aSeed', new BufferAttribute(state.seed, 1));
+    g.setAttribute('aAlpha', new BufferAttribute(new Float32Array(MAX_MOTES).fill(1), 1));
+    g.setAttribute('aScale', new BufferAttribute(new Float32Array(MAX_MOTES).fill(1), 1));
     return g;
   }, [state]);
 
@@ -166,7 +180,9 @@ export default function FloatingMotes({ enabled = false, waterZoom = false }: { 
     const t = getRippleTuning();
     const now = performance.now() / 1000;
     const exchange = sampleShowcase('motes', now);
-    const fx = Math.max(sampleKeyFx(now).motes, exchange.energy);
+    const p9 = sampleP9(now);
+    const p9Style = getP9MoteStyle(p9);
+    const fx = exchange.energy;
     // K8 第一要务：绕中心按 zoom 缩放，**与合成 shader 的 uZoomAmount 同款门控+公式** →
     // 当 K6 参照。waterZoom 开 → zoom=1+(水位−0.5)·zoomAmount（同 WaterDistort）；
     // 关 → zoom≡1（与水面"不缩放=现状"一致，微光也不缩，避免比水更早动 = 假参照）。
@@ -174,12 +190,13 @@ export default function FloatingMotes({ enabled = false, waterZoom = false }: { 
       ? Math.max(ZOOM_MIN, 1 + (getWaterLevel() - 0.5) * t.zoomAmount) // 同 shader/滴水的下限 → 大幅度也不翻转
       : 1;
     // 写 material 真身 uniforms（R3F 拷贝坑：改外部 uniforms 对象无效）
-    mat.uniforms.uSize.value = enabled ? t.motesSize + fx * 2.5 : 1.5 + fx * 4.5;
-    mat.uniforms.uOpacity.value = Math.min(1, enabled ? t.motesOpacity + fx * 0.3 : fx * 0.82);
-    const density = enabled ? Math.min(1, t.motesCount + fx * 0.2) : fx * 0.38;
+    mat.uniforms.uSize.value = Math.max(0.5, (enabled ? t.motesSize + fx * 2.5 : 1.5 + fx * 4.5) + p9Style.size);
+    mat.uniforms.uOpacity.value = Math.max(0, Math.min(1, (enabled ? t.motesOpacity + fx * 0.3 : fx * 0.82) + p9Style.opacity));
+    (mat.uniforms.uColor.value as Color).set(p9Style.color);
+    const density = enabled ? Math.min(1, t.motesCount + fx * 0.2 + p9Style.density) : fx * 0.38 + p9Style.density;
     const drift = enabled ? t.motesDrift + fx * 0.6 : 0.25 + fx * 1.2;
     const count = Math.max(0, Math.min(MAX_MOTES, Math.round(density * MAX_MOTES)));
-    stepMotes(pts.geometry as BufferGeometry, state, s.clock.getElapsedTime(), now, zoom, drift, count, exchange, getShowcasePose());
+    stepMotes(pts.geometry as BufferGeometry, state, s.clock.getElapsedTime(), zoom, drift, count, exchange, getShowcasePose(), p9);
   });
 
   return (

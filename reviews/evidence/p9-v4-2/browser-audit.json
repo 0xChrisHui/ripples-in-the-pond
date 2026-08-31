@@ -1,0 +1,100 @@
+{
+  "generatedAt": "2026-08-31T19:26:55.212Z",
+  "homepage": {
+    "hudVisible": false,
+    "log": [
+      {
+        "id": "FX11",
+        "key": "k",
+        "accepted": true,
+        "reason": null,
+        "at": 1901.6000000238419
+      },
+      {
+        "id": "FX01",
+        "key": "a",
+        "accepted": false,
+        "reason": "no-eclipse",
+        "at": 2097.4000000059605
+      }
+    ]
+  },
+  "noMusic": {
+    "total": 33,
+    "accepted": 20,
+    "noEclipse": 13
+  },
+  "allKeys": {
+    "total": 33,
+    "accepted": 33,
+    "unique": 33
+  },
+  "sporeBatches": 6,
+  "v": {
+    "accepted": 5,
+    "capacity": 1
+  },
+  "colonies": {
+    "accepted": 5,
+    "capacity": 1,
+    "voices": 5
+  },
+  "accent": {
+    "log": [
+      {
+        "id": "FX41",
+        "key": "h",
+        "accepted": true,
+        "reason": null,
+        "at": 1463.0999999940395
+      },
+      {
+        "id": "FX42",
+        "key": "3",
+        "accepted": true,
+        "reason": null,
+        "at": 1568.7000000178814
+      },
+      {
+        "id": "FX43",
+        "key": "8",
+        "accepted": true,
+        "reason": null,
+        "at": 1638.9000000059605
+      }
+    ],
+    "opacity": {
+      "dark": 0.85,
+      "film": 0.0645664
+    }
+  },
+  "incremental": {
+    "FX24": 2,
+    "FX35": 2
+  },
+  "r": {
+    "peakFields": 5,
+    "settledFields": 0,
+    "settledVoices": 0
+  },
+  "sampler": {
+    "browserFrames": 121,
+    "samplePasses": 122
+  },
+  "reducedMotion": {
+    "normalLensTravel": 47.467500000447046,
+    "reducedLensTravel": 10.441200000196716,
+    "ratio": 0.21996523937638135
+  },
+  "stress": {
+    "peakVoices": 5,
+    "settledVoices": 0,
+    "settledFields": 0
+  },
+  "fps": {
+    "frames": 181,
+    "ms": 3004.7000000178814,
+    "fps": 60.23895896393079
+  },
+  "errors": []
+}

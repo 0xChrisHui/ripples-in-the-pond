@@ -1,10 +1,3 @@
-/**
- * H3 — 水位深度遮罩合成 shader（WaterDistort 专用）。
- *
- * 不渲离屏 z 图（换材质在 R3F+InstancedMesh 上不稳）；改为把球坐标/半径/深度当 uniform 数组传进来，
- * 每像素遍历球算"露出水面程度 above"——z>L 露出 → above≈1 → 不扭(清晰)；z≤L 水下 → 涟漪折射 + 月光高光。
- */
-
 import { pondFloorGlsl } from '../shaders/pond-floor-shaders';
 import { waterLightGlsl } from '../shaders/water-light-glsl';
 
@@ -49,7 +42,10 @@ export const compositeMaskFrag = /* glsl */ `
   uniform float uMoonReflectStrength;// 月光倒影强度（≤0.5 克制；偏画面一侧、低不透明 → 不盖过球）
   uniform float uBallLightBelow;     // 月光对"水下球"的增亮衰减（0..1）；水上球严格为 0
   uniform float uWaveOnBall;         // 水下球波纹增强：水面涟漪明暗(梯度·朝月)乘性荡漾过水下球面，提升"水下感"；0=关
-  uniform vec4  uQuietWave;          // P9-D：(中心x,y,扩张进度,能量)，经过区域暂时抹平水纹
+  uniform vec4  uQuietWaves[5];      // P9 v4.1：最多五条独立安静波
+  uniform vec4  uP9Arcs[5];          // P9 v4：最多五条屏外超大圆弧浪
+  uniform vec4  uP9Water;            // P9 v4：静浪辅助参数
+  uniform vec4  uP9Caustic;          // P9 v2：焦散分裂、进度、增亮、退暗
 
   // K3：取"对该像素影响最大的水下球"的深度因子 d∈[0,1]（贴水面=0、塘底=1），d=clamp((uWaterLevel-depthZ)/uPondDepth)
   // 与 water-level.ts depthFactor 同式 → 球 dim/标题淡出/水面折射月光 三消费方读同一 d、浮沉一起连续变（统一 R4）。
@@ -98,15 +94,28 @@ export const compositeMaskFrag = /* glsl */ `
     float hx = texture2D(uHeight, hUv + vec2(uDelta.x, 0.0)).r;
     float hy = texture2D(uHeight, hUv + vec2(0.0, uDelta.y)).r;
     vec2 grad = vec2(hx - h, hy - h) * edgeWin; // ×edgeWin：池外梯度→0=静水（无折射/无高光、无 clamp 边缘尖峰）
-    if (uQuietWave.w > 0.001) {
-      vec2 q = vUv - uQuietWave.xy;
-      q.x *= uViewport.x / max(1.0, uViewport.y);
-      float qr = uQuietWave.z * 1.25;
-      float qd = length(q);
+    float quietFront = 0.0, p9Wave = 0.0;
+    float quietEnergy = 0.0;
+    for (int qi = 0; qi < 5; qi++) {
+      vec4 qv = uQuietWaves[qi];
+      if (qv.w <= 0.001) continue;
+      vec2 q = vUv - qv.xy; q.x *= uViewport.x / max(1.0, uViewport.y);
+      float qr = qv.z * 1.25, qd = length(q);
       float interior = 1.0 - smoothstep(qr - 0.06, qr + 0.04, qd);
-      float front = 1.0 - smoothstep(0.02, 0.09, abs(qd - qr));
-      float calm = clamp(max(interior * 0.72, front) * uQuietWave.w, 0.0, 0.98);
-      grad *= 1.0 - calm;
+      float front = 1.0 - smoothstep(0.015, 0.12, abs(qd - qr));
+      quietFront = max(quietFront, front * qv.w);
+      quietEnergy = max(quietEnergy, qv.w);
+      grad *= 1.0 - clamp(max(interior * 0.72, front) * qv.w, 0.0, 0.98);
+    }
+    vec2 sphereGrad = grad; // T 的屏外巨浪只扫水面，不把已隐藏音乐球的白底重新照出来。
+    for (int ai = 0; ai < 5; ai++) {
+      vec4 av = uP9Arcs[ai];
+      if (av.x <= 0.001) continue;
+      vec2 center = vec2(0.5) + vec2(cos(av.z), sin(av.z)) * 2.35;
+      vec2 aq = vUv - center;
+      float arcWave = exp(-pow((length(aq) - (1.35 + av.y * 2.0)) / 0.075, 2.0)) * av.x;
+      p9Wave += arcWave;
+      grad += normalize(aq + 0.0001) * arcWave * 0.016;
     }
     float gmag = length(grad);
     if (uDebug > 0.5) { // 真实 target：绿=水上，红=水下，蓝=RGB 超出 Alpha（合成契约失配）
@@ -152,7 +161,9 @@ export const compositeMaskFrag = /* glsl */ `
       // 不透明球 notBase≈1 不受影响；水域 sub=1 时与原式逐字等价（此改仅在球圆盘内、且该处变暗时生效）。
       base = mix(base, pondFloorColor(vUv + disp, uPondFloorStyle), uPondFloorStrength * (1.0 - notBase));
     }
-    vec3 col = base + vec3(spec * uSpec * moonMod * (1.0 - occ));
+    vec3 col = base + vec3(spec * uSpec * moonMod * (1.0 - occ)) + vec3(0.62, 0.76, 0.86) * p9Wave * 0.3;
+    vec3 quietColor = vec3(0.92, 0.96, 1.0);
+    col += quietColor * quietFront * quietEnergy * 0.34;
     // A 暗影：冷向减光（多减暖留冷、影偏蓝灰不死黑；暗塘上弱、亮处显）
     if (uSphereShowing > 0.5) col = max(col - aMask * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
     // C 反光晕：加冷光（暗塘上加光比减光更显，像球的光落在下方水面）
@@ -162,6 +173,15 @@ export const compositeMaskFrag = /* glsl */ `
     // K5/K11 月光两效（焦散+倒影）：各算一次冷白增量，水面路径与球路径共用。uCaustics/uMoonReflect<0.5 时该项=0（=现状跳过）。
     vec3 causV = (uCaustics > 0.5 ? computeCaustics(vUv, grad, uTime) * uCausticsStrength : 0.0) * vec3(0.55, 0.72, 0.95);
     vec3 moonV = (uMoonReflect > 0.5 ? moonReflectTex(hUv, grad, uTime) * uMoonReflectStrength * edgeWin : 0.0) * vec3(0.91, 0.95, 1.0);
+    if (uP9Caustic.x > 0.001) {
+      vec2 splitDir = vec2(cos(uP9Caustic.y * 6.283), sin(uP9Caustic.y * 6.283)) * uP9Caustic.x * 0.08;
+      vec3 splitV = (computeCaustics(vUv + splitDir, grad, uTime) + computeCaustics(vUv - splitDir, grad, uTime)
+        + computeCaustics(vUv + vec2(-splitDir.y, splitDir.x), grad, uTime)) * uCausticsStrength * vec3(0.55, 0.72, 0.95) / 3.0;
+      float splitLife = 1.0 - smoothstep(0.68, 1.0, uP9Caustic.y);
+      causV = splitV * splitLife;
+    }
+    causV *= 1.0 + uP9Caustic.z * 3.4;
+    causV *= 1.0 - clamp(uP9Caustic.w, 0.0, 0.92);
     // 背景始终走完整水面路径；球体在最后以预乘 alpha 覆盖，不再从背景抠洞。
     col += causV * (1.0 - occ);
     col += moonV;
@@ -172,9 +192,12 @@ export const compositeMaskFrag = /* glsl */ `
     vec3 ballLight = dot(causAmb, vec3(0.299, 0.587, 0.114)) >= dot(moonAmb, vec3(0.299, 0.587, 0.114)) ? causAmb : moonAmb;
     // 水下球"水下感"增强：水面涟漪明暗(梯度·朝月，正=亮带/负=暗带 → 完整波纹荡漾，比 spec 单取高光更"水")乘性打到水下球面。
     // 只给水下球增加波纹光，不把波纹光写回背景。
-    float waveBall = dot(dir, normalize(vec2(-0.6, 1.0))) * smoothstep(0.0, 0.004, gmag);
+    float sphereGmag = length(sphereGrad);
+    vec2 sphereDir = sphereGmag > 1e-5 ? sphereGrad / sphereGmag : vec2(0.0);
+    float waveBall = dot(sphereDir, normalize(vec2(-0.6, 1.0))) * smoothstep(0.0, 0.004, sphereGmag);
     if (uHasSpheres > 0.5) {
-      vec4 sphere = texture2D(uSphereScene, vUv + disp); // 水下球 FBO：RGB 已预乘 alpha
+      vec2 sphereDisp = clamp(-sphereGrad * uPerturb * refrMod, -0.025, 0.025);
+      vec4 sphere = texture2D(uSphereScene, vUv + sphereDisp); // T 巨浪不再扭曲隐藏球取样，杜绝白底回闪
       float waveDelta = waveBall * uWaveOnBall;
       if (waveDelta >= 0.0) {
         sphere.rgb += max(vec3(sphere.a) - sphere.rgb, vec3(0.0)) * min(waveDelta, 1.0);

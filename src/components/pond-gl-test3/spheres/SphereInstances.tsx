@@ -15,7 +15,6 @@ import { writeFrame, hexToSRGB, BODY_RATIO, type InstanceBuf } from './sphere-fr
 import type { LifeFlags } from '../gl-flags';
 import type { GlSim } from './use-gl-sim';
 import { BACKGROUND_LAYER, SPHERE_LAYER } from '../water/composite/render-passes';
-import { sampleKeyFx } from '../key-fx/key-fx-state';
 
 /**
  * G4 — 35/36 球 InstancedMesh（一次 draw call）。
@@ -37,26 +36,26 @@ interface SphereUniforms {
  * 把调色 store 同步到 shader uniform 真身（matRef.current.uniforms.X.value）——R3F 把 uniforms prop
  * 拷贝进 material，改外部 useMemo 对象到不了 shader（血泪踩坑 #1，WaterSurface 同此修法）。
  */
-function applyTuningUniforms(mat: ShaderMaterial, t: SphereTuning, keyFxHalo: number, colorGrade: boolean): void {
-  mat.uniforms.uBrightness.value = t.brightness + keyFxHalo * 0.12;
+function applyTuningUniforms(mat: ShaderMaterial, t: SphereTuning, colorGrade: boolean): void {
+  mat.uniforms.uBrightness.value = t.brightness;
   mat.uniforms.uContrast.value = t.contrast;
   mat.uniforms.uSaturation.value = t.saturation;
   mat.uniforms.uColorGrade.value = colorGrade ? 1 : 0;
 }
 
 /** L3/L5 形态 uniform：边缘波、激励与光晕呼吸统一写 material 真身。 */
-function applyLifeUniforms(mat: ShaderMaterial, life: LifeFlags, timeSec: number, keyFxHalo: number): void {
+function applyLifeUniforms(mat: ShaderMaterial, life: LifeFlags, timeSec: number): void {
   const lt = getLifeTuning();
   const k1 = Math.round(lt.edgeWaveFreq);
   const w = prefersReducedMotion() ? 0 : lt.edgeWaveSpeed; // reduced-motion → 停转（形状保留）
-  mat.uniforms.uEdgeAmp.value = Math.max(life.edgeWave ? lt.edgeWaveAmp : 0, keyFxHalo * 0.045);
+  mat.uniforms.uEdgeAmp.value = life.edgeWave ? lt.edgeWaveAmp : 0;
   mat.uniforms.uEdgeK1.value = k1;
   mat.uniforms.uEdgeK2.value = k1 + 3; // 非倍数、不合拍
   mat.uniforms.uEdgeW1.value = w;
   mat.uniforms.uEdgeW2.value = w * 1.618;
   mat.uniforms.uEdgeSoft.value = life.edgeWave ? lt.edgeSoft : 0;
   mat.uniforms.uExciteGain.value = life.edgeExcite ? lt.exciteGain : 0;
-  mat.uniforms.uHaloBreathAmp.value = Math.max(life.haloBreath && !prefersReducedMotion() ? lt.haloBreathAmp : 0, keyFxHalo * 0.16);
+  mat.uniforms.uHaloBreathAmp.value = life.haloBreath && !prefersReducedMotion() ? lt.haloBreathAmp : 0;
   mat.uniforms.uHaloBreathSpeed.value = lt.haloBreathSpeed;
   mat.uniforms.uLifeEnv.value = lifeEnv(timeSec);
   mat.uniforms.uTime.value = timeSec;
@@ -136,13 +135,12 @@ export default function SphereInstances(
       lastSize.current = { w: sz.w, h: sz.h };
     }
     const tuning = getTuning();
-    const keyFxHalo = sampleKeyFx(performance.now() / 1000).halo;
-    applyTuningUniforms(mat, tuning, keyFxHalo, colorGrade);
-    applyLifeUniforms(mat, life, performance.now() / 1000, keyFxHalo); // L3 边缘 + L5 光晕呼吸
+    applyTuningUniforms(mat, tuning, colorGrade);
+    applyLifeUniforms(mat, life, performance.now() / 1000); // L3 边缘 + L5 光晕呼吸
     const proj = makeProjCtx(sz.w || 1, sz.h || 1);
     writeFrame(mesh, buf, {
       nodes, wavesRef: glSim.wavesRef, playingId: glSim.playingIdRef.current, hoverId: glSim.hoverIdRef.current,
-      tuning, waterOn, motionOn, proj, drift: sphereDrift, life, waveSpeed: 0.2 * (sz.h || 900), waterComposite: separatePass, keyFxHalo,
+      tuning, waterOn, motionOn, proj, drift: sphereDrift, life, waveSpeed: 0.2 * (sz.h || 900), waterComposite: separatePass,
     });
   });
 

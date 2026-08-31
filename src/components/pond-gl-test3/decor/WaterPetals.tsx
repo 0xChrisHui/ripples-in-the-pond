@@ -11,6 +11,9 @@ import { project, type ProjCtx } from '../sphere-projection';
 import { depthOf, displayDepthOf, getPointerFx, getCameraFx } from '../pointer-fx';
 import { prefersReducedMotion } from '../reduced-motion';
 import type { GlSim } from '../spheres/use-gl-sim';
+import { getShowcasePose } from '../showcase/showcase-state';
+import { sampleP9 } from '../p9/runtime/p9-sampler';
+import { applyP9PetalMotion, getP9PetalCount, getP9PetalVisual } from '../p9/consumers/p9-petals';
 
 /**
  * 水面花瓣层（/test1 WaterPetals 的 fork，复刻 references/flower-water-ripples）：GL 水面之上的 2D overlay canvas。
@@ -56,6 +59,7 @@ export default function WaterPetals({ glSim }: { glSim?: GlSim }) {
       last = now;
       const t = now / 1000;
       const tn = getRippleTuning();
+      const p9 = sampleP9(t);
       const nodes = glSimRef.current?.nodes;
       // 球的投影上下文（出入水 splash 注入位置 + 遮挡抠洞 共用）：透视/视差/滚轮/浮动下都贴着视觉球
       const { mx, my } = getPointerFx();
@@ -77,17 +81,21 @@ export default function WaterPetals({ glSim }: { glSim?: GlSim }) {
           }
         }
       }
-      syncPetals(petals, Math.max(0, Math.round(tn.petalCount)), W, H, dpr); // 数量即时增删
+      const baseCount = Math.max(0, Math.round(tn.petalCount));
+      syncPetals(petals, getP9PetalCount(baseCount, p9), W, H, dpr);
       if (!prefersReducedMotion()) updatePetals(petals, dt, t, tn.petalSens);
+      applyP9PetalMotion(petals, p9, getShowcasePose());
       ctx.clearRect(0, 0, W, H);
-      drawPetals(ctx, petals, t, W, H, dpr, tn.petalSens, tn.petalSize);
+      drawPetals(ctx, petals, t, W, H, dpr, tn.petalSens, tn.petalSize, getP9PetalVisual(p9, petals.length));
       // 遮挡（/test3 投影适配）：出水球在水面之上 → 抠掉花瓣层上**投影后**球身处（destination-out），露出下层 GL 球 = 球盖花瓣。
       // emerged=1−没入：出水球 1（全抠/全盖）、水下球 0（不抠 → 花瓣仍盖其上，正确）；过水线渐变。位置/半径走 project()=视觉球。
       if (nodes) {
+        const playingId = glSimRef.current?.playingIdRef.current;
         ctx.save();
         ctx.globalCompositeOperation = 'destination-out';
         ctx.fillStyle = '#000';
         for (const n of nodes) {
+          if (!playingId || n.id !== playingId) continue;
           if (n.x == null || n.y == null) continue;
           const emerged = 1 - getSubmerge(displayDepthOf(n));
           if (emerged <= 0.01) continue;
