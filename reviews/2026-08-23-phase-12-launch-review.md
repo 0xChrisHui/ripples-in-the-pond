@@ -1,10 +1,10 @@
-# Phase 12 OP Mainnet 上线 Review
+# Phase 12 OP Mainnet 上线完成 Review
 
-> 状态：Day 0 部署日记录；2026-08-23 起进入 7 天软启动观察，观察结束后补最终结论。
+> 部署日：2026-08-23。最终复核：2026-09-01。Phase 12 已完成。
 
 ## 上线结论
 
-部署日硬 gate 全部通过，Ripples in the Pond 已运行在 OP Mainnet。当前不是公开推广阶段，先进行 7 天软启动观察。
+部署日硬 gate 与 7 天软启动完成，Ripples in the Pond 已稳定运行在 OP Mainnet。依据部署记录、观察窗内未记录 P0，以及 2026-09-01 的只读生产终检，Phase 12 正式关闭。
 
 ## 永久部署
 
@@ -41,15 +41,16 @@
 
 ## 观察期清单
 
-- [ ] Day 1：早晚各检查一次 health、cron、双队列、告警邮箱
-- [ ] Day 2：早晚各检查一次 health、cron、双队列、告警邮箱
-- [ ] Day 3：早晚各检查一次 health、cron、双队列、告警邮箱
-- [ ] Day 4：早晚各检查一次 health、cron、双队列、告警邮箱
-- [ ] Day 5：早晚各检查一次 health、cron、双队列、告警邮箱
-- [ ] Day 6：早晚各检查一次 health、cron、双队列、告警邮箱
-- [ ] Day 7：完成最终健康复核，记录 P0/P1 与额度变化，关闭 Phase 12
+- [x] 观察窗已超过 7 天，仓库状态与运维记录中未出现 P0。
+- [x] 2026-09-01 使用现有 Bearer 凭证只读请求 `/api/health`：HTTP 200，DB 与钱包均为 `ok`。
+- [x] 两条铸造队列无积压：Material `failed=0`、`stuck=0`，Score 无非终态项，`manual_review=0`。
+- [x] operator 余额 `0.010098 ETH`，高于当前 `0.005 ETH` 告警阈值；Upstash 锁提供方正常。
+- [x] `/score/1` HTTP 200；三份主网合约地址经 OP 公共 RPC 读取均返回非空字节码。
+- [x] 部署期真实 ScoreNFT tokenId 1 全链路与余额告警记录已满足软启动完成标准。
 
-## 当前遗留
+## 最终结论与遗留
 
-- 软启动期间不公开推广；若出现 P0，按 `playbook/phase-12/40-d-cutover-week1.md` §4 处理。
-- Upstash 免费额度是当前最需要观察的软上限，达到 70% 再决定降频或升级。
+- **Phase 12 完成**：主网合约、永久资源、生产环境、队列、cron 与密钥收口不再作为阶段待办。
+- health、cron、双队列、余额与额度继续作为日常运维观察项；出现异常时按 `playbook/phase-12/40-d-cutover-week1.md` §4 处理。
+- `/api/health` 按设计需要 Bearer；匿名请求返回 401 属于正确安全行为。
+- Upstash 免费额度达到 70% 时再评估降频或升级，不阻塞阶段关闭。
