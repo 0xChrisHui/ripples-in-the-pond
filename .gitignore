@@ -66,6 +66,14 @@ data/covers/
 /.mcp.json
 # 临时工作目录（日志/规划草稿/编译缓存/大图，scratch 不入库）
 /.tmp/
+# P11 盘点产生的浏览器配置与依赖缓存（原始证据留本机）
+/.tmp-p11-audit/
+# 本地工具记忆，不参与项目交付
+/.workbuddy/
+# 本地思考素材库：参考源码、视觉原型、音频母版和工程文件均不进入版本控制
+/references/
+# P9 浏览器证据体积较大，仅保留最终 review 入库
+/reviews/evidence/p9-*/
 # P9 浏览器视觉验收使用的临时 Edge 用户配置
 /.tmp-p9-*/
 /.tmp-p9-edge-qa*/
