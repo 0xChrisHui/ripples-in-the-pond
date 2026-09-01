@@ -6,13 +6,14 @@
 
 ---
 
-## 1. 范围（仅保留三块）
+## 1. 范围（2026-07-05 定稿三块；2026-07-11 追加 Track F）
 
 1. **Track A — /score/[id] 便捷转发 + 海报下载**
    - Twitter/X、微博、复制链接
    - 海报 / link 下载方案
 2. **Track B — 后端安全修复**（来源：2026-07-05 后端整体 review，findings 已落盘 `reviews/2026-07-05-backend-review.md`）
 3. **Track C — 债务收口**（历史"挂 P10"项重新分诊，见 §5）
+4. **Track F — 解码器 postMessage 控制接口**（已随 P12-A1 完成并上传永久版本）
 
 ### 子文档索引（分步执行手册）
 
@@ -21,6 +22,7 @@
 | `10-a-share-poster.md` | Track A：分享转发（Twitter/X、微博、复制链接）+ 海报 / link 下载 |
 | `20-b-backend-fixes.md` | Track B：后端 bug 修复（按 review 编号 P0/P1/P2/P3 + 合约 CT） |
 | `30-c-debt.md` | Track C：债务收口（历史「挂 P10」重新分诊） |
+| `70-f-decoder-postmessage.md` | Track F：解码器 postMessage v1；实现与永久上传已随 P12-A1 完成 |
 | `../../reviews/2026-07-05-backend-review.md` | **findings 唯一来源**：全部 P0-1~P3-14 + CT-1~CT-15，带勾选框 |
 
 ### 明确移出 P10（2026-07-05 用户拍板）
