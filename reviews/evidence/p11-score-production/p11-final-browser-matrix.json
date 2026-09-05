@@ -1,0 +1,203 @@
+{
+  "startedAt": "2026-09-02T02:25:46.396Z",
+  "artist": [
+    {
+      "width": 375,
+      "title": "艺术家 — Ripples in the Pond",
+      "h1": "艺术家（署名待确认）",
+      "overflowX": false,
+      "draftTag": "文字草稿 · 待艺术家确认",
+      "artistPortraitPresent": true,
+      "project108Present": true,
+      "portraitTop": 0,
+      "project108Top": 0,
+      "forbidden": {
+        "airdrop": false,
+        "number36": false,
+        "number72": false
+      },
+      "facts": [
+        {
+          "label": "01已发布作品",
+          "value": "35 / 108"
+        },
+        {
+          "label": "02作品铸造总数",
+          "value": "4"
+        },
+        {
+          "label": "03参与者",
+          "value": "1"
+        },
+        {
+          "label": "01\n已发布作品",
+          "value": "35 / 108"
+        },
+        {
+          "label": "02\n作品铸造总数",
+          "value": "4"
+        },
+        {
+          "label": "03\n参与者",
+          "value": "1"
+        }
+      ],
+      "factsValid": false,
+      "bottomPlayer": false,
+      "screenshot": "E:/Projects/nft-music/reviews/evidence/p11-score-production/p11-final-artist-375.png"
+    },
+    {
+      "width": 768,
+      "title": "艺术家 — Ripples in the Pond",
+      "h1": "艺术家（署名待确认）",
+      "overflowX": false,
+      "draftTag": "文字草稿 · 待艺术家确认",
+      "artistPortraitPresent": true,
+      "project108Present": true,
+      "portraitTop": 88,
+      "project108Top": 1620.3125,
+      "forbidden": {
+        "airdrop": false,
+        "number36": false,
+        "number72": false
+      },
+      "facts": [
+        {
+          "label": "01\n已发布作品",
+          "value": "35 / 108"
+        },
+        {
+          "label": "02\n作品铸造总数",
+          "value": "4"
+        },
+        {
+          "label": "03\n参与者",
+          "value": "1"
+        }
+      ],
+      "factsValid": true,
+      "bottomPlayer": false
+    },
+    {
+      "width": 1024,
+      "title": "艺术家 — Ripples in the Pond",
+      "h1": "艺术家（署名待确认）",
+      "overflowX": false,
+      "draftTag": "文字草稿 · 待艺术家确认",
+      "artistPortraitPresent": true,
+      "project108Present": true,
+      "portraitTop": 88,
+      "project108Top": 1399.9375,
+      "forbidden": {
+        "airdrop": false,
+        "number36": false,
+        "number72": false
+      },
+      "facts": [
+        {
+          "label": "01\n已发布作品",
+          "value": "35 / 108"
+        },
+        {
+          "label": "02\n作品铸造总数",
+          "value": "4"
+        },
+        {
+          "label": "03\n参与者",
+          "value": "1"
+        }
+      ],
+      "factsValid": true,
+      "bottomPlayer": false
+    },
+    {
+      "width": 1440,
+      "title": "艺术家 — Ripples in the Pond",
+      "h1": "艺术家（署名待确认）",
+      "overflowX": false,
+      "draftTag": "文字草稿 · 待艺术家确认",
+      "artistPortraitPresent": true,
+      "project108Present": true,
+      "portraitTop": 88,
+      "project108Top": 1174.75,
+      "forbidden": {
+        "airdrop": false,
+        "number36": false,
+        "number72": false
+      },
+      "facts": [
+        {
+          "label": "01\n已发布作品",
+          "value": "35 / 108"
+        },
+        {
+          "label": "02\n作品铸造总数",
+          "value": "4"
+        },
+        {
+          "label": "03\n参与者",
+          "value": "1"
+        }
+      ],
+      "factsValid": true,
+      "bottomPlayer": false,
+      "screenshot": "E:/Projects/nft-music/reviews/evidence/p11-score-production/p11-final-artist-1440.png"
+    }
+  ],
+  "me": [
+    {
+      "width": 375,
+      "title": "Ripples in the Pond",
+      "h1": "我的音乐档案",
+      "overflowX": false,
+      "identity": "正在确认身份",
+      "unauthenticated": false,
+      "identitySkeleton": false,
+      "loginAction": {
+        "text": "登录",
+        "top": 574,
+        "visible": true
+      },
+      "bottomPlayer": false,
+      "bottomObscuresAction": false,
+      "bodyText": "←\n返回池塘\n\nPERSONAL ARCHIVE\n\n尚未登录\n\nMY MUSIC / PRIVATE INDEX\n\n我的音乐档案\n\n唱片、录音与收藏的声音素材，按它们真实的制作状态留在这里。\n\nPRIVATE ARCHIVE\n\n登录后找回你的音乐\n\n登录用于找回你的音乐档案，并继续保存属于你的声音。\n\n登录",
+      "screenshot": "E:/Projects/nft-music/reviews/evidence/p11-score-production/p11-final-me-375.png"
+    },
+    {
+      "width": 1440,
+      "title": "Ripples in the Pond",
+      "h1": "我的音乐档案",
+      "overflowX": false,
+      "identity": "尚未登录",
+      "unauthenticated": true,
+      "identitySkeleton": false,
+      "loginAction": {
+        "text": "登录",
+        "top": 565,
+        "visible": true
+      },
+      "bottomPlayer": false,
+      "bottomObscuresAction": false,
+      "bodyText": "←\n返回池塘\n\nPERSONAL ARCHIVE\n\n尚未登录\n\nMY MUSIC / PRIVATE INDEX\n\n我的音乐档案\n\n唱片、录音与收藏的声音素材，按它们真实的制作状态留在这里。\n\nPRIVATE ARCHIVE\n\n登录后找回你的音乐\n\n登录用于找回你的音乐档案，并继续保存属于你的声音。\n\n登录",
+      "screenshot": "E:/Projects/nft-music/reviews/evidence/p11-score-production/p11-final-me-1440.png"
+    }
+  ],
+  "score": {
+    "idle": {
+      "title": "Ripples #1 — 33",
+      "scoreState": "failed",
+      "reducedMotionMedia": true,
+      "canvasCount": 0,
+      "overflowX": false,
+      "blackCoreDom": [],
+      "runtimeText": "永久资料暂时无法读取\n\n已知链上身份与永久凭证仍保留在下方，可据此独立核验。\n重试",
+      "screenshot": "E:/Projects/nft-music/reviews/evidence/p11-score-production/p11-final-score-reduced-idle.png"
+    },
+    "audioReadyWithin8s": false,
+    "playbackBlocker": "永久音频在 8 秒预算内未 ready；未继续等待外部 Arweave。"
+  },
+  "console": [],
+  "meSessionBoundary": "隔离临时浏览器无既有登录会话，仅验证未登录边界；未发起登录。",
+  "ok": true,
+  "finishedAt": "2026-09-02T02:26:38.338Z"
+}

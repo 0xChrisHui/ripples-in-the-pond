@@ -9,7 +9,9 @@ export async function fetchMyNFTs(token: string): Promise<OwnedNFT[]> {
   const res = await fetchWithAuth('/api/me/nfts', {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) return [];
+  if (!res.ok) {
+    throw new Error(res.status === 401 ? '登录状态已失效，请重新登录' : '素材档案读取失败');
+  }
   const data: MyNFTsResponse = await res.json();
   return data.nfts;
 }

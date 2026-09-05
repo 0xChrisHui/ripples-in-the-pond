@@ -98,10 +98,12 @@ function GlFallback({ artDir }: { artDir: GLFlags['artDir'] }) {
 export interface PondGLProps {
   flags: GLFlags;
   glSim?: GlSim;
+  pointerInteractive?: boolean;
+  onPerformanceChange?: (degraded: boolean) => void;
   onHealthChange: (health: GlHealth) => void;
 }
 
-export default function PondGL({ flags, glSim, onHealthChange }: PondGLProps) {
+export default function PondGL({ flags, glSim, pointerInteractive = true, onPerformanceChange, onHealthChange }: PondGLProps) {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production' && flags.rtt && flags.waterFx) {
       console.warn('[PondGL] rtt 与 waterFx 同时开启：两个 priority-1 渲染器会互相覆盖，请关闭其中一个。');
@@ -166,9 +168,9 @@ export default function PondGL({ flags, glSim, onHealthChange }: PondGLProps) {
           {/* H1 spike：RTT 验证全屏盖在最上（renderOrder 10），隔离实验、默认关 */}
           {flags.rtt && <RttSpike />}
           {/* H2/H3：扭曲水面——渲真场景进 FBO 全屏折射扭曲 + 水位遮罩（接管渲染循环，返回 null） */}
-          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} glSpheres={flags.glSpheres} sphereDrift={flags.sphereDrift} depthModel={flags.depthModel} sphereShadow={flags.sphereShadow} shadowOcclude={flags.shadowOcclude} shadowGlow={flags.shadowGlow} shadowContact={flags.shadowContact} caustics={flags.caustics} waterZoom={flags.waterZoom} pondFloor={flags.pondFloor} moonReflect={flags.moonReflect} />}
+          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} glSpheres={flags.glSpheres} sphereDrift={flags.sphereDrift} depthModel={flags.depthModel} sphereShadow={flags.sphereShadow} shadowOcclude={flags.shadowOcclude} shadowGlow={flags.shadowGlow} shadowContact={flags.shadowContact} caustics={flags.caustics} waterZoom={flags.waterZoom} pondFloor={flags.pondFloor} moonReflect={flags.moonReflect} pointerInteractive={pointerInteractive} />}
           {/* J3：低 FPS 自动降 DPR 保流畅（仅测时长 + setDpr，不渲染） */}
-          {flags.autoDegrade && <AutoDpr />}
+          {flags.autoDegrade && <AutoDpr onPerformanceChange={onPerformanceChange} />}
         </Canvas>
       </GLErrorBoundary>
       {/* 水面花瓣层（2D overlay，z-10 在 GL 之上）：出水球用 project() 抠洞 → 球盖花瓣。headless 跟随同源涟漪 */}

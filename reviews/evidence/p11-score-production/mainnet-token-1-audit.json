@@ -1,0 +1,66 @@
+{
+  "label": "mainnet-token-1",
+  "kind": "mainnet",
+  "baseUrl": "http://127.0.0.1:3012",
+  "token": "1",
+  "startedAt": "2026-09-01T19:20:23.980Z",
+  "protocolHas": [
+    "Emulation.setVirtualTimePolicy"
+  ],
+  "viewports": [],
+  "checks": {},
+  "ok": false,
+  "error": "Error: ready 路由 超时\n    at until (file:///E:/Projects/nft-music/.tmp/p11-b4-audit.mjs:91:9)\n    at async waitReady (file:///E:/Projects/nft-music/.tmp/p11-b4-audit.mjs:162:3)\n    at async runViewport (file:///E:/Projects/nft-music/.tmp/p11-b4-audit.mjs:169:3)\n    at async file:///E:/Projects/nft-music/.tmp/p11-b4-audit.mjs:197:27",
+  "lastState": {
+    "stage": "failure",
+    "href": "http://127.0.0.1:3012/score/1",
+    "title": "Ripples #1 — 33",
+    "attrs": {
+      "data-p11-theme": "score",
+      "data-theme": "dark",
+      "data-score-state": "failed"
+    },
+    "anchor": {
+      "state": "error",
+      "visual": "record",
+      "text": "永久资料暂时无法读取\n\n已知链上身份与永久凭证仍保留在下方，可据此独立核验。\n重试"
+    },
+    "media": {
+      "coarse": true,
+      "fine": false,
+      "hover": false,
+      "reduced": false
+    },
+    "viewport": {
+      "width": 375,
+      "height": 812,
+      "scrollWidth": 375,
+      "overflowX": false
+    },
+    "canvases": 0,
+    "webglCanvases": 0,
+    "webglCalls": 0,
+    "share": null,
+    "archive": {
+      "top": 812,
+      "rows": 12
+    },
+    "decoder": null,
+    "links": [
+      {
+        "text": "下载海报",
+        "href": "http://127.0.0.1:3012/score/1/poster"
+      }
+    ],
+    "buttons": [
+      "分享",
+      "复制链接",
+      "分享到 X",
+      "分享到微博"
+    ],
+    "bottomPlayer": false,
+    "contexts": [],
+    "p9Count": 0,
+    "runtimeErrors": []
+  }
+}

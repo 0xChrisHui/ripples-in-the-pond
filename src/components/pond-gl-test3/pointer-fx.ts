@@ -72,7 +72,7 @@ export function resetDepthShift(): void {
   shiftVelocity = 0;
 }
 
-export function usePointerFx(active: boolean): void {
+export function usePointerFx(active: boolean, captureWheel = true): void {
   useEffect(() => {
     if (!active) return;
     const onMove = (e: PointerEvent) => {
@@ -83,6 +83,7 @@ export function usePointerFx(active: boolean): void {
     const onLeave = (e: PointerEvent) => { if (!e.relatedTarget) inside = false; };
     // 一点透视开时滚轮接管 → 集体深度偏移（上滚 deltaY<0 → shift 增 → 球升出水面、靠近、变大）
     const onWheel = (e: WheelEvent) => {
+      if (!captureWheel) return;
       if (!cam.perspective) return; // 透视关 → 滚轮回归页面正常滚动
       const target = e.target;
       if (target instanceof Element && target.closest('[data-pond-ui]')) return;
@@ -139,5 +140,5 @@ export function usePointerFx(active: boolean): void {
       cancelAnimationFrame(raf);
       shiftVelocity = 0;
     };
-  }, [active]);
+  }, [active, captureWheel]);
 }

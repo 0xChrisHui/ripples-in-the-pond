@@ -24,7 +24,7 @@ function resetDprState(state: DprState, dpr: number): void {
 }
 
 /** 低 FPS 自动降 DPR；卸载或 context 恢复时回到挂载基准，避免低清状态泄漏到下一次启用。 */
-export default function AutoDpr() {
+export default function AutoDpr({ onPerformanceChange }: { onPerformanceChange?: (degraded: boolean) => void }) {
   const gl = useThree((state) => state.gl);
   const setDpr = useThree((state) => state.setDpr);
   const stateRef = useRef(createDprState(clampDpr(gl.getPixelRatio())));
@@ -35,14 +35,16 @@ export default function AutoDpr() {
     const restoreBaseline = () => {
       resetDprState(state, baselineDpr);
       setDpr(baselineDpr);
+      onPerformanceChange?.(false);
     };
     const canvas = gl.domElement;
     canvas.addEventListener('webglcontextrestored', restoreBaseline, false);
     return () => {
       canvas.removeEventListener('webglcontextrestored', restoreBaseline, false);
-      restoreBaseline();
+      resetDprState(state, baselineDpr);
+      setDpr(baselineDpr);
     };
-  }, [gl, setDpr]);
+  }, [gl, onPerformanceChange, setDpr]);
 
   useFrame(() => {
     const now = performance.now();
@@ -61,9 +63,11 @@ export default function AutoDpr() {
     else { state.low = 0; state.high = 0; }
     if (state.low >= 2 && state.dpr > 1) {
       state.dpr = Math.max(1, state.dpr - 0.5); setDpr(state.dpr); state.low = 0;
+      onPerformanceChange?.(true);
       console.info(`[AutoDpr] 低 FPS(${Math.round(fps)}) → 降 DPR 到 ${state.dpr}`);
     } else if (state.high >= 4 && state.dpr < state.maxDpr) {
       state.dpr = Math.min(state.maxDpr, state.dpr + 0.5); setDpr(state.dpr); state.high = 0;
+      if (state.dpr === state.maxDpr) onPerformanceChange?.(false);
       console.info(`[AutoDpr] FPS 回升(${Math.round(fps)}) → 升 DPR 到 ${state.dpr}`);
     }
   });

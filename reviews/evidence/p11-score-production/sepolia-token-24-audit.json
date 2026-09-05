@@ -1,0 +1,45 @@
+{
+  "label": "sepolia-token-24",
+  "kind": "sepolia",
+  "baseUrl": "http://127.0.0.1:3013",
+  "token": "24",
+  "startedAt": "2026-09-01T19:29:58.078Z",
+  "protocolHas": [
+    "Emulation.setVirtualTimePolicy"
+  ],
+  "viewports": [],
+  "checks": {},
+  "ok": false,
+  "error": "Error: score 状态出现 超时\n    at until (file:///E:/Projects/nft-music/.tmp/p11-b4-audit.mjs:91:9)\n    at async navigateReady (file:///E:/Projects/nft-music/.tmp/p11-b4-audit.mjs:170:5)\n    at async runViewport (file:///E:/Projects/nft-music/.tmp/p11-b4-audit.mjs:180:32)\n    at async file:///E:/Projects/nft-music/.tmp/p11-b4-audit.mjs:246:27",
+  "lastState": {
+    "stage": "failure",
+    "href": "http://127.0.0.1:3013/score/24",
+    "title": "作品暂不可用 · Ripples in the Pond",
+    "attrs": null,
+    "anchor": null,
+    "media": {
+      "coarse": false,
+      "fine": true,
+      "hover": true,
+      "reduced": false
+    },
+    "viewport": {
+      "width": 1440,
+      "height": 960,
+      "scrollWidth": 1440,
+      "overflowX": false
+    },
+    "canvases": 0,
+    "webglCanvases": 0,
+    "webglCalls": 0,
+    "share": null,
+    "archive": null,
+    "decoder": null,
+    "links": [],
+    "buttons": [],
+    "bottomPlayer": false,
+    "contexts": [],
+    "p9Count": 0,
+    "runtimeErrors": []
+  }
+}

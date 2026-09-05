@@ -99,20 +99,21 @@ function spawnLimit(effect: P9EffectDefinition): number {
   return effect.id === 'FX32' || effect.id === 'FX44' ? Math.min(5, configured) : configured;
 }
 
-function resetVoice(voice: P9Voice, effect: P9EffectDefinition, now: number): void {
+function resetVoice(voice: P9Voice, effect: P9EffectDefinition, now: number, elapsed = 0): void {
   const seed = effect.number * 97 + sequence++ * 31;
   const gradual = effect.retrigger === 'smooth-accumulate' || effect.retrigger === 'velocity-impulse';
+  const startedAt = now - Math.min(effect.duration, Math.max(0, elapsed));
   Object.assign(voice, {
-    effect, startedAt: now, lastHitAt: now, endsAt: now + effect.duration,
+    effect, startedAt, lastHitAt: startedAt, endsAt: startedAt + effect.duration,
     strength: 1, renderedStrength: gradual ? 0 : 1,
     sampledAt: now, hits: 1, angle: hash01(seed) * Math.PI * 2, seed,
-    emittedMask: 0, commitProgress: -1, reduced: prefersReducedMotion(), paletteFrom: 0, velocity: 1.15,
-    paletteTo: effect.retrigger === 'palette-cycle' ? 1 : 0, paletteStartedAt: now,
+    emittedMask: elapsed > 0 ? 1 : 0, commitProgress: -1, reduced: prefersReducedMotion(), paletteFrom: 0, velocity: 1.15,
+    paletteTo: effect.retrigger === 'palette-cycle' ? 1 : 0, paletteStartedAt: startedAt,
   });
 }
 
 /** 唯一触发入口：33 个 sound key 一一映射；不同效果并行，不建立全局等待队列。 */
-export function triggerP9Effect(audioKey: string): P9TriggerDetail | null {
+export function triggerP9Effect(audioKey: string, elapsed = 0): P9TriggerDetail | null {
   const effect = findP9Effect(audioKey);
   if (!effect) return null;
   if (effect.requiresEclipse && !getShowcasePose().active) {
@@ -156,7 +157,7 @@ export function triggerP9Effect(audioKey: string): P9TriggerDetail | null {
   }
   softenBudget(effect.accent, now);
   const voice = {} as P9Voice;
-  resetVoice(voice, effect, now);
+  resetVoice(voice, effect, now, elapsed);
   if (sameEffect.length > 0 && effect.retrigger === 'bounded-envelope' && hasHitGain(effect)) {
     voice.strength = getP9EffectValue(effect.id, 'hitGain', 0.12);
     voice.renderedStrength = voice.strength;
@@ -182,6 +183,14 @@ export function getP9Voices(now: number): readonly P9Voice[] {
 }
 
 export function getP9Revision(): number { return revision; }
+
+/** Score 路由销毁专用：清空未结束 voice，避免快速返回首页时残留演出。 */
+export function resetP9Runtime(): void {
+  voices.length = 0;
+  sequence = 0;
+  lastGlobalReattackAt = -Infinity;
+  revision += 1;
+}
 
 export function getP9RuntimeStats(now = performance.now() / 1000) {
   const active = getP9Voices(now);

@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { usePlayer } from './PlayerProvider';
 import { useFavorite } from '@/src/hooks/useFavorite';
+import './bottom-player.css';
 
 /** 秒 → "m:ss" */
 function formatTime(sec: number): string {
@@ -11,11 +13,9 @@ function formatTime(sec: number): string {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-/**
- * BottomPlayer — 固定底部播放条 + 进度条
- * 没播放时隐藏，播放时滑入显示曲名 + 进度 + 停止按钮
- */
+/** 全局试听的窄唱片标签；Score 路由拥有独立播放会话，因此精确隐藏。 */
 export default function BottomPlayer() {
+  const pathname = usePathname();
   const { playing, currentTrack, duration, startedAt, stop, getCurrentTime } =
     usePlayer();
   const [progress, setProgress] = useState(0);
@@ -39,59 +39,63 @@ export default function BottomPlayer() {
     return () => clearInterval(id);
   }, [playing, duration, startedAt, getCurrentTime]);
 
-  if (!currentTrack) return null;
+  if (!currentTrack || pathname.startsWith('/score/')) return null;
 
-  const elapsed = progress * duration;
+  const elapsed = duration > 0 ? progress * duration : 0;
 
   return (
-    <div
-      className={[
-        'fixed bottom-0 left-0 right-0 z-50',
-        'flex flex-col',
-        'bg-black/80 backdrop-blur-md border-t border-white/10',
-        'transition-transform duration-300',
-        playing ? 'translate-y-0' : 'translate-y-full',
-      ].join(' ')}
-    >
-      {/* 进度条 */}
-      <div className="h-0.5 w-full bg-white/10">
-        <div
-          className="h-full bg-white/40 transition-[width] duration-200"
-          style={{ width: `${progress * 100}%` }}
-        />
-      </div>
+    <>
+      <div className="bottom-player-spacer" aria-hidden="true" />
+      <aside
+        className="bottom-player-shell"
+        data-playing={playing}
+        aria-label="全局播放器"
+      >
+        <div className="bottom-player">
+          <div
+            className="bottom-player__progress"
+            role="progressbar"
+            aria-label="播放进度"
+            aria-valuemin={0}
+            aria-valuemax={Math.max(1, Math.round(duration))}
+            aria-valuenow={Math.round(elapsed)}
+            aria-valuetext={`${formatTime(elapsed)} / ${formatTime(duration)}`}
+          >
+            <span style={{ transform: `scaleX(${progress})` }} />
+          </div>
 
-      <div className="flex items-center justify-between px-6 py-3">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-white/20 animate-pulse" />
-          <div>
-            <p className="text-sm text-white">{currentTrack.title}</p>
-            <p className="text-xs text-white/40">
-              {formatTime(elapsed)} / {formatTime(duration)}
-            </p>
+          <div className="bottom-player__body">
+            <span className="bottom-player__record" aria-hidden="true">
+              <span />
+            </span>
+
+            <div className="bottom-player__identity">
+              <p title={currentTrack.title}>{currentTrack.title}</p>
+              <span>
+                {formatTime(elapsed)} <i aria-hidden="true">/</i> {formatTime(duration)}
+              </span>
+            </div>
+
+            <div className="bottom-player__actions">
+              <button
+                type="button"
+                onClick={favorite}
+                data-active={status === 'success'}
+                aria-label={status === 'success' ? '已收藏' : `收藏《${currentTrack.title}》`}
+              >
+                {status === 'success' ? '已收藏' : '收藏'}
+              </button>
+              <button
+                type="button"
+                onClick={stop}
+                aria-label={`停止播放《${currentTrack.title}》`}
+              >
+                停止
+              </button>
+            </div>
           </div>
         </div>
-
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={favorite}
-            className="text-sm transition-colors"
-            style={{ color: status === 'success' ? '#fb7185' : 'rgba(255,255,255,0.6)' }}
-            aria-label="收藏"
-          >
-            {status === 'success' ? '已收藏' : '收藏'}
-          </button>
-          <button
-            type="button"
-            onClick={stop}
-            className="text-white/60 hover:text-white transition-colors text-sm"
-            aria-label="停止播放"
-          >
-            ⏸ 停止
-          </button>
-        </div>
-      </div>
-    </div>
+      </aside>
+    </>
   );
 }

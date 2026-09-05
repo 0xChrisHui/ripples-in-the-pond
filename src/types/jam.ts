@@ -38,6 +38,11 @@ export interface KeyEvent {
   duration: number;
 }
 
+/** 已铸 Score 由 metadata.animation_url 永久钉住的四项播放输入。 */
+export type ScorePlaybackManifest = {
+  permanentDecoderUrl: string; eventsRef: string; baseAudioRef: string; soundsMapRef: string;
+};
+
 /** pending_scores 表的一行 — 合奏草稿（状态机表，禁止 DELETE） */
 export interface PendingScore {
   id: string;
@@ -92,9 +97,9 @@ export interface ScorePreviewResponse {
 export interface MyScoresResponse {
   scores: {
     id: string;
-    /** 草稿绑定的底曲（DraftCard ▶ 按钮 toggle 用） */
+    /** 录音绑定的底曲（档案行试听时交给全局 Player） */
     track: Track;
-    /** 按键事件序列；light 模式不返回，DraftCard 点击播放时再拉 */
+    /** 按键事件序列；light 模式不返回，档案行点击试听时再拉 */
     events?: KeyEvent[];
     /** 该用户对同一曲目的第几次创作 */
     seq: number;
@@ -121,6 +126,7 @@ export const SCORE_STATUSES = [
 ] as const;
 
 export type ScoreMintStatus = (typeof SCORE_STATUSES)[number];
+export type ScoreFailureKind = 'safe_retry' | 'manual_review';
 
 /** 非终态：用于监控积压 */
 export const SCORE_ACTIVE_STATUSES = SCORE_STATUSES.filter(
@@ -173,16 +179,9 @@ export interface ScoreMetadata {
   }>;
 }
 
-/**
- * 个人页用：用户的 ScoreNFT（B8 重设：包含未上链的中间态草稿）
- *
- * 用户感知"我的唱片" = 数据库中所有 queue row，与链上完成度脱钩。
- * 链上字段（tokenId / txHash）是 progressive enhancement：
- *   - 已上链 → 字段补齐，详情页可显示 Etherscan / OpenSea link，可点击进详情页
- *   - 未上链 → 字段为 undefined，卡片显示"上链中"，暂不可点击（Phase 3 路由双兼容后启用）
- */
+/** 个人页的 Score 队列记录；状态直接来自数据库，不由 tokenId 猜测。 */
 export interface OwnedScoreNFT {
-  /** 路由用 ID — 已上链=tokenId 字符串，未上链=queue row UUID */
+  /** 仅 success 使用 tokenId；其余状态都用 queue UUID。 */
   id: string;
   /** queue row UUID — React key 必用此字段（始终非空，与 tokenId 是否回写无关）*/
   queueId: string;
@@ -191,12 +190,13 @@ export interface OwnedScoreNFT {
   /** 队列真实状态；failed 必须与仍在处理中的状态区分显示 */
   status: ScoreMintStatus;
   trackTitle: string;
-  coverUrl: string;
-  eventCount: number;
+  eventCount: number | null;
   /** 链上 tx hash — 已上链才有 */
   txHash?: string;
-  /** 入队时间（已上链时近似铸造时间）*/
-  mintedAt: string;
+  status: ScoreMintStatus;
+  failureKind: ScoreFailureKind | null;
+  /** 队列提交时间，不冒充链上铸造时间。 */
+  submittedAt: string;
 }
 
 /** API 响应：GET /api/me/score-nfts */

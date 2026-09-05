@@ -67,8 +67,8 @@ interface PingPong {
 const EMPTY_NODES: GlPhysNode[] = []; // glSim 未就绪时占位（无球 → 全屏扭）
 
 export default function WaterDistort(
-  { debug = false, glSim, sphereDrift = false, depthModel = false, sphereShadow = false, shadowOcclude = false, shadowGlow = false, shadowContact = false, caustics = false, waterZoom = false, pondFloor = false, moonReflect = false, glSpheres = false }:
-  { debug?: boolean; glSim?: GlSim; sphereDrift?: boolean; depthModel?: boolean; sphereShadow?: boolean; shadowOcclude?: boolean; shadowGlow?: boolean; shadowContact?: boolean; caustics?: boolean; waterZoom?: boolean; pondFloor?: boolean; moonReflect?: boolean; glSpheres?: boolean },
+  { debug = false, glSim, sphereDrift = false, depthModel = false, sphereShadow = false, shadowOcclude = false, shadowGlow = false, shadowContact = false, caustics = false, waterZoom = false, pondFloor = false, moonReflect = false, glSpheres = false, pointerInteractive = true }:
+  { debug?: boolean; glSim?: GlSim; sphereDrift?: boolean; depthModel?: boolean; sphereShadow?: boolean; shadowOcclude?: boolean; shadowGlow?: boolean; shadowContact?: boolean; caustics?: boolean; waterZoom?: boolean; pondFloor?: boolean; moonReflect?: boolean; glSpheres?: boolean; pointerInteractive?: boolean },
 ) {
   const renderer = useThree((s) => s.gl);
   const canvasSize = useThree((s) => s.size);
@@ -148,15 +148,13 @@ export default function WaterDistort(
         strength: ce.detail.strength ?? t.dropClick,
       });
     };
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerdown', onDown);
+    if (pointerInteractive) { window.addEventListener('pointermove', onMove); window.addEventListener('pointerdown', onDown); }
     window.addEventListener('bg-ripple:wave', onWave);
     return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerdown', onDown);
+      if (pointerInteractive) { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerdown', onDown); }
       window.removeEventListener('bg-ripple:wave', onWave);
     };
-  }, []);
+  }, [pointerInteractive]);
 
   // 切组 / 重建节点 → 清穿越/尾迹记忆，避免旧球的没入状态触发假溅起
   useEffect(() => { resetRippleFeed(); }, [nodes]);

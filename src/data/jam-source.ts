@@ -47,7 +47,9 @@ export async function fetchMyScores(token: string): Promise<MyScoresResponse['sc
   const res = await fetchWithAuth('/api/me/scores?light=1', {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) return [];
+  if (!res.ok) {
+    throw new Error(res.status === 401 ? '登录状态已失效，请重新登录' : '录音档案读取失败');
+  }
   const data: MyScoresResponse = await res.json();
   return data.scores;
 }
@@ -68,7 +70,9 @@ export async function fetchMyScoreNFTs(token: string): Promise<OwnedScoreNFT[]> 
   const res = await fetchWithAuth('/api/me/score-nfts', {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) return [];
+  if (!res.ok) {
+    throw new Error(res.status === 401 ? '登录状态已失效，请重新登录' : '唱片档案读取失败');
+  }
   const data: MyScoreNFTsResponse = await res.json();
   return data.scoreNfts;
 }

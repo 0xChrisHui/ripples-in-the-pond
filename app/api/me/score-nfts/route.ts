@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
-import { resolveArUrl } from '@/src/lib/arweave';
-import type { MyScoreNFTsResponse, OwnedScoreNFT, ScoreMintStatus } from '@/src/types/jam';
+import { SCORE_STATUSES, type MyScoreNFTsResponse, type OwnedScoreNFT, type ScoreMintStatus } from '@/src/types/jam';
+
+function readStatus(value: unknown): ScoreMintStatus {
+  if (typeof value === 'string' && SCORE_STATUSES.some((status) => status === value)) {
+    return value as ScoreMintStatus;
+  }
+  throw new Error(`未知 Score 状态: ${String(value)}`);
+}
 
 /**
  * GET /api/me/score-nfts
@@ -26,7 +32,7 @@ export async function GET(req: NextRequest) {
     const { data: rows, error } = await supabaseAdmin
       .from('score_nft_queue')
       .select(`
-        id, status, token_id, cover_ar_tx_id, tx_hash, created_at,
+        id, token_id, tx_hash, created_at, status, failure_kind,
         tracks(title),
         pending_scores(event_count)
       `)
@@ -38,16 +44,20 @@ export async function GET(req: NextRequest) {
     const scoreNfts: OwnedScoreNFT[] = (rows ?? []).map((r) => {
       const trackData = r.tracks as unknown as { title: string } | null;
       const ps = r.pending_scores as unknown as { event_count: number | null } | null;
+      const status = readStatus(r.status);
+      const failureKind = r.failure_kind === 'safe_retry' || r.failure_kind === 'manual_review'
+        ? r.failure_kind
+        : null;
       return {
-        id: r.token_id != null ? String(r.token_id) : r.id,
+        id: status === 'success' && r.token_id != null ? String(r.token_id) : r.id,
         queueId: r.id,
         tokenId: r.token_id ?? undefined,
-        status: r.status as ScoreMintStatus,
+        status,
         trackTitle: trackData?.title ?? '未知曲目',
-        coverUrl: resolveArUrl(r.cover_ar_tx_id),
-        eventCount: ps?.event_count ?? 0,
+        eventCount: ps?.event_count ?? null,
         txHash: r.tx_hash ?? undefined,
-        mintedAt: r.created_at,
+        failureKind,
+        submittedAt: r.created_at,
       };
     });
 

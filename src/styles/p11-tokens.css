@@ -1,0 +1,139 @@
+/*
+ * P11 — “日式留白 × 实体唱片档案”语义令牌。
+ * 暗色单主题只由 data-p11-theme 启用，不覆盖 P8/P9 的 --pond-* 运行时变量。
+ */
+:root {
+  /* 颜色：值源自 A2 色彩表，附加项只补足状态和叠层语义。 */
+  --p11-ink: #070706;
+  --p11-surface: rgba(12, 11, 9, 0.9);
+  --p11-surface-solid: #0c0b09;
+  --p11-surface-raised: #15130f;
+  --p11-bone: #e3dccf;
+  --p11-muted: #aaa397;
+  --p11-faint: #7f796f;
+  --p11-brass: #c3a15f;
+  --p11-brass-strong: #d8b870;
+  --p11-on-brass: #100e09;
+  --p11-moss: #8e9b83;
+  --p11-line: rgba(227, 220, 207, 0.18);
+  --p11-line-strong: rgba(227, 220, 207, 0.36);
+  --p11-overlay: rgba(7, 7, 6, 0.78);
+  --p11-status-finalized: #9aaa8c;
+  --p11-status-processing: #d0ae6b;
+  --p11-status-degraded: #c89765;
+  --p11-status-failed: #d28b7f;
+
+  /* 字体：Display 仅用于作品名/艺术家，Mono 仅用于链上凭证。 */
+  --p11-font-display: var(--font-cormorant), "Songti SC", STSong, serif;
+  --p11-font-body: var(--font-geist-sans), "PingFang SC", "Microsoft YaHei", sans-serif;
+  --p11-font-mono: var(--font-geist-mono), "SFMono-Regular", Consolas, monospace;
+  --p11-text-xs: 0.75rem;
+  --p11-text-sm: 0.875rem;
+  --p11-text-body: 1rem;
+  --p11-text-lead: 1.125rem;
+  --p11-text-title: clamp(2.5rem, 7vw, 5.75rem);
+  --p11-weight-regular: 400;
+  --p11-weight-medium: 500;
+  --p11-weight-semibold: 600;
+  --p11-leading-display: 0.98;
+  --p11-leading-body: 1.75;
+  --p11-leading-ledger: 1.65;
+  --p11-tracking-tight: -0.025em;
+  --p11-tracking-label: 0.14em;
+  --p11-tracking-mono: 0.02em;
+
+  /* 8px 基准空间阶；2/4/12 用于细节、hairline 周边和小型标签。 */
+  --p11-space-2: 2px;
+  --p11-space-4: 4px;
+  --p11-space-8: 8px;
+  --p11-space-12: 12px;
+  --p11-space-16: 16px;
+  --p11-space-24: 24px;
+  --p11-space-32: 32px;
+  --p11-space-48: 48px;
+  --p11-space-64: 64px;
+  --p11-space-96: 96px;
+  --p11-space-128: 128px;
+
+  /* 布局：断点只调排版，不代替下方的 capability 查询。 */
+  --p11-columns-mobile: 4;
+  --p11-columns-tablet: 8;
+  --p11-columns-desktop: 12;
+  --p11-gutter-mobile: 12px;
+  --p11-gutter-tablet: 20px;
+  --p11-gutter-desktop: 24px;
+  --p11-page-inset: clamp(20px, 4vw, 64px);
+  --p11-page-max: 1440px;
+  --p11-ledger-max: 68ch;
+  --p11-touch-target: 44px;
+  --p11-hairline: 1px;
+  --p11-radius-sm: 2px;
+  --p11-radius-md: 4px;
+  --p11-radius-round: 9999px;
+  --p11-shadow-raised: 0 24px 64px rgba(0, 0, 0, 0.32);
+
+  /* 焦点不依赖 box-shadow，强制配色下仍保留清晰轮廓。 */
+  --p11-focus-color: var(--p11-brass-strong);
+  --p11-focus-width: 2px;
+  --p11-focus-style: solid;
+  --p11-focus-offset: 4px;
+
+  /* 动效：同一条无回弹 ease-out 曲线，位移/旋转由 reduced-motion 清零。 */
+  --p11-fast: 160ms;
+  --p11-anchor-shift: 450ms;
+  --p11-reveal: 520ms;
+  --p11-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --p11-motion-distance: 8px;
+  --p11-motion-rotation: 2deg;
+  --p11-motion-scale: 0.985;
+
+  /* 默认按手机/粗指针能力处理；仅联合媒体查询才开启桌面探索反馈。 */
+  --p11-capability-hover: 0;
+  --p11-capability-fine-pointer: 0;
+  --p11-hover-lift: 0px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :root {
+    --p11-capability-hover: 1;
+    --p11-capability-fine-pointer: 1;
+    --p11-hover-lift: -2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --p11-fast: 80ms;
+    --p11-anchor-shift: 80ms;
+    --p11-reveal: 80ms;
+    --p11-motion-distance: 0px;
+    --p11-motion-rotation: 0deg;
+    --p11-motion-scale: 1;
+    --p11-hover-lift: 0px;
+  }
+}
+
+@media (forced-colors: active) {
+  :root {
+    --p11-ink: Canvas;
+    --p11-surface: Canvas;
+    --p11-surface-solid: Canvas;
+    --p11-surface-raised: Canvas;
+    --p11-bone: CanvasText;
+    --p11-muted: CanvasText;
+    --p11-faint: GrayText;
+    --p11-brass: Highlight;
+    --p11-brass-strong: Highlight;
+    --p11-on-brass: HighlightText;
+    --p11-moss: LinkText;
+    --p11-line: CanvasText;
+    --p11-line-strong: CanvasText;
+    --p11-overlay: Canvas;
+    --p11-status-finalized: CanvasText;
+    --p11-status-processing: CanvasText;
+    --p11-status-degraded: CanvasText;
+    --p11-status-failed: CanvasText;
+    --p11-focus-color: Highlight;
+    --p11-shadow-raised: none;
+  }
+}

@@ -3,7 +3,6 @@
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { usePathname, useSearchParams } from 'next/navigation';
-import LoginButton from '@/src/components/auth/LoginButton';
 import TestJam from '@/src/components/jam/TestJam';
 import DraftSavedToast from '@/src/components/jam/DraftSavedToast';
 import PerfHUD from '@/src/components/PerfHUD';
@@ -17,6 +16,7 @@ import GlNav from '@/src/components/pond-gl-test3/overlay/GlNav';
 import GlLoading from '@/src/components/pond-gl-test3/overlay/GlLoading';
 import TunePanel from '@/src/components/pond-gl-test3/overlay/TunePanel';
 import ScenePanel from '@/src/components/pond-gl-test3/overlay/ScenePanel';
+import PondHeader from '@/src/components/pond-gl-test3/overlay/PondHeader';
 import RippleSpikePanel from '@/src/components/pond-gl-test3/water/spike/RippleSpikePanel';
 import LifePanel from '@/src/components/pond-gl-test3/life/LifePanel';
 import P9TuningPanel from '@/src/components/pond-gl-test3/p9/tuning/P9TuningPanel';
@@ -64,16 +64,7 @@ function Test3PageInner() {
         <PondGL flags={glFlags} glSim={glSim} onHealthChange={setRuntimeGlHealth} />
       )}
 
-      {/* 顶栏：标题 + 登录 */}
-      <div data-pond-ui="true" className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex items-start justify-between px-6 py-5">
-        <h1 className="text-lg font-light tracking-[0.3em] text-white/80">
-          Ripples in the Pond
-          {isSandbox && <span className="text-white/30"> — {pathname} GL sandbox</span>}
-        </h1>
-        <div className="pointer-events-auto">
-          <LoginButton />
-        </div>
-      </div>
+      <PondHeader />
 
       {/* I1：GL 切组 nav（左上 A/B/C，点击直接切 GL 组）；J1：兜底时隐（无可见球可切） */}
       {glSim.ready && glOk && <GlNav glSim={glSim} />}

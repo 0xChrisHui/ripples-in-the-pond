@@ -15,13 +15,12 @@ function maskPhone(phone: string): string {
 /** 未注册提示 + 跳转 Semi 注册按钮 */
 function RegisterPrompt() {
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-xs text-red-400">该手机号尚未注册 Semi 钱包，请先注册后再登录</p>
+    <div className="semi-login__register" id="semi-feedback" role="alert">
+      <p>该手机号尚未注册 Semi 钱包，请先注册后再登录。</p>
       <a
         href={SEMI_REGISTER_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-full rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm tracking-[0.2em] text-white transition-colors hover:bg-white/20"
       >
         前往注册 Semi 钱包
       </a>
@@ -32,7 +31,7 @@ function RegisterPrompt() {
 type Phase = 'phone' | 'code';
 
 /**
- * Phase 7 Track D D2 — Semi 社区钱包登录，两阶段深色布局。
+ * Phase 7 Track D D2 — Semi 社区钱包登录，两阶段身份纸页。
  */
 export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
   const [phone, setPhone] = useState('');
@@ -122,68 +121,69 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
     }
   }, [code, normalizedPhone, onSuccess]);
 
+  const backToPhone = () => {
+    setPhase('phone');
+    setCode('');
+    setError(null);
+    setNeedRegister(false);
+  };
+
+  const feedback = needRegister
+    ? <RegisterPrompt />
+    : error && <p className="semi-login__error" id="semi-feedback" role="alert">{error}</p>;
+
   if (phase === 'phone') {
     return (
-      <div className="flex flex-col gap-5 text-center">
-        <div>
-          <h2 className="text-2xl font-light tracking-[0.35em] text-white">登 录</h2>
-          <p className="mt-3 text-sm text-white/50">输入你登录用的手机号</p>
+      <form className="semi-login" onSubmit={(event) => { event.preventDefault(); void sendCode(); }}>
+        <div className="semi-login__step">
+          <p>01 · Semi 社区钱包</p>
+          <h3>手机号登录</h3>
         </div>
-
+        <label className="semi-login__label" htmlFor="semi-phone">手机号</label>
         <input
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          disabled={loading}
-          placeholder="例如 13800000000"
-          className="w-full rounded-full border border-white/10 bg-black/40 px-5 py-3 text-center text-sm text-white outline-none transition-colors placeholder:text-white/25 focus:border-white/30 disabled:opacity-50"
+          id="semi-phone" type="tel" inputMode="tel" autoComplete="tel"
+          value={phone} onChange={(event) => setPhone(event.target.value)} disabled={loading}
+          placeholder="例如 13800000000" aria-invalid={Boolean(error)}
+          aria-describedby={error || needRegister ? 'semi-feedback' : undefined}
+          data-login-autofocus
         />
-
         <button
-          type="button"
-          onClick={sendCode}
+          type="submit"
           disabled={loading || !phoneValid}
-          className="w-full rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm tracking-[0.2em] text-white transition-colors hover:bg-white/20 disabled:opacity-40"
+          className="semi-login__primary"
         >
-          {loading ? '发送中…' : '下 一 步'}
+          {loading ? '发送中…' : '发送验证码'}
         </button>
-
-        {needRegister ? <RegisterPrompt /> : error && <p className="text-xs text-red-400">{error}</p>}
-      </div>
+        {feedback}
+      </form>
     );
   }
 
   return (
-    <div className="flex flex-col gap-5 text-center">
-      <div>
-        <h2 className="text-2xl font-light tracking-[0.35em] text-white">验 证 码</h2>
-        <p className="mt-3 text-sm text-white/50">请输入收到的 6 位验证码</p>
-        <p className="mt-1 text-xs text-white/35">发往 {maskPhone(normalizedPhone)}</p>
+    <form className="semi-login" onSubmit={(event) => { event.preventDefault(); void submit(); }}>
+      <div className="semi-login__step semi-login__step--code">
+        <button type="button" className="semi-login__back" onClick={backToPhone}>← 修改手机号</button>
+        <p>02 · 验证身份</p>
+        <h3>输入验证码</h3>
+        <small>已发送至 {maskPhone(normalizedPhone)}</small>
       </div>
-
-      <PinInput value={code} onChange={setCode} disabled={loading} />
-
+      <PinInput value={code} onChange={setCode} disabled={loading} invalid={Boolean(error)} />
       <button
         type="button"
         onClick={sendCode}
         disabled={countdown > 0 || loading}
-        className="text-xs text-white/45 transition-colors hover:text-white/70 disabled:cursor-not-allowed disabled:hover:text-white/45"
+        className="semi-login__resend"
       >
-        {countdown > 0 ? `${countdown}s 后重发` : '重发'}
+        {countdown > 0 ? `${countdown}s 后可重新发送` : '重新发送验证码'}
       </button>
-
       <button
-        type="button"
-        onClick={submit}
+        type="submit"
         disabled={loading || code.length !== 6}
-        className="w-full rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm tracking-[0.2em] text-white transition-colors hover:bg-white/20 disabled:opacity-40"
+        className="semi-login__primary"
       >
-        {loading ? '登录中…' : '验  证'}
+        {loading ? '登录中…' : '确认并登录'}
       </button>
-
-      {needRegister ? <RegisterPrompt /> : error && <p className="text-xs text-red-400">{error}</p>}
-    </div>
+      {feedback}
+    </form>
   );
 }

@@ -1,8 +1,9 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useEffect, useId, useRef, useSyncExternalStore } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import SemiLogin from './SemiLogin';
+import './auth-dialog.css';
 
 /**
  * Phase 7 Track D D1 — 全站登录 modal，默认走 Semi 社区钱包。
@@ -52,36 +53,87 @@ export function closeLoginModal(): void {
 export default function LoginModal() {
   const open = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const { login: privyLogin, ready: privyReady } = usePrivy();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const descriptionId = useId();
+
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.activeElement;
+    const dialog = dialogRef.current;
+    const priorOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const frame = requestAnimationFrame(() => {
+      const preferred = dialog?.querySelector<HTMLElement>('[data-login-autofocus]:not(:disabled)');
+      const fallback = dialog?.querySelector<HTMLElement>('button:not(:disabled), input:not(:disabled)');
+      (preferred ?? fallback)?.focus();
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      document.body.style.overflow = priorOverflow;
+      if (previous instanceof HTMLElement
+        && (document.activeElement === document.body || dialog?.contains(document.activeElement))) {
+        previous.focus();
+      }
+    };
+  }, [open]);
+
+  const keepFocusInside = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeLoginModal();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const items = [...(dialogRef.current?.querySelectorAll<HTMLElement>(
+      'a[href], button:not(:disabled), input:not(:disabled), [tabindex]:not([tabindex="-1"])',
+    ) ?? [])];
+    if (items.length === 0) return;
+    const first = items[0];
+    const last = items.at(-1)!;
+    if (event.shiftKey && (document.activeElement === first
+      || !dialogRef.current?.contains(document.activeElement))) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
 
   if (!open) return null;
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm"
-      onClick={closeLoginModal}
+      className="auth-dialog-backdrop"
+      onPointerDown={(event) => {
+        if (event.target === event.currentTarget) closeLoginModal();
+      }}
     >
       <div
-        className="w-full max-w-sm rounded-2xl border border-white/10 bg-zinc-950 p-6"
-        onClick={(e) => e.stopPropagation()}
+        ref={dialogRef}
+        className="auth-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
+        onKeyDown={keepFocusInside}
       >
-        <div className="mb-6 flex items-center justify-between">
+        <header className="auth-dialog__header">
+          <div>
+            <p className="auth-dialog__eyebrow">Identity record · 身份页</p>
+            <h2 id={titleId}>找回你的音乐档案</h2>
+            <p id={descriptionId}>登录用于找回你的音乐档案，并继续保存属于你的声音。</p>
+          </div>
           <button
             type="button"
             onClick={closeLoginModal}
-            aria-label="返回"
-            className="text-lg text-white/40 transition-colors hover:text-white"
+            aria-label="关闭登录窗口"
+            className="auth-dialog__close"
           >
-            ←
+            <span aria-hidden="true">×</span>
           </button>
-          <button
-            type="button"
-            onClick={closeLoginModal}
-            aria-label="关闭"
-            className="text-white/40 transition-colors hover:text-white"
-          >
-            ✕
-          </button>
-        </div>
+        </header>
 
         {SEMI_DISABLED ? (
           <button
@@ -91,14 +143,15 @@ export default function LoginModal() {
               privyLogin();
             }}
             disabled={!privyReady}
-            className="flex w-full items-center justify-center rounded-xl bg-white py-3 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="auth-dialog__email auth-dialog__email--primary"
+            data-login-autofocus
           >
-            {privyReady ? '✉ 用邮箱登录' : '邮箱登录加载中…'}
+            {privyReady ? '使用邮箱登录' : '邮箱登录加载中…'}
           </button>
         ) : (
           <>
             <SemiLogin onSuccess={closeLoginModal} />
-
+            <div className="auth-dialog__divider"><span>或</span></div>
             <button
               type="button"
               onClick={() => {
@@ -106,9 +159,9 @@ export default function LoginModal() {
                 privyLogin();
               }}
               disabled={!privyReady}
-              className="mt-5 flex w-full items-center justify-end gap-1 text-xs text-white/40 transition-colors hover:text-white/70 disabled:cursor-not-allowed disabled:opacity-40"
+              className="auth-dialog__email"
             >
-              {privyReady ? '✉ 用邮箱登录' : '邮箱登录加载中…'}
+              {privyReady ? '使用邮箱登录' : '邮箱登录加载中…'}
             </button>
           </>
         )}

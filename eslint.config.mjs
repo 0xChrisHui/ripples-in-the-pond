@@ -15,8 +15,10 @@ const eslintConfig = defineConfig([
     // 项目工具链（不是 web 应用代码，用 Node.js CommonJS 写法）
     ".claude/hooks/**",
     "scripts/**",
-    // P9 浏览器视觉验收使用的临时 Edge 用户配置
-    ".tmp-p9-*/**",
+    // 浏览器视觉验收与诊断使用的临时用户配置
+    ".tmp-*/**",
+    // reviews 只保存结果与脚本，Edge 用户配置不是项目源码
+    "reviews/evidence/**/edge-profile/**",
     // 项目统一临时目录（缓存隔离、诊断产物，不属于源码）
     ".tmp/**",
     // Foundry 项目（Solidity + OZ 库自带的 JS 测试）

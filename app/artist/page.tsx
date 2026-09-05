@@ -1,107 +1,86 @@
-import { supabaseAdmin } from "@/src/lib/supabase";
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import ArtistPortrait from '@/src/components/artist/ArtistPortrait';
+import ArtistStatement from '@/src/components/artist/ArtistStatement';
+import Project108 from '@/src/components/artist/Project108';
+import { artistContent } from '@/src/content/artist';
+import { supabaseAdmin } from '@/src/lib/supabase';
+import './artist.css';
 
-/**
- * /artist — 公开艺术家页面
- * 展示项目统计 + 108 首进度条
- * Server Component，直接查数据库
- */
+export const metadata: Metadata = {
+  title: '艺术家 — Ripples in the Pond',
+  description: 'Ripples in the Pond 的艺术家文字肖像与 108 首长期作品实践。',
+};
 
-const TOTAL_TRACKS = 108;
-const AIRDROP_INTERVAL = 36;
+async function readPublished(): Promise<number> {
+  const { count, error } = await supabaseAdmin.from('tracks')
+    .select('id', { count: 'exact', head: true }).eq('published', true);
+  if (error || count === null) throw new Error(error?.message ?? '缺少已发布作品数');
+  return count;
+}
 
-async function getStats() {
-  const { count: trackCount } = await supabaseAdmin
-    .from("tracks")
-    .select("id", { count: "exact", head: true });
+async function readTotalMints(): Promise<number> {
+  const [material, score] = await Promise.all([
+    supabaseAdmin.from('mint_events').select('id', { count: 'exact', head: true })
+      .is('score_nft_token_id', null),
+    supabaseAdmin.from('score_nft_queue').select('id', { count: 'exact', head: true })
+      .eq('status', 'success'),
+  ]);
+  if (material.error || score.error || material.count === null || score.count === null) {
+    throw new Error(material.error?.message ?? score.error?.message ?? '缺少铸造总数');
+  }
+  return material.count + score.count;
+}
 
-  const { count: materialMints } = await supabaseAdmin
-    .from("mint_events")
-    .select("id", { count: "exact", head: true })
-    .is("score_nft_token_id", null);
+async function readParticipants(): Promise<number> {
+  const [material, score] = await Promise.all([
+    supabaseAdmin.from('mint_events').select('user_id'),
+    supabaseAdmin.from('score_nft_queue').select('user_id').eq('status', 'success'),
+  ]);
+  if (material.error || score.error || !material.data || !score.data) {
+    throw new Error(material.error?.message ?? score.error?.message ?? '缺少参与者数据');
+  }
+  const ids = [...material.data, ...score.data]
+    .map((row) => row.user_id)
+    .filter((id): id is string => typeof id === 'string' && id.length > 0);
+  return new Set(ids).size;
+}
 
-  const { count: scoreMints } = await supabaseAdmin
-    .from("score_nft_queue")
-    .select("id", { count: "exact", head: true })
-    .eq("status", "success");
+function nullableResult<T>(label: string, result: PromiseSettledResult<T>): T | null {
+  if (result.status === 'fulfilled') return result.value;
+  console.error(`/artist ${label} 查询失败：`, result.reason);
+  return null;
+}
 
-  const { data: participants } = await supabaseAdmin
-    .from("mint_events")
-    .select("user_id");
-  const uniqueUsers = new Set(
-    (participants ?? []).map((p) => p.user_id),
-  );
-  const { data: scoreParticipants } = await supabaseAdmin
-    .from("score_nft_queue")
-    .select("user_id")
-    .eq("status", "success");
-  for (const p of scoreParticipants ?? []) uniqueUsers.add(p.user_id);
-
-  const published = trackCount ?? 0;
-  const totalMints = (materialMints ?? 0) + (scoreMints ?? 0);
-  const progress = Math.round((published / TOTAL_TRACKS) * 100);
-  const currentRound = Math.floor(published / AIRDROP_INTERVAL) + 1;
-  const nextAirdrop = Math.min(currentRound * AIRDROP_INTERVAL, TOTAL_TRACKS);
-
-  return { published, totalMints, participants: uniqueUsers.size, progress, nextAirdrop };
+async function getArtistStats() {
+  const [published, totalMints, participants] = await Promise.allSettled([
+    readPublished(), readTotalMints(), readParticipants(),
+  ]);
+  return {
+    published: nullableResult('已发布作品', published),
+    totalMints: nullableResult('铸造总数', totalMints),
+    participants: nullableResult('参与者', participants),
+  };
 }
 
 export default async function ArtistPage() {
-  const stats = await getStats();
+  const stats = await getArtistStats();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-black px-6 py-16 text-white">
-      <h1 className="mb-2 text-lg font-light tracking-[0.3em] text-white/80">
-        Ripples in the Pond
-      </h1>
-      <p className="mb-12 text-sm text-white/40">艺术家 · 项目进度</p>
-
-      {/* 进度条 */}
-      <div className="mb-12 w-full max-w-md">
-        <div className="mb-2 flex justify-between text-xs text-white/50">
-          <span>{stats.published} / {TOTAL_TRACKS} 首曲目</span>
-          <span>{stats.progress}%</span>
-        </div>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
-          <div
-            className="h-full rounded-full bg-blue-500 transition-all duration-500"
-            style={{ width: `${stats.progress}%` }}
-          />
-        </div>
-        {/* 空投标记点 */}
-        <div className="relative mt-1 h-4 w-full">
-          {[36, 72, 108].map((milestone) => (
-            <div
-              key={milestone}
-              className="absolute top-0 flex flex-col items-center"
-              style={{ left: `${(milestone / TOTAL_TRACKS) * 100}%`, transform: "translateX(-50%)" }}
-            >
-              <div className={`h-2 w-px ${stats.published >= milestone ? "bg-blue-400" : "bg-white/20"}`} />
-              <span className="text-[10px] text-white/30">{milestone}</span>
-            </div>
-          ))}
-        </div>
+    <main className="artist-page" data-p11-theme="archive">
+      <div className="artist-page__shell">
+        <nav className="artist-page__nav" aria-label="页面导航">
+          <Link href="/">Ripples in the Pond</Link>
+          <span>ARTIST / 001</span>
+        </nav>
+        <ArtistPortrait content={artistContent} />
+        <div className="artist-page__waterline" aria-hidden="true"><span /></div>
+        <ArtistStatement statement={artistContent.statement} />
+        <Project108 description={artistContent.project108} {...stats} />
+        <footer className="artist-page__footer">
+          <span>RIPPLES IN THE POND</span><span>001—108</span>
+        </footer>
       </div>
-
-      {/* 统计卡片 */}
-      <div className="grid w-full max-w-md grid-cols-2 gap-4">
-        <StatCard label="已发布曲目" value={stats.published} />
-        <StatCard label="总铸造数" value={stats.totalMints} />
-        <StatCard label="参与者" value={stats.participants} />
-        <StatCard label="下次空投" value={`第 ${stats.nextAirdrop} 首`} />
-      </div>
-
-      <p className="mt-12 text-xs text-white/20">
-        每 {AIRDROP_INTERVAL} 首曲目发布时触发一轮空投
-      </p>
     </main>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: number | string }) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/5 px-5 py-4">
-      <div className="text-2xl font-semibold">{value}</div>
-      <div className="mt-1 text-xs text-white/40">{label}</div>
-    </div>
   );
 }

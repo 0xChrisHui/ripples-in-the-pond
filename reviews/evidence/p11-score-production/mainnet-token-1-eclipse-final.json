@@ -1,0 +1,38 @@
+{
+  "startedAt": "2026-09-01T19:38:54.848Z",
+  "viewports": [],
+  "console": [
+    {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[GroupMarkerNotSet(crbug.com/242999)!:A0603100B4680000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1788291562609.303,
+        "url": "http://127.0.0.1:3014/score/1"
+      }
+    },
+    {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "timestamp": 1788291572588.049,
+        "url": "https://7pcacku753czo4giof6qrcbiaxiwiazivenswoesw7cdbmga6ngq.arweave.net/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+        "networkRequestId": "31612.207"
+      }
+    },
+    {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 ()",
+        "timestamp": 1788291611922.109,
+        "url": "https://7pcacku753czo4giof6qrcbiaxiwiazivenswoesw7cdbmga6ngq.permagate.io/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800?",
+        "networkRequestId": "31612.217"
+      }
+    }
+  ],
+  "ok": false,
+  "error": "Error: playback ready 超时\n    at until (file:///E:/Projects/nft-music/.tmp/p11-eclipse-check.mjs:43:9)\n    at async navigate (file:///E:/Projects/nft-music/.tmp/p11-eclipse-check.mjs:72:3)\n    at async file:///E:/Projects/nft-music/.tmp/p11-eclipse-check.mjs:118:3",
+  "finishedAt": "2026-09-01T19:41:03.292Z"
+}

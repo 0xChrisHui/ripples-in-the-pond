@@ -1,0 +1,56 @@
+@import url('./ui.css');
+
+:root {
+  --ink: #06110f;
+  --deep: #09211d;
+  --sea: #123d3a;
+  --ivory: #d8ddca;
+  --muted: #8c9e8e;
+  --amber: #d7a45b;
+  --line: rgba(190, 211, 184, .2);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+body { background: var(--ink); color: var(--ivory); font-family: var(--mono); }
+button { color: inherit; font: inherit; }
+button:focus-visible { outline: 1px solid var(--amber); outline-offset: 5px; }
+.experience { position: relative; width: 100%; height: 100%; min-height: 620px; isolation: isolate; }
+#ecosystem { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.grain {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2; opacity: .11;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+.organism-layer { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.organism-target {
+  position: absolute; width: 46px; height: 46px; border: 0; border-radius: 50%;
+  background: transparent; transform: translate(-50%, -50%); pointer-events: none;
+}
+.organism-target:focus-visible { box-shadow: 0 0 0 1px var(--amber), 0 0 28px rgba(215,164,91,.42); }
+.masthead { position: absolute; inset: 0 0 auto; z-index: 5; display: flex; justify-content: space-between; padding: 28px 30px; pointer-events: none; }
+.identity { pointer-events: auto; }
+.eyebrow { margin: 0 0 8px; color: var(--muted); font-size: 9px; letter-spacing: .2em; text-transform: uppercase; }
+h1 { margin: 0; font: 300 clamp(30px, 3.2vw, 52px)/.86 var(--serif); letter-spacing: -.04em; }
+h1 i { font-size: .52em; font-weight: 300; }
+.descriptor { max-width: 290px; margin: 12px 0 0; color: rgba(216,221,202,.52); font-size: 10px; line-height: 1.8; letter-spacing: .05em; }
+.collection-button { display: flex; gap: 16px; align-items: center; height: 42px; padding: 0 0 0 18px; border: 0; border-bottom: 1px solid var(--line); background: none; pointer-events: auto; cursor: pointer; font-size: 10px; letter-spacing: .12em; }
+.collection-button b { display: grid; place-items: center; min-width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%; color: var(--amber); font-weight: 300; }
+.chapter-nav { position: absolute; z-index: 5; left: 30px; top: 42%; display: grid; gap: 3px; }
+.chapter-nav > p { margin: 0 0 12px; color: var(--muted); font-size: 8px; letter-spacing: .24em; }
+.chapter { display: grid; grid-template-columns: 24px 1fr; align-items: center; gap: 8px; width: 132px; padding: 8px 0; border: 0; background: none; color: rgba(216,221,202,.36); text-align: left; cursor: pointer; transition: color .4s ease; }
+.chapter::after { content: ''; grid-column: 1 / -1; width: 0; height: 1px; background: var(--amber); transition: width .5s ease; }
+.chapter b { font: italic 300 18px var(--serif); }
+.chapter span { font-size: 9px; letter-spacing: .08em; }
+.chapter:hover, .chapter.is-active { color: var(--ivory); }
+.chapter.is-active::after { width: 100%; }
+.keyboard-guide { position: absolute; z-index: 5; left: 30px; bottom: 30px; display: flex; align-items: center; gap: 12px; pointer-events: none; }
+#key-orb { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%; color: var(--amber); font-size: 9px; }
+.keyboard-guide p { max-width: 240px; margin: 0; color: rgba(216,221,202,.46); font-size: 8px; line-height: 1.7; letter-spacing: .1em; }
+.mobile-note { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

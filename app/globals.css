@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "../src/styles/p11-tokens.css";
+@import "../src/styles/p11-primitives.css";
 /* Phase 8 — 水塘特效 CSS（.ripple-once + 各 lane keyframe）独立成文件，
    避免 globals.css 撞 220 行硬线，且给并行 lane 一个隔离的追加区。 */
 @import "./pond-effects.css";
@@ -209,3 +211,10 @@ body {
   color: var(--foreground);
   font-family: var(--font-azeret), Arial, Helvetica, sans-serif;
 }
+
+[data-p11-theme] {
+  color-scheme: dark;
+  font-family: var(--p11-font-body);
+}
+[data-p11-font="display"] { font-family: var(--p11-font-display); }
+[data-p11-font="mono"] { font-family: var(--p11-font-mono); }

@@ -6,6 +6,7 @@ type PinInputProps = {
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
+  invalid?: boolean;
   length?: number;
 };
 
@@ -13,6 +14,7 @@ export default function PinInput({
   value,
   onChange,
   disabled = false,
+  invalid = false,
   length = 6,
 }: PinInputProps) {
   const refs = useRef<HTMLInputElement[]>([]);
@@ -27,7 +29,7 @@ export default function PinInput({
   }
 
   return (
-    <div className="flex justify-center gap-2">
+    <div className="pin-input" role="group" aria-label="六位验证码">
       {digits.map((digit, index) => (
         <input
           key={index}
@@ -36,10 +38,13 @@ export default function PinInput({
           }}
           type="text"
           inputMode="numeric"
+          autoFocus={index === 0}
           autoComplete={index === 0 ? 'one-time-code' : 'off'}
           value={digit}
           disabled={disabled}
           aria-label={`验证码第 ${index + 1} 位`}
+          aria-invalid={invalid}
+          onFocus={(event) => event.currentTarget.select()}
           onChange={(e) => {
             const inputDigits = e.target.value.replace(/\D/g, '').split('');
             if (inputDigits.length === 0) return;
@@ -72,7 +77,6 @@ export default function PinInput({
             setDigits(next);
             focusIndex(Math.min(pasted.length, length - 1));
           }}
-          className="size-12 rounded-lg border border-white/10 bg-black/40 text-center text-xl text-white outline-none transition-colors focus:border-white/40 disabled:opacity-50"
         />
       ))}
     </div>

@@ -46,7 +46,7 @@ const modak = Modak({
 
 export const metadata: Metadata = {
   title: "Ripples in the Pond",
-  description: "音乐 NFT 铸造平台",
+  description: "在水塘中共同演奏，并把一次声音相遇保存为永久唱片。",
 };
 
 export default function RootLayout({
@@ -58,7 +58,7 @@ export default function RootLayout({
     // suppressHydrationWarning 仅压制 html/body 根节点 — 处理浏览器扩展（NeonLingo / Monica AI 之类）
     // 在 React hydrate 前往 html/body 注入 CSS 变量或 data 属性导致的 hydration mismatch；
     // 子树的真实 hydration bug 仍会正常报警。
-    <html lang="en" suppressHydrationWarning>
+    <html lang="zh-CN" suppressHydrationWarning>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} ${azeretMono.variable} ${modak.variable} antialiased`}

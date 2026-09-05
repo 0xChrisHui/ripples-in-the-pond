@@ -1,0 +1,193 @@
+.bottom-player-shell {
+  --player-width: 680px;
+  --player-edge: max(12px, env(safe-area-inset-bottom));
+  position: fixed;
+  z-index: 70;
+  right: 12px;
+  bottom: var(--player-edge);
+  left: 12px;
+  display: flex;
+  justify-content: center;
+  color: var(--p11-bone);
+  font-family: var(--p11-font-body);
+  pointer-events: none;
+}
+
+.bottom-player-spacer {
+  height: calc(94px + env(safe-area-inset-bottom));
+}
+
+.bottom-player {
+  position: relative;
+  width: min(100%, var(--player-width));
+  overflow: hidden;
+  border: 1px solid var(--p11-line-strong);
+  border-left-color: var(--p11-brass);
+  border-radius: var(--p11-radius-sm);
+  background: linear-gradient(100deg, rgba(195, 161, 95, .07), transparent 32%), var(--p11-surface-solid);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .42);
+  pointer-events: auto;
+}
+
+.bottom-player__progress {
+  height: 2px;
+  overflow: hidden;
+  background: var(--p11-line);
+}
+
+.bottom-player__progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--p11-brass-strong);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--p11-fast) linear;
+}
+
+.bottom-player__body {
+  display: grid;
+  min-height: 64px;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--p11-space-8);
+  padding: var(--p11-space-8);
+}
+
+.bottom-player__record {
+  position: relative;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--p11-line-strong);
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, #080807 0 3px, #1a1814 3.5px 4px);
+}
+
+.bottom-player__record::before,
+.bottom-player__record span {
+  content: '';
+  border-radius: 50%;
+}
+
+.bottom-player__record::before {
+  width: 13px;
+  height: 13px;
+  background: var(--p11-brass);
+}
+
+.bottom-player__record span {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--p11-ink);
+}
+
+.bottom-player-shell[data-playing='true'] .bottom-player__record {
+  animation: bottom-player-spin 8s linear infinite;
+}
+
+.bottom-player__identity {
+  min-width: 0;
+}
+
+.bottom-player__identity p {
+  overflow: hidden;
+  color: var(--p11-bone);
+  font-size: var(--p11-text-sm);
+  font-weight: var(--p11-weight-medium);
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bottom-player__identity > span {
+  display: block;
+  margin-top: var(--p11-space-4);
+  color: var(--p11-faint);
+  font: var(--p11-text-xs)/1 var(--p11-font-mono);
+  letter-spacing: var(--p11-tracking-mono);
+}
+
+.bottom-player__identity i {
+  padding: 0 2px;
+  color: var(--p11-line-strong);
+  font-style: normal;
+}
+
+.bottom-player__actions {
+  display: flex;
+  align-items: center;
+}
+
+.bottom-player__actions button {
+  min-width: 52px;
+  min-height: var(--p11-touch-target);
+  padding: 0 var(--p11-space-8);
+  border: 0;
+  border-left: 1px solid var(--p11-line);
+  background: transparent;
+  color: var(--p11-muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--p11-text-xs);
+  transition: color var(--p11-fast) var(--p11-ease-out), background var(--p11-fast) var(--p11-ease-out);
+}
+
+.bottom-player__actions button[data-active='true'] {
+  color: var(--p11-brass-strong);
+}
+
+.bottom-player__actions button:focus-visible {
+  outline: var(--p11-focus-width) var(--p11-focus-style) var(--p11-focus-color);
+  outline-offset: -4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bottom-player__actions button:hover {
+    background: var(--p11-surface-raised);
+    color: var(--p11-brass-strong);
+  }
+}
+
+@media (min-width: 768px) {
+  .bottom-player-shell {
+    --player-edge: 20px;
+    right: var(--p11-page-inset);
+    left: var(--p11-page-inset);
+  }
+  .bottom-player__body {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: var(--p11-space-12);
+    padding: var(--p11-space-8) var(--p11-space-12);
+  }
+  .bottom-player__record {
+    width: 40px;
+    height: 40px;
+  }
+  .bottom-player__actions button {
+    min-width: 68px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom-player-shell[data-playing='true'] .bottom-player__record {
+    animation: none;
+  }
+  .bottom-player__progress span,
+  .bottom-player__actions button {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .bottom-player {
+    forced-color-adjust: auto;
+    box-shadow: none;
+  }
+}
+
+@keyframes bottom-player-spin {
+  to { transform: rotate(1turn); }
+}

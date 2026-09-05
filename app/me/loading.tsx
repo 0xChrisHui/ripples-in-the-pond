@@ -1,31 +1,23 @@
-import LoadingSpinner from '@/src/components/common/LoadingSpinner';
+import ArchiveHeader from '@/src/components/me/archive/ArchiveHeader';
+import ArchiveSection from '@/src/components/me/archive/ArchiveSection';
+import '@/src/components/me/archive/archive.css';
+
+const sections = ['我的唱片', '我的录音', '我的素材'];
 
 export default function MeLoading() {
   return (
-    <main className="min-h-screen bg-black px-6 py-12">
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-8 flex items-center justify-between">
-          <div className="h-5 w-24 rounded bg-white/10" />
-          <div className="h-3 w-12 rounded bg-white/10" />
+    <main className="me-archive" data-p11-theme="archive">
+      <div className="me-archive__inner">
+        <ArchiveHeader authState="checking" counts={sections.map((label) => ({ label, value: null }))} />
+        <div className="me-archive__sections" aria-busy="true" aria-label="正在读取音乐档案">
+          {sections.map((title, index) => (
+            <ArchiveSection key={title} index={index + 1} title={title} count={null}
+              loading emptyDescription="">
+              <div className="me-archive__skeleton" />
+              <div className="me-archive__skeleton" />
+            </ArchiveSection>
+          ))}
         </div>
-
-        <section>
-          <div className="mb-4 flex items-center gap-3">
-            <LoadingSpinner />
-            <div className="h-4 w-24 rounded bg-white/10" />
-          </div>
-          <div className="grid gap-3">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="rounded-lg border border-white/10 bg-white/5 p-4">
-                <div className="h-4 w-2/3 rounded bg-white/10" />
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="h-4 w-4 rounded-full bg-white/10" />
-                  <div className="h-6 w-24 rounded-full bg-white/10" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
       </div>
     </main>
   );

@@ -3,177 +3,169 @@ import { cache } from 'react';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { resolveArUrl } from '@/src/lib/arweave';
 import { explorerTxUrl } from '@/src/lib/chain/chain-config';
-import { getScoreFromChain } from './score-fallback';
+import { SCORE_NFT_ADDRESS } from '@/src/lib/chain/contracts';
+import { getScoreFromChain, getScoreOwner } from './score-fallback';
+import { createScoreProvenance, loadScoreMetadata } from './score/metadata';
+import type { ScoreProvenance } from './score/metadata';
+import type { ScoreMintStatus, ScorePlaybackManifest } from '@/src/types/jam';
 import type { Track } from '@/src/types/tracks';
 
-/**
- * /score/[id] 页面数据源（B8 重设：路由 ID 兼容 tokenId 数字 / queue.id UUID）
- *
- * 入口 getScoreById：纯数字按 token_id 查（兼容已上链历史链接 / 分享卡），
- * UUID 按 queue.id 查（B8 主路径，含未上链的中间态）。
- *
- * Phase 6 A5 链上灾备路径在 B8 后已删除（score-fallback.ts noop 残留 2026-05-08 清掉）。
- * 主路径 DB miss 直接 notFound；灾备方案待 P7 重新设计。
- *
- * C9b（2026-05-15）：首屏不再 SELECT events_data（大 JSON 阻塞 SSR），改拉
- * pending_scores.event_count generated column。events 走独立 endpoint
- * /api/scores/[id]/events 由 ScorePlayer 挂载时按需 fetch（score-events-source.ts）。
- * getScoreById 用 React cache() 包装：同 request 内 generateMetadata + page 只跑一次。
- */
+type ScoreSource = 'database' | 'chain';
+type PublicFailure = 'data_unavailable' | 'queue_failed' | 'metadata_unavailable';
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+type ScorePageBase = {
+  state: 'ready' | 'processing' | 'failed'; source: ScoreSource;
+  id: string; queueId: string | null; tokenId?: number; queueStatus: ScoreMintStatus | null;
+  trackTitle: string; creatorAddress: string; currentHolder: string | null;
+  coverUrl: string; permanentEventCount: number | null;
+  createdAt: string | null; confirmedAt: string | null;
+  /** B3 迁移前兼容旧页面；新 UI 使用 createdAt 与 metadata 的确认来源。 */
+  mintedAt: string; txHash?: string; etherscanUrl?: string; degraded?: boolean;
+  animationUrl?: string; provenance: ScoreProvenance;
+};
+export type ScoreReadyData = ScorePageBase & {
+  state: 'ready'; tokenId: number; track?: Track; eventCount: number;
+  metadataRef: string; manifest: ScorePlaybackManifest;
+};
+export type ScoreProcessingData = ScorePageBase & {
+  state: 'processing'; track: Track; eventCount: number; manifest?: never;
+};
+export type ScoreFailedData = ScorePageBase & {
+  state: 'failed'; track?: never; eventCount: number | null;
+  publicFailure: PublicFailure; failureKind: string | null; manifest?: never;
+};
+export type ScorePageData = ScoreReadyData | ScoreProcessingData | ScoreFailedData;
+export type { ScoreProvenance } from './score/metadata';
 
-export interface ScorePageData {
-  /** 路由用 ID（tokenId.toString() 或 queue.id UUID）*/
-  id: string;
-  /** 已上链 tokenId — 未上链时 undefined */
-  tokenId?: number;
-  trackTitle: string;
-  creatorAddress: string;
-  /** 底曲信息（PlayerProvider.toggle + useEventsPlayback 用）；链上灾备降级态无此字段 */
-  track?: Track;
-  /** 链上灾备降级态：decoder 自包含播放器 URL，页面改嵌 iframe（无 track 时用）*/
-  animationUrl?: string;
-  /** true = 链上灾备降级态（DB miss 时从链上+Arweave 直读）*/
-  degraded?: boolean;
-  coverUrl: string;
-  /** 已上链 tx hash — 未上链时 undefined */
-  txHash?: string;
-  /** 已上链 Etherscan link — 未上链时 undefined */
-  etherscanUrl?: string;
-  mintedAt: string;
-  eventCount: number;
-}
-
-
-/** 路由入口：纯数字 → tokenId 路径，否则按 UUID → queue.id 路径
- *  cache(): per-request dedupe（generateMetadata + page 共享同一 request 时只跑一次）。
- */
-export const getScoreById = cache(
-  async (id: string): Promise<ScorePageData | null> => {
-    if (/^\d+$/.test(id)) {
-      const n = Number(id);
-      // 防御：> 2^53 数字会丢精度；DB token_id 是 int4（~2.1B 上限）远在安全范围内。
-      if (!Number.isSafeInteger(n)) return null;
-      return getScoreByTokenId(n);
-    }
-    return getScoreByQueueId(id);
-  },
+type QueueRow = {
+  id: string; status: ScoreMintStatus; token_id: number | null; token_uri: string | null;
+  tx_hash: string | null; uri_tx_hash: string | null; created_at: string;
+  cover_ar_tx_id: string; metadata_ar_tx_id: string | null; failure_kind: string | null;
+  user_id: string; pending_score_id: string; track_id: string;
+};
+const provenance = (input: Partial<Parameters<typeof createScoreProvenance>[0]> = {}) => (
+  createScoreProvenance({
+    contract: SCORE_NFT_ADDRESS, tokenId: null, holder: null, creator: null,
+    mintTx: null, setUriTx: null, metadataRef: null, manifest: null,
+    tokenUriSource: 'database', ...input,
+  })
 );
 
-/** 已上链历史路径（兼容 /score/123 旧链接 + 分享卡）— B8 后转发到 queue 主路径
- *  order/limit 取最新（非 maybeSingle）：避免历史 race 留下双行时静默 404。
- */
-async function getScoreByTokenId(
-  tokenId: number,
-): Promise<ScorePageData | null> {
-  const { data: queueRow, error } = await supabaseAdmin
-    .from('score_nft_queue')
-    .select('id')
-    .eq('token_id', tokenId)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  // DB 抖动/miss → 链上灾备（P10-C）：数字 tokenId 可从链上 tokenURI + Arweave 重建降级页
-  if (error) {
-    console.error('[score-source] tokenId → queue lookup failed, try chain fallback:', error);
-    return getScoreFromChain(tokenId);
-  }
-  if (!queueRow) return getScoreFromChain(tokenId);
-
-  return (await getScoreByQueueId(queueRow.id)) ?? getScoreFromChain(tokenId);
+function unavailable(queue: QueueRow, eventCount: number): ScoreFailedData {
+  const tokenId = queue.token_id ?? undefined;
+  return {
+    state: 'failed', source: 'database', id: tokenId == null ? queue.id : String(tokenId),
+    queueId: queue.id, tokenId, queueStatus: queue.status,
+    trackTitle: '作品资料暂不可用', creatorAddress: '', currentHolder: null,
+    coverUrl: '', eventCount, permanentEventCount: null, createdAt: queue.created_at,
+    confirmedAt: null, mintedAt: queue.created_at, publicFailure: 'data_unavailable',
+    failureKind: queue.failure_kind, txHash: queue.tx_hash ?? undefined,
+    etherscanUrl: queue.tx_hash ? explorerTxUrl(queue.tx_hash) : undefined,
+    provenance: provenance({ tokenId: queue.token_id, mintTx: queue.tx_hash,
+      setUriTx: queue.uri_tx_hash }),
+  };
 }
 
-/** B8 主路径：queue.id 直接查（含未上链中间态 / 失败态）
- *  分独立 query — supabase 联表对多外键关系偶尔报歧义错。
- *  C9b：pending_scores 改拉 event_count（generated column），不拉 events_data。
- */
-async function getScoreByQueueId(
-  queueId: string,
-): Promise<ScorePageData | null> {
-  const { data: queue, error: qErr } = await supabaseAdmin
-    .from('score_nft_queue')
-    .select(
-      'token_id, tx_hash, created_at, cover_ar_tx_id, user_id, pending_score_id, track_id',
-    )
-    .eq('id', queueId)
-    .maybeSingle();
-
-  if (qErr) {
-    console.error('[score-source] queue query failed:', qErr);
-    return null;
+export const getScoreById = cache(async (id: string): Promise<ScorePageData | null> => {
+  if (/^\d+$/.test(id)) {
+    const tokenId = Number(id);
+    if (!Number.isSafeInteger(tokenId) || tokenId < 1) return null;
+    return getScoreByTokenId(tokenId);
   }
-  if (!queue) return null;
+  if (!UUID_RE.test(id)) return null;
+  return getScoreByQueueId(id);
+});
 
-  const [pendingRes, trackRes, userRes] = await Promise.allSettled([
-    supabaseAdmin
-      .from('pending_scores')
-      .select('event_count')
-      .eq('id', queue.pending_score_id)
-      .maybeSingle(),
-    supabaseAdmin
-      .from('tracks')
-      .select('*')
-      .eq('id', queue.track_id)
-      .maybeSingle(),
-    supabaseAdmin
-      .from('users')
-      .select('evm_address')
-      .eq('id', queue.user_id)
-      .maybeSingle(),
-  ]);
-
-  if (trackRes.status === 'rejected' || userRes.status === 'rejected') {
-    console.error('[score-source] required relation query rejected', {
-      queueId,
-      track: trackRes.status === 'rejected' ? trackRes.reason : 'ok',
-      user: userRes.status === 'rejected' ? userRes.reason : 'ok',
-    });
-    return null;
-  }
-
-  const track = trackRes.value.data as Track | null;
-  const user = userRes.value.data;
-  if (!track || !user) {
-    console.error('[score-source] missing relation', {
-      queueId,
-      hasTrack: !!track,
-      hasUser: !!user,
-    });
-    return null;
-  }
-
-  // pending_scores 缺失/报错降级 eventCount=0，但都 log（"0 个音符"会被误以为空草稿）
-  let eventCount = 0;
-  if (pendingRes.status === 'rejected') {
-    console.error('[score-source] pending_scores query rejected:', pendingRes.reason);
-  } else if (pendingRes.value.error) {
-    console.error('[score-source] pending_scores query error:', pendingRes.value.error);
-  } else if (typeof pendingRes.value.data?.event_count === 'number') {
-    eventCount = pendingRes.value.data.event_count;
-  }
-
-  // cover_ar_tx_id 非法降级 coverUrl=''：OG 走色块，详情页 <img> broken 但不整页崩
-  let coverUrl = '';
+async function getScoreByTokenId(tokenId: number): Promise<ScorePageData | null> {
   try {
-    coverUrl = resolveArUrl(queue.cover_ar_tx_id);
-  } catch (err) {
-    console.error('[score-source] cover txId invalid:', {
-      queueId,
-      cover_ar_tx_id: queue.cover_ar_tx_id,
-      err,
-    });
+    const { data, error } = await supabaseAdmin.from('score_nft_queue').select('id')
+      .eq('token_id', tokenId).order('created_at', { ascending: false }).limit(1).maybeSingle();
+    if (error) throw error;
+    if (!data) return getScoreFromChain(tokenId);
+    return (await getScoreByQueueId(data.id)) ?? getScoreFromChain(tokenId);
+  } catch (error) {
+    console.error('[score-source] database path failed, using chain:', tokenId, error);
+    return getScoreFromChain(tokenId);
   }
+}
 
-  return {
-    id: queueId,
-    tokenId: queue.token_id ?? undefined,
-    trackTitle: track.title,
-    creatorAddress: user.evm_address,
-    track,
-    coverUrl,
+async function getScoreByQueueId(queueId: string): Promise<ScorePageData | null> {
+  const { data, error } = await supabaseAdmin.from('score_nft_queue').select(
+    'id,status,token_id,token_uri,tx_hash,uri_tx_hash,created_at,cover_ar_tx_id,'
+    + 'metadata_ar_tx_id,failure_kind,user_id,pending_score_id,track_id',
+  ).eq('id', queueId).maybeSingle();
+  if (error) {
+    console.error('[score-source] queue query failed:', error);
+    throw new Error('作品数据库暂时不可用');
+  }
+  if (!data) return null;
+  return buildQueueScore(data as unknown as QueueRow);
+}
+
+async function buildQueueScore(queue: QueueRow): Promise<ScorePageData> {
+  const [pending, trackResult, user, holder] = await Promise.all([
+    supabaseAdmin.from('pending_scores').select('event_count').eq('id', queue.pending_score_id).maybeSingle(),
+    supabaseAdmin.from('tracks').select('*').eq('id', queue.track_id).maybeSingle(),
+    supabaseAdmin.from('users').select('evm_address').eq('id', queue.user_id).maybeSingle(),
+    queue.token_id == null ? Promise.resolve(null) : getScoreOwner(queue.token_id),
+  ]);
+  const track = trackResult.data as Track | null;
+  const creator = typeof user.data?.evm_address === 'string' ? user.data.evm_address : null;
+  const eventCount = typeof pending.data?.event_count === 'number' ? pending.data.event_count : null;
+  if (eventCount == null) throw new Error('作品事件数暂时不可用');
+  if (trackResult.error || user.error) throw new Error('作品关联数据暂时不可用');
+  if (!track || !creator) {
+    console.error('[score-source] required queue relation unavailable:', queue.id);
+    return unavailable(queue, eventCount);
+  }
+  let coverUrl = '';
+  try { coverUrl = resolveArUrl(queue.cover_ar_tx_id); } catch { /* processing 保留文字身份。 */ }
+  const base = {
+    source: 'database' as const, queueId: queue.id, tokenId: queue.token_id ?? undefined,
+    queueStatus: queue.status, trackTitle: track.title, creatorAddress: creator,
+    currentHolder: holder, track, coverUrl, eventCount, permanentEventCount: null,
+    createdAt: queue.created_at, confirmedAt: null, mintedAt: queue.created_at,
     txHash: queue.tx_hash ?? undefined,
     etherscanUrl: queue.tx_hash ? explorerTxUrl(queue.tx_hash) : undefined,
-    mintedAt: queue.created_at,
-    eventCount,
   };
+  const metadataFailure = (): ScoreFailedData => ({
+    ...base, track: undefined, state: 'failed',
+    id: queue.token_id == null ? queue.id : String(queue.token_id),
+    publicFailure: 'metadata_unavailable', failureKind: queue.failure_kind,
+    provenance: provenance({ tokenId: queue.token_id, holder, creator, mintTx: queue.tx_hash,
+      setUriTx: queue.uri_tx_hash, metadataRef: queue.token_uri }),
+  });
+  if (queue.status === 'failed') {
+    return { ...base, track: undefined, state: 'failed',
+      id: queue.token_id == null ? queue.id : String(queue.token_id),
+      publicFailure: 'queue_failed', failureKind: queue.failure_kind,
+      provenance: provenance({ tokenId: queue.token_id, holder, creator, mintTx: queue.tx_hash,
+        setUriTx: queue.uri_tx_hash }) };
+  }
+  if (queue.status !== 'success') {
+    return { ...base, state: 'processing', id: queue.id,
+      provenance: provenance({ tokenId: queue.token_id, holder, creator, mintTx: queue.tx_hash,
+        setUriTx: queue.uri_tx_hash }) };
+  }
+  if (queue.token_id == null || !queue.metadata_ar_tx_id
+    || queue.token_uri !== `ar://${queue.metadata_ar_tx_id}`) {
+    return metadataFailure();
+  }
+  try {
+    const metadata = await loadScoreMetadata(queue.token_uri);
+    const manifest = metadata.manifest;
+    return {
+      ...base, state: 'ready', id: String(queue.token_id), tokenId: queue.token_id,
+      trackTitle: metadata.trackTitle ?? metadata.name ?? track.title,
+      coverUrl: metadata.coverUrl ?? coverUrl, eventCount: metadata.eventCount ?? eventCount,
+      permanentEventCount: metadata.eventCount,
+      confirmedAt: null, mintedAt: metadata.mintedAt ?? queue.created_at,
+      metadataRef: metadata.metadataRef, manifest,
+      provenance: provenance({ tokenId: queue.token_id, holder, creator, mintTx: queue.tx_hash,
+        setUriTx: queue.uri_tx_hash, metadataRef: metadata.metadataRef, manifest }),
+    };
+  } catch (error) {
+    console.error('[score-source] permanent metadata invalid:', queue.id, error);
+    return metadataFailure();
+  }
 }

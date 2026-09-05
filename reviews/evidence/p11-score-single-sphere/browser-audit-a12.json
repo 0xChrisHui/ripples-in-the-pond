@@ -1,0 +1,920 @@
+{
+  "generatedAt": "2026-09-01T12:38:10.041Z",
+  "page": "http://127.0.0.1:3100/score-lab/1",
+  "pass": true,
+  "checks": [
+    {
+      "name": "1440 fine capability",
+      "pass": true,
+      "actual": {
+        "label": "desktop-idle",
+        "href": "http://127.0.0.1:3100/score-lab/1",
+        "capability": "fine",
+        "anchorState": "idle",
+        "fine": true,
+        "coarse": false,
+        "reduced": false,
+        "recordVisible": true,
+        "recordLabel": "播放 Ripples #1",
+        "playbackVisible": true,
+        "playbackLabel": "播放 Ripples #1",
+        "sphereCount": 0,
+        "eclipseOpacity": 0,
+        "canvasCount": 2,
+        "canvasStable": true,
+        "overflowX": 0,
+        "recordTransition": "0.45s, 0.45s, 0.15s",
+        "p9": [],
+        "pageErrors": [],
+        "contextLosses": []
+      },
+      "expected": "fine marker + fine media"
+    },
+    {
+      "name": "desktop idle record, no sphere",
+      "pass": true,
+      "actual": {
+        "label": "desktop-idle",
+        "href": "http://127.0.0.1:3100/score-lab/1",
+        "capability": "fine",
+        "anchorState": "idle",
+        "fine": true,
+        "coarse": false,
+        "reduced": false,
+        "recordVisible": true,
+        "recordLabel": "播放 Ripples #1",
+        "playbackVisible": true,
+        "playbackLabel": "播放 Ripples #1",
+        "sphereCount": 0,
+        "eclipseOpacity": 0,
+        "canvasCount": 2,
+        "canvasStable": true,
+        "overflowX": 0,
+        "recordTransition": "0.45s, 0.45s, 0.15s",
+        "p9": [],
+        "pageErrors": [],
+        "contextLosses": []
+      },
+      "expected": "record visible; sphere=0"
+    },
+    {
+      "name": "first V observation accepted",
+      "pass": true,
+      "actual": [
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 4455.5999999940395
+        }
+      ],
+      "expected": "first observation contains exactly one accepted V"
+    },
+    {
+      "name": "playing eclipse replaces record",
+      "pass": true,
+      "actual": {
+        "label": "playing-transition",
+        "href": "http://127.0.0.1:3100/score-lab/1",
+        "capability": "fine",
+        "anchorState": "playing",
+        "fine": true,
+        "coarse": false,
+        "reduced": false,
+        "recordVisible": false,
+        "recordLabel": "播放 Ripples #1",
+        "playbackVisible": true,
+        "playbackLabel": "停止 Ripples #1",
+        "sphereCount": 0,
+        "eclipseOpacity": 1,
+        "canvasCount": 2,
+        "canvasStable": true,
+        "overflowX": 0,
+        "recordTransition": "0.45s, 0.45s, 0.15s",
+        "p9": [
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": true,
+            "reason": null,
+            "at": 4455.5999999940395
+          },
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": true,
+            "reason": null,
+            "at": 4971.0999999940395
+          },
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": true,
+            "reason": null,
+            "at": 5321.0999999940395
+          },
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": true,
+            "reason": null,
+            "at": 5688
+          }
+        ],
+        "pageErrors": [],
+        "contextLosses": []
+      },
+      "expected": "record hidden; eclipse opacity >= .9"
+    },
+    {
+      "name": "V×6 bounded pressure",
+      "pass": true,
+      "actual": {
+        "total": 6,
+        "accepted": 5,
+        "capacity": 1
+      },
+      "expected": "6 / 5 / 1"
+    },
+    {
+      "name": "stop and longest tail recover",
+      "pass": true,
+      "actual": {
+        "label": "after-4.2s-tail",
+        "href": "http://127.0.0.1:3100/score-lab/1",
+        "capability": "fine",
+        "anchorState": "idle",
+        "fine": true,
+        "coarse": false,
+        "reduced": false,
+        "recordVisible": true,
+        "recordLabel": "播放 Ripples #1",
+        "playbackVisible": true,
+        "playbackLabel": "播放 Ripples #1",
+        "sphereCount": 0,
+        "eclipseOpacity": 0,
+        "canvasCount": 2,
+        "canvasStable": true,
+        "overflowX": 0,
+        "recordTransition": "0.45s, 0.45s, 0.15s",
+        "p9": [
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": true,
+            "reason": null,
+            "at": 4455.5999999940395
+          },
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": true,
+            "reason": null,
+            "at": 4971.0999999940395
+          },
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": true,
+            "reason": null,
+            "at": 5321.0999999940395
+          },
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": true,
+            "reason": null,
+            "at": 5688
+          },
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": true,
+            "reason": null,
+            "at": 6754.5
+          },
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": false,
+            "reason": "capacity",
+            "at": 7254
+          }
+        ],
+        "pageErrors": [],
+        "contextLosses": []
+      },
+      "expected": "idle record; eclipse off; no late trigger"
+    },
+    {
+      "name": "restart keeps Canvas",
+      "pass": true,
+      "actual": {
+        "restartObserved": true,
+        "stage": {
+          "label": "restarted",
+          "href": "http://127.0.0.1:3100/score-lab/1",
+          "capability": "fine",
+          "anchorState": "playing",
+          "fine": true,
+          "coarse": false,
+          "reduced": false,
+          "recordVisible": false,
+          "recordLabel": "播放 Ripples #1",
+          "playbackVisible": true,
+          "playbackLabel": "停止 Ripples #1",
+          "sphereCount": 0,
+          "eclipseOpacity": 1,
+          "canvasCount": 2,
+          "canvasStable": true,
+          "overflowX": 0,
+          "recordTransition": "0.45s, 0.45s, 0.15s",
+          "p9": [
+            {
+              "key": "v",
+              "id": "FX32",
+              "accepted": true,
+              "reason": null,
+              "at": 4455.5999999940395
+            },
+            {
+              "key": "v",
+              "id": "FX32",
+              "accepted": true,
+              "reason": null,
+              "at": 4971.0999999940395
+            },
+            {
+              "key": "v",
+              "id": "FX32",
+              "accepted": true,
+              "reason": null,
+              "at": 5321.0999999940395
+            },
+            {
+              "key": "v",
+              "id": "FX32",
+              "accepted": true,
+              "reason": null,
+              "at": 5688
+            },
+            {
+              "key": "v",
+              "id": "FX32",
+              "accepted": true,
+              "reason": null,
+              "at": 6754.5
+            },
+            {
+              "key": "v",
+              "id": "FX32",
+              "accepted": false,
+              "reason": "capacity",
+              "at": 7254
+            },
+            {
+              "key": "v",
+              "id": "FX32",
+              "accepted": true,
+              "reason": null,
+              "at": 13954.40000000596
+            }
+          ],
+          "pageErrors": [],
+          "contextLosses": []
+        }
+      },
+      "expected": "playing observed + same Canvas"
+    },
+    {
+      "name": "route roundtrip clean return",
+      "pass": true,
+      "actual": {
+        "label": "route-return",
+        "href": "http://127.0.0.1:3100/score-lab/1",
+        "capability": "fine",
+        "anchorState": "idle",
+        "fine": true,
+        "coarse": false,
+        "reduced": false,
+        "recordVisible": true,
+        "recordLabel": "播放 Ripples #1",
+        "playbackVisible": true,
+        "playbackLabel": "播放 Ripples #1",
+        "sphereCount": 0,
+        "eclipseOpacity": 0,
+        "canvasCount": 2,
+        "canvasStable": true,
+        "overflowX": 0,
+        "recordTransition": "0.45s, 0.45s, 0.15s",
+        "p9": [],
+        "pageErrors": [],
+        "contextLosses": []
+      },
+      "expected": "fresh idle route + stable new Canvas"
+    },
+    {
+      "name": "375 coarse idle record, no sphere",
+      "pass": true,
+      "actual": {
+        "label": "mobile-idle",
+        "href": "http://127.0.0.1:3100/score-lab/1",
+        "capability": "coarse",
+        "anchorState": "idle",
+        "fine": false,
+        "coarse": true,
+        "reduced": false,
+        "recordVisible": true,
+        "recordLabel": "播放 Ripples #1",
+        "playbackVisible": true,
+        "playbackLabel": "播放 Ripples #1",
+        "sphereCount": 0,
+        "eclipseOpacity": 0,
+        "canvasCount": 2,
+        "canvasStable": true,
+        "overflowX": 0,
+        "recordTransition": "0.45s, 0.45s, 0.15s",
+        "p9": [],
+        "pageErrors": [],
+        "contextLosses": []
+      },
+      "expected": "coarse + record + sphere=0"
+    },
+    {
+      "name": "375 no horizontal overflow",
+      "pass": true,
+      "actual": 0,
+      "expected": "<= 0"
+    },
+    {
+      "name": "375 click becomes eclipse",
+      "pass": true,
+      "actual": {
+        "label": "mobile-playing",
+        "href": "http://127.0.0.1:3100/score-lab/1",
+        "capability": "coarse",
+        "anchorState": "playing",
+        "fine": false,
+        "coarse": true,
+        "reduced": false,
+        "recordVisible": false,
+        "recordLabel": "播放 Ripples #1",
+        "playbackVisible": true,
+        "playbackLabel": "停止 Ripples #1",
+        "sphereCount": 0,
+        "eclipseOpacity": 1,
+        "canvasCount": 2,
+        "canvasStable": true,
+        "overflowX": 0,
+        "recordTransition": "0.45s, 0.45s, 0.15s",
+        "p9": [
+          {
+            "key": "v",
+            "id": "FX32",
+            "accepted": true,
+            "reason": null,
+            "at": 2080.0999999940395
+          }
+        ],
+        "pageErrors": [],
+        "contextLosses": []
+      },
+      "expected": "eclipse >= .9 + same Canvas"
+    },
+    {
+      "name": "reduced-motion state honored",
+      "pass": true,
+      "actual": {
+        "reducedTransitionMs": 0.01,
+        "idle": {
+          "label": "reduced-idle",
+          "href": "http://127.0.0.1:3100/score-lab/1",
+          "capability": "coarse",
+          "anchorState": "idle",
+          "fine": false,
+          "coarse": true,
+          "reduced": true,
+          "recordVisible": true,
+          "recordLabel": "播放 Ripples #1",
+          "playbackVisible": true,
+          "playbackLabel": "播放 Ripples #1",
+          "sphereCount": 0,
+          "eclipseOpacity": 0,
+          "canvasCount": 2,
+          "canvasStable": true,
+          "overflowX": 0,
+          "recordTransition": "1e-05s",
+          "p9": [],
+          "pageErrors": [],
+          "contextLosses": []
+        },
+        "playing": {
+          "label": "reduced-playing",
+          "href": "http://127.0.0.1:3100/score-lab/1",
+          "capability": "coarse",
+          "anchorState": "playing",
+          "fine": false,
+          "coarse": true,
+          "reduced": true,
+          "recordVisible": false,
+          "recordLabel": "播放 Ripples #1",
+          "playbackVisible": true,
+          "playbackLabel": "停止 Ripples #1",
+          "sphereCount": 0,
+          "eclipseOpacity": 1,
+          "canvasCount": 2,
+          "canvasStable": true,
+          "overflowX": 0,
+          "recordTransition": "1e-05s",
+          "p9": [],
+          "pageErrors": [],
+          "contextLosses": []
+        }
+      },
+      "expected": "reduce media + transition <=20ms + same Canvas"
+    },
+    {
+      "name": "no console or page errors",
+      "pass": true,
+      "actual": {
+        "protocolErrors": [],
+        "pageErrors": []
+      },
+      "expected": "empty"
+    },
+    {
+      "name": "no WebGL context loss",
+      "pass": true,
+      "actual": [],
+      "expected": "empty"
+    },
+    {
+      "name": "Canvas never remounts within route lifecycle",
+      "pass": true,
+      "actual": {
+        "desktopIdle": true,
+        "vSingle": true,
+        "playingTransition": true,
+        "vPressure": true,
+        "afterTail": true,
+        "resumed": true,
+        "routeReturn": true,
+        "mobileIdle": true,
+        "mobilePlaying": true,
+        "reducedIdle": true,
+        "reducedPlaying": true
+      },
+      "expected": "all true"
+    }
+  ],
+  "stages": {
+    "desktopIdle": {
+      "label": "desktop-idle",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "fine",
+      "anchorState": "idle",
+      "fine": true,
+      "coarse": false,
+      "reduced": false,
+      "recordVisible": true,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "播放 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 0,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "0.45s, 0.45s, 0.15s",
+      "p9": [],
+      "pageErrors": [],
+      "contextLosses": []
+    },
+    "vSingle": {
+      "label": "v-single",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "fine",
+      "anchorState": "playing",
+      "fine": true,
+      "coarse": false,
+      "reduced": false,
+      "recordVisible": false,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "停止 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 1,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "0.45s, 0.45s, 0.15s",
+      "p9": [
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 4455.5999999940395
+        }
+      ],
+      "pageErrors": [],
+      "contextLosses": []
+    },
+    "playingTransition": {
+      "label": "playing-transition",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "fine",
+      "anchorState": "playing",
+      "fine": true,
+      "coarse": false,
+      "reduced": false,
+      "recordVisible": false,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "停止 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 1,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "0.45s, 0.45s, 0.15s",
+      "p9": [
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 4455.5999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 4971.0999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 5321.0999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 5688
+        }
+      ],
+      "pageErrors": [],
+      "contextLosses": []
+    },
+    "vPressure": {
+      "label": "v-pressure",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "fine",
+      "anchorState": "playing",
+      "fine": true,
+      "coarse": false,
+      "reduced": false,
+      "recordVisible": false,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "停止 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 1,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "0.45s, 0.45s, 0.15s",
+      "p9": [
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 4455.5999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 4971.0999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 5321.0999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 5688
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 6754.5
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": false,
+          "reason": "capacity",
+          "at": 7254
+        }
+      ],
+      "pageErrors": [],
+      "contextLosses": []
+    },
+    "afterTail": {
+      "label": "after-4.2s-tail",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "fine",
+      "anchorState": "idle",
+      "fine": true,
+      "coarse": false,
+      "reduced": false,
+      "recordVisible": true,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "播放 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 0,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "0.45s, 0.45s, 0.15s",
+      "p9": [
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 4455.5999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 4971.0999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 5321.0999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 5688
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 6754.5
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": false,
+          "reason": "capacity",
+          "at": 7254
+        }
+      ],
+      "pageErrors": [],
+      "contextLosses": []
+    },
+    "resumed": {
+      "label": "restarted",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "fine",
+      "anchorState": "playing",
+      "fine": true,
+      "coarse": false,
+      "reduced": false,
+      "recordVisible": false,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "停止 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 1,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "0.45s, 0.45s, 0.15s",
+      "p9": [
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 4455.5999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 4971.0999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 5321.0999999940395
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 5688
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 6754.5
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": false,
+          "reason": "capacity",
+          "at": 7254
+        },
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 13954.40000000596
+        }
+      ],
+      "pageErrors": [],
+      "contextLosses": []
+    },
+    "routeReturn": {
+      "label": "route-return",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "fine",
+      "anchorState": "idle",
+      "fine": true,
+      "coarse": false,
+      "reduced": false,
+      "recordVisible": true,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "播放 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 0,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "0.45s, 0.45s, 0.15s",
+      "p9": [],
+      "pageErrors": [],
+      "contextLosses": []
+    },
+    "mobileIdle": {
+      "label": "mobile-idle",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "coarse",
+      "anchorState": "idle",
+      "fine": false,
+      "coarse": true,
+      "reduced": false,
+      "recordVisible": true,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "播放 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 0,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "0.45s, 0.45s, 0.15s",
+      "p9": [],
+      "pageErrors": [],
+      "contextLosses": []
+    },
+    "mobilePlaying": {
+      "label": "mobile-playing",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "coarse",
+      "anchorState": "playing",
+      "fine": false,
+      "coarse": true,
+      "reduced": false,
+      "recordVisible": false,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "停止 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 1,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "0.45s, 0.45s, 0.15s",
+      "p9": [
+        {
+          "key": "v",
+          "id": "FX32",
+          "accepted": true,
+          "reason": null,
+          "at": 2080.0999999940395
+        }
+      ],
+      "pageErrors": [],
+      "contextLosses": []
+    },
+    "reducedIdle": {
+      "label": "reduced-idle",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "coarse",
+      "anchorState": "idle",
+      "fine": false,
+      "coarse": true,
+      "reduced": true,
+      "recordVisible": true,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "播放 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 0,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "1e-05s",
+      "p9": [],
+      "pageErrors": [],
+      "contextLosses": []
+    },
+    "reducedPlaying": {
+      "label": "reduced-playing",
+      "href": "http://127.0.0.1:3100/score-lab/1",
+      "capability": "coarse",
+      "anchorState": "playing",
+      "fine": false,
+      "coarse": true,
+      "reduced": true,
+      "recordVisible": false,
+      "recordLabel": "播放 Ripples #1",
+      "playbackVisible": true,
+      "playbackLabel": "停止 Ripples #1",
+      "sphereCount": 0,
+      "eclipseOpacity": 1,
+      "canvasCount": 2,
+      "canvasStable": true,
+      "overflowX": 0,
+      "recordTransition": "1e-05s",
+      "p9": [],
+      "pageErrors": [],
+      "contextLosses": []
+    }
+  },
+  "diagnostics": {
+    "protocolErrors": [],
+    "externalNetworkErrors": [
+      {
+        "entry": {
+          "source": "network",
+          "level": "error",
+          "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+          "timestamp": 1788266272191.165,
+          "url": "https://fnbuavsrgtjf5emf47rtxokzfkvmn7du2iz5byeuhbbaxnjhqsfa.arweave.net/K0NAVlE00l6RhefjO7lZKqrG_HTSM9DglDhCC7UnhIo",
+          "networkRequestId": "49564.110"
+        }
+      }
+    ],
+    "pageErrors": [],
+    "contextLosses": []
+  },
+  "limitations": [
+    "当前 PlayerProvider 的“停止”会归零；paused、续播与 ended 不能作为独立 DOM 状态断言，G6 只实证停止/重播。",
+    "4.2 秒余韵以“无新增触发、唱片/日食复位、Canvas 稳定”作黑盒代理，页面未暴露内部 voice 数。",
+    "粗指针由沙盒捕获层阻止事件抵达共享 pointer consumers；共享 WaterDistort/wake-field listener 仍注册，严格的零注册需跨越 A1.2 沙盒边界。",
+    "375 coarse 为 Edge CDP 触控仿真，不替代 iOS/Android 真机 GPU、音频策略与手感验收。",
+    "Arweave/COOP 连接失败会完整列入 externalNetworkErrors，但不冒充应用 console error。"
+  ]
+}

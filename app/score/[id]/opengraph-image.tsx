@@ -1,147 +1,96 @@
 import { ImageResponse } from 'next/og';
 import { getScoreById } from '@/src/data/score-source';
 
-/**
- * /score/[id] 的动态 OG 分享卡
- * Next.js 自动在 <meta og:image> 中引用此路由生成的图片。
- * 微信/Twitter 分享时自动展示封面 + 曲目名 + 品牌。
- *
- * B8：路由 ID 双兼容（tokenId 数字 / queue.id UUID）。未上链草稿也会出 OG，
- * 但卡片标题用"上链中"代替 #{tokenId}。
- */
-
 export const runtime = 'nodejs';
-export const alt = 'Ripples in the Pond — Score NFT';
+export const alt = 'Ripples in the Pond — 永久唱片';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 type Props = { params: Promise<{ id: string }> };
 
+async function availableCover(url: string): Promise<string | null> {
+  if (!url) return null;
+  try {
+    const response = await fetch(url, { signal: AbortSignal.timeout(4000) });
+    const type = response.headers.get('content-type') ?? '';
+    return response.ok && type.startsWith('image/') ? url : null;
+  } catch { return null; }
+}
+
+function statusLabel(state: 'ready' | 'processing' | 'failed'): string {
+  if (state === 'ready') return 'PERMANENT SCORE · 已定稿';
+  if (state === 'processing') return 'PRESSING IN PROGRESS · 制作中';
+  return 'ARCHIVE AVAILABLE · 凭证可核验';
+}
+
 export default async function OgImage({ params }: Props) {
   const { id } = await params;
   const score = await getScoreById(id);
   if (!score) return fallbackImage();
-
-  // 预取封面：Satori <img> 内部 fetch 失败会整个崩，
-  // 所以先手动 fetch，成功才传 src，否则降级色块。
-  let coverSrc: string | null = null;
-  if (score.coverUrl) {
-    try {
-      const resp = await fetch(score.coverUrl, {
-        signal: AbortSignal.timeout(4000),
-      });
-      if (resp.ok) coverSrc = score.coverUrl;
-    } catch {
-      // ESET / 网络不可达 → 降级色块
-    }
-  }
+  const cover = await availableCover(score.coverUrl);
+  const title = score.tokenId == null ? 'Ripples · 制作中' : `Ripples #${score.tokenId}`;
+  const events = score.eventCount == null ? '事件数待核验' : `${score.eventCount} 个永久事件`;
 
   return new ImageResponse(
-    (
-      <div
-        style={{
-          display: 'flex',
-          width: '100%',
-          height: '100%',
-          background: '#000',
-          color: '#fff',
-          fontFamily: 'system-ui, sans-serif',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 60,
-          padding: 60,
-        }}
-      >
-        {/* 封面：预取成功用图，否则降级色块 */}
-        {coverSrc ? (
+    <div style={{
+      display: 'flex', position: 'relative', width: '100%', height: '100%', overflow: 'hidden',
+      background: '#070706', color: '#e3dccf', fontFamily: 'Georgia, serif', padding: '54px 62px',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0, display: 'flex',
+        background: 'radial-gradient(ellipse at 33% 55%, rgba(142,155,131,.18), transparent 42%), linear-gradient(180deg, #0c0b09 0%, #070706 76%)',
+      }} />
+      {[0, 1, 2, 3].map((ring) => (
+        <div key={ring} style={{
+          position: 'absolute', left: 70 - ring * 38, top: 360 - ring * 22,
+          width: 610 + ring * 76, height: 128 + ring * 44, border: '1px solid rgba(227,220,207,.12)',
+          borderRadius: '50%', transform: 'rotate(-4deg)',
+        }} />
+      ))}
+      <div style={{ position: 'absolute', left: 112, top: 486, width: 410, height: 46, borderRadius: '50%', background: 'rgba(0,0,0,.5)' }} />
+      <div style={{
+        position: 'relative', display: 'flex', width: 390, height: 390, marginTop: 72, marginLeft: 18,
+        alignItems: 'center', justifyContent: 'center', borderRadius: '50%',
+        border: '1px solid rgba(227,220,207,.28)',
+        background: 'radial-gradient(circle at 43% 36%, #292720 0%, #0b0c0b 28%, #010202 72%)',
+        boxShadow: '0 28px 70px rgba(0,0,0,.6)',
+      }}>
+        {[0, 1, 2, 3, 4].map((groove) => (
+          <div key={groove} style={{
+            position: 'absolute', width: 344 - groove * 42, height: 344 - groove * 42,
+            border: '1px solid rgba(227,220,207,.10)', borderRadius: '50%',
+          }} />
+        ))}
+        {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={coverSrc}
-            alt=""
-            width={360}
-            height={360}
-            style={{ borderRadius: 16, objectFit: 'cover' }}
-          />
+          <img src={cover} alt="" width={142} height={142} style={{ borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(195,161,95,.72)' }} />
         ) : (
-          <div
-            style={{
-              width: 360,
-              height: 360,
-              borderRadius: 16,
-              background: 'linear-gradient(135deg, #1e3a5f, #3b82f6)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 120,
-              opacity: 0.4,
-            }}
-          >
-            ♫
-          </div>
+          <div style={{ display: 'flex', width: 142, height: 142, borderRadius: '50%', alignItems: 'center', justifyContent: 'center', background: '#251d11', border: '2px solid #c3a15f', color: '#c3a15f', fontSize: 56 }}>R</div>
         )}
-
-        {/* 文字区域 */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 16,
-            maxWidth: 600,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 18,
-              letterSpacing: '0.15em',
-              opacity: 0.5,
-              textTransform: 'uppercase',
-            }}
-          >
-            Ripples in the Pond
-          </div>
-          <div style={{ fontSize: 48, fontWeight: 300, lineHeight: 1.2 }}>
-            {score.tokenId != null ? `Ripples #${score.tokenId}` : 'Ripples · 上链中'}
-          </div>
-          <div style={{ fontSize: 24, opacity: 0.6 }}>
-            {score.trackTitle}
-          </div>
-          <div style={{ fontSize: 18, opacity: 0.35, marginTop: 8 }}>
-            {`${score.eventCount} events`}
-          </div>
+        <div style={{ position: 'absolute', width: 10, height: 10, borderRadius: '50%', background: '#d8b870', border: '2px solid #070706' }} />
+      </div>
+      <div style={{ position: 'relative', display: 'flex', flex: 1, flexDirection: 'column', marginLeft: 78, paddingTop: 34 }}>
+        <div style={{ display: 'flex', color: '#c3a15f', fontFamily: 'monospace', fontSize: 15, letterSpacing: '.16em' }}>
+          {statusLabel(score.state)}
+        </div>
+        <div style={{ display: 'flex', width: 54, marginTop: 24, borderTop: '1px solid #c3a15f' }} />
+        <div style={{ display: 'flex', marginTop: 28, fontSize: 62, fontWeight: 400, lineHeight: 1.02, letterSpacing: '-.025em' }}>{title}</div>
+        <div style={{ display: 'flex', marginTop: 22, color: '#aaa397', fontSize: 27 }}>{score.trackTitle}</div>
+        <div style={{ display: 'flex', marginTop: 14, color: '#7f796f', fontFamily: 'monospace', fontSize: 17 }}>{events}</div>
+        <div style={{ display: 'flex', marginTop: 'auto', paddingTop: 28, borderTop: '1px solid rgba(227,220,207,.18)', justifyContent: 'space-between', color: '#aaa397', fontFamily: 'monospace', fontSize: 14, letterSpacing: '.1em' }}>
+          <span>RIPPLES IN THE POND</span><span>OP ARCHIVE</span>
         </div>
       </div>
-    ),
+    </div>,
     { ...size },
   );
 }
 
 function fallbackImage() {
   return new ImageResponse(
-    (
-      <div
-        style={{
-          display: 'flex',
-          width: '100%',
-          height: '100%',
-          background: '#000',
-          color: '#fff',
-          fontFamily: 'system-ui, sans-serif',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <div
-          style={{
-            fontSize: 36,
-            fontWeight: 200,
-            letterSpacing: '0.12em',
-            opacity: 0.6,
-          }}
-        >
-          Ripples in the Pond
-        </div>
-      </div>
-    ),
+    <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(ellipse at 50% 60%, #151b17, #070706 66%)', color: '#e3dccf', fontFamily: 'Georgia, serif', fontSize: 48, letterSpacing: '.08em' }}>
+      Ripples in the Pond
+    </div>,
     { ...size },
   );
 }

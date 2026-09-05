@@ -2,73 +2,76 @@ import 'server-only';
 import { createPublicClient, http } from 'viem';
 import { CURRENT_CHAIN } from '@/src/lib/chain/chain-config';
 import { SCORE_NFT_ADDRESS, SCORE_NFT_ABI } from '@/src/lib/chain/contracts';
-import { resolveArUrl } from '@/src/lib/arweave';
-import type { ScorePageData } from './score-source';
+import { createScoreProvenance, loadScoreMetadata } from './score/metadata';
+import type { ScoreFailedData, ScorePageData, ScoreReadyData } from './score-source';
 
-/**
- * P10-C 链上灾备（方案 a）：DB miss + 数字 tokenId 时，读链上 tokenURI + Arweave
- * metadata，返回降级 ScorePageData（无 track，带 animationUrl → 页面渲染 decoder iframe）。
- *
- * 用独立只读 publicClient（不碰 operator-wallet 私钥模块）；全 view call，不违
- * CONVENTIONS §3.1"前端不调合约"。任何一步失败 → 返 null（回到 notFound），
- * 灾备只锦上添花，不引入新崩溃面。
- */
 const readClient = createPublicClient({
   chain: CURRENT_CHAIN,
   transport: http(process.env.ALCHEMY_RPC_URL),
 });
 
-type Attr = { trait_type: string; value: string | number };
-
-export async function getScoreFromChain(tokenId: number): Promise<ScorePageData | null> {
+async function readTokenUri(tokenId: number): Promise<string | null> {
   try {
-    const uri = (await readClient.readContract({
-      address: SCORE_NFT_ADDRESS,
-      abi: SCORE_NFT_ABI,
-      functionName: 'tokenURI',
-      args: [BigInt(tokenId)],
-    })) as string;
-    if (!uri?.startsWith('ar://')) return null;
-
-    const resp = await fetch(resolveArUrl(uri.slice('ar://'.length)), {
-      signal: AbortSignal.timeout(4000),
+    const value = await readClient.readContract({
+      address: SCORE_NFT_ADDRESS, abi: SCORE_NFT_ABI,
+      functionName: 'tokenURI', args: [BigInt(tokenId)],
     });
-    if (!resp.ok) return null;
-    const meta = await resp.json();
-    if (!meta?.animation_url) return null;
-
-    const attrs: Attr[] = Array.isArray(meta.attributes) ? meta.attributes : [];
-    const attr = (t: string) => attrs.find((a) => a.trait_type === t)?.value;
-    const track = attr('Track');
-    const events = attr('Events');
-    const minted = attr('Minted At');
-
-    // ownerOf 失败不致命，creatorAddress 留空
-    let creatorAddress = '';
-    try {
-      creatorAddress = (await readClient.readContract({
-        address: SCORE_NFT_ADDRESS,
-        abi: SCORE_NFT_ABI,
-        functionName: 'ownerOf',
-        args: [BigInt(tokenId)],
-      })) as string;
-    } catch {
-      /* keep empty */
-    }
-
-    return {
-      id: String(tokenId),
-      tokenId,
-      trackTitle: typeof track === 'string' ? track : (meta.name ?? `Ripples #${tokenId}`),
-      creatorAddress,
-      coverUrl: typeof meta.image === 'string' ? meta.image : '',
-      mintedAt: typeof minted === 'string' ? minted : new Date(0).toISOString(),
-      eventCount: typeof events === 'number' ? events : 0,
-      animationUrl: meta.animation_url as string,
-      degraded: true,
-    };
-  } catch (err) {
-    console.error('[score-fallback] chain fallback failed:', tokenId, err);
+    return typeof value === 'string' && value.startsWith('ar://') ? value : null;
+  } catch (error) {
+    console.error('[score-fallback] tokenURI read failed:', tokenId, error);
     return null;
+  }
+}
+
+export async function getScoreOwner(tokenId: number): Promise<string | null> {
+  try {
+    return await readClient.readContract({
+      address: SCORE_NFT_ADDRESS, abi: SCORE_NFT_ABI,
+      functionName: 'ownerOf', args: [BigInt(tokenId)],
+    }) as string;
+  } catch (error) {
+    console.error('[score-fallback] ownerOf read failed:', tokenId, error);
+    return null;
+  }
+}
+
+function metadataFailure(tokenId: number, tokenUri: string, holder: string | null): ScoreFailedData {
+  return {
+    state: 'failed', source: 'chain', id: String(tokenId), queueId: null, tokenId,
+    queueStatus: null, trackTitle: `Ripples #${tokenId}`, creatorAddress: '',
+    currentHolder: holder, coverUrl: '', eventCount: null, permanentEventCount: null,
+    createdAt: null, confirmedAt: null, mintedAt: '', degraded: true,
+    publicFailure: 'metadata_unavailable', failureKind: null,
+    provenance: createScoreProvenance({
+      contract: SCORE_NFT_ADDRESS, tokenId, holder, creator: null, mintTx: null,
+      setUriTx: null, metadataRef: tokenUri, manifest: null,
+    }),
+  };
+}
+
+/** DB miss 时只从 OP tokenURI 与永久 metadata 重建，不拼接当前环境资源。 */
+export async function getScoreFromChain(tokenId: number): Promise<ScorePageData | null> {
+  const tokenUri = await readTokenUri(tokenId);
+  if (!tokenUri) return null;
+  const holder = await getScoreOwner(tokenId);
+  try {
+    const metadata = await loadScoreMetadata(tokenUri);
+    if (metadata.eventCount == null) throw new Error('永久 metadata 缺少事件数');
+    const ready: ScoreReadyData = {
+      state: 'ready', source: 'chain', id: String(tokenId), queueId: null, tokenId,
+      queueStatus: null, trackTitle: metadata.trackTitle ?? metadata.name ?? `Ripples #${tokenId}`,
+      creatorAddress: '', currentHolder: holder, coverUrl: metadata.coverUrl ?? '',
+      eventCount: metadata.eventCount, permanentEventCount: metadata.eventCount,
+      createdAt: null, confirmedAt: null, mintedAt: metadata.mintedAt ?? '',
+      degraded: true, metadataRef: metadata.metadataRef, manifest: metadata.manifest,
+      provenance: createScoreProvenance({
+        contract: SCORE_NFT_ADDRESS, tokenId, holder, creator: null, mintTx: null,
+        setUriTx: null, metadataRef: metadata.metadataRef, manifest: metadata.manifest,
+      }),
+    };
+    return ready;
+  } catch (error) {
+    console.error('[score-fallback] permanent metadata invalid:', tokenId, error);
+    return metadataFailure(tokenId, tokenUri, holder);
   }
 }

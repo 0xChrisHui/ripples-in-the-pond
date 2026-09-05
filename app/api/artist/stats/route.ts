@@ -1,77 +1,68 @@
-import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/src/lib/supabase";
-
-/**
- * GET /api/artist/stats
- * 公开 API，无需鉴权
- * 返回项目统计：曲目数 / 铸造数 / 参与者数 / 进度
- */
+import { NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/src/lib/supabase';
 
 const TOTAL_TRACKS_GOAL = 108;
-const AIRDROP_INTERVAL = 36;
 
+async function readPublished(): Promise<number> {
+  const { count, error } = await supabaseAdmin.from('tracks')
+    .select('id', { count: 'exact', head: true }).eq('published', true);
+  if (error || count == null) throw new Error(error?.message ?? '缺少已发布作品数');
+  return count;
+}
+
+async function readMaterialMints(): Promise<number> {
+  const { count, error } = await supabaseAdmin.from('mint_events')
+    .select('id', { count: 'exact', head: true }).is('score_nft_token_id', null);
+  if (error || count == null) throw new Error(error?.message ?? '缺少素材铸造数');
+  return count;
+}
+
+async function readScoreMints(): Promise<number> {
+  const { count, error } = await supabaseAdmin.from('score_nft_queue')
+    .select('id', { count: 'exact', head: true }).eq('status', 'success');
+  if (error || count == null) throw new Error(error?.message ?? '缺少唱片铸造数');
+  return count;
+}
+
+async function readParticipants(): Promise<number> {
+  const [material, score] = await Promise.all([
+    supabaseAdmin.from('mint_events').select('user_id').is('score_nft_token_id', null),
+    supabaseAdmin.from('score_nft_queue').select('user_id').eq('status', 'success'),
+  ]);
+  if (material.error || score.error) throw new Error(material.error?.message ?? score.error?.message);
+  const ids = [...(material.data ?? []), ...(score.data ?? [])]
+    .map((row) => row.user_id).filter((id): id is string => typeof id === 'string' && id.length > 0);
+  return new Set(ids).size;
+}
+
+function valueOf<T>(result: PromiseSettledResult<T>): T | null {
+  return result.status === 'fulfilled' ? result.value : null;
+}
+
+/** 公开统计只返回可证实数字；任一局部查询失败时对应值为 null。 */
 export async function GET() {
-  try {
-    // 1. 已发布曲目数
-    const { count: trackCount } = await supabaseAdmin
-      .from("tracks")
-      .select("id", { count: "exact", head: true });
+  const [publishedResult, materialResult, scoreResult, participantsResult] = await Promise.allSettled([
+    readPublished(), readMaterialMints(), readScoreMints(), readParticipants(),
+  ]);
+  const publishedTracks = valueOf(publishedResult);
+  const materialMints = valueOf(materialResult);
+  const scoreMints = valueOf(scoreResult);
+  const totalMints = materialMints == null || scoreMints == null
+    ? null
+    : materialMints + scoreMints;
+  const participants = valueOf(participantsResult);
+  const progress = publishedTracks == null ? null : Math.round((publishedTracks / TOTAL_TRACKS_GOAL) * 100);
+  const errors = [publishedResult, materialResult, scoreResult, participantsResult]
+    .filter((result) => result.status === 'rejected').length;
+  if (errors > 0) console.error('[artist-stats] partial query failure:', { errors });
 
-    // 2. Material NFT 铸造数（成功的）
-    const { count: materialMints } = await supabaseAdmin
-      .from("mint_events")
-      .select("id", { count: "exact", head: true })
-      .is("score_nft_token_id", null);
-
-    // 3. Score NFT 铸造数（成功的）
-    const { count: scoreMints } = await supabaseAdmin
-      .from("score_nft_queue")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "success");
-
-    // 4. 总参与者数（不同 user_id 有铸造记录的）
-    const { data: participants } = await supabaseAdmin
-      .from("mint_events")
-      .select("user_id");
-
-    const uniqueUsers = new Set(
-      (participants ?? []).map((p) => p.user_id),
-    );
-
-    // 也统计 score_nft_queue 的参与者
-    const { data: scoreParticipants } = await supabaseAdmin
-      .from("score_nft_queue")
-      .select("user_id")
-      .eq("status", "success");
-
-    for (const p of scoreParticipants ?? []) {
-      uniqueUsers.add(p.user_id);
-    }
-
-    const published = trackCount ?? 0;
-    const totalMints = (materialMints ?? 0) + (scoreMints ?? 0);
-    const currentRound = Math.floor(published / AIRDROP_INTERVAL) + 1;
-    const nextAirdropAt = Math.min(
-      currentRound * AIRDROP_INTERVAL,
-      TOTAL_TRACKS_GOAL,
-    );
-
-    return NextResponse.json({
-      publishedTracks: published,
-      totalTracksGoal: TOTAL_TRACKS_GOAL,
-      totalMints,
-      materialMints: materialMints ?? 0,
-      scoreMints: scoreMints ?? 0,
-      participants: uniqueUsers.size,
-      currentRound,
-      nextAirdropAt,
-      progress: Math.round((published / TOTAL_TRACKS_GOAL) * 100),
-    });
-  } catch (err) {
-    console.error("GET /api/artist/stats error:", err);
-    return NextResponse.json(
-      { error: "获取统计失败" },
-      { status: 500 },
-    );
-  }
+  return NextResponse.json({
+    publishedTracks,
+    totalTracksGoal: TOTAL_TRACKS_GOAL,
+    totalMints,
+    materialMints,
+    scoreMints,
+    participants,
+    progress,
+  });
 }

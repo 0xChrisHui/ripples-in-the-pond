@@ -1,0 +1,124 @@
+{
+  "generatedAt": "2026-09-01T10:33:50.504Z",
+  "desktopIdle": {
+    "href": "http://127.0.0.1:3000/score-lab/1",
+    "canvasCount": 2,
+    "sphereButtons": 1,
+    "pressed": "false",
+    "label": "播放 33",
+    "eclipseOpacity": "0",
+    "status": "点击水面上的球，唤起日食与白色静浪",
+    "p9": [],
+    "canvasStable": true
+  },
+  "desktopActive": {
+    "href": "http://127.0.0.1:3000/score-lab/1",
+    "canvasCount": 2,
+    "sphereButtons": 1,
+    "pressed": "true",
+    "label": "暂停 33",
+    "eclipseOpacity": "1",
+    "status": "正在播放 · V×6 真实时序预演",
+    "p9": [
+      {
+        "key": "v",
+        "accepted": true,
+        "reason": null
+      }
+    ],
+    "canvasStable": true
+  },
+  "desktopSettled": {
+    "href": "http://127.0.0.1:3000/score-lab/1",
+    "canvasCount": 2,
+    "sphereButtons": 1,
+    "pressed": "true",
+    "label": "暂停 33",
+    "eclipseOpacity": "1",
+    "status": "正在播放 · V×6 真实时序预演",
+    "p9": [
+      {
+        "key": "v",
+        "accepted": true,
+        "reason": null
+      },
+      {
+        "key": "v",
+        "accepted": true,
+        "reason": null
+      },
+      {
+        "key": "v",
+        "accepted": true,
+        "reason": null
+      },
+      {
+        "key": "v",
+        "accepted": true,
+        "reason": null
+      },
+      {
+        "key": "v",
+        "accepted": true,
+        "reason": null
+      },
+      {
+        "key": "v",
+        "accepted": false,
+        "reason": "capacity"
+      }
+    ],
+    "canvasStable": true
+  },
+  "mobileIdle": {
+    "href": "http://127.0.0.1:3000/score-lab/1",
+    "canvasCount": 2,
+    "sphereButtons": 1,
+    "pressed": "false",
+    "label": "播放 33",
+    "eclipseOpacity": "0",
+    "status": "点击水面上的球，唤起日食与白色静浪",
+    "p9": [],
+    "canvasStable": true
+  },
+  "mobileActive": {
+    "href": "http://127.0.0.1:3000/score-lab/1",
+    "canvasCount": 2,
+    "sphereButtons": 1,
+    "pressed": "true",
+    "label": "暂停 33",
+    "eclipseOpacity": "1",
+    "status": "正在播放 · V×6 真实时序预演",
+    "p9": [
+      {
+        "key": "v",
+        "accepted": true,
+        "reason": null
+      },
+      {
+        "key": "v",
+        "accepted": true,
+        "reason": null
+      }
+    ],
+    "canvasStable": true
+  },
+  "reducedMotion": {
+    "href": "http://127.0.0.1:3000/score-lab/1",
+    "canvasCount": 2,
+    "sphereButtons": 1,
+    "pressed": "true",
+    "label": "暂停 33",
+    "eclipseOpacity": "1",
+    "status": "正在播放 · V×6 真实时序预演",
+    "p9": [
+      {
+        "key": "v",
+        "accepted": true,
+        "reason": null
+      }
+    ],
+    "canvasStable": true
+  },
+  "errors": []
+}

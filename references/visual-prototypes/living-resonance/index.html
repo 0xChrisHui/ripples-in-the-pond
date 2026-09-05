@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#06110f">
+  <title>Living Resonance — Ripples in the Pond</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="experience" aria-label="液态共生体音乐原型">
+    <canvas id="ecosystem" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <div id="organism-layer" class="organism-layer"></div>
+
+    <header class="masthead">
+      <div class="identity">
+        <p class="eyebrow">A LIVING ARCHIVE · 001—108</p>
+        <h1>Ripples <i>in the</i> Pond</h1>
+        <p class="descriptor">三十六个声音生命体，在同一片深水中等待被唤醒。</p>
+      </div>
+      <button id="collection-button" class="collection-button" type="button">
+        <span>我的音乐</span><b id="seed-count">00</b>
+      </button>
+    </header>
+
+    <nav class="chapter-nav" aria-label="生态章节">
+      <p>生态层</p>
+      <button class="chapter is-active" data-chapter="0" type="button"><b>Ⅰ</b><span>潮下花园</span></button>
+      <button class="chapter" data-chapter="1" type="button"><b>Ⅱ</b><span>微光群落</span></button>
+      <button class="chapter" data-chapter="2" type="button"><b>Ⅲ</b><span>深水记忆</span></button>
+    </nav>
+
+    <section id="specimen-tag" class="specimen-tag" aria-live="polite">
+      <span class="tag-line" aria-hidden="true"></span>
+      <p id="tag-index">SPECIMEN 001</p>
+      <h2 id="tag-title">微潮</h2>
+      <span>触碰以聆听</span>
+    </section>
+
+    <section id="onboarding" class="onboarding">
+      <p class="eyebrow">FIRST CONTACT</p>
+      <h2>触碰一个生命体<br>让声音在水中醒来</h2>
+      <p>播放后按下 A—Z，留下属于你的记忆丝。</p>
+      <button id="enter-button" type="button">进入生态场 <span>↗</span></button>
+    </section>
+
+    <div class="keyboard-guide">
+      <span id="key-orb">A—Z</span>
+      <p id="key-message">键盘演奏 · 每个声音拥有不同的生物反应</p>
+    </div>
+
+    <section id="player" class="player" aria-label="正在播放">
+      <div class="player-title"><small id="player-index">001</small><strong id="player-name">微潮</strong></div>
+      <p id="record-state"><i></i>记忆丝正在生长</p>
+      <div class="progress"><span id="progress-bar"></span></div>
+      <time id="player-time">00:00 / 02:24</time>
+      <button id="stop-button" type="button">停止</button>
+      <button id="collect-button" type="button">收藏种子</button>
+    </section>
+
+    <aside id="tune-panel" class="tune-panel" aria-label="生态调参面板">
+      <div class="panel-head"><p>FIELD TUNING</p><button id="close-panel" type="button">×</button></div>
+      <div class="presets">
+        <button data-preset="dormant" type="button">休眠</button>
+        <button data-preset="listening" type="button">聆听</button>
+        <button data-preset="resonant" type="button">共鸣</button>
+      </div>
+      <label>流场速度 <output>0.26</output><input data-tune="flow" type="range" min="0" max="1" step="0.01" value="0.26"></label>
+      <label>膜呼吸 <output>0.34</output><input data-tune="breath" type="range" min="0" max="1" step="0.01" value="0.34"></label>
+      <label>膜张力 <output>0.48</output><input data-tune="membrane" type="range" min="0" max="1" step="0.01" value="0.48"></label>
+      <label>神经响应 <output>0.72</output><input data-tune="response" type="range" min="0" max="1" step="0.01" value="0.72"></label>
+      <label>记忆残留 <output>0.62</output><input data-tune="trail" type="range" min="0" max="1" step="0.01" value="0.62"></label>
+      <label>核心辉光 <output>0.54</output><input data-tune="halo" type="range" min="0" max="1" step="0.01" value="0.54"></label>
+      <p class="panel-hint">按 D 隐藏实验面板</p>
+    </aside>
+
+    <p class="mobile-note">触碰可聆听与收藏 · 使用电脑键盘体验完整合奏</p>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

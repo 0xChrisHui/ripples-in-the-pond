@@ -1,0 +1,243 @@
+{
+  "startedAt": "2026-09-01T19:48:31.797Z",
+  "matrix": [
+    {
+      "name": "390-idle",
+      "href": "http://127.0.0.1:3015/score/1",
+      "title": "Ripples #1 — 33",
+      "scoreState": "ready",
+      "playbackState": "loading",
+      "capability": "coarse",
+      "reducedMotionData": "false",
+      "reducedMotionMedia": false,
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "scrollWidth": 390
+      },
+      "overflowX": false,
+      "share": {
+        "text": "分享\n更多",
+        "top": 12,
+        "bottom": 56,
+        "firstScreen": true
+      },
+      "ledgerRows": 12,
+      "ledgerPresent": true,
+      "bottomPlayer": false,
+      "canvasCount": 1,
+      "webglCanvasCount": 1,
+      "glHealth": "unavailable",
+      "h1Count": 1,
+      "bodyText": "←\n返回池塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n更多\n已定稿\nFINALIZED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n正在准备永久录音…\n\n永久音频只会在你主动点击后建立播放会话。\n正在准备\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xAc3F7471…6c20A4AA\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：OP 合约\n创作者\n0x19da4b17…E2E6bA54\n来源：作品数据库\n复制完整值\n当前持有者\n0x19da4b17…E2E6bA54\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\n铸造交易\n0x1d2de0a4…3f182f4a\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n定稿交易\n0xaa72331c…784550dc\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久底曲\nar://M-NM7…weToIqIQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久音效表\nar://NQsgc…X7Eu_kl8\n来源：metadata.anim",
+      "screenshot": "E:/Projects/nft-music/reviews/evidence/p11-score-production/p11-non-audio-390-idle.png"
+    },
+    {
+      "name": "768-idle",
+      "href": "http://127.0.0.1:3015/score/1",
+      "title": "Ripples #1 — 33",
+      "scoreState": "ready",
+      "playbackState": "loading",
+      "capability": "coarse",
+      "reducedMotionData": "false",
+      "reducedMotionMedia": false,
+      "viewport": {
+        "width": 768,
+        "height": 900,
+        "scrollWidth": 768
+      },
+      "overflowX": false,
+      "share": {
+        "text": "分享\n更多",
+        "top": 12,
+        "bottom": 56,
+        "firstScreen": true
+      },
+      "ledgerRows": 12,
+      "ledgerPresent": true,
+      "bottomPlayer": false,
+      "canvasCount": 2,
+      "webglCanvasCount": 1,
+      "glHealth": "healthy",
+      "h1Count": 1,
+      "bodyText": "←\n返回池塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n更多\n已定稿\nFINALIZED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n正在准备永久录音…\n\n永久音频只会在你主动点击后建立播放会话。\n正在准备\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xAc3F7471…6c20A4AA\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：OP 合约\n创作者\n0x19da4b17…E2E6bA54\n来源：作品数据库\n复制完整值\n当前持有者\n0x19da4b17…E2E6bA54\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\n铸造交易\n0x1d2de0a4…3f182f4a\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n定稿交易\n0xaa72331c…784550dc\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久底曲\nar://M-NM7…weToIqIQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久音效表\nar://NQsgc…X7Eu_kl8\n来源：metadata.anim",
+      "screenshot": "E:/Projects/nft-music/reviews/evidence/p11-score-production/p11-non-audio-768-idle.png"
+    },
+    {
+      "name": "1024-idle",
+      "href": "http://127.0.0.1:3015/score/1",
+      "title": "Ripples #1 — 33",
+      "scoreState": "ready",
+      "playbackState": "loading",
+      "capability": "coarse",
+      "reducedMotionData": "false",
+      "reducedMotionMedia": false,
+      "viewport": {
+        "width": 1024,
+        "height": 900,
+        "scrollWidth": 1024
+      },
+      "overflowX": false,
+      "share": {
+        "text": "分享\n更多",
+        "top": 12,
+        "bottom": 56,
+        "firstScreen": true
+      },
+      "ledgerRows": 12,
+      "ledgerPresent": true,
+      "bottomPlayer": false,
+      "canvasCount": 2,
+      "webglCanvasCount": 1,
+      "glHealth": "healthy",
+      "h1Count": 1,
+      "bodyText": "←\n返回池塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n更多\n已定稿\nFINALIZED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n正在准备永久录音…\n\n永久音频只会在你主动点击后建立播放会话。\n正在准备\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xAc3F7471…6c20A4AA\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：OP 合约\n创作者\n0x19da4b17…E2E6bA54\n来源：作品数据库\n复制完整值\n当前持有者\n0x19da4b17…E2E6bA54\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\n铸造交易\n0x1d2de0a4…3f182f4a\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n定稿交易\n0xaa72331c…784550dc\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久底曲\nar://M-NM7…weToIqIQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久音效表\nar://NQsgc…X7Eu_kl8\n来源：metadata.anim",
+      "screenshot": "E:/Projects/nft-music/reviews/evidence/p11-score-production/p11-non-audio-1024-idle.png"
+    },
+    {
+      "name": "1024-reduced-idle",
+      "href": "http://127.0.0.1:3015/score/1",
+      "title": "Ripples #1 — 33",
+      "scoreState": "ready",
+      "playbackState": "loading",
+      "capability": "fine",
+      "reducedMotionData": "false",
+      "reducedMotionMedia": true,
+      "viewport": {
+        "width": 1024,
+        "height": 900,
+        "scrollWidth": 1024
+      },
+      "overflowX": false,
+      "share": {
+        "text": "分享\n更多",
+        "top": 12,
+        "bottom": 56,
+        "firstScreen": true
+      },
+      "ledgerRows": 12,
+      "ledgerPresent": true,
+      "bottomPlayer": false,
+      "canvasCount": 2,
+      "webglCanvasCount": 1,
+      "glHealth": "healthy",
+      "h1Count": 1,
+      "bodyText": "←\n返回池塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n更多\n已定稿\nFINALIZED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n正在准备永久录音…\n\n永久音频只会在你主动点击后建立播放会话。\n正在准备\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xAc3F7471…6c20A4AA\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：OP 合约\n创作者\n0x19da4b17…E2E6bA54\n来源：作品数据库\n复制完整值\n当前持有者\n0x19da4b17…E2E6bA54\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\n铸造交易\n0x1d2de0a4…3f182f4a\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n定稿交易\n0xaa72331c…784550dc\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：作品数据库\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久底曲\nar://M-NM7…weToIqIQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久音效表\nar://NQsgc…X7Eu_kl8\n来源：metadata.anim",
+      "screenshot": "E:/Projects/nft-music/reviews/evidence/p11-score-production/p11-non-audio-1024-reduced-idle.png"
+    }
+  ],
+  "routes": {
+    "notFound": {
+      "name": "not-found",
+      "href": "http://127.0.0.1:3015/score/not-a-real-id",
+      "title": "作品暂不可用 · Ripples in the Pond",
+      "scoreState": null,
+      "playbackState": null,
+      "capability": null,
+      "reducedMotionData": null,
+      "reducedMotionMedia": false,
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "scrollWidth": 390
+      },
+      "overflowX": false,
+      "share": null,
+      "ledgerRows": 0,
+      "ledgerPresent": false,
+      "bottomPlayer": false,
+      "canvasCount": 0,
+      "webglCanvasCount": 0,
+      "glHealth": null,
+      "h1Count": 1,
+      "bodyText": "处理失败\nFAILED\n404 · NOT FOUND\n\nMISSING RECORD\n\n这里没有这枚唱片\n\n链接可能有误，或这件作品从未存在。数据库暂时不可用时，我们不会把它误报成 404。\n\n← 返回水塘",
+      "screenshot": "E:/Projects/nft-music/reviews/evidence/p11-score-production/p11-non-audio-not-found.png"
+    },
+    "appError": {
+      "status": "pending",
+      "reason": "没有安全且不修改产品代码的运行时触发入口"
+    }
+  },
+  "http": {
+    "og": {
+      "url": "http://127.0.0.1:3015/score/1/opengraph-image",
+      "status": 200,
+      "ok": true,
+      "contentType": "image/png",
+      "contentDisposition": null,
+      "cacheControl": "no-cache, no-store",
+      "bytes": 117101
+    },
+    "poster": {
+      "url": "http://127.0.0.1:3015/score/1/poster",
+      "status": 200,
+      "ok": true,
+      "contentType": "image/png",
+      "contentDisposition": "inline; filename=\"ripples-1.png\"",
+      "cacheControl": "public, max-age=3600",
+      "bytes": 242921
+    }
+  },
+  "console": [
+    {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[GroupMarkerNotSet(crbug.com/242999)!:A06031009C110000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1788292116492.402,
+        "url": "http://127.0.0.1:3015/score/1"
+      }
+    },
+    {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[GroupMarkerNotSet(crbug.com/242999)!:A08061009C110000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1788292117167.541,
+        "url": "http://127.0.0.1:3015/score/1"
+      }
+    },
+    {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "timestamp": 1788292122429.691,
+        "url": "https://v34lm2hcwgmplo3e3afbwofbt6mxl2b5jp62zm6uvkyutcc3sbla.arweave.net/rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+        "networkRequestId": "29192.611"
+      }
+    },
+    {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "timestamp": 1788292122433.596,
+        "url": "https://7pcacku753czo4giof6qrcbiaxiwiazivenswoesw7cdbmga6ngq.arweave.net/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+        "networkRequestId": "29192.605"
+      }
+    },
+    {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "timestamp": 1788292122436.646,
+        "url": "https://i37qymqgn3vfhermmqo5k3fquzb7ccmmp63cwgi4l372mrqgbaaq.arweave.net/Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+        "networkRequestId": "29192.602"
+      }
+    },
+    {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "timestamp": 1788292122440.016,
+        "url": "https://2iav2jkzhalltbwg4kidwcfixr64aigyd7c4ud45xygavdobad3a.arweave.net/0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+        "networkRequestId": "29192.612"
+      }
+    }
+  ],
+  "ok": true,
+  "finishedAt": "2026-09-01T19:49:10.419Z"
+}

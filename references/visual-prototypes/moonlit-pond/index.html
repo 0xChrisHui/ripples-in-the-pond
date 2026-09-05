@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#06100f">
+  <title>Ripples in the Pond — 月下活水庭院</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./responsive.css">
+</head>
+<body>
+  <main class="experience" aria-label="月下音乐水塘">
+    <canvas id="pond" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <div id="a11yNodes" class="a11y-nodes" aria-label="音乐列表"></div>
+
+    <header class="masthead">
+      <a class="brand" href="#" aria-label="Ripples in the Pond 首页">
+        <span>Ripples in the Pond</span>
+        <small>月下声音档案 · 001—108</small>
+      </a>
+      <button id="libraryButton" class="text-button library-button" type="button">
+        我的音乐 <span id="favoriteCount">0</span>
+      </button>
+    </header>
+
+    <nav class="chapters" aria-label="音乐章节">
+      <p>三重水庭</p>
+      <button class="chapter is-active" data-chapter="0" type="button">
+        <span>Ⅰ</span><small>薄明<br>001—036</small>
+      </button>
+      <button class="chapter" data-chapter="1" type="button">
+        <span>Ⅱ</span><small>潮汐<br>037—072</small>
+      </button>
+      <button class="chapter" data-chapter="2" type="button">
+        <span>Ⅲ</span><small>余夜<br>073—108</small>
+      </button>
+    </nav>
+
+    <section id="intro" class="intro" aria-live="polite">
+      <span class="intro-mark" aria-hidden="true"></span>
+      <p>点击一颗声音聆听</p>
+      <small>按 A—Z 加入演奏</small>
+    </section>
+
+    <section id="trackCard" class="track-card" aria-live="polite" aria-hidden="true">
+      <p id="trackNumber" class="track-number">NO. 001</p>
+      <h1 id="trackTitle">水的记忆</h1>
+      <div class="track-actions">
+        <button id="cardPlay" class="circle-button" type="button" aria-label="播放当前音乐">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7.5v9l7-4.5z"/></svg>
+        </button>
+        <button id="cardFavorite" class="favorite-button" type="button" aria-label="收藏当前音乐">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19s-7-4.4-7-9.1C5 7.2 6.7 5.5 9 5.5c1.4 0 2.5.7 3 1.7.5-1 1.6-1.7 3-1.7 2.3 0 4 1.7 4 4.4C19 14.6 12 19 12 19z"/></svg>
+          <span>收藏</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="keyboard-note" aria-live="polite">
+      <p id="keyEcho">A—Z <span>让声音落入水中</span></p>
+      <small id="mobileNote">触摸声音体可以聆听与移动</small>
+    </section>
+
+    <section id="player" class="player" aria-label="播放器" aria-hidden="true">
+      <div class="player-copy">
+        <p id="playerTitle">水的记忆</p>
+        <small id="recordStatus">正在聆听 · 你的演奏会被自然记录</small>
+      </div>
+      <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+      <time id="playerTime">0:00</time>
+      <button id="stopButton" class="circle-button small" type="button" aria-label="停止播放">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h8v8H8z"/></svg>
+      </button>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <button id="debugToggle" class="debug-toggle" type="button" aria-label="打开水庭调节面板">D</button>
+    <aside id="debugPanel" class="debug-panel" aria-hidden="true">
+      <header><p>水庭调律</p><button id="debugClose" type="button" aria-label="关闭">×</button></header>
+      <div class="presets">
+        <button data-preset="still" type="button">静水</button>
+        <button data-preset="moon" type="button">月夜</button>
+        <button data-preset="alive" type="button">活水</button>
+      </div>
+      <label>水波速度 <input data-setting="waveSpeed" type="range" min="0.4" max="1.8" step="0.05" value="1"></label>
+      <label>波纹余韵 <input data-setting="damping" type="range" min="0.35" max="1.2" step="0.05" value="0.75"></label>
+      <label>生命微光 <input data-setting="glow" type="range" min="0.5" max="1.7" step="0.05" value="1"></label>
+      <label>水面呼吸 <input data-setting="drift" type="range" min="0" max="1.5" step="0.05" value="0.7"></label>
+      <label>月光长度 <input data-setting="moon" type="range" min="0.2" max="1.8" step="0.05" value="1"></label>
+      <label>焦点明暗 <input data-setting="contrast" type="range" min="0.4" max="1.4" step="0.05" value="0.9"></label>
+      <p class="debug-help">按 D 隐藏 · 所有参数实时生效</p>
+    </aside>
+  </main>
+  <noscript>请启用 JavaScript，进入可演奏的月下水庭。</noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

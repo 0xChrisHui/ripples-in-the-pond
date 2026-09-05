@@ -1,0 +1,30 @@
+{
+  "tokenId": 1,
+  "permanentSource": {
+    "kind": "Arweave Events Tx",
+    "txId": "7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ",
+    "canonicalUrl": "https://arweave.net/7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ",
+    "count": 35,
+    "keyCount": 13,
+    "keys": ["b", "c", "d", "f", "h", "j", "k", "l", "n", "r", "s", "t", "v"],
+    "fields": ["duration", "key", "time"],
+    "normalizedUtf8Bytes": 1345,
+    "normalizedSha256": "728a104ac691aadcf7f6ca0c9d66fd678d0dbe1a5c9205887d84d9b69eb1851d"
+  },
+  "pageSource": {
+    "kind": "Supabase mirror",
+    "query": "score_nft_queue(token_id=1) -> pending_scores.events_data",
+    "count": 35,
+    "keyCount": 13,
+    "keys": ["b", "c", "d", "f", "h", "j", "k", "l", "n", "r", "s", "t", "v"],
+    "fields": ["duration", "key", "time"],
+    "normalizedUtf8Bytes": 1345,
+    "normalizedSha256": "728a104ac691aadcf7f6ca0c9d66fd678d0dbe1a5c9205887d84d9b69eb1851d"
+  },
+  "comparison": {
+    "normalization": "保持数组顺序与对象字段顺序，JSON.stringify 紧凑 UTF-8；逐事件保留 key/time/duration",
+    "exactNormalizedMatch": true,
+    "verifiedAt": "2026-09-01"
+  },
+  "productionBoundary": "A1.3 沙盒使用经哈希证明相等的数据库镜像；正式 B 必须从 metadata animation_url manifest 解析永久 Events Tx。"
+}
