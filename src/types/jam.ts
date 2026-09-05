@@ -193,7 +193,6 @@ export interface OwnedScoreNFT {
   eventCount: number | null;
   /** 链上 tx hash — 已上链才有 */
   txHash?: string;
-  status: ScoreMintStatus;
   failureKind: ScoreFailureKind | null;
   /** 队列提交时间，不冒充链上铸造时间。 */
   submittedAt: string;
