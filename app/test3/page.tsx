@@ -1,119 +1,13 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
-import { usePathname, useSearchParams } from 'next/navigation';
-import TestJam from '@/src/components/jam/TestJam';
-import DraftSavedToast from '@/src/components/jam/DraftSavedToast';
-import PerfHUD from '@/src/components/PerfHUD';
-import { parseGLFlags, type GLFlags } from '@/src/components/pond-gl-test3/gl-flags';
-import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
-import { useGlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
-import { usePointerFx, setCameraFx } from '@/src/components/pond-gl-test3/pointer-fx';
-import SphereOverlay from '@/src/components/pond-gl-test3/overlay/SphereOverlay';
-import GlEclipse from '@/src/components/pond-gl-test3/overlay/GlEclipse';
-import GlNav from '@/src/components/pond-gl-test3/overlay/GlNav';
-import GlLoading from '@/src/components/pond-gl-test3/overlay/GlLoading';
-import TunePanel from '@/src/components/pond-gl-test3/overlay/TunePanel';
-import ScenePanel from '@/src/components/pond-gl-test3/overlay/ScenePanel';
-import PondHeader from '@/src/components/pond-gl-test3/overlay/PondHeader';
-import RippleSpikePanel from '@/src/components/pond-gl-test3/water/spike/RippleSpikePanel';
-import LifePanel from '@/src/components/pond-gl-test3/life/LifePanel';
-import P9TuningPanel from '@/src/components/pond-gl-test3/p9/tuning/P9TuningPanel';
-import { loadP9Tuning } from '@/src/components/pond-gl-test3/p9/tuning/p9-tuning-store';
-
-// GL 渲染层：全链路 next/dynamic + ssr:false，three/R3F 只进入异步 chunk。
-const PondGL = dynamic(() => import('@/src/components/pond-gl-test3/PondGL'), { ssr: false });
-
-/**
- * `/` 与 `/test3` 共用的真透明合成版本。
- *
- * 渲染层全部走 `@/src/components/pond-gl-test3/`。
- * 与 /test1 仅有的共享边界：纯数据/配置（archipelago/sphere-config、types/tracks、player/PlayerProvider）。
- * 正式首页隐藏沙盒工具；/test3 与兼容入口 /test4 保留调参与诊断能力。
- */
-function Test3PageInner() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const isSandbox = pathname === '/test3' || pathname === '/test4';
-  const isP9Sandbox = pathname === '/test3';
-  const p9Enabled = pathname === '/' || isP9Sandbox;
-  // GL 层开关（初值取 URL）；背景氛围 fx 随 SVG 卸载移除，到 I3 用 GL 重做再加回
-  const [glFlags, setGlFlags] = useState<GLFlags>(() => parseGLFlags(searchParams));
-  const [runtimeGlHealth, setRuntimeGlHealth] = useState<GlHealth>('unavailable');
-  const onGl = useCallback((patch: Partial<GLFlags>) => setGlFlags((f) => ({ ...f, ...patch })), []);
-
-  // 球 / 水面 / 扭曲水面 任一开 → glSim active（取数 / 建 sim / 订阅涟漪事件）
-  const glSim = useGlSim(glFlags.glSpheres || glFlags.water || glFlags.waterFx);
-  // J1：WebGL 不可用 / 强制兜底 → GL 走兜底夜塘，对应隐掉 GL 球的 DOM 叠层（命中/日蚀/切组），
-  // 免得兜底上浮着一堆没有球的标题（缓存检测，forceFallback 切换时重算）
-  const glHealth: GlHealth = glFlags.forceFallback ? 'forced' : runtimeGlHealth;
-  const glOk = glHealth === 'healthy';
-  // 水面固定 → 滚轮驱动一点透视缩放 k、鼠标驱动视差（pointer-fx）。仅透视/视差任一开时才挂监听。
-  usePointerFx(glOk && glFlags.glSpheres && (glFlags.perspective || glFlags.parallax));
-  // 相机三效开关（控制台按钮）同步进 pointer-fx 单例 → 各 ctx builder + project 每帧读取门控
-  useEffect(() => {
-    setCameraFx({ dof: glFlags.dof, perspective: glFlags.perspective, parallax: glFlags.parallax });
-  }, [glFlags.dof, glFlags.perspective, glFlags.parallax]);
-  useEffect(() => { if (p9Enabled) loadP9Tuning(); }, [p9Enabled]);
-
-  return (
-    <main className="relative min-h-screen overflow-hidden bg-black">
-      {/* GL 层：基调 / 球 / 水面 / 背景图 / 实验 任一开就挂 Canvas，都关 = 不加载 three chunk */}
-      {(glFlags.glBase || glFlags.glSpheres || glFlags.water || glFlags.bgImage || glFlags.rtt || glFlags.waterFx || glFlags.floatMotes || glFlags.waterPlants || glFlags.reefStones || glFlags.crystalPillars) && (
-        <PondGL flags={glFlags} glSim={glSim} onHealthChange={setRuntimeGlHealth} />
-      )}
-
-      <PondHeader />
-
-      {/* I1：GL 切组 nav（左上 A/B/C，点击直接切 GL 组）；J1：兜底时隐（无可见球可切） */}
-      {glSim.ready && glOk && <GlNav glSim={glSim} />}
-
-      {/* J4：GL 球取数中/失败的加载浮层（WebGL 可用时才有意义；兜底夜塘自带视觉，不叠） */}
-      {glFlags.glSpheres && glOk && (glSim.loading || glSim.error) && (
-        <GlLoading error={glSim.error} onRetry={glSim.retry} />
-      )}
-
-      {/* 左侧 Jam UI（在 nav 下方） */}
-      <div data-pond-ui="true" className="pointer-events-none fixed left-6 z-30" style={{ top: '14rem' }}>
-        <div className="pointer-events-auto">
-          <TestJam p9Enabled={p9Enabled} />
-        </div>
-      </div>
-
-      {/* GL 球 DOM 命中层（z-10，接点击拖拽，在 nav/HUD 之下）；J1：兜底时隐 */}
-      {glFlags.glSpheres && glSim.ready && glOk && (
-        <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} depthModel={glFlags.depthModel} showLabels={glFlags.sphereLabels} />
-      )}
-
-      {/* I2：GL 日蚀层（z-20，播放球叠日蚀焦点；其他球已隐去）；J1：兜底时隐 */}
-      {glFlags.glSpheres && glFlags.glEclipse && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
-
-      {/* 水面已固定，水位指示无意义 → 不挂 WaterLevelIndicator */}
-
-      {/* 右下角参数板栏：调色 + 波纹/运动 同栏从下往上堆叠（不重叠） */}
-      {isSandbox && (
-        <div data-pond-ui="true" className="pointer-events-none fixed bottom-3 right-3 z-50 flex flex-col-reverse items-end gap-2">
-          {isP9Sandbox && <P9TuningPanel />}
-          {glFlags.glSpheres && <TunePanel />}
-          {glFlags.glSpheres && <LifePanel />}
-          {(glFlags.rtt || glFlags.waterFx || glFlags.floatMotes || glFlags.waterPlants || glFlags.reefStones || glFlags.crystalPillars) && <RippleSpikePanel />}
-        </div>
-      )}
-
-      {/* 视觉控制台（左下角，逐层开关 GL 层） */}
-      {isSandbox && <ScenePanel glFlags={glFlags} onGl={onGl} />}
-
-      <DraftSavedToast />
-      {isSandbox && <PerfHUD />}
-    </main>
-  );
-}
+import { Suspense } from 'react';
+import HomeLoading from '@/app/loading';
+import PondExperience from '@/src/features/home-pond/PondExperience';
 
 export default function Test3Page() {
   return (
-    <Suspense fallback={null}>
-      <Test3PageInner />
+    <Suspense fallback={<HomeLoading />}>
+      <PondExperience mode="test3" />
     </Suspense>
   );
 }

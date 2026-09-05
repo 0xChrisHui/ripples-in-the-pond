@@ -1,5 +1,4 @@
 'use client';
-
 import {
   forceSimulation,
   forceManyBody,
@@ -25,7 +24,7 @@ import {
   type SimLink,
 } from '@/src/components/archipelago/sphere-config';
 import type { Track } from '@/src/types/tracks';
-
+import { createLayoutRandom, layoutUnit } from '@/src/features/home-pond/layout-seed';
 /**
  * G4 — GL 球的 d3-force sim builder（无 SVG 耦合版）。
  *
@@ -34,10 +33,8 @@ import type { Track } from '@/src/types/tracks';
  * G4 只复刻"默认态"基础漂浮，不接 Lane C 物理（springBack/viscous/breeze 默认就是 false）。
  * 与 SVG 版唯一差异：tick 只做边界 clamp，不写任何 DOM —— GL 用 R3F useFrame 直接读 node.x/y。
  */
-
 const ALPHA_BASELINE = 0.008; // 出处 sphere-sim-setup.ts:25（持续漂浮 baseline alpha）
 const PAD = 20;               // 出处 sphere-sim-setup.ts:26（边界内缩）
-
 // z = 基准深度（建点固定，painter 排序用）；displayZ = H5 每帧浮沉后的动态深度（消费方读它）。
 // _dragLoose 对标 sphere-sim-setup.ts；_focusLerp = H5 播放球浮出焦点的缓动状态（见 sphere-motion）。
 export type GlPhysNode = SimNode & {
@@ -61,9 +58,8 @@ export type GlPhysNode = SimNode & {
   _jelVx?: number;    // L3-3 果冻感平滑速度 x
   _jelVy?: number;    // L3-3 果冻感平滑速度 y
 };
-
 /** tracksToShow → 节点 + 链接（复刻 SphereCanvas.tsx:64-83 的建点逻辑，含 baseLayer/lw/radius/z） */
-export function buildGlNodes(tracksToShow: Track[], groupId: GroupId): {
+export function buildGlNodes(tracksToShow: Track[], groupId: GroupId, dataVersion = 'legacy'): {
   nodes: GlPhysNode[];
   links: SimLink[];
   assignment: Map<string, number>;
@@ -73,7 +69,10 @@ export function buildGlNodes(tracksToShow: Track[], groupId: GroupId): {
     track: t,
     ...computeNodeAttrs(t, groupId),
   }));
-  const { assignment, clusterCount } = buildClusterAssignment(baseNodes.map((n) => n.id));
+  const nodeIds = baseNodes.map((n) => n.id);
+  const { assignment, clusterCount } = buildClusterAssignment(
+    nodeIds, createLayoutRandom(dataVersion, groupId, 'clusters', ...nodeIds),
+  );
   // baseLayer 由 z 派生（与 use-sphere-z.ts 同公式），z 用于 painter 排序
   const clusterZ = Array.from({ length: clusterCount }, (_, i) => halton(i + 1, 5));
   const nodes: GlPhysNode[] = baseNodes.map((n) => {
@@ -81,21 +80,21 @@ export function buildGlNodes(tracksToShow: Track[], groupId: GroupId): {
     const h = hashStr(n.id);
     const z = Math.max(0, Math.min(1, baseZ + ((h % 601) / 1000) - 0.3));
     const baseLayer = Math.max(1, Math.min(NUM_LAYERS, Math.round((1 - z) * (NUM_LAYERS - 1) + 1)));
+    const unit = (key: string) => layoutUnit(dataVersion, groupId, n.id, key);
     const lw = {
-      amp: 0.6 + Math.random() * 0.8,
-      f1: 0.04 + Math.random() * 0.08,
-      f2: 0.10 + Math.random() * 0.15,
-      p1: Math.random() * 6.283,
-      p2: Math.random() * 6.283,
+      amp: 0.6 + unit('lw-amp') * 0.8,
+      f1: 0.04 + unit('lw-f1') * 0.08,
+      f2: 0.10 + unit('lw-f2') * 0.15,
+      p1: unit('lw-p1') * 6.283,
+      p2: unit('lw-p2') * 6.283,
     };
     return { ...n, baseLayer, lw, radius: n.kSize * fLayer(baseLayer), z };
   });
   // 远先画：z 升序（与 use-sphere-z sortedNodes 同序）→ instance index = 绘制顺序
   nodes.sort((a, b) => a.z - b.z);
-  const links = generateLinks(nodes, assignment);
+  const links = generateLinks(nodes, assignment, createLayoutRandom(dataVersion, groupId, 'links', ...nodeIds));
   return { nodes, links, assignment };
 }
-
 /** cluster 锚点（绝对 px）；resize 时随尺寸等比缩放，故单列类型供 resizeGlSim 用 */
 type ClusterAnchor = { x: number; y: number; strength: number };
 
@@ -107,6 +106,7 @@ export function setupGlSimulation(
   assignment: Map<string, number>,
   width: number,
   height: number,
+  dataVersion = 'legacy',
 ): { sim: Simulation<SimNode, SimLink>; anchors: Map<string, ClusterAnchor> } {
   const cx = width / 2;
   const cy = height / 2;
@@ -116,7 +116,10 @@ export function setupGlSimulation(
   const clusterSizes = Array.from({ length: clusterCount }, () => 0);
   assignment.forEach((cid) => { if (cid >= 0 && cid < clusterCount) clusterSizes[cid]++; });
   const clusterAnchors = Array.from({ length: Math.max(clusterCount, 1) }, (_, i) => {
-    const isOuter = (clusterSizes[i] ?? 0) <= 2 && Math.random() < 0.30;
+    const memberIds = nodes.filter((node) => assignment.get(node.id) === i).map((node) => node.id).sort();
+    const isOuter = (clusterSizes[i] ?? 0) <= 2 && layoutUnit(
+      dataVersion, nodes[0]?.groupId ?? 'A', 'outer', ...memberIds,
+    ) < 0.30;
     const range = isOuter ? 0.60 : 0.36;
     const offset = isOuter ? 0.20 : 0.32;
     return { x: width * (offset + halton(i + 1, 2) * range), y: height * (offset + halton(i + 1, 3) * range) };

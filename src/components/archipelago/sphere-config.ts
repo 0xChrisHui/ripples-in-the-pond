@@ -61,17 +61,17 @@ export function hashStr(s: string): number {
 }
 
 /**
- * v32 — 随机 cluster 划分：大小池 power-law（单球/对儿/三球/大聚落混合）。
- * 必须在 useEffect 内调用（用了 Math.random，避 react-hooks/purity）。
+ * v32 — cluster 划分：大小池 power-law（单球/对儿/三球/大聚落混合）。
+ * 默认保持历史随机行为；P15 首页会注入版本化随机源以稳定首帧。
  * size=1 的 cluster 自然就是孤立球。
  */
-export function buildClusterAssignment(nodeIds: string[]): {
+export function buildClusterAssignment(nodeIds: string[], random: () => number = Math.random): {
   assignment: Map<string, number>;
   clusterCount: number;
 } {
   const shuffled = [...nodeIds];
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   const assignment = new Map<string, number>();
@@ -80,7 +80,7 @@ export function buildClusterAssignment(nodeIds: string[]): {
   let cid = 0;
   while (i < shuffled.length) {
     const remain = shuffled.length - i;
-    const size = Math.min(remain, sizePool[Math.floor(Math.random() * sizePool.length)]);
+    const size = Math.min(remain, sizePool[Math.floor(random() * sizePool.length)]);
     for (let j = 0; j < size; j++) {
       assignment.set(shuffled[i + j], cid);
     }
@@ -160,6 +160,7 @@ export function computeNodeAttrs(track: Track, groupId: GroupId): {
 export function generateLinks(
   nodes: SimNode[],
   assignment: Map<string, number>,
+  random: () => number = Math.random,
 ): SimLink[] {
   const links: SimLink[] = [];
   const clusterMembers = new Map<number, number[]>();
@@ -187,15 +188,15 @@ export function generateLinks(
   const clusterIds = Array.from(clusterMembers.keys());
   for (let a = 0; a < clusterIds.length; a++) {
     for (let b = a + 1; b < clusterIds.length; b++) {
-      if (Math.random() > 0.05) continue;
+      if (random() > 0.05) continue;
       const m1 = clusterMembers.get(clusterIds[a])!;
       const m2 = clusterMembers.get(clusterIds[b])!;
-      const i1 = m1[Math.floor(Math.random() * m1.length)];
-      const i2 = m2[Math.floor(Math.random() * m2.length)];
+      const i1 = m1[Math.floor(random() * m1.length)];
+      const i2 = m2[Math.floor(random() * m2.length)];
       links.push({
         source: nodes[i1].id,
         target: nodes[i2].id,
-        correlation: 0.12 + Math.random() * 0.10,
+        correlation: 0.12 + random() * 0.10,
       });
     }
   }

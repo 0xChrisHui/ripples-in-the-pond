@@ -3,6 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Simulation } from 'd3-force';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
+import { scheduleAudioPrewarm } from '@/src/features/home-pond/audio-prewarm';
+import {
+  cacheHomeTracksResponse,
+  readHomeTracksSnapshot,
+} from '@/src/features/home-pond/tracks-cache';
 import {
   GROUPS,
   getGroupTracks,
@@ -12,11 +17,14 @@ import {
   type SimNode,
   type SimLink,
 } from '@/src/components/archipelago/sphere-config';
-import type { Track, TracksListResponse } from '@/src/types/tracks';
+import type { HomeTracksSnapshot } from '@/src/types/home-pond';
+import type { Track } from '@/src/types/tracks';
 import { buildGlNodes, setupGlSimulation, resizeGlSim, type GlPhysNode } from './gl-sim-setup';
 import type { BgWave } from './gl-sim-waves';
 import { resetWaterLine } from '../water/water-level';
 import { resetDepthShift } from '../pointer-fx';
+
+const EMPTY_TRACKS: Track[] = [];
 
 /**
  * G4 — GL 球 sim 编排 hook（无 three 依赖，可在 page 层调用）。
@@ -51,7 +59,9 @@ export function useGlSim(active: boolean): GlSim {
   useEffect(() => { playingIdRef.current = playingId; }, [playingId]);
 
   const [groupId, setGroupId] = useState<GroupId>('A');
-  const [tracks, setTracks] = useState<Track[]>([]);
+  const [snapshot, setSnapshot] = useState<HomeTracksSnapshot | null>(() => readHomeTracksSnapshot());
+  const tracks = snapshot?.tracks ?? EMPTY_TRACKS;
+  const snapshotRef = useRef(snapshot);
   const [tracksError, setTracksError] = useState(false);
   const [nodes, setNodes] = useState<GlPhysNode[]>([]);
   const simRef = useRef<Simulation<SimNode, SimLink> | null>(null);
@@ -65,19 +75,34 @@ export function useGlSim(active: boolean): GlSim {
 
   // 取数（仅 active；与 Archipelago 各取一次，/api/tracks 有 ISR 缓存，重复成本低）。
   // J4：加 res.ok 判定 + error 态 + retry（失败不再静默 console.error、无 UI）。
+  const requestRef = useRef<AbortController | null>(null);
   const loadTracks = useCallback(async () => {
+    requestRef.current?.abort();
+    const controller = new AbortController();
+    requestRef.current = controller;
     setTracksError(false);
     try {
-      const r = await fetch('/api/tracks');
+      const r = await fetch('/api/tracks', { signal: controller.signal });
       if (!r.ok) throw new Error(`tracks HTTP ${r.status}`);
-      const d = (await r.json()) as TracksListResponse;
-      setTracks(d.tracks);
-    } catch (e) {
+      const degraded = r.headers.get('x-degraded');
+      if (degraded) throw new Error(`tracks degraded: ${degraded}`);
+      const next = cacheHomeTracksResponse(await r.json() as unknown);
+      if (!next) throw new Error('tracks 响应为空或结构无效');
+      snapshotRef.current = next;
+      setSnapshot((current) => current?.dataVersion === next.dataVersion
+        ? { ...current, writtenAt: next.writtenAt }
+        : next);
+    } catch (e: unknown) {
+      if (e instanceof DOMException && e.name === 'AbortError') return;
       console.error('[GLSim] tracks 加载失败:', e);
-      setTracksError(true);
+      setTracksError(snapshotRef.current === null);
     }
   }, []);
-  useEffect(() => { if (active) void loadTracks(); }, [active, loadTracks]);
+  useEffect(() => {
+    if (!active) return;
+    void loadTracks();
+    return () => requestRef.current?.abort();
+  }, [active, loadTracks]);
 
   // 键盘 ←→ 切组（复刻 Archipelago.tsx:135-149 的并行逻辑，初始同为 A → 同步）
   useEffect(() => {
@@ -122,15 +147,16 @@ export function useGlSim(active: boolean): GlSim {
     // 切组重建球群时同时重置两个独立坐标：水面固定中线，球层级回到中性位置。
     resetWaterLine();
     resetDepthShift();
-    const { nodes: built, links, assignment } = buildGlNodes(show, groupId);
+    const dataVersion = snapshot?.dataVersion ?? 'uncached';
+    const { nodes: built, links, assignment } = buildGlNodes(show, groupId, dataVersion);
     simRef.current?.stop();
-    const { sim, anchors } = setupGlSimulation(built, links, assignment, w, h);
+    const { sim, anchors } = setupGlSimulation(built, links, assignment, w, h, dataVersion);
     simRef.current = sim;
     anchorsRef.current = anchors;
     wavesRef.current = [];
     queueMicrotask(() => setNodes(built));
     return () => { simRef.current?.stop(); };
-  }, [active, tracks, groupId]);
+  }, [active, tracks, groupId, snapshot?.dataVersion]);
 
   // document.hidden 时暂停 sim（性能预算：后台标签不跑物理）
   useEffect(() => {
@@ -165,22 +191,12 @@ export function useGlSim(active: boolean): GlSim {
     };
   }, [active, nodes]);
 
-  // J4 — 音频预热：当前组曲目各拉前 300KB（6 worker 并发），点播放更跟手（移植 Archipelago）。
+  // P15-B：真实圆圈建立后再 idle 预热；切组/隐藏/离页用 AbortController 真取消。
   useEffect(() => {
-    if (!active || tracks.length === 0) return;
+    if (!active || nodes.length === 0 || tracks.length === 0) return;
     const padded = padTracksToTarget(getGroupTracks(groupId, tracks), getGroupTargetCount(groupId));
-    let cancelled = false;
-    const queue = padded.filter((t) => t.audio_url);
-    const workers = Array.from({ length: 6 }, async () => {
-      while (queue.length > 0 && !cancelled) {
-        const t = queue.shift();
-        if (!t?.audio_url) continue;
-        try { await fetch(t.audio_url, { headers: { Range: 'bytes=0-307199' } }); } catch { /* 预热失败不影响主流程 */ }
-      }
-    });
-    void Promise.all(workers);
-    return () => { cancelled = true; };
-  }, [active, tracks, groupId]);
+    return scheduleAudioPrewarm(padded);
+  }, [active, tracks, groupId, nodes.length]);
 
   return {
     ready: nodes.length > 0,
