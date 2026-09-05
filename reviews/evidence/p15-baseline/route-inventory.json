@@ -1,0 +1,77 @@
+{
+  "generatedAt": "2026-09-05T17:33:09.596Z",
+  "inventory": [
+    {
+      "route": "/",
+      "classification": "production",
+      "page": "app/page.tsx",
+      "hasLoading": false
+    },
+    {
+      "route": "/artist",
+      "classification": "production",
+      "page": "app/artist/page.tsx",
+      "hasLoading": true
+    },
+    {
+      "route": "/me",
+      "classification": "production",
+      "page": "app/me/page.tsx",
+      "hasLoading": true
+    },
+    {
+      "route": "/score-lab/1",
+      "classification": "sandbox",
+      "page": "app/score-lab/1/page.tsx",
+      "hasLoading": false
+    },
+    {
+      "route": "/score/[id]",
+      "classification": "production",
+      "page": "app/score/[id]/page.tsx",
+      "hasLoading": true
+    },
+    {
+      "route": "/star",
+      "classification": "compatibility",
+      "page": "app/star/page.tsx",
+      "hasLoading": false
+    },
+    {
+      "route": "/test",
+      "classification": "sandbox",
+      "page": "app/test/page.tsx",
+      "hasLoading": false
+    },
+    {
+      "route": "/test1",
+      "classification": "sandbox",
+      "page": "app/test1/page.tsx",
+      "hasLoading": false
+    },
+    {
+      "route": "/test2",
+      "classification": "sandbox",
+      "page": "app/test2/page.tsx",
+      "hasLoading": false
+    },
+    {
+      "route": "/test3",
+      "classification": "sandbox",
+      "page": "app/test3/page.tsx",
+      "hasLoading": false
+    },
+    {
+      "route": "/test4",
+      "classification": "sandbox",
+      "page": "app/test4/page.tsx",
+      "hasLoading": false
+    },
+    {
+      "route": "/v1",
+      "classification": "compatibility",
+      "page": "app/v1/page.tsx",
+      "hasLoading": false
+    }
+  ]
+}
