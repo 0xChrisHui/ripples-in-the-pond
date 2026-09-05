@@ -1327,3 +1327,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **方向决定**：采用“夜塘唱片册”，冻结首页水塘与 P9 演奏核心；`/score/[id]` 采用 Decoder-first，`/artist` 暂以 108 首长期项目为主角。
 - **执行边界**：只迁移盘点与 A–F playbook，不擅自修改 `docs/ARCHITECTURE.md`；Decoder-first 与现有 inline `ScorePlayer` 规则仍需用户明确授权后同步。
 - **历史补口**：P10 Track F 已随 P12-A1 实现并永久上传，本轮只补总览索引和完成状态，不重复改解码器代码。
+
+## 2026-09-05 — P9 以单一最终真值正式封存
+
+- **封存决定**：`playbook/phase-9/04-final-closure.md` 与 `reviews/2026-09-05-phase-9-completion-review.md` 成为 P9 最终入口；旧 playbook、三方 review 和 Fix Pack 清单只作历史追溯，不再表达当前待办。
+- **证据边界**：Git 只长期保留 `reviews/evidence/p9-v4-2/` 最终证据；调试缓存、候选预演和过程截图继续留在本地忽略目录，不进入产品真值。
+- **后续边界**：现有 33 键演奏集合冻结；单键缺陷走独立热修，新增键位、音效或编舞进入后续 Phase，不重开 P9。

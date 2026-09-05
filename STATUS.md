@@ -18,7 +18,7 @@
   - **Phase 14** = 混音系统 + RemixNFT
   - **Phase 15** = 音效系统扩展
   - **Phase 16** = 原生钱包 + 多链 / ETH Mainnet（往后排）
-**P9 系统性 Review 最终稿**：`reviews/2026-09-01-phase-9-final-review.md`（交叉复核 DeepSeek v4 Pro、Kimi K3 与当前代码。原结论为 0 P0、3 P1、8 P2、6 P3；E“引力透镜轨道”与 R“花瓣原地炸裂”按用户拍板作为当前真值。Review Fix Pack A+B+C 已在 v4.2 全部完成，最终生产证据见 `reviews/2026-09-01-phase-9-v4-2-final-gate.md`。）
+**P9 最终完成 Review**：`reviews/2026-09-05-phase-9-completion-review.md`（阶段结论：33 键 / 33 唯一音效 / 33 生产动画，0 个 P9 遗留项，正式封存。2026-09-01 的系统性 review 与 Fix Pack 清单只保留为历史输入，最终生产证据见 `reviews/2026-09-01-phase-9-v4-2-final-gate.md`。）
 **P8 综合系统性 Review**：`reviews/2026-08-25-phase-8-consolidated-review.md`（汇总 Kimi K3 + Codex 并完成交叉验证；严格排除其他 Phase、媒体与 commit 收束。结论：0 个 P0、3 个 P1、7 个 P2。**3 个 P1、7 个 P2、死文件、文档契约、双树清单与自动浏览器回归均已完成**：专项代码与每步完整 `verify.sh` 全绿；Edge 实测四路由、fallback/context、wheel、拖拽取消、键盘、reduced-motion、横竖屏、DPR `2→1.5→2` 与 waterFx 连续切换全部通过。证据见 `reviews/2026-08-26-phase-8-browser-regression.md` 与 `reviews/2026-08-26-phase-8-dual-tree-inventory.md`。**2026-08-26 用户已确认 R3 与 L 线“活而不乱”最终目验通过，并明确让当前 `/test3` 替代首页；默认 `/` 已切为 GL 水塘，沙盒工具仅留 `/test3`/`/test4`，旧 SVG 由 `/v1` 保留。**原始 Kimi 报告保留在 `reviews/2026-08-25-phase-8-review.md`。）
 **P7 Completion Review**: `reviews/2026-05-16-phase-7-completion-review.md`（commit `5a2211a`，结论：Phase 7 完结，deferred 项挂 Phase 10）
 **P7 三方 review**：`reviews/2026-05-13-phase-7-playbook-review.md`（Claude 自审 + 2 个 Codex review，16 项必修已全部落地）
@@ -26,7 +26,7 @@
 **P6 Smoke Test**: `reviews/2026-05-08-phase-6-completion-smoke-test.md`（16/19 通过 + 0 P0 + 0 P1）
 **stakeholder 反馈**：艺术家 5 条反馈已收到（→ Phase 8）；投资人催 Semi demo（→ P7 Track B PoC-only）
 
-**P9 完成（2026-09-01）**：v4.2 Review Fix Pack A+B+C 已部署 Production，生产注册表收束为 33 键/33 音效/33 动画；`/` 与 `/test3` 共用同一 P9 演奏层，首页不显示 P9 状态浮窗，调参面板仍只留在 `/test3`。静态审计、浏览器 33 键扫描、复音/回收/reduced-motion/60 FPS 压测、合并后完整 `scripts/verify.sh` 和 `pond-ripple.xyz` 线上冒烟全绿，证据见 `reviews/2026-09-01-phase-9-v4-2-final-gate.md`。后续新增体感反馈按独立热修处理，不再占阶段 Next。
+**P9 正式封存（2026-09-05）**：v4.2 Review Fix Pack A+B+C、Track C 清理、首页同步和 Production 发布全部完成；生产注册表为 33 键/33 唯一音效/33 动画。`/` 与 `/test3` 共用演奏层，首页不显示 P9 状态浮窗，调参面板只留在 `/test3`。2026-09-05 再次完成静态审计和 `pond-ripple.xyz` 线上真实键盘冒烟，P9 遗留项为 0；后续反馈按独立热修处理，不再占阶段 Next。
 
 **P11 当前（2026-09-01）**：P11-0 盘点与完整 playbook 已完成，入口见 `playbook/phase-11/00-overview.md`，证据与 11 个界面层清单见 `reviews/2026-09-01-phase-11-design-inventory.md`。方向为“夜塘唱片册”；首页夜塘/P9 核心冻结；`/score/[id]` 采用 Decoder-first；`/artist` 暂以 108 首长期项目为主角。**下一步：先处理 Decoder-first 与 `docs/ARCHITECTURE.md` 现有 inline `ScorePlayer` 规则的冲突；未获得明确架构同步授权前，不进入 P11-B 代码。**
 
@@ -239,6 +239,12 @@
 - `app/api/` 硬线豁免缺失：hook 只认 `src/app/api/`，当前 app/api/ 接近 8 上限，新 route 考虑复用现有子目录（见 S5.c 放 `cron/queue-status/`）
 
 ## 上次成功验证
+
+- 验证: **P9 最终收尾、证据复验与阶段封存完成**
+- 时间: 2026-09-05
+- 改动: 建立 P9 唯一最终入口与 completion review；历史 playbook/review 标注为归档；刷新可复现静态审计、生产截图和真实键盘冒烟证据。
+- 验证证据: 33 键/33 唯一音效/33 动画、20 个独立效果/13 个日食效果、月光写入 0；生产 `/`、`/test3`、`/api/ping` 均为 HTTP 200，K 键成功触发 FX11，非日食状态 A 键按契约拒绝，首页无 P9 浮窗与调参面板。
+- 下一步: **P9 无下一步；项目继续以 P11 的 Decoder-first 架构同步授权为唯一 Now。**
 
 - 验证: **工作树堆积收口 + P12 最终关闭 + P11 playbook 迁移完成**
 - 时间: 2026-09-01

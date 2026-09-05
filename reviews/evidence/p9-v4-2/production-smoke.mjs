@@ -1,11 +1,15 @@
 import { writeFile } from 'node:fs/promises';
 
-const BASE = 'https://pond-ripple.xyz';
+const BASE = process.env.P9_BASE_URL || 'https://pond-ripple.xyz';
 const OUT = 'reviews/evidence/p9-v4-2';
+const DEPLOYMENT = process.env.P9_DEPLOYMENT_SHA || 'unknown';
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const port = process.env.P9_CDP_PORT || '9334';
 const targets = await fetch(`http://127.0.0.1:${port}/json`).then((response) => response.json());
-const target = targets.find((item) => item.type === 'page' && item.url.startsWith('http://127.0.0.1:3000'));
+const pages = targets.filter((item) => item.type === 'page' && !item.url.startsWith('chrome-extension://'));
+const target = pages.find((item) => item.url.startsWith(BASE))
+  || pages.find((item) => item.url.startsWith('http://127.0.0.1:3000'))
+  || pages[0];
 if (!target) throw new Error('没有找到 P9 验收浏览器页');
 
 const ws = new WebSocket(target.webSocketDebuggerUrl);
@@ -37,10 +41,9 @@ await send('Emulation.setDeviceMetricsOverride', {
 await send('Page.navigate', { url: BASE });
 await send('Page.bringToFront');
 for (let attempt = 0; attempt < 100; attempt += 1) {
-  const ready = await evaluate(`Boolean([...document.querySelectorAll('button')]
-    .some((button) => /^(播放|暂停)/.test(button.getAttribute('aria-label') || '')))`);
+  const ready = await evaluate(`document.body.innerText.includes('33 个声音动画')`);
   if (ready) break;
-  if (attempt === 99) throw new Error('生产首页未在 50 秒内就绪');
+  if (attempt === 99) throw new Error('生产首页演奏层未在 50 秒内就绪');
   await wait(500);
 }
 await wait(2500);
@@ -74,7 +77,7 @@ const errors = events.filter((event) => event.method === 'Runtime.exceptionThrow
   .map((event) => event.params);
 const { data } = await send('Page.captureScreenshot', { format: 'png', fromSurface: true });
 await writeFile(`${OUT}/production-homepage.png`, Buffer.from(data, 'base64'));
-const result = { generatedAt: new Date().toISOString(), deployment: 'fe179b0870dae85394ac7cbe42fac6ca3ddec095', page, errors };
+const result = { generatedAt: new Date().toISOString(), deployment: DEPLOYMENT, page, errors };
 await writeFile(`${OUT}/production-smoke.json`, `${JSON.stringify(result, null, 2)}\n`);
 console.log(JSON.stringify(result, null, 2));
 ws.close();

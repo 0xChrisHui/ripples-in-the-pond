@@ -1,5 +1,7 @@
 # Phase 9 系统性 Review — 最终交叉审查
 
+> **历史审查（已关闭）**：本文的 3 个 P1、8 个 P2、6 个 P3 是 Fix Pack 前的输入清单，A+B+C 已在 v4.2 全部处理。当前完成状态以 `2026-09-05-phase-9-completion-review.md` 为唯一阶段裁决。
+
 > 日期：2026-09-01  
 > 范围：P9 v4.1 当前工作树，33 键 / 33 音效 / 33 动画系统  
 > 输入报告：DeepSeek v4 Pro（`2026-09-01-phase-9-review-trae.md`）、Kimi K3（`2026-09-01-phase-9-consolidated-review.md`）、Codex 当前代码与验证审计  

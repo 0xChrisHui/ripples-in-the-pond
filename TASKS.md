@@ -246,6 +246,8 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 
 ## ✅ Done
 
+- **[Phase 9 最终封存]** ✅ 完成（2026-09-05）— 33 键 / 33 唯一音效 / 33 生产动画已通过最终静态审计、浏览器压力 Gate、首页同步、Production 发布与线上复验；P9 遗留项为 0，后续体感反馈转独立热修或新阶段。
+
 - **[Phase 7 Track A A2]** ✅ 完成（2026-05-15）— AirdropNFT v2 加 `_uriSet` 防 MINTER 私钥泄露后改 metadata：
   - **合约改动**：`contracts/src/AirdropNFT.sol` 复制 ScoreNFT v2 那 7 行 `_uriSet` mapping + setTokenURI `require(!_uriSet[tokenId])` + 标 `_uriSet[tokenId]=true`
   - **测试**：`contracts/test/AirdropNFT.t.sol` 加 `testSetTokenURIOnlyOnce` — 首次 setTokenURI 成功 → 二次同 tokenId revert `"AirdropNFT: URI already set"` → URI 保持首次值；forge test 7/7（原 6 + 新 1）
