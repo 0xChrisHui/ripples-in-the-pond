@@ -7,6 +7,13 @@ export type ArchiveSectionName = 'scores' | 'recordings' | 'materials';
 
 const SCHEMA_VERSION = 1;
 const PREFIX = 'ripples_archive';
+const FRESH_MS = 5 * 60_000;
+const MAX_AGE_MS = 7 * 24 * 60 * 60_000;
+const SOURCE_BY_SECTION: Record<ArchiveSectionName, string> = {
+  scores: '/api/me/score-nfts',
+  recordings: '/api/me/scores?light=1',
+  materials: '/api/me/nfts',
+};
 const SCORE_STATES = new Set<ScoreMintStatus>([
   'pending', 'uploading_events', 'minting_onchain', 'uploading_metadata',
   'setting_uri', 'success', 'failed',
@@ -15,6 +22,7 @@ const SCORE_STATES = new Set<ScoreMintStatus>([
 type Identity = { authSource: ArchiveAuthSource; userId: string };
 type Envelope<T> = {
   schemaVersion: number;
+  environment: string;
   authSource: ArchiveAuthSource;
   userId: string;
   section: ArchiveSectionName;
@@ -23,8 +31,17 @@ type Envelope<T> = {
   items: T[];
 };
 
+function environmentOf(): string {
+  const origin = typeof location === 'undefined' ? 'unknown-origin' : location.origin;
+  const chain = process.env.NEXT_PUBLIC_CHAIN_ID ?? 'unknown-chain';
+  const material = process.env.NEXT_PUBLIC_MATERIAL_NFT_ADDRESS ?? 'unknown-material';
+  const score = process.env.NEXT_PUBLIC_SCORE_NFT_ADDRESS ?? 'unknown-score';
+  return [origin, chain, material.toLowerCase(), score.toLowerCase()].join('|');
+}
+
 function keyOf(identity: Identity, section: ArchiveSectionName): string {
-  return [PREFIX, SCHEMA_VERSION, identity.authSource, encodeURIComponent(identity.userId), section].join(':');
+  return [PREFIX, SCHEMA_VERSION, encodeURIComponent(environmentOf()),
+    identity.authSource, encodeURIComponent(identity.userId), section].join(':');
 }
 
 function object(value: unknown): Record<string, unknown> | null {
@@ -73,21 +90,28 @@ export function readArchiveCache<T>(
   identity: Identity,
   section: ArchiveSectionName,
   validator: (value: unknown) => value is T,
-): { items: T[]; savedAt: string } | null {
+): { items: T[]; savedAt: string; fresh: boolean } | null {
   if (typeof window === 'undefined') return null;
   try {
     const raw = localStorage.getItem(keyOf(identity, section));
     if (!raw) return null;
     const value = JSON.parse(raw) as Partial<Envelope<unknown>>;
     if (value.schemaVersion !== SCHEMA_VERSION
+      || value.environment !== environmentOf()
       || value.authSource !== identity.authSource
       || value.userId !== identity.userId
       || value.section !== section
+      || value.source !== SOURCE_BY_SECTION[section]
       || typeof value.savedAt !== 'string'
       || !Number.isFinite(Date.parse(value.savedAt))
       || !Array.isArray(value.items)
       || !value.items.every(validator)) return null;
-    return { items: value.items, savedAt: value.savedAt };
+    const age = Date.now() - Date.parse(value.savedAt);
+    if (age < -FRESH_MS || age > MAX_AGE_MS) {
+      localStorage.removeItem(keyOf(identity, section));
+      return null;
+    }
+    return { items: value.items, savedAt: value.savedAt, fresh: age <= FRESH_MS };
   } catch {
     return null;
   }
@@ -102,6 +126,7 @@ export function writeArchiveCache<T>(
   if (typeof window === 'undefined') return;
   const value: Envelope<T> = {
     schemaVersion: SCHEMA_VERSION,
+    environment: environmentOf(),
     authSource: identity.authSource,
     userId: identity.userId,
     section,
@@ -113,5 +138,12 @@ export function writeArchiveCache<T>(
     localStorage.setItem(keyOf(identity, section), JSON.stringify(value));
   } catch (error) {
     console.warn(`档案缓存写入失败（${section}）:`, error);
+  }
+}
+
+export function clearArchiveCache(identity: Identity): void {
+  if (typeof window === 'undefined') return;
+  for (const section of Object.keys(SOURCE_BY_SECTION) as ArchiveSectionName[]) {
+    localStorage.removeItem(keyOf(identity, section));
   }
 }

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import {
+  clearArchiveCache,
   readArchiveCache,
   validCachedScore,
   writeArchiveCache,
@@ -20,6 +21,7 @@ class MemoryStorage {
 const storage = new MemoryStorage();
 Object.defineProperty(globalThis, 'window', { value: globalThis, configurable: true });
 Object.defineProperty(globalThis, 'localStorage', { value: storage, configurable: true });
+Object.defineProperty(globalThis, 'location', { value: { origin: 'https://one.example' }, configurable: true });
 
 const score = {
   id: 'queue-1', queueId: 'queue-1', status: 'pending' as const,
@@ -40,6 +42,17 @@ assert.equal(
 
 writeArchiveCache(privy, 'scores', '/api/me/score-nfts', []);
 assert.deepEqual(readArchiveCache(privy, 'scores', validCachedScore)?.items, []);
+Object.defineProperty(globalThis, 'location', { value: { origin: 'https://two.example' }, configurable: true });
+assert.equal(readArchiveCache(privy, 'scores', validCachedScore), null, '环境必须隔离');
+Object.defineProperty(globalThis, 'location', { value: { origin: 'https://one.example' }, configurable: true });
+const cacheKey = storage.key(0)!;
+const expired = JSON.parse(storage.getItem(cacheKey)!);
+expired.savedAt = '2000-01-01T00:00:00.000Z';
+storage.setItem(cacheKey, JSON.stringify(expired));
+assert.equal(readArchiveCache(privy, 'scores', validCachedScore), null, '超过保留期必须删除');
+writeArchiveCache(privy, 'scores', '/api/me/score-nfts', [score]);
+clearArchiveCache(privy);
+assert.equal(readArchiveCache(privy, 'scores', validCachedScore), null, '登出必须清当前身份缓存');
 
 storage.setItem('ripples_drafts', JSON.stringify([{
   trackId: 'track-legacy',

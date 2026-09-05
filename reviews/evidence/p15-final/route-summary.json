@@ -1,0 +1,570 @@
+[
+  {
+    "input": "reviews/evidence/p15-final/routes-warm.json",
+    "measuredAt": "2026-09-05T18:59:25.936Z",
+    "mode": "warm",
+    "route": "/",
+    "requested": 50,
+    "valid": 50,
+    "errors": 0,
+    "metrics": {
+      "responseStart": {
+        "p50": 15.3,
+        "p90": 23.8,
+        "p95": 24.8,
+        "max": 40.5
+      },
+      "fcp": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "shellAt": {
+        "p50": 412.6,
+        "p90": 446.5,
+        "p95": 456.3,
+        "max": 462.6
+      },
+      "firstCirclesAt": {
+        "p50": 494.4,
+        "p90": 530.9,
+        "p95": 545.5,
+        "max": 549
+      },
+      "allCirclesAt": {
+        "p50": 494.4,
+        "p90": 530.9,
+        "p95": 545.5,
+        "max": 549
+      },
+      "domContentLoaded": {
+        "p50": 352.7,
+        "p90": 384.3,
+        "p95": 398,
+        "max": 406.5
+      },
+      "loadEvent": {
+        "p50": 390.2,
+        "p90": 429.1,
+        "p95": 441.1,
+        "max": 457.6
+      },
+      "cls": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "longestTask": {
+        "p50": 300,
+        "p90": 333,
+        "p95": 339,
+        "max": 353
+      },
+      "transferBytes": {
+        "p50": 17585,
+        "p90": 17585,
+        "p95": 17585,
+        "max": 17585
+      }
+    }
+  },
+  {
+    "input": "reviews/evidence/p15-final/routes-warm.json",
+    "measuredAt": "2026-09-05T18:59:25.936Z",
+    "mode": "warm",
+    "route": "/me",
+    "requested": 50,
+    "valid": 50,
+    "errors": 0,
+    "metrics": {
+      "responseStart": {
+        "p50": 12,
+        "p90": 15.1,
+        "p95": 18.4,
+        "max": 32.7
+      },
+      "fcp": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "shellAt": {
+        "p50": 398.7,
+        "p90": 427.4,
+        "p95": 441.9,
+        "max": 485
+      },
+      "firstCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "allCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "domContentLoaded": {
+        "p50": 342.8,
+        "p90": 371.4,
+        "p95": 383.6,
+        "max": 419.9
+      },
+      "loadEvent": {
+        "p50": 382.5,
+        "p90": 411.5,
+        "p95": 425.6,
+        "max": 478.7
+      },
+      "cls": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "longestTask": {
+        "p50": 299,
+        "p90": 325,
+        "p95": 336,
+        "max": 369
+      },
+      "transferBytes": {
+        "p50": 0,
+        "p90": 300,
+        "p95": 300,
+        "max": 300
+      }
+    }
+  },
+  {
+    "input": "reviews/evidence/p15-final/routes-warm.json",
+    "measuredAt": "2026-09-05T18:59:25.936Z",
+    "mode": "warm",
+    "route": "/artist",
+    "requested": 50,
+    "valid": 50,
+    "errors": 0,
+    "metrics": {
+      "responseStart": {
+        "p50": 13.5,
+        "p90": 15.1,
+        "p95": 15.5,
+        "max": 18.7
+      },
+      "fcp": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "shellAt": {
+        "p50": 399.4,
+        "p90": 434.6,
+        "p95": 440.5,
+        "max": 451.2
+      },
+      "firstCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "allCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "domContentLoaded": {
+        "p50": 345.2,
+        "p90": 380.1,
+        "p95": 386.3,
+        "max": 395.8
+      },
+      "loadEvent": {
+        "p50": 383.6,
+        "p90": 421.9,
+        "p95": 430.3,
+        "max": 445.6
+      },
+      "cls": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "longestTask": {
+        "p50": 302,
+        "p90": 326,
+        "p95": 330,
+        "max": 343
+      },
+      "transferBytes": {
+        "p50": 0,
+        "p90": 300,
+        "p95": 300,
+        "max": 600
+      }
+    }
+  },
+  {
+    "input": "reviews/evidence/p15-final/routes-warm.json",
+    "measuredAt": "2026-09-05T18:59:25.936Z",
+    "mode": "warm",
+    "route": "/score/1",
+    "requested": 50,
+    "valid": 50,
+    "errors": 0,
+    "metrics": {
+      "responseStart": {
+        "p50": 20.8,
+        "p90": 27.2,
+        "p95": 29.4,
+        "max": 46.5
+      },
+      "fcp": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "shellAt": {
+        "p50": 946.3,
+        "p90": 976.7,
+        "p95": 988.6,
+        "max": 1009.3
+      },
+      "firstCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "allCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "domContentLoaded": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "loadEvent": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "cls": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "longestTask": {
+        "p50": 325,
+        "p90": 352,
+        "p95": 356,
+        "max": 359
+      },
+      "transferBytes": {
+        "p50": 0,
+        "p90": 300,
+        "p95": 600,
+        "max": 600
+      }
+    }
+  },
+  {
+    "input": "reviews/evidence/p15-final/routes-cold.json",
+    "measuredAt": "2026-09-05T18:39:20.024Z",
+    "mode": "cold",
+    "route": "/",
+    "requested": 10,
+    "valid": 10,
+    "errors": 0,
+    "metrics": {
+      "responseStart": {
+        "p50": 15,
+        "p90": 67.1,
+        "p95": 77.3,
+        "max": 77.3
+      },
+      "fcp": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "shellAt": {
+        "p50": 296.5,
+        "p90": 416.1,
+        "p95": 489.5,
+        "max": 489.5
+      },
+      "firstCirclesAt": {
+        "p50": 573.6,
+        "p90": 707.1,
+        "p95": 775.8,
+        "max": 775.8
+      },
+      "allCirclesAt": {
+        "p50": 573.6,
+        "p90": 707.1,
+        "p95": 775.8,
+        "max": 775.8
+      },
+      "domContentLoaded": {
+        "p50": 262.3,
+        "p90": 384.3,
+        "p95": 458.8,
+        "max": 458.8
+      },
+      "loadEvent": {
+        "p50": 0,
+        "p90": 722.2,
+        "p95": 811,
+        "max": 811
+      },
+      "cls": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "longestTask": {
+        "p50": 207,
+        "p90": 284,
+        "p95": 332,
+        "max": 332
+      },
+      "transferBytes": {
+        "p50": 4108938,
+        "p90": 4420575,
+        "p95": 4420575,
+        "max": 4420575
+      }
+    }
+  },
+  {
+    "input": "reviews/evidence/p15-final/routes-cold.json",
+    "measuredAt": "2026-09-05T18:39:20.024Z",
+    "mode": "cold",
+    "route": "/me",
+    "requested": 10,
+    "valid": 10,
+    "errors": 0,
+    "metrics": {
+      "responseStart": {
+        "p50": 19.8,
+        "p90": 36.9,
+        "p95": 65.1,
+        "max": 65.1
+      },
+      "fcp": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "shellAt": {
+        "p50": 312.1,
+        "p90": 396.2,
+        "p95": 408.1,
+        "max": 408.1
+      },
+      "firstCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "allCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "domContentLoaded": {
+        "p50": 281.2,
+        "p90": 374.3,
+        "p95": 375.7,
+        "max": 375.7
+      },
+      "loadEvent": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "cls": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "longestTask": {
+        "p50": 212,
+        "p90": 293,
+        "p95": 294,
+        "max": 294
+      },
+      "transferBytes": {
+        "p50": 809790,
+        "p90": 949834,
+        "p95": 949834,
+        "max": 949834
+      }
+    }
+  },
+  {
+    "input": "reviews/evidence/p15-final/routes-cold.json",
+    "measuredAt": "2026-09-05T18:39:20.024Z",
+    "mode": "cold",
+    "route": "/artist",
+    "requested": 10,
+    "valid": 10,
+    "errors": 0,
+    "metrics": {
+      "responseStart": {
+        "p50": 18.4,
+        "p90": 20.3,
+        "p95": 28.5,
+        "max": 28.5
+      },
+      "fcp": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "shellAt": {
+        "p50": 370.2,
+        "p90": 399,
+        "p95": 488.2,
+        "max": 488.2
+      },
+      "firstCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "allCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "domContentLoaded": {
+        "p50": 341.9,
+        "p90": 380,
+        "p95": 455.6,
+        "max": 455.6
+      },
+      "loadEvent": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "cls": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "longestTask": {
+        "p50": 269,
+        "p90": 301,
+        "p95": 302,
+        "max": 302
+      },
+      "transferBytes": {
+        "p50": 809572,
+        "p90": 949616,
+        "p95": 949616,
+        "max": 949616
+      }
+    }
+  },
+  {
+    "input": "reviews/evidence/p15-final/routes-cold.json",
+    "measuredAt": "2026-09-05T18:39:20.024Z",
+    "mode": "cold",
+    "route": "/score/1",
+    "requested": 10,
+    "valid": 10,
+    "errors": 0,
+    "metrics": {
+      "responseStart": {
+        "p50": 29.2,
+        "p90": 48.4,
+        "p95": 50.7,
+        "max": 50.7
+      },
+      "fcp": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "shellAt": {
+        "p50": 838.8,
+        "p90": 969.9,
+        "p95": 982,
+        "max": 982
+      },
+      "firstCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "allCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "domContentLoaded": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "loadEvent": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "cls": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "longestTask": {
+        "p50": 187,
+        "p90": 204,
+        "p95": 245,
+        "max": 245
+      },
+      "transferBytes": {
+        "p50": 590362,
+        "p90": 782519,
+        "p95": 948868,
+        "max": 948868
+      }
+    }
+  }
+]

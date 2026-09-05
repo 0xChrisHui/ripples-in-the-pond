@@ -204,7 +204,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - **Phase 12** — OP Mainnet 上线准备与部署
 - **Phase 13** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
 - **Phase 14（当前）** — 钱包配方音乐 NFT 自动空投（v2 详细 playbook 已冻结，尚未写业务代码；`playbook/phase-14/00-overview.md`）
-- **Phase 15** — 全站丝滑体验与永久播放可靠性（playbook 已建立，尚未施工；`playbook/phase-15/00-overview.md`）
+- **Phase 15** — 仓库内无外部依赖代码已在 `codex/p15-smooth-playback` 完成；等待 P14 干净边界后先应用 049 migration，再做 Preview 登录态/首声/长任务/真机/断站 Gate（`reviews/2026-09-06-phase-15-final-review.md`）
 - **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
 - **未排期** — 音效系统扩展（原 P15：26→50 与输入键/音效 id 解耦；待以后重新编号）
 

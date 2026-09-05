@@ -4,6 +4,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useCallback, useSyncExternalStore } from 'react';
 import { clearNftCache } from '@/src/lib/nft-cache';
 import { openLoginModal } from '@/src/components/auth/LoginModal';
+import { clearArchiveCache } from '@/src/hooks/me/archive-cache';
 import {
   clearSemiJwt,
   readSemiJwt,
@@ -55,11 +56,12 @@ export function useAuth() {
 
   const logout = useCallback(async () => {
     if (userId) clearNftCache(userId);
+    if (userId && authSource) clearArchiveCache({ userId, authSource });
     clearSemiJwt();
     if (privyAuth) {
       await privyLogout();
     }
-  }, [userId, privyAuth, privyLogout]);
+  }, [authSource, userId, privyAuth, privyLogout]);
 
   const getAccessToken = useCallback(async (): Promise<string | null> => {
     if (authSource === 'privy') return privyToken();

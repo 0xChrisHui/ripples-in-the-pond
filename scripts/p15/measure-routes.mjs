@@ -62,9 +62,11 @@ const observerSource = `(() => {
   const watchPaint = () => {
     const state = window.__p15;
     if (state.shellAt == null && document.querySelector('main')) state.shellAt = performance.now();
-    const circles = document.querySelectorAll('button[aria-label^="播放"],button[aria-label^="暂停"]');
+    const circles = document.querySelectorAll('button[data-track-id]');
     if (state.firstCirclesAt == null && circles.length > 0) state.firstCirclesAt = performance.now();
-    if (state.allCirclesAt == null && circles.length >= 35) state.allCirclesAt = performance.now();
+    if (state.allCirclesAt == null && document.querySelector('[data-all-circles-interactive="true"]')) {
+      state.allCirclesAt = performance.now();
+    }
     if (performance.now() < 30_000) {
       requestAnimationFrame(watchPaint);
     }
@@ -101,11 +103,12 @@ async function measure(route, index) {
         route: location.pathname,
         now: performance.now(),
         shell: Boolean(document.querySelector('main')),
-        circles: document.querySelectorAll('button[aria-label^="播放"],button[aria-label^="暂停"]').length,
+        circles: document.querySelectorAll('button[data-track-id]').length,
+        allCircles: Boolean(document.querySelector('[data-all-circles-interactive="true"]')),
       })`);
       if (state.route === route && state.shell && observed.shellAt == null) observed.shellAt = state.now;
       if (state.route === route && state.circles > 0 && observed.firstCirclesAt == null) observed.firstCirclesAt = state.now;
-      if (state.route === route && state.circles >= 35 && observed.allCirclesAt == null) observed.allCirclesAt = state.now;
+      if (state.route === route && state.allCircles && observed.allCirclesAt == null) observed.allCirclesAt = state.now;
       ready = observed.shellAt != null && (route !== '/' || observed.allCirclesAt != null);
     } catch {
       ready = false;

@@ -1416,3 +1416,11 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **永久性决定**：网站在线时允许使用按 Arweave txid/hash 校验的高速镜像；链上 tokenURI、Arweave metadata/音频与永久 Decoder 仍是唯一可脱离本站复现的真相。
 - **实施决定**：先做 P15-0 冷/热、桌面/移动和故障基线，再按证据优化；不把漂亮 loading、假数据或一次最快结果当作“丝滑”。
 - **架构边界**：本轮只建 playbook，不修改 `docs/ARCHITECTURE.md`；进入 CDN/全局缓存/统一资源解析器施工前另取用户授权。
+
+## 2026-09-06 — P15 与 P14 并行时采用隔离分支和 fail-closed 交付
+
+- **隔离决定**：P15 只在 `E:\Projects\nft-music-p15` / `codex/p15-smooth-playback` 施工，以 P14 已提交的 `80ed458` 为锚点；不吸收或覆盖 P14 主工作树正在进行的未提交文档、playbook 和素材。
+- **镜像决定**：仓库只落地可选 `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL` 与双 Arweave 网关 resolver；未获批供应商、账号、额度和清理策略前不创建 E4–E5 外部镜像，空配置即安全回退永久网关。
+- **完整性决定**：P14 带 canonical SHA-256 的资源强校验；历史 Score 缺永久 hash 时只声明长度、类型、跨候选与解码兼容校验，不伪称密码学同字节证明。
+- **私人缓存决定**：`/me` 快照按 origin、chain、Material/Score 合约、登录源、用户、schema 与栏目隔离，5 分钟 freshness、7 天最大保留期，登出清当前身份；token 和私人正文不落盘。
+- **验收决定**：线上 baseline 与本地 after 的变化率只作方向证据；发布 Gate 必须在独立 Preview 复跑。真实账号、首声、健康 GL、真机和断站条件不满足时保持未通过。

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
+import { getGroupTargetCount } from '@/src/components/archipelago/sphere-config';
 import type { GlSim } from '../spheres/use-gl-sim';
 import { getSubmerge } from '../water/water-level';
 import { project, applyFloat } from '../sphere-projection';
@@ -25,6 +26,7 @@ export default function SphereOverlay({
   const playingId = playing && currentTrack ? currentTrack.id : null;
   const elements = useRef<Map<string, HTMLButtonElement>>(new Map());
   const submerged = useRef<Map<string, number>>(new Map());
+  const allReady = nodes.length >= getGroupTargetCount(glSim.groupId);
 
   useEffect(() => {
     if (nodes.length === 0) return;
@@ -32,11 +34,11 @@ export default function SphereOverlay({
     const firstFrame = requestAnimationFrame(() => {
       secondFrame = requestAnimationFrame(() => {
         performance.mark('p15:first-circles-painted');
-        if (nodes.length >= 35) performance.mark('p15:all-circles-interactive');
+        if (allReady) performance.mark('p15:all-circles-interactive');
       });
     });
     return () => { cancelAnimationFrame(firstFrame); cancelAnimationFrame(secondFrame); };
-  }, [nodes]);
+  }, [allReady, nodes]);
 
   useEffect(() => {
     let frame = 0;
@@ -70,7 +72,7 @@ export default function SphereOverlay({
 
   return (
     <div className="pointer-events-none fixed inset-0 z-10"
-      data-first-circles={nodes.length > 0} data-all-circles-interactive={nodes.length >= 35}>
+      data-first-circles={nodes.length > 0} data-all-circles-interactive={allReady}>
       {nodes.map((node) => (
         <SphereHit key={node.id} node={node} glSim={glSim} glHealthy={glHealthy}
           isPlaying={playingId === node.id} showLabels={showLabels}

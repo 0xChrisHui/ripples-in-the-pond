@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 14 详细 Playbook 已完成，停在 P14-0 产品/合约决策 Gate**；Phase 11 代码与自动 Gate 已完成，外部动态补证与正式 Artist 文案继续保留；Phase 12 维持软启动观察。P8/P9 已正式完结，P12 已迁移 OP Mainnet。
+**Phase**: **Phase 14 执行中，当前停在 G7 权利确认 → P14-A1 永久上传**；P15 仓库内代码闭环已在隔离分支完成，外部与真实设备 Gate 未关闭。Phase 11 外部动态补证与正式 Artist 文案继续保留；Phase 12 维持软启动观察。P8/P9 已正式完结，P12 已迁移 OP Mainnet。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）
@@ -30,9 +30,9 @@
 
 **P11 当前（2026-09-05）**：**代码与自动 Gate 已完成。** Track A、Track B B1–B5、Track C C0–C3、Track D D1–D3、Track E E0–E4 与 ARCHITECTURE v3/当前产品定位同步均已落地；C 的竞态、刷新反馈、坏封面与坏缓存已修，Artist stats API 已做到字段级局部容错且不再输出旧空投语义。Score 滚动热修已把生产 `/score/[id]` 的鼠标视差与滚轮景深解耦，纵向阅读页不再拦截滚轮；loading 同步补成可滚动的 Hero + 永久档案两屏结构。最终 `scripts/verify.sh` 全绿：TypeScript、ESLint、production build（34/34）与 Forge 42/42 全部通过；首页构建产物对 Score data/playback/ledger/session 的禁入模式仍为 0 命中。最终浏览器矩阵中 Artist 375/768/1024/1440 四视口与 `/me` 未登录边界通过，控制台 0 error。**未完成的只有用户本机滚动目验与外部动态证据**：Mainnet Token #1 的 ready Score cold-start reduced-motion 与日食黑盘复拍当前被 `arweave.net`、`ario.permagate.io` 两个网关同时失败阻塞；这不是代码 Gate 失败，资源恢复后必须补证，不能提前写通过。第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 只作隔离 fixture。Artist 正式文案仍待用户以后替换，但不再阻塞代码完成。
 
-**P14 v2 Playbook（2026-09-05）**：核心方案与 `P14-0/A/B/C/E/D/F` 七条详细施工轨已冻结，文件位于 `playbook/phase-14/`。新 P14 = 钱包在启用后第一次成功铸造 ScoreNFT → 地址派生 36 位 `A-Z0-9` 确定性随机配方 → metadata 永久保存 recipe 与所用碎片 `ar://` 地址 → 独立 ERC-721 异步空投；每钱包终身一枚、允许转让、不补发历史钱包、只上 OP Mainnet。详细顺序因永久 metadata 依赖调整为 `P14-0 → A → B → C → E → D → F`：E0 必须先与用户共创视觉并冻结永久播放器，再允许 D 上传 metadata。**尚未开始业务代码；下一步只执行 P14-0 决策 Gate。**
+**P14 执行进度（2026-09-06）**：P14-0、A0、B、C 本地地基、E Foundation、D/D5 与 F0 已完成；全仓代码 Gate 已通过。**当前真实阻塞是 G7 音频及采样永久公开/NFT 使用权确认与完整人耳试听；36 个 clip 及 manifest/Decoder/封面尚无正式 Arweave txid。在此之前不得上传、迁移、部署或 live。**
 
-**P15 Playbook（2026-09-05）**：已建立 `playbook/phase-15/` 七轨详细计划，覆盖性能基线与预算、全局导航/稳定外壳、首页水塘与音乐圆圈快显、`/me` 身份及三段档案解耦、API/真实缓存、高速媒体镜像、Score/P14 永久播放和全站回归。P15 取代旧“音效系统扩展”；旧项退回未排期，不挤占 P16。**当前只完成计划，没有修改页面、API或播放器；正式施工从 P15-0 开始，且不改变当前 P14-0 的权威下一步。**
+**P15 实施进度（2026-09-06）**：隔离分支 `codex/p15-smooth-playback` 已完成 P15-0、A、B、C、E0–E3，以及不依赖新供应商的 D resolver/Score/P14 分批播放代码；50 次热导航、10 次冷启动、四视口 fallback 和专项合同验证通过，完整 `scripts/verify.sh` 全绿。**尚未完结**：主线程长任务仍超过 200ms；真实登录态、首声、健康 GL、移动设备、断站与 P14 永久 Decoder 没有完整证据；E4–E5 镜像服务未获批，049 migration 未应用，Preview/Production 未部署。详见 `reviews/2026-09-06-phase-15-final-review.md`。
 
 **P8-L 动态验收微调（2026-08-23）**：视差/流场上限微调已完成。真透明 R3 最终维修已完成浏览器自动复验：球网格改为挂载时绑定独立 FBO layer，水上实体主体最后覆盖湿背景，水下球保留水纹；完全出水球中心点击时涟漪只绕过主体，`alphaFlicker` 开启后主体覆盖仍稳定。**2026-08-26 用户最终目验确认 R3 与 L 线“活而不乱”合适，验收门已关闭。**
 
@@ -85,7 +85,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **当前唯一下一步：D4 软启动观察（Day 0/7）**。每天两次看 `/api/health`、cron-job.org、Supabase 双队列与告警邮箱；7 天无 P0 后完成 launch review，Phase 12 才正式完结。E 性能仍是软 gate，不阻塞。
 
-**当前权威下一步**：执行 P14-0，一次性拍板产品名、合约参数、资格启用边界、媒体数据形态、声音衔接与分级外部写入权限；未完成前不写 P14 业务代码、不上传 P14 永久资源。P14-E0 仍保留独立视觉共创 Gate，不能由默认建议替代。P11 本机滚动目验、Arweave 恢复后的 Token #1 动态补证和 Artist 正式文案继续作为开放项保留，但不阻塞 P14-0。
+**当前权威下一步**：先关闭 P14 G7（权利确认 + `public/p14-clip-audit.html` 完整人耳试听），再从 P14-A1 永久上传继续。P14 形成干净提交边界后才能整合 P15；整合时先应用 `049_pending_scores_client_draft_id.sql`，再建独立 Preview 关闭 P15 登录态、首声、长任务、真实设备和断站 Gate，不与 P14 主网启用同批。
 
 ---
 

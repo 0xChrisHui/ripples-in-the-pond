@@ -23,7 +23,10 @@ export default function NavigationFeedback() {
   useEffect(() => {
     pendingHref.current = null;
     if (resetTimer.current != null) window.clearTimeout(resetTimer.current);
-    delete document.documentElement.dataset.routePending;
+    resetTimer.current = window.setTimeout(() => {
+      delete document.documentElement.dataset.routePending;
+      resetTimer.current = null;
+    }, 160);
   }, [pathname]);
 
   useEffect(() => {

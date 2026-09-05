@@ -1,5 +1,4 @@
 'use client';
-
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchMyNFTs } from '@/src/data/nfts-source';
 import { fetchMyScoreNFTs, fetchMyScores } from '@/src/data/jam-source';
@@ -15,10 +14,8 @@ import {
   emptyMaterials, emptyRecordings, emptyScores, loadingPhase, type ArchiveSlice,
 } from './archive-state';
 import { syncLocalDrafts } from './draft-sync';
-
 export type { ArchiveRecording } from './archive-data';
 export type { ArchivePhase, ArchiveSlice } from './archive-state';
-
 type Params = {
   authenticated: boolean;
   authSource: ArchiveAuthSource | null;
@@ -26,11 +23,9 @@ type Params = {
   getAccessToken: () => Promise<string | null>;
 };
 type Section = 'scores' | 'recordings' | 'materials';
-
 function message(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
-
 /** `/me` 按 owner generation 恢复三段真实缓存，再各自后台刷新。 */
 export function useMeArchive({ authenticated, authSource, userId, getAccessToken }: Params) {
   const [ownerId, setOwnerId] = useState<string | null>(null);
@@ -45,7 +40,6 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
   const isCurrent = useCallback((generation: number, owner: string | null) => (
     generation === generationRef.current && owner === activeOwnerRef.current
   ), []);
-
   const loadScores = useCallback(async (
     token: string, generation: number, owner: string, source: ArchiveAuthSource,
   ) => {
@@ -62,7 +56,6 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
       }));
     }
   }, [isCurrent]);
-
   const syncDrafts = useCallback(async (
     token: string, generation: number, owner: string, source: ArchiveAuthSource,
   ) => {
@@ -88,7 +81,6 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
       }));
     }
   }, [isCurrent]);
-
   const loadRecordings = useCallback(async (
     token: string, generation: number, owner: string, source: ArchiveAuthSource,
   ) => {
