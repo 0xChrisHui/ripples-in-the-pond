@@ -63,6 +63,10 @@ Migration 文件按 **Phase** 分子目录（目录文件数 ≤ 8 硬线触发�
 #### `phase-7/track-a/`（修严重 BUG）
 - `032_score_queue_state_machine.sql` — A3+A12 score_nft_queue 加 mint_attempted_at + uri_attempted_at（双 mint 防御 10min 窗口）+ token_id partial unique index（P2-11）
 
+### Phase 15（`phase-15/`）
+
+- `049_pending_scores_client_draft_id.sql` — C3 为本机草稿增加用户内幂等身份，并串行化同曲目并发保存
+
 ## 新人第一次建库
 
 在 Supabase Dashboard → SQL Editor，按下面顺序一条条粘贴执行：

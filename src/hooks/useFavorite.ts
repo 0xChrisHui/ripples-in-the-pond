@@ -77,11 +77,12 @@ export function useFavorite(
       if (draft) {
         try {
           await saveScore(token, {
+            clientDraftId: draft.clientDraftId,
             trackId: draft.trackId,
             eventsData: draft.eventsData,
             createdAt: draft.createdAt,
           });
-          removeDraft(draft.trackId);
+          removeDraft(draft.trackId, draft.clientDraftId);
         } catch (err) {
           console.warn('[favorite] 草稿上传失败，保留在本地', err);
         }

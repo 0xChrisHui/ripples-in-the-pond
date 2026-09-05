@@ -49,10 +49,13 @@ export async function POST(req: NextRequest) {
 
     // 3. 解析请求体
     const body: SaveScoreRequest = await req.json();
-    const { trackId, eventsData, createdAt } = body;
+    const { clientDraftId, trackId, eventsData, createdAt } = body;
 
-    if (!trackId || !Array.isArray(eventsData) || !createdAt) {
+    if (!clientDraftId || !trackId || !Array.isArray(eventsData) || !createdAt) {
       return NextResponse.json({ error: '缺少必填字段' }, { status: 400 });
+    }
+    if (!/^[A-Za-z0-9_-]{8,80}$/.test(clientDraftId)) {
+      return NextResponse.json({ error: 'clientDraftId 格式无效' }, { status: 400 });
     }
 
     // 4. 验证 createdAt 在 24h 内
@@ -107,6 +110,7 @@ export async function POST(req: NextRequest) {
       'save_score_atomic',
       {
         p_user_id: auth.userId,
+        p_client_draft_id: clientDraftId,
         p_track_id: trackId,
         p_events_data: eventsData,
         p_created_at: new Date(createdMs).toISOString(),

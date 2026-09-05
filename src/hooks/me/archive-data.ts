@@ -53,7 +53,7 @@ export function recordingsFrom(
     title: `本机录音 · ${String(index + 1).padStart(2, '0')}`,
     createdAt: draft.createdAt,
     eventCount: draft.eventsData.length,
-    uploadFailed: failedUploads.has(draft.trackId),
+    uploadFailed: failedUploads.has(draft.clientDraftId),
   }));
   return [...remote, ...waiting, ...local];
 }

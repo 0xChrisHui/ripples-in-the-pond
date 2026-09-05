@@ -23,6 +23,7 @@ export default function MePage() {
   const auth = useAuth();
   const { ownerId, scores, recordings, materials, retry } = useMeArchive({
     authenticated: auth.authenticated,
+    authSource: auth.authSource,
     userId: auth.userId,
     getAccessToken: auth.getAccessToken,
   });

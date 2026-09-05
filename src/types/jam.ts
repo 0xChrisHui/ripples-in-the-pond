@@ -65,6 +65,8 @@ export interface SoundsListResponse {
 
 /** API 请求体：POST /api/score/save */
 export interface SaveScoreRequest {
+  /** 客户端草稿稳定身份；服务端按 user + 此字段保证重复上传幂等。 */
+  clientDraftId: string;
   trackId: string;
   eventsData: KeyEvent[];
   /** 创作时间（ISO 字符串），服务端按此计算 24h TTL，超过 24h 拒绝 */
