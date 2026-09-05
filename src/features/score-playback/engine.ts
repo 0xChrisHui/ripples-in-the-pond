@@ -1,15 +1,15 @@
 import type { ScorePlaybackManifest } from '@/src/types/jam';
 import { ScoreP9Session, getScoreP9EndMs } from './score-p9-session';
-import { fetchPermanentBytes, fetchPermanentJson, parseSoundsMap } from './sounds-map';
+import { loadScoreResources } from './resource-loader';
 import type {
   ScorePlaybackController,
   ScorePlaybackListener,
   ScorePlaybackResources,
   ScorePlaybackSnapshot,
 } from './types';
-import { normalizeScoreEvents } from './types';
 const INITIAL_SNAPSHOT: ScorePlaybackSnapshot = Object.freeze({
   state: 'loading', positionMs: 0, durationMs: 0, activeKeys: [], errorMessage: null,
+  resourceLoadMs: null, decodeMs: null, firstSoundExpectedMs: null,
 });
 type EngineOptions = {
   fetcher?: typeof fetch;
@@ -49,31 +49,20 @@ export class ScorePlaybackEngine implements ScorePlaybackController {
     this.listeners.forEach((listener) => listener());
   }
   async load(manifest: ScorePlaybackManifest): Promise<void> {
+    const loadStartedAt = performance.now();
     const generation = ++this.generation;
     this.abortController?.abort();
     this.abortController = new AbortController();
     await this.releaseAudio();
     this.resources = null;
-    this.update({ state: 'loading', positionMs: 0, durationMs: 0, activeKeys: [], errorMessage: null });
+    this.update({ ...INITIAL_SNAPSHOT });
     try {
       const signal = this.abortController.signal;
-      const [eventsRaw, soundsRaw, baseBytes] = await Promise.all([
-        fetchPermanentJson(manifest.eventsRef, this.fetcher, signal),
-        fetchPermanentJson(manifest.soundsMapRef, this.fetcher, signal),
-        fetchPermanentBytes(manifest.baseAudioRef, this.fetcher, signal),
-      ]);
-      const events = normalizeScoreEvents(eventsRaw);
-      const sounds = parseSoundsMap(soundsRaw);
-      const usedKeys = [...new Set(events.map((event) => event.key))];
-      const missing = usedKeys.filter((key) => !sounds[key]);
-      if (missing.length) throw new Error(`永久音效表缺少事件键：${missing.join('、')}`);
-      const soundEntries = await Promise.all(usedKeys.map(async (key) => [
-        key,
-        await fetchPermanentBytes(`ar://${sounds[key].txId}`, this.fetcher, signal),
-      ] as const));
+      const resources = await loadScoreResources(manifest, this.fetcher, signal);
       if (generation !== this.generation) return;
-      this.resources = { manifest, events, baseBytes, soundBytes: Object.fromEntries(soundEntries) };
-      this.update({ state: 'ready' });
+      this.resources = resources;
+      this.update({ state: 'ready', resourceLoadMs: Math.round(performance.now() - loadStartedAt) });
+      performance.mark('p15:score-resources-ready');
     } catch (error) {
       if (generation !== this.generation || this.abortController.signal.aborted) return;
       this.update({ state: 'error', errorMessage: safeMessage(error) });
@@ -82,13 +71,16 @@ export class ScorePlaybackEngine implements ScorePlaybackController {
   private async ensureDecoded(): Promise<void> {
     if (this.context && this.baseBuffer) return;
     if (!this.resources) throw new Error('Score 播放资源尚未就绪');
+    const decodeStartedAt = performance.now();
     const context = this.context ?? this.createContext();
     this.context = context;
     await context.resume();
-    const base = await context.decodeAudioData(this.resources.baseBytes.slice(0));
-    const sounds = await Promise.all(Object.entries(this.resources.soundBytes).map(async ([key, bytes]) => [
-      key, await context.decodeAudioData(bytes.slice(0)),
-    ] as const));
+    const [base, sounds] = await Promise.all([
+      context.decodeAudioData(this.resources.baseBytes.slice(0)),
+      Promise.all(Object.entries(this.resources.soundBytes).map(async ([key, bytes]) => [
+        key, await context.decodeAudioData(bytes.slice(0)),
+      ] as const)),
+    ]);
     this.baseBuffer = base;
     this.soundBuffers = Object.fromEntries(sounds);
     const soundEnd = this.resources.events.reduce((end, event) => {
@@ -96,10 +88,13 @@ export class ScorePlaybackEngine implements ScorePlaybackController {
       return Math.max(end, event.time + duration * 1000);
     }, 0);
     const durationMs = Math.max(base.duration * 1000, soundEnd, getScoreP9EndMs(this.resources.events));
-    this.update({ durationMs: Math.round(durationMs) });
+    this.update({ durationMs: Math.round(durationMs), decodeMs: Math.round(performance.now() - decodeStartedAt) });
+    performance.mark('p15:score-decoded');
   }
   async play(): Promise<void> {
     if (!this.resources || !['ready', 'paused', 'ended'].includes(this.snapshot.state)) return;
+    const intentAt = performance.now();
+    performance.mark('p15:audio-intent');
     const generation = this.generation;
     if (this.snapshot.state === 'ended') this.startOffsetMs = 0;
     else this.startOffsetMs = this.snapshot.positionMs;
@@ -109,12 +104,12 @@ export class ScorePlaybackEngine implements ScorePlaybackController {
       if (generation !== this.generation) return;
       if (!this.context || !this.baseBuffer) throw new Error('浏览器无法建立音频会话');
       if (this.context.state !== 'running') await this.context.resume();
-      this.schedule(this.startOffsetMs);
+      this.schedule(this.startOffsetMs, intentAt);
     } catch (error) {
       this.update({ state: 'error', activeKeys: [], errorMessage: safeMessage(error) });
     }
   }
-  private schedule(offsetMs: number): void {
+  private schedule(offsetMs: number, intentAt: number): void {
     const context = this.context!;
     const when = context.currentTime + 0.06;
     this.stopSources();
@@ -132,7 +127,11 @@ export class ScorePlaybackEngine implements ScorePlaybackController {
     this.startedAt = when;
     this.startOffsetMs = offsetMs;
     this.lastSnapshotAt = 0;
-    this.update({ state: 'playing', positionMs: offsetMs, activeKeys: [] });
+    this.update({
+      state: 'playing', positionMs: offsetMs, activeKeys: [],
+      firstSoundExpectedMs: Math.round(performance.now() - intentAt + 60),
+    });
+    performance.mark('p15:first-sound-scheduled');
     this.raf = requestAnimationFrame(this.tick);
   }
   private startSource(buffer: AudioBuffer, when: number, offset = 0): void {

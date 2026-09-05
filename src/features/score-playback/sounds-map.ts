@@ -1,13 +1,9 @@
 import type { NormalizedSoundsMap } from './types';
+import { PermanentMediaError, resolvePermanentMedia } from '@/src/features/permanent-media';
 
 const TX_ID_RE = /^[a-zA-Z0-9_-]{43}$/;
-const ARWEAVE_GATEWAYS = [
-  'https://arweave.net',
-  'https://ario.permagate.io',
-] as const;
-const FETCH_ROUNDS = 2;
-const RETRY_DELAY_MS = 400;
 const MAX_JSON_BYTES = 128 * 1024;
+const SCORE_HISTORY_VALIDATION = { level: 'compatibility' } as const;
 
 type Fetcher = typeof fetch;
 
@@ -15,49 +11,21 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function txIdFromRef(ref: string): string {
-  if (!ref.startsWith('ar://')) throw new Error('永久资源必须使用 ar:// 引用');
-  const txId = ref.slice(5);
-  if (!TX_ID_RE.test(txId)) throw new Error('永久资源包含无效的 Arweave txId');
-  return txId;
-}
-
-function candidates(ref: string): string[] {
-  const txId = txIdFromRef(ref);
-  return ARWEAVE_GATEWAYS.map((gateway) => `${gateway}/${txId}`);
-}
-
-function abortableDelay(signal?: AbortSignal): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const timer = globalThis.setTimeout(resolve, RETRY_DELAY_MS);
-    signal?.addEventListener('abort', () => {
-      globalThis.clearTimeout(timer);
-      reject(signal.reason ?? new DOMException('请求已取消', 'AbortError'));
-    }, { once: true });
-  });
-}
-
-/** 浏览器侧沿用项目固定双网关；两轮均失败后才暴露安全错误。 */
+/** 历史 Score 没有 canonical hash，显式走兼容验证但仍检查类型和长度。 */
 export async function fetchPermanentBytes(
   ref: string,
   fetcher: Fetcher = fetch,
   signal?: AbortSignal,
 ): Promise<ArrayBuffer> {
-  const errors: string[] = [];
-  for (let round = 0; round < FETCH_ROUNDS; round += 1) {
-    for (const url of candidates(ref)) {
-      try {
-        const response = await fetcher(url, { signal });
-        if (response.ok) return response.arrayBuffer();
-        errors.push(`${new URL(url).host}: HTTP ${response.status}`);
-      } catch (error) {
-        if (signal?.aborted) throw error;
-        errors.push(`${new URL(url).host}: 网络错误`);
-      }
-    }
-    if (round + 1 < FETCH_ROUNDS) await abortableDelay(signal);
+  try {
+    const result = await resolvePermanentMedia(ref, {
+      kind: 'audio', validation: SCORE_HISTORY_VALIDATION, fetcher, signal,
+    });
+    return result.bytes;
+  } catch (error) {
+    if (signal?.aborted) throw signal.reason ?? new DOMException('请求已取消', 'AbortError');
+    throw error;
   }
-  throw new Error(`永久资源暂时不可用（${errors.join('；')}）`);
 }
 
 export async function fetchPermanentJson(
@@ -65,12 +33,20 @@ export async function fetchPermanentJson(
   fetcher: Fetcher = fetch,
   signal?: AbortSignal,
 ): Promise<unknown> {
-  const bytes = await fetchPermanentBytes(ref, fetcher, signal);
-  if (bytes.byteLength > MAX_JSON_BYTES) throw new Error('永久 JSON 超过 128KiB 安全上限');
   try {
-    return JSON.parse(new TextDecoder().decode(bytes)) as unknown;
-  } catch {
-    throw new Error('永久 JSON 无法解析');
+    const result = await resolvePermanentMedia(ref, {
+      kind: 'json', validation: SCORE_HISTORY_VALIDATION,
+      fetcher, signal, maxBytes: MAX_JSON_BYTES,
+    });
+    return JSON.parse(new TextDecoder().decode(result.bytes)) as unknown;
+  } catch (error) {
+    if (signal?.aborted) throw signal.reason ?? new DOMException('请求已取消', 'AbortError');
+    if (error instanceof PermanentMediaError && error.attempts.length > 0
+      && error.attempts.every((attempt) => attempt.kind === 'too-large')) {
+      throw new Error('永久 JSON 超过 128KiB 安全上限');
+    }
+    if (error instanceof SyntaxError) throw new Error('永久 JSON 无法解析');
+    throw error;
   }
 }
 

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { WalletRecipePlayerEngine } from '../../src/features/wallet-recipe/player/engine';
+import { sharedPermanentMediaHealth } from '../../src/features/permanent-media/health';
 import {
   createWalletRecipeTimeline,
   equalPowerGain,
@@ -12,6 +13,12 @@ const KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 const TX_ID = 'a'.repeat(43);
 const AUDIO_BYTES = new TextEncoder().encode('p14-player-audio-fixture');
 const AUDIO_SHA = createHash('sha256').update(AUDIO_BYTES).digest('hex');
+
+function audioResponse(bytes: Uint8Array = AUDIO_BYTES): Response {
+  return new Response(bytes.slice(), {
+    headers: { 'content-type': 'audio/wav', 'accept-ranges': 'bytes' },
+  });
+}
 
 function makeInput(recipe: string): WalletRecipePlayerInput {
   const clips: WalletRecipePlayerInput['clips'] = {};
@@ -106,7 +113,7 @@ async function verifyEngineLifecycle(): Promise<void> {
   let fetchCount = 0;
   const fetcher: typeof fetch = async () => {
     fetchCount += 1;
-    return new Response(AUDIO_BYTES.slice());
+    return audioResponse();
   };
   const frames = new FakeFrames();
   const context = new FakeAudioContext();
@@ -165,7 +172,7 @@ async function verifyRecoverableErrors(): Promise<void> {
   const fallbackEngine = new WalletRecipePlayerEngine({
     fetcher: async () => {
       attempts += 1;
-      return attempts === 1 ? new Response(null, { status: 503 }) : new Response(AUDIO_BYTES.slice());
+      return attempts === 1 ? new Response(null, { status: 503 }) : audioResponse();
     },
     createAudioContext: () => new FakeAudioContext() as unknown as AudioContext,
     requestFrame: frames.request,
@@ -180,15 +187,16 @@ async function verifyRecoverableErrors(): Promise<void> {
   });
   await failingEngine.load(makeInput('A'.repeat(36)));
   assert.equal(failingEngine.getSnapshot().errorKind, 'network');
+  sharedPermanentMediaHealth.reset();
 
   const corruptEngine = new WalletRecipePlayerEngine({
-    fetcher: async () => new Response(new TextEncoder().encode('corrupt')),
+    fetcher: async () => audioResponse(new TextEncoder().encode('corrupt')),
   });
   await corruptEngine.load(makeInput('A'.repeat(36)));
   assert.equal(corruptEngine.getSnapshot().errorKind, 'integrity');
 
   const durationEngine = new WalletRecipePlayerEngine({
-    fetcher: async () => new Response(AUDIO_BYTES.slice()),
+    fetcher: async () => audioResponse(),
     createAudioContext: () => new FakeAudioContext(0.5) as unknown as AudioContext,
     requestFrame: frames.request,
     cancelFrame: frames.cancel,

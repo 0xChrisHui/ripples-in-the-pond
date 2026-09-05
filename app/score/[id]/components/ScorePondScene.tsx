@@ -91,6 +91,9 @@ export default function ScorePondScene({ score, network }: Props) {
       data-reduced-motion={capabilities.reduced}
       data-score-state="ready"
       data-playback-state={playback.state}
+      data-resource-load-ms={playback.resourceLoadMs ?? undefined}
+      data-decode-ms={playback.decodeMs ?? undefined}
+      data-first-sound-expected-ms={playback.firstSoundExpectedMs ?? undefined}
       data-gl-health={health}
       lang="zh-CN"
     >

@@ -29,6 +29,9 @@ export type WalletRecipePlayerSnapshot = {
   currentKey: string | null;
   loadedUniqueCount: number;
   totalUniqueCount: number;
+  initialLoadMs: number | null;
+  decodeMs: number | null;
+  firstSoundExpectedMs: number | null;
   errorKind: WalletRecipePlayerErrorKind | null;
   errorMessage: string | null;
 };
@@ -51,6 +54,7 @@ export type PlayerError = Error & { kind: WalletRecipePlayerErrorKind };
 export const IDLE_WALLET_RECIPE_SNAPSHOT: WalletRecipePlayerSnapshot = Object.freeze({
   state: 'idle', positionMs: 0, durationMs: 0, currentIndex: null, currentKey: null,
   loadedUniqueCount: 0, totalUniqueCount: 0, errorKind: null, errorMessage: null,
+  initialLoadMs: null, decodeMs: null, firstSoundExpectedMs: null,
 });
 
 export function toPlayerError(

@@ -1,0 +1,56 @@
+import type { PermanentMediaHealthContract } from './types';
+
+type HealthOptions = Readonly<{
+  failureThreshold?: number;
+  cooldownMs?: number;
+  now?: () => number;
+}>;
+
+type CandidateState = {
+  failures: number;
+  coolingUntil: number;
+};
+
+/** 只记录公开候选基址的短期健康，不持久化用户或资源标识。 */
+export class PermanentMediaHealth implements PermanentMediaHealthContract {
+  private readonly states = new Map<string, CandidateState>();
+  private readonly failureThreshold: number;
+  private readonly cooldownMs: number;
+  private readonly now: () => number;
+
+  constructor(options: HealthOptions = {}) {
+    this.failureThreshold = Math.max(1, options.failureThreshold ?? 2);
+    this.cooldownMs = Math.max(0, options.cooldownMs ?? 30_000);
+    this.now = options.now ?? Date.now;
+  }
+
+  canAttempt(key: string): boolean {
+    const state = this.states.get(key);
+    if (!state) return true;
+    if (state.coolingUntil <= this.now()) {
+      if (state.coolingUntil > 0) this.states.delete(key);
+      return true;
+    }
+    return false;
+  }
+
+  recordFailure(key: string): void {
+    const state = this.states.get(key) ?? { failures: 0, coolingUntil: 0 };
+    state.failures += 1;
+    if (state.failures >= this.failureThreshold) {
+      state.failures = 0;
+      state.coolingUntil = this.now() + this.cooldownMs;
+    }
+    this.states.set(key, state);
+  }
+
+  recordSuccess(key: string): void {
+    this.states.delete(key);
+  }
+
+  reset(): void {
+    this.states.clear();
+  }
+}
+
+export const sharedPermanentMediaHealth = new PermanentMediaHealth();

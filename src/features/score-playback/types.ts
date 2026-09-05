@@ -14,6 +14,9 @@ export type ScorePlaybackSnapshot = Readonly<{
   durationMs: number;
   activeKeys: readonly string[];
   errorMessage: string | null;
+  resourceLoadMs: number | null;
+  decodeMs: number | null;
+  firstSoundExpectedMs: number | null;
 }>;
 
 export type ScorePlaybackListener = () => void;
