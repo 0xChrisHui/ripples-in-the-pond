@@ -47,12 +47,12 @@ echo ""
 # 3. 文件大小检查（额外保险，hook 也会查）
 # 硬线与 .claude/hooks/check-file-size.js + docs/CONVENTIONS.md §1.1 同步：
 #   - 普通代码文件 ≤220 行
-#   - API route handler（src/app/api/**/route.ts）≤270 行
+#   - API route handler（app/api/**/route.ts 或 src/app/api/**/route.ts）≤270 行
 echo "── 3. 代码文件大小（≤220 行 / API route ≤270 行）──"
-LARGE_FILES=$(find src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" \) 2>/dev/null | while read -r f; do
+LARGE_FILES=$(find app src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" \) 2>/dev/null | while read -r f; do
   lines=$(wc -l < "$f")
   case "$f" in
-    src/app/api/*/route.ts) limit=270 ;;
+    app/api/*/route.ts|src/app/api/*/route.ts) limit=270 ;;
     *) limit=220 ;;
   esac
   if [ "$lines" -gt "$limit" ]; then
@@ -71,10 +71,10 @@ echo ""
 
 # 4. 目录文件数检查
 echo "── 4. 目录文件数（≤8）──"
-LARGE_DIRS=$(find src -type d 2>/dev/null | while read -r d; do
+LARGE_DIRS=$(find app src -type d 2>/dev/null | while read -r d; do
   # 豁免：天然 fan-out 目录（与 .claude/hooks/check-folder-size.js 同步）
   case "$d" in
-    *src/app/api*|*src/components/animations/effects*|*src/components/animations-svg/effects*) continue ;;
+    app/api|app/api/*|src/app/api|src/app/api/*|src/components/animations/effects*|src/components/animations-svg/effects*) continue ;;
   esac
   count=$(find "$d" -maxdepth 1 -type f 2>/dev/null | wc -l)
   if [ "$count" -gt 8 ]; then
@@ -96,13 +96,13 @@ echo "── 5. 危险代码扫描 ──"
 DANGER_FOUND=0
 
 # 5a. TODO / FIXME 占位符
-if grep -rn --include="*.ts" --include="*.tsx" "// TODO\|// FIXME\|// implement later\|// XXX" src/ 2>/dev/null; then
+if grep -rn --include="*.ts" --include="*.tsx" "// TODO\|// FIXME\|// implement later\|// XXX" app/ src/ 2>/dev/null; then
   echo "$FAIL 发现 TODO/FIXME 占位符"
   DANGER_FOUND=1
 fi
 
 # 5b. console.log(process.env)
-if grep -rn --include="*.ts" --include="*.tsx" "console\.log(process\.env" src/ 2>/dev/null; then
+if grep -rn --include="*.ts" --include="*.tsx" "console\.log(process\.env" app/ src/ 2>/dev/null; then
   echo "$FAIL 发现 console 打印 process.env — 会泄露密钥"
   DANGER_FOUND=1
 fi

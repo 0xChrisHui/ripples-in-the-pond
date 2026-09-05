@@ -45,7 +45,7 @@ export default function PondShadow() {
   const tilt = usePondTilt();
   const blobs = useMemo(() => makeBlobs(), []);
 
-  // keyframes 在 app/pond-effects.css「Lane B」区块（pondshadow-drift-a..d）
+  // keyframes 在 app/styles/pond-effects.css「Lane B」区块（pondshadow-drift-a..d）
   return (
     <>
       {/* 水面层（§0.7）：理想态应进 zoomG 随 zoom 缩放；Wave 2 前沙盒先挂背景层（镜头层，不随 zoom）。 */}

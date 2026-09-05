@@ -1,9 +1,17 @@
+import Link from 'next/link';
 import './score-page.css';
 
 export default function ScoreLoading() {
   return (
     <main className="score-pond-page score-pond-page--lifecycle" data-p11-theme="score" data-theme="dark" lang="zh-CN">
       <section className="score-pond-page__hero">
+        <header className="score-pond-header" data-pond-ui="true">
+          <Link className="score-pond-header__back" href="/">
+            <span aria-hidden="true">←</span>
+            <span>返回池塘</span>
+          </Link>
+          <p className="score-pond-header__edition">PERMANENT RECORD · 永久唱片</p>
+        </header>
         <div className="score-fallback__content absolute inset-0 m-auto h-fit px-[var(--p11-page-inset)]" role="status">
           <span className="score-fallback__mark" aria-hidden="true">◌</span>
           <h1>正在查找这枚唱片</h1>

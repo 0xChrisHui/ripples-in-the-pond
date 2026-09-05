@@ -1,14 +1,18 @@
+import Link from 'next/link';
 import './artist.css';
 
 export default function ArtistLoading() {
   return (
     <main className="artist-page artist-loading" data-p11-theme="archive" aria-busy="true">
       <div className="artist-page__shell">
-        <div className="artist-page__nav"><span className="artist-loading__line artist-loading__nav" /></div>
+        <nav className="artist-page__nav" aria-label="页面导航">
+          <Link href="/">Ripples in the Pond</Link>
+          <span>ARTIST / 001</span>
+        </nav>
         <section className="artist-portrait">
           <div className="artist-portrait__name">
-            <span className="artist-loading__line artist-loading__eyebrow" />
-            <span className="artist-loading__line artist-loading__name" />
+            <p className="artist-page__folio">ARTIST PORTRAIT</p>
+            <h1>艺术家</h1>
           </div>
           <div className="artist-portrait__copy">
             <span className="artist-loading__line artist-loading__eyebrow" />

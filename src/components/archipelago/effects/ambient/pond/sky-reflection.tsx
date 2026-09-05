@@ -49,7 +49,7 @@ export default function SkyReflection() {
     }
   }, []);
 
-  // keyframes 在 app/pond-effects.css「Lane B」区块（skyref-breathe / skyref-sway）
+  // keyframes 在 app/styles/pond-effects.css「Lane B」区块（skyref-breathe / skyref-sway）
   return (
     <>
       <svg

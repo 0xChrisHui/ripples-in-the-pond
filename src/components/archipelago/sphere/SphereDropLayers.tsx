@@ -15,7 +15,7 @@ import { MOON_ANCHOR } from '../render/render-helpers';
  *   - dropShimmer：主高光 opacity 呼吸（CSS class drop-shimmer，hash 错峰 delay 内联）
  *   - sphereSheen：斜向高光带缓慢扫过（单层 linearGradient + transform keyframe）
  *
- * keyframe 全在 app/pond-effects.css 的「Lane A 球体线」区块。
+ * keyframe 全在 app/styles/pond-effects.css 的「Lane A 球体线」区块。
  */
 
 interface Props {

@@ -16,7 +16,7 @@ const BAND_W_PCT = 10; // 视口宽度占比
 
 export default function MoonPath() {
   const left = `${BAND_CX_PCT - BAND_W_PCT / 2}%`;
-  // keyframes 在 app/pond-effects.css「Lane B」区块（moonpath-sway-a/b）
+  // keyframes 在 app/styles/pond-effects.css「Lane B」区块（moonpath-sway-a/b）
   return (
     <>
       <div

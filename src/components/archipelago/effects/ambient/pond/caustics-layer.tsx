@@ -29,7 +29,7 @@ function CausticsTexture({ seed }: { seed: number }) {
 }
 
 export default function CausticsLayer() {
-  // keyframes 在 app/pond-effects.css「Lane B」区块（caustics-drift-a/b）
+  // keyframes 在 app/styles/pond-effects.css「Lane B」区块（caustics-drift-a/b）
   return (
     <>
       <div className="pointer-events-none fixed inset-0 z-[-1] overflow-hidden" aria-hidden="true">

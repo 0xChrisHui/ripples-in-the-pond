@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 
 type Props = {
   backHref: string;
@@ -18,10 +19,10 @@ export default function ScorePondHeader({
 }: Props) {
   return (
     <header className="score-pond-header" data-pond-ui="true">
-      <a className="score-pond-header__back" href={backHref}>
+      <Link className="score-pond-header__back" href={backHref}>
         <span aria-hidden="true">←</span>
         <span>{backLabel}</span>
-      </a>
+      </Link>
 
       <p className="score-pond-header__edition" aria-label={`${network}，${tokenLabel}`}>
         <span>{network}</span>

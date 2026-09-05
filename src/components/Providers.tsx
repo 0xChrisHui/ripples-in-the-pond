@@ -5,6 +5,7 @@ import { privyConfig } from '@/src/lib/auth/privy';
 import { PlayerProvider } from '@/src/components/player/PlayerProvider';
 import BottomPlayer from '@/src/components/player/BottomPlayer';
 import LoginModal from '@/src/components/auth/LoginModal';
+import NavigationFeedback from '@/src/components/navigation/NavigationFeedback';
 
 /**
  * 全局 Provider 包装层
@@ -21,6 +22,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     >
       <PlayerProvider>
         {children}
+        <NavigationFeedback />
         <BottomPlayer />
         <LoginModal />
       </PlayerProvider>

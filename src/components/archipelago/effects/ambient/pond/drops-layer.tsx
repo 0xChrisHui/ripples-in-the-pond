@@ -85,7 +85,7 @@ export default function DropsLayer({ rain = false }: Props) {
     };
   }, [rain]);
 
-  // keyframe drop-fall 在 app/pond-effects.css「Lane B」区块
+  // keyframe drop-fall 在 app/styles/pond-effects.css「Lane B」区块
   return (
     <div ref={hostRef} className="pointer-events-none fixed inset-0 z-[1]" aria-hidden="true" />
   );

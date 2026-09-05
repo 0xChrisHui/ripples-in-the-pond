@@ -3,8 +3,8 @@
 @import "../src/styles/p11-primitives.css";
 /* Phase 8 — 水塘特效 CSS（.ripple-once + 各 lane keyframe）独立成文件，
    避免 globals.css 撞 220 行硬线，且给并行 lane 一个隔离的追加区。 */
-@import "./pond-effects.css";
-@import "./pond-effects-motion.css";
+@import "./styles/pond-effects.css";
+@import "./styles/pond-effects-motion.css";
 
 /*
  * Tailwind v4 默认扫整个项目寻找 className，遇到二进制/非法 UTF-8 文件
@@ -62,6 +62,24 @@ html, body {
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none; /* Chrome / Safari / Edge */
+}
+
+.p15-route-feedback {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
+  height: 2px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scaleX(0.12);
+  transform-origin: left;
+  background: linear-gradient(90deg, transparent, #f0d18a, transparent);
+  transition: opacity 80ms linear, transform 900ms cubic-bezier(.2,.8,.2,1);
+}
+
+html[data-route-pending='true'] .p15-route-feedback {
+  opacity: .9;
+  transform: scaleX(.82);
 }
 
 /* Phase 6 B2.1 — 全局 noise grain 颗粒（sound-spheres line 35-42 复刻） */

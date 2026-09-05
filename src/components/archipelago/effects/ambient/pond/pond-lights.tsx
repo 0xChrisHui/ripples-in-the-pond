@@ -113,7 +113,7 @@ export default function PondLights() {
     };
   }, []);
 
-  // 静态 keyframes（pl-breathe / pl-shard）在 app/pond-effects.css「Lane B」区块；
+  // 静态 keyframes（pl-breathe / pl-shard）在 app/styles/pond-effects.css「Lane B」区块；
   // 浮光游走 keyframe fl-{i} 为每实例动态生成，留在 styleRef inline。
   return (
     <>
