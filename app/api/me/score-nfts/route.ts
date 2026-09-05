@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
+import { ServerTiming } from '@/src/lib/performance/server-timing';
 import { SCORE_STATUSES, type MyScoreNFTsResponse, type OwnedScoreNFT, type ScoreMintStatus } from '@/src/types/jam';
 
 function readStatus(value: unknown): ScoreMintStatus {
@@ -23,21 +24,24 @@ function readStatus(value: unknown): ScoreMintStatus {
  */
 
 export async function GET(req: NextRequest) {
+  const timing = new ServerTiming();
   try {
-    const auth = await authenticateRequest(req);
+    const auth = await timing.measure('auth', () => authenticateRequest(req));
     if (!auth) {
-      return NextResponse.json({ error: '未登录' }, { status: 401 });
+      return timing.response(() => NextResponse.json({ error: '未登录' }, { status: 401 }));
     }
 
-    const { data: rows, error } = await supabaseAdmin
-      .from('score_nft_queue')
-      .select(`
-        id, token_id, tx_hash, created_at, status, failure_kind,
-        tracks(title),
-        pending_scores(event_count)
-      `)
-      .eq('user_id', auth.userId)
-      .order('created_at', { ascending: false });
+    const { data: rows, error } = await timing.measure('db', () => (
+      supabaseAdmin
+        .from('score_nft_queue')
+        .select(`
+          id, token_id, tx_hash, created_at, status, failure_kind,
+          tracks(title),
+          pending_scores(event_count)
+        `)
+        .eq('user_id', auth.userId)
+        .order('created_at', { ascending: false })
+    ));
 
     if (error) throw error;
 
@@ -62,9 +66,11 @@ export async function GET(req: NextRequest) {
     });
 
     const res: MyScoreNFTsResponse = { scoreNfts };
-    return NextResponse.json(res);
+    return timing.response(() => NextResponse.json(res));
   } catch (err) {
     console.error('GET /api/me/score-nfts error:', err);
-    return NextResponse.json({ error: '服务器内部错误' }, { status: 500 });
+    return timing.response(() => (
+      NextResponse.json({ error: '服务器内部错误' }, { status: 500 })
+    ));
   }
 }

@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { ServerTiming } from '@/src/lib/performance/server-timing';
 
 const TOTAL_TRACKS_GOAL = 108;
+
+export const revalidate = 300;
 
 async function readPublished(): Promise<number> {
   const { count, error } = await supabaseAdmin.from('tracks')
@@ -41,9 +44,14 @@ function valueOf<T>(result: PromiseSettledResult<T>): T | null {
 
 /** 公开统计只返回可证实数字；任一局部查询失败时对应值为 null。 */
 export async function GET() {
-  const [publishedResult, materialResult, scoreResult, participantsResult] = await Promise.allSettled([
-    readPublished(), readMaterialMints(), readScoreMints(), readParticipants(),
-  ]);
+  const timing = new ServerTiming();
+  timing.record('auth', 0);
+  const [publishedResult, materialResult, scoreResult, participantsResult] = await timing.measure(
+    'db',
+    () => Promise.allSettled([
+      readPublished(), readMaterialMints(), readScoreMints(), readParticipants(),
+    ]),
+  );
   const publishedTracks = valueOf(publishedResult);
   const materialMints = valueOf(materialResult);
   const scoreMints = valueOf(scoreResult);
@@ -56,13 +64,8 @@ export async function GET() {
     .filter((result) => result.status === 'rejected').length;
   if (errors > 0) console.error('[artist-stats] partial query failure:', { errors });
 
-  return NextResponse.json({
-    publishedTracks,
-    totalTracksGoal: TOTAL_TRACKS_GOAL,
-    totalMints,
-    materialMints,
-    scoreMints,
-    participants,
-    progress,
-  });
+  return timing.response(() => NextResponse.json({
+    publishedTracks, totalTracksGoal: TOTAL_TRACKS_GOAL, totalMints,
+    materialMints, scoreMints, participants, progress,
+  }));
 }

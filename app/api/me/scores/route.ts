@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
+import { ServerTiming } from '@/src/lib/performance/server-timing';
 import type { KeyEvent, MyScoresResponse } from '@/src/types/jam';
 import type { Track } from '@/src/types/tracks';
 
@@ -17,17 +18,20 @@ import type { Track } from '@/src/types/tracks';
  */
 
 export async function GET(req: NextRequest) {
+  const timing = new ServerTiming();
   try {
-    const auth = await authenticateRequest(req);
+    const auth = await timing.measure('auth', () => authenticateRequest(req));
     if (!auth) {
-      return NextResponse.json({ error: '未登录' }, { status: 401 });
+      return timing.response(() => NextResponse.json({ error: '未登录' }, { status: 401 }));
     }
 
     // 拿 user 已入队的 pending_score_id 集合（用于 SQL NOT IN 排除）
-    const { data: queueRows, error: qErr } = await supabaseAdmin
-      .from('score_nft_queue')
-      .select('pending_score_id')
-      .eq('user_id', auth.userId);
+    const { data: queueRows, error: qErr } = await timing.measure('db', () => (
+      supabaseAdmin
+        .from('score_nft_queue')
+        .select('pending_score_id')
+        .eq('user_id', auth.userId)
+    ));
     if (qErr) throw qErr;
 
     const enqueuedIds = (queueRows ?? []).map((q) => q.pending_score_id);
@@ -55,17 +59,19 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const { data: scores, error } = await query.order('created_at', {
-      ascending: false,
-    });
+    const { data: scores, error } = await timing.measure('db', () => (
+      query.order('created_at', { ascending: false })
+    ));
 
     if (error) throw error;
 
     // 序号：按用户该 track 的所有历史草稿数（含 expired）
-    const { data: allScores } = await supabaseAdmin
-      .from('pending_scores')
-      .select('track_id')
-      .eq('user_id', auth.userId);
+    const { data: allScores } = await timing.measure('db', () => (
+      supabaseAdmin
+        .from('pending_scores')
+        .select('track_id')
+        .eq('user_id', auth.userId)
+    ));
 
     const trackCounts = new Map<string, number>();
     for (const s of allScores ?? []) {
@@ -93,9 +99,11 @@ export async function GET(req: NextRequest) {
         }];
       }),
     };
-    return NextResponse.json(res);
+    return timing.response(() => NextResponse.json(res));
   } catch (err) {
     console.error('GET /api/me/scores error:', err);
-    return NextResponse.json({ error: '服务器内部错误' }, { status: 500 });
+    return timing.response(() => (
+      NextResponse.json({ error: '服务器内部错误' }, { status: 500 })
+    ));
   }
 }

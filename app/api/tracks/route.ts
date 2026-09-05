@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { ServerTiming } from '@/src/lib/performance/server-timing';
 import type { TracksListResponse } from '@/src/types/tracks';
 
 /**
@@ -15,20 +16,24 @@ import type { TracksListResponse } from '@/src/types/tracks';
 export const revalidate = 300;
 
 export async function GET() {
+  const timing = new ServerTiming();
+  timing.record('auth', 0);
   try {
-    const { data: tracks, error } = await supabaseAdmin
-      .from('tracks')
-      .select('id, title, week, audio_url, cover, island, created_at, published')
-      .order('week', { ascending: true });
+    const { data: tracks, error } = await timing.measure('db', () => (
+      supabaseAdmin
+        .from('tracks')
+        .select('id, title, week, audio_url, cover, island, created_at, published')
+        .order('week', { ascending: true })
+    ));
 
     if (error) throw error;
 
     const res: TracksListResponse = { tracks: tracks ?? [] };
-    return NextResponse.json(res);
+    return timing.response(() => NextResponse.json(res));
   } catch (err) {
     console.error('GET /api/tracks error:', err);
     const fallback: TracksListResponse = { tracks: [] };
-    const res = NextResponse.json(fallback, { status: 200 });
+    const res = timing.response(() => NextResponse.json(fallback, { status: 200 }));
     res.headers.set('X-Degraded', 'tracks-db-error');
     return res;
   }
