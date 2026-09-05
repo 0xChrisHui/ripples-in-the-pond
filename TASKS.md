@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 9 v4.2 Review Fix Pack A+B+C、首页同步与生产发布已完成 ✅**（2026-09-01）：33 键生产注册表、参数真值、连续复音、缓存回收、reduced-motion、V 五浪、FX44 五簇与 H/3 全局重音冷却均完成；`/` 已启用与 `/test3` 相同的 P9 演奏层并移除 P9 状态浮窗。静态、浏览器、压力、完整工程验证与 `pond-ripple.xyz` 线上冒烟全绿。**当前唯一 Now：用户在生产首页完成最终体感体验；若无新增反馈，封存 P9 并决定 Phase 11。**
+- **Phase 11 外部动态证据补档**（2026-09-02）：P11 代码与自动 Gate 已完成，最终 `scripts/verify.sh` 全绿（TypeScript、ESLint、production build 34/34、Forge 42/42）；Artist 四视口、`/me` 未登录边界与控制台 0 error 已通过。**当前唯一 Now：等待 `arweave.net` 与 `ario.permagate.io` 恢复后，补 Mainnet Token #1 ready Score 的 cold-start reduced-motion 与日食黑盘复拍。**网关同时失败期间不改已全绿代码、不把 fallback 冒充主演出通过。Artist 正式文案以后替换；第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 仅作隔离历史 fixture。
 
 - **Phase 8 首页迁移 ✅**（2026-08-26）：R3 与 L 线“活而不乱”最终目验通过；当前 `/test3` 已替代默认首页，生产路由隐藏调参/诊断工具，`/v1` 保留旧 SVG 版本。完整 `verify.sh` 与三路由烟测全绿。
 
@@ -202,10 +202,26 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - **Phase 10** — 分享转发（/score 加 X/微博/复制链接）+ 海报/link 下载 + 债务收口 + 后端 bug 修复（**2026-07-05 收窄**：原「组件升级/小球 36→35/特殊球/5 大球」作废；playbook `playbook/phase-10/00-overview.md`）
 - **Phase 11** — 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
 - **Phase 12** — OP Mainnet 上线准备与部署
-- **Phase 13** — 混音系统 + RemixNFT
-- **Phase 14** — 音效系统扩展
-- **Phase 15** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
+- **Phase 13** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
+- **Phase 14（当前）** — 钱包配方音乐 NFT 自动空投（v2 详细 playbook 已冻结，尚未写业务代码；`playbook/phase-14/00-overview.md`）
+- **Phase 15** — 全站丝滑体验与永久播放可靠性（playbook 已建立，尚未施工；`playbook/phase-15/00-overview.md`）
 - **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
+- **未排期** — 音效系统扩展（原 P15：26→50 与输入键/音效 id 解耦；待以后重新编号）
+
+### Phase 14 当前看板（2026-09-05）
+
+- [x] v2 核心规则：首次 Score mint、终身一枚、可转让、不补历史、36 位 recipe、独立 ERC-721。
+- [x] 详细 playbook：`P14-0 → A → B → C → E → D → F` 七轨、异常矩阵、测试网/主网双 Gate。
+- [x] 本地素材预盘点：`public/the36` 实为 36 个不同 MP3（A–Z + 0–9），不是 35 个。
+- [ ] **当前唯一 Next：P14-0 产品/合约/权限决策表。**
+- [ ] P14-A 36 段时长/hash/Arweave 永久冻结。
+- [ ] P14-B recipe v1 与 metadata/data schema。
+- [ ] P14-C 新合约与 durable queue 地基。
+- [ ] P14-E0 与用户共同拍板视觉；之后才做播放器、封面与永久 Decoder。
+- [ ] P14-D 独立发现器与自动空投；不得修改 Score 成功路径。
+- [ ] P14-F OP Sepolia E2E、主网部署、observe、live 与首枚真实空投。
+
+> 连续执行目标：所有产品/视觉/外部写入判断集中在命名 Gate；每个已授权闭环尽量一次跑完并留证据。仍遵守 `AGENTS.md`：每个独立小闭环通过后停下等“继续”，主网部署与 live 永不合并授权。
 
 ### Phase 8 Scope（当前任务）
 
@@ -216,7 +232,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - 5 个背景大球 → P10
 - 按键动画 → P9
 - 全局 UI 重设计 → P11
-- 音效扩展 → P14
+- 音效扩展 → 未排期（原 P15 已被全站性能新方案取代）
 
 详细 roadmap：`playbook/roadmap-P8-P16.md`；P8 playbook：`playbook/phase-8/00-overview.md`
 
@@ -236,6 +252,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 
 ## 🚧 Blocked
 
+- **Phase 11 ready Score 最后两项动态证据** — `arweave.net` 与 `ario.permagate.io` 当前同时失败，永久音频无法在验收预算内 ready；因此 cold-start reduced-motion 与日食黑盘复拍必须等外部资源恢复。代码、自动 Gate 与非音频浏览器矩阵均已完成，此阻塞不等于产品代码失败。
 - **Phase 4A S3** — 前端登录按钮 + useAuth 兼容 + 端到端验证
   - **阻塞原因**：Semi 团队在设计 OAuth 开放登录，现有 API 不确定对外开放
   - **已完成的前置**：S0 JWT 基础设施 ✅ / S1 双验证中间件 ✅ / S2 后端登录端点 ✅
@@ -246,6 +263,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 
 ## ✅ Done
 
+- **[Phase 11 代码与自动 Gate]** ✅ 完成（2026-09-02）— A–E 代码、C2/C3 档案七态与局部失败、Artist 草稿页及字段级 stats 容错、ARCH 当前空投语义清理、第二 Token deferred 决策均闭合；C 的竞态/刷新/坏封面/坏缓存已修。最终 verify：production build 34/34、Forge 42/42；Artist 375/768/1024/1440 与 `/me` 未登录矩阵通过，console 0。仅外部 Arweave 恢复后的 ready Score 两项动态证据留在 Blocked。
 - **[Phase 7 Track A A2]** ✅ 完成（2026-05-15）— AirdropNFT v2 加 `_uriSet` 防 MINTER 私钥泄露后改 metadata：
   - **合约改动**：`contracts/src/AirdropNFT.sol` 复制 ScoreNFT v2 那 7 行 `_uriSet` mapping + setTokenURI `require(!_uriSet[tokenId])` + 标 `_uriSet[tokenId]=true`
   - **测试**：`contracts/test/AirdropNFT.t.sol` 加 `testSetTokenURIOnlyOnce` — 首次 setTokenURI 成功 → 二次同 tokenId revert `"AirdropNFT: URI already set"` → URI 保持首次值；forge test 7/7（原 6 + 新 1）

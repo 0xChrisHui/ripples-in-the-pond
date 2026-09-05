@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 9 v4.2 已完成并上线 + Phase 12 软启动并行观察**（P8 于 2026-08-26 正式完结；P12 已迁移 OP Mainnet）。P7 / P8 / P9 / P10 / P12 部署已完结，P11 未开始。
+**Phase**: **Phase 14 详细 Playbook 已完成，停在 P14-0 产品/合约决策 Gate**；Phase 11 代码与自动 Gate 已完成，外部动态补证与正式 Artist 文案继续保留；Phase 12 维持软启动观察。P8/P9 已正式完结，P12 已迁移 OP Mainnet。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）
@@ -15,8 +15,8 @@
   - **Phase 11** = 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
   - **Phase 12** = OP Mainnet 上线准备与部署
   - **Phase 13** = Semi 音乐 NFT 生态合作
-  - **Phase 14** = 混音系统 + RemixNFT
-  - **Phase 15** = 音效系统扩展
+  - **Phase 14** = 钱包配方音乐 NFT 自动空投（首次 ScoreNFT mint 触发，终身一枚）
+  - **Phase 15** = 全站丝滑体验与永久播放可靠性
   - **Phase 16** = 原生钱包 + 多链 / ETH Mainnet（往后排）
 **P9 系统性 Review 最终稿**：`reviews/2026-09-01-phase-9-final-review.md`（交叉复核 DeepSeek v4 Pro、Kimi K3 与当前代码。结论：0 P0、3 P1、8 P2、6 P3；33/33/33 映射、13/20 门控、月光写入 0、33 唯一音频和完整工程验证均通过。E“引力透镜轨道”与 R“花瓣原地炸裂”是用户拍板后的当前真值，DeepSeek 的 E=P0 为旧 playbook 导致的误报；Kimi 漏掉 6 个可见但无效参数、R 缓存增长与 reduced-motion 绕行。Track C 前建议先做 Review Fix Pack A+B。）
 **P8 综合系统性 Review**：`reviews/2026-08-25-phase-8-consolidated-review.md`（汇总 Kimi K3 + Codex 并完成交叉验证；严格排除其他 Phase、媒体与 commit 收束。结论：0 个 P0、3 个 P1、7 个 P2。**3 个 P1、7 个 P2、死文件、文档契约、双树清单与自动浏览器回归均已完成**：专项代码与每步完整 `verify.sh` 全绿；Edge 实测四路由、fallback/context、wheel、拖拽取消、键盘、reduced-motion、横竖屏、DPR `2→1.5→2` 与 waterFx 连续切换全部通过。证据见 `reviews/2026-08-26-phase-8-browser-regression.md` 与 `reviews/2026-08-26-phase-8-dual-tree-inventory.md`。**2026-08-26 用户已确认 R3 与 L 线“活而不乱”最终目验通过，并明确让当前 `/test3` 替代首页；默认 `/` 已切为 GL 水塘，沙盒工具仅留 `/test3`/`/test4`，旧 SVG 由 `/v1` 保留。**原始 Kimi 报告保留在 `reviews/2026-08-25-phase-8-review.md`。）
@@ -27,6 +27,12 @@
 **stakeholder 反馈**：艺术家 5 条反馈已收到（→ Phase 8）；投资人催 Semi demo（→ P7 Track B PoC-only）
 
 **P9 当前（2026-09-01）**：v4.2 Review Fix Pack A+B+C 已完成并部署 Production，生产注册表收束为 33 键/33 音效/33 动画；`/` 与 `/test3` 共用同一 P9 演奏层，首页不显示 P9 状态浮窗，调参面板仍只留在 `/test3`。静态审计、浏览器 33 键扫描、复音/回收/reduced-motion/60 FPS 压测、合并后完整 `scripts/verify.sh` 和 `pond-ripple.xyz` 线上冒烟全绿，证据见 `reviews/2026-09-01-phase-9-v4-2-final-gate.md`。**下一步：用户在生产首页进行最终体感体验；若无新增反馈，Phase 9 正式封存并进入下一阶段。**
+
+**P11 当前（2026-09-05）**：**代码与自动 Gate 已完成。** Track A、Track B B1–B5、Track C C0–C3、Track D D1–D3、Track E E0–E4 与 ARCHITECTURE v3/当前产品定位同步均已落地；C 的竞态、刷新反馈、坏封面与坏缓存已修，Artist stats API 已做到字段级局部容错且不再输出旧空投语义。Score 滚动热修已把生产 `/score/[id]` 的鼠标视差与滚轮景深解耦，纵向阅读页不再拦截滚轮；loading 同步补成可滚动的 Hero + 永久档案两屏结构。最终 `scripts/verify.sh` 全绿：TypeScript、ESLint、production build（34/34）与 Forge 42/42 全部通过；首页构建产物对 Score data/playback/ledger/session 的禁入模式仍为 0 命中。最终浏览器矩阵中 Artist 375/768/1024/1440 四视口与 `/me` 未登录边界通过，控制台 0 error。**未完成的只有用户本机滚动目验与外部动态证据**：Mainnet Token #1 的 ready Score cold-start reduced-motion 与日食黑盘复拍当前被 `arweave.net`、`ario.permagate.io` 两个网关同时失败阻塞；这不是代码 Gate 失败，资源恢复后必须补证，不能提前写通过。第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 只作隔离 fixture。Artist 正式文案仍待用户以后替换，但不再阻塞代码完成。
+
+**P14 v2 Playbook（2026-09-05）**：核心方案与 `P14-0/A/B/C/E/D/F` 七条详细施工轨已冻结，文件位于 `playbook/phase-14/`。新 P14 = 钱包在启用后第一次成功铸造 ScoreNFT → 地址派生 36 位 `A-Z0-9` 确定性随机配方 → metadata 永久保存 recipe 与所用碎片 `ar://` 地址 → 独立 ERC-721 异步空投；每钱包终身一枚、允许转让、不补发历史钱包、只上 OP Mainnet。详细顺序因永久 metadata 依赖调整为 `P14-0 → A → B → C → E → D → F`：E0 必须先与用户共创视觉并冻结永久播放器，再允许 D 上传 metadata。**尚未开始业务代码；下一步只执行 P14-0 决策 Gate。**
+
+**P15 Playbook（2026-09-05）**：已建立 `playbook/phase-15/` 七轨详细计划，覆盖性能基线与预算、全局导航/稳定外壳、首页水塘与音乐圆圈快显、`/me` 身份及三段档案解耦、API/真实缓存、高速媒体镜像、Score/P14 永久播放和全站回归。P15 取代旧“音效系统扩展”；旧项退回未排期，不挤占 P16。**当前只完成计划，没有修改页面、API或播放器；正式施工从 P15-0 开始，且不改变当前 P14-0 的权威下一步。**
 
 **P8-L 动态验收微调（2026-08-23）**：视差/流场上限微调已完成。真透明 R3 最终维修已完成浏览器自动复验：球网格改为挂载时绑定独立 FBO layer，水上实体主体最后覆盖湿背景，水下球保留水纹；完全出水球中心点击时涟漪只绕过主体，`alphaFlicker` 开启后主体覆盖仍稳定。**2026-08-26 用户最终目验确认 R3 与 L 线“活而不乱”合适，验收门已关闭。**
 
@@ -79,7 +85,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **当前唯一下一步：D4 软启动观察（Day 0/7）**。每天两次看 `/api/health`、cron-job.org、Supabase 双队列与告警邮箱；7 天无 P0 后完成 launch review，Phase 12 才正式完结。E 性能仍是软 gate，不阻塞。
 
-**当前权威下一步**：用户在 `https://pond-ripple.xyz/` 完成 P9 v4.2 最终体感体验；无新增反馈则封存 P9，再决定 Phase 11。P12 仅保留 7 天软启动观察（health、cron、双队列、告警）。
+**当前权威下一步**：执行 P14-0，一次性拍板产品名、合约参数、资格启用边界、媒体数据形态、声音衔接与分级外部写入权限；未完成前不写 P14 业务代码、不上传 P14 永久资源。P14-E0 仍保留独立视觉共创 Gate，不能由默认建议替代。P11 本机滚动目验、Arweave 恢复后的 Token #1 动态补证和 Artist 正式文案继续作为开放项保留，但不阻塞 P14-0。
 
 ---
 
@@ -116,8 +122,8 @@
   - Phase 11 = 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
   - Phase 12 = OP Mainnet 上线准备与部署
   - Phase 13 = Semi 音乐 NFT 生态合作
-  - Phase 14 = 混音系统 + RemixNFT
-  - Phase 15 = 音效系统扩展
+  - Phase 14 = 钱包配方音乐 NFT 自动空投（首次 ScoreNFT mint 触发，终身一枚）
+  - Phase 15 = 全站丝滑体验与永久播放可靠性
   - Phase 16 = 原生钱包 + 多链 / ETH Mainnet（往后排）
   - 详细 roadmap：`playbook/roadmap-P8-P16.md` + `playbook/phase-8/00-overview.md`
 
@@ -235,6 +241,84 @@
 - `app/api/` 硬线豁免缺失：hook 只认 `src/app/api/`，当前 app/api/ 接近 8 上限，新 route 考虑复用现有子目录（见 S5.c 放 `cron/queue-status/`）
 
 ## 上次成功验证
+
+- 验证: **P14 七轨详细 Playbook 与连续施工 Gate 完成**
+- 时间: 2026-09-05
+- 改动: 在 `playbook/phase-14/` 建齐 P14-0/A/B/C/E/D/F 七条详细施工轨，逐步写明范围、前置、状态机、异常分类、测试矩阵、Arweave/测试网/主网权限门与第二天验收证据；永久依赖顺序修正为先 E 共创并冻结视觉/Decoder，再 D 上传 metadata。同步 STATUS/TASKS/JOURNAL/LEARNING；未修改业务代码、合约、数据库或外部资源。
+- 验证证据: `public/the36` 只读确认 36 个 MP3（A–Z + 0–9）、36 个 SHA-256 均不同；`git diff --check` 通过；完整 `scripts/verify.sh` 全绿（TypeScript、ESLint 0 error / 3 个既有 warning、生产构建 34/34、Forge 42/42）。
+- 下一步: **只执行 P14-0 产品/合约/权限决策 Gate；未拍板前不写业务代码。P14-E0 仍必须与用户共同讨论视觉。**
+
+- 验证: **P14 v2 规划冻结与路线文档同步**
+- 时间: 2026-09-05
+- 改动: 新建 P14 标准 overview，冻结首次 ScoreNFT 触发、终身一枚且可转让、36 位地址配方、Arweave 永久素材和首页聆听入口；同步 STATUS/TASKS/roadmap，并纠正 P13/P14/P15 旧编号错位。
+- 验证证据: 完整 `scripts/verify.sh` 全绿（TypeScript、ESLint 0 error / 3 个既有 warning、生产构建 34/34、Forge 42/42）；本闭环未修改功能代码、合约、数据库或部署配置。
+- 下一步: **P14 保持在 P14-0，不写代码；正式启动时先拍板产品名、播放器/视觉形态、碎片衔接和合约参数。当前项目执行仍先完成 P11 用户目验与外部补证。**
+
+- 验证: **P11 Score 纵向滚动热修**
+- 时间: 2026-09-05
+- 改动: Score 页面保留精细指针视差，但关闭共享水塘的滚轮接管；loading 补齐 Hero 与永久档案两屏真实结构，加载期间也有纵向阅读空间。
+- 验证证据: 完整 `scripts/verify.sh` 全绿（TypeScript、ESLint 0 error、生产构建 34/34、Forge 42/42）；独立 Edge 在 PondGL `healthy` 下实测 Hero 滚轮 `scrollY 0→650`，档案区 `843→1493`，连续纵向滚动恢复。
+- 下一步: **用户硬刷新 `/score/1`，连续滚动加载态、Hero 与永久档案区做最终体感确认。**
+
+- 验证: **P11 Track B/E 工程基线与 Score 日食层级修复收口**
+- 时间: 2026-09-02
+- 改动: 生产 `/score/[id]` 的永久播放、单节点水塘、唱片↔日食、分享/凭证、OG/海报、全局音频互斥与 P11 全局表面完成；E045 将日食/P9 放进 Score 专属 `z=35` 无变换层，位于 hero 之上、交互 UI 之下。
+- 验证证据: 完整 `scripts/verify.sh` 全绿（TypeScript、ESLint 0 error、生产构建 34/34、Forge 42/42）；静态 Gate 15/15、Audio/网关定测通过；首页 18 个入口 chunk 共 2,449,474 bytes，Score 禁入模式 0 命中。黑盘最终复拍被 Arweave 双网关瞬时失败阻塞，失败 JSON 已留档，不能冒充视觉通过。
+- 下一步: **取得 C2/C3 最小越界授权与 Artist 真实内容；公网资源恢复后复拍黑盘并完成 F2–F5 浏览器矩阵。**
+
+- 验证: **P11-B1 永久数据联合 + B2 路由播放会话目标验证完成**
+- 时间: 2026-09-02
+- 改动: `/score` 数据源新增 ready/processing/failed 联合、双网关有界永久 manifest 解析与链上回落；新增独立 Web Audio/P9 会话，支持加载、暂停续播、结束、重播与销毁，并在销毁时清空 Score 专属 P9 运行态。
+- 验证证据: OP Mainnet Token #1 永久输入与 35 条事件验证通过；隔离 OP Sepolia #24 ready、损坏 metadata failure 均保留身份/凭证；假 AudioContext 生命周期与 flat/v1/v2 sounds map 全绿；两线 `tsc`、定向 ESLint 均通过。
+- 下一步: **迁移生产 `/score/[id]`，随后执行 B4 完整 Gate。**
+
+- 验证: **P11-B0 ARCHITECTURE v3 同步门关闭**
+- 时间: 2026-09-02
+- 改动: 经用户明确授权，将已铸 Token 的永久 manifest 主次关系、Score 单节点 PondGL、路由级 Web Audio/P9 隔离、设备 capability、fallback 与首页首包边界局部同步到架构真值。
+- 验证证据: 完整 `scripts/verify.sh` 全绿；生产构建 34/34、Forge 42/42，无新增依赖或运行时代码。
+- 下一步: **并行执行 P11-B1/B2，再迁移生产 Score。**
+
+- 验证: **P11-A1.3 + A2 + A3 代码与真值收口**
+- 时间: 2026-09-02
+- 改动: `/score-lab/1` 接入 35 条 Token #1 永久 Events、P11 tokens、五个原语、首屏分享、完整永久凭证与 Decoder；事件音效/P9 统一到同一 Player 时钟，并保留无 WebGL/事件异常降级。
+- 验证证据: Arweave/DB Events 35 条、13 键、0 未映射且 SHA-256 一致；完整 `scripts/verify.sh` 全绿（生产构建 34/34、Forge 42/42）。自动 Edge 因 PondGL health 在四种夹具中均未 healthy，G7 动态矩阵未通过且已如实留档。
+- 下一步: **可见浏览器关闭 G7；明确授权 ARCH v3 同步后进入 P11-B。**
+
+- 验证: **P11-A1.2 唱片 ↔ 日食沙盒与 G6 完成**
+- 时间: 2026-09-01
+- 改动: `/score-lab/1` 用真实 Token #1 封面建立 idle 静态唱片，播放时切换同锚点日食；fine pointer 保留探索，coarse pointer 在沙盒捕获层阻断鼠标式输入；继续只重演真实 `V×6`，生产 `/score` 与共享渲染 API 未修改。
+- 验证证据: 完整 `scripts/verify.sh` 全绿（生产构建 34/34、Forge 42/42）；生产 Edge CDP 15/15 通过，375/1440、reduced-motion、Canvas 稳定、4.2 秒余韵、停止/重播、路由往返与 0 context loss 均留档于 `reviews/evidence/p11-score-single-sphere/`。
+- 下一步: **Stop A1 用户目验；批准后执行 A1.3/G7，批准前不进入 A2 或生产 `/score`。**
+
+- 验证: **P11 v3 作品水塘 playbook 完成同步**
+- 时间: 2026-09-01
+- 改动: 重写 P11 总览、Track A/B/E/F；冻结 idle 静态唱片 → playing 日食、桌面 fine-pointer 可探索、手机/coarse-pointer 只播放、首屏分享、同页完整凭证、P9 G5→G6→G7 与单 PondGL/路由会话护栏；未修改生产 `/score` 或架构文件。
+- 验证证据: 完整 `scripts/verify.sh` 全绿；TypeScript、代码硬线、目录上限和危险扫描通过，ESLint 0 error / 3 个既有 P9 warning，生产构建 34/34 页面成功，Forge 42/42 通过。
+- 下一步: **执行 P11-A1.2 沙盒状态合同；通过后在生产施工前停于架构同步门。**
+
+- 验证: **P11-A1 漂浮唱片盒动态方向样板完成**
+- 时间: 2026-09-01
+- 改动: 新建 `references/visual-prototypes/p11-score-floating-record-case.html`；首屏复用现有水域背景资产，以 Token #1 永久封面作为漂浮唱片盒，点击后打开日食，并用真实 35 条 Events 时间线预演 eclipse/motes/petals/water/scene 五类 P9 通道；分享提升到首屏。
+- 验证证据: 375×844 与 1440×1000 的 ready/playing 四态实拍通过；两档均无横向溢出且分享可见，事件数组 35/35、真实合约与永久资源引用保留；完整 `scripts/verify.sh` 全绿，生产构建 33/33 页面成功，Forge 42/42 通过。
+- 下一步: **用户点击唱片盒目验动态方向；通过前不进入 A2，不改 playbook 或生产路由。**
+
+- 验证: **P11-A1 暖黑黄铜 Score 配色样板完成**
+- 时间: 2026-09-01
+- 改动: 新建 `references/visual-prototypes/p11-score-warm-brass.html`，在相同 Token #1 内容和响应式版式上将冷淡蓝替换为暖墨黑、骨白、氧化黄铜与低饱和鼠尾草链接色；原样板和生产 `/score` 均未修改。
+- 验证证据: 375×2500 与 1440×2050 Edge 实拍通过；143 行、无旧淡蓝残留、真实合约地址保留；完整 `scripts/verify.sh` 全绿，生产构建 33/33 页面成功，Forge 42/42 通过。
+- 下一步: **用户目验暖色样板，拍板配色和分享入口层级；确认前不进入 P11-A2。**
+
+- 验证: **36-AU 参考音频乱码文件名修复完成**
+- 时间: 2026-09-01
+- 改动: 将目录 `闊抽2` 恢复为 `音频2`，并同步恢复“大号”“工作室大钢琴”“呼吸声音”三组 `.wav` / `.pkf` 配对文件名；未修改任何音频内容。
+- 验证证据: 35 个文件重命名前后 SHA-256 全部一致；18 个 WAV、17 个 PKF 数量不变；完整 `scripts/verify.sh` 通过，生产构建成功，Forge 42/42 通过。
+- 下一步: **仍按当前权威计划等待用户说“继续，开始 P11-A0”；本次参考素材整理不改变 Phase 11 进度。**
+
+- 验证: **P11 Playbook v2 与公开回放架构完成对齐**
+- 时间: 2026-09-01
+- 改动: 重写 `playbook/phase-11/` 总览与 A–F 六轨；锁定 `/score/[id]` 站内原生唱片 + 路由级 Web Audio、metadata 永久输入、首屏摘要 + 凭证账本、80/20 视觉合同和 `/artist` 文字肖像；同步架构、盘点、任务、学习与决策记录，删除已被推翻的 Decoder-first P11 决策。
+- 验证证据: 完整 `scripts/verify.sh` 通过；TypeScript、代码硬线、目录上限和危险扫描通过，ESLint 0 error / 3 个既有 P9 warning，生产构建 33/33 页面成功，Forge 42/42 通过。
+- 下一步: **等待用户说“继续，开始 P11-A0”；先核验真实 Token #1 数据并制作 375px / 1440px 高保真样板，不改生产路由。**
 
 - 验证: **P9 三方系统性 review 最终交叉审查完成**
 - 时间: 2026-09-01
@@ -497,7 +581,7 @@ Phase 7 不再是 UI 翻修候选清单，而是三 Track 并行：
 
 旧 Phase 7 UI 翻修候选已分流：艺术家反馈 5 条 + Claude Design + /me /score /artist 深度重设计 → Phase 8；按键动画 + 音效系统扩展 26→50 → Phase 9；主网部署 / Resend / CRON_SECRET / operator 主网 ETH → Phase 10。
 
-> ⚠️ **本段为 2026-05-13 历史分流，已被 2026-06-04 新路线图覆盖**：P8=水塘视觉、P9=按键动画、P11=全局 UI 重设计、P12=主网、P14=音效扩展。当前权威以顶部 Phase 拆分表 + `playbook/roadmap-P8-P16.md` 为准。
+> ⚠️ **本段为 2026-05-13 历史分流，已被后续路线图覆盖**：P14 已于 2026-09-05 重写为钱包配方音乐 NFT 自动空投；P15 同日改为全站丝滑体验与永久播放可靠性，原音效扩展退回未排期。当前权威以顶部 Phase 拆分表及 P14/P15 playbook 为准。
 
 ## 📌 悬空 TODO（不在 step 内但要追踪）
 

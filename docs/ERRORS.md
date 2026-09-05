@@ -527,3 +527,66 @@
 - 🧠 原因：`.env.local` 按设计被 Git 忽略，新 worktree 不会自动获得主工作区的本地构建环境；不是合并冲突或线上变量丢失。
 - 🔧 修复：不打印任何密钥，只把现有 `.env.local` 复制到隔离发布 worktree 作为本地验证输入；文件继续被 Git 忽略，不进入提交。
 - 💡 新 worktree 的源码和依赖可以独立，但需要显式准备被忽略的本地构建环境。
+
+### E040 — 浏览器审计临时目录被 ESLint 当作源码扫描
+
+- 📅 2026-09-01 / P11-0 视觉盘点验证
+- 😱 现象：`scripts/verify.sh` 的 ESLint 阶段尝试读取 `.tmp-p11-audit` 内 Edge 扩展脚本，Windows 返回 `EPERM`。
+- 🧠 原因：ESLint 只忽略了 P9 专用 `.tmp-p9-*`，新阶段的浏览器 profile 命名未被通用规则覆盖。
+- 🔧 修复：将 ESLint 与 Git 忽略规则收束为项目根目录 `.tmp-*`，明确这类目录只存浏览器验收和诊断产物，不属于应用源码。
+- ✅ 结果：完整 `scripts/verify.sh` 通过；TypeScript、ESLint、硬线、危险扫描、33/33 页面构建与 Forge 42/42 全绿。
+- 💡 临时验收目录应按用途统一隔离，不应每个 Phase 追加一组易遗漏的专用名称。
+
+### E041 — P11 Track A 完整验证因 Google Fonts 断连失败
+
+- 📅 2026-09-01 / P11-A1.3 + A2 + A3 收口
+- 😱 现象：TypeScript、ESLint、硬线与危险代码扫描通过后，Turbopack 无法连接 `fonts.gstatic.com` 下载 Cormorant Garamond，生产构建失败。
+- 🧠 原因：`next/font` 构建期字体资源请求瞬时断连；错误链位于 Next.js 内部字体模块，与 P11 源码、刚恢复的 lockfile 依赖树无关。
+- 🔧 处理：按协议停在失败点，不修改字体或相邻产品代码；等待用户授权后重跑同一条完整验证。
+- ✅ 结果：网络恢复后原样重跑，生产构建 34/34、TypeScript、ESLint（0 error）、结构扫描与 Forge 42/42 全绿；未修改字体架构。
+- 💡 同一网络型故障曾见 E035；应在网络恢复后原样复验，不能用产品改动掩盖外部资源不可达。
+
+### E042 — P11 G7 自动化环境无法进入 PondGL healthy
+
+- 📅 2026-09-02 / P11-A1.3 G7 浏览器 Gate
+- 😱 现象：预热后的 default headless、SwiftShader headless、非 headless Hidden 与 offscreen Edge 都能进入播放，但 90 秒内 PondGL health 均未变为 `healthy`，日食断言无法开始。
+- 🧠 证据：四种夹具均为 `AudioContext=running`、Canvas=1、35 Events / 13 keys / 0 unmapped、页面错误 0；SwiftShader 可创建原生 WebGL context，但产品正确留在唱片 fallback，P9 触发为 0。
+- 🔧 处理：没有为通过测试而放宽产品 health 判据；审计脚本增加 90 秒冷启动预算、页面目标筛选、fine/coarse、reduced-motion 与三种停止路径，随后关闭所有审计进程。
+- ✅ 结果：无 WebGL 降级路径得到证据，WebGL 日食/P9 动态 Gate 仍未通过，明确转为可见前台浏览器目验。
+- 💡 测试宿主能创建 WebGL 不等于 R3F 场景健康；fallback 证据与主演出证据必须分开记录。
+
+### E043 — P11-B 播放引擎测试入口与 React 19 ref 规则不兼容
+
+- 📅 2026-09-02 / P11-B1+B2 目标验证
+- 😱 现象：`tsx` 标准输入入口按 CommonJS 解释，无法执行 ESM 测试；播放 Hook 首版在 render 期间读写 ref，被 React 19 ESLint 拒绝。
+- 🧠 原因：前者是测试入口的模块格式限制；后者是 React 19 对 render 纯度的约束，不允许用 ref 充当惰性构造容器。
+- 🔧 修复：测试脚本改为被忽略的 `.tmp/p11-b2-engine-test.ts` 文件；引擎实例改用惰性 `useState`，不改变生命周期语义。
+- ✅ 结果：Web Audio load/play/pause/resume/ended/replay/destroy、P9 清理及三种 sounds map 全绿，TypeScript 与定向 ESLint 通过。
+- 💡 一次性验证脚本也应使用和项目一致的 ESM 文件入口；React 运行时对象用惰性 state 比 render 期 ref 写入更稳妥。
+
+### E044 — P11 并行迁移期间生成类型与静态 Gate 读到中间态
+
+- 📅 2026-09-02 / P11-B3、C1、B5 并行收口
+- 😱 现象：一次 TypeScript 检查在海报 route 被原子替换的间隙读到缺文件；初版 B4 静态 Gate 也因只识别直接 canonical 对象写法而误报现有条件表达式。
+- 🧠 原因：验证命令与并行文件替换发生竞争；扫描器又把代码写法当成产品语义，规则过窄。
+- 🔧 修复：等待文件落稳后重建 Next 类型并原样复跑；canonical Gate 改为识别 token-only 条件表达式，同时保留真实语义检查。
+- ✅ 结果：TypeScript、定向 ESLint 与 B4/B5 静态 Gate 15/15 全绿；未为测试删除产品分支。
+- 💡 并行施工的验证必须在文件原子落稳后裁决，静态 Gate 应检查行为合同而不是偏好的语法形状。
+
+### E045 — Score 日食 SVG 被变换祖先改写 fixed 坐标系
+
+- 📅 2026-09-02 / P11-B4 可见截图复核
+- 😱 现象：播放状态、PondGL 与 P9 都正常，但画面只见白色日冕和小环，核心黑盘偏出作品锚点。
+- 🧠 原因：`GlEclipse` 使用 viewport `position: fixed` 与绝对投影坐标；它先被嵌在带 `transform: translate(...)` 的锚点祖先内，移到页面根层后又沿用首页 `z=21–23`，低于 Score hero 的 `z=30`。前者改写坐标系，后者把黑盘压到半透明 hero 背后。
+- 🔧 修复：把真实 `GlEclipse` 提到未变换的 Score 页面根层；再用 Score 专属、无 transform 的 `z=35` stacking context 托起整组日食/P9 覆盖层，仍低于 `z=40–42` 的身份与播放控制。RecordAnchor 只保留点击锚点与无 WebGL 的局部 CSS fallback。
+- ✅ 结果：TypeScript、定向 ESLint、Audio/P9 生命周期与 B4/B5 静态 Gate 15/15 通过；待最终可见截图确认黑盘对位。
+- 💡 viewport overlay 不应挂在任何 transform/filter/perspective 祖先下；视觉锚点与渲染层可以共享状态，不必共享 DOM 父级。
+
+### E046 — Score 水塘在 hydration 后接管整页滚轮
+
+- 📅 2026-09-05 / P11 Score 滚动热修
+- 😱 现象：`/score/1` 初始偶尔能下滑一次，随后 Hero 与永久档案区都无法继续上下滚动；加载态也只有一屏，无法预览下方结构。
+- 🧠 原因：Score 在 PondGL healthy 后启用共享 `usePointerFx`，其 `window` 级非 passive wheel listener 对非 `data-pond-ui` 目标统一执行 `preventDefault()`；加载页同时只有 `100svh` 内容。
+- 🔧 修复：为共享 Hook 增加独立的滚轮接管开关，Score 只保留鼠标视差；loading 改成不含伪数据的 Hero + 永久档案两屏结构。
+- ✅ 结果：完整 `scripts/verify.sh` 全绿（生产构建 34/34、Forge 42/42）；独立 Edge 在 PondGL healthy 下验证 Hero 与档案区滚轮均持续推进 `scrollY`，等待用户最终体感目验。
+- 💡 视觉交互的启用条件不能等同于页面输入所有权；长页面必须优先保留原生滚动。

@@ -6,13 +6,15 @@
 
 ---
 
-## 1. 范围（仅保留三块）
+## 1. 范围（2026-07-05 定稿三块；2026-07-11 追加 Track F）
 
 1. **Track A — /score/[id] 便捷转发 + 海报下载**
    - Twitter/X、微博、复制链接
    - 海报 / link 下载方案
 2. **Track B — 后端安全修复**（来源：2026-07-05 后端整体 review，findings 已落盘 `reviews/2026-07-05-backend-review.md`）
 3. **Track C — 债务收口**（历史"挂 P10"项重新分诊，见 §5）
+4. **Track F — 解码器 postMessage 控制接口**（2026-07-11 追加：P13 Semi 全局迷你条依赖；
+   解码器逐 NFT 永久钉死 → **主网开铸前硬 deadline**；建议与 P12-A1 同批一次重传）
 
 ### 子文档索引（分步执行手册）
 
@@ -21,6 +23,7 @@
 | `10-a-share-poster.md` | Track A：分享转发（Twitter/X、微博、复制链接）+ 海报 / link 下载 |
 | `20-b-backend-fixes.md` | Track B：后端 bug 修复（按 review 编号 P0/P1/P2/P3 + 合约 CT） |
 | `30-c-debt.md` | Track C：债务收口（历史「挂 P10」重新分诊） |
+| `70-f-decoder-postmessage.md` | Track F：解码器 postMessage 控制接口（协议 v1 权威；P13 Semi 迷你条依赖） |
 | `../../reviews/2026-07-05-backend-review.md` | **findings 唯一来源**：全部 P0-1~P3-14 + CT-1~CT-15，带勾选框 |
 
 ### 明确移出 P10（2026-07-05 用户拍板）
@@ -150,7 +153,7 @@
 > 2026-07-05 已完成的架构调研结论，防止将来重查：
 
 - 现状：球 ≡ track、点击 ≡ 播放，`SimNode`（`src/components/archipelago/sphere-config.ts:37`）无类型/角色字段；DOM 版与 GL 版（`pond-gl-test3`）共享该模型
-- P14 混音（钱包地址+唱片hash→节拍→合成→RemixNFT）在合约/队列层是"再来一套 ScoreNFT"，特殊球不碰链上
+- P14 已于 2026-09-05 重写为“首次 ScoreNFT mint → 钱包地址派生36位配方 → 自动空投独立 NFT”；仍是独立合约/队列，特殊球不碰链上
 - 预留 4 缝：① `SimNode.kind?: 'normal' | 'special'` ② 点击分发分支（`SphereOverlay.tsx` onUp / `SphereNode.tsx` onClick）③ 混音种子来源（稳定 hash + useAuth 钱包地址可取到即可）④ 注入点在 `getGroupTracks`/`buildGlNodes` 之后追加 + flag 门控默认关
 
 ---

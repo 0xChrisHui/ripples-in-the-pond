@@ -35,7 +35,7 @@
 |---|---|
 | 聆听 | 108 首音乐 × 群岛结构，爱心收藏 = 铸造素材 NFT |
 | 共创 | 首页即乐器，按键合奏 + 无感录制 → 乐谱 NFT |
-| 重组 | 每 36 首 AI 再创作，空投参与者 |
+| 重组 | 以已发布作品与共创乐谱为素材继续再创作；具体公开机制另行冻结，不承诺按曲目数量触发空投 |
 
 ---
 
@@ -121,15 +121,14 @@
 1. **封面图不是单独的 NFT**——它是 ScoreNFT 的视觉外观（PNG 文件），不是一个独立 token
 2. **乐谱不是子 NFT**——乐谱是一段 events JSON，描述"哪个键在第几毫秒按下、用了哪个 sound"。它**就是**母 NFT 的内容，不是装在母 NFT 里的另一个 token
 
-**回放数据的 4 层冗余**（Phase 6 B8 P3 修订）：
-1. Arweave 主网关
-2. Arweave 多网关 fallback（决策 9）
-3. 我们的 Supabase `score_nft_queue` 联表 `pending_scores.events_data`（B8 P3 起新主路径）
-   - 历史：原第 3 层是 `mint_events.score_data` 自包含拷贝，B8 后此表降级为链上事件账本（cron 仍写但 UI 不读）
-4. OP 主网上的 tokenURI 字符串（永远在，但不可读取内容；OP 数据最终结算到 ETH L1，不灭）
-   - **第 4 层"链上灾备"在 B8 P3 后挂 P7 重新设计**：B8 inline 播放需 `track.audio_url`，链上 metadata 拿不到完整 Track 对象（只有 ar:// 字符串）
+**回放数据的 4 层可用性链**（P11 v3 修订）：
+1. OP 主网 `tokenURI`：已铸作品的不可变入口，指向该 Token 的 Arweave metadata。
+2. metadata `animation_url`：永久钉住 `events/base/sounds` 与 Decoder；这是已铸作品正式回放输入的唯一真值。
+3. Arweave 主网关 + 多网关 fallback（决策 9）：提高同一永久内容的可用性，不改变资源身份。
+4. Supabase `score_nft_queue`、`pending_scores.events_data`：负责 UUID 生命周期、快速定位、创作者关系、交叉核验与运维镜像；不得替换已铸 Token 的永久输入。
+   - `mint_events.score_data` 继续作为链上事件账本，cron 仍写但 UI 不读。
 
-`pending_scores` 24h **不再过期已被铸造的草稿**（B8 P2 起入队后 status='draft' 不变，events_data 永久保留供详情页前端 inline 播放使用）。
+`pending_scores` 24h **不再过期已被铸造的草稿**（B8 P2 起入队后 status='draft' 不变）；`events_data` 保留为队列记录与永久输入的可核验镜像，不再是已铸详情页的 canonical 回放来源。
 
 ### 决策 7：ERC-6551 TBA 当前未实装（Phase 6 D-C3 修订）
 
@@ -353,15 +352,21 @@ Phase 2 spike 已验证 Web Audio 可行（commit `da9210d`）。
 固定底部，显示当前曲目 + 进度条 + 停止按钮。
 播放中 = 录制中（用户无感）。
 
-### 公开回放页 `/score/[id]`（Phase 6 B8 P3 重设）
+### 公开回放页 `/score/[id]`（P11 v3）
 
 **路由双兼容**：纯数字 → `getScoreByTokenId`（兼容旧分享卡 / 链上 external_url）/ UUID → `getScoreByQueueId`（B8 主路径，含未上链中间态"上链中"灰卡）。
 
-**数据源**：`score_nft_queue` 单一来源（联表 `pending_scores.events_data` 拿事件 + `tracks(*)` 拿底曲）。`mint_events` 表 B8 后**降级为链上事件账本**（cron 仍写，UI 不读，留给监控 / 1% 链上追踪用户）。
+**永久输入**：数据库负责路由定位、创作者关系和未完成 UUID 的真实生命周期；已铸 Token 只从该 NFT metadata `animation_url` 校验并解析 `events/base/sounds`，不使用当前环境变量或数据库事件镜像替换历史资源。数据库失败或 miss 时，数字 Token 走 OP Mainnet `tokenURI → Arweave metadata → ownerOf`。永久 Decoder 只由用户主动在新页面打开，站内不执行其脚本、也不嵌 iframe。
 
-**播放方案**：前端 inline（PlayerProvider.toggle 播底曲 + useEventsPlayback 按 events.time 触发音效）。删除原 Arweave decoder iframe 调用。OpenSea 端 metadata `animation_url` 仍指向 decoder（链上不可改），但项目主路径不依赖。
+**渲染合同**：Score 复用生产 PondGL、水面、花瓣与既有 P9 能力；首页输入自己的 35 个节点，Score 只输入 1 个作品节点。`idle/loading/paused/ended` 显示 Token 永久封面的静态唱片，`playing` 在同一锚点切为日食。一页最多一棵现有 R3F Canvas 与花瓣 Canvas，不复制渲染器、Canvas 树或第二个 P9 注册表。
 
-**任何人可访问，OG meta tags 三件套**。灾备链路（决策 6 第 4 层"链上 tokenURI → Arweave fallback"）在 B8 P3 后**降为 P7 重新设计**：原 score-fallback.ts noop 残留已删除，链上 metadata 拿不到完整 Track 对象不能复用 inline 播放方案。
+**音频与 P9 会话**：Score 使用路由级 Web Audio engine 和独立 Score P9 session，但复用既有 P9 registry。挂载时停止全局 PlayerProvider 并隐藏 BottomPlayer；卸载时清理事件游标、voice、RAF/timer、pointer、水面与临时调制，离开后保持静音。任一时刻只有一个音频源和一个 Score session。
+
+**设备能力**：默认手机/coarse pointer 只保留明确播放、环境水波/花瓣与声音驱动演出；仅 `(hover: hover) and (pointer: fine)` 开启水面跟随、悬停、视差与鼠标扰动。`prefers-reduced-motion` 是独立减负条件，不隐藏播放状态。
+
+**降级与首包边界**：作品身份、播放控制、首屏分享、永久凭证与 Decoder 出口先由 DOM 提供；无 WebGL、context lost、低性能或音频/资源失败时仍保留唱片、阅读、重试与核验。Score PondGL 与播放内核只进入 `/score` 路由，不得进入首页首包；首页仍只加载自己的 35 节点数据。P11 不新增渲染依赖。
+
+**任何人可访问，OG meta tags 三件套**。数字 Token 在数据库失败或 miss 时走已落地的链上 `tokenURI → Arweave metadata` 灾备，并从同一 metadata 构建站内播放 manifest；`ownerOf` 只表示当前持有人。未完成 UUID 只能依赖数据库展示生命周期，不伪造永久资源。
 
 ---
 
@@ -467,8 +472,8 @@ Patatap spike ✅ / 首页 = 全屏乐器 + 岛屿群 / 无感录制（播放即
 ### Phase 3 — 乐谱 NFT + 封面 + 分享
 封面预生成 / ScoreNFT + MintOrchestrator / ERC-6551 TBA（含 fallback）/ mint_events.score_data 自包含 / **score-decoder.html 上传 Arweave**（决策 13）/ 公开回放页 + ShareCard / 唱片架 / 链上事件同步
 
-### Phase 4 — 社区钱包 + 空投
-社区 API 封装 / 自签 JWT 双验证 / 艺术家页面动态化 / 空投开箱 / 余额告警 + 健康检查
+### Phase 4 — 社区身份与运营设施（历史建设）
+社区 API 封装 / 自签 JWT 双验证 / 艺术家页面动态化 / 活跃度记录 / 余额告警 + 健康检查。历史空投设施不属于当前公开产品承诺。
 
 ### Phase 5 — 测试网公开版（Vercel + 域名）
 **第一个可公开访问的版本**，仍在 OP Sepolia 测试网。Vercel 部署 + 域名绑定 / Vercel Cron 配置 / 环境变量迁移 / 基础安全（rate limiting、CORS、错误页面）/ Semi 前端（如果 OAuth 已出）/ 冒烟测试
