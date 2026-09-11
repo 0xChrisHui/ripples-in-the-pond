@@ -10,6 +10,7 @@ import {
   classifyEligibility,
   compareDiscoveryCursor,
   decideMintAction,
+  decideRecoveredMintAction,
   decideUploadAction,
   decideWalletRecipeRuntime,
   formatDiscoveryCursor,
@@ -105,6 +106,9 @@ function verifyUploadAndMintRecovery(): void {
     chainTokenId: 0n, chainStateMatches: true, txHash: '0xhash', attemptedAgeMs: 1,
     receipt: 'success', confirmations: 20n,
   }), 'success');
+  assert.equal(decideRecoveredMintAction('minting_onchain'), 'advance_to_confirming');
+  assert.equal(decideRecoveredMintAction('confirming_onchain'), 'inspect_receipt');
+  assert.throws(() => decideRecoveredMintAction('success'), /非法状态/);
 }
 
 function verifyStableMetadata(): void {

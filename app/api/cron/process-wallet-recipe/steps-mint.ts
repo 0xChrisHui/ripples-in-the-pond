@@ -4,7 +4,10 @@ import { supabaseAdmin } from '@/src/lib/supabase';
 import { operatorWalletClient, publicClient } from '@/src/lib/chain/operator-wallet';
 import { acquireOpLock, releaseOpLock } from '@/src/lib/chain/operator-lock';
 import { WALLET_RECIPE_ABI } from '@/src/lib/chain/wallet-recipe-contract';
-import { decideMintAction } from '@/src/features/wallet-recipe/pipeline-policy';
+import {
+  decideMintAction,
+  decideRecoveredMintAction,
+} from '@/src/features/wallet-recipe/pipeline-policy';
 import { PipelineStepError, type PipelineStepResult, type WalletRecipeQueueRow } from './shared';
 
 const mintedEvent = parseAbiItem(
@@ -198,6 +201,9 @@ export async function stepMintOnchain(
     const stamp = row.mint_attempted_at ?? new Date().toISOString();
     if (!(await saveChainFacts(row, leaseOwner, { txHash, tokenId: state.tokenId, stamp }))) {
       return { status: row.status, detail: 'lease_lost' };
+    }
+    if (decideRecoveredMintAction(row.status) === 'advance_to_confirming') {
+      return { status: 'confirming_onchain', detail: 'mint_recovered' };
     }
     return inspectReceipt(
       { ...row, mint_attempted_at: stamp }, leaseOwner, contract, txHash, deadlineAt,

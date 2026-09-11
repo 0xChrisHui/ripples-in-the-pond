@@ -1453,3 +1453,10 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **资格决定**：cutoff 固定为已确认区块 `156738598`；链上仅有的两枚历史 Score 均通过正式注册 RPC 写为 `excluded_prelaunch`。没有 cutoff 后真实首铸时保持 observe，不为 smoke 伪造资格。
 - **调度决定**：observe 发现 P14 每分钟任务依赖的 `sync-chain-events` 原为每 5 分钟，期间会安全拒绝并出现 stale/lagging；将只读同步任务改为每分钟后继续观察，保持游标语义不变并缩短发现延迟。
 - **部署结果**：Pond Echoes 主网合约 `0xd2E884FA06C9a9BDef2350956cc4216d3E2B476c` 已验证源码；Production 为 observe，954 秒内 15 次 cron HTTP 200，2 excluded / 0 eligible / 0 failed / 0 mint。
+
+## 2026-09-11 — P14 live 与首枚真实 Pond Echo
+
+- **Gate 决定**：只在 Score #3 的 receipt、cutoff、首次 origin 与唯一 eligible/pending 四项对清后切 live；两枚历史 Score 继续保持 excluded，不补发、不伪造 smoke。
+- **生产结果**：新钱包 `0x456b...7708` 自动收到 ECHO #1；metadata 与 mint 均一次成功，三网关全量永久输入、链/DB/metadata/Score source 和双视口 36/36 长播通过。
+- **恢复决定**：审计发现“链上已铸但 DB 仍为 minting”时可能跨过数据库状态约束直接 success；恢复路径改为强制先进入 confirming，下一轮再验 receipt，避免已上链任务陷入 safe_retry。
+- **观察决定**：首枚完成不提前等同于 F8；Production 保持 live，继续 24h/7d 只读观察。自动化不得冒充用户私密登录，`/me` 的最终展示由原钱包本人目验。

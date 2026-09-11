@@ -225,10 +225,11 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - [x] P14-C 新合约与 durable queue 地基。
 - [x] P14-E 视觉、播放器、封面与永久 Decoder。
 - [x] P14-D 独立发现器与自动空投；Score 成功路径保持独立。
-- [ ] P14-F：OP Sepolia E2E、主网部署与 observe 已完成；F7 live/首枚真实空投等待 cutoff 后真实 `eligible`。
-- [ ] **当前唯一 Next：保持 observe；真实用户首铸 Score 被发现为 pending 后，执行 F7 live Gate。**
+- [x] P14-F7 主路径：真实 Score #3 触发 ECHO #1；live 状态机、永久性四方对账与 375/1440 完整 36/36 长播通过。
+- [ ] P14-F7/F8 观察收口：完成 24h/7d health/队列/余额/网关观察，并由原钱包在 `/me#pond-echoes` 做一次私密登录态目验。
+- [ ] **当前唯一 Next：保持 live 与每分钟 cron，完成 24h/7d 观察后写 F8 最终报告。**
 
-> 生产当前为 `observe`：只发现资格，不上传 metadata、不发 P14 交易。没有真实 eligible 时不得为验收制造主网用户。
+> 生产当前为 `live`：首枚真实 ECHO 已成功；严重异常先切 off 并保留现场，不删除队列、不回退 cutoff、不重传未知上传。
 
 ### Phase 8 Scope（当前任务）
 
