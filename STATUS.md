@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 14 F7 首枚真实主网空投已完成，当前进入 24h/7d live 观察**。Production `WALLET_RECIPE_MODE=live`；ECHO #1 已由 cutoff 后真实 Score #3 自动触发并完成永久性与双视口长播审计。P8/P9/P11/P12 已正式完结。
+**Phase**: **Phase 14 P14-G 主网索引恢复与第 36 首首页接入进行中**。旧 source cursor 路径已止血：Production `WALLET_RECIPE_MODE=off`，source/P14 两项 cron 均关闭，旧观察窗作废；G0 三次稳定读回通过。G1–G5 代码已完成并进入生产 migration、全链对账与浏览器 Gate。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）
@@ -34,7 +34,7 @@
 
 **P11 正式发布（2026-09-06）**：发布提交 `2e55d65` 已推送 `main`，Vercel Production 成功。正式域名 `/`、`/artist`、`/me`、`/score/1` 均 HTTP 200；Artist 草稿标识、私人音乐档案、Score 分享入口与永久凭证均命中新版 SSR 内容。受保护 `/api/health` 使用 Bearer 验证为 DB/钱包正常、两队列 0 积压/0 失败。双 Arweave 网关恢复后的 Token #1 动态补证与 Artist 正式文案仍是开放项，不阻塞发布。
 
-**P14 主网 live（2026-09-11）**：P14-0/A/B/C/E/D、OP Sepolia E2E 与 F1–F7 主路径均已完成。真实新钱包 `0x456b...7708` 的 Score #3 位于区块 `156746674`，严格晚于 cutoff `156738598`；observe 固化唯一 eligible/pending 后，经用户 live Gate 自动生成 ECHO #1。metadata txid `E4JV...KU88`，mint tx `0x2680...68e8`，区块 `156759068`，全程 0 retry/0 error。链/DB/metadata/Score source 四方一致；metadata、manifest、Decoder、封面和 36 段音频在三网关全部同字节；375/1440 两视口各完整播放 1–36 段并以 `4:29/4:29` ended，0 overflow、0 console/page error。终检 health 为 1 success / 2 excluded / 0 active / 0 failed / 0 manual review，alerts 空。证据见 `reviews/evidence/p14-f7/README.md`。**当前继续 24h/7d live 观察；用户登录原钱包后的 `/me#pond-echoes` 只剩一次私密会话人工目验。**
+**P14-G 恢复（2026-09-12）**：生产旧 source cursor 曾因“读取失败按 0 + 普通覆盖写”退到 `5500`。G0 已把 P14 切 `off`、关闭两个 cron、暂停旧观察，并在 lock TTL 后确认游标/队列稳定；ECHO #1 与历史记录未受损。G1–G5 已完成 scoped cursor/CAS、全链恢复工具、#36 永久音频合同与双重禁铸、35+1 水中访客和日食纯黑代码。完整 MSTR 的永久上传仍等待专属权利与整首试听确认。
 
 **P15 Playbook（2026-09-05）**：已建立 `playbook/phase-15/` 七轨详细计划，覆盖性能基线与预算、全局导航/稳定外壳、首页水塘与音乐圆圈快显、`/me` 身份及三段档案解耦、API/真实缓存、高速媒体镜像、Score/P14 永久播放和全站回归。P15 取代旧“音效系统扩展”；旧项退回未排期，不挤占 P16。**当前只完成计划，没有修改页面、API或播放器；正式施工从 P15-0 开始，且不改变当前 P14-0 的权威下一步。**
 
@@ -89,7 +89,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：保持 P14 `live` 与两项每分钟 cron，完成首枚上线后的 24h/7d 只读观察；用户用原钱包登录 `.xyz` 后在 `/me#pond-echoes` 做一次档案发现目验。技术路径无待处理失败；观察窗结束后执行 F8 最终收口，再进入 P15-0。
+**当前权威下一步**：执行 migration 050 的测试库并发 Gate 与 Production read-back；完成 ScoreNFT 全链 0-diff、初始化 scoped cursor、部署新 source route，再只恢复 source cron 做 10 次/15 分钟观察。完整 MSTR 获得专属权利与整首试听确认后，继续永久上传、migration 051、浏览器/生产 G6–G7。
 
 ---
 

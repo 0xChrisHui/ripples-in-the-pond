@@ -214,7 +214,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
 - **未排期** — 音效系统扩展（原 P15：26→50 与输入键/音效 id 解耦；待以后重新编号）
 
-### Phase 14 当前看板（2026-09-11）
+### Phase 14 当前看板（2026-09-12）
 
 - [x] v2 核心规则：首次 Score mint、终身一枚、可转让、不补历史、36 位 recipe、独立 ERC-721。
 - [x] 详细 playbook：`P14-0 → A → B → C → E → D → F` 七轨、异常矩阵、测试网/主网双 Gate。
@@ -226,8 +226,12 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - [x] P14-E 视觉、播放器、封面与永久 Decoder。
 - [x] P14-D 独立发现器与自动空投；Score 成功路径保持独立。
 - [x] P14-F7 主路径：真实 Score #3 触发 ECHO #1；live 状态机、永久性四方对账与 375/1440 完整 36/36 长播通过。
-- [ ] P14-F7/F8 观察收口：完成 24h/7d health/队列/余额/网关观察，并由原钱包在 `/me#pond-echoes` 做一次私密登录态目验。
-- [ ] **当前唯一 Next：保持 live 与每分钟 cron，完成 24h/7d 观察后写 F8 最终报告。**
+- [x] P14-G0：生产切 `off`、两个 cron 停止、旧观察暂停；三次稳定读回与事故快照完成。
+- [x] P14-G1–G5 代码：scoped cursor/CAS、全链恢复工具、#36 数据/播放/禁铸、水中访客与日食黑场完成并通过自动验证。
+- [ ] P14-G2：应用 migration 050，完成测试库并发、生产全链 0-diff、scoped cursor 初始化与 source 10 次/15 分钟观察。
+- [ ] P14-G3 素材 Gate：用户完整试听 MSTR，并明确确认完整母带永久公开/NFT 权利；随后上传并完成 2/3 网关整文件 quorum。
+- [ ] P14-G6/G7：35+1 动态、日食纯黑、P9 33 键、移动端/性能浏览器验收，发布并重启新的 24h/7d 窗口。
+- [ ] **当前唯一 Next：先完成 G2；等待 MSTR 两项人工 Gate 时继续所有不依赖上传的验证。**
 
 > 生产当前为 `live`：首枚真实 ECHO 已成功；严重异常先切 off 并保留现场，不删除队列、不回退 cutoff、不重传未知上传。
 
