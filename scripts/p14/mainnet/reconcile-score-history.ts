@@ -59,7 +59,9 @@ async function main() {
   if (!Number.isSafeInteger(requestBudget) || requestBudget <= 0) {
     throw new Error('必须用 --max-requests=<正整数> 设置 RPC 请求额度 ceiling');
   }
-  const rpcUrl = process.env.ALCHEMY_RPC_URL || process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL;
+  const rpcUrl = process.env.P14_RECONCILE_RPC_URL
+    || process.env.ALCHEMY_RPC_URL
+    || process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL;
   const dbUrl = process.env.SERVER_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const dbKey = process.env.SERVER_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!rpcUrl || !dbUrl || !dbKey) throw new Error('主网 RPC/Supabase 环境不完整');

@@ -1,0 +1,25 @@
+{
+  "chainId": 10,
+  "contract": "0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa",
+  "deployBlock": "155933187",
+  "safeHead": "156794055",
+  "latestHead": "156794127",
+  "requests": 93,
+  "retries": 0,
+  "counts": {
+    "chain": 3,
+    "mints": 3,
+    "db": 3,
+    "scoreQueue": 2,
+    "mintEvents": 2,
+    "recipes": 3
+  },
+  "differences": {
+    "missing": 0,
+    "extra": 0,
+    "conflicts": 0,
+    "integrity": []
+  },
+  "collectionSha256": "910fee5d60ba454feef635e5e27cfe4b9a7dd5b67e7ddb5a8145368c36b5fa3f",
+  "cursorInitialized": true
+}
