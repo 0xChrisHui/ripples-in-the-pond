@@ -23,7 +23,11 @@ async function initialize(chainId: number) {
 
 async function main() {
 const initialized = await Promise.all([initialize(11155420), initialize(11155420)]);
-assert.equal(initialized.filter((result) => !result.error).length, 1);
+assert.equal(
+  initialized.filter((result) => !result.error).length,
+  1,
+  `并发初始化结果：${initialized.map((result) => result.error?.message ?? 'ok').join(' | ')}`,
+);
 
 const advances = await Promise.all([
   db.rpc('advance_source_chain_cursor', {
@@ -33,7 +37,11 @@ const advances = await Promise.all([
     p_chain_id: 11155420, p_score_contract: contract, p_expected: '100', p_next: '120',
   }),
 ]);
-assert.equal(advances.filter((result) => !result.error).length, 1);
+assert.equal(
+  advances.filter((result) => !result.error).length,
+  1,
+  `并发推进结果：${advances.map((result) => result.error?.message ?? 'ok').join(' | ')}`,
+);
 const winner = advances.find((result) => !result.error)?.data;
 
 const regression = await db.rpc('advance_source_chain_cursor', {

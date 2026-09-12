@@ -11,6 +11,7 @@ update public.chain_events set
     when '0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa' then 10
     when '0x1c478f9f5b66302a35a0178e07df67ba343c832f' then 11155420
     when '0xa65c9308635c8dd068a314c189e8d77941a7e99c' then 11155420
+    when '0xe0faed842283f3d689aa8619cbb0ccc232a1db23' then 11155420
     else chain_id
   end;
 
@@ -117,3 +118,5 @@ revoke all on function public.advance_source_chain_cursor(bigint, text, bigint, 
   from public, anon, authenticated;
 grant execute on function public.initialize_source_chain_cursor(bigint, text, bigint) to service_role;
 grant execute on function public.advance_source_chain_cursor(bigint, text, bigint, bigint) to service_role;
+
+notify pgrst, 'reload schema';
