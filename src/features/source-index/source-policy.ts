@@ -1,6 +1,31 @@
 export const SOURCE_CONFIRMATIONS = 20n;
 export const SOURCE_CHUNK_SIZE = 10n;
 export const SOURCE_MAX_BATCHES = 50;
+export const SOURCE_DB_MAX_ATTEMPTS = 3;
+
+const TRANSIENT_DB_ERROR = /gateway|timeout|timed out|fetch failed|connection|502|503|504/i;
+
+export function isTransientSourceDbError(error: unknown): boolean {
+  return error instanceof Error && TRANSIENT_DB_ERROR.test(error.message);
+}
+
+export async function retrySourceDbOperation<T>(
+  operation: () => Promise<T>,
+  wait: (delayMs: number) => Promise<void> = (delayMs) =>
+    new Promise((resolve) => globalThis.setTimeout(resolve, delayMs)),
+): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= SOURCE_DB_MAX_ATTEMPTS; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      if (!isTransientSourceDbError(error) || attempt === SOURCE_DB_MAX_ATTEMPTS) throw error;
+      await wait(attempt * 250);
+    }
+  }
+  throw lastError;
+}
 
 const CONTRACT = /^0x[0-9a-f]{40}$/;
 

@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   parseSourceCursor,
+  retrySourceDbOperation,
   safeHeadFromLatest,
   sourceCursorKey,
   sourceSyncLockKey,
@@ -52,6 +53,20 @@ assert.throws(() => parseSourceCursor(undefined));
 assert.throws(() => parseSourceCursor('-1'));
 assert.notEqual(sourceCursorKey(10, contract), sourceCursorKey(11155420, contract));
 assert.notEqual(sourceSyncLockKey(10, contract), sourceSyncLockKey(11155420, contract));
+
+let transientAttempts = 0;
+assert.equal(await retrySourceDbOperation(async () => {
+  transientAttempts += 1;
+  if (transientAttempts < 3) throw new Error('Gateway Timeout');
+  return 'ok';
+}, async () => undefined), 'ok');
+assert.equal(transientAttempts, 3);
+let permanentAttempts = 0;
+await assert.rejects(retrySourceDbOperation(async () => {
+  permanentAttempts += 1;
+  throw new Error('permission denied');
+}, async () => undefined));
+assert.equal(permanentAttempts, 1);
 
 let reads = 0;
 let writes = 0;
