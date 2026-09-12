@@ -6,6 +6,7 @@ import {
   resolvePermanentMedia,
 } from '../../src/features/permanent-media';
 import { fetchPermanentJson } from '../../src/features/score-playback/sounds-map';
+import { verifyCanonicalCache } from './checks/canonical-cache';
 
 const REF = `ar://${'A'.repeat(43)}`;
 const AUDIO_HEADERS = { 'content-type': 'audio/mpeg', 'accept-ranges': 'bytes' };
@@ -19,6 +20,12 @@ function response(body: BodyInit, headers: HeadersInit = AUDIO_HEADERS): Respons
     status: 200,
     headers: { ...AUDIO_HEADERS, ...Object.fromEntries(new Headers(headers)) },
   });
+}
+
+async function sha256(bytes: Uint8Array): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)]
+    .map((value) => value.toString(16).padStart(2, '0')).join('');
 }
 
 async function expectFailure(
@@ -49,25 +56,28 @@ async function verifyFallback(): Promise<void> {
     kind: 'audio', validation: { level: 'compatibility' }, fetcher,
     mirrorBaseUrl: 'https://mirror.example', rounds: 1, health: health(),
   });
-  assert.equal(result.source, 'arweave');
-  assert.deepEqual(calls.map((url) => new URL(url).host), ['mirror.example', 'arweave.net']);
+  assert.equal(result.source, 'ardrive');
+  assert.deepEqual(calls.map((url) => new URL(url).host), ['mirror.example', 'ardrive.net']);
   assert.deepEqual(
     permanentMediaCandidates(REF, '').map((item) => item.source),
-    ['arweave', 'permagate'],
+    ['ardrive', 'arweave-tokyo', 'arweave'],
   );
 
   calls.length = 0;
   const gatewayFallback: typeof fetch = async (input) => {
     const url = String(input);
     calls.push(url);
-    return url.includes('arweave.net') ? new Response(null, { status: 503 }) : response('sound');
+    return url.includes('arweave.net') ? response('sound') : new Response(null, { status: 503 });
   };
   const backup = await resolvePermanentMedia(REF, {
     kind: 'audio', validation: { level: 'compatibility' }, fetcher: gatewayFallback,
     mirrorBaseUrl: '', rounds: 1, health: health(),
   });
-  assert.equal(backup.source, 'permagate');
-  assert.deepEqual(calls.map((url) => new URL(url).host), ['arweave.net', 'ario.permagate.io']);
+  assert.equal(backup.source, 'arweave');
+  assert.deepEqual(
+    calls.map((url) => new URL(url).host),
+    ['ardrive.net', 'arweave.tokyo', 'arweave.net'],
+  );
 }
 
 async function verifyTimeoutAndAbort(): Promise<void> {
@@ -120,9 +130,7 @@ async function verifyTypeAndLength(): Promise<void> {
 
 async function verifyHash(): Promise<void> {
   const validBytes = new TextEncoder().encode('canonical bytes');
-  const digest = await crypto.subtle.digest('SHA-256', validBytes);
-  const expected = [...new Uint8Array(digest)]
-    .map((value) => value.toString(16).padStart(2, '0')).join('');
+  const expected = await sha256(validBytes);
   const fallback: typeof fetch = async (input) => (
     String(input).includes('mirror.example') ? response('wrong bytes') : response(validBytes)
   );
@@ -130,7 +138,7 @@ async function verifyHash(): Promise<void> {
     kind: 'audio', validation: { level: 'canonical', sha256: expected },
     fetcher: fallback, mirrorBaseUrl: 'https://mirror.example', rounds: 1, health: health(),
   });
-  assert.equal(resolved.source, 'arweave');
+  assert.equal(resolved.source, 'ardrive');
   assert.equal(resolved.verification, 'sha256');
 
   const alwaysWrong: typeof fetch = async () => response('wrong bytes');
@@ -173,6 +181,7 @@ async function main(): Promise<void> {
   await verifyTimeoutAndAbort();
   await verifyTypeAndLength();
   await verifyHash();
+  await verifyCanonicalCache();
   await verifyCooldown();
   await verifyScoreCompatibilityErrors();
   console.log('永久媒体 resolver 验证通过');

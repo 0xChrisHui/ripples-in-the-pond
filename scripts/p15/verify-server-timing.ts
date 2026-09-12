@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { ServerTiming } from '../../src/lib/performance/server-timing';
 
 function clock(values: number[]): () => number {
@@ -41,11 +42,20 @@ function verifyHeaderSafety(): void {
   assert.doesNotMatch(header, /wallet|user|token|error|description/i);
 }
 
+async function verifyEchoRouteCoverage(): Promise<void> {
+  const source = await readFile('app/api/me/pond-echoes/route.ts', 'utf8');
+  assert.match(source, /timing\.measure\('auth'/);
+  assert.match(source, /timing\.measure\('db'/);
+  assert.match(source, /timing\.measure\('rpc'/);
+  assert.match(source, /return timing\.response/);
+}
+
 async function main(): Promise<void> {
   await verifyDeterministicHeader();
   await verifyFailureAndAccumulation();
   verifyHeaderSafety();
-  console.log('Server-Timing 纯函数验证通过');
+  await verifyEchoRouteCoverage();
+  console.log('Server-Timing 纯函数与 Echo route 覆盖验证通过');
 }
 
 void main();

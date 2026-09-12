@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { CLIP_MANIFEST_V1 } from '../../src/features/wallet-recipe/clip-manifest';
 import {
   buildWalletRecipeMetadataJsonV1,
@@ -124,11 +126,30 @@ function verifyStableMetadata(): void {
   assert.equal(Buffer.compare(Buffer.from(first), Buffer.from(second)), 0);
 }
 
+function verifyUploadLedgerSqlContract(): void {
+  const migration = readFileSync(join(
+    process.cwd(),
+    'supabase/migrations/phase-14/049_wallet_recipe_queue.sql',
+  ), 'utf8');
+  assert.match(migration, /'collection_metadata', 'metadata'/);
+  assert.match(migration, /kind = 'metadata' and queue_id is not null/);
+  assert.match(migration, /kind <> 'metadata' and queue_id is null/);
+  assert.match(migration, /v_ledger\.attempted_at <= now\(\) - interval '5 minutes'/);
+  assert.match(migration, /set state = 'upload_result_unknown'/);
+  assert.match(migration, /source_score_tx_hash = lower\(p_source_score_tx_hash\)/);
+  assert.match(migration, /if found then[\s\S]*P14 replay evidence changed[\s\S]*return next v_row/);
+  assert.match(
+    migration,
+    /status = case when v_ledger\.state = 'upload_result_unknown' then 'manual_review'/,
+  );
+}
+
 verifyModes();
 verifyDiscoveryPolicy();
 verifyUploadAndMintRecovery();
 verifyStableMetadata();
+verifyUploadLedgerSqlContract();
 assert.deepEqual([0, 1, 2, 3, 4, 5].map(retryDelayMinutes), [1, 2, 5, 15, 30, null]);
-assert.equal(WALLET_RECIPE_CLAIM_DEADLINE_MS, 45_000);
-assert.equal(WALLET_RECIPE_RESPONSE_DEADLINE_MS, 55_000);
+assert.equal(WALLET_RECIPE_CLAIM_DEADLINE_MS, 20_000);
+assert.equal(WALLET_RECIPE_RESPONSE_DEADLINE_MS, 25_000);
 console.log('P14-D pipeline：mode/discovery/upload/mint/retry/metadata 全部通过');

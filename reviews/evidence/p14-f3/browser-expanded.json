@@ -1,0 +1,313 @@
+{
+  "environment": {
+    "os": "Windows",
+    "browser": "138.0.3351.109",
+    "base": "http://localhost:3100",
+    "device": "本机 Edge headless；coarse 视口使用 Playwright 触控仿真"
+  },
+  "home": [
+    {
+      "width": 375,
+      "label": "unauthenticated",
+      "status": 200,
+      "link": "池中回声 · 登录后查看",
+      "errors": []
+    },
+    {
+      "width": 768,
+      "label": "unauthenticated",
+      "status": 200,
+      "link": "池中回声 · 登录后查看",
+      "errors": []
+    },
+    {
+      "width": 1440,
+      "label": "unauthenticated",
+      "status": 200,
+      "link": "池中回声 · 登录后查看",
+      "errors": []
+    },
+    {
+      "width": 375,
+      "label": "W2",
+      "status": 200,
+      "link": "池中回声 · 1 枚",
+      "errors": []
+    },
+    {
+      "width": 768,
+      "label": "W2",
+      "status": 200,
+      "link": "池中回声 · 1 枚",
+      "errors": []
+    },
+    {
+      "width": 1440,
+      "label": "W2",
+      "status": 200,
+      "link": "池中回声 · 1 枚",
+      "errors": []
+    },
+    {
+      "width": 375,
+      "label": "W0",
+      "status": 200,
+      "link": "池中回声 · 尚未持有",
+      "errors": []
+    },
+    {
+      "width": 375,
+      "label": "W1",
+      "status": 200,
+      "link": "池中回声 · 尚未持有",
+      "errors": []
+    }
+  ],
+  "archive": [
+    {
+      "label": "W0",
+      "width": 375,
+      "count": "01",
+      "text": "02 池中回声 01 01 · ECHO Pond Echo · 23F8—6180 由你的首枚 Score 触发，尚未成为可转让作品 启用前作品 查看状态 →"
+    },
+    {
+      "label": "W1",
+      "width": 768,
+      "count": "01",
+      "text": "02 池中回声 01 01 · ECHO Pond Echo · 4Fff—0F78 由你的钱包诞生，目前由另一地址持有 已转出 打开作品 →"
+    },
+    {
+      "label": "W2",
+      "width": 1440,
+      "count": "01",
+      "text": "02 池中回声 01 01 · ECHO Pond Echo · 40F7—c7A9 链上 ownerOf 确认当前属于你 当前持有 打开作品 →"
+    },
+    {
+      "label": "W3",
+      "width": 375,
+      "count": "02",
+      "text": "02 池中回声 02 01 · ECHO Pond Echo · 4Fff—0F78 链上 ownerOf 确认当前属于你 当前持有 打开作品 → 02 · ECHO Pond Echo · ce8c—D2d1 链上 ownerOf 确认当前属于你 当前持有 打开作品 →"
+    }
+  ],
+  "detail": [
+    {
+      "width": 375,
+      "initialState": "idle",
+      "readyMs": 17433,
+      "feedbackMs": 577,
+      "frameRate": {
+        "samples": 141,
+        "medianFps": 55.865921787704956,
+        "onePercentLowFps": 51.81347150259263
+      },
+      "button": {
+        "x": 20,
+        "y": 1581.578125,
+        "width": 148,
+        "height": 44
+      },
+      "paused": "paused",
+      "aria": {
+        "live": "polite",
+        "text": "已暂停"
+      },
+      "currentSegmentDomCount": 1,
+      "canvasCount": 0,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "initialState": "loading",
+      "readyMs": 18296,
+      "feedbackMs": 451,
+      "frameRate": {
+        "samples": 141,
+        "medianFps": 56.179775280901175,
+        "onePercentLowFps": 52.63157894736842
+      },
+      "button": {
+        "x": 20,
+        "y": 1596.578125,
+        "width": 148,
+        "height": 44
+      },
+      "paused": "paused",
+      "aria": {
+        "live": "polite",
+        "text": "已暂停"
+      },
+      "currentSegmentDomCount": 1,
+      "canvasCount": 0,
+      "errors": []
+    },
+    {
+      "width": 768,
+      "initialState": "loading",
+      "readyMs": 17463,
+      "feedbackMs": 447,
+      "frameRate": {
+        "samples": 141,
+        "medianFps": 56.179775280901175,
+        "onePercentLowFps": 52.63157894736842
+      },
+      "button": {
+        "x": 274.71875,
+        "y": 1171,
+        "width": 148,
+        "height": 44
+      },
+      "paused": "paused",
+      "aria": {
+        "live": "polite",
+        "text": "已暂停"
+      },
+      "currentSegmentDomCount": 1,
+      "canvasCount": 0,
+      "errors": []
+    },
+    {
+      "width": 1024,
+      "initialState": "loading",
+      "readyMs": 17009,
+      "feedbackMs": 453,
+      "frameRate": {
+        "samples": 140,
+        "medianFps": 56.17977528088969,
+        "onePercentLowFps": 52.356020942402395
+      },
+      "button": {
+        "x": 346.421875,
+        "y": 1171,
+        "width": 148,
+        "height": 44
+      },
+      "paused": "paused",
+      "aria": {
+        "live": "polite",
+        "text": "已暂停"
+      },
+      "currentSegmentDomCount": 1,
+      "canvasCount": 0,
+      "errors": []
+    },
+    {
+      "width": 1440,
+      "initialState": "idle",
+      "readyMs": 16443,
+      "feedbackMs": 449,
+      "frameRate": {
+        "samples": 140,
+        "medianFps": 56.179775280901175,
+        "onePercentLowFps": 52.08333333333136
+      },
+      "button": {
+        "x": 468.3125,
+        "y": 1171,
+        "width": 148,
+        "height": 44
+      },
+      "paused": "paused",
+      "aria": {
+        "live": "polite",
+        "text": "已暂停"
+      },
+      "currentSegmentDomCount": 1,
+      "canvasCount": 0,
+      "errors": []
+    },
+    {
+      "width": 375,
+      "reducedMotion": true,
+      "matches": true,
+      "animation": "none"
+    },
+    {
+      "width": 768,
+      "reducedMotion": true,
+      "matches": true,
+      "animation": "none"
+    },
+    {
+      "width": 1440,
+      "reducedMotion": true,
+      "matches": true,
+      "animation": "none"
+    }
+  ],
+  "faults": {
+    "singleGateway": {
+      "state": "ready"
+    },
+    "noQuorum": {
+      "state": "error",
+      "alert": "所有永久网关均不可用（ardrive.net 失败；arweave.tokyo 失败；arweave.net 失败）"
+    }
+  },
+  "cleanup": {
+    "during": {
+      "activeSources": 36,
+      "contexts": [
+        "running"
+      ]
+    },
+    "after": {
+      "activeSources": 0,
+      "pendingFetches": 0,
+      "contexts": [
+        "closed"
+      ]
+    }
+  },
+  "performance": {
+    "loads": [
+      {
+        "width": 375,
+        "coldMs": 10213,
+        "controlFeedbackMs": 581
+      },
+      {
+        "width": 390,
+        "coldMs": 9709,
+        "controlFeedbackMs": 55.200000047683716
+      },
+      {
+        "width": 768,
+        "coldMs": 9691,
+        "controlFeedbackMs": 65
+      },
+      {
+        "width": 1024,
+        "coldMs": 9706,
+        "controlFeedbackMs": 56.10000002384186
+      },
+      {
+        "width": 1440,
+        "coldMs": 9612,
+        "controlFeedbackMs": 56.300000071525574
+      }
+    ],
+    "memory": {
+      "samples": [
+        63349454,
+        66176979
+      ],
+      "deltaBytes": 2827525,
+      "interaction": "20 次快速播放/暂停；另有 engine 定向测试覆盖 20 次 replay 与资源回收"
+    },
+    "zoom200": {
+      "equivalentCssWidth": 720,
+      "scrollWidth": 720,
+      "clientWidth": 720
+    },
+    "firstControlFeedbackMs": 5.899999976158142,
+    "warmReloadMs": 2661
+  },
+  "archiveStates": [
+    { "state": "processing", "width": 375, "expectedText": "等待制作", "hasRecoveryCopy": false },
+    { "state": "processing", "width": 768, "expectedText": "等待制作", "hasRecoveryCopy": false },
+    { "state": "processing", "width": 1440, "expectedText": "等待制作", "hasRecoveryCopy": false },
+    { "state": "failed", "width": 375, "expectedText": "等待人工核验", "hasRecoveryCopy": true },
+    { "state": "failed", "width": 768, "expectedText": "等待人工核验", "hasRecoveryCopy": true },
+    { "state": "failed", "width": 1440, "expectedText": "等待人工核验", "hasRecoveryCopy": true }
+  ]
+}

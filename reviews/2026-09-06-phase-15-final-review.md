@@ -37,7 +37,7 @@ P15 不能标记为“已上线完结”。当前仍有四类真实 Gate：P14 �
 - 缓存键隔离 origin、chain、Material/Score 合约、auth source、user、schema 与 section；只缓存最小展示数据，不缓存 token 或正文。
 - 5 分钟 freshness、7 天最大保留期；换环境不命中，过期删除，登出清当前身份。
 - 本地草稿有稳定 `clientDraftId`；后台上传按草稿精确删除，避免旧请求删除用户刚创建的新草稿。
-- migration `049_pending_scores_client_draft_id.sql` 提供唯一约束、事务 advisory lock 与幂等 RPC；部署应用代码前必须先应用 migration。
+- migration `050_pending_scores_client_draft_id.sql` 提供唯一约束、事务 advisory lock 与幂等 RPC；部署应用代码前必须先应用 migration。
 
 ### API 和永久播放
 

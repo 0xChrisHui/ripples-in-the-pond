@@ -1,6 +1,11 @@
 export type PermanentMediaKind = 'json' | 'audio' | 'binary';
 
-export type PermanentMediaSource = 'mirror' | 'arweave' | 'permagate';
+export type PermanentMediaSource =
+  | 'cache'
+  | 'mirror'
+  | 'ardrive'
+  | 'arweave-tokyo'
+  | 'arweave';
 
 export type PermanentMediaFailureKind =
   | 'aborted'

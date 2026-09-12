@@ -3,6 +3,7 @@ import { ProgressiveRecipeResources } from './progressive-resources';
 import type { WalletRecipeTimeline } from './timeline';
 
 const START_DELAY_SECONDS = 0.06;
+const LATE_BUFFER_DELAY_SECONDS = 0.02;
 
 /** 只由 AudioContext 时钟驱动；晚到的已校验 buffer 会接入尚未结束的时间线。 */
 export class RecipePlaybackClock {
@@ -31,7 +32,7 @@ export class RecipePlaybackClock {
     this.running = true;
     this.startPositionMs = positionMs;
     this.anchorTime = this.context.currentTime + START_DELAY_SECONDS;
-    this.scheduleAvailable(positionMs);
+    this.scheduleAvailable(positionMs, this.anchorTime);
     this.lastUiPositionMs = -Infinity;
     this.onPosition(positionMs, 'playing');
     this.frame = this.requestFrame(this.tick);
@@ -39,7 +40,11 @@ export class RecipePlaybackClock {
   }
 
   addAvailable(): void {
-    if (this.running) this.scheduleAvailable(this.currentPositionMs());
+    if (!this.running) return;
+    this.scheduleAvailable(
+      this.currentPositionMs(),
+      this.context.currentTime + LATE_BUFFER_DELAY_SECONDS,
+    );
   }
 
   pause(): number {
@@ -58,13 +63,13 @@ export class RecipePlaybackClock {
     this.scheduledIndices.clear();
   }
 
-  private scheduleAvailable(positionMs: number): void {
+  private scheduleAvailable(positionMs: number, anchorTime: number): void {
     for (const segment of this.timeline.segments) {
       if (this.scheduledIndices.has(segment.index)) continue;
       const buffer = this.resources.buffer(segment.key);
       if (!buffer) continue;
       const node = scheduleAudioSegment(
-        this.context, buffer, segment, positionMs, this.anchorTime,
+        this.context, buffer, segment, positionMs, anchorTime,
         (ended) => this.releaseEndedNode(ended),
       );
       this.scheduledIndices.add(segment.index);
@@ -96,4 +101,3 @@ export class RecipePlaybackClock {
     node.gain.disconnect();
   }
 }
-

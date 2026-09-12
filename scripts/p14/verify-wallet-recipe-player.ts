@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
 import { WalletRecipePlayerEngine } from '../../src/features/wallet-recipe/player/engine';
 import { sharedPermanentMediaHealth } from '../../src/features/permanent-media/health';
 import {
@@ -7,87 +6,15 @@ import {
   equalPowerGain,
   segmentAtPosition,
 } from '../../src/features/wallet-recipe/player/timeline';
-import type { WalletRecipePlayerInput } from '../../src/features/wallet-recipe/player/types';
-
-const KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-const TX_ID = 'a'.repeat(43);
-const AUDIO_BYTES = new TextEncoder().encode('p14-player-audio-fixture');
-const AUDIO_SHA = createHash('sha256').update(AUDIO_BYTES).digest('hex');
-
-function audioResponse(bytes: Uint8Array = AUDIO_BYTES): Response {
-  return new Response(bytes.slice(), {
-    headers: { 'content-type': 'audio/wav', 'accept-ranges': 'bytes' },
-  });
-}
-
-function makeInput(recipe: string): WalletRecipePlayerInput {
-  const clips: WalletRecipePlayerInput['clips'] = {};
-  for (const key of new Set(recipe)) {
-    clips[key] = { uri: `ar://${TX_ID}`, sha256: AUDIO_SHA, durationMs: 1000 };
-  }
-  return { recipe, clips };
-}
-
-class FakeAudioParam {
-  cancelScheduledValues(): void {}
-  setValueAtTime(): void {}
-  setValueCurveAtTime(): void {}
-}
-
-class FakeGain {
-  gain = new FakeAudioParam();
-  connect(): void {}
-  disconnect(): void {}
-}
-
-class FakeSource {
-  buffer: AudioBuffer | null = null;
-  stopped = false;
-  startArgs: number[] = [];
-  private ended: (() => void) | null = null;
-  connect(): void {}
-  disconnect(): void {}
-  addEventListener(_name: string, listener: () => void): void { this.ended = listener; }
-  start(...args: number[]): void { this.startArgs = args; }
-  stop(): void { this.stopped = true; }
-  finish(): void { this.ended?.(); }
-}
-
-class FakeAudioContext {
-  currentTime = 0;
-  state: AudioContextState = 'running';
-  destination = {} as AudioDestinationNode;
-  sources: FakeSource[] = [];
-  constructor(private readonly decodedDuration = 1) {}
-  async resume(): Promise<void> { this.state = 'running'; }
-  async close(): Promise<void> { this.state = 'closed'; }
-  async decodeAudioData(): Promise<AudioBuffer> {
-    return { duration: this.decodedDuration } as AudioBuffer;
-  }
-  createBufferSource(): AudioBufferSourceNode {
-    const source = new FakeSource();
-    this.sources.push(source);
-    return source as unknown as AudioBufferSourceNode;
-  }
-  createGain(): GainNode { return new FakeGain() as unknown as GainNode; }
-}
-
-class FakeFrames {
-  private nextId = 0;
-  private callbacks = new Map<number, FrameRequestCallback>();
-  request = (callback: FrameRequestCallback): number => {
-    const id = ++this.nextId;
-    this.callbacks.set(id, callback);
-    return id;
-  };
-  cancel = (id: number): void => { this.callbacks.delete(id); };
-  run(): void {
-    const callbacks = [...this.callbacks.values()];
-    this.callbacks.clear();
-    callbacks.forEach((callback) => callback(0));
-  }
-  get count(): number { return this.callbacks.size; }
-}
+import {
+  audioResponse,
+  deferred,
+  FakeAudioContext,
+  FakeFrames,
+  KEYS,
+  makeInput,
+  waitUntil,
+} from './player-test-fixtures';
 
 function verifyTimelines(): void {
   const repeated = createWalletRecipeTimeline(makeInput('A'.repeat(36)));
@@ -133,8 +60,10 @@ async function verifyEngineLifecycle(): Promise<void> {
   assert.equal(fetchCount, 1, '重复字符只能下载一次');
   assert.equal(contextCount, 0, 'load 不得创建 AudioContext');
 
-  await engine.play();
+  const playing = engine.play();
   assert.equal(contextCount, 1, '只有用户调用 play 才创建 AudioContext');
+  assert.equal(context.resumeCount, 1, 'AudioContext 必须在用户激活任务内恢复');
+  await playing;
   assert.equal(context.sources.length, 36);
   assert.equal(frames.count, 1);
   context.currentTime = 0.56;
@@ -166,6 +95,40 @@ async function verifyEngineLifecycle(): Promise<void> {
   assert.equal(context.state, 'closed');
 }
 
+async function verifyProgressiveScheduling(): Promise<void> {
+  const firstRemaining = deferred();
+  const laterRemaining = deferred();
+  let fetchCount = 0;
+  const fetcher: typeof fetch = async () => {
+    fetchCount += 1;
+    if (fetchCount >= 5 && fetchCount <= 8) await firstRemaining.promise;
+    if (fetchCount >= 9) await laterRemaining.promise;
+    return audioResponse();
+  };
+  const frames = new FakeFrames();
+  const context = new FakeAudioContext();
+  const engine = new WalletRecipePlayerEngine({
+    fetcher,
+    createAudioContext: () => context as unknown as AudioContext,
+    requestFrame: frames.request,
+    cancelFrame: frames.cancel,
+  });
+  await engine.load(makeInput(KEYS));
+  await engine.play();
+  assert.equal(context.sources.length, 4, '首屏只调度前四个 key');
+  context.currentTime = 0.5;
+  firstRemaining.release();
+  await waitUntil(() => context.sources.length >= 8);
+  assert.equal(fetchCount, 12, 'remaining 必须保持四 key 有界批次');
+  assert.equal(engine.getSnapshot().loadedUniqueCount, 8, '首个 remaining 批次应立即合并');
+  assert.ok(Math.abs(context.sources[4].startArgs[0] - 3.84) < 0.001,
+    '晚到 buffer 必须以当前 AudioContext 时间和 playhead 调度');
+  laterRemaining.release();
+  await waitUntil(() => context.decodeCount === KEYS.length);
+  assert.equal(context.sources.length, KEYS.length);
+  await engine.destroy();
+}
+
 async function verifyRecoverableErrors(): Promise<void> {
   const frames = new FakeFrames();
   let attempts = 0;
@@ -195,6 +158,17 @@ async function verifyRecoverableErrors(): Promise<void> {
   await corruptEngine.load(makeInput('A'.repeat(36)));
   assert.equal(corruptEngine.getSnapshot().errorKind, 'integrity');
 
+  let invalidFetches = 0;
+  const invalidInput = makeInput('A'.repeat(36));
+  invalidInput.clips.A.sha256 = 'ABC';
+  const invalidEngine = new WalletRecipePlayerEngine({ fetcher: async () => {
+    invalidFetches += 1;
+    return audioResponse();
+  } });
+  await invalidEngine.load(invalidInput);
+  assert.equal(invalidEngine.getSnapshot().errorKind, 'invalid_input');
+  assert.equal(invalidFetches, 0, '非法 hash 不得进入 resolver');
+
   const durationEngine = new WalletRecipePlayerEngine({
     fetcher: async () => audioResponse(),
     createAudioContext: () => new FakeAudioContext(0.5) as unknown as AudioContext,
@@ -207,14 +181,16 @@ async function verifyRecoverableErrors(): Promise<void> {
 
   await durationEngine.load(makeInput('B'.repeat(36)));
   assert.equal(durationEngine.getSnapshot().state, 'ready', '错误后重新 load 应恢复');
-  await Promise.all([fallbackEngine.destroy(), failingEngine.destroy(), corruptEngine.destroy(), durationEngine.destroy()]);
+  await Promise.all([fallbackEngine.destroy(), failingEngine.destroy(), corruptEngine.destroy(),
+    invalidEngine.destroy(), durationEngine.destroy()]);
 }
 
 async function main(): Promise<void> {
   verifyTimelines();
   await verifyEngineLifecycle();
+  await verifyProgressiveScheduling();
   await verifyRecoverableErrors();
-  console.log('P14-E1 时间线、等功率衔接、状态机与资源清理验证通过');
+  console.log('P14-E1 时间线、渐进调度、状态机与资源清理验证通过');
 }
 
 main().catch((error: unknown) => {

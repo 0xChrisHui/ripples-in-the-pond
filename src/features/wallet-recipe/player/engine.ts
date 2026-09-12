@@ -8,20 +8,13 @@ import {
 import {
   IDLE_WALLET_RECIPE_SNAPSHOT,
   toPlayerError,
+  type WalletRecipePlayerEngineOptions,
   type PlayerError,
   type WalletRecipePlayerController,
   type WalletRecipePlayerInput,
   type WalletRecipePlayerListener,
   type WalletRecipePlayerSnapshot,
 } from './types';
-
-type EngineOptions = {
-  fetcher?: typeof fetch;
-  createAudioContext?: () => AudioContext;
-  requestFrame?: (callback: FrameRequestCallback) => number;
-  cancelFrame?: (handle: number) => void;
-};
-
 export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
   private readonly fetcher: typeof fetch;
   private readonly createContext: () => AudioContext;
@@ -36,21 +29,18 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
   private clock: RecipePlaybackClock | null = null;
   private abortController: AbortController | null = null;
   private generation = 0;
-
-  constructor(options: EngineOptions = {}) {
+  constructor(options: WalletRecipePlayerEngineOptions = {}) {
     this.fetcher = options.fetcher ?? fetch;
     this.createContext = options.createAudioContext ?? (() => new AudioContext());
     this.requestFrame = options.requestFrame ?? ((callback) => window.requestAnimationFrame(callback));
     this.cancelFrame = options.cancelFrame ?? ((handle) => window.cancelAnimationFrame(handle));
   }
-
   getSnapshot = (): WalletRecipePlayerSnapshot => this.snapshot;
   getServerSnapshot = (): WalletRecipePlayerSnapshot => IDLE_WALLET_RECIPE_SNAPSHOT;
   subscribe = (listener: WalletRecipePlayerListener): (() => void) => {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
   };
-
   private update(patch: Partial<WalletRecipePlayerSnapshot>): void {
     this.snapshot = Object.freeze({ ...this.snapshot, ...patch });
     this.listeners.forEach((listener) => listener());
@@ -103,15 +93,18 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
     resources: ProgressiveRecipeResources, generation: number,
   ): Promise<void> {
     try {
-      await resources.loadRemaining((loaded) => {
-        if (generation === this.generation) this.update({ loadedUniqueCount: loaded });
-      });
+      await resources.loadRemaining(
+        (loaded) => {
+          if (generation === this.generation) this.update({ loadedUniqueCount: loaded });
+        },
+        async () => {
+          if (generation !== this.generation || !this.context) return;
+          await this.decodeMissing(resources, generation);
+          if (generation === this.generation) this.clock?.addAvailable();
+        },
+      );
       if (generation !== this.generation) return;
       performance.mark('p15:recipe-all-resources-ready');
-      if (this.context) {
-        await this.decodeMissing(resources, generation);
-        this.clock?.addAvailable();
-      }
     } catch (error) {
       if (generation !== this.generation || this.abortController?.signal.aborted) return;
       this.fail(toPlayerError(error, 'network'));
@@ -137,7 +130,11 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
     try {
       const context = this.context ?? this.createContext();
       this.context = context;
-      if (context.state !== 'running') await context.resume();
+      const resume = context.state === 'running' ? Promise.resolve() : context.resume();
+      // AudioContext 已在用户激活任务中创建/恢复；下一任务再解码，让 loading 先绘制。
+      await new Promise<void>((resolve) => globalThis.setTimeout(resolve, 0));
+      await resume;
+      if (generation !== this.generation) return;
       await this.decodeMissing(this.resources!, generation);
       if (generation !== this.generation) return;
       this.clock ??= new RecipePlaybackClock(

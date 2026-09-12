@@ -1,4 +1,4 @@
--- P15-C3：让本机草稿后台同步在重进页面、跨标签和网络重试时保持幂等。
+-- P15-C3：接续 P14 的 049，让本机草稿后台同步在重进页面、跨标签和网络重试时保持幂等。
 
 alter table pending_scores
   add column if not exists client_draft_id text;

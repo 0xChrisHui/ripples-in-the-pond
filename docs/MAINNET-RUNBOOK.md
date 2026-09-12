@@ -332,10 +332,14 @@ ScoreNFT 正常铸造。已经上传到 Arweave 或广播到链上的对象不�
 `WALLET_RECIPE_EXPECTED_ACTIVATION_BLOCK` 只能核对相等，不能覆盖数据库。
 
 生产调度只用 cron-job.org：每分钟 Bearer 调用一次
-`/api/cron/process-wallet-recipe`。route 在 45 秒后停止 claim、55 秒前返回；lease 固定
-5 分钟且每步落库后立即释放。safe retry 依次等待 1/2/5/15/30 分钟，五次仍失败进入
+`/api/cron/process-wallet-recipe`。route 在 20 秒后停止 claim、25 秒前返回，为
+cron-job.org 普通任务的 30 秒硬超时保留网络余量；lease 固定 5 分钟且每步落库后立即释放。safe retry 依次等待 1/2/5/15/30 分钟，五次仍失败进入
 `manual_review`。cron 调用成功时写
 `p14:last-cron-success:<chainId>:<小写 ScoreNFT 地址>`；超过 3 分钟未更新即处理告警。
+
+P14 合约在构造交易内直接把 `DEFAULT_ADMIN_ROLE` 与 ERC-173 owner 交给独立 admin，
+并把 `MINTER_ROLE` 交给 operator/minter；deployer 不取得长期角色。部署后只做 owner、
+admin、minter 与 deployer=false 的链上 read-back，不再发送冗余 grant/revoke 交易。
 
 ### 10.2 只读诊断顺序
 

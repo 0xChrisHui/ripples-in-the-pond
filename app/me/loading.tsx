@@ -2,7 +2,7 @@ import ArchiveHeader from '@/src/components/me/archive/ArchiveHeader';
 import ArchiveSection from '@/src/components/me/archive/ArchiveSection';
 import '@/src/components/me/archive/archive.css';
 
-const sections = ['我的唱片', '我的录音', '我的素材'];
+const sections = ['我的唱片', '池中回声', '我的录音', '我的素材'];
 
 export default function MeLoading() {
   return (

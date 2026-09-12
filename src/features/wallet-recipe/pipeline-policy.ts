@@ -2,8 +2,8 @@ import type { WalletRecipeMode } from '@/src/lib/chain/wallet-recipe-contract';
 import type { WalletRecipeEligibility } from '@/src/types/wallet-recipe';
 
 export const WALLET_RECIPE_CONFIRMATIONS = 20n;
-export const WALLET_RECIPE_CLAIM_DEADLINE_MS = 45_000;
-export const WALLET_RECIPE_RESPONSE_DEADLINE_MS = 55_000;
+export const WALLET_RECIPE_CLAIM_DEADLINE_MS = 20_000;
+export const WALLET_RECIPE_RESPONSE_DEADLINE_MS = 25_000;
 export const WALLET_RECIPE_RETRY_MINUTES = [1, 2, 5, 15, 30] as const;
 export const MINT_ATTEMPT_UNKNOWN_MS = 25 * 60 * 1000;
 export const MINT_RECEIPT_TIMEOUT_MS = 30 * 60 * 1000;

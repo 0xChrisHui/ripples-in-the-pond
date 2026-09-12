@@ -11,6 +11,10 @@ import { buildWalletRecipeMetadataJsonV1 } from '@/src/lib/wallet-recipe/metadat
 import { parseWalletRecipeMetadataJsonV1 } from '@/src/lib/wallet-recipe/metadata-parser';
 import { deriveRecipeV1 } from '@/src/lib/wallet-recipe/recipe-v1';
 import { RECIPE_V1_TEST_VECTORS } from '@/src/lib/wallet-recipe/vectors-v1';
+import {
+  hasWalletRecipeGatewayQuorum,
+  WALLET_RECIPE_GATEWAYS,
+} from '@/src/lib/wallet-recipe/gateways';
 
 type State = 'PASS' | 'WARN' | 'BLOCKED';
 type Check = { id: string; state: State; detail: unknown };
@@ -73,10 +77,14 @@ async function auditRpc(chainId: number, addresses: Address[]): Promise<void> {
 
 async function gatewayCheck(txId: string, expected: string): Promise<{ gateway: string; status: number; sha256?: string }> {
   const gateway = process.env.P14_GATEWAY_UNDER_TEST ?? '';
-  const response = await fetch(`${gateway}/${txId}`, { signal: AbortSignal.timeout(12_000) });
-  if (!response.ok) return { gateway, status: response.status };
-  const digest = sha(Buffer.from(await response.arrayBuffer()));
-  return { gateway, status: digest === expected ? 200 : 409, sha256: digest };
+  try {
+    const response = await fetch(`${gateway}/${txId}`, { signal: AbortSignal.timeout(12_000) });
+    if (!response.ok) return { gateway, status: response.status };
+    const digest = sha(Buffer.from(await response.arrayBuffer()));
+    return { gateway, status: digest === expected ? 200 : 409, sha256: digest };
+  } catch {
+    return { gateway, status: 0 };
+  }
 }
 
 async function main(): Promise<void> {
@@ -133,10 +141,22 @@ async function main(): Promise<void> {
     parseWalletRecipeMetadataJsonV1(metadata, { imageTxId: tx.image, decoderTxId: tx.decoder!, clipManifestTxId: tx.manifest!, clipManifest: manifest });
     add('metadata-roundtrip', 'PASS', { bytes: Buffer.byteLength(metadata), animationUrl: JSON.parse(metadata).animation_url });
     const resources = [{ txId: tx.manifest!, hash: localInputs.manifest }, { txId: tx.decoder!, hash: localInputs.decoder }, { txId: tx.image!, hash: localInputs.image }, ...localClips.map((clip) => ({ txId: clip.txId!, hash: clip.expected }))];
-    const gateways = ['https://arweave.net', 'https://ario.permagate.io'];
-    const results = [];
-    for (const gateway of gateways) for (const item of resources) { process.env.P14_GATEWAY_UNDER_TEST = gateway; results.push(await gatewayCheck(item.txId, item.hash)); }
-    add('arweave-two-gateways', results.every((item) => item.status === 200) ? 'PASS' : 'BLOCKED', { checked: results.length, failures: results.filter((item) => item.status !== 200) });
+    const results: Awaited<ReturnType<typeof gatewayCheck>>[] = [];
+    for (const item of resources) {
+      const evidence = [];
+      for (const gateway of WALLET_RECIPE_GATEWAYS) {
+        process.env.P14_GATEWAY_UNDER_TEST = gateway;
+        const result = await gatewayCheck(item.txId, item.hash);
+        evidence.push({ ...result, ok: result.status === 200 });
+        results.push(result);
+        if (hasWalletRecipeGatewayQuorum(evidence)) break;
+      }
+    }
+    const passed = resources.every((item) => hasWalletRecipeGatewayQuorum(
+      results.filter((result) => result.gateway && result.sha256 === item.hash)
+        .map((result) => ({ gateway: result.gateway, ok: result.status === 200 })),
+    ));
+    add('arweave-gateway-quorum', passed ? 'PASS' : 'BLOCKED', { checked: results.length, failures: results.filter((item) => item.status !== 200) });
   } else add('metadata-roundtrip', 'BLOCKED', { reason: '永久 txid 未冻结，拒绝使用假地址代验' });
 
   const secretNames = ['ALCHEMY_RPC_URL', 'OP_SEPOLIA_RPC_URL', 'OP_MAINNET_RPC_URL', 'OPERATOR_PRIVATE_KEY', 'DEPLOYER_PRIVATE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'UPSTASH_REDIS_REST_TOKEN', 'RESEND_API_KEY', 'CRON_SECRET', 'TURBO_WALLET_PATH', 'TURBO_WALLET_JWK', 'VERCEL_TOKEN'];

@@ -2,13 +2,20 @@ import { PermanentMediaError, resolvePermanentMedia } from '@/src/features/perma
 import type { WalletRecipeTimeline } from './timeline';
 import type { PlayerError, WalletRecipePlayerInput } from './types';
 
-const LOAD_CONCURRENCY = 4;
 const INITIAL_SEGMENT_COUNT = 4;
+const LOAD_CONCURRENCY = 4;
 const DECODE_DURATION_TOLERANCE_MS = 3;
+const SHA256_PATTERN = /^[0-9a-f]{64}$/;
 
 async function fetchPermanentAudio(
   uri: string, expectedSha256: string, fetcher: typeof fetch, signal: AbortSignal,
 ): Promise<ArrayBuffer> {
+  if (!SHA256_PATTERN.test(expectedSha256)) {
+    throw Object.assign(
+      new Error('音频 SHA-256 必须是 64 位小写十六进制'),
+      { kind: 'invalid_input' as const },
+    ) satisfies PlayerError;
+  }
   try {
     const result = await resolvePermanentMedia(uri, {
       kind: 'audio', validation: { level: 'canonical', sha256: expectedSha256 },

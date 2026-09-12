@@ -65,16 +65,30 @@ Migration 文件按 **Phase** 分子目录（目录文件数 ≤ 8 硬线触发�
 
 ### Phase 15（`phase-15/`）
 
-- `049_pending_scores_client_draft_id.sql` — C3 为本机草稿增加用户内幂等身份，并串行化同曲目并发保存
+- `050_pending_scores_client_draft_id.sql` — C3 为本机草稿增加用户内幂等身份，并串行化同曲目并发保存
 
 ## 新人第一次建库
 
-在 Supabase Dashboard → SQL Editor，按下面顺序一条条粘贴执行：
+在 Supabase Dashboard → SQL Editor 按下列顺序执行。不得用
+`find ... | sort`：字典序会把 `phase-10/12/14` 错排到 `phase-3` 前面。
 
-```bash
-# 按树遍历，深度优先，按文件名排序
-find supabase/migrations -name "*.sql" | sort
+```text
+phase-0-2/001–006
+phase-3/007–014
+phase-3/hotfix/015h–016h
+phase-4/015–020
+phase-6/track-a/021–026
+phase-6/track-b/027–029
+phase-6/track-a/030–031
+phase-7/track-a/030b, 032–033
+phase-10/040–047
+phase-12/048
+phase-14/049
+phase-15/050
 ```
+
+新空库可以按 Phase 分事务执行并逐批 read-back。对非空库不得重放整链：
+`028_b6_seed_data.sql` 包含历史 Material mint 清理，且多个早期 migration 不是幂等的。
 
 ## 新增 migration
 

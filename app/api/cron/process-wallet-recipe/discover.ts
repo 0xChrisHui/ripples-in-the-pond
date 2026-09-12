@@ -85,6 +85,7 @@ async function readSystemValues(keys: string[]): Promise<Map<string, string>> {
 }
 
 async function verifyEventSamples(rows: ChainEventRow[], scoreContract: Address): Promise<void> {
+  if (rows.length === 0) return;
   const indexes = new Set([0, Math.floor((rows.length - 1) / 2), rows.length - 1]);
   await Promise.all([...indexes].filter((index) => index >= 0).map(async (index) => {
     const row = rows[index];

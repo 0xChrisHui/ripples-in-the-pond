@@ -38,6 +38,13 @@ export type WalletRecipePlayerSnapshot = {
 
 export type WalletRecipePlayerListener = () => void;
 
+export type WalletRecipePlayerEngineOptions = {
+  fetcher?: typeof fetch;
+  createAudioContext?: () => AudioContext;
+  requestFrame?: (callback: FrameRequestCallback) => number;
+  cancelFrame?: (handle: number) => void;
+};
+
 export type WalletRecipePlayerController = {
   getSnapshot: () => WalletRecipePlayerSnapshot;
   subscribe: (listener: WalletRecipePlayerListener) => () => void;

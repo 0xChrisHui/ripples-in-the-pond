@@ -1,7 +1,7 @@
 # P14-E Foundation｜本地冻结证据
 
 > 日期：2026-09-06（Asia/Shanghai）
-> 状态：E0、E1 与 E2/E5 本地实现完成；永久上传因 G7 权利确认未关闭而保持阻塞。
+> 状态：E0、E1 与 E2/E5 本地实现完成；G7 与人耳试听已关闭，38/40 个永久对象完成，封面等待第二网关传播。
 
 ## 采用方向
 
@@ -39,7 +39,7 @@ Decoder 严格校验 manifest 字段、自包含 identity hash、36 个 clip txi
 |---|---:|---|
 | `src/wallet-recipe-decoder/index.html` | 13,512 | `2521bd95a7fb58f01343ce8625648553067a7c5831eaf71c17d84cd5f7833a4e` |
 
-本轮没有生成 Decoder txid。G7 关闭后仍须完成 HTTP/CORS 真音频全曲、375/390/768/1024/1440、reduced-motion 和双网关 bytes/hash 证据，才允许一次永久上传。
+Decoder 已永久上传：`h1xSTezG7OuH85i2pT88H1iJI-KFRbImtvmfXSseKf0`。本地 HTTP/CORS 真音频、全曲、375/390/768/1024/1440 与 reduced-motion Gate 已通过；永久 bytes/hash 证据见 `reviews/2026-09-06-phase-14-a-permanent-assets.md`。
 
 ## E5 共用封面
 
@@ -51,11 +51,11 @@ Decoder 严格校验 manifest 字段、自包含 identity hash、36 个 clip txi
 
 E0 已目视确认封面的黑绿夜塘、骨白核心、36 个黄铜点与同心水纹符合推荐方向。所有 token 共用这一封面，独特性由 recipe 与 animation 表达。
 
-## 未关闭 Gate
+## 永久冻结进度
 
-1. 音频及其采样的永久公开/NFT 使用权尚无用户明确确认。
-2. `clips-v1.json` 的 36 个 `arweaveTxId` 仍为 `null`。
-3. Decoder、manifest、封面尚无冻结 txid，也未做双网关传播验证。
-4. 模型完成了 PCM、交界峰值和浏览器解码检查，但不能代替权利人的完整人耳审美试听。
+1. 权利确认与权利人的 A→9 完整人耳试听已归档并通过。
+2. `clips-v1.json` 的 36 个 txid 已冻结；36 clips、manifest 与 Decoder 共 38 个对象已双网关 verified。
+3. 封面 txid 为 `4uEbvBt9gIaVt50FZ1wfQkuz3ogXZIGGjAdoWre3-SU`；主网关 bytes/hash 已通过，第二网关仍返回截断 Range，保持 `uploaded` 等待态且禁止重传。
+4. collection metadata 必须等封面双网关 verified 后才允许首次上传。
 
-因此 E Foundation 的“本地实现”通过，“永久媒体冻结”未通过；禁止用假 txid 或本地 URL 继续 F1。
+因此 E Foundation 的“本地实现”与已传 38 个对象通过，“永久媒体全部冻结”尚未通过；禁止重传封面或用本地 URL 继续 F1。

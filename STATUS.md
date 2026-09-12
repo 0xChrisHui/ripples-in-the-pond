@@ -85,7 +85,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **当前唯一下一步：D4 软启动观察（Day 0/7）**。每天两次看 `/api/health`、cron-job.org、Supabase 双队列与告警邮箱；7 天无 P0 后完成 launch review，Phase 12 才正式完结。E 性能仍是软 gate，不阻塞。
 
-**当前权威下一步**：先关闭 P14 G7（权利确认 + `public/p14-clip-audit.html` 完整人耳试听），再从 P14-A1 永久上传继续。P14 形成干净提交边界后才能整合 P15；整合时先应用 `049_pending_scores_client_draft_id.sql`，再建独立 Preview 关闭 P15 登录态、首声、长任务、真实设备和断站 Gate，不与 P14 主网启用同批。
+**当前权威下一步**：先关闭 P14 G7（权利确认 + `public/p14-clip-audit.html` 完整人耳试听），再从 P14-A1 永久上传继续。P14 形成干净提交边界后才能整合 P15；整合时先应用 `050_pending_scores_client_draft_id.sql`，再建独立 Preview 关闭 P15 登录态、首声、长任务、真实设备和断站 Gate，不与 P14 主网启用同批。
 
 ---
 

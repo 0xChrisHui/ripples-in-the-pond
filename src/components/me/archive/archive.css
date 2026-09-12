@@ -185,7 +185,7 @@
   .me-archive__intro .me-archive__kicker { grid-column: 1 / 4; }
   .me-archive__intro h1 { grid-column: 1 / 8; margin-top: var(--p11-space-24); }
   .me-archive__intro > p:last-child { grid-column: 9 / 13; align-self: end; margin-top: 0; }
-  .me-archive__summary { grid-template-columns: repeat(3, 1fr); }
+  .me-archive__summary { grid-template-columns: repeat(4, 1fr); }
   .me-archive__summary > div { display: grid; min-height: 112px; padding: var(--p11-space-24); border-right: 1px solid var(--p11-line); border-bottom: 0; }
   .me-archive__summary > div:first-child { padding-left: 0; }
   .me-archive__summary > div:last-child { border-right: 0; }

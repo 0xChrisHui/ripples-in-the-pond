@@ -2,12 +2,14 @@
 
 import { useAuth } from '@/src/hooks/useAuth';
 import { useMeArchive, type ArchiveSlice } from '@/src/hooks/me/useMeArchive';
+import { useOwnedEchoes } from '@/src/hooks/me/useOwnedEchoes';
 import ArchiveEmpty from '@/src/components/me/archive/ArchiveEmpty';
 import ArchiveHeader from '@/src/components/me/archive/ArchiveHeader';
 import ArchiveSection from '@/src/components/me/archive/ArchiveSection';
 import MaterialArchiveRow from '@/src/components/me/archive/MaterialArchiveRow';
 import RecordingArchiveRow from '@/src/components/me/archive/RecordingArchiveRow';
 import ScoreArchiveRow from '@/src/components/me/archive/ScoreArchiveRow';
+import EchoArchiveRow from '@/src/components/echo/EchoArchiveRow';
 import '@/src/components/me/archive/archive.css';
 
 function countOf<T>(slice: ArchiveSlice<T>): number | null {
@@ -27,6 +29,13 @@ export default function MePage() {
     userId: auth.userId,
     getAccessToken: auth.getAccessToken,
   });
+  const echoes = useOwnedEchoes({
+    authenticated: auth.authenticated,
+    authSource: auth.authSource,
+    userId: auth.userId,
+    evmAddress: auth.evmAddress,
+    getAccessToken: auth.getAccessToken,
+  });
   const archiveReady = Boolean(auth.userId && ownerId === auth.userId);
   const identityPending = !auth.ready || (auth.authenticated && !archiveReady);
   const authState = identityPending
@@ -36,6 +45,7 @@ export default function MePage() {
       : 'unauthenticated' as const;
   const counts = [
     { label: '我的唱片', value: countOf(scores) },
+    { label: '池中回声', value: countOf(echoes) },
     { label: '我的录音', value: countOf(recordings) },
     { label: '我的素材', value: countOf(materials) },
   ];
@@ -82,7 +92,21 @@ export default function MePage() {
             </ArchiveSection>
 
             <ArchiveSection
-              index={2} title="我的录音" count={countOf(recordings)}
+              id="pond-echoes" index={2} title="池中回声"
+              count={countOf(echoes)} loading={isLoading(echoes)}
+              refreshing={echoes.phase === 'refreshing'}
+              error={echoes.error} warning={echoes.warning} onRetry={() => { void echoes.retry(); }}
+              emptyDescription="首枚符合启用条件的 Score 会生成一枚钱包专属的 36 段永久作品。"
+            >
+              {echoes.items.map((echo, index) => (
+                <EchoArchiveRow key={echo.key} echo={echo} index={index} />
+              ))}
+              {isLoading(echoes) && echoes.items.length === 0
+                && <div className="me-archive__skeleton" />}
+            </ArchiveSection>
+
+            <ArchiveSection
+              index={3} title="我的录音" count={countOf(recordings)}
               loading={isLoading(recordings)} refreshing={recordings.phase === 'refreshing'}
               error={recordings.error} onRetry={() => { void retry('recordings'); }}
               emptyDescription="回到池塘播放一首音乐，你加入的演奏会先保存在这里。"
@@ -95,7 +119,7 @@ export default function MePage() {
             </ArchiveSection>
 
             <ArchiveSection
-              index={3} title="我的素材" count={countOf(materials)}
+              index={4} title="我的素材" count={countOf(materials)}
               loading={isLoading(materials)} refreshing={materials.phase === 'refreshing'}
               error={materials.error} onRetry={() => { void retry('materials'); }}
               emptyDescription="聆听音乐时，可以将喜欢的声音素材加入收藏。"

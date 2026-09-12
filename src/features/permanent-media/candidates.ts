@@ -1,10 +1,12 @@
+import { WALLET_RECIPE_GATEWAYS } from '@/src/lib/wallet-recipe/gateways';
 import type { PermanentMediaCandidate } from './types';
 
 const TX_ID_RE = /^[a-zA-Z0-9_-]{43}$/;
-const GATEWAYS = [
-  { source: 'arweave', baseUrl: 'https://arweave.net', label: 'arweave.net' },
-  { source: 'permagate', baseUrl: 'https://ario.permagate.io', label: 'ario.permagate.io' },
-] as const;
+const SOURCE_BY_GATEWAY = {
+  'https://ardrive.net': 'ardrive',
+  'https://arweave.tokyo': 'arweave-tokyo',
+  'https://arweave.net': 'arweave',
+} as const;
 
 export function parseArweaveRef(ref: string): string {
   if (!ref.startsWith('ar://')) throw new Error('永久资源必须使用 ar:// 引用');
@@ -38,12 +40,10 @@ export function permanentMediaCandidates(
       source: 'mirror', healthKey: mirror, label: '高速镜像', url: `${mirror}/${txId}`,
     });
   }
-  for (const gateway of GATEWAYS) {
+  for (const baseUrl of WALLET_RECIPE_GATEWAYS) {
+    const label = new URL(baseUrl).host;
     candidates.push({
-      source: gateway.source,
-      healthKey: gateway.baseUrl,
-      label: gateway.label,
-      url: `${gateway.baseUrl}/${txId}`,
+      source: SOURCE_BY_GATEWAY[baseUrl], healthKey: baseUrl, label, url: `${baseUrl}/${txId}`,
     });
   }
   return candidates;

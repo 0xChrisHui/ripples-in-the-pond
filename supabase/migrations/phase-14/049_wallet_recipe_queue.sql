@@ -101,7 +101,9 @@ create index if not exists wallet_recipe_queue_claim_idx
 create table if not exists public.arweave_upload_ledger (
   id uuid primary key default gen_random_uuid(),
   chain_id bigint not null check (chain_id in (10, 11155420)),
-  kind text not null check (kind in ('clip', 'clip_manifest', 'decoder', 'image', 'metadata')),
+  kind text not null check (kind in (
+    'clip', 'clip_manifest', 'decoder', 'image', 'collection_metadata', 'metadata'
+  )),
   content_sha256 text not null check (content_sha256 ~ '^[0-9a-f]{64}$'),
   queue_id uuid references public.wallet_recipe_queue(id) on delete restrict,
   state text not null check (state in ('uploading', 'uploaded', 'verified', 'upload_result_unknown')),
@@ -112,7 +114,10 @@ create table if not exists public.arweave_upload_ledger (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (chain_id, kind, content_sha256),
-  constraint arweave_ledger_queue_shape check (kind <> 'metadata' or queue_id is not null),
+  constraint arweave_ledger_queue_shape check (
+    (kind = 'metadata' and queue_id is not null)
+    or (kind <> 'metadata' and queue_id is null)
+  ),
   constraint arweave_ledger_tx_shape check (
     state not in ('uploaded', 'verified') or arweave_tx_id is not null
   ),
@@ -213,18 +218,37 @@ begin
   if v_activation_text is null or v_activation_text !~ '^[0-9]+$' then
     raise exception 'P14 activationBlock missing or invalid';
   end if;
+  v_eligibility := case when p_source_score_block <= v_activation_text::bigint
+    then 'excluded_prelaunch' else 'eligible' end;
   select k.value into v_cursor from public.system_kv k
     where k.key = 'p14:cursor:' || p_chain_id || ':' || v_contract for update;
-  if v_cursor is null or v_cursor !~ '^[0-9]+:-?[0-9]+$'
-    or v_cursor is distinct from p_expected_cursor then
+  if v_cursor is null or v_cursor !~ '^[0-9]+:-?[0-9]+$' then
+    raise exception 'P14 discovery cursor missing or invalid';
+  end if;
+  select q.* into v_row from public.wallet_recipe_queue q
+    where q.chain_id = p_chain_id and q.source_score_contract = v_contract
+      and q.source_score_tx_hash = lower(p_source_score_tx_hash)
+      and q.source_score_log_index = p_source_score_log_index;
+  if found then
+    if v_row.origin_wallet_key is distinct from v_origin_key
+      or v_row.source_score_queue_id is distinct from p_source_score_queue_id
+      or v_row.source_score_token_id is distinct from p_source_score_token_id
+      or v_row.source_score_block is distinct from p_source_score_block
+      or v_row.eligibility is distinct from v_eligibility
+      or (v_eligibility = 'eligible' and (v_row.recipe is distinct from p_recipe
+        or v_row.recipe_hash is distinct from p_recipe_hash)) then
+      raise exception 'P14 replay evidence changed';
+    end if;
+    return next v_row;
+    return;
+  end if;
+  if v_cursor is distinct from p_expected_cursor then
     raise exception 'P14 discovery cursor conflict';
   end if;
   if (p_source_score_block, p_source_score_log_index) <=
     (split_part(v_cursor, ':', 1)::bigint, split_part(v_cursor, ':', 2)::integer) then
     raise exception 'P14 source event must follow the cursor';
   end if;
-  v_eligibility := case when p_source_score_block <= v_activation_text::bigint
-    then 'excluded_prelaunch' else 'eligible' end;
   if v_eligibility = 'eligible'
     and (p_recipe !~ '^[A-Z0-9]{36}$' or p_recipe_hash !~ '^[0-9a-f]{64}$') then
     raise exception 'Invalid P14 recipe';
@@ -290,6 +314,14 @@ begin
   select l.* into v_ledger from public.arweave_upload_ledger l
     where l.chain_id = v_job.chain_id and l.kind = 'metadata'
       and l.content_sha256 = p_content_sha256 for update;
+  -- 旧 worker 可能在 Turbo 已收件但尚未回写 txid 时退出；过期后只能转人工核对，
+  -- 绝不能把没有 txid 的 uploading 当成“未上传”并再次扣费。
+  if v_inserted is null and v_ledger.state = 'uploading'
+    and v_ledger.attempted_at <= now() - interval '5 minutes' then
+    update public.arweave_upload_ledger l set state = 'upload_result_unknown',
+      last_error = 'metadata upload lease expired before txid was durably recorded',
+      updated_at = now() where l.id = v_ledger.id returning l.* into v_ledger;
+  end if;
   update public.wallet_recipe_queue q set metadata_sha256 = p_content_sha256,
     metadata_upload_state = v_ledger.state,
     metadata_ar_tx_id = coalesce(v_ledger.arweave_tx_id, q.metadata_ar_tx_id),

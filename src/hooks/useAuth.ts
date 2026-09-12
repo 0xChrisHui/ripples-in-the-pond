@@ -56,12 +56,12 @@ export function useAuth() {
 
   const logout = useCallback(async () => {
     if (userId) clearNftCache(userId);
-    if (userId && authSource) clearArchiveCache({ userId, authSource });
+    if (userId && authSource) clearArchiveCache({ userId, authSource, evmAddress });
     clearSemiJwt();
     if (privyAuth) {
       await privyLogout();
     }
-  }, [authSource, userId, privyAuth, privyLogout]);
+  }, [authSource, userId, evmAddress, privyAuth, privyLogout]);
 
   const getAccessToken = useCallback(async (): Promise<string | null> => {
     if (authSource === 'privy') return privyToken();

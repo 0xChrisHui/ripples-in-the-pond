@@ -1,12 +1,14 @@
-import { createHash } from 'node:crypto';
 import { getAddress, type Address } from 'viem';
-import { ARWEAVE_GATEWAYS, resolveArUrl } from '@/src/lib/arweave';
 import { ARWEAVE_TX_ID_PATTERN } from '@/src/lib/wallet-recipe/constants';
+import {
+  WALLET_RECIPE_GATEWAYS,
+} from '@/src/lib/wallet-recipe/gateways';
 import { parseClipManifestV1 } from '@/src/lib/wallet-recipe/clip-manifest';
 import { CLIP_MANIFEST_V1 } from '@/src/features/wallet-recipe/clip-manifest';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import type { WalletRecipePermanentConfig } from '@/src/lib/chain/wallet-recipe-contract';
 import { PipelineStepError, type PipelineStepResult, type WalletRecipeQueueRow } from './shared';
+import { fetchPermanentObjectQuorum } from './gateway-quorum';
 
 const FETCH_TIMEOUT_MS = 12_000;
 
@@ -24,30 +26,21 @@ export function assertPermanentConfig(config: WalletRecipePermanentConfig): void
   }
 }
 
-async function fetchGateway(txId: string, gateway: (typeof ARWEAVE_GATEWAYS)[number]) {
-  const signal = AbortSignal.timeout(FETCH_TIMEOUT_MS);
-  const response = await fetch(resolveArUrl(txId, gateway), { signal, cache: 'no-store' });
+async function fetchGateway(
+  txId: string,
+  gateway: (typeof WALLET_RECIPE_GATEWAYS)[number],
+  signal: AbortSignal,
+) {
+  const response = await fetch(`${gateway}/${txId}`, {
+    signal: AbortSignal.any([signal, AbortSignal.timeout(FETCH_TIMEOUT_MS)]),
+    cache: 'no-store',
+  });
   if (!response.ok) throw new Error(`${gateway} HTTP ${response.status}`);
   return Buffer.from(await response.arrayBuffer());
 }
 
 export async function verifyPermanentObject(txId: string): Promise<VerifiedPermanentObject> {
-  let first: Buffer;
-  let second: Buffer;
-  try {
-    [first, second] = await Promise.all(
-      ARWEAVE_GATEWAYS.map((gateway) => fetchGateway(txId, gateway)),
-    );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new PipelineStepError(`Arweave 尚未双网关可取：${message}`, 'transient');
-  }
-  const firstHash = createHash('sha256').update(first).digest('hex');
-  const secondHash = createHash('sha256').update(second).digest('hex');
-  if (firstHash !== secondHash) {
-    throw new PipelineStepError(`Arweave 双网关内容不一致：${txId}`, 'permanent_input');
-  }
-  return { bytes: first, sha256: firstHash };
+  return fetchPermanentObjectQuorum(txId, fetchGateway);
 }
 
 function assertManifestMatches(bytes: Buffer): void {

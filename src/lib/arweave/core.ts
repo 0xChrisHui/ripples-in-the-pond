@@ -66,7 +66,18 @@ export async function fetchFromArweave(txId: string): Promise<Buffer> {
   );
 }
 
-export type UploadResult = { txId: string; url: string };
+export type UploadResult = {
+  txId: string;
+  url: string;
+  uploaderAddress: string;
+  costWinc: string;
+};
+export type UploadTag = { name: string; value: string };
+export type TurboUploadBudget = {
+  effectiveBalanceWinc: string;
+  requiredWinc: string;
+  itemCostsWinc: string[];
+};
 
 type WalletFile = {
   address: string;
@@ -112,16 +123,45 @@ function getTurboClient(): TurboAuthenticatedClient {
 export async function uploadBuffer(
   buffer: Buffer,
   contentType: string,
+  tags: readonly UploadTag[] = [],
 ): Promise<UploadResult> {
+  if (tags.some((tag) => tag.name.toLowerCase() === 'content-type')) {
+    throw new Error('额外 tags 不得覆盖 Content-Type');
+  }
   const client = getTurboClient();
   const result = await client.upload({
     data: buffer,
     dataItemOpts: {
-      tags: [{ name: 'Content-Type', value: contentType }],
+      tags: [{ name: 'Content-Type', value: contentType }, ...tags],
     },
   });
   return {
     txId: result.id,
     url: resolveArUrl(result.id),
+    uploaderAddress: result.owner,
+    costWinc: result.winc,
+  };
+}
+
+/** 上传前一次性核对余额；byteCounts 应包含失败重传缓冲。 */
+export async function getTurboUploadBudget(
+  byteCounts: readonly number[],
+): Promise<TurboUploadBudget> {
+  if (!byteCounts.length || byteCounts.some((value) => !Number.isInteger(value) || value <= 0)) {
+    throw new Error('Turbo 预算必须提供有限正整数 bytes');
+  }
+  const client = getTurboClient();
+  const [balance, costs] = await Promise.all([
+    client.getBalance(),
+    client.getUploadCosts({ bytes: [...byteCounts] }),
+  ]);
+  const required = costs.reduce((sum, item) => sum + BigInt(item.winc), 0n);
+  if (BigInt(balance.effectiveBalance) < required) {
+    throw new Error(`Turbo credits 不足：需要 ${required} winc，可用 ${balance.effectiveBalance} winc`);
+  }
+  return {
+    effectiveBalanceWinc: balance.effectiveBalance,
+    requiredWinc: required.toString(),
+    itemCostsWinc: costs.map((item) => item.winc),
   };
 }

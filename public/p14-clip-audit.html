@@ -9,6 +9,7 @@
       body { max-width: 1120px; margin: 32px auto; padding: 0 20px; }
       button { padding: 10px 16px; border: 1px solid #7c92aa; border-radius: 8px; background: #17202a; color: inherit; cursor: pointer; }
       button:disabled { opacity: .5; cursor: wait; }
+      a { color: #9ed7bd; }
       pre { overflow: auto; padding: 16px; border: 1px solid #2b3745; border-radius: 8px; background: #11161d; }
       table { width: 100%; border-collapse: collapse; margin-top: 20px; }
       th, td { padding: 6px 8px; border-bottom: 1px solid #293440; text-align: right; }
@@ -20,6 +21,10 @@
   <body>
     <h1>P14 本地 36 片段 Web Audio 审计</h1>
     <p>点击后按固定字符顺序逐个解码。这里的 <code>AudioBuffer.length</code> 是浏览器播放真值。</p>
+    <p id="file-help" class="bad" hidden>
+      浏览器不允许 <code>file://</code> 页面读取旁边的 MP3。请先运行 <code>npm run dev</code>，再从
+      <a href="http://localhost:3000/p14-clip-audit.html">localhost 试听页</a>打开。
+    </p>
     <button id="run" type="button">开始 36/36 解码</button>
     <button id="listen" type="button" disabled>按 A→9 顺序试听</button>
     <span id="status"></span>
@@ -35,6 +40,7 @@
       const status = document.querySelector('#status');
       const rows = document.querySelector('#rows');
       const output = document.querySelector('#output');
+      const fileHelp = document.querySelector('#file-help');
       let decoded = [];
 
       function analyze(buffer) {
@@ -68,6 +74,12 @@
       }
 
       run.addEventListener('click', async () => {
+        if (location.protocol === 'file:') {
+          fileHelp.hidden = false;
+          status.textContent = ' 请改用 localhost 打开';
+          status.className = 'bad';
+          return;
+        }
         run.disabled = true;
         rows.replaceChildren();
         const context = new AudioContext();
@@ -127,6 +139,7 @@
         status.textContent = ' 顺序试听播放完成；请人工记录爆音、截断、静音与响度异常';
         listen.disabled = false;
       });
+      if (location.protocol === 'file:') fileHelp.hidden = false;
       if (new URLSearchParams(location.search).has('autorun')) run.click();
     </script>
   </body>

@@ -1,0 +1,117 @@
+{
+  "base": "http://localhost:3100",
+  "viewports": [
+    {
+      "width": 375,
+      "status": 200,
+      "state": "ready",
+      "errors": [],
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "title": "Pond Echo · 4Fff—0F78",
+      "transferNote": "这枚作品已经转让；来源钱包仍永久保留，当前持有人来自链上 ownerOf。",
+      "buttonDisabled": false
+    },
+    {
+      "width": 390,
+      "status": 200,
+      "state": "ready",
+      "errors": [],
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "title": "Pond Echo · 4Fff—0F78",
+      "transferNote": "这枚作品已经转让；来源钱包仍永久保留，当前持有人来自链上 ownerOf。",
+      "buttonDisabled": false
+    },
+    {
+      "width": 768,
+      "status": 200,
+      "state": "ready",
+      "errors": [],
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "title": "Pond Echo · 4Fff—0F78",
+      "transferNote": "这枚作品已经转让；来源钱包仍永久保留，当前持有人来自链上 ownerOf。",
+      "buttonDisabled": false
+    },
+    {
+      "width": 1024,
+      "status": 200,
+      "state": "ready",
+      "errors": [],
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "title": "Pond Echo · 4Fff—0F78",
+      "transferNote": "这枚作品已经转让；来源钱包仍永久保留，当前持有人来自链上 ownerOf。",
+      "buttonDisabled": false
+    },
+    {
+      "width": 1440,
+      "status": 200,
+      "state": "ready",
+      "errors": [],
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "title": "Pond Echo · 4Fff—0F78",
+      "transferNote": "这枚作品已经转让；来源钱包仍永久保留，当前持有人来自链上 ownerOf。",
+      "buttonDisabled": false
+    }
+  ],
+  "routes": [
+    {
+      "path": "/echo/origin/0x4Fffc941Af305Efa80Afc9754083411859af0F78",
+      "status": 200,
+      "title": "Pond Echo · 4Fff—0F78"
+    },
+    {
+      "path": "/echo/2",
+      "status": 200,
+      "title": "Pond Echo · 40F7—c7A9"
+    },
+    {
+      "path": "/echo/3",
+      "status": 200,
+      "title": "Pond Echo · ce8c—D2d1"
+    }
+  ],
+  "playback": [
+    {
+      "tokenId": 1,
+      "recipe": "G3JTZNRDOK76X6EEEK238XO61EZ95SN5L09D",
+      "elapsedMs": 270870,
+      "finalSegment": "第 36 / 36 段",
+      "state": "ended",
+      "heapBytes": 49549603,
+      "errors": []
+    },
+    {
+      "tokenId": 2,
+      "recipe": "6O8MP0JPC4R198N79O3W9UDWC68YYOJMXHVG",
+      "elapsedMs": 270345,
+      "finalSegment": "第 36 / 36 段",
+      "state": "ended",
+      "heapBytes": 49883167,
+      "errors": []
+    },
+    {
+      "tokenId": 3,
+      "recipe": "K60ISFPVW5CR52HA1U3R42685USK1FKGV40U",
+      "elapsedMs": 270374,
+      "finalSegment": "第 36 / 36 段",
+      "state": "ended",
+      "heapBytes": 49577459,
+      "errors": []
+    }
+  ],
+  "rapidToggle": {
+    "finalState": "paused",
+    "heapBefore": 63349454,
+    "heapAfter": 66176979,
+    "errors": []
+  },
+  "reducedMotion": {
+    "state": "ready",
+    "matches": true,
+    "errors": []
+  }
+}

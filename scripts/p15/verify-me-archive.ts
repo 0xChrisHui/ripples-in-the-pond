@@ -1,12 +1,15 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import {
+  archiveCacheKey,
   clearArchiveCache,
   readArchiveCache,
+  validCachedEcho,
   validCachedScore,
   writeArchiveCache,
 } from '../../src/hooks/me/archive-cache';
 import { getDrafts, saveDraft } from '../../src/lib/draft-store';
+import { fetchMyEchoes } from '../../src/data/echo/client';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -30,6 +33,16 @@ const score = {
 };
 const privy = { authSource: 'privy' as const, userId: 'user-a' };
 const semi = { authSource: 'semi' as const, userId: 'user-a' };
+const echoAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+const echoIdentity = { ...privy, evmAddress: echoAddress.toUpperCase().replace('0X', '0x') };
+const echo = {
+  key: 'owned:1', tokenId: '1', name: 'Pond Echo #1',
+  originWallet: echoAddress, currentOwner: echoAddress, tokenUri: 'ar://metadata',
+  status: 'owned' as const, relation: 'current-owner' as const, hasError: false,
+};
+
+process.env.NEXT_PUBLIC_CHAIN_ID = '10';
+process.env.NEXT_PUBLIC_WALLET_RECIPE_NFT_ADDRESS = '0x1111111111111111111111111111111111111111';
 
 writeArchiveCache(privy, 'scores', '/api/me/score-nfts', [score]);
 assert.deepEqual(readArchiveCache(privy, 'scores', validCachedScore)?.items, [score]);
@@ -39,6 +52,31 @@ assert.equal(
   null,
   'owner 必须隔离',
 );
+
+const echoKey = archiveCacheKey(echoIdentity, 'echoes');
+assert.ok(echoKey);
+const decodedEchoKey = decodeURIComponent(echoKey);
+assert.match(decodedEchoKey, /privy:user-a:0xabcdefabcdefabcdefabcdefabcdefabcdefabcd:echoes$/);
+assert.match(decodedEchoKey, /\|10\|0x1111111111111111111111111111111111111111:/);
+writeArchiveCache(echoIdentity, 'echoes', '/api/me/pond-echoes', [echo]);
+assert.deepEqual(readArchiveCache(
+  { ...privy, evmAddress: echoAddress }, 'echoes', validCachedEcho,
+)?.items, [echo], '同一钱包不同大小写必须命中同一份缓存');
+assert.equal(readArchiveCache(
+  { ...semi, evmAddress: echoAddress }, 'echoes', validCachedEcho,
+), null, 'Echo 登录源必须隔离');
+assert.equal(readArchiveCache(
+  { ...privy, userId: 'user-b', evmAddress: echoAddress }, 'echoes', validCachedEcho,
+), null, 'Echo userId 必须隔离');
+assert.equal(readArchiveCache(
+  { ...privy, evmAddress: '0x2222222222222222222222222222222222222222' }, 'echoes', validCachedEcho,
+), null, 'Echo 钱包地址必须隔离');
+process.env.NEXT_PUBLIC_CHAIN_ID = '11155420';
+assert.equal(readArchiveCache(echoIdentity, 'echoes', validCachedEcho), null, 'Echo 链必须隔离');
+process.env.NEXT_PUBLIC_CHAIN_ID = '10';
+process.env.NEXT_PUBLIC_WALLET_RECIPE_NFT_ADDRESS = '0x3333333333333333333333333333333333333333';
+assert.equal(readArchiveCache(echoIdentity, 'echoes', validCachedEcho), null, 'Echo 合约必须隔离');
+process.env.NEXT_PUBLIC_WALLET_RECIPE_NFT_ADDRESS = '0x1111111111111111111111111111111111111111';
 
 writeArchiveCache(privy, 'scores', '/api/me/score-nfts', []);
 assert.deepEqual(readArchiveCache(privy, 'scores', validCachedScore)?.items, []);
@@ -53,6 +91,8 @@ assert.equal(readArchiveCache(privy, 'scores', validCachedScore), null, '超过�
 writeArchiveCache(privy, 'scores', '/api/me/score-nfts', [score]);
 clearArchiveCache(privy);
 assert.equal(readArchiveCache(privy, 'scores', validCachedScore), null, '登出必须清当前身份缓存');
+clearArchiveCache(echoIdentity);
+assert.equal(readArchiveCache(echoIdentity, 'echoes', validCachedEcho), null, '登出必须清当前钱包 Echo 缓存');
 
 storage.setItem('ripples_drafts', JSON.stringify([{
   trackId: 'track-legacy',
@@ -71,14 +111,34 @@ saveDraft({
 assert.ok(getDrafts().find((draft) => draft.trackId === 'track-new')?.clientDraftId);
 
 async function verifyMigration(): Promise<void> {
-  const migration = await readFile(
-    'supabase/migrations/phase-15/049_pending_scores_client_draft_id.sql',
-    'utf8',
-  );
+  const [migration, echoHook, echoRoute] = await Promise.all([
+    readFile('supabase/migrations/phase-15/050_pending_scores_client_draft_id.sql', 'utf8'),
+    readFile('src/hooks/me/useOwnedEchoes.ts', 'utf8'),
+    readFile('app/api/me/pond-echoes/route.ts', 'utf8'),
+  ]);
   assert.match(migration, /unique index if not exists pending_scores_user_client_draft_unique/);
   assert.match(migration, /pg_advisory_xact_lock/);
   assert.match(migration, /p_client_draft_id/);
-  console.log('/me owner 隔离缓存与草稿幂等合同验证通过');
+  assert.match(echoHook, /上次链上确认/);
+  assert.match(echoHook, /fetchMyEchoes\(token, controller\.signal\)/);
+  assert.match(echoRoute, /timing\.measure\('rpc'/);
+  assert.match(echoRoute, /timing\.response/);
+  const previousFetch = globalThis.fetch;
+  let receivedSignal: AbortSignal | null | undefined;
+  try {
+    globalThis.fetch = (async (_input, init) => {
+      receivedSignal = init?.signal;
+      return new Response(JSON.stringify({
+        echoes: [echo], onChainTotal: 1, truncated: false, originStatusUnavailable: false,
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }) as typeof fetch;
+    const controller = new AbortController();
+    assert.equal((await fetchMyEchoes('token', controller.signal)).echoes.length, 1);
+    assert.equal(receivedSignal, controller.signal, 'Echo 请求必须透传 AbortSignal');
+  } finally {
+    globalThis.fetch = previousFetch;
+  }
+  console.log('/me owner、Echo 链上缓存与草稿幂等合同验证通过');
 }
 
 void verifyMigration();

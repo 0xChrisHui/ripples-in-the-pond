@@ -79,7 +79,7 @@ async function broadcastMint(
   contract: Address,
   deadlineAt: number,
 ): Promise<PipelineStepResult> {
-  if (deadlineAt - Date.now() < 25_000) {
+  if (deadlineAt - Date.now() < 12_000) {
     return { status: 'minting_onchain', detail: 'response_deadline', failureKind: 'transient' };
   }
   const simulation = await publicClient.simulateContract({
@@ -89,7 +89,7 @@ async function broadcastMint(
     functionName: 'mintToOrigin',
     args: [row.origin_wallet, row.token_uri as string],
   });
-  if (deadlineAt - Date.now() < 12_000) {
+  if (deadlineAt - Date.now() < 8_000) {
     return { status: 'minting_onchain', detail: 'response_deadline', failureKind: 'transient' };
   }
   const stamp = new Date().toISOString();
@@ -133,7 +133,7 @@ async function inspectReceipt(
   txHash: Hex,
   deadlineAt: number,
 ): Promise<PipelineStepResult> {
-  if (deadlineAt - Date.now() < 25_000) {
+  if (deadlineAt - Date.now() < 12_000) {
     return { status: 'confirming_onchain', detail: 'response_deadline', failureKind: 'transient' };
   }
   let receipt;

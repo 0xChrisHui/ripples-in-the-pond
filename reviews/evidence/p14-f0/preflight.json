@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-05T17:57:16.971Z",
+  "generatedAt": "2026-09-06T00:34:55.901Z",
   "readOnly": true,
   "gate": "BLOCKED",
   "checks": [
@@ -9,9 +9,9 @@
       "state": "BLOCKED",
       "detail": {
         "counts": {
-          "p14": 34,
+          "p14": 9,
           "user-media": 3,
-          "existing": 31
+          "existing": 25
         },
         "lines": [
           "M .claude/hooks/check-file-size.js",
@@ -19,24 +19,17 @@
           " M .claude/hooks/check-forbidden-imports.js",
           " M .claude/hooks/session-start-context.js",
           " M .claude/hooks/stop-checklist.js",
-          " M .env.example",
           " M AGENTS.md",
           " M QUICKSTART.md",
           " M STATUS.md",
           " M TASKS.md",
-          " M app/api/health/route.ts",
-          " M contracts/src/WalletRecipeNFT.sol",
-          " M contracts/test/DeployWalletRecipe.t.sol",
-          " M contracts/test/WalletRecipeNFT.t.sol",
           " M docs/ARCHITECTURE.md",
           " M docs/CONVENTIONS.md",
           " M docs/ERRORS.md",
           " M docs/JOURNAL.md",
           " M docs/LEARNING.md",
-          " M docs/MAINNET-RUNBOOK.md",
           " M docs/STACK.md",
           " M playbook/phase-14/00-overview.md",
-          " M playbook/phase-14/05-frozen-decisions.md",
           " M playbook/phase-14/10-0-product-contract-gate.md",
           " M playbook/phase-14/20-a-assets.md",
           " M playbook/phase-14/30-b-recipe-data-contract.md",
@@ -53,35 +46,11 @@
           " M playbook/phase-15/60-e-data-cache.md",
           " M playbook/phase-15/70-f-regression-rollout.md",
           " M reviews/2026-08-23-phase-12-launch-review.md",
-          " M scripts/arweave/p14/upload-p14-assets.ts",
-          " M scripts/p14/verify-wallet-recipe.ts",
-          " M scripts/vercel-env-sync.ts",
-          " M src/lib/wallet-recipe/constants.ts",
-          " M src/lib/wallet-recipe/recipe-v1.ts",
-          " M src/lib/wallet-recipe/vectors-v1.ts",
-          " M src/types/tracks.ts",
-          "?? app/api/cron/process-wallet-recipe/",
-          "?? public/pond-echoes/",
           "?? public/the36/",
           "?? references/36-AU/",
           "?? references/audio/",
-          "?? reviews/evidence/p14-e-foundation/",
-          "?? reviews/evidence/p14-f0/",
-          "?? scripts/p14/generate-pond-echo-cover.ts",
-          "?? scripts/p14/preflight-wallet-recipe-release.ts",
-          "?? scripts/p14/verify-wallet-recipe-health.ts",
-          "?? scripts/p14/verify-wallet-recipe-pipeline.ts",
-          "?? scripts/p14/verify-wallet-recipe-player.ts",
-          "?? src/features/wallet-recipe/health/",
-          "?? src/features/wallet-recipe/pipeline-policy.ts",
-          "?? src/features/wallet-recipe/player/",
-          "?? src/lib/chain/wallet-recipe-contract.ts",
-          "?? src/lib/health/",
-          "?? src/lib/wallet-recipe/collection-metadata.ts",
-          "?? src/types/wallet-recipe-health.ts",
-          "?? src/wallet-recipe-decoder/",
-          "?? supabase/.temp/",
-          "?? supabase/migrations/phase-14/"
+          "?? reviews/evidence/p14-f0/rights-confirmation.md",
+          "?? supabase/.temp/"
         ]
       }
     },
@@ -89,7 +58,7 @@
       "id": "p14-code-policy",
       "state": "PASS",
       "detail": {
-        "files": 79,
+        "files": 80,
         "oversized": [],
         "crowded": [],
         "forbidden": []
@@ -215,16 +184,10 @@
     },
     {
       "id": "rpc-11155420",
-      "state": "PASS",
+      "state": "BLOCKED",
       "detail": {
         "configured": true,
-        "actualChainId": 11155420,
-        "balances": [
-          {
-            "address": "0x306D3A445b1fc7a789639fa9115e308a34231633",
-            "wei": "9212950866073795"
-          }
-        ]
+        "error": "fetch failed"
       }
     },
     {
@@ -236,11 +199,9 @@
     },
     {
       "id": "turbo-balance",
-      "state": "PASS",
+      "state": "BLOCKED",
       "detail": {
-        "address": "0xD9AEDeAd70F4Cd7532163C4FACBEc77b127B4582",
-        "token": "base-eth",
-        "winc": "623213389830"
+        "error": "fetch failed"
       }
     },
     {
@@ -255,7 +216,7 @@
     },
     {
       "id": "rights-gate",
-      "state": "BLOCKED",
+      "state": "PASS",
       "detail": {
         "expected": "reviews/evidence/p14-f0/rights-confirmation.md"
       }
@@ -272,7 +233,7 @@
       "id": "opensea-metadata",
       "state": "PASS",
       "detail": {
-        "checkedAt": "2026-09-05T17:57:16.968Z",
+        "checkedAt": "2026-09-06T00:34:55.898Z",
         "official": [
           "https://docs.opensea.io/docs/metadata-standards",
           "https://docs.opensea.io/docs/metadata-storage",

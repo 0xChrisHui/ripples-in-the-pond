@@ -37,6 +37,10 @@ export const WALLET_RECIPE_ABI = [
     outputs: [{ name: '', type: 'uint256' }],
   },
   {
+    type: 'function', name: 'totalSupply', stateMutability: 'view',
+    inputs: [], outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
     type: 'function', name: 'tokenOfOwnerByIndex', stateMutability: 'view',
     inputs: [
       { name: 'owner', type: 'address' },
