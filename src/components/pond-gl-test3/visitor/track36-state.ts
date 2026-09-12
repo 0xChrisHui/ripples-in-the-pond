@@ -1,4 +1,4 @@
-import type { Track } from '@/src/types/tracks';
+import type { FeaturedEcho } from '@/src/types/featured-echo';
 import type { GlPhysNode } from '../spheres/gl-sim-setup';
 import { unproject, type ProjCtx } from '../sphere-projection';
 import { sampleTrack36Path } from './track36-path';
@@ -6,8 +6,33 @@ import { sampleTrack36Path } from './track36-path';
 export const TRACK36_TRAVEL_MS = 15_000;
 export const TRACK36_RADIUS = 34;
 
+/** 不进入 d3、不属于 Track 集合；只携带 ECHO 永久身份和视觉渲染字段。 */
+export interface FeaturedEchoVisualNode {
+  kind: 'featured-echo';
+  id: string;
+  identity: FeaturedEcho['identity'];
+  radius: number;
+  color: string;
+  baseLayer: number;
+  kSize: number;
+  lw: { amp: number; f1: number; f2: number; p1: number; p2: number };
+  x: number;
+  y: number;
+  z: number;
+  displayZ: number;
+  _shiftOff?: number;
+  _parGain?: number;
+  _parAng?: number;
+  _waveZ?: number;
+  _shivX?: number;
+  _shivY?: number;
+  _visualDim?: number;
+}
+
+export type PondRenderNode = GlPhysNode | FeaturedEchoVisualNode;
+
 export interface Track36VisitorState {
-  node: GlPhysNode;
+  node: FeaturedEchoVisualNode;
   active: boolean;
   progress: number;
   waitMs: number;
@@ -32,11 +57,13 @@ export interface Track36Advance {
   waterLevel: number;
 }
 
-export function createTrack36State(track: Track, initialDelayMs: number): Track36VisitorState {
+/** ECHO 访客从创建起就与普通 Track 节点分型，避免伪造 week/audio_url。 */
+export function createTrack36State(echo: FeaturedEcho, initialDelayMs: number): Track36VisitorState {
   const pose = sampleTrack36Path(0);
   return {
     node: {
-      id: track.id, track, groupId: 'A', importance: 1, radius: TRACK36_RADIUS,
+      kind: 'featured-echo', id: echo.playbackId, identity: echo.identity,
+      radius: TRACK36_RADIUS,
       color: '#d9e6df', baseLayer: 8, kSize: TRACK36_RADIUS,
       lw: { amp: 0.72, f1: 0.07, f2: 0.17, p1: 0, p2: 2.4 },
       x: 0, y: 0, z: 0, displayZ: 0,
@@ -51,7 +78,7 @@ export function createTrack36State(track: Track, initialDelayMs: number): Track3
 export function getPondRenderNodes(
   regular: GlPhysNode[],
   visitor: Track36VisitorState | null,
-): GlPhysNode[] {
+): PondRenderNode[] {
   return visitor?.active ? [...regular, visitor.node] : regular;
 }
 

@@ -68,6 +68,9 @@ data/covers/
 /.tmp/
 # 浏览器视觉验收与诊断使用的临时用户配置
 /.tmp-*/
+/.codex-edge-*/
+# Supabase CLI 的本机状态与缓存
+/supabase/.temp/
 # 本地工具记忆，不参与项目交付
 /.workbuddy/
 # 本地思考素材库：参考源码、视觉原型、音频母版和工程文件均不进入版本控制

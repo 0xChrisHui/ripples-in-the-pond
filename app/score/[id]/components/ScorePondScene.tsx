@@ -43,7 +43,7 @@ function visualTrackOf(score: ScoreReadyData): Track {
     id: `score-${score.tokenId}`, title: score.trackTitle, week: score.tokenId,
     audio_url: score.manifest.baseAudioRef, arweave_url: null, audio_gateway_urls: [],
     cover: score.coverUrl, island: 'score', created_at: score.createdAt ?? score.mintedAt,
-    published: true, material_mintable: false,
+    published: true,
   };
 }
 

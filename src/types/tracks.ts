@@ -31,8 +31,6 @@ export interface Track {
   created_at: string;
   /** Phase 6 B6：A 组 demo 只显 published=true 的 5 球 */
   published: boolean;
-  /** 是否存在可安全铸造的 MaterialNFT metadata。 */
-  material_mintable: boolean;
 }
 
 /** mint_events 表的一行 */

@@ -24,9 +24,8 @@ export const GROUPS: GroupDef[] = [
   { id: 'C', label: '3', color: GROUP_PALETTES[2][0] },
 ];
 
-/** P14-G：每组 35 个常规节点，另加同一枚不进入力导的 #36 访客。 */
+/** 每组 35 个常规 Track；首页另挂一枚不进入力导的 Pond Echo 访客。 */
 export const REGULAR_TRACK_COUNT = 35;
-export const DISPLAY_TRACK_COUNT = 36;
 
 // v31 — 球大小 9/30，靠减 collide 斥力 + 提 outlier 拉力压总占地
 export const CFG = {
@@ -64,11 +63,7 @@ export function hashStr(s: string): number {
   return h;
 }
 
-/**
- * v32 — 随机 cluster 划分：大小池 power-law（单球/对儿/三球/大聚落混合）。
- * 必须在 useEffect 内调用（用了 Math.random，避 react-hooks/purity）。
- * size=1 的 cluster 自然就是孤立球。
- */
+/** 随机 cluster 划分；含 Math.random，必须在 useEffect 内调用。 */
 export function buildClusterAssignment(nodeIds: string[]): {
   assignment: Map<string, number>;
   clusterCount: number;
@@ -110,12 +105,11 @@ export interface SimLink extends SimulationLinkDatum<SimNode> {
   correlation: number;
 }
 
-// Phase 6 B6（2026-05-04）：A 组只显 published=true 的 5 球（艺术家 demo）；
-// B/C 组保持原 36 球行为（音频 SQL 层循环到 No.1-5）
+// A 组只取 published=true；B/C 从正式 Track 1–35 取数，不接收 Pond Echo DTO。
 export function getGroupTracks(gid: GroupId, allTracks: Track[]): Track[] {
-  const regular = allTracks.filter((t) => t.week !== 36);
+  const regular = allTracks.filter((t) => t.week >= 1 && t.week <= REGULAR_TRACK_COUNT);
   if (gid === 'A') return regular.filter((t) => t.published);
-  return regular.filter((t) => t.week >= 1 && t.week <= REGULAR_TRACK_COUNT);
+  return regular;
 }
 
 // #36 已从常规集合抽离；三个分组都只建立 35 个 d3 节点。
@@ -135,11 +129,7 @@ export function padTracksToTarget(real: Track[], target: number): Track[] {
   const padded: Track[] = [];
   for (let i = 0; i < target; i++) {
     const src = real[i % real.length];
-    padded.push({
-      ...src,
-      id: i < real.length ? src.id : `${src.id}-fill-${i}`,
-      week: i + 1,
-    });
+    padded.push({ ...src, id: i < real.length ? src.id : `${src.id}-fill-${i}`, week: i + 1 });
   }
   return padded;
 }
@@ -166,10 +156,7 @@ export function computeNodeAttrs(track: Track, groupId: GroupId): {
  * v86 — 加跨 cluster 稀疏边：每对 cluster 5% 概率 1 条，corr 0.12-0.22 弱拉力
  *       拉力 ≈ 0.04-0.07，远弱于内部 0.15-0.24；距离 ≈ 89-94 自然拉长。
  */
-export function generateLinks(
-  nodes: SimNode[],
-  assignment: Map<string, number>,
-): SimLink[] {
+export function generateLinks(nodes: SimNode[], assignment: Map<string, number>): SimLink[] {
   const links: SimLink[] = [];
   const clusterMembers = new Map<number, number[]>();
   nodes.forEach((n, i) => {
@@ -184,11 +171,8 @@ export function generateLinks(
       for (let b = a + 1; b < indices.length; b++) {
         const seed = (indices[a] * 17 + indices[b] * 31) % 100;
         const corr = 0.5 + (seed % 30) / 100;
-        links.push({
-          source: nodes[indices[a]].id,
-          target: nodes[indices[b]].id,
-          correlation: Math.min(0.85, corr),
-        });
+        links.push({ source: nodes[indices[a]].id, target: nodes[indices[b]].id,
+          correlation: Math.min(0.85, corr) });
       }
     }
   });
@@ -201,11 +185,8 @@ export function generateLinks(
       const m2 = clusterMembers.get(clusterIds[b])!;
       const i1 = m1[Math.floor(Math.random() * m1.length)];
       const i2 = m2[Math.floor(Math.random() * m2.length)];
-      links.push({
-        source: nodes[i1].id,
-        target: nodes[i2].id,
-        correlation: 0.12 + Math.random() * 0.10,
-      });
+      links.push({ source: nodes[i1].id, target: nodes[i2].id,
+        correlation: 0.12 + Math.random() * 0.10 });
     }
   }
 

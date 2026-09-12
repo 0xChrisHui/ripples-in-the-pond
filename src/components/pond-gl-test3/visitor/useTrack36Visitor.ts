@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type RefObject } from 'react';
-import type { Track } from '@/src/types/tracks';
+import type { FeaturedEcho } from '@/src/types/featured-echo';
 import { prefersReducedMotion } from '../reduced-motion';
 import { getPointerFx, getCameraFx } from '../pointer-fx';
 import { getEffectiveWaterLevel } from '../water/water-level';
@@ -25,19 +25,19 @@ function emitRipple(state: Track36VisitorState): void {
   } }));
 }
 
-/** 只管理一位访客；Track 缺失时保持 null，不构造本地假音频。 */
+/** 只管理已经由公开 API 验证过的 ECHO #1；缺失时不构造访客。 */
 export function useTrack36Visitor(
-  track: Track | null,
+  echo: FeaturedEcho | null,
   active: boolean,
-  playingTrackId: string | null,
+  activePlaybackId: string | null,
 ): RefObject<Track36VisitorState | null> {
   const stateRef = useRef<Track36VisitorState | null>(null);
-  const playerRef = useRef(playingTrackId);
-  useEffect(() => { playerRef.current = playingTrackId; }, [playingTrackId]);
+  const playerRef = useRef(activePlaybackId);
+  useEffect(() => { playerRef.current = activePlaybackId; }, [activePlaybackId]);
 
   useEffect(() => {
-    if (!track || !active) { stateRef.current = null; return; }
-    const state = createTrack36State(track, firstDelay());
+    if (!echo || !active) { stateRef.current = null; return; }
+    const state = createTrack36State(echo, firstDelay());
     resetTrack36Drops();
     stateRef.current = state;
     let raf = 0;
@@ -46,7 +46,7 @@ export function useTrack36Visitor(
       const waterLevel = getEffectiveWaterLevel();
       advanceTrack36Visitor(state, {
         now, width: innerWidth, height: innerHeight,
-        anyPlaying: pid !== null, featuredPlaying: pid === track.id,
+        anyPlaying: pid !== null, featuredPlaying: pid === echo.playbackId,
         hidden: document.hidden, reducedMotion: prefersReducedMotion(),
         nextDelayMs: repeatDelay(), waterLevel,
       });
@@ -62,7 +62,7 @@ export function useTrack36Visitor(
     };
     raf = requestAnimationFrame(loop);
     return () => { cancelAnimationFrame(raf); resetTrack36Drops(); stateRef.current = null; };
-  }, [active, track]);
+  }, [active, echo]);
 
   return stateRef;
 }

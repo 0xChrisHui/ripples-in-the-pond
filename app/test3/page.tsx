@@ -24,7 +24,10 @@ import { loadP9Tuning } from '@/src/components/pond-gl-test3/p9/tuning/p9-tuning
 import { usePlayer } from '@/src/components/player/PlayerProvider';
 import { useTrack36Visitor } from '@/src/components/pond-gl-test3/visitor/useTrack36Visitor';
 import Track36HitTarget from '@/src/components/pond-gl-test3/visitor/Track36HitTarget';
+import FeaturedEchoBottomPlayer from '@/src/components/pond-gl-test3/visitor/FeaturedEchoBottomPlayer';
+import { useFeaturedEchoPlayback } from '@/src/components/pond-gl-test3/visitor/useFeaturedEchoPlayback';
 import { useScenePresence } from '@/src/components/pond-gl-test3/focus/useScenePresence';
+import type { FeaturedEcho, FeaturedEchoResponse } from '@/src/types/featured-echo';
 
 // GL 渲染层：全链路 next/dynamic + ssr:false，three/R3F 只进入异步 chunk。
 const PondGL = dynamic(() => import('@/src/components/pond-gl-test3/PondGL'), { ssr: false });
@@ -45,18 +48,25 @@ function Test3PageInner() {
   // GL 层开关（初值取 URL）；背景氛围 fx 随 SVG 卸载移除，到 I3 用 GL 重做再加回
   const [glFlags, setGlFlags] = useState<GLFlags>(() => parseGLFlags(searchParams));
   const [runtimeGlHealth, setRuntimeGlHealth] = useState<GlHealth>('unavailable');
+  const [featuredEcho, setFeaturedEcho] = useState<FeaturedEcho | null>(null);
   const onGl = useCallback((patch: Partial<GLFlags>) => setGlFlags((f) => ({ ...f, ...patch })), []);
 
-  // 球 / 水面 / 扭曲水面 任一开 → glSim active（取数 / 建 sim / 订阅涟漪事件）
-  const glSim = useGlSim(glFlags.glSpheres || glFlags.water || glFlags.waterFx);
   const { playing, currentTrack } = usePlayer();
+  const echoPlayback = useFeaturedEchoPlayback(featuredEcho);
+  // 球 / 水面 / 扭曲水面 任一开 → glSim active；Echo 活跃时按钮与方向键都不能切组。
+  const glSim = useGlSim(
+    glFlags.glSpheres || glFlags.water || glFlags.waterFx,
+    echoPlayback.active,
+  );
   // J1：WebGL 不可用 / 强制兜底 → GL 走兜底夜塘，对应隐掉 GL 球的 DOM 叠层（命中/日蚀/切组），
   // 免得兜底上浮着一堆没有球的标题（缓存检测，forceFallback 切换时重算）
   const glHealth: GlHealth = glFlags.forceFallback ? 'forced' : runtimeGlHealth;
   const glOk = glHealth === 'healthy';
-  const playingId = playing && currentTrack ? currentTrack.id : null;
-  const visitor = useTrack36Visitor(glSim.featuredTrack ?? null, glOk && glFlags.glSpheres, playingId);
-  useScenePresence(glSim, visitor);
+  const regularPlayingId = playing && currentTrack ? currentTrack.id : null;
+  const playingId = echoPlayback.playing ? featuredEcho?.playbackId ?? null : regularPlayingId;
+  const activePlaybackId = echoPlayback.active ? featuredEcho?.playbackId ?? null : regularPlayingId;
+  const visitor = useTrack36Visitor(featuredEcho, glOk && glFlags.glSpheres, activePlaybackId);
+  useScenePresence(glSim, visitor, playingId);
   // 水面固定 → 滚轮驱动一点透视缩放 k、鼠标驱动视差（pointer-fx）。仅透视/视差任一开时才挂监听。
   usePointerFx(glOk && glFlags.glSpheres && (glFlags.perspective || glFlags.parallax));
   // 相机三效开关（控制台按钮）同步进 pointer-fx 单例 → 各 ctx builder + project 每帧读取门控
@@ -64,6 +74,21 @@ function Test3PageInner() {
     setCameraFx({ dof: glFlags.dof, perspective: glFlags.perspective, parallax: glFlags.parallax });
   }, [glFlags.dof, glFlags.perspective, glFlags.parallax]);
   useEffect(() => { if (p9Enabled) loadP9Tuning(); }, [p9Enabled]);
+  useEffect(() => {
+    const controller = new AbortController();
+    void fetch('/api/echo/featured', { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`featured echo HTTP ${response.status}`);
+        const body = await response.json() as FeaturedEchoResponse;
+        setFeaturedEcho(body.echo);
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return;
+        console.info('[pond] Pond Echo #1 暂不展示:', error);
+        setFeaturedEcho(null);
+      });
+    return () => controller.abort();
+  }, []);
 
   return (
     <main data-pond-root="true" data-pond-eclipse-active="false" className="relative min-h-screen overflow-hidden bg-black">
@@ -75,7 +100,8 @@ function Test3PageInner() {
       <PondHeader />
 
       {/* I1：GL 切组 nav（左上 A/B/C，点击直接切 GL 组）；J1：兜底时隐（无可见球可切） */}
-      {glSim.ready && glOk && <GlNav glSim={glSim} />}
+      {glSim.ready && glOk && <GlNav glSim={glSim} playbackActive={echoPlayback.active}
+        featured={featuredEcho !== null} />}
 
       {/* J4：GL 球取数中/失败的加载浮层（WebGL 可用时才有意义；兜底夜塘自带视觉，不叠） */}
       {glFlags.glSpheres && glOk && (glSim.loading || glSim.error) && (
@@ -93,10 +119,10 @@ function Test3PageInner() {
       {glFlags.glSpheres && glSim.ready && glOk && (
         <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} depthModel={glFlags.depthModel} showLabels={glFlags.sphereLabels} />
       )}
-      {glFlags.glSpheres && glOk && glSim.featuredTrack && (
+      {glFlags.glSpheres && featuredEcho && (
         <div className="pointer-events-none fixed inset-0 z-10">
-          <Track36HitTarget track={glSim.featuredTrack} visitor={visitor}
-            playing={playingId === glSim.featuredTrack.id} toggle={glSim.toggle} />
+          <Track36HitTarget echo={featuredEcho} visitor={visitor}
+            playbackState={echoPlayback.state} fallback={!glOk} toggle={echoPlayback.toggle} />
         </div>
       )}
 
@@ -119,6 +145,7 @@ function Test3PageInner() {
       {isSandbox && <ScenePanel glFlags={glFlags} onGl={onGl} />}
 
       <DraftSavedToast />
+      <FeaturedEchoBottomPlayer echo={featuredEcho} playback={echoPlayback} />
       {isSandbox && <PerfHUD />}
     </main>
   );

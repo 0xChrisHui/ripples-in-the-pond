@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, type RefObject } from 'react';
-import { usePlayer } from '@/src/components/player/PlayerProvider';
 import type { GlSim } from '../spheres/use-gl-sim';
 import { getPondRenderNodes, type Track36VisitorState } from '../visitor/track36-state';
 import { project, applyFloat, type ProjCtx } from '../sphere-projection';
@@ -22,23 +21,23 @@ function syncCss(value: number, active: boolean): void {
 export function useScenePresence(
   glSim: GlSim,
   visitor: RefObject<Track36VisitorState | null>,
+  playingId: string | null,
 ): void {
-  const { playing, currentTrack } = usePlayer();
-  const playerRef = useRef({ playing, trackId: currentTrack?.id ?? null });
+  const playerRef = useRef(playingId);
   useEffect(() => {
-    playerRef.current = { playing, trackId: currentTrack?.id ?? null };
-  }, [playing, currentTrack]);
+    playerRef.current = playingId;
+  }, [playingId]);
 
   useEffect(() => {
     let raf = 0, last = performance.now();
     const loop = (now: number) => {
-      const player = playerRef.current;
-      const node = player.trackId
+      const trackId = playerRef.current;
+      const node = trackId
         ? getPondRenderNodes(glSim.nodes, visitor.current).find(
-          (candidate) => candidate.id === player.trackId || candidate.track.id === player.trackId,
+          (candidate) => candidate.id === trackId,
         )
         : null;
-      if (player.playing && node && node.x != null && node.y != null) {
+      if (trackId && node && node.x != null && node.y != null) {
         const { mx, my } = getPointerFx(); const camera = getCameraFx();
         const ctx: ProjCtx = {
           cx: innerWidth / 2, cy: innerHeight / 2, mx, my,
@@ -47,12 +46,12 @@ export function useScenePresence(
         };
         const pose = applyFloat(project(node.x, node.y, depthOf(node), ctx, node), node, ctx.cx, ctx.cy);
         setPlaybackFocus({
-          active: true, trackId: player.trackId,
+          active: true, trackId,
           x: pose.sx / innerWidth, y: pose.sy / innerHeight,
           scale: node.radius * pose.scale / 50,
         });
       } else clearPlaybackFocus();
-      const isFocused = player.playing && !!node;
+      const isFocused = !!trackId && !!node;
       const presence = advanceScenePresence(isFocused ? 0 : 1, now - last, prefersReducedMotion());
       syncCss(presence, isFocused);
       last = now;

@@ -13,6 +13,7 @@ import { getTrackAudioSources, playTrackSources } from './track-audio';
 
 /** 播放生命周期回调（B2 录制用） */
 export interface PlayerLifecycle {
+  onBeforePlay?: (track: Track) => void;
   onPlayStart?: (track: Track) => void;
   onPlayEnd?: () => void;
 }
@@ -58,6 +59,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     return () => { listenersRef.current.delete(lifecycle); };
   }, []);
 
+  const notifyBeforePlay = useCallback((track: Track) => {
+    listenersRef.current.forEach((l) => l.onBeforePlay?.(track));
+  }, []);
+
   const notifyStart = useCallback((track: Track) => {
     listenersRef.current.forEach((l) => l.onPlayStart?.(track));
   }, []);
@@ -66,7 +71,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     listenersRef.current.forEach((l) => l.onPlayEnd?.());
   }, []);
 
-  // lazy 创建 + 绑事件（loadedmetadata 拿 duration / ended reset state）
   const getAudio = useCallback(() => {
     if (!audioRef.current) {
       const audio = new Audio();
@@ -98,7 +102,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (loadingRef.current === track.id) return;
     const request = ++requestRef.current;
     loadingRef.current = track.id;
-
+    notifyBeforePlay(track);
     const audio = getAudio();
     audio.pause();
     if (lifecycleStartedRef.current) {
@@ -144,7 +148,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     // 加载期间用户切到别的（loadingRef 被覆盖）→ 当前 audio 已被新 src 覆盖，无需手动停
     if (loadingRef.current !== track.id) return;
     if (loadingRef.current === track.id) loadingRef.current = null;
-  }, [getAudio, notifyEnd, notifyStart]);
+  }, [getAudio, notifyBeforePlay, notifyEnd, notifyStart]);
 
   const stop = useCallback(() => {
     requestRef.current += 1;
@@ -190,8 +194,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
 export function usePlayer(): PlayerState {
   const ctx = useContext(PlayerContext);
-  if (!ctx) {
-    throw new Error('usePlayer 必须在 PlayerProvider 内使用');
-  }
+  if (!ctx) throw new Error('usePlayer 必须在 PlayerProvider 内使用');
   return ctx;
 }

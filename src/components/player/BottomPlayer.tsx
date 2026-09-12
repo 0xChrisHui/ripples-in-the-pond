@@ -77,16 +77,14 @@ export default function BottomPlayer() {
             </div>
 
             <div className="bottom-player__actions">
-              {currentTrack.material_mintable && (
-                <button
-                  type="button"
-                  onClick={favorite}
-                  data-active={status === 'success'}
-                  aria-label={status === 'success' ? '已收藏' : `收藏《${currentTrack.title}》`}
-                >
-                  {status === 'success' ? '已收藏' : '收藏'}
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={favorite}
+                data-active={status === 'success'}
+                aria-label={status === 'success' ? '已收藏' : `收藏《${currentTrack.title}》`}
+              >
+                {status === 'success' ? '已收藏' : '收藏'}
+              </button>
               <button
                 type="button"
                 onClick={stop}

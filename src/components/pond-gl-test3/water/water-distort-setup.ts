@@ -1,19 +1,13 @@
 import {
-  Scene,
-  Mesh,
-  PlaneGeometry,
-  ShaderMaterial,
-  Vector2,
-  Vector4,
-  type IUniform,
+  Scene, Mesh, PlaneGeometry, ShaderMaterial, Vector2, Vector4, type IUniform,
 } from 'three';
 import { quadVert, simFrag } from './spike/ripple-spike-shaders';
 import type { RippleTuning } from './spike/ripple-tuning';
 import { compositeMaskFrag, MAX_SPHERES } from './water-distort-shaders';
-import type { GlPhysNode } from '../spheres/gl-sim-setup';
 import { project, applyFloat, type ProjCtx } from '../sphere-projection';
 import { depthOf, displayDepthOf } from '../pointer-fx';
 import type { P9WaterUniform } from '../p9/consumers/p9-water';
+import type { PondRenderNode } from '../visitor/track36-state';
 
 export interface QuadScene {
   scene: Scene;
@@ -40,11 +34,8 @@ export function disposeQuadScene(quad: QuadScene): void {
 /** 纵向维持 256 预算，横向随 Canvas 比例变化，保证屏上网格近似正方形。 */
 export function getHeightFieldSize(width: number, height: number, maxTextureSize: number) {
   const targetHeight = Math.max(1, Math.min(256, maxTextureSize));
-  const targetWidth = Math.max(1, Math.min(
-    maxTextureSize,
-    1024,
-    Math.max(64, Math.round(targetHeight * width / Math.max(1, height))),
-  ));
+  const targetWidth = Math.max(1, Math.min(maxTextureSize, 1024,
+    Math.max(64, Math.round(targetHeight * width / Math.max(1, height)))));
   return { width: targetWidth, height: targetHeight };
 }
 
@@ -63,11 +54,8 @@ export function makeSimScene(resX: number, resY: number, dropSlots: Vector4[]): 
 
 /** 合成材质：真场景折射 + 水位遮罩 + 月光高光。K3 加 4 个深度 uniform（默认值 = OFF/恒等，见 shader）。 */
 export function makeCompositeScene(
-  sceneTex: IUniform['value'],
-  heightTex: IUniform['value'],
-  resX: number,
-  resY: number,
-  spheresInit: Vector4[],
+  sceneTex: IUniform['value'], heightTex: IUniform['value'],
+  resX: number, resY: number, spheresInit: Vector4[],
   fragmentShader = compositeMaskFrag,
 ): QuadScene {
   return makeQuadScene(fragmentShader, {
@@ -124,18 +112,11 @@ export function makeCompositeScene(
 
 /** 每帧写 sim/composite 的标量 uniform（参数板 + debug + 宽高比 + K3 深度调制 + K4 投影 + K5 焦散）。模块级避 immutability。 */
 export function applyTuning(
-  sim: QuadScene,
-  composite: QuadScene,
-  t: RippleTuning,
-  debug: boolean,
-  aspect: number,
-  depthModel: boolean,
+  sim: QuadScene, composite: QuadScene, t: RippleTuning,
+  debug: boolean, aspect: number, depthModel: boolean,
   shadow: { dark: boolean; occlude: boolean; glow: boolean; contact: boolean }, // K4 投影四模式
-  caustics: boolean,
-  time: number,
-  waterZoom: boolean,
-  pondFloor: boolean,
-  moonReflect: boolean,
+  caustics: boolean, time: number, waterZoom: boolean,
+  pondFloor: boolean, moonReflect: boolean,
   keyFx: { water: number; moon: number },
   quiet: readonly { x: number; y: number; progress: number; energy: number }[],
   p9Water: P9WaterUniform,
@@ -192,10 +173,7 @@ export function applyTuning(
 
 /** 把球数据写进 uniform 数组（位置/半径×可见度/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */
 export function applySpheres(
-  composite: QuadScene,
-  nodes: GlPhysNode[],
-  w: number,
-  h: number,
+  composite: QuadScene, nodes: PondRenderNode[], w: number, h: number,
   waterLevelEff: number,  // 有效水位（没入判定：computeAbove/computeDepth/computeShadow）
   waterLevelRaw: number,  // 原始水位 current（K6 缩放/debug 横线）
   proj: ProjCtx,          // /test3 task 4：与 GL 实例/命中层同款投影 → 水位遮罩贴着投影后的球

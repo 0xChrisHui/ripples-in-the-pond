@@ -63,6 +63,11 @@ Migration 文件按 **Phase** 分子目录（目录文件数 ≤ 8 硬线触发�
 #### `phase-7/track-a/`（修严重 BUG）
 - `032_score_queue_state_machine.sql` — A3+A12 score_nft_queue 加 mint_attempted_at + uri_attempted_at（双 mint 防御 10min 窗口）+ token_id partial unique index（P2-11）
 
+### Phase 14（`phase-14/`）
+
+- `049_wallet_recipe_queue.sql` — 钱包终身资格、可恢复空投队列与 Arweave 上传账本
+- `050_chain_event_source_cursor.sql` — 链事件按 chain + contract 隔离，并保存单调 source cursor
+
 ## 新人第一次建库
 
 在 Supabase Dashboard → SQL Editor 按下列顺序执行。不得用
@@ -79,7 +84,7 @@ phase-6/track-a/030–031
 phase-7/track-a/030b, 032–033
 phase-10/040–047
 phase-12/048
-phase-14/049–051
+phase-14/049–050
 ```
 
 新空库可以按 Phase 分事务执行并逐批 read-back。对非空库不得重放整链：

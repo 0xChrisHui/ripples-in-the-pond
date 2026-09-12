@@ -16,7 +16,6 @@ export const MOCK_TRACKS: Track[] = [
     island: '蓝岛',
     created_at: '2026-01-06',
     published: false,
-    material_mintable: true,
   },
   {
     id: 'track-002',
@@ -29,7 +28,6 @@ export const MOCK_TRACKS: Track[] = [
     island: '绿岛',
     created_at: '2026-01-13',
     published: false,
-    material_mintable: true,
   },
   {
     id: 'track-003',
@@ -42,7 +40,6 @@ export const MOCK_TRACKS: Track[] = [
     island: '紫岛',
     created_at: '2026-01-20',
     published: false,
-    material_mintable: true,
   },
   {
     id: 'track-004',
@@ -55,7 +52,6 @@ export const MOCK_TRACKS: Track[] = [
     island: '金岛',
     created_at: '2026-01-27',
     published: false,
-    material_mintable: true,
   },
   {
     id: 'track-005',
@@ -68,6 +64,5 @@ export const MOCK_TRACKS: Track[] = [
     island: '红岛',
     created_at: '2026-02-03',
     published: false,
-    material_mintable: true,
   },
 ];

@@ -20,7 +20,7 @@ export async function GET(
     // 1. 查 track
     const { data: track, error } = await supabaseAdmin
       .from('tracks')
-      .select('id, title, week, audio_url, arweave_url, cover, island, created_at, published, material_mintable')
+      .select('id, title, week, audio_url, arweave_url, cover, island, created_at, published')
       .eq('id', id)
       .single();
 
@@ -33,7 +33,7 @@ export async function GET(
     let pending = false;
 
     const auth = await authenticateRequest(req);
-    if (auth && track.material_mintable === true) {
+    if (auth) {
       const { data: event } = await supabaseAdmin
         .from('mint_events')
         .select('id')

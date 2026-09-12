@@ -2,7 +2,13 @@
 
 import { useEffect } from 'react';
 import { getRippleTuning } from './water/spike/ripple-tuning';
-import type { GlPhysNode } from './spheres/gl-sim-setup';
+
+/** 普通 Track 球与独立 ECHO 访客共享的最小深度投影边界。 */
+export interface VisualDepthNode {
+  z: number;
+  displayZ?: number;
+  _shiftOff?: number;
+}
 
 /**
  * /test3 — 指针交互单例：滚轮 → 球**集体深度偏移** shift（层模型）、鼠标 → 视差位移。
@@ -40,12 +46,12 @@ export function getPointerFx(): { mx: number; my: number } {
 
 /** per-node 渲染深度：base 深度 z + 滚轮集体偏移 shift + 每球偏移 _shiftOff（L2-1）。
  *  层模型默认 0.35-0.65（层 35-65），clamp[0,1]=层 0-100；球浮动已与深度解耦（走投影端 applyFloat，不进 d）。 */
-export function depthOf(n: GlPhysNode): number {
+export function depthOf(n: VisualDepthNode): number {
   const d = D_LO + n.z * D_SPAN + shift + (n._shiftOff ?? 0);
   return d < 0 ? 0 : d > 1 ? 1 : d;
 }
 /** per-node 没入判定深度：用动态深度 displayZ（H5 浮沉）+ 滚轮 shift + _shiftOff（L2-1）。 */
-export function displayDepthOf(n: GlPhysNode): number {
+export function displayDepthOf(n: VisualDepthNode): number {
   const d = D_LO + (n.displayZ ?? n.z) * D_SPAN + shift + (n._shiftOff ?? 0);
   return d < 0 ? 0 : d > 1 ? 1 : d;
 }
