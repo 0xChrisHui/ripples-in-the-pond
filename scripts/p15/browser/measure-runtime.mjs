@@ -131,8 +131,9 @@ finally {
       && echo.hot.samples.every((sample) => sample.ui?.state === 'ready' && !sample.error),
     echoHotP95ExpectedFirstSound500: Number.isFinite(echo.hot?.p95ExpectedFirstSoundMs)
       && echo.hot.p95ExpectedFirstSoundMs <= 500,
-    echoContinuityFourToFive: echo.continuity?.state === 'playing'
-      && echo.continuity.currentIndex >= 4 && echo.continuity.allResourcesReady === true
+    echoContinuityFifthScheduled: echo.continuity?.state === 'playing'
+      && echo.continuity.fifthSegmentScheduled === true
+      && echo.continuity.allResourcesReady === true
       && !echo.continuity.error,
     noEchoRuntimeErrors: echoSamples.length === 20 && echoSamples.every((sample) =>
       !sample.consoleErrors?.length && !sample.pageErrors?.length)

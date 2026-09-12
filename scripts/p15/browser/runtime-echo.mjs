@@ -62,7 +62,8 @@ async function measureContinuity(cdp, navigate, waitFor) {
     return {state:document.querySelector('.echo-player')?.dataset.state??null,currentIndex,
       currentSegment:currentIndex==null?null:currentIndex+1,
       allResourcesReady:performance.getEntriesByName('p15:recipe-all-resources-ready').length>0,
-      crossedFourToFive:currentIndex!=null&&currentIndex>=4,actualAudibilityVerified:false};})()`;
+      fifthSegmentScheduled:performance.getEntriesByName(
+        'p15:recipe-fifth-segment-scheduled').length>0,actualAudibilityVerified:false};})()`;
   try {
     await navigate(cdp, '/echo/1');
     await waitFor(cdp, `['ready','error'].includes(
@@ -70,12 +71,11 @@ async function measureContinuity(cdp, navigate, waitFor) {
     const ready = await cdp.evaluate(uiExpression);
     if (ready.state !== 'ready') throw new Error(`continuity 播放器状态为 ${ready.state}`);
     await clickPlay(cdp);
-    await waitFor(cdp, `(() => { const active=document.querySelector(
-      '.echo-recipe li[aria-current="step"]'); const index=active?[...active.parentElement.children].indexOf(active):null;
-      const state=document.querySelector('.echo-player')?.dataset.state;
-      return state==='error'||(state==='playing'&&index>=4
+    await waitFor(cdp, `(() => { const state=document.querySelector('.echo-player')?.dataset.state;
+      return state==='error'||(state==='playing'
+        &&performance.getEntriesByName('p15:recipe-fifth-segment-scheduled').length>0
         &&performance.getEntriesByName('p15:recipe-all-resources-ready').length>0); })()`,
-    30_000, 'Pond Echo continuity 跨 4→5 段');
+    30_000, 'Pond Echo 第 5 段排程');
     return { ...(await cdp.evaluate(snapshot)), consoleErrors: cdp.consoleErrors.slice(starts.console),
       pageErrors: cdp.pageErrors.slice(starts.page) };
   } catch (error) {
@@ -110,7 +110,7 @@ export async function measureEchoRuntime({ cdp, siteBase, navigate, waitFor }) {
     cacheBoundary: {
       cold: '10 个 cold 样本各自在导航前清除浏览器 HTTP cache 与本站 Cache Storage；保留 cookies',
       hot: '第 10 个 cold 完成后，同一 CDP target 连续 10 次完整导航，不再清缓存',
-      continuity: '10 个 hot 后再导航一次且不清缓存，观察播放跨过第 4→5 段',
+      continuity: '10 个 hot 后再导航一次且不清缓存，观察第 5 段完成排程',
       scope: '仅证明浏览器侧冷/热边界；未清除 Preview、CDN 或服务端缓存',
     },
     actualAudibilityVerified: false,

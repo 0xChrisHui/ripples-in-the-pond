@@ -45,6 +45,7 @@ export class RecipePlaybackClock {
       this.currentPositionMs(),
       this.context.currentTime + LATE_BUFFER_DELAY_SECONDS,
     );
+    if (this.scheduledIndices.has(4)) performance.mark('p15:recipe-fifth-segment-scheduled');
   }
 
   pause(): number {
