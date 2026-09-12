@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import type { TracksListResponse } from '@/src/types/tracks';
+import { exposeTrack, type TrackRow } from '@/src/lib/track-contract';
 
 /**
  * GET /api/tracks
@@ -18,12 +19,14 @@ export async function GET() {
   try {
     const { data: tracks, error } = await supabaseAdmin
       .from('tracks')
-      .select('id, title, week, audio_url, cover, island, created_at, published')
+      .select('id, title, week, audio_url, arweave_url, cover, island, created_at, published, material_mintable')
       .order('week', { ascending: true });
 
     if (error) throw error;
 
-    const res: TracksListResponse = { tracks: tracks ?? [] };
+    const res: TracksListResponse = {
+      tracks: (tracks as TrackRow[] | null)?.map(exposeTrack) ?? [],
+    };
     return NextResponse.json(res);
   } catch (err) {
     console.error('GET /api/tracks error:', err);

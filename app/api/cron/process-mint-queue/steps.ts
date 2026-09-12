@@ -8,6 +8,7 @@ import {
   MATERIAL_NFT_ABI,
 } from '@/src/lib/chain/contracts';
 import { markFailed, markSuccess, resetToPending } from './steps-helpers';
+import { guardMaterialMint } from '@/src/lib/material-mintability';
 
 /**
  * 素材 NFT 铸造的状态机 steps（写库辅助函数见 steps-helpers.ts）：
@@ -93,6 +94,20 @@ export async function trySendNew() {
   if (error || !jobs || jobs.length === 0) return null;
 
   const job = jobs[0];
+
+  // P14-G3：旧 pending 也必须在发交易前重验，不能只依赖入队 API/UI。
+  const { data: track, error: trackError } = await supabaseAdmin
+    .from('tracks')
+    .select('material_mintable')
+    .eq('week', job.token_id)
+    .maybeSingle();
+  if (trackError) throw trackError;
+  const mintable = await guardMaterialMint(track?.material_mintable, async () => {
+    await markFailed(job.id, 'manual_review', `track ${job.token_id} is not material mintable`);
+  });
+  if (!mintable) {
+    return { result: 'not_mintable', jobId: job.id };
+  }
 
   const { data: user } = await supabaseAdmin
     .from('users')

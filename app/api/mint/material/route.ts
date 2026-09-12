@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
+import {
+  canMintMaterial,
+  MATERIAL_NOT_MINTABLE,
+} from '@/src/lib/material-mintability';
 
 /**
  * POST /api/mint/material
@@ -28,15 +32,22 @@ export async function POST(req: NextRequest) {
     // 只验曲目存在、不验 published —— 收藏未发布曲目是现有正常功能（B/C 组 week 16-36 全 unpublished）
     // 封死越权面：未来周次 / 任意大整数 / 不存在的 tokenId 一律 400，
     // 越权面从"任意整数"缩到"首页本来就能收藏的曲目"
-    const { data: trackExists } = await supabaseAdmin
+    const { data: track, error: trackError } = await supabaseAdmin
       .from('tracks')
-      .select('id')
+      .select('id, material_mintable')
       .eq('week', tokenId)
       .limit(1)
       .maybeSingle();
 
-    if (!trackExists) {
+    if (trackError) throw trackError;
+    if (!track) {
       return NextResponse.json({ error: '曲目不存在' }, { status: 400 });
+    }
+    if (!canMintMaterial(track.material_mintable)) {
+      return NextResponse.json(
+        MATERIAL_NOT_MINTABLE,
+        { status: 409 },
+      );
     }
 
     const userId = auth.userId;
