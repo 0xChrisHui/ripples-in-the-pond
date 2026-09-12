@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 14 P14-G 主网索引恢复与 ECHO #1 首页接入进行中**。旧 source cursor 路径已止血；G1/G2 已完成 migration、全链 0-diff、scoped cursor 初始化及修复后 21/21 次、20 分钟生产 source 观察。Production `WALLET_RECIPE_MODE=off`、P14 cron 仍关闭，source cron 已安全恢复。#36 已纠正为 `/echo/1` 的 ECHO #1，旧 Track/MSTR 接入不再有效。
+**Phase**: **Phase 14 P14-G 生产恢复进行中**。G1/G2 的 scoped source cursor、全链 0-diff 与 source-only 恢复已完成；G3–G6 的 ECHO #1 首页 35+1、永久 36 段现场播放、日食/P9、移动端、fallback 与 30 分钟资源 Gate 已在 Production 通过。Production `WALLET_RECIPE_MODE=off`、P14 cron 仍关闭，source cron 保持启用；下一步进入 G7 observe，不提前恢复 live。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）
@@ -34,7 +34,7 @@
 
 **P11 正式发布（2026-09-06）**：发布提交 `2e55d65` 已推送 `main`，Vercel Production 成功。正式域名 `/`、`/artist`、`/me`、`/score/1` 均 HTTP 200；Artist 草稿标识、私人音乐档案、Score 分享入口与永久凭证均命中新版 SSR 内容。受保护 `/api/health` 使用 Bearer 验证为 DB/钱包正常、两队列 0 积压/0 失败。双 Arweave 网关恢复后的 Token #1 动态补证与 Artist 正式文案仍是开放项，不阻塞发布。
 
-**P14-G 恢复（2026-09-12）**：生产旧 source cursor 曾因“读取失败按 0 + 普通覆盖写”退到 `5500`。G0 已把 P14 切 `off`、关闭两个 cron并暂停旧观察；ECHO #1 与历史记录未受损。G1/G2 随后完成测试库并发、生产 migration、86 万区块全链 0-diff、scoped cursor 初始化与 source-only 部署；首次观察暴露 Supabase 偶发 Gateway Timeout，加入“最多三次重试 + CAS 超时回读”后重新观察 21/21 成功、首末相隔 20 分钟，cursor `156795213 → 156795973`、末端 safe-head lag 7。source cron 已恢复，P14 仍 `off`。用户随后纠正：首页第 36 枚固定为已空投的 ECHO #1，只读使用链上 tokenURI 与永久 metadata recipe/clips，并复用 WalletRecipePlayerEngine 现场组合 36 段；不是 MSTR、不是 `tracks.week=36`，不生成新 MP3、不进入 MaterialNFT/Track/Score 录制。
+**P14-G 恢复（2026-09-12）**：生产旧 source cursor 曾因“读取失败按 0 + 普通覆盖写”退到 `5500`。G0–G2 已完成止血、测试库并发、生产 migration、86 万区块全链 0-diff、scoped cursor 初始化、source-only 部署及修复后 21/21 次观察。G3–G6 已把主网 ECHO #1 作为独立 featured 输入接入首页：正式域名 `/api/tracks` 精确 35，成功时 35+1、失败时 35+0；链上 tokenURI、永久 metadata/36 位 recipe/26 个唯一 clip/约 269.9 秒通过全字节 Gate。Production 浏览器矩阵、20 次普通播放、P9 33 键、ECHO 日食与自然 ended、375px/fallback、同一 WebGL context、30 分钟 31 样本与 0 mutation 全绿。P14 仍 `off`，source cron 保持启用，准备进入 G7 observe。
 
 **P15 Playbook（2026-09-05）**：已建立 `playbook/phase-15/` 七轨详细计划，覆盖性能基线与预算、全局导航/稳定外壳、首页水塘与音乐圆圈快显、`/me` 身份及三段档案解耦、API/真实缓存、高速媒体镜像、Score/P14 永久播放和全站回归。P15 取代旧“音效系统扩展”；旧项退回未排期，不挤占 P16。**当前只完成计划，没有修改页面、API或播放器；正式施工从 P15-0 开始，且不改变当前 P14-G3–G6 的权威下一步。**
 
@@ -89,7 +89,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：G2 已通过。继续完成纠正后的 G3–G6：将已验证 ECHO #1 作为独立 featured 输入接入首页，复用永久 recipe/clips 播放，完成 35+1、日食、P9、移动端与性能 Gate；取消全部 MSTR 权利/试听/上传 Gate，也不执行为 Track #36 设计的 migration 051。
+**当前权威下一步**：G3–G6 已通过。执行 G7：Production 切 `observe` 并启用 P14 cron，至少 10 次且首末相隔 15 分钟全绿后切回 `live`；从 live 恢复时刻重新开始 24h/7d 观察，完成前不得进入 F8/P15。
 
 ---
 

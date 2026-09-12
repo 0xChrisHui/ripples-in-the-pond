@@ -1477,3 +1477,10 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **出现边界**：只有链上身份与永久档案完整性验证成功时首页才显示 35+1；未空投、tokenURI/metadata/clip 任一失败时严格保持 35 首，不以数据库 Track、本地文件或假 URL 降级。
 - **播放边界**：点击 #36 复用现有 WalletRecipePlayerEngine 在浏览器现场组合 36 段，不生成或上传新 MP3，不进入 MaterialNFT、Track、TestJam 或 Score 录制；原 MSTR 权利确认、整首试听与永久上传 Gate 全部取消。
 - **保留决定**：相对水面 `-30 → +20 → -10` 的访客路径、有界 FBO 水中涟漪、播放冻结/停止续走与 selective scenePresence 日食纯黑合同保持不变；G2 仍未完成，不因本次产品纠正提前标绿。
+
+## 2026-09-12 — P14-G ECHO #1 首页发布与 G6 关闭
+
+- **身份分层**：首页 ECHO 使用 chainId + PondEchoes contract + tokenId 的独立 featured 身份；首页 `/api/tracks` 只限制当前常规列表为 1–35，不把未来 Track 36–108 永久禁掉，也不把 ECHO 塞进常规力导或 links。
+- **完整性分层**：发布 Gate 全量读取并核对 26 个唯一 clip 字节；运行时先校验链上 owner/tokenURI 与永久 metadata，点击播放时再校验实际 clip hash并允许有界重试，避免每次首页加载下载约 3.3MB 音频。
+- **验收边界**：确定性 featured fixture 只负责 35+0、布局、键盘与 fallback 故障矩阵，不替代链上/永久档案；正式域名另以真实 ECHO 36 段自然 ended 和 30 分钟 soak 关闭 G6。
+- **发布结果**：部署 `dpl_5j7YLuBbeEgZ5yVUDyTbmW8iWAQX` 已提升到 `pond-ripple.xyz`；Production 保持 `off`、P14 cron 保持关闭，待 G7 observe 独立通过后才恢复 live。

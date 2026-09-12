@@ -229,12 +229,13 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - [x] P14-G0：生产切 `off`、两个 cron 停止、旧观察暂停；三次稳定读回与事故快照完成。
 - [x] P14-G1：scoped cursor/CAS、全链恢复工具、瞬时 DB 超时有界重试与 CAS 回读已完成。
 - [x] P14-G2：migration 050 测试库并发与生产 read-back、ScoreNFT 全链 0-diff、scoped cursor 初始化完成；修复后 source 21/21 次成功且首末相隔 20 分钟。
-- [ ] P14-G3：只读核验 `/echo/1` 的 ECHO #1 链上 tokenURI、永久 metadata、36 位 recipe 与 clips，并以独立 featured 输入接入首页；不读取/新增 `tracks.week=36`。
-- [ ] P14-G4/G5：把已有水中访客与日食原型从 Track/PlayerProvider 假设改接 ECHO #1 + WalletRecipePlayerEngine；保留相对水位路径、有界 FBO 涟漪与纯黑日食，不产生录制/上传。
-- [ ] P14-G6/G7：验收成功时 35+1、未空投/档案失败时 35+0、36 段现场组合、日食/P9/移动端/性能与零副作用；发布并重启新的 24h/7d 窗口。
-- [ ] **当前唯一 Next：完成纠正后的 ECHO #1 G3–G6。MSTR 权利、试听与上传 Gate 已全部取消。**
+- [x] P14-G3：只读核验 `/echo/1` 的 ECHO #1 链上 tokenURI、永久 metadata、36 位 recipe 与 clips，并以独立 featured 输入接入首页；不读取/新增 `tracks.week=36`。
+- [x] P14-G4/G5：把已有水中访客与日食原型从 Track/PlayerProvider 假设改接 ECHO #1 + WalletRecipePlayerEngine；保留相对水位路径、有界 FBO 涟漪与纯黑日食，不产生录制/上传。
+- [x] P14-G6：Production 35+1/35+0、36 段自然 ended、日食/P9、375px/fallback、30 分钟性能与零副作用 Gate 全绿。
+- [ ] P14-G7：切 observe 运行至少 10 次/15 分钟，恢复 live 后从零重启 24h/7d 观察；七天 Gate 完成前不执行 F8。
+- [ ] **当前唯一 Next：执行 G7 observe → live 恢复，并启动新的 24h/7d 观察。**
 
-> 生产当前为 `off`：G2 已通过且 source cron 已恢复；P14 cron 仍关闭，首枚真实 ECHO 保持完好。G7 前不恢复 live，不删除队列、不回退 cutoff、不重传未知上传。
+> 生产当前为 `off`：G3–G6 已通过且 source cron 保持启用；P14 cron 仍关闭，首枚真实 ECHO 保持完好。G7 observe 全绿前不恢复 live，不删除队列、不回退 cutoff、不重传未知上传。
 
 ### Phase 8 Scope（当前任务）
 
