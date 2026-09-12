@@ -62,6 +62,22 @@ export class ProgressiveRecipeResources {
     }
   }
 
+  async decodeInitial(context: AudioContext): Promise<number> {
+    while (this.decodeFlight) await this.decodeFlight;
+    const initial = new Set(this.initialKeys);
+    const pending = new Map([...this.compressed].filter(
+      ([key]) => initial.has(key) && !this.decoded.has(key),
+    ));
+    if (!pending.size) return 0;
+    const flight = this.decodePending(context, pending);
+    this.decodeFlight = flight;
+    try {
+      return await flight;
+    } finally {
+      if (this.decodeFlight === flight) this.decodeFlight = null;
+    }
+  }
+
   private async decodePending(
     context: AudioContext, pending: Map<string, ArrayBuffer>,
   ): Promise<number> {

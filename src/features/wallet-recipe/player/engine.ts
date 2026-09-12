@@ -98,7 +98,7 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
           if (generation === this.generation) this.update({ loadedUniqueCount: loaded });
         },
         async () => {
-          if (generation !== this.generation || !this.context) return;
+          if (generation !== this.generation || !this.context || !this.clock) return;
           await this.decodeMissing(resources, generation);
           if (generation === this.generation) this.clock?.addAvailable();
         },
@@ -111,15 +111,13 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
     }
   }
 
-  private async decodeMissing(
-    resources: ProgressiveRecipeResources, generation: number,
-  ): Promise<void> {
+  private async decodeMissing(resources: ProgressiveRecipeResources,
+    generation: number): Promise<void> {
     if (!this.context) return;
     const elapsed = await resources.decodeMissing(this.context);
     if (generation !== this.generation) return;
     if (elapsed > 0) this.update({ decodeMs: (this.snapshot.decodeMs ?? 0) + elapsed });
   }
-
   async play(): Promise<void> {
     if (!this.timeline || !this.input || !['ready', 'paused', 'ended', 'error'].includes(this.snapshot.state)) return;
     const positionMs = this.snapshot.state === 'ended' ? 0 : this.snapshot.positionMs;
@@ -131,12 +129,11 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
       const context = this.context ?? this.createContext();
       this.context = context;
       const resume = context.state === 'running' ? Promise.resolve() : context.resume();
-      // AudioContext 已在用户激活任务中创建/恢复；下一任务再解码，让 loading 先绘制。
       await new Promise<void>((resolve) => globalThis.setTimeout(resolve, 0));
+      const decodeMs = await this.resources!.decodeInitial(context);
       await resume;
       if (generation !== this.generation) return;
-      await this.decodeMissing(this.resources!, generation);
-      if (generation !== this.generation) return;
+      if (decodeMs > 0) this.update({ decodeMs: (this.snapshot.decodeMs ?? 0) + decodeMs });
       this.clock ??= new RecipePlaybackClock(
         context, this.timeline, this.resources!, this.requestFrame, this.cancelFrame,
         (position, state) => this.updatePosition(position, state),
@@ -144,12 +141,16 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
       const startDelayMs = this.clock.start(positionMs);
       this.update({ firstSoundExpectedMs: Math.round(performance.now() - intentAt + startDelayMs) });
       performance.mark('p15:recipe-first-sound-scheduled');
+      void this.decodeMissing(this.resources!, generation).then(() => {
+        if (generation === this.generation) this.clock?.addAvailable();
+      }).catch((error: unknown) => {
+        if (generation === this.generation) this.fail(toPlayerError(error, 'decode'));
+      });
     } catch (error) {
       if (generation !== this.generation) return;
       this.fail(toPlayerError(error, 'decode'));
     }
   }
-
   private updatePosition(positionMs: number, state: 'playing' | 'paused' | 'ended'): void {
     const segment = segmentAtPosition(this.timeline!, positionMs);
     this.update({ state, positionMs, currentIndex: segment?.index ?? null,
