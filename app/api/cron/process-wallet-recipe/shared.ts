@@ -57,6 +57,10 @@ export function asPipelineError(error: unknown): PipelineStepError {
   return new PipelineStepError(message, 'safe_retry');
 }
 
+export function pipelineFailureHttpStatus(kind: WalletRecipeFailureKind): 500 | 503 {
+  return kind === 'transient' || kind === 'safe_retry' ? 503 : 500;
+}
+
 export function isLeaseRow(value: unknown): value is { id: string } {
   return Boolean(value && typeof value === 'object' && 'id' in value);
 }

@@ -1,27 +1,13 @@
-import {
-  createPublicClient,
-  decodeEventLog,
-  getAddress,
-  http,
-  parseAbiItem,
-  type Address,
-  type Hex,
-} from 'viem';
+import { createPublicClient, decodeEventLog, getAddress, http, parseAbiItem,
+  type Address, type Hex } from 'viem';
 import { CURRENT_CHAIN, CHAIN_ID_NUM } from '@/src/lib/chain/chain-config';
 import { SCORE_NFT_ADDRESS } from '@/src/lib/chain/contracts';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { sourceCursorKey } from '@/src/features/source-index/source-policy';
-import {
-  compareDiscoveryCursor,
-  formatDiscoveryCursor,
-  parseDiscoveryCursor,
-  type DiscoveryCursor,
-} from '@/src/features/wallet-recipe/pipeline-policy';
-import {
-  deriveRecipeV1,
-  hashRecipeV1,
-  normalizeOriginWallet,
-} from '@/src/lib/wallet-recipe/recipe-v1';
+import { compareDiscoveryCursor, decideDiscoverySource, formatDiscoveryCursor,
+  parseDiscoveryCursor, type DiscoveryCursor } from '@/src/features/wallet-recipe/pipeline-policy';
+import { deriveRecipeV1, hashRecipeV1,
+  normalizeOriginWallet } from '@/src/lib/wallet-recipe/recipe-v1';
 import { PipelineStepError } from './shared';
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -133,21 +119,20 @@ export async function discoverWalletRecipes(deadlineAt = Number.POSITIVE_INFINIT
     throw new PipelineStepError('P14 activation/cursor 或上游链游标未初始化', 'permanent_input');
   }
 
+  let cursor = parseDiscoveryCursor(cursorText);
   const head = await readClient.getBlockNumber();
   const safeHead = head > 20n ? head - 20n : 0n;
-  if (BigInt(sourceBlockText) > safeHead) {
-    throw new PipelineStepError('source_index_ahead_of_safe_head', 'permanent_input');
+  const sourceDecision = decideDiscoverySource({
+    sourceBlock: BigInt(sourceBlockText), safeHead, discoveryBlock: cursor.blockNumber,
+  });
+  if (!sourceDecision.ready) {
+    throw new PipelineStepError(sourceDecision.reason, sourceDecision.failureKind);
   }
-  if (BigInt(sourceBlockText) < safeHead) {
-    throw new PipelineStepError('source_index_lagging', 'transient');
-  }
-  let cursor = parseDiscoveryCursor(cursorText);
   const cursorBlock = Number(cursor.blockNumber);
-  const safeHeadNumber = Number(safeHead);
-  if (!Number.isSafeInteger(cursorBlock) || !Number.isSafeInteger(safeHeadNumber)) {
+  const sourceBlockNumber = Number(sourceDecision.upperBound);
+  if (!Number.isSafeInteger(cursorBlock) || !Number.isSafeInteger(sourceBlockNumber)) {
     throw new PipelineStepError('链游标超出安全整数范围', 'permanent_input');
   }
-
   const { data, error } = await supabaseAdmin
     .from('chain_events')
     .select('chain_id,contract,event_name,tx_hash,log_index,block_number,from_addr,to_addr,token_id')
@@ -155,7 +140,7 @@ export async function discoverWalletRecipes(deadlineAt = Number.POSITIVE_INFINIT
     .eq('contract', contractKey)
     .eq('event_name', 'Transfer')
     .eq('from_addr', ZERO_ADDRESS)
-    .lte('block_number', safeHeadNumber)
+    .lte('block_number', sourceBlockNumber)
     .or(`block_number.gt.${cursorBlock},and(block_number.eq.${cursorBlock},log_index.gt.${cursor.logIndex})`)
     .order('block_number', { ascending: true })
     .order('log_index', { ascending: true })

@@ -9,6 +9,7 @@ import { deriveRecipeV1, normalizeOriginWallet } from '../../src/lib/wallet-reci
 import {
   classifyEligibility,
   compareDiscoveryCursor,
+  decideDiscoverySource,
   decideMintAction,
   decideRecoveredMintAction,
   decideUploadAction,
@@ -20,6 +21,7 @@ import {
   WALLET_RECIPE_CLAIM_DEADLINE_MS,
   WALLET_RECIPE_RESPONSE_DEADLINE_MS,
 } from '../../src/features/wallet-recipe/pipeline-policy';
+import { pipelineFailureHttpStatus } from '../../app/api/cron/process-wallet-recipe/shared';
 import type { ClipManifestV1 } from '../../src/types/wallet-recipe';
 
 const TX = {
@@ -55,6 +57,15 @@ function verifyDiscoveryPolicy(): void {
   assert.equal(compareDiscoveryCursor(cursor, parseDiscoveryCursor('123:7')), 0);
   assert.equal(compareDiscoveryCursor(cursor, parseDiscoveryCursor('123:8')), -1);
   assert.throws(() => parseDiscoveryCursor('head'), /格式无效/);
+  assert.deepEqual(decideDiscoverySource({
+    sourceBlock: 95n, safeHead: 100n, discoveryBlock: 90n,
+  }), { ready: true, upperBound: 95n, lag: 5n });
+  assert.deepEqual(decideDiscoverySource({
+    sourceBlock: 101n, safeHead: 100n, discoveryBlock: 90n,
+  }), { ready: false, reason: 'source_index_ahead_of_safe_head', failureKind: 'permanent_input' });
+  assert.deepEqual(decideDiscoverySource({
+    sourceBlock: 95n, safeHead: 100n, discoveryBlock: 96n,
+  }), { ready: false, reason: 'discovery_cursor_ahead_of_source', failureKind: 'permanent_input' });
 
   const lower = '0x1234567890abcdef1234567890abcdef12345678' as const;
   const checksum = normalizeOriginWallet(lower);
@@ -148,11 +159,29 @@ function verifyUploadLedgerSqlContract(): void {
   );
 }
 
+function verifyRuntimeSourceContract(): void {
+  const discovery = readFileSync(join(
+    process.cwd(), 'app/api/cron/process-wallet-recipe/discover.ts',
+  ), 'utf8');
+  const route = readFileSync(join(
+    process.cwd(), 'app/api/cron/process-wallet-recipe/route.ts',
+  ), 'utf8');
+  assert.match(discovery, /\.lte\('block_number', sourceBlockNumber\)/);
+  assert.doesNotMatch(discovery, /\.lte\('block_number', safeHeadNumber\)/);
+  assert.match(route, /decision\.reason === 'disabled' \? 200 : 500/);
+  assert.match(route, /lastCronSuccessAt 写入失败[\s\S]*status: 503/);
+  assert.match(route, /result === 'manual_review'[\s\S]*status: 500/);
+}
+
 verifyModes();
 verifyDiscoveryPolicy();
 verifyUploadAndMintRecovery();
 verifyStableMetadata();
 verifyUploadLedgerSqlContract();
+verifyRuntimeSourceContract();
+assert.equal(pipelineFailureHttpStatus('transient'), 503);
+assert.equal(pipelineFailureHttpStatus('safe_retry'), 503);
+assert.equal(pipelineFailureHttpStatus('permanent_input'), 500);
 assert.deepEqual([0, 1, 2, 3, 4, 5].map(retryDelayMinutes), [1, 2, 5, 15, 30, null]);
 assert.equal(WALLET_RECIPE_CLAIM_DEADLINE_MS, 20_000);
 assert.equal(WALLET_RECIPE_RESPONSE_DEADLINE_MS, 25_000);

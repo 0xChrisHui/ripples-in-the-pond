@@ -1484,3 +1484,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **完整性分层**：发布 Gate 全量读取并核对 26 个唯一 clip 字节；运行时先校验链上 owner/tokenURI 与永久 metadata，点击播放时再校验实际 clip hash并允许有界重试，避免每次首页加载下载约 3.3MB 音频。
 - **验收边界**：确定性 featured fixture 只负责 35+0、布局、键盘与 fallback 故障矩阵，不替代链上/永久档案；正式域名另以真实 ECHO 36 段自然 ended 和 30 分钟 soak 关闭 G6。
 - **发布结果**：部署 `dpl_5j7YLuBbeEgZ5yVUDyTbmW8iWAQX` 已提升到 `pond-ripple.xyz`；Production 保持 `off`、P14 cron 保持关闭，待 G7 observe 独立通过后才恢复 live。
+
+## 2026-09-12 — P14-G7 异步 source 消费边界修正
+
+- **消费上界**：source cron 与 P14 cron 是两个异步任务，不能要求 source cursor 恰好等于不断增长的 safe head。P14 改为只消费 source 已完成“事件落库 → CAS 游标”的稳定前缀，并继续在查询前拒绝 source 超前或 discovery cursor 超前。
+- **告警边界**：fresh 的小幅 source lag 只保留为 telemetry；source 已过期且仍落后、落后超过单轮 500 blocks、source 超前或 discovery 超前才进入健康告警，避免正常错峰长期假红。
+- **HTTP 语义**：配置/永久输入、discovery、claim、last-success 写入与 manual review 不再返回伪成功 200；只有显式 off、正常 observe/live、deadline 等受控状态保留 200，使 cron-job.org 历史能反映真实失败。

@@ -114,6 +114,31 @@ export function decideRecoveredMintAction(status: WalletRecipeQueueStatus): Reco
   throw new Error(`P14 铸造恢复收到非法状态：${status}`);
 }
 
+export type DiscoverySourceDecision = {
+  ready: true;
+  upperBound: bigint;
+  lag: bigint;
+} | {
+  ready: false;
+  reason: 'source_index_ahead_of_safe_head' | 'discovery_cursor_ahead_of_source';
+  failureKind: 'permanent_input';
+};
+
+/** P14 只消费 source 已持久化的上界；异步链头增长不能把正常同步误判为失败。 */
+export function decideDiscoverySource(input: {
+  sourceBlock: bigint;
+  safeHead: bigint;
+  discoveryBlock: bigint;
+}): DiscoverySourceDecision {
+  if (input.sourceBlock > input.safeHead) {
+    return { ready: false, reason: 'source_index_ahead_of_safe_head', failureKind: 'permanent_input' };
+  }
+  if (input.discoveryBlock > input.sourceBlock) {
+    return { ready: false, reason: 'discovery_cursor_ahead_of_source', failureKind: 'permanent_input' };
+  }
+  return { ready: true, upperBound: input.sourceBlock, lag: input.safeHead - input.sourceBlock };
+}
+
 export function decideMintAction(input: {
   chainTokenId: bigint;
   chainStateMatches: boolean;

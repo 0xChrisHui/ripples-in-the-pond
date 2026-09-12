@@ -15,7 +15,7 @@ import { assertPermanentConfig, preflightPermanentInputs,
   stepPrepareMedia } from './steps-media';
 import { stepUploadMetadata } from './steps-metadata';
 import { stepMintOnchain } from './steps-mint';
-import { asPipelineError, type PipelineStepResult,
+import { asPipelineError, pipelineFailureHttpStatus, type PipelineStepResult,
   type WalletRecipeQueueRow } from './shared';
 
 export const runtime = 'nodejs';
@@ -46,7 +46,7 @@ async function successfulResponse(body: Record<string, unknown>) {
       ...body,
       result: 'safe_retry',
       message: `lastCronSuccessAt 写入失败：${message}`,
-    });
+    }, { status: 503 });
   } finally {
     if (timeout) clearTimeout(timeout);
   }
@@ -155,7 +155,7 @@ export async function GET(req: NextRequest) {
       requestedMode: decision.requestedMode,
       discovered: 0,
       processed: 0,
-    });
+    }, { status: decision.reason === 'disabled' ? 200 : 500 });
   }
 
   if (decision.effectiveMode === 'live' && permanentConfig) {
@@ -170,7 +170,7 @@ export async function GET(req: NextRequest) {
         discovered: 0,
         processed: 0,
         message: failure.message,
-      });
+      }, { status: pipelineFailureHttpStatus(failure.failureKind) });
     }
   }
 
@@ -187,7 +187,7 @@ export async function GET(req: NextRequest) {
       discovered: 0,
       processed: 0,
       message: failure.message,
-    });
+    }, { status: pipelineFailureHttpStatus(failure.failureKind) });
   }
   if (decision.effectiveMode === 'observe') {
     return successfulResponse({ result: 'ok', mode: 'observe', processed: 0, ...discovery });
@@ -204,7 +204,7 @@ export async function GET(req: NextRequest) {
   if (error) {
     return NextResponse.json({
       result: 'safe_retry', mode: 'live', processed: 0, message: error.message, ...discovery,
-    });
+    }, { status: 503 });
   }
   const row = (data?.[0] ?? null) as WalletRecipeQueueRow | null;
   if (!row) {
@@ -241,7 +241,7 @@ export async function GET(req: NextRequest) {
       ...discovery,
     };
     return result === 'manual_review'
-      ? NextResponse.json(body)
+      ? NextResponse.json(body, { status: 500 })
       : successfulResponse(body);
   } catch (error) {
     const failure = asPipelineError(error);
@@ -262,6 +262,6 @@ export async function GET(req: NextRequest) {
       status: finished?.status ?? targetStatus,
       message: failure.message,
       ...discovery,
-    });
+    }, { status: pipelineFailureHttpStatus(failure.failureKind) });
   }
 }
