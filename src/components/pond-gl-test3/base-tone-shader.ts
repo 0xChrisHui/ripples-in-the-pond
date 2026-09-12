@@ -23,6 +23,7 @@ export const baseToneFragmentShader = /* glsl */ `
   precision mediump float;
   varying vec2 vUv;
   uniform int uMode;
+  uniform float uScenePresence;
   void main() {
     if (uMode == 1) {
       gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
@@ -32,6 +33,6 @@ export const baseToneFragmentShader = /* glsl */ `
     float v = smoothstep(0.85, 0.08, d);                 // 中心 1 → 边缘 0
     vec3 edge = vec3(0.004, 0.012, 0.010);               // 边缘近黑（深墨绿）
     vec3 core = vec3(0.012, 0.040, 0.034);               // 中心微亮（深蓝墨绿）
-    gl_FragColor = vec4(mix(edge, core, v), 1.0);
+    gl_FragColor = vec4(mix(edge, core, v) * uScenePresence, 1.0);
   }
 `;

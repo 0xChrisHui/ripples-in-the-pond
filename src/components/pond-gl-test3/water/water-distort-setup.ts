@@ -118,6 +118,7 @@ export function makeCompositeScene(
     uP9Arcs: { value: Array.from({ length: 5 }, () => new Vector4(0, 0, 0, 0)) },
     uP9Water: { value: new Vector4(0, 0, 0, 0) },
     uP9Caustic: { value: new Vector4(0, 0, 0, 0) },
+    uScenePresence: { value: 1 },
   });
 }
 
@@ -138,6 +139,7 @@ export function applyTuning(
   keyFx: { water: number; moon: number },
   quiet: readonly { x: number; y: number; progress: number; energy: number }[],
   p9Water: P9WaterUniform,
+  scenePresence: number,
 ): void {
   sim.mat.uniforms.uDamping.value = Math.max(0.9, Math.min(0.995, t.damping + keyFx.water * 0.012));
   sim.mat.uniforms.uWaveSpeed.value = Math.max(0.05, t.waveProp * (1 + keyFx.water * 0.12));
@@ -185,6 +187,7 @@ export function applyTuning(
   }
   (composite.mat.uniforms.uP9Water.value as Vector4).fromArray(p9Water.wave);
   (composite.mat.uniforms.uP9Caustic.value as Vector4).fromArray(p9Water.caustic);
+  composite.mat.uniforms.uScenePresence.value = scenePresence;
 }
 
 /** 把球数据写进 uniform 数组（位置/半径×可见度/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */

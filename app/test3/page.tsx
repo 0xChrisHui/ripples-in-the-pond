@@ -21,6 +21,10 @@ import RippleSpikePanel from '@/src/components/pond-gl-test3/water/spike/RippleS
 import LifePanel from '@/src/components/pond-gl-test3/life/LifePanel';
 import P9TuningPanel from '@/src/components/pond-gl-test3/p9/tuning/P9TuningPanel';
 import { loadP9Tuning } from '@/src/components/pond-gl-test3/p9/tuning/p9-tuning-store';
+import { usePlayer } from '@/src/components/player/PlayerProvider';
+import { useTrack36Visitor } from '@/src/components/pond-gl-test3/visitor/useTrack36Visitor';
+import Track36HitTarget from '@/src/components/pond-gl-test3/visitor/Track36HitTarget';
+import { useScenePresence } from '@/src/components/pond-gl-test3/focus/useScenePresence';
 
 // GL 渲染层：全链路 next/dynamic + ssr:false，three/R3F 只进入异步 chunk。
 const PondGL = dynamic(() => import('@/src/components/pond-gl-test3/PondGL'), { ssr: false });
@@ -45,10 +49,14 @@ function Test3PageInner() {
 
   // 球 / 水面 / 扭曲水面 任一开 → glSim active（取数 / 建 sim / 订阅涟漪事件）
   const glSim = useGlSim(glFlags.glSpheres || glFlags.water || glFlags.waterFx);
+  const { playing, currentTrack } = usePlayer();
   // J1：WebGL 不可用 / 强制兜底 → GL 走兜底夜塘，对应隐掉 GL 球的 DOM 叠层（命中/日蚀/切组），
   // 免得兜底上浮着一堆没有球的标题（缓存检测，forceFallback 切换时重算）
   const glHealth: GlHealth = glFlags.forceFallback ? 'forced' : runtimeGlHealth;
   const glOk = glHealth === 'healthy';
+  const playingId = playing && currentTrack ? currentTrack.id : null;
+  const visitor = useTrack36Visitor(glSim.featuredTrack ?? null, glOk && glFlags.glSpheres, playingId);
+  useScenePresence(glSim, visitor);
   // 水面固定 → 滚轮驱动一点透视缩放 k、鼠标驱动视差（pointer-fx）。仅透视/视差任一开时才挂监听。
   usePointerFx(glOk && glFlags.glSpheres && (glFlags.perspective || glFlags.parallax));
   // 相机三效开关（控制台按钮）同步进 pointer-fx 单例 → 各 ctx builder + project 每帧读取门控
@@ -58,10 +66,10 @@ function Test3PageInner() {
   useEffect(() => { if (p9Enabled) loadP9Tuning(); }, [p9Enabled]);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-black">
+    <main data-pond-root="true" data-pond-eclipse-active="false" className="relative min-h-screen overflow-hidden bg-black">
       {/* GL 层：基调 / 球 / 水面 / 背景图 / 实验 任一开就挂 Canvas，都关 = 不加载 three chunk */}
       {(glFlags.glBase || glFlags.glSpheres || glFlags.water || glFlags.bgImage || glFlags.rtt || glFlags.waterFx || glFlags.floatMotes || glFlags.waterPlants || glFlags.reefStones || glFlags.crystalPillars) && (
-        <PondGL flags={glFlags} glSim={glSim} onHealthChange={setRuntimeGlHealth} />
+        <PondGL flags={glFlags} glSim={glSim} visitor={visitor} onHealthChange={setRuntimeGlHealth} />
       )}
 
       <PondHeader />
@@ -84,6 +92,12 @@ function Test3PageInner() {
       {/* GL 球 DOM 命中层（z-10，接点击拖拽，在 nav/HUD 之下）；J1：兜底时隐 */}
       {glFlags.glSpheres && glSim.ready && glOk && (
         <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx} depthModel={glFlags.depthModel} showLabels={glFlags.sphereLabels} />
+      )}
+      {glFlags.glSpheres && glOk && glSim.featuredTrack && (
+        <div className="pointer-events-none fixed inset-0 z-10">
+          <Track36HitTarget track={glSim.featuredTrack} visitor={visitor}
+            playing={playingId === glSim.featuredTrack.id} toggle={glSim.toggle} />
+        </div>
       )}
 
       {/* I2：GL 日蚀层（z-20，播放球叠日蚀焦点；其他球已隐去）；J1：兜底时隐 */}

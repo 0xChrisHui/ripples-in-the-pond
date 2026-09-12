@@ -24,6 +24,10 @@ export const GROUPS: GroupDef[] = [
   { id: 'C', label: '3', color: GROUP_PALETTES[2][0] },
 ];
 
+/** P14-G：每组 35 个常规节点，另加同一枚不进入力导的 #36 访客。 */
+export const REGULAR_TRACK_COUNT = 35;
+export const DISPLAY_TRACK_COUNT = 36;
+
 // v31 — 球大小 9/30，靠减 collide 斥力 + 提 outlier 拉力压总占地
 export const CFG = {
   minR: 9,
@@ -109,14 +113,19 @@ export interface SimLink extends SimulationLinkDatum<SimNode> {
 // Phase 6 B6（2026-05-04）：A 组只显 published=true 的 5 球（艺术家 demo）；
 // B/C 组保持原 36 球行为（音频 SQL 层循环到 No.1-5）
 export function getGroupTracks(gid: GroupId, allTracks: Track[]): Track[] {
-  if (gid === 'A') return allTracks.filter((t) => t.published);
-  return allTracks.filter((t) => t.week >= 1 && t.week <= 36);
+  const regular = allTracks.filter((t) => t.week !== 36);
+  if (gid === 'A') return regular.filter((t) => t.published);
+  return regular.filter((t) => t.week >= 1 && t.week <= REGULAR_TRACK_COUNT);
 }
 
-// A 组 = 全部 published 真实曲目数（P6 B6=5 → P7 A6.1=15 → 本次 +20 首新曲=35）/ B/C 组 36 球
-// ⚠️ 每次新增 published 曲目都要同步这个数字，否则 padTracksToTarget 会 slice 截断、A tab 看不到新歌
-export function getGroupTargetCount(gid: GroupId): number {
-  return gid === 'A' ? 35 : 36;
+// #36 已从常规集合抽离；三个分组都只建立 35 个 d3 节点。
+export function getGroupTargetCount(_gid: GroupId): number {
+  const targets: Record<GroupId, number> = {
+    A: REGULAR_TRACK_COUNT,
+    B: REGULAR_TRACK_COUNT,
+    C: REGULAR_TRACK_COUNT,
+  };
+  return targets[_gid];
 }
 
 // DB < target 时循环 padding；改 week 1..target 让颜色/size 各异；id 加后缀避 React key 冲突

@@ -8,6 +8,7 @@ import {
   getGroupTracks,
   getGroupTargetCount,
   padTracksToTarget,
+  REGULAR_TRACK_COUNT,
   type GroupId,
   type SimNode,
   type SimLink,
@@ -33,6 +34,7 @@ export interface GlSim {
   error: boolean;        // J4：取数失败（显示"加载失败，点击重试"）
   retry: () => void;     // J4：重新取数
   groupId: GroupId;
+  featuredTrack?: Track | null;
   nodes: GlPhysNode[];
   simRef: React.RefObject<Simulation<SimNode, SimLink> | null>;
   wavesRef: React.RefObject<BgWave[]>;
@@ -61,7 +63,9 @@ export function useGlSim(active: boolean): GlSim {
   const anchorsRef = useRef<Map<string, { x: number; y: number; strength: number }> | null>(null);
   const setHover = useCallback((id: string | null) => { hoverIdRef.current = id; }, []);
   // I1 — GL nav 点击切组（取代旧 Archipelago nav；直接驱动 GL 组、修 G4"nav 点击 GL 不跟随"）
-  const setGroup = useCallback((id: GroupId) => setGroupId(id), []);
+  const setGroup = useCallback((id: GroupId) => {
+    if (!playingIdRef.current) setGroupId(id);
+  }, []);
 
   // 取数（仅 active；与 Archipelago 各取一次，/api/tracks 有 ISR 缓存，重复成本低）。
   // J4：加 res.ok 判定 + error 态 + retry（失败不再静默 console.error、无 UI）。
@@ -86,12 +90,12 @@ export function useGlSim(active: boolean): GlSim {
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       const idx = GROUPS.findIndex((g) => g.id === groupId);
-      if (e.key === 'ArrowRight') setGroupId(GROUPS[(idx + 1) % GROUPS.length].id);
-      if (e.key === 'ArrowLeft') setGroupId(GROUPS[(idx - 1 + GROUPS.length) % GROUPS.length].id);
+      if (e.key === 'ArrowRight') setGroup(GROUPS[(idx + 1) % GROUPS.length].id);
+      if (e.key === 'ArrowLeft') setGroup(GROUPS[(idx - 1 + GROUPS.length) % GROUPS.length].id);
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [active, groupId]);
+  }, [active, groupId, setGroup]);
 
   // 涟漪事件桥：订阅 bg-ripple:wave → wavesRef（duration 秒→ms，复刻 use-wave-events.ts）
   useEffect(() => {
@@ -118,7 +122,9 @@ export function useGlSim(active: boolean): GlSim {
     }
     const w = window.innerWidth, h = window.innerHeight;
     sizeRef.current = { w, h };
-    const show = padTracksToTarget(getGroupTracks(groupId, tracks), getGroupTargetCount(groupId));
+    const regularTracks = tracks.filter((track) => track.week !== 36);
+    const target = Math.min(REGULAR_TRACK_COUNT, getGroupTargetCount(groupId));
+    const show = padTracksToTarget(getGroupTracks(groupId, regularTracks), target);
     // 切组重建球群时同时重置两个独立坐标：水面固定中线，球层级回到中性位置。
     resetWaterLine();
     resetDepthShift();
@@ -168,9 +174,12 @@ export function useGlSim(active: boolean): GlSim {
   // J4 — 音频预热：当前组曲目各拉前 300KB（6 worker 并发），点播放更跟手（移植 Archipelago）。
   useEffect(() => {
     if (!active || tracks.length === 0) return;
-    const padded = padTracksToTarget(getGroupTracks(groupId, tracks), getGroupTargetCount(groupId));
+    const regularTracks = tracks.filter((track) => track.week !== 36);
+    const target = Math.min(REGULAR_TRACK_COUNT, getGroupTargetCount(groupId));
+    const padded = padTracksToTarget(getGroupTracks(groupId, regularTracks), target);
     let cancelled = false;
-    const queue = padded.filter((t) => t.audio_url);
+    const featured = tracks.find((track) => track.week === 36);
+    const queue = [...padded, ...(featured ? [featured] : [])].filter((t) => t.audio_url);
     const workers = Array.from({ length: 6 }, async () => {
       while (queue.length > 0 && !cancelled) {
         const t = queue.shift();
@@ -187,6 +196,10 @@ export function useGlSim(active: boolean): GlSim {
     loading: nodes.length === 0 && !tracksError,
     error: tracksError,
     retry: loadTracks,
-    groupId, nodes, simRef, wavesRef, playingIdRef, hoverIdRef, sizeRef, setHover, setGroup, toggle,
+    groupId,
+    featuredTrack: tracks.find((track) => track.week === 36 && track.published)
+      ?? tracks.find((track) => track.week === 36)
+      ?? null,
+    nodes, simRef, wavesRef, playingIdRef, hoverIdRef, sizeRef, setHover, setGroup, toggle,
   };
 }

@@ -21,6 +21,7 @@ import { stepWheelDesync, stepParallax, stepShiver, stepFlowDrift, stepFlicker, 
 import { getLifeTuning } from '../life/life-tuning';
 import { stepWakeSpheres } from '../life/wake-field';
 import { prefersReducedMotion } from '../reduced-motion';
+import { getScenePresence } from '../focus/playback-focus';
 
 // 球色：手动解析 hex → sRGB 0-1，绕过 three 的 Color/ColorManagement（R3F 强制 linear 会让球色暗掉近半）。
 // 自定义 shader 不经 three colorspace_fragment → 手动 sRGB 直通 = 原始值原样显示（与 SVG/CSS 一致）。
@@ -82,6 +83,7 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
   stepSphereGlide(nodes); // 涟漪推的惯性滑行收尾（_gvx 慢衰减加到位置）→ 波过后丝滑滑停
 
   const anyPlaying = playingId != null;
+  const scenePresence = getScenePresence();
   const { aColor, aParams, aSubmerge, aLifeDim, baseColors, hoverLerp, dimLerp } = buf;
   const lt = getLifeTuning();
   const edgeOn = life.edgeWave || life.edgeExcite; // L3 边缘波/激励任一开才写 aSeed（_excite 维护恒跑，见下）
@@ -143,11 +145,11 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
     const lifeDim = n._lifeDim ?? 1;
     aSubmerge[i] = waterSubmerge;
     aLifeDim[i] = lifeDim;
-    n._visualDim = dimLerp[i] * (1 - submerge) * (waterComposite ? 1 : lifeDim);
+    n._visualDim = dimLerp[i] * scenePresence * (1 - submerge) * (waterComposite ? 1 : lifeDim);
     aParams[i * 4] = Math.min(1, fill * tuning.fill);
     aParams[i * 4 + 1] = (isHover ? 0.5 : 0.3) * tuning.halo
       * 1;
-    aParams[i * 4 + 2] = dimLerp[i] * (1 - submerge); // 播放淡出；生命感透明由 aLifeDim 独立传入
+    aParams[i * 4 + 2] = dimLerp[i] * scenePresence * (1 - submerge); // 日食时包括播放球在内统一退到纯黑
     aParams[i * 4 + 3] = p.blurAmt * rt.dofStrength;          // /test3 景深失焦度 ×强度倍率
   }
 

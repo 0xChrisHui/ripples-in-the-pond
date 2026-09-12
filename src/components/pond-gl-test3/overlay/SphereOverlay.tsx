@@ -7,6 +7,7 @@ import { setNodeDrag, endNodeDrag, type GlPhysNode } from '../spheres/gl-sim-set
 import { getSubmerge, getEffectiveWaterLevel } from '../water/water-level';
 import { project, unproject, applyFloat, type ProjCtx } from '../sphere-projection';
 import { getPointerFx, getCameraFx, depthOf, displayDepthOf } from '../pointer-fx';
+import { getScenePresence } from '../focus/playback-focus';
 
 /**
  * G4 — DOM 命中层：每球一个绝对定位 div，承载标题/角标/点击播放/拖拽/hover。
@@ -59,9 +60,10 @@ export default function SphereOverlay({ glSim, waterOn, depthModel = false, show
         // 失焦球的标题/角标一并虚化（移植 /test 的 CSS blur），与 GL 散景同向
         el.style.filter = p.blurAmt > 0.02 ? `blur(${(p.blurAmt * 3).toFixed(2)}px)` : '';
         // 别的球在播 → 完全隐藏（聚焦只剩播放球 + 日蚀）；否则没入淡出（水下仍留 0.4 锚点）
-        el.style.opacity = dim ? '0' : String(Math.max(0.4, 1 - sub * 1.5) * (n._lifeDim ?? 1)); // L5-1 隐现：标题/角标与球同步
+        el.style.opacity = dim ? '0' : String(Math.max(0.4, 1 - sub * 1.5) * (n._lifeDim ?? 1) * getScenePresence());
         // 水下对象仍可点（H 规格）；别的球在播时让出交互（其他球已隐藏）
         el.style.pointerEvents = dim ? 'none' : 'auto';
+        el.tabIndex = dim ? -1 : 0;
       }
       raf = requestAnimationFrame(loop);
     };
