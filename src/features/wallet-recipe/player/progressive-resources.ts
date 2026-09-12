@@ -14,7 +14,7 @@ export class ProgressiveRecipeResources {
   private readonly remainingKeys: string[];
   private compressed = new Map<string, ArrayBuffer>();
   private decoded = new Map<string, AudioBuffer>();
-  private decodeFlight: Promise<number> | null = null;
+  private decodeFlight: Promise<unknown> | null = null;
 
   constructor(
     private readonly input: WalletRecipePlayerInput,
@@ -49,9 +49,39 @@ export class ProgressiveRecipeResources {
     }
   }
 
-  async decodeMissing(context: AudioContext): Promise<number> {
-    while (this.decodeFlight) await this.decodeFlight;
-    const pending = new Map([...this.compressed].filter(([key]) => !this.decoded.has(key)));
+  async decodeMissing(context: AudioContext, onBatch: (elapsed: number) => void): Promise<void> {
+    if (this.decodeFlight) {
+      await this.decodeFlight;
+      return;
+    }
+    const flight = this.decodeBatches(context, onBatch);
+    this.decodeFlight = flight;
+    try {
+      await flight;
+    } finally {
+      if (this.decodeFlight === flight) this.decodeFlight = null;
+    }
+  }
+
+  private async decodeBatches(
+    context: AudioContext, onBatch: (elapsed: number) => void,
+  ): Promise<void> {
+    while (this.pending().size) {
+      const pending = new Map([...this.pending()].slice(0, REMAINING_BATCH_SIZE));
+      if (!pending.size) return;
+      onBatch(await this.decodePending(context, pending));
+      if (this.pending().size) {
+        await new Promise<void>((resolve) => globalThis.setTimeout(resolve, 0));
+      }
+    }
+  }
+
+  async decodeInitial(context: AudioContext): Promise<number> {
+    const initial = new Set(this.initialKeys);
+    let pending = this.pending(initial);
+    if (!pending.size) return 0;
+    if (this.decodeFlight) await this.decodeFlight;
+    pending = this.pending(initial);
     if (!pending.size) return 0;
     const flight = this.decodePending(context, pending);
     this.decodeFlight = flight;
@@ -62,20 +92,10 @@ export class ProgressiveRecipeResources {
     }
   }
 
-  async decodeInitial(context: AudioContext): Promise<number> {
-    while (this.decodeFlight) await this.decodeFlight;
-    const initial = new Set(this.initialKeys);
-    const pending = new Map([...this.compressed].filter(
-      ([key]) => initial.has(key) && !this.decoded.has(key),
+  private pending(keys?: Set<string>): Map<string, ArrayBuffer> {
+    return new Map([...this.compressed].filter(
+      ([key]) => !this.decoded.has(key) && (!keys || keys.has(key)),
     ));
-    if (!pending.size) return 0;
-    const flight = this.decodePending(context, pending);
-    this.decodeFlight = flight;
-    try {
-      return await flight;
-    } finally {
-      if (this.decodeFlight === flight) this.decodeFlight = null;
-    }
   }
 
   private async decodePending(

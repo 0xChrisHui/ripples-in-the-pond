@@ -100,7 +100,6 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
         async () => {
           if (generation !== this.generation || !this.context || !this.clock) return;
           await this.decodeMissing(resources, generation);
-          if (generation === this.generation) this.clock?.addAvailable();
         },
       );
       if (generation !== this.generation) return;
@@ -114,9 +113,11 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
   private async decodeMissing(resources: ProgressiveRecipeResources,
     generation: number): Promise<void> {
     if (!this.context) return;
-    const elapsed = await resources.decodeMissing(this.context);
-    if (generation !== this.generation) return;
-    if (elapsed > 0) this.update({ decodeMs: (this.snapshot.decodeMs ?? 0) + elapsed });
+    await resources.decodeMissing(this.context, (elapsed) => {
+      if (generation !== this.generation) return;
+      this.update({ decodeMs: (this.snapshot.decodeMs ?? 0) + elapsed });
+      this.clock?.addAvailable();
+    });
   }
   async play(): Promise<void> {
     if (!this.timeline || !this.input || !['ready', 'paused', 'ended', 'error'].includes(this.snapshot.state)) return;
@@ -141,9 +142,7 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
       const startDelayMs = this.clock.start(positionMs);
       this.update({ firstSoundExpectedMs: Math.round(performance.now() - intentAt + startDelayMs) });
       performance.mark('p15:recipe-first-sound-scheduled');
-      void this.decodeMissing(this.resources!, generation).then(() => {
-        if (generation === this.generation) this.clock?.addAvailable();
-      }).catch((error: unknown) => {
+      void this.decodeMissing(this.resources!, generation).catch((error: unknown) => {
         if (generation === this.generation) this.fail(toPlayerError(error, 'decode'));
       });
     } catch (error) {

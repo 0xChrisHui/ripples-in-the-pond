@@ -111,7 +111,7 @@ try {
 } catch (error) { report.fatalError = errorText(error); }
 finally {
   const home = report.home ?? {}; const echo = report.echo ?? {};
-  const echoSamples = [echo.cold, ...(echo.hot?.samples ?? [])].filter(Boolean);
+  const echoSamples = [...(echo.cold?.samples ?? []), ...(echo.hot?.samples ?? [])];
   report.checks = {
     identityPresent: Boolean(report.identity.repositoryCommit && report.identity.nextBuildId),
     glHealthy: home.glHealth === 'healthy',
@@ -121,16 +121,22 @@ finally {
     layoutShiftObserver: home.observerSupport?.layoutShift === true,
     cls01: home.observerSupport?.layoutShift === true && home.cls <= .1,
     noHomeRuntimeErrors: !home.consoleErrors?.length && !home.pageErrors?.length,
-    echoColdReady: echo.cold?.ui?.state === 'ready' && echo.cold.ui.actionDisabled === false,
-    echoColdExpectedFirstSound2000: Number.isFinite(echo.cold?.playback?.expectedFirstSoundMs)
-      && echo.cold.playback.expectedFirstSoundMs <= 2_000,
+    echoColdTenValid: echo.cold?.requested === 10 && echo.cold.valid === 10
+      && echo.cold.samples?.length === 10
+      && echo.cold.samples.every((sample) => sample.ui?.state === 'ready' && !sample.error),
+    echoColdP95ExpectedFirstSound2000: Number.isFinite(echo.cold?.p95ExpectedFirstSoundMs)
+      && echo.cold.p95ExpectedFirstSoundMs <= 2_000,
     echoHotTenValid: echo.hot?.requested === 10 && echo.hot.valid === 10
       && echo.hot.samples?.length === 10
       && echo.hot.samples.every((sample) => sample.ui?.state === 'ready' && !sample.error),
     echoHotP95ExpectedFirstSound500: Number.isFinite(echo.hot?.p95ExpectedFirstSoundMs)
       && echo.hot.p95ExpectedFirstSoundMs <= 500,
-    noEchoRuntimeErrors: echoSamples.length === 11 && echoSamples.every((sample) =>
-      !sample.consoleErrors?.length && !sample.pageErrors?.length),
+    echoContinuityFourToFive: echo.continuity?.state === 'playing'
+      && echo.continuity.currentIndex >= 4 && echo.continuity.allResourcesReady === true
+      && !echo.continuity.error,
+    noEchoRuntimeErrors: echoSamples.length === 20 && echoSamples.every((sample) =>
+      !sample.consoleErrors?.length && !sample.pageErrors?.length)
+      && !echo.continuity?.consoleErrors?.length && !echo.continuity?.pageErrors?.length,
   };
   report.pass = !report.fatalError && Object.values(report.checks).every(Boolean);
   try {

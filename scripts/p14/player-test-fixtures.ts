@@ -52,7 +52,8 @@ export class FakeAudioContext {
   sources: FakeSource[] = [];
   resumeCount = 0;
   decodeCount = 0;
-  constructor(private readonly decodedDuration = 1) {}
+  constructor(private readonly decodedDuration = 1,
+    private readonly decodeBarrier?: { after: number; promise: Promise<void> }) {}
   async resume(): Promise<void> {
     this.resumeCount += 1;
     this.state = 'running';
@@ -60,6 +61,9 @@ export class FakeAudioContext {
   async close(): Promise<void> { this.state = 'closed'; }
   async decodeAudioData(): Promise<AudioBuffer> {
     this.decodeCount += 1;
+    if (this.decodeBarrier && this.decodeCount > this.decodeBarrier.after) {
+      await this.decodeBarrier.promise;
+    }
     return { duration: this.decodedDuration } as AudioBuffer;
   }
   createBufferSource(): AudioBufferSourceNode {

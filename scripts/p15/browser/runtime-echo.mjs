@@ -55,28 +55,67 @@ async function sampleEcho(cdp, navigate, waitFor, classification, index) {
   }
 }
 
+async function measureContinuity(cdp, navigate, waitFor) {
+  const starts = { console: cdp.consoleErrors.length, page: cdp.pageErrors.length };
+  const snapshot = `(() => { const active=document.querySelector('.echo-recipe li[aria-current="step"]');
+    const currentIndex=active?[...active.parentElement.children].indexOf(active):null;
+    return {state:document.querySelector('.echo-player')?.dataset.state??null,currentIndex,
+      currentSegment:currentIndex==null?null:currentIndex+1,
+      allResourcesReady:performance.getEntriesByName('p15:recipe-all-resources-ready').length>0,
+      crossedFourToFive:currentIndex!=null&&currentIndex>=4,actualAudibilityVerified:false};})()`;
+  try {
+    await navigate(cdp, '/echo/1');
+    await waitFor(cdp, `['ready','error'].includes(
+      document.querySelector('.echo-player')?.dataset.state)`, 30_000, 'Pond Echo continuity ready');
+    const ready = await cdp.evaluate(uiExpression);
+    if (ready.state !== 'ready') throw new Error(`continuity 播放器状态为 ${ready.state}`);
+    await clickPlay(cdp);
+    await waitFor(cdp, `(() => { const active=document.querySelector(
+      '.echo-recipe li[aria-current="step"]'); const index=active?[...active.parentElement.children].indexOf(active):null;
+      const state=document.querySelector('.echo-player')?.dataset.state;
+      return state==='error'||(state==='playing'&&index>=4
+        &&performance.getEntriesByName('p15:recipe-all-resources-ready').length>0); })()`,
+    30_000, 'Pond Echo continuity 跨 4→5 段');
+    return { ...(await cdp.evaluate(snapshot)), consoleErrors: cdp.consoleErrors.slice(starts.console),
+      pageErrors: cdp.pageErrors.slice(starts.page) };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : String(error),
+      ...(await cdp.evaluate(snapshot).catch(() => ({ actualAudibilityVerified: false }))),
+      consoleErrors: cdp.consoleErrors.slice(starts.console),
+      pageErrors: cdp.pageErrors.slice(starts.page) };
+  }
+}
+
+function summarize(samples) {
+  const values = samples.map((sample) => sample.playback?.expectedFirstSoundMs)
+    .filter(Number.isFinite);
+  return { requested: 10, valid: values.length, p95Method: 'nearest-rank',
+    p95ExpectedFirstSoundMs: nearestRank(values, .95), samples };
+}
+
 export async function measureEchoRuntime({ cdp, siteBase, navigate, waitFor }) {
   const origin = new URL(siteBase).origin;
-  await cdp.send('Network.clearBrowserCache');
-  await cdp.send('Storage.clearDataForOrigin', { origin, storageTypes: 'cache_storage' });
-  const cold = await sampleEcho(cdp, navigate, waitFor, 'cold', 1);
+  const coldSamples = [];
+  for (let index = 1; index <= 10; index += 1) {
+    await cdp.send('Network.clearBrowserCache');
+    await cdp.send('Storage.clearDataForOrigin', { origin, storageTypes: 'cache_storage' });
+    coldSamples.push(await sampleEcho(cdp, navigate, waitFor, 'cold', index));
+  }
   const hotSamples = [];
   for (let index = 1; index <= 10; index += 1) {
     hotSamples.push(await sampleEcho(cdp, navigate, waitFor, 'hot', index));
   }
-  const hotValues = hotSamples.map((sample) => sample.playback?.expectedFirstSoundMs)
-    .filter(Number.isFinite);
+  const continuity = await measureContinuity(cdp, navigate, waitFor);
   return {
     cacheBoundary: {
-      firstSample: 'cold',
-      cold: '首样本前清除浏览器 HTTP cache 与本站 Cache Storage；保留 cookies',
-      hot: '随后同一 CDP target 连续 10 次完整导航，不清缓存',
+      cold: '10 个 cold 样本各自在导航前清除浏览器 HTTP cache 与本站 Cache Storage；保留 cookies',
+      hot: '第 10 个 cold 完成后，同一 CDP target 连续 10 次完整导航，不再清缓存',
+      continuity: '10 个 hot 后再导航一次且不清缓存，观察播放跨过第 4→5 段',
       scope: '仅证明浏览器侧冷/热边界；未清除 Preview、CDN 或服务端缓存',
     },
     actualAudibilityVerified: false,
-    cold,
-    hot: { requested: 10, valid: hotValues.length,
-      p95Method: 'nearest-rank', p95ExpectedFirstSoundMs: nearestRank(hotValues, .95),
-      samples: hotSamples },
+    cold: summarize(coldSamples),
+    hot: summarize(hotSamples),
+    continuity,
   };
 }
