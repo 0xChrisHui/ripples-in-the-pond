@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 14 P14-0 产品/合约决策 Gate**：一次性拍板产品名、合约参数、资格启用边界、媒体数据形态、声音衔接与分级外部写入权限；完成前不写 P14 业务代码、不上传 P14 永久资源。P14-E0 仍保留独立视觉共创 Gate。
+- **Phase 14 P14-G3–G6 ECHO #1 首页接入与验收**：以链上 tokenURI + 永久 recipe/clips 作为独立 featured 输入，完成 35+1、水中访客、现场播放、日食/P9、移动端与性能 Gate；不使用 MSTR 或 `tracks.week=36`。
 
 ## ⏳ Later / 开放项
 
@@ -209,7 +209,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - **Phase 11** — 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
 - **Phase 12** — OP Mainnet 上线准备与部署
 - **Phase 13** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
-- **Phase 14（当前）** — 钱包配方音乐 NFT 自动空投（v2 详细 playbook 已冻结，尚未写业务代码；`playbook/phase-14/00-overview.md`）
+- **Phase 14（当前）** — 钱包配方音乐 NFT 自动空投；首枚 ECHO #1 已成功空投，当前执行 P14-G 索引恢复与 ECHO #1 首页第 36 枚访客接入（`playbook/phase-14/80-g-recovery-track36-eclipse.md`）
 - **Phase 15** — 全站丝滑体验与永久播放可靠性（playbook 已建立，尚未施工；`playbook/phase-15/00-overview.md`）
 - **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
 - **未排期** — 音效系统扩展（原 P15：26→50 与输入键/音效 id 解耦；待以后重新编号）
@@ -227,13 +227,14 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - [x] P14-D 独立发现器与自动空投；Score 成功路径保持独立。
 - [x] P14-F7 主路径：真实 Score #3 触发 ECHO #1；live 状态机、永久性四方对账与 375/1440 完整 36/36 长播通过。
 - [x] P14-G0：生产切 `off`、两个 cron 停止、旧观察暂停；三次稳定读回与事故快照完成。
-- [x] P14-G1–G5 代码：scoped cursor/CAS、全链恢复工具、#36 数据/播放/禁铸、水中访客与日食黑场完成并通过自动验证。
-- [ ] P14-G2：应用 migration 050，完成测试库并发、生产全链 0-diff、scoped cursor 初始化与 source 10 次/15 分钟观察。
-- [ ] P14-G3 素材 Gate：用户完整试听 MSTR，并明确确认完整母带永久公开/NFT 权利；随后上传并完成 2/3 网关整文件 quorum。
-- [ ] P14-G6/G7：35+1 动态、日食纯黑、P9 33 键、移动端/性能浏览器验收，发布并重启新的 24h/7d 窗口。
-- [ ] **当前唯一 Next：先完成 G2；等待 MSTR 两项人工 Gate 时继续所有不依赖上传的验证。**
+- [x] P14-G1：scoped cursor/CAS、全链恢复工具、瞬时 DB 超时有界重试与 CAS 回读已完成。
+- [x] P14-G2：migration 050 测试库并发与生产 read-back、ScoreNFT 全链 0-diff、scoped cursor 初始化完成；修复后 source 21/21 次成功且首末相隔 20 分钟。
+- [ ] P14-G3：只读核验 `/echo/1` 的 ECHO #1 链上 tokenURI、永久 metadata、36 位 recipe 与 clips，并以独立 featured 输入接入首页；不读取/新增 `tracks.week=36`。
+- [ ] P14-G4/G5：把已有水中访客与日食原型从 Track/PlayerProvider 假设改接 ECHO #1 + WalletRecipePlayerEngine；保留相对水位路径、有界 FBO 涟漪与纯黑日食，不产生录制/上传。
+- [ ] P14-G6/G7：验收成功时 35+1、未空投/档案失败时 35+0、36 段现场组合、日食/P9/移动端/性能与零副作用；发布并重启新的 24h/7d 窗口。
+- [ ] **当前唯一 Next：完成纠正后的 ECHO #1 G3–G6。MSTR 权利、试听与上传 Gate 已全部取消。**
 
-> 生产当前为 `live`：首枚真实 ECHO 已成功；严重异常先切 off 并保留现场，不删除队列、不回退 cutoff、不重传未知上传。
+> 生产当前为 `off`：G2 已通过且 source cron 已恢复；P14 cron 仍关闭，首枚真实 ECHO 保持完好。G7 前不恢复 live，不删除队列、不回退 cutoff、不重传未知上传。
 
 ### Phase 8 Scope（当前任务）
 

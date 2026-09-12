@@ -1,7 +1,7 @@
-# P14-G — 主网索引恢复、第 36 首水中访客与日食黑场
+# P14-G — 主网索引恢复、ECHO #1 水中访客与日食黑场
 
 > **建立日期**：2026-09-12
-> **状态**：施工蓝图已冻结，尚未执行生产修复、永久上传或页面改动
+> **状态**：G0 已止血、G1 与视觉原型已有本地实现；G2 尚未完成。2026-09-12 已按产品纠正重写 #36 身份合同，旧 Track/MSTR 方案作废
 > **进入条件**：P14 F1–F7 已完成；F8 暂停
 > **唯一顺序**：`G0 → G1 → G2 → G3 → G4 → G5 → G6 → G7 → F8`
 
@@ -11,25 +11,26 @@
 
 P14 首枚主网空投成功后，生产 Score 事件源游标从约 1.567 亿异常退回低位，并以每次 500 blocks 的节奏缓慢前进。P14 发现器自身保持 fail closed，ECHO #1 没有损坏，也没有错误空投；但新 Score 不能被及时发现，因此原 24h/7d 观察窗失效，不能直接执行 F8。
 
-同时，原 P14 只把“首页入口”实现成 `/me#pond-echoes` 导航，没有把作品源头——完整的 Track #36——作为首页可直接点击聆听的音乐圆圈。这不满足用户最初的产品意图。本轨把下面三件事一次收口：
+同时，原 P14 只把“首页入口”实现成 `/me#pond-echoes` 导航，没有把已经成功空投的 ECHO #1 作为首页可直接点击聆听的第 36 枚音乐圆圈。这不满足用户最初的产品意图。本轨把下面三件事一次收口：
 
 1. 修复并恢复生产 Score 事件索引，防止游标再次回退。
-2. 把完整 Track #36 发布为首页周期穿越水塘的特殊音乐圆圈，可直接点击播放。
+2. 把 `/echo/1` 对应的 ECHO #1 作为首页周期穿越水塘的第 36 枚特殊音乐圆圈，可直接点击现场组合播放。
 3. 任何音乐圆进入日食模式时，让静息水塘和全部音乐圆同步淡出，形成纯黑背景。
 
-这三项共享同一发布 Gate：先恢复数据源，再接入真实 #36 音频，最后完成视觉、浏览器和生产观察。不得为了先看视觉而在生产继续使用已知不安全的旧游标写入路径。
+这三项共享同一发布 Gate：先恢复数据源，再只读接入链上 ECHO #1 与其永久档案，最后完成视觉、浏览器和生产观察。不得为了先看视觉而在生产继续使用已知不安全的旧游标写入路径。
 
 ---
 
 ## 2. 冻结的产品合同
 
-### 2.1 Track #36 的身份
+### 2.1 第 36 枚音乐圆圈的身份
 
-- #36 是原始完整作品，不是 Pond Echo 的 36 个 A–Z/0–9 碎片，也不是第 36 个常规力导球。
-- 当前候选母带是 `references/36-AU/第36个 当所有的碎片都在最后组合在了一起 MSTR.mp3`；施工时必须重新记录 bytes、SHA-256、codec、声道、采样率和精确时长。
-- `/` 的每个 A/B/C 分组都保持 **35 个常规圆圈 + 同一枚 #36 特殊访客**。切组不能复制 #36，也不能让普通球数量变成 36 或总数变成 37。
-- #36 不参加常规 d3 力导、拖拽、滚轮景深和生命感随机漂移；它仍复用现有 Track、PlayerProvider、球 shader、投影、命中和日食能力。
-- 点击 #36 直接播放完整母带；进入播放后冻结在点击瞬间的位置，停止或自然结束后从该进度继续穿行。
+- #36 固定代表已经成功空投、公开页为 `/echo/1` 的 **ECHO #1**；唯一内容真值来自 OP Mainnet `PondEchoes.tokenURI(1)` 与该 URI 指向的永久 metadata `recipe + clips`。
+- #36 **不是** MSTR、不是 `tracks.week=36`、不是 MaterialNFT，也不是第 36 个常规力导 Track。候选完整母带及其权利、试听、上传 Gate 全部退出本轨。
+- 只有链上合约身份、tokenURI、永久 metadata、36 位 recipe、clips 完整性与网关字节校验都成功时，首页才加入这枚访客；ECHO #1 未空投或任一永久档案 Gate 失败时，首页严格只有 35 首，不用数据库 Track、假 URL 或本地文件降级冒充。
+- `/` 的每个 A/B/C 分组都保持 **35 个常规圆圈 + 同一枚 ECHO #1 特殊访客**。切组不能复制 #36，也不能让普通球数量变成 36 或总数变成 37。
+- #36 不参加常规 d3 力导、拖拽、滚轮景深和生命感随机漂移；它复用现有球 shader、投影、命中和日食能力，但数据身份不得适配成 Track。
+- 点击 #36 复用现有 `WalletRecipePlayerEngine`，按永久 metadata 在浏览器现场组合 36 段；不生成、不上传新的 MP3。播放后冻结在点击位置，停止或自然结束后从该进度继续穿行。
 - 视觉自动出现不等于音频自动播放。音频永远只由明确用户手势启动。
 
 ### 2.2 水中穿行
@@ -82,14 +83,12 @@ P3 = ( 0.58W, 1.12H)
 - 日食期间分组导航禁用；用户先停止播放再切组，避免当前焦点节点被替换。
 - `prefers-reduced-motion` 下全屏转换改为即时或不超过 80ms；视觉变化不改变音量、播放时间、录制时钟或 Audio 实例。
 
-### 2.5 #36 的铸造边界
+### 2.5 #36 的系统边界
 
-现有 MaterialNFT URI 已按 35 份 metadata 冻结。#36 本轮目标是公开聆听，不自动承诺可铸造：
-
-- G3 先只读检查链上 `uri(36)` 及对应永久 metadata 是否真实存在并可恢复。
-- 若不存在或不完整，数据层增加明确的 `material_mintable=false`（具体字段名按现有 schema 约定），首页不显示误导性的收藏/铸造入口，`POST /api/mint/material` 也必须服务端拒绝。
-- 不为 #36 擅自重部署 MaterialNFT、改变已冻结 URI 或补造不可恢复 metadata。
-- #36 播放仍可进入现有 Score/jam 录制流程；“不可铸造成 MaterialNFT”不等于“不可参与演奏”。
+- ECHO #1 已经是独立 Pond Echo ERC-721；首页 #36 只提供该既有 NFT 的公开聆听入口，不进入 MaterialNFT 铸造、Track 收藏或 Track API。
+- 点击 #36 不启动 TestJam/Score 录制，不把 36 段组合结果写成 Track，也不生成新的媒体或永久上传任务。
+- 不修改既有 ECHO #1 的 tokenURI、metadata、recipe、clips 或所有权；首页只读复用 `/echo/1` 已有的严格验证数据源和 `WalletRecipePlayerEngine`。
+- 普通 Track 继续走 PlayerProvider 与既有录制规则；ECHO #1 与普通 Track 必须互斥播放，但不能通过伪造 Track 对象实现互斥。
 
 ---
 
@@ -210,32 +209,31 @@ migration/RLS/RPC read-back、真并发测试、route 测试、TypeScript、lint
 
 ---
 
-## 7. G3｜Track #36 音频、权利与数据接入
+## 7. G3｜ECHO #1 链上身份、永久档案与首页接入
 
-### 素材 Gate
+### 链上与永久档案 Gate
 
-1. 对候选 MSTR 做无修改审计，和项目中的 WAV/工程来源建立 provenance；记录 SHA-256、bytes、duration、codec、sample rate、channels 与试听证据。
-2. 现有权利确认明确覆盖 `public/the36` 的 36 段及其中采样。只有 provenance 能证明完整母带属于同一授权范围时才复用；否则在永久公开前补一条只针对完整 MSTR 的权利确认。
-3. 权利与人耳试听都通过后，按现有 content-hash ledger 上传同一 MP3 bytes 到 Arweave；响应未知进入 `upload_result_unknown`，不盲目重传。
-4. 以 3 个候选独立网关中的 2 个完成整文件 bytes/hash quorum，冻结 txid。Production 不使用 `references/`、`public/` 临时路径或可变 CDN 作为母带真值。
+1. 以 Production chainId 与 PondEchoes 合约地址读取 `ownerOf(1)`、`originWalletOf(1)`、`tokenURI(1)`；token 不存在、合约身份错误或读取失败均 fail closed。
+2. 复用 `/echo/1` 的 `getEchoByTokenId(1n)` 严格数据源，验证 tokenURI 为规范 `ar://`，并对永久 metadata 做现有网关 quorum/字节一致性检查；不得以数据库 queue 或缓存对象替代链上真值。
+3. 对 metadata schema、36 位 `A-Z0-9` recipe、每个引用 clip 的 `ar://`、SHA-256、bytes、duration 与 clip manifest 一致性执行同一套永久档案校验。
+4. 任一 Gate 失败时返回“无 featured ECHO”，首页仍渲染 35 个普通 Track；不得构造本地 placeholder、MSTR 或 `tracks.week=36` 兜底。
 
-### 数据接入
+### 数据与播放接入
 
-- 审计现有 `tracks` week=36 记录，幂等 upsert 为唯一正式 #36，填入冻结的永久音频 URL 和发布状态。
-- `/api/tracks` 返回 #36，但首页组装时先按 `week === 36`/稳定身份提取为 `featuredTrack`，再让普通分组走 35 球逻辑。
-- 拆开当前混用的计数：`regularTargetCount = 35` 只控制 padding/simulation，`displayTotalCount = 36` 控制 GlNav/界面计数；B/C 不得先 pad 到 36 再追加 featured。
-- A/B/C 每组断言 35 regular + 1 featured；#36 的 React key、Track id 和 GL node id 全局唯一。
-- 增加显式 Material mintability 并在 API 与 UI 双层执行；不能只隐藏按钮。
-- 冻结播放字段合同：数据库保存 canonical Arweave txid/URL，列表与单曲 API 返回永久身份和可解析的 gateway 候选；PlayerProvider 通过共享 resolver 生成 HTTP URL，不把 `ar://` 直接交给 HTMLAudio。
-- 首网关失败可有界切换备用网关，且同一次用户手势不重复启动播放、录制或 Audio 实例。
-- `material_mintable=false` 进入 Track 类型、列表 API、单曲 API、BottomPlayer/收藏 UI 和服务端 mint 校验；直接请求 mint API 返回结构化拒绝。
-- 记录 `/api/tracks`、缓存、永久 URL、Range/full fetch、解码和播放时钟基线。
+- `/api/tracks` 与 Track schema 保持 35 首口径，不新增、查询或识别 `week=36`；首页用独立的只读 ECHO featured 输入承载 tokenId、name、recipe、clips 与永久身份。
+- 首页服务端取得通过 Gate 的 ECHO #1 数据后，只把播放器必需的已验证 `recipe + clips` 与展示身份传给客户端；不把私钥、queue 内部状态或数据库信任旁路带入浏览器。
+- `regularTargetCount = 35` 只控制 padding/simulation；`displayTotalCount` 仅在 ECHO Gate 成功时为 36，否则为 35。B/C 不得先 pad 到 36 再追加 featured。
+- A/B/C 每组断言 35 regular；Gate 成功时共享 1 个 ECHO featured，失败时为 0。ECHO 的 React key/GL node id 使用链+合约+tokenId 永久身份，不使用 Track id。
+- 点击调用现有 `useWalletRecipePlayer`/`WalletRecipePlayerEngine` 现场组合 36 段，沿用其网关 fallback、hash/bytes/duration 校验、60ms 等功率衔接和单一 AudioContext 规则。
+- 普通 PlayerProvider 与 ECHO engine 建立显式互斥协调：启动一方先停止另一方；同一次手势只能创建一次 ECHO 播放，不重复 load/play 或录制。
+- ECHO 播放状态只驱动其 BottomPlayer 兼容展示、PlaybackFocus 与日食；不进入 TestJam、Score/Track 录制、Material 收藏或任何上传队列。
+- 记录链上读取、metadata quorum、36/36 clips 解码、完整现场组合播放、暂停/续播/ended 与首网关失败后的有界 fallback 基线。
 
 ### Gate G3
 
-- 完整母带权利、试听、hash 和 2/3 gateway quorum 证据齐全。
-- #36 只有一条正式数据记录，三组均无重复/填充假球。
-- #36 可直接解码并完整播放；MaterialNFT 边界不会产生无 metadata token。
+- ECHO #1 的链、合约、tokenId、owner/origin、tokenURI、永久 metadata、recipe 与 clips 形成同一条可审计身份链。
+- `/api/tracks` 仍为 35 首；ECHO Gate 成功时三组均为 35+1，失败时均为 35+0，无重复/填充假球。
+- 36 段可由现有 WalletRecipePlayerEngine 完整现场组合播放，且 0 个新 MP3、0 次新上传、0 个 MaterialNFT/Track/Score 录制副作用。
 
 ---
 
@@ -243,23 +241,23 @@ migration/RLS/RPC read-back、真并发测试、route 测试、TypeScript、lint
 
 ### 推荐结构
 
-在 `src/components/pond-gl-test3/visitor/` 建立不超过 8 个职责清晰的文件，名称可按现有约定微调：
+在 `src/components/pond-gl-test3/visitor/` 建立不超过 8 个职责清晰的文件；旧 `track36-*` 原型允许就地重命名/改造，但不得保留 Track 数据依赖：
 
 - `track36-path.ts`：纯函数轨迹、深度与 crossing 计算。
-- `track36-state.ts`：单实例状态、progress、冻结/恢复与 focus pose。
-- `use-track36-visitor.ts`：首次/周期调度、visibility 和 PlayerProvider 联动。
+- `track36-state.ts`：单实例状态、ECHO 永久身份、progress、冻结/恢复与 focus pose。
+- `use-track36-visitor.ts`：首次/周期调度、visibility 和 ECHO/普通 Track 互斥播放联动。
 - `Track36Visitor.tsx`：把 featured node 接入现有 GL sphere pipeline。
 - `Track36HitTarget.tsx`：至少 44×44px 的 DOM/键盘命中层。
 - `track36-ripples.ts`：有界 transient Drop 队列与节流；若能自然并入现有 ripple-feed，则不另建。
 
 ### 集成规则
 
-- #36 作为唯一 `_motionRole='featured-transit'` 的 `GlPhysNode` 追加到共享 render nodes，复用 SphereInstances、WaterDistort 和 GlEclipse。
+- 只有 G3 返回已验证 ECHO #1 时，#36 才作为唯一 `_motionRole='featured-transit'` 的 `GlPhysNode` 追加到共享 render nodes，复用 SphereInstances、WaterDistort 和 GlEclipse；该节点携带 ECHO 身份而非 Track。
 - 普通 d3 simulation/links 只接收 35 regular nodes；featured node 的 x/y/depth 在通用漂移之后由轨迹控制器最终写回。
 - 所有通用沉浮、滚轮去同步、颤动、暗流、wake 和 glide 更新必须一开始就跳过 featured node，不能先积累隐藏速度/激励再覆盖 x/y。
 - `depthOf/displayDepthOf` 对 featured node 读取轨迹深度，不叠加滚轮 shift、自漂或 wake 位移。
 - `_transitAlpha` 必须进入球体最终透明度；休眠时节点位于屏外且 alpha=0，不能只依靠 `_lifeDim`。
-- generic SphereOverlay 必须过滤 featured，或在同一组件内分支为专用 hit target；页面只能存在一枚 #36 DOM control，避免双命中、双 toggle。
+- generic SphereOverlay 必须过滤 featured，或在同一组件内分支为专用 hit target；页面只能存在一枚 #36 DOM control，避免双命中、双 play。
 - featured 节点禁止拖拽，但支持 click、Enter、Space；aria-label 为“播放/暂停 第 36 首”，hover/focus 时明确显示“36”和曲名。
 - hover/focus 减速，播放冻结；切组不重置进度；resize/旋转后路径继续且命中不偏。
 - 两次 surface crossing 接现有 splash 口径；水下尾波走有界 transient queue。
@@ -268,8 +266,8 @@ migration/RLS/RPC read-back、真并发测试、route 测试、TypeScript、lint
 
 - 轨迹在 `0/.48/.74/1` 的位置和相对深度准确，位置/速度/深度连续。
 - 后台恢复不跳、单实例、队列有界、计时器/rAF 全清理。
-- 三组始终 exactly 35+1，普通节点仍为 35，#36 不进 links、不被拖拽。
-- 点击只触发一次 `toggle(track)`；播放冻结，停止/ended 恢复；另一首播放时 #36 按统一日食规则退场。
+- ECHO Gate 成功时三组 exactly 35+1，未空投/校验失败时 exactly 35+0；普通节点始终为 35，#36 不进 links、不被拖拽。
+- 点击只触发一次 WalletRecipePlayerEngine 播放动作且不产生录制/上传；播放冻结，停止/ended 恢复；另一首播放时 #36 按统一日食规则退场。
 - WaterDistort 的水上/水下 pass 与 DOM 投影使用同一 featured depth。
 - 调度器可注入 clock/seed 或测试 hook，2–4 秒与 24–36 秒随机窗口能确定性测试而不等待碰运气。
 
@@ -279,9 +277,9 @@ migration/RLS/RPC read-back、真并发测试、route 测试、TypeScript、lint
 
 ### 状态模型
 
-- PlayerProvider 的 `playing/currentTrack` 继续是唯一音频真值，不新增第二套日食事件总线。
-- 建立共享 `PlaybackFocus`/`focusPoseRef`，它是由 `renderNodes + playingId` 派生的只读输出，不是第二套可写播放真值；普通 node 或 #36 featured node 提供屏幕位置、半径、深度和有效性，GlEclipse 不复制第二套实现。
-- `eclipseActive = playing && currentTrack && focusPose.valid && glHealthy`。
+- 普通音乐仍以 PlayerProvider 的 `playing/currentTrack` 为真值，#36 以既有 WalletRecipePlayerEngine snapshot 为真值；二者先互斥，再归一为一个只读 `PlaybackFocus`，不新增第二套日食事件总线。
+- 共享 `PlaybackFocus`/`focusPoseRef` 由 `renderNodes + ordinary player snapshot + ECHO player snapshot` 派生；普通 node 或 ECHO featured node 提供屏幕位置、半径、深度和有效性，GlEclipse 不复制第二套实现，也不把 ECHO 伪装为 Track。
+- `eclipseActive = playbackFocus.playing && focusPose.valid && glHealthy`。
 - 建立 `scenePresence`：普通态 `1`，日食态阻尼到 `0`，默认约 500ms；统一时钟/阻尼器每帧只更新一次，所有消费者只读同一值，快速切歌不闪回水塘。
 
 ### 分层接入
@@ -307,7 +305,7 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 - 日食中隐藏的非播放圆退出 pointer events 与 Tab 顺序。
 - 点击当前日食焦点或 BottomPlayer 可停止；分组导航在播放时禁用。
 - `audio.play()` reject、ended、stop、route unmount、焦点失效都只触发一次恢复并清理 body 标记。
-- 不创建第二个 Canvas、FBO、AudioContext 或 HTMLAudio 实例。
+- 不创建第二个 Canvas/FBO，也不为 #36 自制新的音频引擎；只复用 WalletRecipePlayerEngine 自己的单一 AudioContext，普通 Track 继续复用 PlayerProvider 的单一 Audio 实例。
 - fallback/no WebGL 时只要仍有有效 DOM 焦点就保持可停止；无法保证焦点时 fail open 恢复场景。
 
 ### Gate G5
@@ -328,6 +326,7 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 - TypeScript、ESLint、production build、Forge 全绿。
 - 现有 P9 静态审计：33 active、33 唯一音效、33 唯一映射、13/20 日食门控不变。
 - 首页只有一个 PondGL Canvas/WebGL context；20 次播放/停止后不增长。
+- ECHO #1 Gate 成功时 `/api/tracks` 仍为 35 且首页为 35+1；模拟未空投、tokenURI/metadata/clip 校验失败时首页为 35+0。
 
 ### 浏览器矩阵
 
@@ -349,8 +348,8 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 - 30 分钟无 DOM、timer、rAF、Drop queue 或内存持续增长。
 - 稳态 FPS 相对同设备基线下降不超过 5 FPS，切换期无长任务。
 - 路由离开 `/` 后清除 body 标记，`/me`、`/score` 背景与 grain 正常。
-- #36 从永久 URL 完整播放，播放时间持续前进；不得用静音、短样本或本地 URL 冒充。
-- #36 的 BottomPlayer 不显示/不能触发 Material 收藏；直接调用 mint API 也得到预期结构化拒绝。
+- #36 必须从链上 tokenURI 指向的永久 metadata 取得 recipe/clips，并由 WalletRecipePlayerEngine 完整现场组合 36 段；不得用 MSTR、静音、短样本、本地 URL 或预合成 MP3 冒充。
+- #36 的播放不得触发 Material 收藏、Track/TestJam/Score 录制或上传；网络与控制台证据中 0 个新媒体写入和 0 个相关 mutation。
 
 ### Gate G6
 
@@ -364,7 +363,7 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 
 1. 断言 G2 的 production migration、全链 0-diff、scoped cursor 初始化、新 source route 和 10 次/15 分钟 source 观察均已完成；G7 不重复执行 G2。
 2. 在隔离 release worktree 合入 G3–G6 已验证提交；重新确认无 `.env.local` 覆盖 Production。
-3. 发布 #36 数据与首页视觉；线上验证永久音频 fallback、35+1、直接播放、Material 边界、涟漪和日食黑场。
+3. 发布 ECHO #1 只读首页接入与 #36 视觉；线上验证链上/永久档案 Gate、35+1/失败时 35+0、36 段现场组合、零录制/上传、涟漪和日食黑场。
 4. 切 P14 为 `observe`，扫描修复停机期新增事件；验证每 origin 唯一、recipe 稳定、零上传、零交易。
 5. observe 至少 10 次/15 分钟全绿后恢复 `live`。若存在合法 eligible，走原队列；没有则空跑，禁止制造假用户。
 6. 从 live 恢复时刻创建新的观察 heartbeat，并重新开始 24h/7d 观察。旧观察窗因 source cursor 事故作废，不能拼接计时。
@@ -374,8 +373,8 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 - scoped source cursor identity、单调性、safe-head lag、last-success。
 - source/P14 cron HTTP 状态和真实错误；不允许把 DB 故障伪装成 200。
 - 新 origin 唯一性、excluded、active age、manual review、Score queue 基线。
-- operator/Turbo 余额、永久母带和 Pond Echo 资源随机 2/3 gateway quorum。
-- `/` 的 #36 完整播放、日食恢复、P9 33 键和一个 Canvas。
+- operator/Turbo 余额与 Pond Echo 既有 metadata/manifest/clips 随机 2/3 gateway quorum；首页播放不能产生新的 Turbo 上传。
+- `/` 的 #36 完整组合 36 段、日食恢复、P9 33 键和一个 Canvas。
 
 ### 最终回滚
 
@@ -387,7 +386,7 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 
 - scoped source cursor 已连续 7 天无回退，24h/7d 新观察完成。
 - 全链/DB/queue/合约集合一致，无漏事件或错误资格。
-- #36 母带、数据、Material 铸造边界、首页 35+1 和永久播放均通过。
+- ECHO #1 链上/永久档案身份、首页成功 35+1/失败 35+0、现场组合播放和零 Track/Material/录制副作用均通过。
 - 普通圆/#36 的日食黑场、P9、可访问性、移动端和性能 Gate 全绿。
 - 最终 review 明确记录本次 cursor incident 的根因、影响范围、修复、恢复区间与防复发测试。
 
@@ -400,9 +399,10 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 - 不把 cursor 读错误当 0，不允许任何非单调普通 update。
 - 不直接跳到当前 head 掩盖可能漏掉的链事件。
 - 不在含 `.env.local` 的根工作树运行 Production 环境脚本。
-- 不为 #36 复活旧 SVG 首页、旧 comet eclipse 事件或第二套播放器。
+- 不为 #36 复活旧 SVG 首页、旧 comet eclipse 事件或自制播放器；只复用 WalletRecipePlayerEngine。
 - 不把 #36 放进常规 35 球力导集合，不在 A/B/C 各复制一枚。
 - 不用整 Canvas opacity 或全屏黑幕遮掉 P9 动画。
-- 不在没有完整母带权利与人耳确认时永久上传。
-- 不让 #36 走一个没有永久 metadata 的 MaterialNFT 铸造入口。
-- 不把自动截图、静态球或短音频冒充完整动态与播放验收。
+- 不读取或新增 `tracks.week=36`，不把 ECHO #1 包装成 Track/MaterialNFT，也不让它进入 TestJam/Score 录制。
+- 不生成、上传或引用新的完整 MP3；只读使用 ECHO #1 已冻结的 tokenURI、metadata recipe 与 clips。
+- 不在 ECHO #1 尚未空投或链上/永久档案 Gate 失败时显示第 36 枚圆圈。
+- 不把自动截图、静态球或短音频冒充完整动态与 36 段现场组合播放验收。
