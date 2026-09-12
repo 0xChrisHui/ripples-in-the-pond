@@ -55,6 +55,13 @@ const base = {
   expectedActivationMatches: true,
   lastDiscoveryCursor: '12345:8',
   sourceChainCursor: '12400',
+  sourceCursorIdentity: {
+    chainId: 10,
+    contract: '0x1234567890abcdef1234567890abcdef12345678',
+    key: 'chain-events:cursor:10:0x1234567890abcdef1234567890abcdef12345678',
+  },
+  sourceLastSuccessAt: '2026-09-06T11:59:00.000Z',
+  sourceSyncStale: false,
   cursors: {
     head: '12420', safeHead: '12400', discoveryToHeadBlocks: '75',
     discoveryToSafeHeadBlocks: '55', sourceToSafeHeadBlocks: '0',

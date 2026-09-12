@@ -25,6 +25,13 @@ export interface WalletRecipeHealth {
   expectedActivationMatches: boolean | null;
   lastDiscoveryCursor: string | null;
   sourceChainCursor: string | null;
+  sourceCursorIdentity: {
+    chainId: number;
+    contract: string;
+    key: string;
+  };
+  sourceLastSuccessAt: string | null;
+  sourceSyncStale: boolean;
   cursors: {
     head: string | null;
     safeHead: string | null;

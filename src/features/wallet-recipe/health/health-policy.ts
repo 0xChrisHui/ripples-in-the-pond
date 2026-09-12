@@ -67,6 +67,7 @@ export function collectHealthAlerts(health: Omit<WalletRecipeHealth, 'alerts'>):
   if (!health.modeConfigured) alerts.push('mode_misconfigured');
   if (!health.database.tableReachable || !health.database.rpcReachable) alerts.push('database_unreachable');
   if (health.walletRecipeMode !== 'off' && health.cronStale) alerts.push('cron_stale');
+  if (health.sourceSyncStale) alerts.push('source_cron_stale');
   if (health.queue.manualReview > 0) alerts.push('manual_review');
   if (health.queue.uploadResultUnknown > 0) alerts.push('upload_result_unknown');
   if ((health.queue.oldestActiveAgeSeconds ?? 0) > 3 * 60) alerts.push('active_queue_stale');

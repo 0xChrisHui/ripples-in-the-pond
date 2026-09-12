@@ -10,6 +10,7 @@ import {
 import { CURRENT_CHAIN, CHAIN_ID_NUM } from '@/src/lib/chain/chain-config';
 import { SCORE_NFT_ADDRESS } from '@/src/lib/chain/contracts';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { sourceCursorKey } from '@/src/features/source-index/source-policy';
 import {
   compareDiscoveryCursor,
   formatDiscoveryCursor,
@@ -34,6 +35,7 @@ const readClient = createPublicClient({
 });
 
 type ChainEventRow = {
+  chain_id: number;
   contract: string;
   event_name: string;
   tx_hash: string;
@@ -56,7 +58,8 @@ function requireEvent(row: ChainEventRow, scoreContract: Address): {
   txHash: Hex;
   cursor: DiscoveryCursor;
 } {
-  if (row.event_name !== 'Transfer' || row.contract.toLowerCase() !== scoreContract.toLowerCase()) {
+  if (row.chain_id !== CHAIN_ID_NUM || row.event_name !== 'Transfer'
+    || row.contract !== scoreContract.toLowerCase()) {
     throw new PipelineStepError('chain_events 出现错误的 Score 合约或事件', 'permanent_input');
   }
   if (row.from_addr.toLowerCase() !== ZERO_ADDRESS) {
@@ -120,8 +123,9 @@ export async function discoverWalletRecipes(deadlineAt = Number.POSITIVE_INFINIT
   const contractKey = scoreContract.toLowerCase();
   const cursorKey = `p14:cursor:${CHAIN_ID_NUM}:${contractKey}`;
   const activationKey = `p14:activation:${CHAIN_ID_NUM}:${contractKey}`;
-  const values = await readSystemValues(['last_synced_block', cursorKey, activationKey]);
-  const sourceBlockText = values.get('last_synced_block');
+  const upstreamKey = sourceCursorKey(CHAIN_ID_NUM, contractKey);
+  const values = await readSystemValues([upstreamKey, cursorKey, activationKey]);
+  const sourceBlockText = values.get(upstreamKey);
   const cursorText = values.get(cursorKey);
   const activationText = values.get(activationKey);
   if (!sourceBlockText || !/^\d+$/.test(sourceBlockText)
@@ -131,6 +135,9 @@ export async function discoverWalletRecipes(deadlineAt = Number.POSITIVE_INFINIT
 
   const head = await readClient.getBlockNumber();
   const safeHead = head > 20n ? head - 20n : 0n;
+  if (BigInt(sourceBlockText) > safeHead) {
+    throw new PipelineStepError('source_index_ahead_of_safe_head', 'permanent_input');
+  }
   if (BigInt(sourceBlockText) < safeHead) {
     throw new PipelineStepError('source_index_lagging', 'transient');
   }
@@ -143,8 +150,9 @@ export async function discoverWalletRecipes(deadlineAt = Number.POSITIVE_INFINIT
 
   const { data, error } = await supabaseAdmin
     .from('chain_events')
-    .select('contract,event_name,tx_hash,log_index,block_number,from_addr,to_addr,token_id')
-    .ilike('contract', contractKey)
+    .select('chain_id,contract,event_name,tx_hash,log_index,block_number,from_addr,to_addr,token_id')
+    .eq('chain_id', CHAIN_ID_NUM)
+    .eq('contract', contractKey)
     .eq('event_name', 'Transfer')
     .eq('from_addr', ZERO_ADDRESS)
     .lte('block_number', safeHeadNumber)

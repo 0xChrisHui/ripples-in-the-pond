@@ -155,8 +155,9 @@ async function main() {
   assert(queue.source_score_queue_id, 'P14 行缺少 source_score_queue_id');
   const [sourceQueueResult, chainEventResult, mintEventResult] = await Promise.all([
     db.from('score_nft_queue').select('id,token_id,tx_hash,status,user_id').eq('id', queue.source_score_queue_id).single(),
-    db.from('chain_events').select('contract,event_name,tx_hash,log_index,block_number,from_addr,to_addr,token_id')
-      .ilike('contract', score).eq('tx_hash', queue.source_score_tx_hash).eq('log_index', queue.source_score_log_index).single(),
+    db.from('chain_events').select('chain_id,contract,event_name,tx_hash,log_index,block_number,from_addr,to_addr,token_id')
+      .eq('chain_id', 10).eq('contract', score.toLowerCase())
+      .eq('tx_hash', queue.source_score_tx_hash).eq('log_index', queue.source_score_log_index).single(),
     db.from('mint_events').select('score_queue_id,score_nft_token_id,tx_hash,user_id')
       .eq('score_queue_id', queue.source_score_queue_id).single(),
   ]);
