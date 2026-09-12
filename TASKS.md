@@ -13,7 +13,7 @@
 
 - **P14 live 观察与私密目验**：保持两项每分钟 cron，完成首枚 Pond Echo 上线后的 24h/7d 只读观察；原钱包本人补 `/me#pond-echoes` 私密档案目验。
 - **P15 高速镜像 E4–E5**：没有获批供应商、账号、Range/CORS、额度和清理边界前保持关闭；统一 resolver 安全回退三条永久网关，不阻塞其余 P15 发布闭环。
-- **Phase 11 外部动态证据补档**（不阻塞）：代码与自动 Gate 已完成；等待 `arweave.net` 与 `ario.permagate.io` 恢复后，补 Mainnet Token #1 ready Score 的 cold-start reduced-motion 与日食黑盘复拍。Artist 正式文案以后替换；第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 仅作隔离历史 fixture。
+- **Phase 11 外部动态证据补档**（不阻塞，2026-09-05 历史条件）：代码与自动 Gate 已完成；当时因 `arweave.net` 与 `ario.permagate.io` 瞬时同时失败，未补 Mainnet Token #1 ready Score 的 cold-start reduced-motion 与日食黑盘复拍。该历史状态不代表当前三候选 resolver；Artist 正式文案以后替换，第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 仅作隔离历史 fixture。
 
 ## 📚 历史状态（非 Now）
 
@@ -214,7 +214,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - **Phase 12** — OP Mainnet 上线准备与部署
 - **Phase 13** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
 - **Phase 14（live 观察）** — F1–F7 与首枚主网空投已完成；保持 live，继续 24h/7d 只读观察及原钱包档案目验（`playbook/phase-14/00-overview.md`）
-- **Phase 15（当前）** — 代码闭环、P14 生产终态整合与 test/production migration 050 已完成；收口完整 Gate、整合后 Preview 与 Production 发布（`reviews/2026-09-06-phase-15-final-review.md`）
+- **Phase 15（当前）** — 代码闭环、P14 生产终态整合、test/production migration 050 与整合后 Preview build 已完成；Preview 页面级浏览器验收受 SSO 限制，采用同提交本地 production build 与用户 review 豁免。当前发布 Production 并做线上回归（`reviews/2026-09-13-phase-15-final-review.md`）
 - **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
 - **未排期** — 音效系统扩展（原 P15：26→50 与输入键/音效 id 解耦；待以后重新编号）
 
@@ -264,7 +264,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 
 ## 🚧 Blocked
 
-- **Phase 11 ready Score 最后两项动态证据** — `arweave.net` 与 `ario.permagate.io` 当前同时失败，永久音频无法在验收预算内 ready；因此 cold-start reduced-motion 与日食黑盘复拍必须等外部资源恢复。代码、自动 Gate 与非音频浏览器矩阵均已完成，此阻塞不等于产品代码失败。
+- **Phase 11 ready Score 最后两项动态证据（2026-09-05 历史）** — 当时 `arweave.net` 与 `ario.permagate.io` 瞬时同时失败，cold-start reduced-motion 与日食黑盘未复拍；代码、自动 Gate 与非音频浏览器矩阵已完成。当前 resolver 已采用不同的三候选顺序，此历史项不再描述当前网关状态。
 - **Phase 4A S3** — 前端登录按钮 + useAuth 兼容 + 端到端验证
   - **阻塞原因**：Semi 团队在设计 OAuth 开放登录，现有 API 不确定对外开放
   - **已完成的前置**：S0 JWT 基础设施 ✅ / S1 双验证中间件 ✅ / S2 后端登录端点 ✅

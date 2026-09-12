@@ -20,7 +20,7 @@ function isLoading<T>(slice: ArchiveSlice<T>): boolean {
   return slice.phase === 'idle' || slice.phase === 'loading';
 }
 
-/** `/me` 私人音乐档案：唱片、录音、素材各守住自己的真实状态与故障边界。 */
+/** `/me` 私人音乐档案：唱片、录音、素材、池中回声各自守住状态与故障边界。 */
 export default function MePage() {
   const auth = useAuth();
   const { ownerId, scores, recordings, materials, retry } = useMeArchive({

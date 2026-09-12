@@ -1,0 +1,73 @@
+[
+  {
+    "input": "reviews/evidence/p15-final/routes-warm-home-repeat.json",
+    "measuredAt": "2026-09-12T20:03:51.413Z",
+    "mode": "warm",
+    "route": "/",
+    "requested": 50,
+    "valid": 50,
+    "errors": 0,
+    "metrics": {
+      "responseStart": {
+        "p50": 15.7,
+        "p90": 26.5,
+        "p95": 28.5,
+        "max": 49.6
+      },
+      "fcp": {
+        "p50": 164,
+        "p90": 184,
+        "p95": 200,
+        "max": 204
+      },
+      "shellAt": {
+        "p50": 182.8,
+        "p90": 202.3,
+        "p95": 212.7,
+        "max": 220.2
+      },
+      "firstCirclesAt": {
+        "p50": 182.8,
+        "p90": 202.3,
+        "p95": 212.7,
+        "max": 220.2
+      },
+      "allCirclesAt": {
+        "p50": 182.8,
+        "p90": 202.3,
+        "p95": 212.7,
+        "max": 220.2
+      },
+      "domContentLoaded": {
+        "p50": 113.1,
+        "p90": 131.6,
+        "p95": 142.2,
+        "max": 149.8
+      },
+      "loadEvent": {
+        "p50": 136.4,
+        "p90": 154.5,
+        "p95": 163.7,
+        "max": 179.9
+      },
+      "cls": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "longestTask": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 51,
+        "max": 67
+      },
+      "transferBytes": {
+        "p50": 16785,
+        "p90": 18585,
+        "p95": 18585,
+        "max": 18585
+      }
+    }
+  }
+]

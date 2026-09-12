@@ -42,8 +42,9 @@
 `permanent-audit.json`，gate 为 PASS：
 
 - 从链上 tokenURI 出发恢复 metadata，而不是信任数据库里的 URL。
-- metadata、manifest、Decoder、封面与全部 36 个音频在 ardrive.net、arweave.tokyo、
-  arweave.net 三个网关均为 3/3 同字节；每段音频 hash 与 bytes 均匹配冻结 manifest。
+- metadata、manifest、Decoder、封面与全部 36 个音频共 40 个永久对象均达到至少
+  2/3 网关 quorum，35 个为 3/3、5 个为 2/3；所有成功响应同字节，每段音频 hash
+  与 bytes 均匹配冻结 manifest。
 - 链上 mapping/receipt、P14 队列、永久 metadata、Score #3 source 四方一致。
 - recipe 为 `KRH9G2JDWD55C6VX0F363L7K5K08BSN18W4P`，由 origin 重新派生后的 hash 与 DB 一致。
 
@@ -58,7 +59,7 @@ ready/ended 截图保留在本目录；过程 partial 在最终报告成功写�
 - 两路都覆盖 `idle → loading → ready → playing → ended`；origin/owner/contract 在页面与永久凭证
   两处一致，ready/ended 横向溢出均为 0，console/page error 均为 0。
 - 每路各记录两个 `net::ERR_ABORTED` Fetch 取消事件；36 段全部成功载入并播放，播放器无 error，
-  因此不是媒体失败。三网关独立审计同时证明所有音频可取且字节正确。
+  因此不是媒体失败。三候选网关独立审计证明所有音频至少可由两条路径取得且字节正确。
 - 截图目检通过：手机与桌面均无裁切、遮挡或状态错位。
 
 ## 防重、健康与剩余观察

@@ -1,0 +1,1414 @@
+{
+  "measuredAt": "2026-09-12T19:45:52.194Z",
+  "siteBase": "http://127.0.0.1:3015",
+  "sampleCount": 50,
+  "routes": [
+    "/me",
+    "/artist",
+    "/"
+  ],
+  "duplicateProtected": true,
+  "modifiedLinkProtected": true,
+  "samples": [
+    {
+      "route": "/me",
+      "index": 1,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 43.5,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 108
+    },
+    {
+      "route": "/me",
+      "index": 2,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 41.800000071525574,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/me",
+      "index": 3,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 45.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 99
+    },
+    {
+      "route": "/me",
+      "index": 4,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 41.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 94
+    },
+    {
+      "route": "/me",
+      "index": 5,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 46.10000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 119
+    },
+    {
+      "route": "/me",
+      "index": 6,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 43.39999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 59
+    },
+    {
+      "route": "/me",
+      "index": 7,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51.10000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/me",
+      "index": 8,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.199999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/me",
+      "index": 9,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.89999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 70
+    },
+    {
+      "route": "/me",
+      "index": 10,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.59999990463257,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 105
+    },
+    {
+      "route": "/me",
+      "index": 11,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 48.89999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 72
+    },
+    {
+      "route": "/me",
+      "index": 12,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 46.39999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 85
+    },
+    {
+      "route": "/me",
+      "index": 13,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51.10000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 98
+    },
+    {
+      "route": "/me",
+      "index": 14,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 48.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 111
+    },
+    {
+      "route": "/me",
+      "index": 15,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 95
+    },
+    {
+      "route": "/me",
+      "index": 16,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 100
+    },
+    {
+      "route": "/me",
+      "index": 17,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 73
+    },
+    {
+      "route": "/me",
+      "index": 18,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 52.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 108
+    },
+    {
+      "route": "/me",
+      "index": 19,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 48.699999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 111
+    },
+    {
+      "route": "/me",
+      "index": 20,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 73
+    },
+    {
+      "route": "/me",
+      "index": 21,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.10000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 102
+    },
+    {
+      "route": "/me",
+      "index": 22,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 87
+    },
+    {
+      "route": "/me",
+      "index": 23,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 52,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 109
+    },
+    {
+      "route": "/me",
+      "index": 24,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 35.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 72
+    },
+    {
+      "route": "/me",
+      "index": 25,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 44,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 93
+    },
+    {
+      "route": "/me",
+      "index": 26,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 56
+    },
+    {
+      "route": "/me",
+      "index": 27,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 46,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 91
+    },
+    {
+      "route": "/me",
+      "index": 28,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 43.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 110
+    },
+    {
+      "route": "/me",
+      "index": 29,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.10000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 102
+    },
+    {
+      "route": "/me",
+      "index": 30,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 47.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 73
+    },
+    {
+      "route": "/me",
+      "index": 31,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 48.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/me",
+      "index": 32,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.700000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 109
+    },
+    {
+      "route": "/me",
+      "index": 33,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51.199999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 68
+    },
+    {
+      "route": "/me",
+      "index": 34,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 90
+    },
+    {
+      "route": "/me",
+      "index": 35,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 85
+    },
+    {
+      "route": "/me",
+      "index": 36,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 40.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 73
+    },
+    {
+      "route": "/me",
+      "index": 37,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.59999990463257,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 85
+    },
+    {
+      "route": "/me",
+      "index": 38,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 47.59999990463257,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 103
+    },
+    {
+      "route": "/me",
+      "index": 39,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.800000071525574,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 94
+    },
+    {
+      "route": "/me",
+      "index": 40,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 44.699999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 72
+    },
+    {
+      "route": "/me",
+      "index": 41,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 41.5,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 142
+    },
+    {
+      "route": "/me",
+      "index": 42,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.90000009536743,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 86
+    },
+    {
+      "route": "/me",
+      "index": 43,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 43.90000009536743,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 111
+    },
+    {
+      "route": "/me",
+      "index": 44,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.39999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 107
+    },
+    {
+      "route": "/me",
+      "index": 45,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 48.299999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 90
+    },
+    {
+      "route": "/me",
+      "index": 46,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 46.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 100
+    },
+    {
+      "route": "/me",
+      "index": 47,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 116
+    },
+    {
+      "route": "/me",
+      "index": 48,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 42,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 88
+    },
+    {
+      "route": "/me",
+      "index": 49,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.700000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/me",
+      "index": 50,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 46.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 82
+    },
+    {
+      "route": "/artist",
+      "index": 1,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 88
+    },
+    {
+      "route": "/artist",
+      "index": 2,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 121
+    },
+    {
+      "route": "/artist",
+      "index": 3,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 48.700000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 121
+    },
+    {
+      "route": "/artist",
+      "index": 4,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 42.299999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 121
+    },
+    {
+      "route": "/artist",
+      "index": 5,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.39999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 72
+    },
+    {
+      "route": "/artist",
+      "index": 6,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 71
+    },
+    {
+      "route": "/artist",
+      "index": 7,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.700000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 57
+    },
+    {
+      "route": "/artist",
+      "index": 8,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.10000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 70
+    },
+    {
+      "route": "/artist",
+      "index": 9,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 73
+    },
+    {
+      "route": "/artist",
+      "index": 10,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 40.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 73
+    },
+    {
+      "route": "/artist",
+      "index": 11,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 41.299999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 89
+    },
+    {
+      "route": "/artist",
+      "index": 12,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 46.39999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 85
+    },
+    {
+      "route": "/artist",
+      "index": 13,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 40.199999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 90
+    },
+    {
+      "route": "/artist",
+      "index": 14,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.699999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 70
+    },
+    {
+      "route": "/artist",
+      "index": 15,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 44.10000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 88
+    },
+    {
+      "route": "/artist",
+      "index": 16,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 53.09999990463257,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 104
+    },
+    {
+      "route": "/artist",
+      "index": 17,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.199999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 99
+    },
+    {
+      "route": "/artist",
+      "index": 18,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 43.5,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 108
+    },
+    {
+      "route": "/artist",
+      "index": 19,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 40.300000071525574,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 90
+    },
+    {
+      "route": "/artist",
+      "index": 20,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 46,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/artist",
+      "index": 21,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 39.89999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 89
+    },
+    {
+      "route": "/artist",
+      "index": 22,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 40.700000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/artist",
+      "index": 23,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 42.40000009536743,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 103
+    },
+    {
+      "route": "/artist",
+      "index": 24,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 46.89999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 106
+    },
+    {
+      "route": "/artist",
+      "index": 25,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 73
+    },
+    {
+      "route": "/artist",
+      "index": 26,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.299999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 73
+    },
+    {
+      "route": "/artist",
+      "index": 27,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.800000071525574,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 130
+    },
+    {
+      "route": "/artist",
+      "index": 28,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 42.199999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 59
+    },
+    {
+      "route": "/artist",
+      "index": 29,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 108
+    },
+    {
+      "route": "/artist",
+      "index": 30,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 52.39999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 101
+    },
+    {
+      "route": "/artist",
+      "index": 31,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 47.10000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/artist",
+      "index": 32,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 41.10000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 118
+    },
+    {
+      "route": "/artist",
+      "index": 33,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 72
+    },
+    {
+      "route": "/artist",
+      "index": 34,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.199999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/artist",
+      "index": 35,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 72
+    },
+    {
+      "route": "/artist",
+      "index": 36,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 54.5,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 115
+    },
+    {
+      "route": "/artist",
+      "index": 37,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 56
+    },
+    {
+      "route": "/artist",
+      "index": 38,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 46.90000009536743,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 83
+    },
+    {
+      "route": "/artist",
+      "index": 39,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/artist",
+      "index": 40,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 87
+    },
+    {
+      "route": "/artist",
+      "index": 41,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 41.700000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 88
+    },
+    {
+      "route": "/artist",
+      "index": 42,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.89999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 95
+    },
+    {
+      "route": "/artist",
+      "index": 43,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.800000071525574,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 55
+    },
+    {
+      "route": "/artist",
+      "index": 44,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 46.699999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 72
+    },
+    {
+      "route": "/artist",
+      "index": 45,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 51.300000071525574,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 85
+    },
+    {
+      "route": "/artist",
+      "index": 46,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 44.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 102
+    },
+    {
+      "route": "/artist",
+      "index": 47,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 49.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 70
+    },
+    {
+      "route": "/artist",
+      "index": 48,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 44.5,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 124
+    },
+    {
+      "route": "/artist",
+      "index": 49,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 48.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 134
+    },
+    {
+      "route": "/artist",
+      "index": 50,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 50.89999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 83
+    },
+    {
+      "route": "/",
+      "index": 1,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 94
+    },
+    {
+      "route": "/",
+      "index": 2,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.699999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 77
+    },
+    {
+      "route": "/",
+      "index": 3,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/",
+      "index": 4,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.699999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/",
+      "index": 5,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.700000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 77
+    },
+    {
+      "route": "/",
+      "index": 6,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 37,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/",
+      "index": 7,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19.100000023841858,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 92
+    },
+    {
+      "route": "/",
+      "index": 8,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.90000009536743,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 78
+    },
+    {
+      "route": "/",
+      "index": 9,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/",
+      "index": 10,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.700000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/",
+      "index": 11,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 36.60000002384186,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/",
+      "index": 12,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 17.800000071525574,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/",
+      "index": 13,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.899999976158142,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 78
+    },
+    {
+      "route": "/",
+      "index": 14,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 36.699999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 92
+    },
+    {
+      "route": "/",
+      "index": 15,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.899999976158142,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/",
+      "index": 16,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/",
+      "index": 17,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/",
+      "index": 18,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.5,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 81
+    },
+    {
+      "route": "/",
+      "index": 19,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19.199999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 79
+    },
+    {
+      "route": "/",
+      "index": 20,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 7.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/",
+      "index": 21,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.700000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/",
+      "index": 22,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.300000071525574,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 91
+    },
+    {
+      "route": "/",
+      "index": 23,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.299999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/",
+      "index": 24,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/",
+      "index": 25,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.299999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/",
+      "index": 26,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.399999976158142,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/",
+      "index": 27,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.299999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 78
+    },
+    {
+      "route": "/",
+      "index": 28,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19.199999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 79
+    },
+    {
+      "route": "/",
+      "index": 29,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.399999976158142,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 73
+    },
+    {
+      "route": "/",
+      "index": 30,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 36.59999990463257,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 91
+    },
+    {
+      "route": "/",
+      "index": 31,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/",
+      "index": 32,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.5,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 93
+    },
+    {
+      "route": "/",
+      "index": 33,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19.299999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/",
+      "index": 34,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19.199999928474426,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/",
+      "index": 35,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.5,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 77
+    },
+    {
+      "route": "/",
+      "index": 36,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 73
+    },
+    {
+      "route": "/",
+      "index": 37,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/",
+      "index": 38,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 36.39999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/",
+      "index": 39,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/",
+      "index": 40,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19.399999976158142,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/",
+      "index": 41,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 36.39999997615814,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 75
+    },
+    {
+      "route": "/",
+      "index": 42,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/",
+      "index": 43,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.799999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 82
+    },
+    {
+      "route": "/",
+      "index": 44,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    },
+    {
+      "route": "/",
+      "index": 45,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19.299999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 78
+    },
+    {
+      "route": "/",
+      "index": 46,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19.299999952316284,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 74
+    },
+    {
+      "route": "/",
+      "index": 47,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19.200000047683716,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 79
+    },
+    {
+      "route": "/",
+      "index": 48,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.5,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 80
+    },
+    {
+      "route": "/",
+      "index": 49,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 18.399999976158142,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 80
+    },
+    {
+      "route": "/",
+      "index": 50,
+      "linkMode": "next-link",
+      "feedbackPaintMs": 19,
+      "feedbackVisible": true,
+      "evidence": "cdp-composited-frame",
+      "shellPaintMs": 76
+    }
+  ],
+  "matrix": [
+    {
+      "width": 375,
+      "height": 844,
+      "reduced": true,
+      "circlesReady": true,
+      "glHealth": "forced",
+      "circleCount": 35,
+      "uniqueTracks": 35,
+      "allInteractive": true,
+      "hasHeader": true,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "reduced": false,
+      "circlesReady": true,
+      "glHealth": "forced",
+      "circleCount": 35,
+      "uniqueTracks": 35,
+      "allInteractive": true,
+      "hasHeader": true,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "reduced": false,
+      "circlesReady": true,
+      "glHealth": "forced",
+      "circleCount": 35,
+      "uniqueTracks": 35,
+      "allInteractive": true,
+      "hasHeader": true,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "reduced": false,
+      "circlesReady": true,
+      "glHealth": "forced",
+      "circleCount": 35,
+      "uniqueTracks": 35,
+      "allInteractive": true,
+      "hasHeader": true,
+      "horizontalOverflow": false
+    }
+  ]
+}

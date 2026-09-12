@@ -1,0 +1,552 @@
+{
+  "schemaVersion": 3,
+  "measuredAt": "2026-09-12T20:43:41.759Z",
+  "siteBase": "http://127.0.0.1:3015",
+  "cdpBase": "http://127.0.0.1:9337",
+  "identity": {
+    "repositoryCommit": "db7f4d6d5f36b615efae2a3ff536754adf2a03d1",
+    "worktreeDirty": false,
+    "nextBuildId": "OVSGMDwlhrDwg92YUWRZ2"
+  },
+  "home": {
+    "glHealth": "healthy",
+    "observerSupport": {
+      "longTask": true,
+      "layoutShift": true
+    },
+    "assets": [
+      "/_next/static/chunks/1275-4f0a65007da7018e.js",
+      "/_next/static/chunks/19c43377-8d762237c2b935ca.js",
+      "/_next/static/chunks/2466.3b7bda1489392a3e.js",
+      "/_next/static/chunks/2583.5aa542d2d156f8ed.js",
+      "/_next/static/chunks/278-3fa0e0507943698f.js",
+      "/_next/static/chunks/2853-1f5dc8dcb9d47715.js",
+      "/_next/static/chunks/3ac1a808.04afbaca6c980aae.js",
+      "/_next/static/chunks/4335-aaa63f69f9ad43c9.js",
+      "/_next/static/chunks/4488-dd8161452cd70aa8.js",
+      "/_next/static/chunks/453-07da4ef44207eabb.js",
+      "/_next/static/chunks/6c3d4463.892c8858be5c3971.js",
+      "/_next/static/chunks/7450-6cb93d096aa9a35e.js",
+      "/_next/static/chunks/8254-4398f0ac809e4ccf.js",
+      "/_next/static/chunks/8782-016cac043a37dacc.js",
+      "/_next/static/chunks/9867.9bc68208ab8ab2b5.js",
+      "/_next/static/chunks/app/error-a4255505e4dbdaae.js",
+      "/_next/static/chunks/app/layout-fc6d4fc4d5f551ea.js",
+      "/_next/static/chunks/app/not-found-a6ddd0dae01fa1aa.js",
+      "/_next/static/chunks/app/page-e15c34a4aa498da3.js",
+      "/_next/static/chunks/b9c24eb3-164aed920710ae2d.js",
+      "/_next/static/chunks/dcaccd7c.af3aef1610197ec7.js",
+      "/_next/static/chunks/eeea44fb-fe1f525bb9b5e869.js",
+      "/_next/static/chunks/main-app-7f252c39109b8ab2.js",
+      "/_next/static/chunks/webpack-f876437f49147211.js",
+      "/_next/static/css/c9f767131cec4bc9.css",
+      "/_next/static/css/ffa8c5b64e3165f6.css",
+      "/_next/static/media/7d4881bb7e1bf84d-s.p.woff2",
+      "/_next/static/media/fb751edd4b3a9ca4-s.p.woff2"
+    ],
+    "documentRaf": {
+      "sampleDurationMs": 10508.299999952316,
+      "count": 589,
+      "rateHz": 56.05093116894957,
+      "p95DeltaMs": 18.699999999999818,
+      "maxDeltaMs": 19.700000000000728
+    },
+    "longTasks": [
+      {
+        "startTime": 65.59999990463257,
+        "duration": 58,
+        "attribution": [
+          {
+            "name": "unknown",
+            "containerType": "window",
+            "containerName": "",
+            "containerId": "",
+            "containerSrc": ""
+          }
+        ]
+      }
+    ],
+    "longestTaskMs": 58,
+    "cls": 0,
+    "layoutShifts": [],
+    "heap": {
+      "beforeBytes": 39148696,
+      "afterBytes": 38961208,
+      "deltaBytes": -187488
+    },
+    "consoleErrors": [],
+    "pageErrors": []
+  },
+  "echo": {
+    "cacheBoundary": {
+      "cold": "10 个 cold 样本各自在导航前清除浏览器 HTTP cache 与本站 Cache Storage；保留 cookies",
+      "hot": "第 10 个 cold 完成后，同一 CDP target 连续 10 次完整导航，不再清缓存",
+      "continuity": "10 个 hot 后再导航一次且不清缓存，观察第 5 段完成排程",
+      "scope": "仅证明浏览器侧冷/热边界；未清除 Preview、CDN 或服务端缓存"
+    },
+    "actualAudibilityVerified": false,
+    "cold": {
+      "requested": 10,
+      "valid": 10,
+      "p95Method": "nearest-rank",
+      "p95ExpectedFirstSoundMs": 433.7000000476837,
+      "samples": [
+        {
+          "classification": "cold",
+          "index": 1,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 5063.200000047684,
+            "scheduledAt": 5436.900000095367,
+            "intentToScheduledMs": 373.7000000476837,
+            "expectedFirstSoundMs": 433.7000000476837,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "cold",
+          "index": 2,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 2699.5,
+            "scheduledAt": 2761,
+            "intentToScheduledMs": 61.5,
+            "expectedFirstSoundMs": 121.5,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "cold",
+          "index": 3,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 2385.399999976158,
+            "scheduledAt": 2458.2000000476837,
+            "intentToScheduledMs": 72.80000007152557,
+            "expectedFirstSoundMs": 132.80000007152557,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "cold",
+          "index": 4,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 2064.2999999523163,
+            "scheduledAt": 2119.0999999046326,
+            "intentToScheduledMs": 54.799999952316284,
+            "expectedFirstSoundMs": 114.79999995231628,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "cold",
+          "index": 5,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 2181.5999999046326,
+            "scheduledAt": 2232.7999999523163,
+            "intentToScheduledMs": 51.200000047683716,
+            "expectedFirstSoundMs": 111.20000004768372,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "cold",
+          "index": 6,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 2088.600000023842,
+            "scheduledAt": 2159.5,
+            "intentToScheduledMs": 70.89999997615814,
+            "expectedFirstSoundMs": 130.89999997615814,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "cold",
+          "index": 7,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 2055.899999976158,
+            "scheduledAt": 2116.6999999284744,
+            "intentToScheduledMs": 60.799999952316284,
+            "expectedFirstSoundMs": 120.79999995231628,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "cold",
+          "index": 8,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 2069.399999976158,
+            "scheduledAt": 2136.7999999523163,
+            "intentToScheduledMs": 67.39999997615814,
+            "expectedFirstSoundMs": 127.39999997615814,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "cold",
+          "index": 9,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 2314.899999976158,
+            "scheduledAt": 2366.600000023842,
+            "intentToScheduledMs": 51.700000047683716,
+            "expectedFirstSoundMs": 111.70000004768372,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "cold",
+          "index": 10,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 2120.2000000476837,
+            "scheduledAt": 2172.600000023842,
+            "intentToScheduledMs": 52.39999997615814,
+            "expectedFirstSoundMs": 112.39999997615814,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    "hot": {
+      "requested": 10,
+      "valid": 10,
+      "p95Method": "nearest-rank",
+      "p95ExpectedFirstSoundMs": 125.39999997615814,
+      "samples": [
+        {
+          "classification": "hot",
+          "index": 1,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 898.3000000715256,
+            "scheduledAt": 957.5,
+            "intentToScheduledMs": 59.199999928474426,
+            "expectedFirstSoundMs": 119.19999992847443,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "hot",
+          "index": 2,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 1220.5999999046326,
+            "scheduledAt": 1283.6999999284744,
+            "intentToScheduledMs": 63.10000002384186,
+            "expectedFirstSoundMs": 123.10000002384186,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "hot",
+          "index": 3,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 901.1000000238419,
+            "scheduledAt": 963.5,
+            "intentToScheduledMs": 62.39999997615814,
+            "expectedFirstSoundMs": 122.39999997615814,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "hot",
+          "index": 4,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 909.2000000476837,
+            "scheduledAt": 958.9000000953674,
+            "intentToScheduledMs": 49.700000047683716,
+            "expectedFirstSoundMs": 109.70000004768372,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "hot",
+          "index": 5,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 875.3999999761581,
+            "scheduledAt": 939,
+            "intentToScheduledMs": 63.60000002384186,
+            "expectedFirstSoundMs": 123.60000002384186,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "hot",
+          "index": 6,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 1216.6999999284744,
+            "scheduledAt": 1281.7999999523163,
+            "intentToScheduledMs": 65.10000002384186,
+            "expectedFirstSoundMs": 125.10000002384186,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "hot",
+          "index": 7,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 979.5,
+            "scheduledAt": 1044.8999999761581,
+            "intentToScheduledMs": 65.39999997615814,
+            "expectedFirstSoundMs": 125.39999997615814,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "hot",
+          "index": 8,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 904.3999999761581,
+            "scheduledAt": 967.5,
+            "intentToScheduledMs": 63.10000002384186,
+            "expectedFirstSoundMs": 123.10000002384186,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "hot",
+          "index": 9,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 908.8000000715256,
+            "scheduledAt": 959.5,
+            "intentToScheduledMs": 50.699999928474426,
+            "expectedFirstSoundMs": 110.69999992847443,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "classification": "hot",
+          "index": 10,
+          "ui": {
+            "state": "ready",
+            "status": "可以播放",
+            "action": "播放完整作品",
+            "actionDisabled": false
+          },
+          "playback": {
+            "state": "playing",
+            "intentAt": 935,
+            "scheduledAt": 982.7000000476837,
+            "intentToScheduledMs": 47.700000047683716,
+            "expectedFirstSoundMs": 107.70000004768372,
+            "expectedBasis": "排程 mark 加播放器 60ms 初始 anchor",
+            "actualAudibilityVerified": false
+          },
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    "continuity": {
+      "state": "playing",
+      "currentIndex": 1,
+      "currentSegment": 2,
+      "allResourcesReady": true,
+      "fifthSegmentScheduled": true,
+      "actualAudibilityVerified": false,
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  },
+  "checks": {
+    "identityPresent": true,
+    "glHealthy": true,
+    "documentRafWindow": true,
+    "longTaskObserver": true,
+    "longestTask200": true,
+    "layoutShiftObserver": true,
+    "cls01": true,
+    "noHomeRuntimeErrors": true,
+    "echoColdTenValid": true,
+    "echoColdP95ExpectedFirstSound2000": true,
+    "echoHotTenValid": true,
+    "echoHotP95ExpectedFirstSound500": true,
+    "echoContinuityFifthScheduled": true,
+    "noEchoRuntimeErrors": true
+  },
+  "pass": true
+}

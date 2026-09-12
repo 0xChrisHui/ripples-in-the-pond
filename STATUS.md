@@ -30,13 +30,13 @@
 
 **P12 完成（2026-09-01）**：7 天软启动窗口结束。本次只读终检确认 `/api/health` HTTP 200、DB/钱包正常、双队列无积压、manual review 为 0、`/score/1` HTTP 200，三份 OP Mainnet 合约均有字节码；最终记录见 `reviews/2026-08-23-phase-12-launch-review.md`。后续 health、cron、队列、余额与额度转为日常运维，不再占阶段待办。
 
-**P11 当前（2026-09-05）**：**代码与自动 Gate 已完成。** Track A、Track B B1–B5、Track C C0–C3、Track D D1–D3、Track E E0–E4 与 ARCHITECTURE v3/当前产品定位同步均已落地；C 的竞态、刷新反馈、坏封面与坏缓存已修，Artist stats API 已做到字段级局部容错且不再输出旧空投语义。Score 滚动热修已把生产 `/score/[id]` 的鼠标视差与滚轮景深解耦，纵向阅读页不再拦截滚轮；loading 同步补成可滚动的 Hero + 永久档案两屏结构。最终 `scripts/verify.sh` 全绿：TypeScript、ESLint、production build（34/34）与 Forge 42/42 全部通过；首页构建产物对 Score data/playback/ledger/session 的禁入模式仍为 0 命中。最终浏览器矩阵中 Artist 375/768/1024/1440 四视口与 `/me` 未登录边界通过，控制台 0 error。**未完成的只有用户本机滚动目验与外部动态证据**：Mainnet Token #1 的 ready Score cold-start reduced-motion 与日食黑盘复拍当前被 `arweave.net`、`ario.permagate.io` 两个网关同时失败阻塞；这不是代码 Gate 失败，资源恢复后必须补证，不能提前写通过。第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 只作隔离 fixture。Artist 正式文案仍待用户以后替换，但不再阻塞代码完成。
+**P11 当时状态（2026-09-05，历史）**：**代码与自动 Gate 已完成。** Track A、Track B B1–B5、Track C C0–C3、Track D D1–D3、Track E E0–E4 与 ARCHITECTURE v3/当时产品定位同步均已落地；C 的竞态、刷新反馈、坏封面与坏缓存已修，Artist stats API 已做到字段级局部容错且不再输出旧空投语义。Score 滚动热修已把生产 `/score/[id]` 的鼠标视差与滚轮景深解耦，纵向阅读页不再拦截滚轮；loading 同步补成可滚动的 Hero + 永久档案两屏结构。最终 `scripts/verify.sh` 全绿：TypeScript、ESLint、production build（34/34）与 Forge 42/42 全部通过；首页构建产物对 Score data/playback/ledger/session 的禁入模式仍为 0 命中。最终浏览器矩阵中 Artist 375/768/1024/1440 四视口与 `/me` 未登录边界通过，控制台 0 error。**当时未完成的只有用户本机滚动目验与外部动态证据**：Mainnet Token #1 的 ready Score cold-start reduced-motion 与日食黑盘复拍曾被 `arweave.net`、`ario.permagate.io` 同时失败阻塞；该瞬时外部状态不代表当前 resolver 候选或可用性。第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 只作隔离 fixture。Artist 正式文案仍待用户以后替换，但不再阻塞代码完成。
 
 **P11 正式发布（2026-09-06）**：发布提交 `2e55d65` 已推送 `main`，Vercel Production 成功。正式域名 `/`、`/artist`、`/me`、`/score/1` 均 HTTP 200；Artist 草稿标识、私人音乐档案、Score 分享入口与永久凭证均命中新版 SSR 内容。受保护 `/api/health` 使用 Bearer 验证为 DB/钱包正常、两队列 0 积压/0 失败。双 Arweave 网关恢复后的 Token #1 动态补证与 Artist 正式文案仍是开放项，不阻塞发布。
 
-**P14 主网 live（2026-09-11）**：P14-0/A/B/C/E/D、OP Sepolia E2E 与 F1–F7 主路径均已完成。真实新钱包 `0x456b...7708` 的 Score #3 位于区块 `156746674`，严格晚于 cutoff `156738598`；observe 固化唯一 eligible/pending 后，经用户 live Gate 自动生成 ECHO #1。metadata txid `E4JV...KU88`，mint tx `0x2680...68e8`，区块 `156759068`，全程 0 retry/0 error。链/DB/metadata/Score source 四方一致；metadata、manifest、Decoder、封面和 36 段音频在三网关全部同字节；375/1440 两视口各完整播放 1–36 段并以 `4:29/4:29` ended，0 overflow、0 console/page error。终检 health 为 1 success / 2 excluded / 0 active / 0 failed / 0 manual review，alerts 空。证据见 `reviews/evidence/p14-f7/README.md`。**当前继续 24h/7d live 观察；用户登录原钱包后的 `/me#pond-echoes` 只剩一次私密会话人工目验。**
+**P14 主网 live（2026-09-11）**：P14-0/A/B/C/E/D、OP Sepolia E2E 与 F1–F7 主路径均已完成。真实新钱包 `0x456b...7708` 的 Score #3 位于区块 `156746674`，严格晚于 cutoff `156738598`；observe 固化唯一 eligible/pending 后，经用户 live Gate 自动生成 ECHO #1。metadata txid `E4JV...KU88`，mint tx `0x2680...68e8`，区块 `156759068`，全程 0 retry/0 error。链/DB/metadata/Score source 四方一致；40 个永久对象全部达到至少 2/3 网关 quorum，成功响应同字节；375/1440 两视口各完整播放 1–36 段并以 `4:29/4:29` ended，0 overflow、0 console/page error。终检 health 为 1 success / 2 excluded / 0 active / 0 failed / 0 manual review，alerts 空。证据见 `reviews/evidence/p14-f7/README.md`。**当前继续 24h/7d live 观察；用户登录原钱包后的 `/me#pond-echoes` 只剩一次私密会话人工目验。**
 
-**P15 实施进度（2026-09-06）**：隔离分支 `codex/p15-smooth-playback` 已完成 P15-0、A、B、C、E0–E3，以及不依赖新供应商的 D resolver/Score/P14 分批播放代码；50 次热导航、10 次冷启动、四视口 fallback 和专项合同验证通过，完整 `scripts/verify.sh` 全绿。**尚未完结**：主线程长任务仍超过 200ms；真实登录态、首声、健康 GL、移动设备、断站与 P14 永久 Decoder 没有完整证据；E4–E5 镜像服务未获批，049 migration 未应用，Preview/Production 未部署。详见 `reviews/2026-09-06-phase-15-final-review.md`。
+**P15 发布候选（2026-09-13）**：P15-0/A/B/C/D/E 与 F 发布前 Gate 已完成；F 的 Production rollout/线上 smoke 尚待执行。`origin/main@58ed270` 的 P14 live 终态及恢复状态机已合入。050 migration 已在 P14 test 与 production 应用，test RPC 重放幂等通过。150 次真实 Link 与初始 300 次冷热直达有效；初始热首页圆圈 p95 835.9ms、`/me` 单次 Long Task 309ms 两个离群点分别经独立 50 次复测降为 p95 212.7ms、max 176ms，原始证据保留。干净提交 `db7f4d6` 的首页 glHealth 健康、Long Task max 58ms、CLS 0；Pond Echo 10 次 cold 排程预计首声 p95 433.7ms、10 次 hot p95 125.4ms，第 5 段排程通过。Preview 页面受 SSO 保护，真实双账号、物理手机、人耳听音及未覆盖设备/故障矩阵按用户“剩余 review 无伤大雅”转发布后观察。E4–E5 新镜像因无获批供应商保持关闭；2026-09-11 快照中 40 个永久对象全部达到至少 2/3 网关 quorum。详见 `reviews/2026-09-13-phase-15-final-review.md`。
 
 **P8-L 动态验收微调（2026-08-23）**：视差/流场上限微调已完成。真透明 R3 最终维修已完成浏览器自动复验：球网格改为挂载时绑定独立 FBO layer，水上实体主体最后覆盖湿背景，水下球保留水纹；完全出水球中心点击时涟漪只绕过主体，`alphaFlicker` 开启后主体覆盖仍稳定。**2026-08-26 用户最终目验确认 R3 与 L 线“活而不乱”合适，验收门已关闭。**
 
@@ -89,7 +89,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：完成 P15 同步生产终态后的完整 Gate 与独立 Preview 复验；随后发布 Production 并做公开路由、永久播放和 P14 队列健康回归。P14 继续 `live` 与两项每分钟 cron 的 24h/7d 只读观察，用户私密 `/me#pond-echoes` 目验独立保留。
+**当前权威下一步**：将 P15 发布候选快进到 `main`，等待 Production 成功后做公开核心路由、Pond Echo、三网关与 P14 队列健康回归。P14 继续 `live` 与两项每分钟 cron 的 24h/7d 只读观察，用户私密 `/me#pond-echoes` 目验独立保留。
 
 ---
 

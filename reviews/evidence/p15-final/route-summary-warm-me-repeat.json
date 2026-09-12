@@ -1,0 +1,73 @@
+[
+  {
+    "input": "reviews/evidence/p15-final/routes-warm-me-repeat.json",
+    "measuredAt": "2026-09-12T19:46:37.225Z",
+    "mode": "warm",
+    "route": "/me",
+    "requested": 50,
+    "valid": 50,
+    "errors": 0,
+    "metrics": {
+      "responseStart": {
+        "p50": 15.4,
+        "p90": 17.9,
+        "p95": 18.7,
+        "max": 25
+      },
+      "fcp": {
+        "p50": 164,
+        "p90": 192,
+        "p95": 208,
+        "max": 236
+      },
+      "shellAt": {
+        "p50": 187.3,
+        "p90": 233.6,
+        "p95": 264.2,
+        "max": 284.3
+      },
+      "firstCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "allCirclesAt": {
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "max": null
+      },
+      "domContentLoaded": {
+        "p50": 141.1,
+        "p90": 181.2,
+        "p95": 194.2,
+        "max": 235.2
+      },
+      "loadEvent": {
+        "p50": 175.6,
+        "p90": 218,
+        "p95": 251.8,
+        "max": 274.5
+      },
+      "cls": {
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "longestTask": {
+        "p50": 84,
+        "p90": 119,
+        "p95": 131,
+        "max": 176
+      },
+      "transferBytes": {
+        "p50": 1300,
+        "p90": 8305,
+        "p95": 8305,
+        "max": 8305
+      }
+    }
+  }
+]

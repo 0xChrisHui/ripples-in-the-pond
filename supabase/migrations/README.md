@@ -2,6 +2,8 @@
 
 Migration 文件按 **Phase** 分子目录（目录文件数 ≤ 8 硬线触发的重组，见 CONVENTIONS.md §1.2）。
 
+> ⚠ Supabase CLI 只自动扫描 `supabase/migrations/` 顶层，不会递归发现这些 Phase 子目录。禁止从仓库根直接用 `db push` 判断或部署嵌套 migration，也不要按 CLI 提示把已落地版本 `repair --status reverted`。发布时应在隔离临时工作区只放本次单个 migration，先 dry-run 确认唯一文件，再 push 和 read-back。
+
 ## 按编号顺序执行
 
 执行顺序 = **phase 子目录序（001-006 → phase-3 → phase-4 → … → phase-10）→ 子目录内编号递增**。
@@ -65,7 +67,7 @@ Migration 文件按 **Phase** 分子目录（目录文件数 ≤ 8 硬线触发�
 
 ### Phase 15（`phase-15/`）
 
-- `050_pending_scores_client_draft_id.sql` — C3 为本机草稿增加用户内幂等身份，并串行化同曲目并发保存
+- `050_pending_scores_client_draft_id.sql` — C3 为本机草稿增加用户内幂等身份，并串行化同曲目并发保存；2026-09-13 已应用到 P14 test 与 production，远端 history/read-back 及 test RPC 重放幂等均通过
 
 ## 新人第一次建库
 
