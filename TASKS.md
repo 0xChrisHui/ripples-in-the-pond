@@ -7,13 +7,23 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 11 外部动态证据补档**（2026-09-02）：P11 代码与自动 Gate 已完成，最终 `scripts/verify.sh` 全绿（TypeScript、ESLint、production build 34/34、Forge 42/42）；Artist 四视口、`/me` 未登录边界与控制台 0 error 已通过。**当前唯一 Now：等待 `arweave.net` 与 `ario.permagate.io` 恢复后，补 Mainnet Token #1 ready Score 的 cold-start reduced-motion 与日食黑盘复拍。**网关同时失败期间不改已全绿代码、不把 fallback 冒充主演出通过。Artist 正式文案以后替换；第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 仅作隔离历史 fixture。
+- **Phase 15 发布收口**：在已同步 P14 生产终态、test/production 050 migration 和独立 Preview 构建成功的基础上，重跑完整工程 Gate、更新最终证据，并完成 Production 发布与公开回归。
+
+## ⏳ Later / 开放项
+
+- **P14 live 观察与私密目验**：保持两项每分钟 cron，完成首枚 Pond Echo 上线后的 24h/7d 只读观察；原钱包本人补 `/me#pond-echoes` 私密档案目验。
+- **P15 高速镜像 E4–E5**：没有获批供应商、账号、Range/CORS、额度和清理边界前保持关闭；统一 resolver 安全回退三条永久网关，不阻塞其余 P15 发布闭环。
+- **Phase 11 外部动态证据补档**（不阻塞）：代码与自动 Gate 已完成；等待 `arweave.net` 与 `ario.permagate.io` 恢复后，补 Mainnet Token #1 ready Score 的 cold-start reduced-motion 与日食黑盘复拍。Artist 正式文案以后替换；第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 仅作隔离历史 fixture。
+
+## 📚 历史状态（非 Now）
+
+- **Phase 14 主网 live ✅**（2026-09-11）：cutoff 后真实 Score #3 自动触发 ECHO #1；链、数据库、metadata、永久资源和双视口 36/36 长播均通过，当前只剩观察窗口与私密登录目验。
 
 - **Phase 8 首页迁移 ✅**（2026-08-26）：R3 与 L 线“活而不乱”最终目验通过；当前 `/test3` 已替代默认首页，生产路由隐藏调参/诊断工具，`/v1` 保留旧 SVG 版本。完整 `verify.sh` 与三路由烟测全绿。
 
-- **Phase 12 并行软启动观察**：OP Mainnet 三合约、数据切换、Vercel 主网生产、4 个 cron、Material/Score 两条真实铸造与 `/score/1` 浏览器播放均已通过；一次性 deployer 已退权、转回余额并销毁私钥。继续按既定频率检查 health、cron、双队列与告警，不改变本轮唯一 Now。
+- **Phase 12 已完结 ✅**（2026-09-01）：OP Mainnet 上线、七天软启动与最终只读健康复核均完成；health、cron、双队列、余额和额度转为日常运维观察。
 
-- **近期完成**：P12 主网上线代码已在 `main@71872d8` 部署生产；Material #24/#7/#34 与 Score #1 主网 smoke 成功，公开页、OG、metadata、animation 播放通过。独立热修 commit `8ce2514` 已合入 `main`，失败的 ScoreNFT 记录不再误显“上链中”。
+- **近期完成**：工作树堆积已在 `codex/worktree-cleanup` 干净分支收束；`references/` 全部本地化，Phase 13 半成品 PRD 与 P9 过程证据归档；P10 Track F 索引补齐；P12 最终 Review 和 P11-0 文档落盘。
 
 - **（历史·2026-07-05 冻结）Phase 8-L**：Wave 0+1 已合并入 main（35 个新 flag 默认 false）。两条待办线由用户定先后：
   - ① **Wave 2 收口**：splashIntro + /test 集中验收 + S8/F9 默认值拍板 + 真机压测
@@ -197,31 +207,33 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 ## ⏭⏭⏭ 之后（2026-06-04 新定，九段拆分）
 
 - **Phase 7（已完结 ✅，2026-05-16）** — 修严重 BUG + Semi 社区钱包 + 全站提速
-- **Phase 8（当前）** — 水塘视觉重设计（首页从星空改水塘）
+- **Phase 8（已完成）** — 水塘视觉重设计（首页从星空改水塘）
 - **Phase 9** — 按键动画优化
 - **Phase 10** — 分享转发（/score 加 X/微博/复制链接）+ 海报/link 下载 + 债务收口 + 后端 bug 修复（**2026-07-05 收窄**：原「组件升级/小球 36→35/特殊球/5 大球」作废；playbook `playbook/phase-10/00-overview.md`）
 - **Phase 11** — 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
 - **Phase 12** — OP Mainnet 上线准备与部署
 - **Phase 13** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
-- **Phase 14（当前）** — 钱包配方音乐 NFT 自动空投（v2 详细 playbook 已冻结，尚未写业务代码；`playbook/phase-14/00-overview.md`）
-- **Phase 15** — 仓库内无外部依赖代码已在 `codex/p15-smooth-playback` 完成；等待 P14 干净边界后先应用 049 migration，再做 Preview 登录态/首声/长任务/真机/断站 Gate（`reviews/2026-09-06-phase-15-final-review.md`）
+- **Phase 14（live 观察）** — F1–F7 与首枚主网空投已完成；保持 live，继续 24h/7d 只读观察及原钱包档案目验（`playbook/phase-14/00-overview.md`）
+- **Phase 15（当前）** — 代码闭环、P14 生产终态整合与 test/production migration 050 已完成；收口完整 Gate、整合后 Preview 与 Production 发布（`reviews/2026-09-06-phase-15-final-review.md`）
 - **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
 - **未排期** — 音效系统扩展（原 P15：26→50 与输入键/音效 id 解耦；待以后重新编号）
 
-### Phase 14 当前看板（2026-09-05）
+### Phase 14 live 观察看板（2026-09-11）
 
 - [x] v2 核心规则：首次 Score mint、终身一枚、可转让、不补历史、36 位 recipe、独立 ERC-721。
 - [x] 详细 playbook：`P14-0 → A → B → C → E → D → F` 七轨、异常矩阵、测试网/主网双 Gate。
 - [x] 本地素材预盘点：`public/the36` 实为 36 个不同 MP3（A–Z + 0–9），不是 35 个。
-- [ ] **当前唯一 Next：P14-0 产品/合约/权限决策表。**
-- [ ] P14-A 36 段时长/hash/Arweave 永久冻结。
-- [ ] P14-B recipe v1 与 metadata/data schema。
-- [ ] P14-C 新合约与 durable queue 地基。
-- [ ] P14-E0 与用户共同拍板视觉；之后才做播放器、封面与永久 Decoder。
-- [ ] P14-D 独立发现器与自动空投；不得修改 Score 成功路径。
-- [ ] P14-F OP Sepolia E2E、主网部署、observe、live 与首枚真实空投。
+- [x] P14-0 产品/合约/权限决策表。
+- [x] P14-A 36 段时长/hash/Arweave 永久冻结。
+- [x] P14-B recipe v1 与 metadata/data schema。
+- [x] P14-C 新合约与 durable queue 地基。
+- [x] P14-E 视觉、播放器、封面与永久 Decoder。
+- [x] P14-D 独立发现器与自动空投；Score 成功路径保持独立。
+- [x] P14-F7 主路径：真实 Score #3 触发 ECHO #1；live 状态机、永久性四方对账与 375/1440 完整 36/36 长播通过。
+- [ ] P14-F7/F8 观察收口：完成 24h/7d health/队列/余额/网关观察，并由原钱包在 `/me#pond-echoes` 做一次私密登录态目验。
+- [ ] 保持 live 与每分钟 cron，完成 24h/7d 观察后写 F8 最终报告；该观察不占 P15 的唯一 Now。
 
-> 连续执行目标：所有产品/视觉/外部写入判断集中在命名 Gate；每个已授权闭环尽量一次跑完并留证据。仍遵守 `AGENTS.md`：每个独立小闭环通过后停下等“继续”，主网部署与 live 永不合并授权。
+> 生产当前为 `live`：首枚真实 ECHO 已成功；严重异常先切 off 并保留现场，不删除队列、不回退 cutoff、不重传未知上传。
 
 ### Phase 8 Scope（当前任务）
 
@@ -262,6 +274,9 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 ---
 
 ## ✅ Done
+
+- **[Phase 11 正式发布]** ✅ 完成（2026-09-06）— 发布提交 `2e55d65` 已进入 `main` 并由 Vercel Production 成功部署；`/`、`/artist`、`/me`、`/score/1` 新 UI 与受保护健康检查均完成线上冒烟。外部动态补证与 Artist 正式文案保留为非阻塞开放项。
+- **[Phase 9 最终封存]** ✅ 完成（2026-09-05）— 33 键 / 33 唯一音效 / 33 生产动画已通过最终静态审计、浏览器压力 Gate、首页同步、Production 发布与线上复验；P9 遗留项为 0，后续体感反馈转独立热修或新阶段。
 
 - **[Phase 11 代码与自动 Gate]** ✅ 完成（2026-09-02）— A–E 代码、C2/C3 档案七态与局部失败、Artist 草稿页及字段级 stats 容错、ARCH 当前空投语义清理、第二 Token deferred 决策均闭合；C 的竞态/刷新/坏封面/坏缓存已修。最终 verify：production build 34/34、Forge 42/42；Artist 375/768/1024/1440 与 `/me` 未登录矩阵通过，console 0。仅外部 Arweave 恢复后的 ready Score 两项动态证据留在 Blocked。
 - **[Phase 7 Track A A2]** ✅ 完成（2026-05-15）— AirdropNFT v2 加 `_uriSet` 防 MINTER 私钥泄露后改 metadata：

@@ -1,7 +1,7 @@
 # P14 F4 — OP Mainnet 部署前只读对账
 
 时间：2026-09-11（Asia/Shanghai）
-状态：预检进行中；尚未广播 P14 主网交易，Production 仍未配置 P14，等价于 `off`。
+状态：F4/F5 已完成；主网合约、production migration 与 off 部署均已验证。
 
 ## ScoreNFT 历史集合
 
@@ -43,4 +43,20 @@ Token #2 是已归因的历史 chain-only 记录，不是未知 mint。链上供
    `supabase db push --linked`。
 5. 重新采样 head/safe head/cursor、运行本目录脚本，确认历史集合仍一致。
 
-本轮全部为只读 RPC/数据库查询；没有迁移、转账、合约部署或 Vercel Production 写入。
+上方 F4 预检轮全部为只读 RPC/数据库查询；F5 的生产写入结果记录如下。
+
+## F5 实际部署结果
+
+- migration 049 已对 production project `uupobbgnhpattyxhxvmc` 执行；两表 RLS 开启，
+  anon/authenticated 无读权限，5 个 service-role RPC 齐全，初始行数为 0。
+- Pond Echoes / ECHO：`0xd2E884FA06C9a9BDef2350956cc4216d3E2B476c`。
+- deploy tx：`0xebb5ade46ec1ad3578b7344e20c8c136ffe12233b0438ea97666057e9bf379ba`，
+  block `156737905`，gas used `2,453,984`。
+- 链上 runtime 与本地编译 Keccak 均为
+  `0x62a0f5f7859bad946ed1ebaa5020de379e2919065f0bfdd6dc83215ef4582a7c`；
+  Etherscan `Pass - Verified`。
+- owner/admin 为 `0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722`，minter 为
+  `0x306D3A445b1fc7a789639fa9115e308a34231633`；一次性 deployer 的 admin/minter
+  均为 false，初始 supply 为 0。
+- 首次 Production deployment `dpl_9DWWZwDtXNpQ8dVReR3iQGadA1HV` 已 Ready 并绑定
+  `pond-ripple.xyz`；受保护 health 证明 mode=off、DB/角色/永久资源可达、P14 队列为空。

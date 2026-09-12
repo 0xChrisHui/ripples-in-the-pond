@@ -1,5 +1,8 @@
 # Phase 10 — Track F：解码器 postMessage 控制接口
 
+> **完成状态（2026-08-23）**：协议 v1 已随 P12-A1 实现、完成浏览器验收并上传 Arweave；
+> 新 Decoder txid `NMCj...Zmb0` 已切入三环境，主网 ScoreNFT tokenId 1 真实播放通过。
+
 > **来源**：2026-07-11 P13（Semi 生态合作）需求会话。Semi NFT 详情页要做"全局播放器 + 底部
 > 迷你条（播放/暂停、×、进度）"，迷你条隔着 iframe 控制我方解码器，唯一正规途径 =
 > postMessage 消息桥。现解码器只有内部 `togglePlay()`（`src/score-decoder/index.html:318`），
@@ -14,8 +17,8 @@
 > （数量无关化 + 音效表 v2 兼容）**同批实施、一次重传 Arweave**；若排期错开也允许各自
 > 重传（只有最终 txid 会上主网，中间版本无成本残留）。
 >
-> **对外契约**：`playbook/phase-13/20-semi-prd2-global-miniplayer.md` 附录 A 是本协议的对外拷贝，
-> **规范权威在本文件 D-F1**，两处必须一致，改动时同步。
+> **对外契约**：Phase 13 的 Semi PRD 目前是 `references/phase-13-drafts/` 下的本地草稿，
+> 不进入版本控制；**规范权威始终是本文件 D-F1**，正式发送前再从这里同步对外拷贝。
 >
 > **核心交付物**：解码器新版（含协议 v1）上传 Arweave + `SCORE_DECODER_AR_TX_ID` 三环境切换。
 > **预估工时**：0.5-1 天。
@@ -111,11 +114,11 @@
 - 不动录制主链路 / 首页 / `pond-gl*` 沙盒任何文件
 - 解码器保持零依赖单文件；本 track 零新包
 - 不动已部署合约、不动已铸 NFT
-- 协议改动必须同步 `playbook/phase-13/20-semi-prd2-global-miniplayer.md` 附录 A（对外拷贝）
+- 协议改动必须同步本地 `references/phase-13-drafts/20-semi-prd2-global-miniplayer.md` 的附录 A（对外拷贝）
 
 ## 参考
 
 - `src/score-decoder/index.html:318`（togglePlay 现状）
 - `../phase-12/10-a-sound-extensibility.md`（解码器永久性 + A1 重写计划，同批重传的搭档）
-- `playbook/phase-13/20-semi-prd2-global-miniplayer.md` §3 + 附录 A（Semi 侧消费方视角）
-- `playbook/phase-13/10-semi-prd1-detail-player.md`（PRD 1：详情弹窗内播放，会话入口）
+- 本地 `references/phase-13-drafts/20-semi-prd2-global-miniplayer.md` §3 + 附录 A（Semi 侧消费方视角）
+- 本地 `references/phase-13-drafts/10-semi-prd1-detail-player.md`（PRD 1：详情弹窗内播放，会话入口）

@@ -168,7 +168,14 @@ P9 最终 review 明确记录当时工作区已有“P12/auth 未提交改动”
 - `reviews/2026-09-02-phase-11-b4-b5-gate.md` 自称“B3 迁移中的时间切片”，其中旧 iframe、旧播放器等阻塞已过期；它可作为历史快照保留，但不能被当成当前 Gate 结论。
 - 本报告原先关于 STATUS/TASKS 仍停 B3/B4 的文字也属于已覆盖快照；当前裁决以本次更新和最新 STATUS/TASKS 为准。
 
-## 8. 当前剩余事项
+## 8. 正式发布验收
+
+- 2026-09-06，合并提交 `2e55d65` 已推送 `main`，Vercel 对应状态为 `Deployment has completed`。
+- 正式域名 `/`、`/artist`、`/me`、`/score/1` 均返回 HTTP 200；新版 Artist 草稿标识、`/me` 私人音乐档案、Score 分享入口与永久凭证均由生产 SSR 返回。
+- 受保护 `/api/health` 未授权请求保持 401；使用生产 Bearer 后返回 200，DB/钱包为 `ok`，pending jobs、manual review、mint failed 与 stuck 均为 0。
+- 发布前在隔离 worktree 重跑完整 `scripts/verify.sh`：TypeScript、ESLint、结构护栏、生产构建 34/34 与 Forge 42/42 全部通过。
+
+## 9. 当前剩余事项
 
 1. **外部动态补证**：等待 `arweave.net` 与 `ario.permagate.io` 恢复，再补 Mainnet Token #1 ready Score 的 cold-start reduced-motion 与日食黑盘复拍。恢复前不反复修改已全绿代码，也不把 fallback 截图冒充主演出通过。
 2. **Artist 正式文案**：用户以后提供最终展示名、身份句、简介、宣言、108 说明与公开链接时，替换当前明确标注的安全草稿；这是内容校对，不是代码或发布 Gate 失败。

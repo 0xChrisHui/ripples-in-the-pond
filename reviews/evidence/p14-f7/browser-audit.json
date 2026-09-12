@@ -1,0 +1,255 @@
+{
+  "startedAt": "2026-09-11T09:29:40.785Z",
+  "completedAt": "2026-09-11T09:34:42.510Z",
+  "base": "https://pond-ripple.xyz",
+  "tokenId": "1",
+  "expected": {
+    "origin": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+    "owner": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+    "contract": "0xd2E884FA06C9a9BDef2350956cc4216d3E2B476c"
+  },
+  "commit": "279a3bb4e04847be8f953e35844ed644b6f115e6",
+  "results": [
+    {
+      "viewport": {
+        "width": 375,
+        "height": 844
+      },
+      "browser": "Edg/138.0.3351.109",
+      "documentStatus": 200,
+      "ready": {
+        "state": "ready",
+        "network": "OP Mainnet · ECHO #1",
+        "recipe": "KRH9G2JDWD55C6VX0F363L7K5K08BSN18W4P",
+        "originHero": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "ownerHero": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "originLedger": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "ownerLedger": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "contractLedger": "0xd2E884FA06C9a9BDef2350956cc4216d3E2B476c",
+        "transferNote": false,
+        "segment": "第 1 / 36 段",
+        "statusText": "可以播放",
+        "actionText": "播放完整作品",
+        "times": [
+          "0:00",
+          "4:29"
+        ],
+        "overflow": 0
+      },
+      "ended": {
+        "state": "ended",
+        "network": "OP Mainnet · ECHO #1",
+        "recipe": "KRH9G2JDWD55C6VX0F363L7K5K08BSN18W4P",
+        "originHero": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "ownerHero": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "originLedger": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "ownerLedger": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "contractLedger": "0xd2E884FA06C9a9BDef2350956cc4216d3E2B476c",
+        "transferNote": false,
+        "segment": "第 36 / 36 段",
+        "statusText": "播放完成",
+        "actionText": "重新播放",
+        "times": [
+          "4:29",
+          "4:29"
+        ],
+        "overflow": 0
+      },
+      "elapsedMs": 271385,
+      "states": [
+        "idle",
+        "loading",
+        "ready",
+        "playing",
+        "ended"
+      ],
+      "segments": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "type": "Fetch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "type": "Fetch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "checks": {
+        "http200": true,
+        "network": true,
+        "recipe": true,
+        "origin": true,
+        "owner": true,
+        "contract": true,
+        "playback": true,
+        "allSegments": true,
+        "stateFlow": true,
+        "time": true,
+        "overflow": true,
+        "transfer": true,
+        "errors": true
+      },
+      "pass": true
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "Edg/138.0.3351.109",
+      "documentStatus": 200,
+      "ready": {
+        "state": "ready",
+        "network": "OP Mainnet · ECHO #1",
+        "recipe": "KRH9G2JDWD55C6VX0F363L7K5K08BSN18W4P",
+        "originHero": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "ownerHero": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "originLedger": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "ownerLedger": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "contractLedger": "0xd2E884FA06C9a9BDef2350956cc4216d3E2B476c",
+        "transferNote": false,
+        "segment": "第 1 / 36 段",
+        "statusText": "可以播放",
+        "actionText": "播放完整作品",
+        "times": [
+          "0:00",
+          "4:29"
+        ],
+        "overflow": 0
+      },
+      "ended": {
+        "state": "ended",
+        "network": "OP Mainnet · ECHO #1",
+        "recipe": "KRH9G2JDWD55C6VX0F363L7K5K08BSN18W4P",
+        "originHero": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "ownerHero": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "originLedger": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "ownerLedger": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+        "contractLedger": "0xd2E884FA06C9a9BDef2350956cc4216d3E2B476c",
+        "transferNote": false,
+        "segment": "第 36 / 36 段",
+        "statusText": "播放完成",
+        "actionText": "重新播放",
+        "times": [
+          "4:29",
+          "4:29"
+        ],
+        "overflow": 0
+      },
+      "elapsedMs": 271717,
+      "states": [
+        "idle",
+        "loading",
+        "ready",
+        "playing",
+        "ended"
+      ],
+      "segments": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "type": "Fetch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "type": "Fetch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "checks": {
+        "http200": true,
+        "network": true,
+        "recipe": true,
+        "origin": true,
+        "owner": true,
+        "contract": true,
+        "playback": true,
+        "allSegments": true,
+        "stateFlow": true,
+        "time": true,
+        "overflow": true,
+        "transfer": true,
+        "errors": true
+      },
+      "pass": true
+    }
+  ],
+  "pass": true
+}

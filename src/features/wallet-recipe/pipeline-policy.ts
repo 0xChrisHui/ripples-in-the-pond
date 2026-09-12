@@ -1,5 +1,8 @@
 import type { WalletRecipeMode } from '@/src/lib/chain/wallet-recipe-contract';
-import type { WalletRecipeEligibility } from '@/src/types/wallet-recipe';
+import type {
+  WalletRecipeEligibility,
+  WalletRecipeQueueStatus,
+} from '@/src/types/wallet-recipe';
 
 export const WALLET_RECIPE_CONFIRMATIONS = 20n;
 export const WALLET_RECIPE_CLAIM_DEADLINE_MS = 20_000;
@@ -101,6 +104,15 @@ export type MintAction =
   | 'recover_success'
   | 'wait_confirmations'
   | 'success';
+
+export type RecoveredMintAction = 'advance_to_confirming' | 'inspect_receipt';
+
+/** 链上已铸的恢复任务仍须遵守 DB 的 minting → confirming → success 顺序。 */
+export function decideRecoveredMintAction(status: WalletRecipeQueueStatus): RecoveredMintAction {
+  if (status === 'minting_onchain') return 'advance_to_confirming';
+  if (status === 'confirming_onchain') return 'inspect_receipt';
+  throw new Error(`P14 铸造恢复收到非法状态：${status}`);
+}
 
 export function decideMintAction(input: {
   chainTokenId: bigint;

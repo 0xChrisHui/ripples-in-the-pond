@@ -1,0 +1,1121 @@
+{
+  "schemaVersion": 1,
+  "gate": "PASS",
+  "generatedAt": "2026-09-11T09:43:02.115Z",
+  "chainId": 10,
+  "contracts": {
+    "p14": "0xd2E884FA06C9a9BDef2350956cc4216d3E2B476c",
+    "score": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA"
+  },
+  "token": {
+    "tokenId": "1",
+    "origin": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+    "owner": "0x456b00a9ecC150ab8fa25bAe830E51811c3A7708",
+    "totalSupply": "1",
+    "tokenUri": "ar://E4JVJ6EWwplEAXjoff1aDpuwbG7GDm5Whcv9kYLKU88"
+  },
+  "p14Receipt": {
+    "txHash": "0x2680c5e1174cbf0eef71b2b18db8fe4d577f9862ddedf89d6b3ca6d4fcd168e8",
+    "blockNumber": "156759068",
+    "status": "success"
+  },
+  "scoreSource": {
+    "tokenId": 3,
+    "txHash": "0xf81cfa621706eeafeda22bd20cfbb16a88bd9916f51dab8f8eddfe16c9772446",
+    "blockNumber": 156746674,
+    "logIndex": 188,
+    "queueId": "623de3aa-31f7-4291-92be-bb6837afd218"
+  },
+  "database": {
+    "queueId": "08bcb96f-67a3-4f2b-9ca6-5e9264f28877",
+    "status": "success",
+    "metadataUploadState": "verified"
+  },
+  "permanent": {
+    "metadata": {
+      "label": "metadata",
+      "txId": "E4JVJ6EWwplEAXjoff1aDpuwbG7GDm5Whcv9kYLKU88",
+      "bytes": 5177,
+      "sha256": "a87d3d0be13309affd61f23b55bc74311a27eca6e855b83ce509355a03b47960",
+      "quorum": 3,
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "bytes": 5177,
+          "sha256": "a87d3d0be13309affd61f23b55bc74311a27eca6e855b83ce509355a03b47960"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "bytes": 5177,
+          "sha256": "a87d3d0be13309affd61f23b55bc74311a27eca6e855b83ce509355a03b47960"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "bytes": 5177,
+          "sha256": "a87d3d0be13309affd61f23b55bc74311a27eca6e855b83ce509355a03b47960"
+        }
+      ]
+    },
+    "manifest": {
+      "label": "manifest",
+      "txId": "vcoWSlqUAGMH_0CO6QM4jvJPwgjbuVkYzzXG3uWPoGA",
+      "bytes": 13617,
+      "sha256": "0e39b1b1a78a3be181c011dd4142fde6f2b2edcc4fdb93a3d478fde48f7a0fba",
+      "quorum": 3,
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "bytes": 13617,
+          "sha256": "0e39b1b1a78a3be181c011dd4142fde6f2b2edcc4fdb93a3d478fde48f7a0fba"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "bytes": 13617,
+          "sha256": "0e39b1b1a78a3be181c011dd4142fde6f2b2edcc4fdb93a3d478fde48f7a0fba"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "bytes": 13617,
+          "sha256": "0e39b1b1a78a3be181c011dd4142fde6f2b2edcc4fdb93a3d478fde48f7a0fba"
+        }
+      ]
+    },
+    "decoder": {
+      "label": "decoder",
+      "txId": "WebQxIooDPjHHHLrkKniMK8W0Se5omXPDH3cYWSpI64",
+      "bytes": 13529,
+      "sha256": "fe08a78ad4f0a6ad1a6fbe336b709a12925dda2a52e141707c1e4618a976dc73",
+      "quorum": 3,
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "bytes": 13529,
+          "sha256": "fe08a78ad4f0a6ad1a6fbe336b709a12925dda2a52e141707c1e4618a976dc73"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "bytes": 13529,
+          "sha256": "fe08a78ad4f0a6ad1a6fbe336b709a12925dda2a52e141707c1e4618a976dc73"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "bytes": 13529,
+          "sha256": "fe08a78ad4f0a6ad1a6fbe336b709a12925dda2a52e141707c1e4618a976dc73"
+        }
+      ]
+    },
+    "image": {
+      "label": "image",
+      "txId": "4uEbvBt9gIaVt50FZ1wfQkuz3ogXZIGGjAdoWre3-SU",
+      "bytes": 1247695,
+      "sha256": "8a93b0bda0ca87e104ec2991b63ed0b58a0f5d1bce836031ac74c0b27759bff8",
+      "quorum": 3,
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "bytes": 1247695,
+          "sha256": "8a93b0bda0ca87e104ec2991b63ed0b58a0f5d1bce836031ac74c0b27759bff8"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "bytes": 1247695,
+          "sha256": "8a93b0bda0ca87e104ec2991b63ed0b58a0f5d1bce836031ac74c0b27759bff8"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "bytes": 1247695,
+          "sha256": "8a93b0bda0ca87e104ec2991b63ed0b58a0f5d1bce836031ac74c0b27759bff8"
+        }
+      ]
+    },
+    "clips": [
+      {
+        "label": "A.mp3",
+        "txId": "3tErt0_eBUgyUKjWxH09iUvjdTh4G-XwtCccjyOUkuQ",
+        "bytes": 126402,
+        "sha256": "e53c254eb16f076363794423a7ff1f451a18c50206f8428e8fe76dee3c3b86de",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "e53c254eb16f076363794423a7ff1f451a18c50206f8428e8fe76dee3c3b86de"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "e53c254eb16f076363794423a7ff1f451a18c50206f8428e8fe76dee3c3b86de"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "e53c254eb16f076363794423a7ff1f451a18c50206f8428e8fe76dee3c3b86de"
+          }
+        ]
+      },
+      {
+        "label": "B.mp3",
+        "txId": "8ymAwGfoYT73p3bEmmev3su1w06gxuJPKUIMhmDP0MU",
+        "bytes": 126402,
+        "sha256": "edbb8d87b3bbc8bd6917565a07ea51c0fe77bc84acb9e039b81f2294b9820b9e",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "edbb8d87b3bbc8bd6917565a07ea51c0fe77bc84acb9e039b81f2294b9820b9e"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "edbb8d87b3bbc8bd6917565a07ea51c0fe77bc84acb9e039b81f2294b9820b9e"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "edbb8d87b3bbc8bd6917565a07ea51c0fe77bc84acb9e039b81f2294b9820b9e"
+          }
+        ]
+      },
+      {
+        "label": "C.mp3",
+        "txId": "DmcTnGCEFo-zAHbfIN6jxLKenuRoyHmBMENHEIQyOJ0",
+        "bytes": 126402,
+        "sha256": "683a62b73ccbf2120a7bdc9d8420129b7af67a57e8c9356edfa71b099abca555",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "683a62b73ccbf2120a7bdc9d8420129b7af67a57e8c9356edfa71b099abca555"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "683a62b73ccbf2120a7bdc9d8420129b7af67a57e8c9356edfa71b099abca555"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "683a62b73ccbf2120a7bdc9d8420129b7af67a57e8c9356edfa71b099abca555"
+          }
+        ]
+      },
+      {
+        "label": "D.mp3",
+        "txId": "4zqqfv3AWADhWmvpUk-9PtCmQczJ8EoE5Wt-RCsxKUo",
+        "bytes": 126402,
+        "sha256": "18be86e2865d5e18406b3abbb4ab6976721a653e0156c239af576bbb3a7af7d9",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "18be86e2865d5e18406b3abbb4ab6976721a653e0156c239af576bbb3a7af7d9"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "18be86e2865d5e18406b3abbb4ab6976721a653e0156c239af576bbb3a7af7d9"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "18be86e2865d5e18406b3abbb4ab6976721a653e0156c239af576bbb3a7af7d9"
+          }
+        ]
+      },
+      {
+        "label": "E.mp3",
+        "txId": "DUj_KISh6wCpXkqtgGRP6ysNfYf83vOfOpeOg2WIVGA",
+        "bytes": 126402,
+        "sha256": "1784f175587ce3c8cfa26eb5dc3ed2f37c883101c5889213dcce1c0ff81e7ef4",
+        "quorum": 2,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": false,
+            "error": "请求失败或超时"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "1784f175587ce3c8cfa26eb5dc3ed2f37c883101c5889213dcce1c0ff81e7ef4"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "1784f175587ce3c8cfa26eb5dc3ed2f37c883101c5889213dcce1c0ff81e7ef4"
+          }
+        ]
+      },
+      {
+        "label": "F.mp3",
+        "txId": "5v41ji8UnGeELAb118vQb3STjugWuT1cBcBIh4cZJHQ",
+        "bytes": 126402,
+        "sha256": "32bcdd22ad7fce6800dbfb408908f9a74404f739ca9d72478081de4425b3fec6",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "32bcdd22ad7fce6800dbfb408908f9a74404f739ca9d72478081de4425b3fec6"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "32bcdd22ad7fce6800dbfb408908f9a74404f739ca9d72478081de4425b3fec6"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "32bcdd22ad7fce6800dbfb408908f9a74404f739ca9d72478081de4425b3fec6"
+          }
+        ]
+      },
+      {
+        "label": "G.mp3",
+        "txId": "fA8aLcTfkXexNzKI6We9G5RvP4INaVppG3961Pb_ako",
+        "bytes": 126402,
+        "sha256": "96e282668418d38347325d2dbb4f5d9b171222d6ebbeeea7cb266caa18dd27ec",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "96e282668418d38347325d2dbb4f5d9b171222d6ebbeeea7cb266caa18dd27ec"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "96e282668418d38347325d2dbb4f5d9b171222d6ebbeeea7cb266caa18dd27ec"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "96e282668418d38347325d2dbb4f5d9b171222d6ebbeeea7cb266caa18dd27ec"
+          }
+        ]
+      },
+      {
+        "label": "H.mp3",
+        "txId": "ps_PIRCMWU176PmW6FTGRKcvTPeuVWB5NQiDOqAyvgk",
+        "bytes": 126402,
+        "sha256": "65ff1311eaa6c8d4494e99ef1a2685479dc1c0ae4e6a3bca203d259d5572db63",
+        "quorum": 2,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "65ff1311eaa6c8d4494e99ef1a2685479dc1c0ae4e6a3bca203d259d5572db63"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": false,
+            "error": "请求失败或超时"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "65ff1311eaa6c8d4494e99ef1a2685479dc1c0ae4e6a3bca203d259d5572db63"
+          }
+        ]
+      },
+      {
+        "label": "I.mp3",
+        "txId": "FyBEc0Xjt7jZQBS1S1ODt5xv_iJLDkUOs6tnMpkOUu0",
+        "bytes": 126402,
+        "sha256": "56deafb6c19fbff7e06a7b3db415a64661b519d09f87b57bff233b10c088cfc7",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "56deafb6c19fbff7e06a7b3db415a64661b519d09f87b57bff233b10c088cfc7"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "56deafb6c19fbff7e06a7b3db415a64661b519d09f87b57bff233b10c088cfc7"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "56deafb6c19fbff7e06a7b3db415a64661b519d09f87b57bff233b10c088cfc7"
+          }
+        ]
+      },
+      {
+        "label": "J.mp3",
+        "txId": "z5PN7gDswWduYeDeuC3Z3xOmvBPneNYidm7Wm5wg5D4",
+        "bytes": 126402,
+        "sha256": "6f4568250a607b48f67ed643a69418727e1d3533679ca98573c49ad25025f114",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "6f4568250a607b48f67ed643a69418727e1d3533679ca98573c49ad25025f114"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "6f4568250a607b48f67ed643a69418727e1d3533679ca98573c49ad25025f114"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "6f4568250a607b48f67ed643a69418727e1d3533679ca98573c49ad25025f114"
+          }
+        ]
+      },
+      {
+        "label": "K.mp3",
+        "txId": "dptxRd4GTpHQ6d-GTkSzzvTDUgBsjsHTYopVpYCwSq8",
+        "bytes": 126402,
+        "sha256": "4e8de097861168f284d0ef77d7f81e8f9808f62b3490fe5839b798d6cb87d67b",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "4e8de097861168f284d0ef77d7f81e8f9808f62b3490fe5839b798d6cb87d67b"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "4e8de097861168f284d0ef77d7f81e8f9808f62b3490fe5839b798d6cb87d67b"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "4e8de097861168f284d0ef77d7f81e8f9808f62b3490fe5839b798d6cb87d67b"
+          }
+        ]
+      },
+      {
+        "label": "L.mp3",
+        "txId": "STqUsGZKOhAR4qhfuW0HkEE0IksPQO2Tv8Qvd-cRPEc",
+        "bytes": 126402,
+        "sha256": "d9135dd80ef8cfcecdaac64cecd221c2c9ce6e2ca332db18fddcb3615838dc4a",
+        "quorum": 2,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": false,
+            "error": "请求失败或超时"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "d9135dd80ef8cfcecdaac64cecd221c2c9ce6e2ca332db18fddcb3615838dc4a"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "d9135dd80ef8cfcecdaac64cecd221c2c9ce6e2ca332db18fddcb3615838dc4a"
+          }
+        ]
+      },
+      {
+        "label": "M.mp3",
+        "txId": "jlJxRU-XRmj7ujSMtty7Bl7b1qG5ygBuOrtdLlQh84A",
+        "bytes": 126402,
+        "sha256": "3e2e68dc0b06a98a7169934f8f2b90937f79cdab5825f54ef56b61536fd52ab6",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "3e2e68dc0b06a98a7169934f8f2b90937f79cdab5825f54ef56b61536fd52ab6"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "3e2e68dc0b06a98a7169934f8f2b90937f79cdab5825f54ef56b61536fd52ab6"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "3e2e68dc0b06a98a7169934f8f2b90937f79cdab5825f54ef56b61536fd52ab6"
+          }
+        ]
+      },
+      {
+        "label": "N.mp3",
+        "txId": "G8NUvcERgfU2SmbTlatpNDNFqRPA18sBUdMo6_Fhu-I",
+        "bytes": 126402,
+        "sha256": "dc6508574fe880fc6419e9a897d7e2e3d71c19eec403f9b41ddc4f48b0970a1f",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "dc6508574fe880fc6419e9a897d7e2e3d71c19eec403f9b41ddc4f48b0970a1f"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "dc6508574fe880fc6419e9a897d7e2e3d71c19eec403f9b41ddc4f48b0970a1f"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "dc6508574fe880fc6419e9a897d7e2e3d71c19eec403f9b41ddc4f48b0970a1f"
+          }
+        ]
+      },
+      {
+        "label": "O.mp3",
+        "txId": "kgMxJm7HeEuT01-hqy-O8eXz619G8W_BhyarJXZ1t34",
+        "bytes": 126402,
+        "sha256": "572045246339e089f7f917b5c8e9ee230f207dc12e4839f40209c4a8eb27d67f",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "572045246339e089f7f917b5c8e9ee230f207dc12e4839f40209c4a8eb27d67f"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "572045246339e089f7f917b5c8e9ee230f207dc12e4839f40209c4a8eb27d67f"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "572045246339e089f7f917b5c8e9ee230f207dc12e4839f40209c4a8eb27d67f"
+          }
+        ]
+      },
+      {
+        "label": "P.mp3",
+        "txId": "GXN3x9Lzk_gVYu8wpDkf76VG1MqMpzQhvq1SuM_R0bc",
+        "bytes": 126402,
+        "sha256": "a255f2b1b0eb22d73254fc3cbf1e3eb8bbc768744f3b3ad67785bef4ac6c923c",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "a255f2b1b0eb22d73254fc3cbf1e3eb8bbc768744f3b3ad67785bef4ac6c923c"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "a255f2b1b0eb22d73254fc3cbf1e3eb8bbc768744f3b3ad67785bef4ac6c923c"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "a255f2b1b0eb22d73254fc3cbf1e3eb8bbc768744f3b3ad67785bef4ac6c923c"
+          }
+        ]
+      },
+      {
+        "label": "Q.mp3",
+        "txId": "tugscPD6x41Blv9lo5raPBBXNK7EP8KkLoiVlzvFfys",
+        "bytes": 126402,
+        "sha256": "417bdc52361c62a017f7b5cdbc8faa5b1a3c4dd271169dd0fe3568475157f918",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "417bdc52361c62a017f7b5cdbc8faa5b1a3c4dd271169dd0fe3568475157f918"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "417bdc52361c62a017f7b5cdbc8faa5b1a3c4dd271169dd0fe3568475157f918"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "417bdc52361c62a017f7b5cdbc8faa5b1a3c4dd271169dd0fe3568475157f918"
+          }
+        ]
+      },
+      {
+        "label": "R.mp3",
+        "txId": "HOsgznxXzivuEvXGD4vgMaWAuKObjTHrmRaBJAhP26A",
+        "bytes": 126402,
+        "sha256": "bdfce1dfb1bc635c9fc7abae9ef0ab09a9bde500ca4a3306aef5be2d5a7261fa",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "bdfce1dfb1bc635c9fc7abae9ef0ab09a9bde500ca4a3306aef5be2d5a7261fa"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "bdfce1dfb1bc635c9fc7abae9ef0ab09a9bde500ca4a3306aef5be2d5a7261fa"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "bdfce1dfb1bc635c9fc7abae9ef0ab09a9bde500ca4a3306aef5be2d5a7261fa"
+          }
+        ]
+      },
+      {
+        "label": "S.mp3",
+        "txId": "gZn0SGZ8V3uLSb162x-KZ4L1er_bjDAGy-m5Khd12vM",
+        "bytes": 126402,
+        "sha256": "7c5f69ab8190a09c4e3b5ba62a7fad5c173b7336c8a0d4b9483ff593842fdf66",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "7c5f69ab8190a09c4e3b5ba62a7fad5c173b7336c8a0d4b9483ff593842fdf66"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "7c5f69ab8190a09c4e3b5ba62a7fad5c173b7336c8a0d4b9483ff593842fdf66"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "7c5f69ab8190a09c4e3b5ba62a7fad5c173b7336c8a0d4b9483ff593842fdf66"
+          }
+        ]
+      },
+      {
+        "label": "T.mp3",
+        "txId": "2drU50u8VR9mxzCwvSYaaLDyRoOz_hEl_LvFX5Dwlc4",
+        "bytes": 126402,
+        "sha256": "e5b169f4c61559618c7d8d816a2a9905e910433739532038579892712d9b8c9e",
+        "quorum": 2,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "e5b169f4c61559618c7d8d816a2a9905e910433739532038579892712d9b8c9e"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": false,
+            "error": "请求失败或超时"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "e5b169f4c61559618c7d8d816a2a9905e910433739532038579892712d9b8c9e"
+          }
+        ]
+      },
+      {
+        "label": "U.mp3",
+        "txId": "-GhPWnX0zHBhCTo_XA6FvlcWeC9XsCgNNy6FH4G_rmw",
+        "bytes": 126402,
+        "sha256": "ae990d8b554985d42c1b158ffa7daa0bb3eb5a5fda5ab3e92ccc7f3663846396",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "ae990d8b554985d42c1b158ffa7daa0bb3eb5a5fda5ab3e92ccc7f3663846396"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "ae990d8b554985d42c1b158ffa7daa0bb3eb5a5fda5ab3e92ccc7f3663846396"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "ae990d8b554985d42c1b158ffa7daa0bb3eb5a5fda5ab3e92ccc7f3663846396"
+          }
+        ]
+      },
+      {
+        "label": "V.mp3",
+        "txId": "Nnbp9YEqEQnvIyF8qy2-SHBrSi8-rW73BWt5vViOAJU",
+        "bytes": 126402,
+        "sha256": "67251a908140c5bc527cedb53f67b52c98de3869f178d74a5184d22789d16593",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "67251a908140c5bc527cedb53f67b52c98de3869f178d74a5184d22789d16593"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "67251a908140c5bc527cedb53f67b52c98de3869f178d74a5184d22789d16593"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "67251a908140c5bc527cedb53f67b52c98de3869f178d74a5184d22789d16593"
+          }
+        ]
+      },
+      {
+        "label": "W.mp3",
+        "txId": "zUknUaZUWOKNh6W6noj02oxcPJltMDEzqAVu5-D6fgc",
+        "bytes": 126402,
+        "sha256": "fcc900342a732fde4239beec830eb6138d843579af311dd8dca70aa93fc21699",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "fcc900342a732fde4239beec830eb6138d843579af311dd8dca70aa93fc21699"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "fcc900342a732fde4239beec830eb6138d843579af311dd8dca70aa93fc21699"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "fcc900342a732fde4239beec830eb6138d843579af311dd8dca70aa93fc21699"
+          }
+        ]
+      },
+      {
+        "label": "X.mp3",
+        "txId": "JarbAcWYpxTvbtlEOV9yeBOZvBqyK7y5Qv1nw3CWecE",
+        "bytes": 126402,
+        "sha256": "d65d2c55e82c77a9a067b027ba3f3ae5dfe2f8866aa4738d26ff565de32074d4",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "d65d2c55e82c77a9a067b027ba3f3ae5dfe2f8866aa4738d26ff565de32074d4"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "d65d2c55e82c77a9a067b027ba3f3ae5dfe2f8866aa4738d26ff565de32074d4"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "d65d2c55e82c77a9a067b027ba3f3ae5dfe2f8866aa4738d26ff565de32074d4"
+          }
+        ]
+      },
+      {
+        "label": "Y.mp3",
+        "txId": "noxejlt60brhv0SGFrN8yF6GwyeePMAUwlaKX7n9L_A",
+        "bytes": 126402,
+        "sha256": "9f5c1e42dc025bb0c5631e028d985700db2054425ac403147af5180c52d0fade",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "9f5c1e42dc025bb0c5631e028d985700db2054425ac403147af5180c52d0fade"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "9f5c1e42dc025bb0c5631e028d985700db2054425ac403147af5180c52d0fade"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "9f5c1e42dc025bb0c5631e028d985700db2054425ac403147af5180c52d0fade"
+          }
+        ]
+      },
+      {
+        "label": "Z.mp3",
+        "txId": "mXt8FxlGtWpd2skBAwDgyV2Q5JFYUgvJci6Tf_VdzbE",
+        "bytes": 126402,
+        "sha256": "b8688198c3a82037d5959c9130a80e1d426a72ffdf23e75e76f09d0edeabbe2f",
+        "quorum": 2,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "b8688198c3a82037d5959c9130a80e1d426a72ffdf23e75e76f09d0edeabbe2f"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "b8688198c3a82037d5959c9130a80e1d426a72ffdf23e75e76f09d0edeabbe2f"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": false,
+            "error": "请求失败或超时"
+          }
+        ]
+      },
+      {
+        "label": "0.mp3",
+        "txId": "Xx_Wl0uFL70BlhZltp6IhbeJprvbmDy_QffZF1nkfl0",
+        "bytes": 126402,
+        "sha256": "21445e9e63cb4a711fc3bcc6e2d4eb751ab355aed5a2a11b6c5e55867b772c7d",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "21445e9e63cb4a711fc3bcc6e2d4eb751ab355aed5a2a11b6c5e55867b772c7d"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "21445e9e63cb4a711fc3bcc6e2d4eb751ab355aed5a2a11b6c5e55867b772c7d"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "21445e9e63cb4a711fc3bcc6e2d4eb751ab355aed5a2a11b6c5e55867b772c7d"
+          }
+        ]
+      },
+      {
+        "label": "1.mp3",
+        "txId": "O2hxMMiu6TWDPPJAqypFXb4XulCtj61ntUs07TTMWdo",
+        "bytes": 126402,
+        "sha256": "6d3527c6dd724d6bab8a6d34f91b40b11cf2f211e123b772daa1a68a39495889",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "6d3527c6dd724d6bab8a6d34f91b40b11cf2f211e123b772daa1a68a39495889"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "6d3527c6dd724d6bab8a6d34f91b40b11cf2f211e123b772daa1a68a39495889"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "6d3527c6dd724d6bab8a6d34f91b40b11cf2f211e123b772daa1a68a39495889"
+          }
+        ]
+      },
+      {
+        "label": "2.mp3",
+        "txId": "T5zBa3HAbhY_x_44Iu9lJkVN5xqFI3mMBr_OUuqHoBI",
+        "bytes": 126402,
+        "sha256": "5e2ed54ee6ec9d36504cb329fe17aa622b6671e352d997a26ab0b481849409b1",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "5e2ed54ee6ec9d36504cb329fe17aa622b6671e352d997a26ab0b481849409b1"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "5e2ed54ee6ec9d36504cb329fe17aa622b6671e352d997a26ab0b481849409b1"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "5e2ed54ee6ec9d36504cb329fe17aa622b6671e352d997a26ab0b481849409b1"
+          }
+        ]
+      },
+      {
+        "label": "3.mp3",
+        "txId": "NQU9xYeUJKu34aAnRWfE62bwhAcpGiH5EhqJURfu95Y",
+        "bytes": 126402,
+        "sha256": "1dd05b68c716eca550c69f8dbeb47786cd61e761dd0c26cbf6e58e3bd6b0807f",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "1dd05b68c716eca550c69f8dbeb47786cd61e761dd0c26cbf6e58e3bd6b0807f"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "1dd05b68c716eca550c69f8dbeb47786cd61e761dd0c26cbf6e58e3bd6b0807f"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "1dd05b68c716eca550c69f8dbeb47786cd61e761dd0c26cbf6e58e3bd6b0807f"
+          }
+        ]
+      },
+      {
+        "label": "4.mp3",
+        "txId": "8wv47QOZp7eomZtsIG4Fp5XyaBgLCT9KDxEUoVgxIoU",
+        "bytes": 126402,
+        "sha256": "5cad691f1f642b569d95ebb241b5430de7071da4b886a253b8fbb0307fa4e3ec",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "5cad691f1f642b569d95ebb241b5430de7071da4b886a253b8fbb0307fa4e3ec"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "5cad691f1f642b569d95ebb241b5430de7071da4b886a253b8fbb0307fa4e3ec"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "5cad691f1f642b569d95ebb241b5430de7071da4b886a253b8fbb0307fa4e3ec"
+          }
+        ]
+      },
+      {
+        "label": "5.mp3",
+        "txId": "oIZOqF4UaBLeaAxzSAvGuRAcfgEdctSt-Sc_Bo9_Ya4",
+        "bytes": 126402,
+        "sha256": "f15cfde1f9635d898edbead3386c9fec8755bc14885f1855965f5b2dcff15b99",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "f15cfde1f9635d898edbead3386c9fec8755bc14885f1855965f5b2dcff15b99"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "f15cfde1f9635d898edbead3386c9fec8755bc14885f1855965f5b2dcff15b99"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "f15cfde1f9635d898edbead3386c9fec8755bc14885f1855965f5b2dcff15b99"
+          }
+        ]
+      },
+      {
+        "label": "6.mp3",
+        "txId": "2dd6mJ7KteAYaqrQBhWPSQw9ntCILzwVbuIGFo_fB34",
+        "bytes": 126402,
+        "sha256": "f12129aad4f43b3c5784a172eddd6f14754e5157724d6237a83def95d812f49c",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "f12129aad4f43b3c5784a172eddd6f14754e5157724d6237a83def95d812f49c"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "f12129aad4f43b3c5784a172eddd6f14754e5157724d6237a83def95d812f49c"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "f12129aad4f43b3c5784a172eddd6f14754e5157724d6237a83def95d812f49c"
+          }
+        ]
+      },
+      {
+        "label": "7.mp3",
+        "txId": "nsF9DRg5hjlEBsqGfxs2xb1RX0Ob6Lc6dLD8li2OOcM",
+        "bytes": 126402,
+        "sha256": "ab0da31fe5ab5c77ec13c6a53b8812192beb36a682ed7663d725a4d6eaf00338",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "ab0da31fe5ab5c77ec13c6a53b8812192beb36a682ed7663d725a4d6eaf00338"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "ab0da31fe5ab5c77ec13c6a53b8812192beb36a682ed7663d725a4d6eaf00338"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "ab0da31fe5ab5c77ec13c6a53b8812192beb36a682ed7663d725a4d6eaf00338"
+          }
+        ]
+      },
+      {
+        "label": "8.mp3",
+        "txId": "mU2x5kXnZ4RClmnuGOlmE12yeS-MIyM-KEUFzjwkGBE",
+        "bytes": 126402,
+        "sha256": "7ba0e6a151a48d7ba843c671465ce54e09fa8db159d616b609c71a056e954d9d",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "7ba0e6a151a48d7ba843c671465ce54e09fa8db159d616b609c71a056e954d9d"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "7ba0e6a151a48d7ba843c671465ce54e09fa8db159d616b609c71a056e954d9d"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "7ba0e6a151a48d7ba843c671465ce54e09fa8db159d616b609c71a056e954d9d"
+          }
+        ]
+      },
+      {
+        "label": "9.mp3",
+        "txId": "WvO27QXXqyxsUoHoloiB6BT8VmULMNDrYZSKrDoFwDw",
+        "bytes": 126402,
+        "sha256": "a591b851c1c551c58f34122369406d9f18f700b6d42d9c9ee266fb1b4a9b9014",
+        "quorum": 3,
+        "gateways": [
+          {
+            "gateway": "https://ardrive.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "a591b851c1c551c58f34122369406d9f18f700b6d42d9c9ee266fb1b4a9b9014"
+          },
+          {
+            "gateway": "https://arweave.tokyo",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "a591b851c1c551c58f34122369406d9f18f700b6d42d9c9ee266fb1b4a9b9014"
+          },
+          {
+            "gateway": "https://arweave.net",
+            "ok": true,
+            "bytes": 126402,
+            "sha256": "a591b851c1c551c58f34122369406d9f18f700b6d42d9c9ee266fb1b4a9b9014"
+          }
+        ]
+      }
+    ]
+  },
+  "consistency": {
+    "chain": true,
+    "database": true,
+    "metadata": true,
+    "scoreSource": true,
+    "gatewayQuorum": true,
+    "clipCount": 36
+  }
+}

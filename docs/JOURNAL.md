@@ -1310,6 +1310,30 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **密钥收口**：deployer 剩余资金转回 operator 后，仅留约 0.000001 ETH 尘埃；13 项角色/冻结状态复核全绿才删除一次性 deployer 钱包文件，admin 备份保持不动。
 - **阶段决定**：D-gate 放行但暂不宣布 Phase 12 完结；先进入 7 天软启动，每日两次检查 health、cron、双队列与告警，7 天无 P0 后再完成 launch review。
 
+## 2026-09-01 — references 改为纯本地素材库
+
+- **版本边界**：整个 `references/` 从 Git 索引移除并由根 `.gitignore` 忽略；仓库只保留 `docs/REFERENCES.md` 的类别、来源和使用边界。
+- **归档决定**：含内部备注或真实链接占位的 Phase 13 PRD、不需长期审计的 P9 过程证据和工具记忆都归入本地 references；P9 v4.2 已发布的最终 Gate 证据作为例外继续留在 `reviews/evidence/`。
+- **安全边界**：临时浏览器目录因 Windows 占用无法整体移动，不强删；保留在原工作树并加入忽略，避免用清理动作换来证据丢失。
+
+## 2026-09-01 — P12 完成软启动终检并正式关闭
+
+- **关闭证据**：观察窗超过 7 天且没有 P0 记录；Bearer `/api/health` 返回 200，DB/钱包正常，Material 队列失败与卡住均为 0，Score 无非终态项，manual review 为 0。
+- **公开与链上复核**：`/score/1` 返回 200；MaterialNFT、ScoreNFT、MintOrchestrator 三个地址通过 OP 公共 RPC 读取均有非空字节码。
+- **阶段决定**：P12 从“软启动观察”改为“已完结”；health、cron、队列、余额和额度仍继续日常观察，但不再占阶段 Next。
+
+## 2026-09-01 — P11-0 文档迁入最新主线
+
+- **方向决定**：采用“夜塘唱片册”，冻结首页水塘与 P9 演奏核心；`/score/[id]` 采用 Decoder-first，`/artist` 暂以 108 首长期项目为主角。
+- **执行边界**：只迁移盘点与 A–F playbook，不擅自修改 `docs/ARCHITECTURE.md`；Decoder-first 与现有 inline `ScorePlayer` 规则仍需用户明确授权后同步。
+- **历史补口**：P10 Track F 已随 P12-A1 实现并永久上传，本轮只补总览索引和完成状态，不重复改解码器代码。
+
+## 2026-09-05 — P9 以单一最终真值正式封存
+
+- **封存决定**：`playbook/phase-9/04-final-closure.md` 与 `reviews/2026-09-05-phase-9-completion-review.md` 成为 P9 最终入口；旧 playbook、三方 review 和 Fix Pack 清单只作历史追溯，不再表达当前待办。
+- **证据边界**：Git 只长期保留 `reviews/evidence/p9-v4-2/` 最终证据；调试缓存、候选预演和过程截图继续留在本地忽略目录，不进入产品真值。
+- **后续边界**：现有 33 键演奏集合冻结；单键缺陷走独立热修，新增键位、音效或编舞进入后续 Phase，不重开 P9。
+
 ## 2026-09-01 — P11 v2 改为原生唱片与艺术家文字肖像
 
 - **Score 视觉决定**：用户在 A“全屏永久页”和 C“站内原生重绘”之间明确选择 C；站内不显示 iframe，以 Decoder 的编辑式唱片语言原生重画页面。
@@ -1424,6 +1448,26 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **完整性决定**：P14 带 canonical SHA-256 的资源强校验；历史 Score 缺永久 hash 时只声明长度、类型、跨候选与解码兼容校验，不伪称密码学同字节证明。
 - **私人缓存决定**：`/me` 快照按 origin、chain、Material/Score 合约、登录源、用户、schema 与栏目隔离，5 分钟 freshness、7 天最大保留期，登出清当前身份；token 和私人正文不落盘。
 - **验收决定**：线上 baseline 与本地 after 的变化率只作方向证据；发布 Gate 必须在独立 Preview 复跑。真实账号、首声、健康 GL、真机和断站条件不满足时保持未通过。
+
+## 2026-09-06 — P11 通过隔离工作树发布正式站
+
+- **发布决定**：主工作区同时有未提交 P14 工作，因此从最新 `origin/main` 建立隔离 worktree，只合并已审计的 P11 功能分支；过程视觉样板继续留在本地 `references/`，不重新带回仓库。
+- **上线结果**：提交 `2e55d65` 已推送 `main`，Vercel Production 成功；正式 `/artist`、`/me` 与 `/score/1` 均命中新 P11 内容，分享入口和永久凭证可见。
+- **健康结果**：受保护 health 验证 DB/钱包正常，pending jobs、manual review、mint failed 与 stuck 均为 0；外部 Arweave 动态补证继续保持未完成的真实状态。
+
+## 2026-09-11 — P14 以隔离发布分支进入主网 observe
+
+- **发布决定**：当前施工分支缺少已经上线的 P11 主线提交，因此从 P14 HEAD 创建 `codex/p14-mainnet-release`，无冲突合入 `origin/main` 并重新跑完整 Gate；只从这个候选版本发布，避免生产 UI 回退。
+- **资格决定**：cutoff 固定为已确认区块 `156738598`；链上仅有的两枚历史 Score 均通过正式注册 RPC 写为 `excluded_prelaunch`。没有 cutoff 后真实首铸时保持 observe，不为 smoke 伪造资格。
+- **调度决定**：observe 发现 P14 每分钟任务依赖的 `sync-chain-events` 原为每 5 分钟，期间会安全拒绝并出现 stale/lagging；将只读同步任务改为每分钟后继续观察，保持游标语义不变并缩短发现延迟。
+- **部署结果**：Pond Echoes 主网合约 `0xd2E884FA06C9a9BDef2350956cc4216d3E2B476c` 已验证源码；Production 为 observe，954 秒内 15 次 cron HTTP 200，2 excluded / 0 eligible / 0 failed / 0 mint。
+
+## 2026-09-11 — P14 live 与首枚真实 Pond Echo
+
+- **Gate 决定**：只在 Score #3 的 receipt、cutoff、首次 origin 与唯一 eligible/pending 四项对清后切 live；两枚历史 Score 继续保持 excluded，不补发、不伪造 smoke。
+- **生产结果**：新钱包 `0x456b...7708` 自动收到 ECHO #1；metadata 与 mint 均一次成功，三网关全量永久输入、链/DB/metadata/Score source 和双视口 36/36 长播通过。
+- **恢复决定**：审计发现“链上已铸但 DB 仍为 minting”时可能跨过数据库状态约束直接 success；恢复路径改为强制先进入 confirming，下一轮再验 receipt，避免已上链任务陷入 safe_retry。
+- **观察决定**：首枚完成不提前等同于 F8；Production 保持 live，继续 24h/7d 只读观察。自动化不得冒充用户私密登录，`/me` 的最终展示由原钱包本人目验。
 
 ## 2026-09-13 — P15 吸收 P14 生产终态
 
