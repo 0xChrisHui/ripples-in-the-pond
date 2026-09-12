@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 15 发布收口**：在已同步 P14 生产终态、test/production 050 migration 和独立 Preview 构建成功的基础上，重跑完整工程 Gate、更新最终证据，并完成 Production 发布与公开回归。
+- **Phase 15 合并发布收口**：把 P14-G `8f5a735` 的 source cursor、ECHO #1 首页 35+1 与 G7 稳定前缀修复合入 P15 `298b65a`，完成整体验证、Production 重发和公开回归；P15 migration 已顺延为 051，不重放 SQL。
 
 ## ⏳ Later / 开放项
 
@@ -213,12 +213,12 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - **Phase 11** — 全局 UI 优化（/me / score / artist 重设计 + Claude Design）
 - **Phase 12** — OP Mainnet 上线准备与部署
 - **Phase 13** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
-- **Phase 14（live 观察）** — F1–F7 与首枚主网空投已完成；保持 live，继续 24h/7d 只读观察及原钱包档案目验（`playbook/phase-14/00-overview.md`）
-- **Phase 15（当前）** — 代码闭环、P14 生产终态整合、test/production migration 050 与整合后 Preview build 已完成；Preview 页面级浏览器验收受 SSO 限制，采用同提交本地 production build 与用户 review 豁免。当前发布 Production 并做线上回归（`reviews/2026-09-13-phase-15-final-review.md`）
+- **Phase 14（非阻塞观察）** — 首枚 ECHO #1、P14-G 索引恢复、首页第 36 枚访客与 G7 稳定前缀修复已交付；后续 observe/live 窗口及原钱包档案目验作为 review 保留（`playbook/phase-14/80-g-recovery-track36-eclipse.md`）
+- **Phase 15（当前）** — 代码闭环、P14-G 最终交付整合、性能证据与首轮 Production 部署已完成；当前重发合并版并做线上回归（`reviews/2026-09-13-phase-15-final-review.md`）
 - **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
 - **未排期** — 音效系统扩展（原 P15：26→50 与输入键/音效 id 解耦；待以后重新编号）
 
-### Phase 14 live 观察看板（2026-09-11）
+### Phase 14 最终交付与观察看板（2026-09-13）
 
 - [x] v2 核心规则：首次 Score mint、终身一枚、可转让、不补历史、36 位 recipe、独立 ERC-721。
 - [x] 详细 playbook：`P14-0 → A → B → C → E → D → F` 七轨、异常矩阵、测试网/主网双 Gate。
@@ -230,10 +230,16 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - [x] P14-E 视觉、播放器、封面与永久 Decoder。
 - [x] P14-D 独立发现器与自动空投；Score 成功路径保持独立。
 - [x] P14-F7 主路径：真实 Score #3 触发 ECHO #1；live 状态机、永久性四方对账与 375/1440 完整 36/36 长播通过。
-- [ ] P14-F7/F8 观察收口：完成 24h/7d health/队列/余额/网关观察，并由原钱包在 `/me#pond-echoes` 做一次私密登录态目验。
-- [ ] 保持 live 与每分钟 cron，完成 24h/7d 观察后写 F8 最终报告；该观察不占 P15 的唯一 Now。
+- [x] P14-G0：生产切 `off`、两个 cron 停止、旧观察暂停；三次稳定读回与事故快照完成。
+- [x] P14-G1：scoped cursor/CAS、全链恢复工具、瞬时 DB 超时有界重试与 CAS 回读已完成。
+- [x] P14-G2：migration 050 测试库并发与生产 read-back、ScoreNFT 全链 0-diff、scoped cursor 初始化完成；修复后 source 21/21 次成功且首末相隔 20 分钟。
+- [x] P14-G3：只读核验 `/echo/1` 的 ECHO #1 链上 tokenURI、永久 metadata、36 位 recipe 与 clips，并以独立 featured 输入接入首页；不读取/新增 `tracks.week=36`。
+- [x] P14-G4/G5：把已有水中访客与日食原型从 Track/PlayerProvider 假设改接 ECHO #1 + WalletRecipePlayerEngine；保留相对水位路径、有界 FBO 涟漪与纯黑日食，不产生录制/上传。
+- [x] P14-G6：Production 35+1/35+0、36 段自然 ended、日食/P9、375px/fallback、30 分钟性能与零副作用 Gate 全绿。
+- [x] P14-G7 代码修复：discovery 只消费 source 已完成落库与 CAS 的稳定前缀，fresh 小幅 lag 只作 telemetry，真实失败返回非 200。
+- [ ] P14-G7/F8 观察与私密目验：合并版发布后核对 mode/cron，并完成剩余 observe/live、24h/7d 与原钱包 `/me#pond-echoes` 目验；按用户决定不阻塞 P15 发布。
 
-> 生产当前为 `live`：首枚真实 ECHO 已成功；严重异常先切 off 并保留现场，不删除队列、不回退 cutoff、不重传未知上传。
+> P14-G 分支最后记录的生产状态为 `off`、source cron 启用、P14 cron 关闭；合并版发布后须以真实环境读回为准。不得删除队列、回退 cutoff 或重传未知上传。
 
 ### Phase 8 Scope（当前任务）
 

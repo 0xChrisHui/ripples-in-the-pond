@@ -13,6 +13,7 @@ import {
   getGroupTracks,
   getGroupTargetCount,
   padTracksToTarget,
+  REGULAR_TRACK_COUNT,
   type GroupId,
   type SimNode,
   type SimLink,
@@ -52,7 +53,7 @@ export interface GlSim {
   toggle: (t: Track) => Promise<void>;
 }
 
-export function useGlSim(active: boolean): GlSim {
+export function useGlSim(active: boolean, externalPlaybackActive = false): GlSim {
   const { playing, currentTrack, toggle } = usePlayer();
   const playingId = playing && currentTrack ? currentTrack.id : null;
   const playingIdRef = useRef<string | null>(null);
@@ -71,7 +72,9 @@ export function useGlSim(active: boolean): GlSim {
   const anchorsRef = useRef<Map<string, { x: number; y: number; strength: number }> | null>(null);
   const setHover = useCallback((id: string | null) => { hoverIdRef.current = id; }, []);
   // I1 — GL nav 点击切组（取代旧 Archipelago nav；直接驱动 GL 组、修 G4"nav 点击 GL 不跟随"）
-  const setGroup = useCallback((id: GroupId) => setGroupId(id), []);
+  const setGroup = useCallback((id: GroupId) => {
+    if (!playingIdRef.current && !externalPlaybackActive) setGroupId(id);
+  }, [externalPlaybackActive]);
 
   // 取数（仅 active；与 Archipelago 各取一次，/api/tracks 有 ISR 缓存，重复成本低）。
   // J4：加 res.ok 判定 + error 态 + retry（失败不再静默 console.error、无 UI）。
@@ -111,12 +114,12 @@ export function useGlSim(active: boolean): GlSim {
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       const idx = GROUPS.findIndex((g) => g.id === groupId);
-      if (e.key === 'ArrowRight') setGroupId(GROUPS[(idx + 1) % GROUPS.length].id);
-      if (e.key === 'ArrowLeft') setGroupId(GROUPS[(idx - 1 + GROUPS.length) % GROUPS.length].id);
+      if (e.key === 'ArrowRight') setGroup(GROUPS[(idx + 1) % GROUPS.length].id);
+      if (e.key === 'ArrowLeft') setGroup(GROUPS[(idx - 1 + GROUPS.length) % GROUPS.length].id);
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [active, groupId]);
+  }, [active, groupId, setGroup]);
 
   // 涟漪事件桥：订阅 bg-ripple:wave → wavesRef（duration 秒→ms，复刻 use-wave-events.ts）
   useEffect(() => {
@@ -143,7 +146,8 @@ export function useGlSim(active: boolean): GlSim {
     }
     const w = window.innerWidth, h = window.innerHeight;
     sizeRef.current = { w, h };
-    const show = padTracksToTarget(getGroupTracks(groupId, tracks), getGroupTargetCount(groupId));
+    const target = Math.min(REGULAR_TRACK_COUNT, getGroupTargetCount(groupId));
+    const show = padTracksToTarget(getGroupTracks(groupId, tracks), target);
     // 切组重建球群时同时重置两个独立坐标：水面固定中线，球层级回到中性位置。
     resetWaterLine();
     resetDepthShift();
@@ -194,7 +198,8 @@ export function useGlSim(active: boolean): GlSim {
   // P15-B：真实圆圈建立后再 idle 预热；切组/隐藏/离页用 AbortController 真取消。
   useEffect(() => {
     if (!active || nodes.length === 0 || tracks.length === 0) return;
-    const padded = padTracksToTarget(getGroupTracks(groupId, tracks), getGroupTargetCount(groupId));
+    const target = Math.min(REGULAR_TRACK_COUNT, getGroupTargetCount(groupId));
+    const padded = padTracksToTarget(getGroupTracks(groupId, tracks), target);
     return scheduleAudioPrewarm(padded);
   }, [active, tracks, groupId, nodes.length]);
 
@@ -203,6 +208,7 @@ export function useGlSim(active: boolean): GlSim {
     loading: nodes.length === 0 && !tracksError,
     error: tracksError,
     retry: loadTracks,
-    groupId, nodes, simRef, wavesRef, playingIdRef, hoverIdRef, sizeRef, setHover, setGroup, toggle,
+    groupId,
+    nodes, simRef, wavesRef, playingIdRef, hoverIdRef, sizeRef, setHover, setGroup, toggle,
   };
 }

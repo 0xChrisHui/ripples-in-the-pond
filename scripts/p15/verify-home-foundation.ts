@@ -13,6 +13,8 @@ const tracks: Track[] = Array.from({ length: 8 }, (_, index) => ({
   title: `${index + 1}`,
   week: index + 1,
   audio_url: `/tracks/${index + 1}.mp3`,
+  arweave_url: null,
+  audio_gateway_urls: [],
   cover: '#000',
   island: '测试',
   created_at: '2026-01-01T00:00:00.000Z',

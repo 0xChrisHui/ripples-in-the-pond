@@ -1,0 +1,101 @@
+{
+  "noFeatured": {
+    "regular": 35,
+    "featured": 0,
+    "overflow": false,
+    "groups": [
+      true,
+      true
+    ]
+  },
+  "tablet": {
+    "size": [
+      768,
+      1024
+    ],
+    "hit": [
+      64,
+      64
+    ],
+    "overflow": false,
+    "canvas": 2,
+    "webgl": true,
+    "groups": [
+      true,
+      true
+    ]
+  },
+  "resize": {
+    "size": [
+      1024,
+      768
+    ],
+    "sameCanvas": true,
+    "sameContext": true,
+    "regular": 35,
+    "featured": 1,
+    "overflow": false
+  },
+  "reducedKeyboard": {
+    "staticDelta": 0,
+    "enter": 1,
+    "space": 1
+  },
+  "forcedFallback": {
+    "mode": "css-fallback",
+    "hit": [
+      64,
+      64
+    ],
+    "regularButtons": 0,
+    "canvas": 0
+  },
+  "recovered": {
+    "mode": "webgl",
+    "regular": 35,
+    "featured": 1,
+    "canvas": 2,
+    "webgl": true
+  },
+  "console": {
+    "errors": [],
+    "warnings": [
+      "MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added. Use emitter.setMaxListeners() to increase limit",
+      "MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase limit",
+      "ObjectMultiplex - orphaned data for stream \"app-init-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"app-init-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"background-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"background-liveness\"",
+      "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+      "MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added. Use emitter.setMaxListeners() to increase limit",
+      "MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase limit",
+      "ObjectMultiplex - orphaned data for stream \"app-init-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"app-init-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"background-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"background-liveness\"",
+      "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+      "MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added. Use emitter.setMaxListeners() to increase limit",
+      "MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase limit",
+      "ObjectMultiplex - orphaned data for stream \"app-init-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"app-init-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"background-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"background-liveness\"",
+      "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+      "MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added. Use emitter.setMaxListeners() to increase limit",
+      "MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase limit",
+      "ObjectMultiplex - orphaned data for stream \"app-init-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"app-init-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"background-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"background-liveness\"",
+      "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+      "MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added. Use emitter.setMaxListeners() to increase limit",
+      "MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase limit",
+      "ObjectMultiplex - orphaned data for stream \"app-init-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"app-init-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"background-liveness\"",
+      "ObjectMultiplex - orphaned data for stream \"background-liveness\"",
+      "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+    ]
+  },
+  "mutations": []
+}

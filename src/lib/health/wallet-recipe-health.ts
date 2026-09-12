@@ -5,6 +5,7 @@ import { supabaseAdmin } from '@/src/lib/supabase';
 import { CHAIN_ID_NUM } from '@/src/lib/chain/chain-config';
 import { SCORE_NFT_ADDRESS } from '@/src/lib/chain/contracts';
 import { publicClient } from '@/src/lib/chain/operator-wallet';
+import { sourceCursorKey, sourceSuccessKey } from '@/src/features/source-index/source-policy';
 import {
   getWalletRecipeAddress,
   getWalletRecipeMode,
@@ -37,11 +38,14 @@ function unavailableDatabaseHealth(nowMs: number) {
     activationBlock: null,
     discoveryCursor: null,
     sourceCursor: null,
+    sourceLastSuccessAt: null,
     lastCronSuccessAt: null,
   };
 }
 
 async function readDatabaseHealth(scoreContract: string, nowMs: number) {
+  const upstreamKey = sourceCursorKey(CHAIN_ID_NUM, scoreContract);
+  const upstreamSuccessKey = sourceSuccessKey(CHAIN_ID_NUM, scoreContract);
   const base = () => supabaseAdmin.from('wallet_recipe_queue')
     .select('id', { count: 'exact', head: true })
     .eq('chain_id', CHAIN_ID_NUM)
@@ -60,7 +64,8 @@ async function readDatabaseHealth(scoreContract: string, nowMs: number) {
     // 传空 owner 会在函数首行抛出固定异常，因此只探测 RPC 而不 claim 任务。
     supabaseAdmin.rpc('claim_wallet_recipe_job', { p_owner: null, p_lease_minutes: 5 }),
     supabaseAdmin.from('system_kv').select('key,value').in('key', [
-      'last_synced_block',
+      upstreamKey,
+      upstreamSuccessKey,
       `p14:activation:${CHAIN_ID_NUM}:${scoreContract}`,
       `p14:cursor:${CHAIN_ID_NUM}:${scoreContract}`,
       `p14:last-cron-success:${CHAIN_ID_NUM}:${scoreContract}`,
@@ -82,9 +87,20 @@ async function readDatabaseHealth(scoreContract: string, nowMs: number) {
     ),
     activationBlock: values.get(`p14:activation:${CHAIN_ID_NUM}:${scoreContract}`) ?? null,
     discoveryCursor: values.get(`p14:cursor:${CHAIN_ID_NUM}:${scoreContract}`) ?? null,
-    sourceCursor: values.get('last_synced_block') ?? null,
+    sourceCursor: values.get(upstreamKey) ?? null,
+    sourceLastSuccessAt: parseSourceSuccess(values.get(upstreamSuccessKey)),
     lastCronSuccessAt: values.get(`p14:last-cron-success:${CHAIN_ID_NUM}:${scoreContract}`) ?? null,
   };
+}
+
+function parseSourceSuccess(value: string | undefined): string | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value) as { at?: unknown };
+    return typeof parsed.at === 'string' ? parsed.at : null;
+  } catch {
+    return null;
+  }
 }
 
 async function readContractHealth(address: Address | null, operator: Address) {
@@ -146,6 +162,13 @@ export async function getWalletRecipeHealth(operator: Address): Promise<WalletRe
     expectedActivationMatches: expected === null ? null : activationValid && expected === database.activationBlock,
     lastDiscoveryCursor: database.discoveryCursor,
     sourceChainCursor: database.sourceCursor,
+    sourceCursorIdentity: {
+      chainId: CHAIN_ID_NUM,
+      contract: scoreContract,
+      key: scoreContract ? sourceCursorKey(CHAIN_ID_NUM, scoreContract) : '',
+    },
+    sourceLastSuccessAt: database.sourceLastSuccessAt,
+    sourceSyncStale: isCronStale(database.sourceLastSuccessAt, nowMs),
     cursors: {
       head: head?.toString() ?? null,
       safeHead: safeHead?.toString() ?? null,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 import type { TrackDetailResponse } from '@/src/types/tracks';
+import { exposeTrack, type TrackRow } from '@/src/lib/track-contract';
 
 /**
  * GET /api/tracks/[id]
@@ -19,7 +20,7 @@ export async function GET(
     // 1. 查 track
     const { data: track, error } = await supabaseAdmin
       .from('tracks')
-      .select('id, title, week, audio_url, cover, island, created_at, published')
+      .select('id, title, week, audio_url, arweave_url, cover, island, created_at, published')
       .eq('id', id)
       .single();
 
@@ -55,7 +56,8 @@ export async function GET(
       }
     }
 
-    const res: TrackDetailResponse = { track, minted, pending };
+    const exposedTrack = exposeTrack(track as TrackRow);
+    const res: TrackDetailResponse = { track: exposedTrack, minted, pending };
     return NextResponse.json(res);
   } catch (err) {
     console.error('GET /api/tracks/[id] error:', err);

@@ -9,9 +9,11 @@ import {
   type ReactNode,
 } from 'react';
 import type { Track } from '@/src/types/tracks';
+import { getTrackAudioSources, playTrackSources } from './track-audio';
 
 /** 播放生命周期回调（B2 录制用） */
 export interface PlayerLifecycle {
+  onBeforePlay?: (track: Track) => void;
   onPlayStart?: (track: Track) => void;
   onPlayEnd?: () => void;
 }
@@ -44,6 +46,8 @@ const PlayerContext = createContext<PlayerState | null>(null);
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadingRef = useRef<string | null>(null);
+  const requestRef = useRef(0);
+  const lifecycleStartedRef = useRef(false);
   const [playing, setPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [duration, setDuration] = useState(0);
@@ -55,6 +59,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     return () => { listenersRef.current.delete(lifecycle); };
   }, []);
 
+  const notifyBeforePlay = useCallback((track: Track) => {
+    listenersRef.current.forEach((l) => l.onBeforePlay?.(track));
+  }, []);
+
   const notifyStart = useCallback((track: Track) => {
     listenersRef.current.forEach((l) => l.onPlayStart?.(track));
   }, []);
@@ -63,7 +71,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     listenersRef.current.forEach((l) => l.onPlayEnd?.());
   }, []);
 
-  // lazy 创建 + 绑事件（loadedmetadata 拿 duration / ended reset state）
   const getAudio = useCallback(() => {
     if (!audioRef.current) {
       const audio = new Audio();
@@ -80,7 +87,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
           setCurrentTrack(null);
           setDuration(0);
           setStartedAt(0);
-          notifyEnd();
+          if (lifecycleStartedRef.current) {
+            lifecycleStartedRef.current = false;
+            notifyEnd();
+          }
         }
       });
       audioRef.current = audio;
@@ -90,35 +100,58 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const play = useCallback(async (track: Track) => {
     if (loadingRef.current === track.id) return;
+    const request = ++requestRef.current;
     loadingRef.current = track.id;
-
+    notifyBeforePlay(track);
     const audio = getAudio();
     audio.pause();
-    audio.src = track.audio_url;
+    if (lifecycleStartedRef.current) {
+      lifecycleStartedRef.current = false;
+      notifyEnd();
+    }
+
+    const sources = getTrackAudioSources(track);
+    if (sources.length === 0) {
+      loadingRef.current = null;
+      console.error('[player] 永久音频尚未冻结', { trackId: track.id });
+      return;
+    }
 
     // 乐观 UI：立即变 playing（HTMLAudio 真正出声 < 100ms 通常体感即时）
     setCurrentTrack(track);
     setPlaying(true);
     setStartedAt(audio.currentTime || 0);
     setDuration(audio.duration || 0);
-    notifyStart(track);
 
     try {
-      await audio.play();
+      const source = await playTrackSources(
+        audio,
+        sources,
+        () => requestRef.current === request,
+      );
+      if (!source || requestRef.current !== request) return;
+      lifecycleStartedRef.current = true;
+      setStartedAt(audio.currentTime || 0);
+      setDuration(audio.duration || 0);
+      notifyStart(track);
     } catch (err) {
-      if (loadingRef.current === track.id) loadingRef.current = null;
+      if (requestRef.current !== request) return;
+      loadingRef.current = null;
       console.error('[player] play failed', { trackId: track.id, err });
       setPlaying(false);
       setCurrentTrack(null);
+      setDuration(0);
+      setStartedAt(0);
       return;
     }
 
     // 加载期间用户切到别的（loadingRef 被覆盖）→ 当前 audio 已被新 src 覆盖，无需手动停
     if (loadingRef.current !== track.id) return;
     if (loadingRef.current === track.id) loadingRef.current = null;
-  }, [getAudio, notifyStart]);
+  }, [getAudio, notifyBeforePlay, notifyEnd, notifyStart]);
 
   const stop = useCallback(() => {
+    requestRef.current += 1;
     loadingRef.current = null;
     const audio = audioRef.current;
     if (audio) {
@@ -129,7 +162,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setPlaying(false);
     setDuration(0);
     setStartedAt(0);
-    notifyEnd();
+    if (lifecycleStartedRef.current) {
+      lifecycleStartedRef.current = false;
+      notifyEnd();
+    }
   }, [notifyEnd]);
 
   const toggle = useCallback(async (track: Track) => {
@@ -158,8 +194,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
 export function usePlayer(): PlayerState {
   const ctx = useContext(PlayerContext);
-  if (!ctx) {
-    throw new Error('usePlayer 必须在 PlayerProvider 内使用');
-  }
+  if (!ctx) throw new Error('usePlayer 必须在 PlayerProvider 内使用');
   return ctx;
 }

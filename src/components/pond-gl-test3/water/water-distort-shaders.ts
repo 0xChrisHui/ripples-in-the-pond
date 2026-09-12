@@ -1,6 +1,5 @@
 import { pondFloorGlsl } from '../shaders/pond-floor-shaders';
 import { waterLightGlsl } from '../shaders/water-light-glsl';
-
 export const MAX_SPHERES = 48;
 
 export const compositeMaskFrag = /* glsl */ `
@@ -46,6 +45,7 @@ export const compositeMaskFrag = /* glsl */ `
   uniform vec4  uP9Arcs[5];          // P9 v4：最多五条屏外超大圆弧浪
   uniform vec4  uP9Water;            // P9 v4：静浪辅助参数
   uniform vec4  uP9Caustic;          // P9 v2：焦散分裂、进度、增亮、退暗
+  uniform float uScenePresence; // 日食只退静息场景；P9 临时编舞在下方单独加回
 
   // K3：取"对该像素影响最大的水下球"的深度因子 d∈[0,1]（贴水面=0、塘底=1），d=clamp((uWaterLevel-depthZ)/uPondDepth)
   // 与 water-level.ts depthFactor 同式 → 球 dim/标题淡出/水面折射月光 三消费方读同一 d、浮沉一起连续变（统一 R4）。
@@ -161,15 +161,16 @@ export const compositeMaskFrag = /* glsl */ `
       // 不透明球 notBase≈1 不受影响；水域 sub=1 时与原式逐字等价（此改仅在球圆盘内、且该处变暗时生效）。
       base = mix(base, pondFloorColor(vUv + disp, uPondFloorStyle), uPondFloorStrength * (1.0 - notBase));
     }
-    vec3 col = base + vec3(spec * uSpec * moonMod * (1.0 - occ)) + vec3(0.62, 0.76, 0.86) * p9Wave * 0.3;
+    vec3 col = (base + vec3(spec * uSpec * moonMod * (1.0 - occ))) * uScenePresence
+      + vec3(0.62, 0.76, 0.86) * p9Wave * 0.3;
     vec3 quietColor = vec3(0.92, 0.96, 1.0);
     col += quietColor * quietFront * quietEnergy * 0.34;
     // A 暗影：冷向减光（多减暖留冷、影偏蓝灰不死黑；暗塘上弱、亮处显）
-    if (uSphereShowing > 0.5) col = max(col - aMask * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
+    if (uSphereShowing > 0.5) col = max(col - aMask * uShadowStrength * uScenePresence * vec3(1.1, 1.0, 0.82), 0.0);
     // C 反光晕：加冷光（暗塘上加光比减光更显，像球的光落在下方水面）
-    if (uShadowGlow > 0.5) col += aMask * uShadowStrength * 0.6 * vec3(0.55, 0.72, 0.95);
+    if (uShadowGlow > 0.5) col += aMask * uShadowStrength * uScenePresence * 0.6 * vec3(0.55, 0.72, 0.95);
     // D 接触影：g=0 紧贴球的小柔影（无视差、不随高度涨），冷向减光
-    if (uShadowContact > 0.5) col = max(col - computeShadowMask(vUv, grad, 0.0) * uShadowStrength * vec3(1.1, 1.0, 0.82), 0.0);
+    if (uShadowContact > 0.5) col = max(col - computeShadowMask(vUv, grad, 0.0) * uShadowStrength * uScenePresence * vec3(1.1, 1.0, 0.82), 0.0);
     // K5/K11 月光两效（焦散+倒影）：各算一次冷白增量，水面路径与球路径共用。uCaustics/uMoonReflect<0.5 时该项=0（=现状跳过）。
     vec3 causV = (uCaustics > 0.5 ? computeCaustics(vUv, grad, uTime) * uCausticsStrength : 0.0) * vec3(0.55, 0.72, 0.95);
     vec3 moonV = (uMoonReflect > 0.5 ? moonReflectTex(hUv, grad, uTime) * uMoonReflectStrength * edgeWin : 0.0) * vec3(0.91, 0.95, 1.0);
@@ -183,8 +184,9 @@ export const compositeMaskFrag = /* glsl */ `
     causV *= 1.0 + uP9Caustic.z * 3.4;
     causV *= 1.0 - clamp(uP9Caustic.w, 0.0, 0.92);
     // 背景始终走完整水面路径；球体在最后以预乘 alpha 覆盖，不再从背景抠洞。
-    col += causV * (1.0 - occ);
-    col += moonV;
+    float p9CausticActive = step(0.001, max(uP9Caustic.x, max(uP9Caustic.z, uP9Caustic.w)));
+    col += causV * mix(uScenePresence, 1.0, p9CausticActive) * (1.0 - occ);
+    col += moonV * uScenePresence;
     // 水下球只吃 grad=0 的环境月光；局部光受预乘 headroom 限制。
     vec3 causAmb = (uCaustics > 0.5 ? computeCaustics(vUv, vec2(0.0), uTime) * uCausticsStrength : 0.0) * vec3(0.55, 0.72, 0.95);
     vec3 moonAmb = (uMoonReflect > 0.5 ? moonReflectTex(hUv, vec2(0.0), uTime) * uMoonReflectStrength * edgeWin : 0.0) * vec3(0.91, 0.95, 1.0);

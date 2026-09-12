@@ -112,7 +112,7 @@ assert.ok(getDrafts().find((draft) => draft.trackId === 'track-new')?.clientDraf
 
 async function verifyMigration(): Promise<void> {
   const [migration, echoHook, echoRoute] = await Promise.all([
-    readFile('supabase/migrations/phase-15/050_pending_scores_client_draft_id.sql', 'utf8'),
+    readFile('supabase/migrations/phase-15/051_pending_scores_client_draft_id.sql', 'utf8'),
     readFile('src/hooks/me/useOwnedEchoes.ts', 'utf8'),
     readFile('app/api/me/pond-echoes/route.ts', 'utf8'),
   ]);

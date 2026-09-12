@@ -1,6 +1,7 @@
 'use client';
 
-import { GROUPS, getGroupTargetCount } from '@/src/components/archipelago/sphere-config';
+import { GROUPS, REGULAR_TRACK_COUNT } from '@/src/components/archipelago/sphere-config';
+import { usePlayer } from '@/src/components/player/PlayerProvider';
 import type { GlSim } from '../spheres/use-gl-sim';
 
 /**
@@ -8,7 +9,10 @@ import type { GlSim } from '../spheres/use-gl-sim';
  * 点击直接切 GL 组（glSim.setGroup → 重建 sim），修掉 G4「nav 点击 GL 不跟随」的历史限制；
  * 顺手发一道 bg-ripple:wave（复用涟漪桥 → 水面起波 + 推球），与键盘 ←→ 并行。
  */
-export default function GlNav({ glSim }: { glSim: GlSim }) {
+export default function GlNav({ glSim, playbackActive = false, featured = false }: {
+  glSim: GlSim; playbackActive?: boolean; featured?: boolean;
+}) {
+  const { playing } = usePlayer();
   const pick = (id: (typeof GROUPS)[number]['id'], el: HTMLElement) => {
     if (id === glSim.groupId) return;
     const r = el.getBoundingClientRect();
@@ -26,9 +30,10 @@ export default function GlNav({ glSim }: { glSim: GlSim }) {
           <button
             key={g.id}
             type="button"
+            disabled={playing || playbackActive}
             onClick={(e) => pick(g.id, e.currentTarget)}
             className={[
-              'flex items-center gap-2 rounded px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] transition',
+              'flex items-center gap-2 rounded px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] transition disabled:cursor-not-allowed disabled:opacity-30',
               active
                 ? 'border border-white/10 bg-white/5 text-white/80'
                 : 'border border-transparent text-white/30 hover:text-white/60',
@@ -36,7 +41,7 @@ export default function GlNav({ glSim }: { glSim: GlSim }) {
           >
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: g.color }} />
             {g.label}
-            <span className="text-[8.5px] text-white/30">{getGroupTargetCount(g.id)}</span>
+            <span className="text-[8.5px] text-white/30">{REGULAR_TRACK_COUNT + Number(featured)}</span>
           </button>
         );
       })}

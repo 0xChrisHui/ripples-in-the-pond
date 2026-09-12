@@ -8,6 +8,13 @@ import {
   type TurboAuthenticatedClient,
   type TokenType,
 } from '@ardrive/turbo-sdk';
+import {
+  ARWEAVE_GATEWAYS,
+  resolveArUrl,
+} from './shared';
+
+export { ARWEAVE_GATEWAYS, resolveArUrl } from './shared';
+export type { ArweaveGateway } from './shared';
 
 // 多网关 fallback 列表，顺序即优先级
 // 只保留两个经过本机 curl 探测确认可达 + Arweave 生态公认主力的网关：
@@ -16,29 +23,7 @@ import {
 // Phase 3 S0 硬门槛：本机 verify-arweave-cors.ts 作 smoke test，
 // 真正的"全球可达"验证延后到 S6 真部署 decoder 后浏览器跨设备手测。
 // 注：早期版本列的 ar-io.dev / arweave.dev / gateway.irys.xyz 是错列/被 ESET 拦。
-export const ARWEAVE_GATEWAYS = [
-  'https://arweave.net',
-  'https://ario.permagate.io',
-] as const;
-
-export type ArweaveGateway = (typeof ARWEAVE_GATEWAYS)[number];
-
 const TX_ID_RE = /^[a-zA-Z0-9_-]{43}$/;
-
-/**
- * 把 Arweave txId 拼成可访问的 HTTPS URL。
- * @param txId Arweave 交易 ID（43 位 base64url 字符）
- * @param gateway 可选网关，默认取主网关
- */
-export function resolveArUrl(
-  txId: string,
-  gateway: ArweaveGateway = ARWEAVE_GATEWAYS[0],
-): string {
-  if (!TX_ID_RE.test(txId)) {
-    throw new Error(`Invalid Arweave txId: ${txId}`);
-  }
-  return `${gateway}/${txId}`;
-}
 
 /**
  * 从 Arweave 下载文件——依次尝试所有网关，任何一个成功即返回。

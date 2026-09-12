@@ -24,6 +24,9 @@ export const GROUPS: GroupDef[] = [
   { id: 'C', label: '3', color: GROUP_PALETTES[2][0] },
 ];
 
+/** 每组 35 个常规 Track；首页另挂一枚不进入力导的 Pond Echo 访客。 */
+export const REGULAR_TRACK_COUNT = 35;
+
 // v31 — 球大小 9/30，靠减 collide 斥力 + 提 outlier 拉力压总占地
 export const CFG = {
   minR: 9,
@@ -106,17 +109,21 @@ export interface SimLink extends SimulationLinkDatum<SimNode> {
   correlation: number;
 }
 
-// Phase 6 B6（2026-05-04）：A 组只显 published=true 的 5 球（艺术家 demo）；
-// B/C 组保持原 36 球行为（音频 SQL 层循环到 No.1-5）
+// A 组只取 published=true；B/C 从正式 Track 1–35 取数，不接收 Pond Echo DTO。
 export function getGroupTracks(gid: GroupId, allTracks: Track[]): Track[] {
-  if (gid === 'A') return allTracks.filter((t) => t.published);
-  return allTracks.filter((t) => t.week >= 1 && t.week <= 36);
+  const regular = allTracks.filter((t) => t.week >= 1 && t.week <= REGULAR_TRACK_COUNT);
+  if (gid === 'A') return regular.filter((t) => t.published);
+  return regular;
 }
 
-// A 组 = 全部 published 真实曲目数（P6 B6=5 → P7 A6.1=15 → 本次 +20 首新曲=35）/ B/C 组 36 球
-// ⚠️ 每次新增 published 曲目都要同步这个数字，否则 padTracksToTarget 会 slice 截断、A tab 看不到新歌
-export function getGroupTargetCount(gid: GroupId): number {
-  return gid === 'A' ? 35 : 36;
+// #36 已从常规集合抽离；三个分组都只建立 35 个 d3 节点。
+export function getGroupTargetCount(_gid: GroupId): number {
+  const targets: Record<GroupId, number> = {
+    A: REGULAR_TRACK_COUNT,
+    B: REGULAR_TRACK_COUNT,
+    C: REGULAR_TRACK_COUNT,
+  };
+  return targets[_gid];
 }
 
 // DB < target 时循环 padding；改 week 1..target 让颜色/size 各异；id 加后缀避 React key 冲突
@@ -126,11 +133,7 @@ export function padTracksToTarget(real: Track[], target: number): Track[] {
   const padded: Track[] = [];
   for (let i = 0; i < target; i++) {
     const src = real[i % real.length];
-    padded.push({
-      ...src,
-      id: i < real.length ? src.id : `${src.id}-fill-${i}`,
-      week: i + 1,
-    });
+    padded.push({ ...src, id: i < real.length ? src.id : `${src.id}-fill-${i}`, week: i + 1 });
   }
   return padded;
 }
@@ -176,11 +179,8 @@ export function generateLinks(
       for (let b = a + 1; b < indices.length; b++) {
         const seed = (indices[a] * 17 + indices[b] * 31) % 100;
         const corr = 0.5 + (seed % 30) / 100;
-        links.push({
-          source: nodes[indices[a]].id,
-          target: nodes[indices[b]].id,
-          correlation: Math.min(0.85, corr),
-        });
+        links.push({ source: nodes[indices[a]].id, target: nodes[indices[b]].id,
+          correlation: Math.min(0.85, corr) });
       }
     }
   });

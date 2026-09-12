@@ -633,3 +633,12 @@
 - 🔧 修复：不新建密钥文件，改用 `vercel env run -e production -- bash scripts/verify.sh`，只向本次子进程注入 Production 环境后原样重跑。
 - ✅ 结果：类型、lint、硬线、目录、危险代码、36 路由生产构建与 Forge 56/56 全部通过。
 - 💡 干净发布工作树与可构建环境是两件事；需要秘密的本地发布验证应使用短生命周期进程注入，不要为方便把生产密钥重新写回仓库目录。
+
+### E050 — P14 observe 用移动 safe head 判断异步 source 导致永久假失败
+
+- 📅 2026-09-12 / P14-G7 生产恢复
+- 😱 现象：cron-job.org 连续 HTTP 200，但路由 body 始终为 `transient/source_index_lagging`，`lastCronSuccessAt` 不更新；继续等待也不会满足 observe Gate。
+- 🧠 原因：P14 发现器要求 source cursor 精确等于“本次请求时”的 safe head；两个每分钟 job 异步执行且链头持续增长，这个等式天然易失效。discovery 与 last-success 写入失败又返回 HTTP 200，外部历史形成伪绿。
+- 🔧 修复：P14 只消费 source 已完成落库与 CAS 的稳定 cursor 上界；查询前仍拒绝 source/discovery 逆序和非法游标。正常小 lag 不报警，stale/>500/ahead 才报警；真实失败改为 500/503。
+- ✅ 结果：pure policy、health、source CAS 与静态查询上界测试通过；P14 cron 暂停，等待新 observe 部署后从零重启 15 分钟窗口。
+- 💡 异步流水线应以持久化 handoff cursor 作为下游上界，而不是要求两个独立调度器在同一瞬间追平移动链头；HTTP 状态必须表达任务结果，而不只是“函数有返回”。

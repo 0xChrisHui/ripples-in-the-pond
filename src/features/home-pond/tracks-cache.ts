@@ -49,8 +49,8 @@ export function deriveTracksDataVersion(tracks: Track[]): string {
   const canonical = [...tracks]
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((track) => [
-      track.id, track.title, track.week, track.audio_url, track.cover,
-      track.island, track.created_at, track.published,
+      track.id, track.title, track.week, track.audio_url, track.arweave_url,
+      track.audio_gateway_urls, track.cover, track.island, track.created_at, track.published,
     ]);
   return `tracks-v1-${versionHash(JSON.stringify(canonical))}`;
 }

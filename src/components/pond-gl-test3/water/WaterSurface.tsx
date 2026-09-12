@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { ShaderMaterial, Vector2, Vector4 } from 'three';
 import { fullscreenVertexShader, waterFragmentShader } from './ripple-shaders';
 import { addRipple, MAX_RIPPLES } from './use-ripple-fbo';
+import { getScenePresence } from '../focus/playback-focus';
 
 /**
  * G5 — 程序化水面（球之下、基调之上）。背景常驻微波 + 鼠标/切组涟漪，纯 fragment shader。
@@ -20,6 +21,7 @@ interface WaterUniforms {
   uRefract: { value: number };
   uMoon: { value: number };
   uRipples: { value: Vector4[] };
+  uScenePresence: { value: number };
   [key: string]: { value: unknown };
 }
 
@@ -40,6 +42,7 @@ export default function WaterSurface({ artDir }: { artDir: 'deep' | 'black' }) {
     uRefract: { value: 0.06 },
     uMoon: { value: 1.6 },
     uRipples: { value: ripples },
+    uScenePresence: { value: 1 },
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), []);
 
@@ -51,6 +54,7 @@ export default function WaterSurface({ artDir }: { artDir: 'deep' | 'black' }) {
     let raf = 0;
     const loop = () => {
       setNum(matRef.current, 'uTime', performance.now() / 1000);
+      setNum(matRef.current, 'uScenePresence', getScenePresence());
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);

@@ -1,7 +1,8 @@
 'use client';
 
-import { Canvas, useThree } from '@react-three/fiber';
-import { Component, Suspense, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
+import type { ShaderMaterial } from 'three';
 import { isWebGLAvailable, pickLifeFlags, type GLFlags } from './gl-flags';
 import { useWakeField } from './life/wake-field';
 import { baseToneVertexShader, baseToneFragmentShader } from './base-tone-shader';
@@ -16,6 +17,9 @@ import BgImage from './BgImage';
 import WaterPetals from './decor/WaterPetals';
 import type { GlSim } from './spheres/use-gl-sim';
 import AutoDpr from './auto-dpr';
+import Track36Visitor from './visitor/Track36Visitor';
+import type { Track36VisitorState } from './visitor/track36-state';
+import { getScenePresence } from './focus/playback-focus';
 
 /**
  * GL 渲染层入口 — P8-G G3。
@@ -27,14 +31,17 @@ import AutoDpr from './auto-dpr';
 
 // 基调层：全屏裁剪空间平面，按 artDir 输出深色水体基调或纯黑。
 function BaseTone({ artDir }: { artDir: GLFlags['artDir'] }) {
+  const matRef = useRef<ShaderMaterial>(null);
   const uniforms = useMemo(
-    () => ({ uMode: { value: artDir === 'black' ? 1 : 0 } }),
+    () => ({ uMode: { value: artDir === 'black' ? 1 : 0 }, uScenePresence: { value: 1 } }),
     [artDir],
   );
+  useFrame(() => { if (matRef.current) matRef.current.uniforms.uScenePresence.value = getScenePresence(); });
   return (
     <mesh frustumCulled={false} renderOrder={-1}>
       <planeGeometry args={[2, 2]} />
       <shaderMaterial
+        ref={matRef}
         key={artDir}
         vertexShader={baseToneVertexShader}
         fragmentShader={baseToneFragmentShader}
@@ -92,7 +99,8 @@ function GlFallback({ artDir }: { artDir: GLFlags['artDir'] }) {
   const bg = artDir === 'black'
     ? '#000'
     : 'radial-gradient(ellipse at 50% 50%, #030a09 0%, #010303 82%)';
-  return <div className="absolute inset-0" style={{ background: bg }} aria-hidden="true" />;
+  return <div className="absolute inset-0 transition-opacity duration-500 motion-reduce:duration-75"
+    style={{ background: bg, opacity: 'var(--pond-scene-presence, 1)' }} aria-hidden="true" />;
 }
 
 export interface PondGLProps {
@@ -101,9 +109,10 @@ export interface PondGLProps {
   pointerInteractive?: boolean;
   onPerformanceChange?: (degraded: boolean) => void;
   onHealthChange: (health: GlHealth) => void;
+  visitor?: RefObject<Track36VisitorState | null>;
 }
 
-export default function PondGL({ flags, glSim, pointerInteractive = true, onPerformanceChange, onHealthChange }: PondGLProps) {
+export default function PondGL({ flags, glSim, pointerInteractive = true, onPerformanceChange, onHealthChange, visitor }: PondGLProps) {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production' && flags.rtt && flags.waterFx) {
       console.warn('[PondGL] rtt 与 waterFx 同时开启：两个 priority-1 渲染器会互相覆盖，请关闭其中一个。');
@@ -165,10 +174,11 @@ export default function PondGL({ flags, glSim, pointerInteractive = true, onPerf
           {/* waterOn 只认旧「水面」(G6 没入淡到全透明=水波盖住球)。扭曲水面(waterFx)下球**不淡出**：
               红线「水下不压黑/不虚化」→ 水下球保持可见、靠合成 pass 的深度折射(K3 d^a)体现浮沉，不消失。 */}
           {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} sphereDrift={flags.sphereDrift} separatePass={flags.waterFx} colorGrade={flags.colorGrade} life={pickLifeFlags(flags)} />}
+          {flags.glSpheres && visitor && <Track36Visitor visitor={visitor} />}
           {/* H1 spike：RTT 验证全屏盖在最上（renderOrder 10），隔离实验、默认关 */}
           {flags.rtt && <RttSpike />}
           {/* H2/H3：扭曲水面——渲真场景进 FBO 全屏折射扭曲 + 水位遮罩（接管渲染循环，返回 null） */}
-          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} glSpheres={flags.glSpheres} sphereDrift={flags.sphereDrift} depthModel={flags.depthModel} sphereShadow={flags.sphereShadow} shadowOcclude={flags.shadowOcclude} shadowGlow={flags.shadowGlow} shadowContact={flags.shadowContact} caustics={flags.caustics} waterZoom={flags.waterZoom} pondFloor={flags.pondFloor} moonReflect={flags.moonReflect} pointerInteractive={pointerInteractive} />}
+          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} visitor={visitor} glSpheres={flags.glSpheres} sphereDrift={flags.sphereDrift} depthModel={flags.depthModel} sphereShadow={flags.sphereShadow} shadowOcclude={flags.shadowOcclude} shadowGlow={flags.shadowGlow} shadowContact={flags.shadowContact} caustics={flags.caustics} waterZoom={flags.waterZoom} pondFloor={flags.pondFloor} moonReflect={flags.moonReflect} pointerInteractive={pointerInteractive} />}
           {/* J3：低 FPS 自动降 DPR 保流畅（仅测时长 + setDpr，不渲染） */}
           {flags.autoDegrade && <AutoDpr onPerformanceChange={onPerformanceChange} />}
         </Canvas>

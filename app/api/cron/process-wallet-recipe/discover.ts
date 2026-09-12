@@ -1,26 +1,13 @@
-import {
-  createPublicClient,
-  decodeEventLog,
-  getAddress,
-  http,
-  parseAbiItem,
-  type Address,
-  type Hex,
-} from 'viem';
+import { createPublicClient, decodeEventLog, getAddress, http, parseAbiItem,
+  type Address, type Hex } from 'viem';
 import { CURRENT_CHAIN, CHAIN_ID_NUM } from '@/src/lib/chain/chain-config';
 import { SCORE_NFT_ADDRESS } from '@/src/lib/chain/contracts';
 import { supabaseAdmin } from '@/src/lib/supabase';
-import {
-  compareDiscoveryCursor,
-  formatDiscoveryCursor,
-  parseDiscoveryCursor,
-  type DiscoveryCursor,
-} from '@/src/features/wallet-recipe/pipeline-policy';
-import {
-  deriveRecipeV1,
-  hashRecipeV1,
-  normalizeOriginWallet,
-} from '@/src/lib/wallet-recipe/recipe-v1';
+import { sourceCursorKey } from '@/src/features/source-index/source-policy';
+import { compareDiscoveryCursor, decideDiscoverySource, formatDiscoveryCursor,
+  parseDiscoveryCursor, type DiscoveryCursor } from '@/src/features/wallet-recipe/pipeline-policy';
+import { deriveRecipeV1, hashRecipeV1,
+  normalizeOriginWallet } from '@/src/lib/wallet-recipe/recipe-v1';
 import { PipelineStepError } from './shared';
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -34,6 +21,7 @@ const readClient = createPublicClient({
 });
 
 type ChainEventRow = {
+  chain_id: number;
   contract: string;
   event_name: string;
   tx_hash: string;
@@ -56,7 +44,8 @@ function requireEvent(row: ChainEventRow, scoreContract: Address): {
   txHash: Hex;
   cursor: DiscoveryCursor;
 } {
-  if (row.event_name !== 'Transfer' || row.contract.toLowerCase() !== scoreContract.toLowerCase()) {
+  if (row.chain_id !== CHAIN_ID_NUM || row.event_name !== 'Transfer'
+    || row.contract !== scoreContract.toLowerCase()) {
     throw new PipelineStepError('chain_events 出现错误的 Score 合约或事件', 'permanent_input');
   }
   if (row.from_addr.toLowerCase() !== ZERO_ADDRESS) {
@@ -120,8 +109,9 @@ export async function discoverWalletRecipes(deadlineAt = Number.POSITIVE_INFINIT
   const contractKey = scoreContract.toLowerCase();
   const cursorKey = `p14:cursor:${CHAIN_ID_NUM}:${contractKey}`;
   const activationKey = `p14:activation:${CHAIN_ID_NUM}:${contractKey}`;
-  const values = await readSystemValues(['last_synced_block', cursorKey, activationKey]);
-  const sourceBlockText = values.get('last_synced_block');
+  const upstreamKey = sourceCursorKey(CHAIN_ID_NUM, contractKey);
+  const values = await readSystemValues([upstreamKey, cursorKey, activationKey]);
+  const sourceBlockText = values.get(upstreamKey);
   const cursorText = values.get(cursorKey);
   const activationText = values.get(activationKey);
   if (!sourceBlockText || !/^\d+$/.test(sourceBlockText)
@@ -129,25 +119,28 @@ export async function discoverWalletRecipes(deadlineAt = Number.POSITIVE_INFINIT
     throw new PipelineStepError('P14 activation/cursor 或上游链游标未初始化', 'permanent_input');
   }
 
+  let cursor = parseDiscoveryCursor(cursorText);
   const head = await readClient.getBlockNumber();
   const safeHead = head > 20n ? head - 20n : 0n;
-  if (BigInt(sourceBlockText) < safeHead) {
-    throw new PipelineStepError('source_index_lagging', 'transient');
+  const sourceDecision = decideDiscoverySource({
+    sourceBlock: BigInt(sourceBlockText), safeHead, discoveryBlock: cursor.blockNumber,
+  });
+  if (!sourceDecision.ready) {
+    throw new PipelineStepError(sourceDecision.reason, sourceDecision.failureKind);
   }
-  let cursor = parseDiscoveryCursor(cursorText);
   const cursorBlock = Number(cursor.blockNumber);
-  const safeHeadNumber = Number(safeHead);
-  if (!Number.isSafeInteger(cursorBlock) || !Number.isSafeInteger(safeHeadNumber)) {
+  const sourceBlockNumber = Number(sourceDecision.upperBound);
+  if (!Number.isSafeInteger(cursorBlock) || !Number.isSafeInteger(sourceBlockNumber)) {
     throw new PipelineStepError('链游标超出安全整数范围', 'permanent_input');
   }
-
   const { data, error } = await supabaseAdmin
     .from('chain_events')
-    .select('contract,event_name,tx_hash,log_index,block_number,from_addr,to_addr,token_id')
-    .ilike('contract', contractKey)
+    .select('chain_id,contract,event_name,tx_hash,log_index,block_number,from_addr,to_addr,token_id')
+    .eq('chain_id', CHAIN_ID_NUM)
+    .eq('contract', contractKey)
     .eq('event_name', 'Transfer')
     .eq('from_addr', ZERO_ADDRESS)
-    .lte('block_number', safeHeadNumber)
+    .lte('block_number', sourceBlockNumber)
     .or(`block_number.gt.${cursorBlock},and(block_number.eq.${cursorBlock},log_index.gt.${cursor.logIndex})`)
     .order('block_number', { ascending: true })
     .order('log_index', { ascending: true })

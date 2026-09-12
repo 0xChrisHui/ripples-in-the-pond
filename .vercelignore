@@ -1,0 +1,7 @@
+.git/
+.next/
+node_modules/
+.env*
+.codex-edge-*/
+supabase/.temp/
+reviews/evidence/**/*.png

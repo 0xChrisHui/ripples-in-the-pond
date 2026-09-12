@@ -1474,12 +1474,42 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **网关决定**：P14 实证优先级 `ardrive.net → arweave.tokyo → arweave.net` 取代 P15 早期双网关样板；统一 resolver 沿用同一候选，并只把通过 canonical SHA-256 的字节写入可复验缓存。
 - **播放决定**：P14 配方播放器坚持四片段窗口化加载；每批下载后立即解码接入当前 AudioContext 时钟，晚到资源不得沿用原始 anchor 抢播。
 - **档案决定**：P14 上线后 `/me` 的“池中回声”成为第四个独立栏目；缓存身份额外包含规范化钱包、链和 Pond Echo 合约，并始终以“上次链上确认”标注旧快照。
-- **迁移决定**：P14 已占用全局最新编号 049，尚未执行的 P15 草稿幂等 migration 顺延为 050，避免部署记录和人工执行顺序歧义。
+- **迁移事实修正**：合并 P14-G 时发现 `050_chain_event_source_cursor.sql` 与 P15 草稿 migration 同号；保留先执行且承担事故恢复审计身份的 P14 `050`，把幂等的 P15 文件顺延为 `051_pending_scores_client_draft_id.sql`。两套结构均已在 test/production 读回存在；在核对远端 `050` 归属前不重放 SQL，也不篡改既有 history。
 
 ## 2026-09-13 — P15 发布 Gate 采用可复现证据与显式 review 豁免
 
-- **迁移结果**：050 先在 P14 test 应用并以真实 RPC 重放证明幂等、清理测试行，再以同一 SQL 应用 production；两边 history、列和六参数函数签名 read-back 一致，旧五参数 overload 保留。
+- **迁移结果**：P15 草稿幂等 SQL 的列和六参数函数签名已在 test/production read-back，test 真实 RPC 重放幂等并清理测试行，旧五参数 overload 保留；鉴于同号冲突，不再把远端单条 `050` history 作为这份 SQL 的独立归属证据。
 - **Preview 决定**：整合提交的 Vercel Preview 构建成功但受团队 SSO 保护；页面数字只采用同一提交的本地 production build，不把匿名 302 或部署绿色状态冒充页面实测。
 - **性能裁决**：首轮首页热圆圈 p95 835.9ms 与 `/me` 单个 309ms Long Task 均保留；独立各 50 次复测分别为圆圈 p95 212.7ms、Long Task max 176ms。最终干净提交运行时最长任务 58ms，按复测证据与用户 review 豁免接受离群点，不改写为原始样本全量通过。
 - **首声决定**：热缓存不再在点击后集中解码全部唯一片段；首个四片段窗口排程后以 4-key 批次后台补解码，续播不等待后台 flight。可信 Gate 记录 10 个 cold 样本 p95 433.7ms、10 个 hot 样本 p95 125.4ms及第 5 段排程，并把实际听音明确保留为未自动验证。
 - **范围决定**：用户明确将剩余 review 视为非阻塞；双真实身份、物理手机与人耳听音转发布后观察。没有获批供应商的新高速镜像继续 deferred，空配置安全回退三条永久网关。
+
+## 2026-09-12 — P14-G 游标事故止血与视觉合同
+
+- **止血决定**：旧 source cursor 把读取故障当 0 并普通覆盖写，导致主网游标回退；立即把 P14 切 `off`、关闭 source/P14 cron，并作废原 24h/7d 观察窗。ECHO #1 与历史队列只保留、不回滚。
+- **恢复决定**：事件源身份改为 chainId + lowercase ScoreNFT contract，数据库 initialize/CAS RPC 是游标唯一写入口；全链 0-diff 前不得把新游标直接跳到链头。
+- **测试库映射**：migration 首跑因未映射的 `0xE0fA…DB23` 主动停止；核对 P12 测试网部署记录后将其登记为 OP Sepolia，保留“未知合约一律阻塞”的边界。
+- **对账数据源**：Alchemy 免费档实测只允许 10-block logs，全链需约 8.6 万次请求；改用 OP Mainnet 公共只读 RPC 的 10,000-block 实测窗口，将扫描压到约 86 次，同时保留逐日志 receipt/blockHash 校验。
+- **作品决定**：#36 是完整母带和每组共享的唯一水中访客，不进入常规力导；完整 MSTR 的权利与整首试听必须单独确认，不能由此前 36 段确认代替。
+- **视觉决定**：采用日本式留白的月夜水塘语言；#36 复用音乐圆 shader，以相对水位穿行和有界 FBO 涟漪表达，日食只淡出静息场景，P9 临时编舞继续在纯黑底显现。
+- **游标瞬时故障策略**：source 恢复观察遇到 Supabase 读取/CAS 偶发 504；采用最多三次的短退避重试。CAS 超时后先回读：只有当前值已经等于目标值才承认成功，仍等于 expected 才重试，其他值继续失败关闭，避免把未知提交结果当失败重复推进。
+
+## 2026-09-12 — P14-G 第 36 枚音乐圆圈产品纠正
+
+- **产品纠正**：上一条“#36 是完整母带”的决定自本条起作废，但保留原文作为决策历史。首页第 36 枚固定代表已经成功空投、公开页为 `/echo/1` 的 ECHO #1；唯一内容真值是 PondEchoes 链上 `tokenURI(1)` 与永久 metadata 中的 36 位 recipe/clips，不是 MSTR、不是 `tracks.week=36`。
+- **出现边界**：只有链上身份与永久档案完整性验证成功时首页才显示 35+1；未空投、tokenURI/metadata/clip 任一失败时严格保持 35 首，不以数据库 Track、本地文件或假 URL 降级。
+- **播放边界**：点击 #36 复用现有 WalletRecipePlayerEngine 在浏览器现场组合 36 段，不生成或上传新 MP3，不进入 MaterialNFT、Track、TestJam 或 Score 录制；原 MSTR 权利确认、整首试听与永久上传 Gate 全部取消。
+- **保留决定**：相对水面 `-30 → +20 → -10` 的访客路径、有界 FBO 水中涟漪、播放冻结/停止续走与 selective scenePresence 日食纯黑合同保持不变；G2 仍未完成，不因本次产品纠正提前标绿。
+
+## 2026-09-12 — P14-G ECHO #1 首页发布与 G6 关闭
+
+- **身份分层**：首页 ECHO 使用 chainId + PondEchoes contract + tokenId 的独立 featured 身份；首页 `/api/tracks` 只限制当前常规列表为 1–35，不把未来 Track 36–108 永久禁掉，也不把 ECHO 塞进常规力导或 links。
+- **完整性分层**：发布 Gate 全量读取并核对 26 个唯一 clip 字节；运行时先校验链上 owner/tokenURI 与永久 metadata，点击播放时再校验实际 clip hash并允许有界重试，避免每次首页加载下载约 3.3MB 音频。
+- **验收边界**：确定性 featured fixture 只负责 35+0、布局、键盘与 fallback 故障矩阵，不替代链上/永久档案；正式域名另以真实 ECHO 36 段自然 ended 和 30 分钟 soak 关闭 G6。
+- **发布结果**：部署 `dpl_5j7YLuBbeEgZ5yVUDyTbmW8iWAQX` 已提升到 `pond-ripple.xyz`；Production 保持 `off`、P14 cron 保持关闭，待 G7 observe 独立通过后才恢复 live。
+
+## 2026-09-12 — P14-G7 异步 source 消费边界修正
+
+- **消费上界**：source cron 与 P14 cron 是两个异步任务，不能要求 source cursor 恰好等于不断增长的 safe head。P14 改为只消费 source 已完成“事件落库 → CAS 游标”的稳定前缀，并继续在查询前拒绝 source 超前或 discovery cursor 超前。
+- **告警边界**：fresh 的小幅 source lag 只保留为 telemetry；source 已过期且仍落后、落后超过单轮 500 blocks、source 超前或 discovery 超前才进入健康告警，避免正常错峰长期假红。
+- **HTTP 语义**：配置/永久输入、discovery、claim、last-success 写入与 manual review 不再返回伪成功 200；只有显式 off、正常 observe/live、deadline 等受控状态保留 200，使 cron-job.org 历史能反映真实失败。

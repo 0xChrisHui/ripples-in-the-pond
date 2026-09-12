@@ -94,6 +94,18 @@ export async function trySendNew() {
 
   const job = jobs[0];
 
+  // 历史或人工写入的任务也必须在发交易前确认对应真实 Track 存在。
+  const { data: track, error: trackError } = await supabaseAdmin
+    .from('tracks')
+    .select('id')
+    .eq('week', job.token_id)
+    .maybeSingle();
+  if (trackError) throw trackError;
+  if (!track) {
+    await markFailed(job.id, 'manual_review', `track not found for week=${job.token_id}`);
+    return { result: 'invalid_track', jobId: job.id };
+  }
+
   const { data: user } = await supabaseAdmin
     .from('users')
     .select('evm_address')

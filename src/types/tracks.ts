@@ -20,6 +20,10 @@ export interface Track {
   week: number;
   /** 音频文件路径（Phase 1 用 /tracks/xxx.mp3，Phase 2 换 Arweave） */
   audio_url: string;
+  /** 永久音频身份；尚未冻结时为 null。 */
+  arweave_url: string | null;
+  /** API 从永久身份派生的 HTTPS 网关候选，不包含裸 ar://。 */
+  audio_gateway_urls: string[];
   /** 封面颜色或图片 URL */
   cover: string;
   /** 所属岛屿/群组 */
