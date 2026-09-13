@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-09-13T10:09:49.7717889+08:00",
+  "commit": "2be3786f45fec398d67abd2cd4305e56e4b9ef19",
+  "deployments": {
+    "preview": "G8hMLPoXqHpTAxYh99Sa2QF9eyMM",
+    "production": "2rgmgPS2ypnR7oqw3j97VrNFt93g"
+  },
+  "publicRoutes": {
+    "/": 200,
+    "/me": 200,
+    "/artist": 200,
+    "/score/1": 200,
+    "/echo/1": 200
+  },
+  "tracks": {
+    "status": 200,
+    "count": 35,
+    "minimumWeek": 1,
+    "maximumWeek": 35,
+    "serverTimingPresent": true
+  },
+  "featuredEcho": {
+    "status": 200,
+    "kind": "pond-echo",
+    "tokenId": "1",
+    "recipeLength": 36,
+    "uniqueClipCount": 26
+  },
+  "productionMarkers": {
+    "p15FifthSegmentScheduled": true,
+    "p14EclipseDataAttribute": true,
+    "p14FeaturedApi": true
+  },
+  "sourceCatchUp": {
+    "boundedRuns": 14,
+    "finalRunBatches": 2,
+    "caughtUpAtRun": true
+  },
+  "health": {
+    "status": 200,
+    "db": "ok",
+    "wallet": "ok",
+    "pendingJobs": 0,
+    "scoreQueueManualReview": 0,
+    "walletRecipeMode": "observe",
+    "configured": true,
+    "sourceCursorIdentity": "chain-events:cursor:10:0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa",
+    "sourceChainCursor": "156833273",
+    "safeHead": "156833280",
+    "sourceToSafeHeadBlocks": "7",
+    "sourceSyncStale": false,
+    "cronStale": false,
+    "queue": {
+      "active": 0,
+      "failed": 0,
+      "manualReview": 0,
+      "success": 1,
+      "excluded": 2
+    },
+    "alerts": []
+  }
+}

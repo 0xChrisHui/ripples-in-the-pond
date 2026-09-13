@@ -4,14 +4,14 @@
 
 P15 已形成可发布候选：代码、migration、production build、导航/路由矩阵、首页运行时、Pond Echo 冷热排程与永久媒体合同完成自动验证。用户于 2026-09-13 明确将剩余 review 视为非阻塞，因此真实双账号、物理 iOS/Android、人耳听音及未自动覆盖的设备/故障矩阵转为发布后观察，不冒充自动化已覆盖。
 
-E4–E5 新高速镜像没有获批供应商、账号、额度与清理边界，本轮不创建；空配置继续使用三候选永久网关。Production 在本评审记录时仍为 pending，发布成功与线上 smoke 将在同一文件补记。
+E4–E5 新高速镜像没有获批供应商、账号、额度与清理边界，本轮不创建；空配置继续使用三候选永久网关。合并 P14-G 最终修复后的 Production 已发布，公开路由、35+1、播放器标记与授权健康面均通过线上 smoke。
 
 ## 版本与边界
 
 - P15 分支：`codex/p15-smooth-playback`。
-- P14 生产基线：`origin/main@58ed270`；整合提交：`c11c606`。
+- P14-G 最终基线：`8f5a735`；P15 合并发布提交：`2be3786`。
 - 首声、分批补解码与可信运行时 Gate：`db7f4d6`。
-- Preview deployment `6413617116` 只证明 `c11c606` 构建成功；最新候选仍须在推送后取得自己的 Preview 绿色状态。匿名页面访问受 Vercel SSO 保护并返回 302。
+- `2be3786` 的 Vercel Preview `G8hMLPoXqHpTAxYh99Sa2QF9eyMM` 与 Production `2rgmgPS2ypnR7oqw3j97VrNFt93g` 均构建成功；匿名 Preview 页面仍受 SSO 保护。
 - P14 主工作树的未提交 review、playbook、hook 与素材改动没有被修改、暂存或提交。
 
 ## 交付内容
@@ -26,8 +26,8 @@ E4–E5 新高速镜像没有获批供应商、账号、额度与清理边界，
 ### 草稿幂等与可观测性
 
 - 本地草稿使用稳定 `clientDraftId`，后台上传只删除对应草稿。
-- migration 050 增加格式约束、用户内部分唯一索引、advisory lock 与六参数幂等 RPC；旧五参数 overload 保留兼容。
-- 执行记录确认 050 已在 P14 test 与 production 应用；test 中同一 `clientDraftId` 两次 RPC 返回同一 `score_id` 且仅一条 draft，测试行已清理。该结论是本轮操作记录，不将缺少独立脱敏 artifact 的文字转述冒充原始证据。
+- P15 migration 051 增加格式约束、用户内部分唯一索引、advisory lock 与六参数幂等 RPC；旧五参数 overload 保留兼容。文件从冲突的 050 纯重命名，SQL blob 保持 `7ab96e7d…` 不变。
+- test 与 production 已读回 P15 结构，test 中同一 `clientDraftId` 两次 RPC 返回同一 `score_id` 且仅一条 draft，测试行已清理。远端 051 history 只可在确认既有 050 属于 P14 后补记；本次未重放 SQL、未修改远端 050。
 - 核心 API 输出分段 `Server-Timing`，不记录 token、钱包与私人正文。
 
 ### 永久播放
@@ -80,19 +80,26 @@ E4–E5 新高速镜像没有获批供应商、账号、额度与清理边界，
 | 双真实身份、物理手机、人耳听音 | review-waived | 用户明确转发布后观察 |
 | GL/R3F 实际 FPS、Score 首声、断站 Decoder、真实网关故障矩阵 | review-waived | 自动证据未完整覆盖；沿用合同测试/历史证据并转发布后观察 |
 | baseline→after 全量 p50、错误/回退率、内存峰值 | review-waived | 保留 `reviews/2026-09-06-phase-15-performance-baseline.md` 与原始 JSON，不补造未采指标 |
-| Production | pending | 发布成功和线上 smoke 后补记 |
+| Production | 通过 | 合并版 Preview/Production 构建成功；5 个公开页面、2 个公开 API、35+1 与双功能 marker 线上通过 |
 
 ## 验证与环境例外
 
 - `bash scripts/verify.sh`：TypeScript、ESLint、规模、目录、危险代码与 Forge 56/56 通过；验证工作树的 Turbopack 仅因 `node_modules` junction 指向工作树外而拒绝。
-- `npm run build -- --webpack`：36/36 路由构建成功。
-- Vercel 原生 Turbopack Preview 对整合提交构建成功，证明真实部署环境不存在本地 junction 限制。
+- 合并版在本机 Node 24 + 外链依赖的 webpack worker 出现 `WasmHash` 内部异常，未作为通过证据；同一提交的 Vercel 原生 Turbopack Preview 与 Production 均成功，36 路由由真实部署环境生成。
 - P14 pipeline/player/gateway 与 P15 home/me/Server-Timing/permanent-media 专项验证通过。
+
+## Production 线上结果
+
+- `/`、`/me`、`/artist`、`/score/1`、`/echo/1` 均 HTTP 200；`/api/tracks` 返回 week 1–35 共 35 首并携带 `Server-Timing`。
+- `/api/echo/featured` 返回 ECHO #1、36 位 recipe 与 26 个唯一 clip；Production chunk 同时包含 `p15:recipe-fifth-segment-scheduled`、日食数据属性与 featured API 标记。
+- 发布后 scoped source cursor 从积压位置以带锁 CAS cron 有界追平；终检 safe-head lag 为 7 blocks，source/P14 cron 均 fresh，alerts 空。
+- Production 保持 P14 `observe`，队列为 1 success / 2 excluded / 0 active / 0 failed / 0 manual review；本轮不越权切 `live`。
+- 脱敏原始读回见 `reviews/evidence/p15-final/production-smoke-2be3786.json`。
 
 ## 回滚边界
 
 - 导航和首页高速层可独立撤回，不触碰永久数据。
 - `/me` 可停用 LKG 读取而不删除草稿或服务端记录。
-- 050 为 additive；应用保留旧五参数 RPC，紧急回滚先撤应用，不先删列或索引。
+- 051 为 additive；应用保留旧五参数 RPC，紧急回滚先撤应用，不先删列或索引。
 - 清空 `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL` 即停镜像；永久 resolver 继续使用三候选 fallback。
 - 播放器优化不修改 tokenURI、永久 metadata、Arweave 内容或已铸 NFT。

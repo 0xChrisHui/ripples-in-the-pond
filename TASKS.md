@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 15 合并发布收口**：把 P14-G `8f5a735` 的 source cursor、ECHO #1 首页 35+1 与 G7 稳定前缀修复合入 P15 `298b65a`，完成整体验证、Production 重发和公开回归；P15 migration 已顺延为 051，不重放 SQL。
+- **无进行中的工程施工**：Phase 15 已以合并版 `2be3786` 完成 Production 发布与健康回归，等待用户选择下一阶段。
 
 ## ⏳ Later / 开放项
 
@@ -214,7 +214,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - **Phase 12** — OP Mainnet 上线准备与部署
 - **Phase 13** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
 - **Phase 14（非阻塞观察）** — 首枚 ECHO #1、P14-G 索引恢复、首页第 36 枚访客与 G7 稳定前缀修复已交付；后续 observe/live 窗口及原钱包档案目验作为 review 保留（`playbook/phase-14/80-g-recovery-track36-eclipse.md`）
-- **Phase 15（当前）** — 代码闭环、P14-G 最终交付整合、性能证据与首轮 Production 部署已完成；当前重发合并版并做线上回归（`reviews/2026-09-13-phase-15-final-review.md`）
+- **Phase 15（已完结 ✅）** — P14-G 最终交付、全站性能/可靠性代码、证据、Preview/Production 与线上回归全部完成（`reviews/2026-09-13-phase-15-final-review.md`）
 - **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
 - **未排期** — 音效系统扩展（原 P15：26→50 与输入键/音效 id 解耦；待以后重新编号）
 
@@ -239,7 +239,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - [x] P14-G7 代码修复：discovery 只消费 source 已完成落库与 CAS 的稳定前缀，fresh 小幅 lag 只作 telemetry，真实失败返回非 200。
 - [ ] P14-G7/F8 观察与私密目验：合并版发布后核对 mode/cron，并完成剩余 observe/live、24h/7d 与原钱包 `/me#pond-echoes` 目验；按用户决定不阻塞 P15 发布。
 
-> P14-G 分支最后记录的生产状态为 `off`、source cron 启用、P14 cron 关闭；合并版发布后须以真实环境读回为准。不得删除队列、回退 cutoff 或重传未知上传。
+> 2026-09-13 合并版终检：Production 为 `observe`，source/P14 cron fresh，scoped source lag 7 blocks，队列 1 success / 2 excluded / 0 active / 0 failed / 0 manual review，alerts 空。后续切 `live` 仍须按 P14 观察 Gate，不得删除队列、回退 cutoff 或重传未知上传。
 
 ### Phase 8 Scope（当前任务）
 

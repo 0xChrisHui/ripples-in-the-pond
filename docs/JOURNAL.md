@@ -1483,6 +1483,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **性能裁决**：首轮首页热圆圈 p95 835.9ms 与 `/me` 单个 309ms Long Task 均保留；独立各 50 次复测分别为圆圈 p95 212.7ms、Long Task max 176ms。最终干净提交运行时最长任务 58ms，按复测证据与用户 review 豁免接受离群点，不改写为原始样本全量通过。
 - **首声决定**：热缓存不再在点击后集中解码全部唯一片段；首个四片段窗口排程后以 4-key 批次后台补解码，续播不等待后台 flight。可信 Gate 记录 10 个 cold 样本 p95 433.7ms、10 个 hot 样本 p95 125.4ms及第 5 段排程，并把实际听音明确保留为未自动验证。
 - **范围决定**：用户明确将剩余 review 视为非阻塞；双真实身份、物理手机与人耳听音转发布后观察。没有获批供应商的新高速镜像继续 deferred，空配置安全回退三条永久网关。
+- **合并发布决定**：P15 首轮 Production 暴露 `origin/main` 尚未包含并行 P14-G 最终分支；采用双亲合并提交 `2be3786`，同时保留 P14 scoped cursor/35+1/日食与 P15 LKG/渐进播放/Server-Timing，不用单边覆盖解决冲突。
+- **生产恢复决定**：合并版上线后 scoped cursor 正常但积压 6,428 blocks；复用生产既有锁、10-block batch 与 CAS 的 source cron 做 14 次有界追赶，最终 lag 7、alerts 空。P14 保持 `observe`，P15 不代替 P14 Gate 切 `live`。
+- **迁移收口决定**：P15 migration 只从冲突的 050 纯重命名为 051，blob hash 保持不变；未核清远端 050 的 name/statements 前不补 history、不重放 SQL、不 repair 既有 050。
 
 ## 2026-09-12 — P14-G 游标事故止血与视觉合同
 

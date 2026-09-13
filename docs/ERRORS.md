@@ -642,3 +642,12 @@
 - 🔧 修复：P14 只消费 source 已完成落库与 CAS 的稳定 cursor 上界；查询前仍拒绝 source/discovery 逆序和非法游标。正常小 lag 不报警，stale/>500/ahead 才报警；真实失败改为 500/503。
 - ✅ 结果：pure policy、health、source CAS 与静态查询上界测试通过；P14 cron 暂停，等待新 observe 部署后从零重启 15 分钟窗口。
 - 💡 异步流水线应以持久化 handoff cursor 作为下游上界，而不是要求两个独立调度器在同一瞬间追平移动链头；HTTP 状态必须表达任务结果，而不只是“函数有返回”。
+
+### E051 — P15 合并验证工作树的依赖副本污染类型与构建扫描
+
+- 📅 2026-09-13 / P15 合并发布收口
+- 😱 现象：首次 TypeScript 在 4GB 堆 OOM；Lint 扫入临时改名的依赖目录；本机 Node 24 + 外链 `node_modules` 的 webpack worker 又在完成编译后触发内部 `WasmHash` 异常。
+- 🧠 原因：为避开不完整依赖临时改名 `node_modules` 后，该目录不再匹配默认排除；验证工作树的 junction 又超出 Turbopack filesystem root，本地构建宿主不再等价于真实部署环境。
+- 🔧 处理：排除临时依赖副本后重跑 TypeScript/Lint；P14/P15 专项、规模、危险扫描与 Forge 56/56 均独立通过；最终以同一提交的 Vercel 原生 Turbopack Preview 和 Production 双成功作为部署构建证据。
+- ✅ 结果：合并提交 `2be3786` 已上线，5 个页面、2 个 API、35+1、双功能 marker 与授权 health 回归通过；本机 webpack 异常未冒充绿色。
+- 💡 验证工作树的依赖拓扑也是测试条件；外链依赖只能做代码 Gate，发布构建应由相同提交的原生部署环境作最终裁决。
