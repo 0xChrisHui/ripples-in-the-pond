@@ -7,12 +7,11 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **无进行中的工程施工**：Phase 15 已完成发布后 review，并修复跨登录源内存 owner 与永久 Track 缓存/API 合同缺口；等待用户选择下一阶段。
+- **P15-G 外部配置 Gate**：仓库代码、自动测试与 playbook 已完成；等待用户创建公开 Vercel Blob Store、上传按 Arweave txid 命名的音频，并配置三环境公开镜像基址后做 Preview/Production 真服务验收。
 
 ## ⏳ Later / 开放项
 
 - **P14 live 观察与私密目验**：保持两项每分钟 cron，完成首枚 Pond Echo 上线后的 24h/7d 只读观察；原钱包本人补 `/me#pond-echoes` 私密档案目验。
-- **P15 高速镜像 E4–E5**：没有获批供应商、账号、Range/CORS、额度和清理边界前保持关闭；统一 resolver 安全回退三条永久网关，不阻塞其余 P15 发布闭环。
 - **Phase 11 外部动态证据补档**（不阻塞，2026-09-05 历史条件）：代码与自动 Gate 已完成；当时因 `arweave.net` 与 `ario.permagate.io` 瞬时同时失败，未补 Mainnet Token #1 ready Score 的 cold-start reduced-motion 与日食黑盘复拍。该历史状态不代表当前三候选 resolver；Artist 正式文案以后替换，第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 仅作隔离历史 fixture。
 
 ## 📚 历史状态（非 Now）

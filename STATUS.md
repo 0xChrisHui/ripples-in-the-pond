@@ -6,9 +6,10 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 15 已完结 ✅**。P14-G 最终提交 `8f5a735` 已无损合入 P15，合并版 `2be3786` 的 Preview 与 Production 均成功；公开页面、35+1 ECHO、P15 渐进播放器 marker、scoped source cursor 与队列健康回归通过。P14 后续 observe/live 窗口与私密目验按用户决定保留为非阻塞 review。P8/P9/P11/P12/P15 已正式完结。
+**Phase**: **Phase 15 已完结 ✅；P15-G 镜像增量等待外部配置**。P14-G 最终提交 `8f5a735` 已无损合入 P15，合并版 `2be3786` 的 Preview 与 Production 均成功；公开页面、35+1 ECHO、P15 渐进播放器 marker、scoped source cursor 与队列健康回归通过。P14 后续 observe/live 窗口与私密目验按用户决定保留为非阻塞 review。P8/P9/P11/P12/P15 已正式完结。
 
 **P15 发布后 review（2026-09-13）**：修复 P14 永久音频字段合入后遗留的 Track 公开合同漂移，首页与私人档案缓存会拒绝旧/损坏字段；`/me` 内存 owner、轮询回写和页面放行改用 `authSource + userId`，堵住同内部 ID 跨登录源的一帧串档窗口。修复提交 `21ec63a` 已快进 `main`，Vercel Preview/Production 成功；正式域名五页 200、tracks 35 首与三网关合同通过。TypeScript、定向 lint、P15 四组脚本、P14 播放器、Webpack production build 与 Foundry 56/56 已通过；详见 `reviews/2026-09-13-phase-15-post-release-review.md`。
+**P15-G 镜像探针（2026-09-13）**：playbook 提交 `ea771b0` 冻结“永久曲谱真相 + Vercel 音频加速 + Arweave 自动回退”；实现提交 `c4a7b20` 与预算修复 `d27f613` 加入真实对象 `Range: bytes=0-0` 严格探针、800ms 探针/900ms 镜像总预算、同 origin single-flight、`5m → 1h → 6h → 24h` 持久退避与 half-open 自动恢复。缓存命中零探针；404/哈希错误只回退单对象；只有服务级错误进入 origin 熔断；Range 成功只准入，完整镜像对象验证成功才清零失败等级。独立终审 0 findings，完整 `scripts/verify.sh` 通过（37 路由、Foundry 56/56）。仓库侧 G0–G4 已完成，当前生产因变量为空仍直接走 Arweave。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）
@@ -36,7 +37,7 @@
 
 **P11 正式发布（2026-09-06）**：发布提交 `2e55d65` 已推送 `main`，Vercel Production 成功。正式域名 `/`、`/artist`、`/me`、`/score/1` 均 HTTP 200；Artist 草稿标识、私人音乐档案、Score 分享入口与永久凭证均命中新版 SSR 内容。受保护 `/api/health` 使用 Bearer 验证为 DB/钱包正常、两队列 0 积压/0 失败。双 Arweave 网关恢复后的 Token #1 动态补证与 Artist 正式文案仍是开放项，不阻塞发布。
 
-**P14 主网 live（2026-09-11）**：P14-0/A/B/C/E/D、OP Sepolia E2E 与 F1–F7 主路径均已完成。真实新钱包 `0x456b...7708` 的 Score #3 位于区块 `156746674`，严格晚于 cutoff `156738598`；observe 固化唯一 eligible/pending 后，经用户 live Gate 自动生成 ECHO #1。metadata txid `E4JV...KU88`，mint tx `0x2680...68e8`，区块 `156759068`，全程 0 retry/0 error。链/DB/metadata/Score source 四方一致；40 个永久对象全部达到至少 2/3 网关 quorum，成功响应同字节；375/1440 两视口各完整播放 1–36 段并以 `4:29/4:29` ended，0 overflow、0 console/page error。终检 health 为 1 success / 2 excluded / 0 active / 0 failed / 0 manual review，alerts 空。证据见 `reviews/evidence/p14-f7/README.md`。**当前继续 24h/7d live 观察；用户登录原钱包后的 `/me#pond-echoes` 只剩一次私密会话人工目验。**
+**P14 主网 live（2026-09-11，历史）**：P14-0/A/B/C/E/D、OP Sepolia E2E 与 F1–F7 主路径均已完成。真实新钱包 `0x456b...7708` 的 Score #3 位于区块 `156746674`，严格晚于 cutoff `156738598`；observe 固化唯一 eligible/pending 后，经用户 live Gate 自动生成 ECHO #1。metadata txid `E4JV...KU88`，mint tx `0x2680...68e8`，区块 `156759068`，全程 0 retry/0 error。链/DB/metadata/Score source 四方一致；40 个永久对象全部达到至少 2/3 网关 quorum，成功响应同字节；375/1440 两视口各完整播放 1–36 段并以 `4:29/4:29` ended，0 overflow、0 console/page error。终检 health 为 1 success / 2 excluded / 0 active / 0 failed / 0 manual review，alerts 空。证据见 `reviews/evidence/p14-f7/README.md`。**本次 live 已结束；2026-09-12 恢复后 Production 当前为 `observe`，后续切 live 仍按 P14-G7 Gate。用户登录原钱包后的 `/me#pond-echoes` 只剩一次私密会话人工目验。**
 
 **P14-G 恢复（2026-09-12）**：生产旧 source cursor 曾因“读取失败按 0 + 普通覆盖写”退到 `5500`。G0–G2 已完成止血、测试库并发、生产 migration、86 万区块全链 0-diff、scoped cursor 初始化、source-only 部署及修复后 21/21 次观察。G3–G6 已把主网 ECHO #1 作为独立 featured 输入接入首页：正式域名 `/api/tracks` 精确 35，成功时 35+1、失败时 35+0；链上 tokenURI、永久 metadata/36 位 recipe/26 个唯一 clip/约 269.9 秒通过全字节 Gate。Production 浏览器矩阵、20 次普通播放、P9 33 键、ECHO 日食与自然 ended、375px/fallback、同一 WebGL context、30 分钟 31 样本与 0 mutation 全绿。合并版发布后 scoped source cursor 已追平到 safe head 7 blocks 内，source/P14 cron fresh、alerts 空；Production 保持 `observe`，不在 P15 收口中擅自切 `live`。
 
@@ -93,7 +94,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：P15 已关闭，不自动进入新 Phase。待用户选择 Phase 13 社区合作、Phase 16 原生钱包/多链，或补做 P14 observe→live、24h/7d 与私密 `/me#pond-echoes` 非阻塞 review。
+**当前权威下一步**：完成 P15-G 外部配置 Gate：用户创建公开 Vercel Blob Store，并上传路径为 `<base>/<arweave-txid>` 的 Score/Pond Echo 音频；再配置 Development/Preview/Production 的 `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL`，Development 本地 pull 后重启，Preview/Production 分别部署并完成 Range/CORS 与自动回退/恢复实测。此后额度耗尽与恢复均不需要改变量或按月重新部署。
 
 ---
 

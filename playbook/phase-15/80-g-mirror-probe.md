@@ -26,14 +26,14 @@
 - 探针明确失败时立即启动 Arweave，不等待计时器结束。
 - 探针在 800ms 内没有形成有效 `206` 时取消镜像探针并启动 Arweave；允许最多 100ms 浏览器调度误差。
 - 同一页面会话、同一镜像 origin 只允许一个在途探针；Score/Pond Echo 的并发素材等待同一个结果，不能各自制造探针风暴。
-- 竞速或切源后必须 Abort 败方；不允许无界双下载。完整镜像 GET 若随后失败，仍沿用统一 resolver 逐对象回退三条永久网关。
-- 关键测量点：`mirrorProbeStart`、`mirrorProbeSettled`、`arFallbackStarted`、`firstVerifiedAudioReady`、`firstSound`。
+- 竞速或切源后必须 Abort 败方；不允许无界双下载。探针与随后的完整镜像 GET 共用 900ms 总预算；超时后 Abort 镜像，并由统一 resolver 逐对象回退三条永久网关。
+- 关键测量点：`p15:mirror-probe-start`、`p15:mirror-probe-settled`、`p15:ar-fallback-started`、`p15:first-verified-audio-ready`，以及两套播放器已有的首声 marker。
 
 ## G3 — 持久长熔断与自动恢复
 
 - localStorage 只保存 schema、规范化镜像 origin、连续失败级别与 `nextProbeAt`；严禁保存钱包、userId、txid、recipe 或播放偏好。
 - 推荐退避序列为 `5 分钟 → 1 小时 → 6 小时 → 24 小时（封顶）`；不可用 localStorage 时退化为当前标签页内存状态。
-- 冷却期内直接跳过镜像。到期进入 half-open，同 origin 只放行一个真实素材探针；成功即清除失败状态并让下一未缓存资源自动走 Vercel，失败则进入下一档退避。
+- 冷却期内直接跳过镜像。到期进入 half-open，同 origin 只放行一个真实素材探针；Range 成功只临时准入，完整镜像对象通过既有验证后才清除失败状态；任一服务级失败进入下一档退避。
 - 单对象 404、哈希不符或格式错误只做对象级回退；只有 Range/CORS 合同失败、连续网络失败或服务级 HTTP 错误才提升 origin 熔断级别。
 - 不按“下月 1 日”强制恢复，避免 Vercel 实际 30 天用量窗口与自然月错位。
 
@@ -50,17 +50,19 @@
 
 - `206` 正常；`200` 忽略 Range；Content-Range/Length/Type 错误。
 - 404 对象级回退；403/429/5xx、CORS/DNS/超时的 origin 退避。
-- 799ms/801ms 边界、Abort/路由离开、同 origin 并发探针去重。
+- 800ms deadline、Abort/路由离开、同 origin 并发探针去重与部分等待者取消。
 - localStorage 缺失、损坏、旧 schema、跨刷新熔断、half-open 成功恢复。
-- 探针成功但完整对象 404/哈希错误；缓存命中零探针；双来源失败诚实报错。
+- 探针成功但完整对象 404/哈希错误；并发完整 GET 服务失败只升一档；缓存命中零探针；镜像与全部 Arweave 候选均失败时诚实报错。
 - 持久状态不含身份、txid 或曲谱；`scripts/verify.sh` 全绿。
 
 发布 Gate：
 
-1. 用户创建公开 Vercel Blob Store，把镜像对象按 `<base>/<arweave-txid>` 上传并保留正确 Content-Type。
-2. Preview 真测 Range/CORS：必须返回严格 `206`、一字节 body 与正确 Content-Range。
-3. 用户把同一个 `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL` 配入 Development/Preview/Production，随后各部署一次让公开变量进入构建。
-4. Production 小流量验收成功、超时、超额模拟和自动恢复；以后额度变化不再重新部署。
+1. 先在 `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL` 仍为空时把本 Track 代码合入 `main` 并完成一次 Production 部署，确保回退保护先于配置上线。
+2. 用户创建 **Public** Vercel Blob Store；`BLOB_READ_WRITE_TOKEN` 只留在 Vercel/本机，不进入浏览器或聊天。
+3. 选择固定目录前缀（推荐 `media/`），把每个对象 pathname 精确设为 `media/<arweave-txid>`，禁用随机文件名后缀并保留正确 Content-Type；例如 CLI 使用 `vercel blob put <本地音频> --pathname media/<arweave-txid> --content-type audio/mpeg`。
+4. `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL` 填 Public Blob origin 加固定目录前缀，例如 `https://<store-id>.public.blob.vercel-storage.com/media`；配置 Development/Preview/Production，Development 本地 pull 后重启，实际只部署 Preview/Production。
+5. Preview 真测 Range/CORS：必须返回严格 `206`、一字节 body 与正确 Content-Range，再推进 Production。
+6. Production 小流量验收成功、超时、超额模拟和自动恢复；以后额度变化不再重新部署。
 
 ## 完成预算
 
@@ -69,4 +71,3 @@
 - 镜像失败带来的额外阻塞 ≤900ms；竞速败方均已 Abort，无无界双下载。
 - 原 P15 NFT 冷首声 p95 ≤2.0s、热首声 p95 ≤500ms 继续成立。
 - half-open 成功后无需刷新、修改变量或重新部署，下一未缓存资源自动恢复高速镜像。
-
