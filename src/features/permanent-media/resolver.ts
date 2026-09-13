@@ -11,6 +11,7 @@ import {
   type PermanentMediaResult,
 } from './types';
 const DEFAULT_TIMEOUT_MS = 5_000;
+const DEFAULT_MIRROR_BUDGET_MS = 900;
 const DEFAULT_ROUNDS = 2;
 const DEFAULT_RETRY_DELAY_MS = 300;
 const DEFAULT_MAX_BYTES = 64 * 1024 * 1024;
@@ -128,11 +129,14 @@ export async function resolvePermanentMedia(
     if (options.kind === 'audio') performance.mark('p15:first-verified-audio-ready');
     return { ...cached, source: 'cache', verification: 'sha256' };
   }
+  const mirrorStartedAt = performance.now();
+  const mirrorBudgetMs = Math.max(1, options.mirrorBudgetMs ?? DEFAULT_MIRROR_BUDGET_MS);
   const mirrorProbe = options.mirrorProbe ?? sharedPermanentMediaMirrorProbe;
   const mirrorBaseUrl = options.kind === 'audio'
     ? await mirrorProbe.select(ref, {
       fetcher: options.fetcher ?? fetch, signal: options.signal,
-      mirrorBaseUrl: options.mirrorBaseUrl, timeoutMs: options.mirrorProbeTimeoutMs,
+      mirrorBaseUrl: options.mirrorBaseUrl,
+      timeoutMs: Math.min(options.mirrorProbeTimeoutMs ?? 800, mirrorBudgetMs),
     })
     : '';
   if (options.signal?.aborted) throw abortError();
@@ -147,7 +151,9 @@ export async function resolvePermanentMedia(
       if (candidate.source === 'mirror' && mirrorDisabled) continue;
       if (!health.canAttempt(candidate.healthKey)) continue;
       try {
-        const result = await attempt(candidate, options, maxBytes, timeoutMs, expected);
+        const candidateTimeout = candidate.source === 'mirror'
+          ? Math.max(1, mirrorBudgetMs - (performance.now() - mirrorStartedAt)) : timeoutMs;
+        const result = await attempt(candidate, options, maxBytes, candidateTimeout, expected);
         health.recordSuccess(candidate.healthKey);
         if (candidate.source === 'mirror') {
           mirrorProbe.recordServiceSuccess?.(candidate.healthKey);

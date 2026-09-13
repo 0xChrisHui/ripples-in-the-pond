@@ -4,7 +4,6 @@ import {
   PermanentMediaMirrorProbe,
   resolvePermanentMedia,
 } from '../../../src/features/permanent-media';
-
 const refs = ['A', 'B', 'C'].map((value) => `ar://${value.repeat(43)}`);
 const mirror = 'https://mirror.example/media';
 const storageKey = 'ripples:media-mirror-health:v1';
@@ -12,14 +11,12 @@ const audioHeaders = { 'content-type': 'audio/mpeg', 'accept-ranges': 'bytes' };
 const probeResponse = () => new Response(new Uint8Array([7]), { status: 206, headers: {
   ...audioHeaders, 'content-range': 'bytes 0-0/42', 'content-length': '1',
 } });
-
 class MemoryStorage {
   readonly values = new Map<string, string>();
   getItem(key: string): string | null { return this.values.get(key) ?? null; }
   setItem(key: string, value: string): void { this.values.set(key, value); }
   removeItem(key: string): void { this.values.delete(key); }
 }
-
 async function sha256(bytes: Uint8Array): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', new Uint8Array(bytes));
   return [...new Uint8Array(digest)]
@@ -173,9 +170,31 @@ async function verifyServiceFailureKinds(): Promise<void> {
   }
 }
 
+async function verifyFullGetDeadline(): Promise<void> {
+  let fullGetAborted = false;
+  const fetcher: typeof fetch = async (input, init) => {
+    if (!String(input).startsWith(mirror)) return new Response('audio', { headers: audioHeaders });
+    if (new Headers(init?.headers).get('range')) return probeResponse();
+    return new Promise((_resolve, reject) => init?.signal?.addEventListener('abort', () => {
+      fullGetAborted = true;
+      reject(new DOMException('已取消', 'AbortError'));
+    }, { once: true }));
+  };
+  const started = performance.now();
+  const result = await resolvePermanentMedia(refs[0], {
+    kind: 'audio', validation: { level: 'compatibility' }, fetcher,
+    mirrorBaseUrl: mirror, rounds: 1, health: new PermanentMediaHealth(), mirrorBudgetMs: 10,
+    mirrorProbe: new PermanentMediaMirrorProbe({ storage: null }),
+  });
+  assert.equal(result.source, 'ardrive');
+  assert.equal(fullGetAborted, true, '完整镜像 GET 超过总预算必须 Abort');
+  assert.ok(performance.now() - started < 100, '镜像探针与完整 GET 必须共用有界总预算');
+}
+
 export async function verifyMirrorObjectFallback(): Promise<void> {
   await verifyDamagedObjectFallback();
   await verifyServiceAndObjectHealthSplit();
   await verifyConcurrentBackoff();
   await verifyServiceFailureKinds();
+  await verifyFullGetDeadline();
 }
