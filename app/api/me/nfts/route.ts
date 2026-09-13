@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 import { ServerTiming } from '@/src/lib/performance/server-timing';
 import type { MyNFTsResponse, OwnedNFT } from '@/src/types/tracks';
+import { exposeTrack, type TrackRow } from '@/src/lib/track-contract';
 
 /**
  * GET /api/me/nfts
@@ -27,7 +28,7 @@ export async function GET(req: NextRequest) {
           token_id,
           tx_hash,
           minted_at,
-          tracks (id, title, week, audio_url, cover, island, created_at)
+          tracks (id, title, week, audio_url, arweave_url, cover, island, created_at, published)
         `)
         .eq('user_id', auth.userId)
         .order('minted_at', { ascending: false })
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
       if (seen.has(e.token_id)) continue;
       seen.add(e.token_id);
       nfts.push({
-        track: e.tracks as unknown as OwnedNFT['track'],
+        track: e.tracks ? exposeTrack(e.tracks as unknown as TrackRow) : null,
         token_id: e.token_id,
         tx_hash: e.tx_hash,
         minted_at: e.minted_at,
@@ -63,18 +64,18 @@ export async function GET(req: NextRequest) {
       .filter((q) => !seen.has(q.token_id))
       .map((q) => q.token_id);
 
-    const tracksByWeek = new Map<number, OwnedNFT['track']>();
+    const tracksByWeek = new Map<number, NonNullable<OwnedNFT['track']>>();
     if (pendingTokenIds.length > 0) {
       // ⚠ P3-13 隐式约定：material tokenId ≡ tracks.week（全仓一致，见 mint 入队 + steps.markSuccess）。
       //   若将来 tokenId 与 week 语义分叉，这里会显示错曲目 —— 届时需引入显式关联列。
       const { data: tracks } = await timing.measure('db', () => (
         supabaseAdmin
           .from('tracks')
-          .select('id, title, week, audio_url, cover, island, created_at')
+          .select('id, title, week, audio_url, arweave_url, cover, island, created_at, published')
           .in('week', pendingTokenIds)
       ));
       for (const t of tracks ?? []) {
-        tracksByWeek.set(t.week, t as OwnedNFT['track']);
+        tracksByWeek.set(t.week, exposeTrack(t as TrackRow));
       }
     }
 
@@ -82,7 +83,7 @@ export async function GET(req: NextRequest) {
       if (seen.has(q.token_id)) continue;
       seen.add(q.token_id);
       nfts.push({
-        track: tracksByWeek.get(q.token_id) ?? null as unknown as OwnedNFT['track'],
+        track: tracksByWeek.get(q.token_id) ?? null,
         token_id: q.token_id,
         tx_hash: '',
         minted_at: q.created_at,

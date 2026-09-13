@@ -7,7 +7,7 @@ import { setCachedNFTs } from '@/src/lib/nft-cache';
 import { useScoreNftPolling } from '@/src/hooks/score/useScoreNftPolling';
 import { recordingsFrom, type ArchiveRecording } from './archive-data';
 import {
-  readArchiveCache, validCachedMaterial, validCachedRecording, validCachedScore,
+  archiveIdentityKey, readArchiveCache, validCachedMaterial, validCachedRecording, validCachedScore,
   writeArchiveCache, type ArchiveAuthSource,
 } from './archive-cache';
 import {
@@ -28,7 +28,7 @@ function message(error: unknown, fallback: string): string {
 }
 /** `/me` 按 owner generation 恢复三段真实缓存，再各自后台刷新。 */
 export function useMeArchive({ authenticated, authSource, userId, getAccessToken }: Params) {
-  const [ownerId, setOwnerId] = useState<string | null>(null);
+  const [ownerKey, setOwnerKey] = useState<string | null>(null);
   const [scores, setScores] = useState(emptyScores);
   const [recordings, setRecordings] = useState<ArchiveSlice<ArchiveRecording>>(emptyRecordings);
   const [materials, setMaterials] = useState(emptyMaterials);
@@ -37,21 +37,24 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
   const activeOwnerRef = useRef<string | null>(null);
   const syncingRef = useRef(new Set<string>());
   useEffect(() => { tokenRef.current = getAccessToken; });
-  const isCurrent = useCallback((generation: number, owner: string | null) => (
-    generation === generationRef.current && owner === activeOwnerRef.current
+  const isCurrent = useCallback((generation: number, owner: string | null,
+    source: ArchiveAuthSource | null) => (
+    generation === generationRef.current
+    && Boolean(owner && source)
+    && archiveIdentityKey({ authSource: source!, userId: owner! }) === activeOwnerRef.current
   ), []);
   const loadScores = useCallback(async (
     token: string, generation: number, owner: string, source: ArchiveAuthSource,
   ) => {
-    if (!isCurrent(generation, owner)) return;
+    if (!isCurrent(generation, owner, source)) return;
     setScores((current) => ({ ...current, phase: loadingPhase(current), error: null }));
     try {
       const items = await fetchMyScoreNFTs(token);
-      if (!isCurrent(generation, owner)) return;
+      if (!isCurrent(generation, owner, source)) return;
       writeArchiveCache({ authSource: source, userId: owner }, 'scores', '/api/me/score-nfts', items);
       setScores({ items, phase: 'ready', error: null, resolved: true });
     } catch (error) {
-      if (isCurrent(generation, owner)) setScores((current) => ({
+      if (isCurrent(generation, owner, source)) setScores((current) => ({
         ...current, phase: 'error', error: message(error, '唱片档案读取失败'),
       }));
     }
@@ -62,7 +65,7 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
     const drafts = getDrafts().filter((draft) => !syncingRef.current.has(draft.clientDraftId));
     if (!drafts.length) return;
     drafts.forEach((draft) => syncingRef.current.add(draft.clientDraftId));
-    const active = () => isCurrent(generation, owner);
+    const active = () => isCurrent(generation, owner, source);
     const result = await syncLocalDrafts(token, drafts, active);
     drafts.forEach((draft) => syncingRef.current.delete(draft.clientDraftId));
     if (!active()) return;
@@ -84,17 +87,17 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
   const loadRecordings = useCallback(async (
     token: string, generation: number, owner: string, source: ArchiveAuthSource,
   ) => {
-    if (!isCurrent(generation, owner)) return;
+    if (!isCurrent(generation, owner, source)) return;
     setRecordings((current) => ({ ...current, phase: loadingPhase(current), error: null }));
     try {
       const server = await fetchMyScores(token);
-      if (!isCurrent(generation, owner)) return;
+      if (!isCurrent(generation, owner, source)) return;
       const remote = recordingsFrom(server, []);
       writeArchiveCache({ authSource: source, userId: owner }, 'recordings', '/api/me/scores?light=1', remote);
       setRecordings({ items: recordingsFrom(server, getDrafts()), phase: 'ready', error: null, resolved: true });
       void syncDrafts(token, generation, owner, source);
     } catch (error) {
-      if (isCurrent(generation, owner)) setRecordings((current) => ({
+      if (isCurrent(generation, owner, source)) setRecordings((current) => ({
         ...current, phase: 'error', error: message(error, '录音档案读取失败'),
       }));
     }
@@ -103,16 +106,16 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
   const loadMaterials = useCallback(async (
     token: string, generation: number, owner: string, source: ArchiveAuthSource,
   ) => {
-    if (!isCurrent(generation, owner)) return;
+    if (!isCurrent(generation, owner, source)) return;
     setMaterials((current) => ({ ...current, phase: loadingPhase(current), error: null }));
     try {
       const items = await fetchMyNFTs(token);
-      if (!isCurrent(generation, owner)) return;
+      if (!isCurrent(generation, owner, source)) return;
       setCachedNFTs(owner, items);
       writeArchiveCache({ authSource: source, userId: owner }, 'materials', '/api/me/nfts', items);
       setMaterials({ items, phase: 'ready', error: null, resolved: true });
     } catch (error) {
-      if (isCurrent(generation, owner)) setMaterials((current) => ({
+      if (isCurrent(generation, owner, source)) setMaterials((current) => ({
         ...current, phase: 'error', error: message(error, '素材档案读取失败'),
       }));
     }
@@ -121,9 +124,9 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
   const retry = useCallback(async (section: Section) => {
     const generation = generationRef.current;
     const owner = userId ?? null;
-    if (!owner || !authSource || !isCurrent(generation, owner)) return;
+    if (!owner || !authSource || !isCurrent(generation, owner, authSource)) return;
     const token = await tokenRef.current();
-    if (!isCurrent(generation, owner)) return;
+    if (!isCurrent(generation, owner, authSource)) return;
     if (!token) {
       const error = '登录凭证暂不可用，请重新登录';
       if (section === 'scores') setScores((current) => ({ ...current, phase: 'error', error }));
@@ -139,15 +142,16 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
   useEffect(() => {
     const owner = authenticated && userId && authSource ? userId : null;
     const source = owner ? authSource : null;
+    const identityKey = owner && source ? archiveIdentityKey({ authSource: source, userId: owner }) : null;
     const generation = ++generationRef.current;
-    activeOwnerRef.current = owner;
+    activeOwnerRef.current = identityKey;
     queueMicrotask(async () => {
-      if (!isCurrent(generation, owner)) return;
+      if (!isCurrent(generation, owner, source)) return;
       if (!owner || !source) {
-        setOwnerId(null); setScores(emptyScores); setRecordings(emptyRecordings); setMaterials(emptyMaterials);
+        setOwnerKey(null); setScores(emptyScores); setRecordings(emptyRecordings); setMaterials(emptyMaterials);
         return;
       }
-      setOwnerId(owner);
+      setOwnerKey(identityKey);
       const identity = { authSource: source, userId: owner };
       const scoreCache = readArchiveCache(identity, 'scores', validCachedScore);
       const recordingCache = readArchiveCache(identity, 'recordings', validCachedRecording);
@@ -162,7 +166,7 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
         ? { items: materialCache.items, phase: 'refreshing', error: null, resolved: true, cached: true }
         : emptyMaterials);
       const token = await tokenRef.current();
-      if (!isCurrent(generation, owner)) return;
+      if (!isCurrent(generation, owner, source)) return;
       if (!token) {
         const error = '登录凭证暂不可用，请重新登录';
         setScores((current) => ({ ...current, phase: 'error', error }));
@@ -182,19 +186,25 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
   useScoreNftPolling({
     scoreNfts: scores.items, authenticated, userId, getAccessToken,
     onRefresh: (items) => {
-      if (userId && authSource && activeOwnerRef.current === userId) {
+      if (userId && authSource
+        && activeOwnerRef.current === archiveIdentityKey({ authSource, userId })) {
         writeArchiveCache({ authSource, userId }, 'scores', '/api/me/score-nfts', items);
         setScores({ items, phase: 'ready', error: null, resolved: true });
       }
     },
     onError: (error) => {
-      if (userId && activeOwnerRef.current === userId) setScores((current) => ({ ...current, phase: 'error', error }));
+      if (userId && authSource
+        && activeOwnerRef.current === archiveIdentityKey({ authSource, userId })) {
+        setScores((current) => ({ ...current, phase: 'error', error }));
+      }
     },
     onPollingChange: (polling) => {
-      if (userId && activeOwnerRef.current === userId) setScores((current) => (
+      if (userId && authSource
+        && activeOwnerRef.current === archiveIdentityKey({ authSource, userId })) setScores((current) => (
         polling && current.phase === 'ready' ? { ...current, phase: 'refreshing' } : current
       ));
     },
   });
-  return { ownerId, scores, recordings, materials, retry };
+  const currentKey = userId && authSource ? archiveIdentityKey({ authSource, userId }) : null;
+  return { ownerId: ownerKey === currentKey ? userId : null, scores, recordings, materials, retry };
 }

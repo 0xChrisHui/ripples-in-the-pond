@@ -9,6 +9,7 @@ import { createScoreProvenance, loadScoreMetadata } from './score/metadata';
 import type { ScoreProvenance } from './score/metadata';
 import type { ScoreMintStatus, ScorePlaybackManifest } from '@/src/types/jam';
 import type { Track } from '@/src/types/tracks';
+import { exposeTrack, type TrackRow } from '@/src/lib/track-contract';
 
 type ScoreSource = 'database' | 'chain';
 type PublicFailure = 'data_unavailable' | 'queue_failed' | 'metadata_unavailable';
@@ -109,15 +110,16 @@ async function buildQueueScore(queue: QueueRow): Promise<ScorePageData> {
     supabaseAdmin.from('users').select('evm_address').eq('id', queue.user_id).maybeSingle(),
     queue.token_id == null ? Promise.resolve(null) : getScoreOwner(queue.token_id),
   ]);
-  const track = trackResult.data as Track | null;
+  const trackRow = trackResult.data as TrackRow | null;
   const creator = typeof user.data?.evm_address === 'string' ? user.data.evm_address : null;
   const eventCount = typeof pending.data?.event_count === 'number' ? pending.data.event_count : null;
   if (eventCount == null) throw new Error('作品事件数暂时不可用');
   if (trackResult.error || user.error) throw new Error('作品关联数据暂时不可用');
-  if (!track || !creator) {
+  if (!trackRow || !creator) {
     console.error('[score-source] required queue relation unavailable:', queue.id);
     return unavailable(queue, eventCount);
   }
+  const track = exposeTrack(trackRow);
   let coverUrl = '';
   try { coverUrl = resolveArUrl(queue.cover_ar_tx_id); } catch { /* processing 保留文字身份。 */ }
   const base = {

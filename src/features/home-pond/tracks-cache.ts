@@ -2,6 +2,7 @@
 
 import type { HomeTracksSnapshot } from '@/src/types/home-pond';
 import type { Track } from '@/src/types/tracks';
+import { isExposedTrack } from '@/src/lib/track-contract';
 
 export const HOME_TRACKS_CACHE_KEY = 'ripples:home-tracks:v1';
 export const HOME_TRACKS_MAX_AGE_MS = 24 * 60 * 60 * 1000;
@@ -17,21 +18,8 @@ function resolveStorage(storage?: CacheStorage): CacheStorage | undefined {
   }
 }
 
-function isTrack(value: unknown): value is Track {
-  if (!value || typeof value !== 'object') return false;
-  const track = value as Record<string, unknown>;
-  return typeof track.id === 'string' && track.id.length > 0
-    && typeof track.title === 'string'
-    && typeof track.week === 'number' && Number.isFinite(track.week)
-    && typeof track.audio_url === 'string'
-    && typeof track.cover === 'string'
-    && typeof track.island === 'string'
-    && typeof track.created_at === 'string'
-    && typeof track.published === 'boolean';
-}
-
 function validTracks(value: unknown): value is Track[] {
-  if (!Array.isArray(value) || value.length === 0 || !value.every(isTrack)) return false;
+  if (!Array.isArray(value) || value.length === 0 || !value.every(isExposedTrack)) return false;
   return new Set(value.map((track) => track.id)).size === value.length;
 }
 

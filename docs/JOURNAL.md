@@ -1516,3 +1516,8 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **消费上界**：source cron 与 P14 cron 是两个异步任务，不能要求 source cursor 恰好等于不断增长的 safe head。P14 改为只消费 source 已完成“事件落库 → CAS 游标”的稳定前缀，并继续在查询前拒绝 source 超前或 discovery cursor 超前。
 - **告警边界**：fresh 的小幅 source lag 只保留为 telemetry；source 已过期且仍落后、落后超过单轮 500 blocks、source 超前或 discovery 超前才进入健康告警，避免正常错峰长期假红。
 - **HTTP 语义**：配置/永久输入、discovery、claim、last-success 写入与 manual review 不再返回伪成功 200；只有显式 off、正常 observe/live、deadline 等受控状态保留 200，使 cron-job.org 历史能反映真实失败。
+
+## 2026-09-13 — P15 发布后 Track 与 owner 合同统一
+
+- **Track 边界**：不为首页、`/me` 和 Score 各保留一套宽松判断；统一用公开 Track 校验/转换合同，P14 的永久音频字段缺失即视为旧缓存，不静默退回可变地址。
+- **身份边界**：`userId` 不能单独代表前端当前身份；内存 owner 与异步轮询也必须包含 `authSource`，与磁盘缓存 key 保持同一隔离粒度。

@@ -2,9 +2,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import {
   archiveCacheKey,
+  archiveIdentityKey,
   clearArchiveCache,
   readArchiveCache,
   validCachedEcho,
+  validCachedMaterial,
+  validCachedRecording,
   validCachedScore,
   writeArchiveCache,
 } from '../../src/hooks/me/archive-cache';
@@ -40,6 +43,32 @@ const echo = {
   originWallet: echoAddress, currentOwner: echoAddress, tokenUri: 'ar://metadata',
   status: 'owned' as const, relation: 'current-owner' as const, hasError: false,
 };
+const track = {
+  id: 'track-1', title: '真实曲目', week: 1, audio_url: '/track.mp3', arweave_url: null,
+  audio_gateway_urls: [], cover: '#000', island: 'A',
+  created_at: '2026-09-06T00:00:00.000Z', published: true,
+};
+
+assert.notEqual(archiveIdentityKey(privy), archiveIdentityKey(semi), '同 userId 的登录源仍须隔离');
+assert.equal(validCachedRecording({
+  key: 'server-1', title: '录音', createdAt: track.created_at,
+  pendingScoreId: 'score-1', eventCount: 1, track,
+}), true);
+assert.equal(validCachedRecording({
+  key: 'server-1', title: '录音', createdAt: track.created_at,
+  pendingScoreId: 'score-1', eventCount: 1,
+  track: { ...track, audio_gateway_urls: undefined },
+}), false, '旧录音 Track 合同必须失效');
+assert.equal(validCachedMaterial({
+  token_id: 1, tx_hash: '0x1', minted_at: track.created_at, track,
+}), true);
+assert.equal(validCachedMaterial({
+  token_id: 1, tx_hash: '0x1', minted_at: track.created_at,
+  track: { ...track, arweave_url: undefined },
+}), false, '旧素材 Track 合同必须失效');
+assert.equal(validCachedMaterial({
+  token_id: 1, tx_hash: '0x1', minted_at: track.created_at, track: '损坏',
+}), false, '损坏的素材 Track 不得被当作 pending');
 
 process.env.NEXT_PUBLIC_CHAIN_ID = '10';
 process.env.NEXT_PUBLIC_WALLET_RECIPE_NFT_ADDRESS = '0x1111111111111111111111111111111111111111';
@@ -123,6 +152,14 @@ async function verifyMigration(): Promise<void> {
   assert.match(echoHook, /fetchMyEchoes\(token, controller\.signal\)/);
   assert.match(echoRoute, /timing\.measure\('rpc'/);
   assert.match(echoRoute, /timing\.response/);
+  const [nftsRoute, scoresRoute, scoreSource] = await Promise.all([
+    readFile('app/api/me/nfts/route.ts', 'utf8'),
+    readFile('app/api/me/scores/route.ts', 'utf8'),
+    readFile('src/data/score-source.ts', 'utf8'),
+  ]);
+  assert.match(nftsRoute, /exposeTrack/);
+  assert.match(scoresRoute, /exposeTrack/);
+  assert.match(scoreSource, /exposeTrack/);
   const previousFetch = globalThis.fetch;
   let receivedSignal: AbortSignal | null | undefined;
   try {

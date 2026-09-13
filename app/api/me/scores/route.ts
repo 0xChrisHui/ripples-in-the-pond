@@ -4,6 +4,7 @@ import { authenticateRequest } from '@/src/lib/auth/middleware';
 import { ServerTiming } from '@/src/lib/performance/server-timing';
 import type { KeyEvent, MyScoresResponse } from '@/src/types/jam';
 import type { Track } from '@/src/types/tracks';
+import { exposeTrack, type TrackRow } from '@/src/lib/track-contract';
 
 /**
  * GET /api/me/scores
@@ -80,8 +81,9 @@ export async function GET(req: NextRequest) {
 
     const res: MyScoresResponse = {
       scores: (scores ?? []).flatMap((s) => {
-        const track = s.tracks as unknown as Track | null;
-        if (!track) return []; // 联表异常 → 跳过该行
+        const trackRow = s.tracks as unknown as TrackRow | null;
+        if (!trackRow) return []; // 联表异常 → 跳过该行
+        const track: Track = exposeTrack(trackRow);
         const row = s as {
           events_data?: unknown;
           event_count?: number | null;

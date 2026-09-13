@@ -46,7 +46,8 @@ export interface MintEvent {
 
 /** 个人页用：用户拥有的 NFT 概要 */
 export interface OwnedNFT {
-  track: Track;
+  /** pending 队列关联曲目暂不可用时为 null。 */
+  track: Track | null;
   token_id: number;
   tx_hash: string;
   minted_at: string;

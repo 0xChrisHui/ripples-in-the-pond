@@ -4,8 +4,10 @@ import { prewarmAudioUrls } from '../../src/features/home-pond/audio-prewarm';
 import {
   HOME_TRACKS_CACHE_KEY,
   cacheHomeTracksResponse,
+  deriveTracksDataVersion,
   readHomeTracksSnapshot,
 } from '../../src/features/home-pond/tracks-cache';
+import { exposeTrack } from '../../src/lib/track-contract';
 import type { Track } from '../../src/types/tracks';
 
 const tracks: Track[] = Array.from({ length: 8 }, (_, index) => ({
@@ -52,6 +54,19 @@ async function main() {
   assert.equal(cacheHomeTracksResponse({ tracks: [] }, storage, environment, 2_000), null);
   assert.equal(cacheHomeTracksResponse({ broken: true }, storage, environment, 2_000), null);
   assert.equal(storage.getItem(HOME_TRACKS_CACHE_KEY), saved);
+  const legacyTrack = { ...tracks[0] } as Partial<Track>;
+  delete legacyTrack.audio_gateway_urls;
+  assert.equal(cacheHomeTracksResponse({ tracks: [legacyTrack] }, storage, environment, 2_000), null);
+  assert.equal(storage.getItem(HOME_TRACKS_CACHE_KEY), saved, '旧 Track 合同不得覆盖 LKG');
+  const changedGateways = tracks.map((track, index) => index === 0
+    ? { ...track, audio_gateway_urls: ['https://gateway.example/changed'] }
+    : track);
+  assert.notEqual(deriveTracksDataVersion(tracks), deriveTracksDataVersion(changedGateways));
+
+  const txId = 'a'.repeat(43);
+  const exposed = exposeTrack({ ...tracks[0], arweave_url: `ar://${txId}` });
+  assert.equal(exposed.audio_gateway_urls.length, 3);
+  assert.equal(exposed.audio_url, `https://ardrive.net/${txId}`);
 
   const tamperedStorage = new MemoryStorage();
   const tampered = JSON.parse(saved ?? '{}') as Record<string, unknown>;

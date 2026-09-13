@@ -2,6 +2,7 @@ import type { ArchiveRecording } from './archive-data';
 import type { EchoArchiveItem } from '@/src/data/echo/types';
 import type { OwnedScoreNFT, ScoreMintStatus } from '@/src/types/jam';
 import type { OwnedNFT } from '@/src/types/tracks';
+import { isExposedTrack } from '@/src/lib/track-contract';
 
 export type ArchiveAuthSource = 'privy' | 'semi';
 export type ArchiveSectionName = 'scores' | 'echoes' | 'recordings' | 'materials';
@@ -21,7 +22,9 @@ const SCORE_STATES = new Set<ScoreMintStatus>([
   'setting_uri', 'success', 'failed',
 ]);
 
-type Identity = { authSource: ArchiveAuthSource; userId: string; evmAddress?: string | null };
+export type ArchiveIdentity = {
+  authSource: ArchiveAuthSource; userId: string; evmAddress?: string | null;
+};
 type Envelope<T> = {
   schemaVersion: number;
   environment: string;
@@ -51,11 +54,15 @@ export function normalizeArchiveAddress(value?: string | null): string | null {
   return /^0x[0-9a-f]{40}$/.test(normalized) ? normalized : null;
 }
 
-export function archiveCacheKey(identity: Identity, section: ArchiveSectionName): string | null {
+export function archiveIdentityKey(identity: ArchiveIdentity): string {
+  return `${identity.authSource}:${encodeURIComponent(identity.userId)}`;
+}
+
+export function archiveCacheKey(identity: ArchiveIdentity, section: ArchiveSectionName): string | null {
   const owner = section === 'echoes' ? normalizeArchiveAddress(identity.evmAddress) : null;
   if (section === 'echoes' && !owner) return null;
   return [PREFIX, SCHEMA_VERSION, encodeURIComponent(environmentOf(section)),
-    identity.authSource, encodeURIComponent(identity.userId), ...(owner ? [owner] : []), section].join(':');
+    archiveIdentityKey(identity), ...(owner ? [owner] : []), section].join(':');
 }
 
 function object(value: unknown): Record<string, unknown> | null {
@@ -83,21 +90,17 @@ export function validCachedRecording(value: unknown): value is ArchiveRecording 
     && typeof item.pendingScoreId === 'string'
     && Number.isFinite(item.eventCount)
     && track
-    && typeof track.id === 'string'
-    && typeof track.title === 'string'
-    && typeof track.audio_url === 'string');
+    && isExposedTrack(track));
 }
 
 export function validCachedMaterial(value: unknown): value is OwnedNFT {
   const item = object(value);
-  const track = object(item?.track);
+  const track = item?.track;
   return Boolean(item
     && Number.isFinite(item.token_id)
     && typeof item.tx_hash === 'string'
     && typeof item.minted_at === 'string'
-    && track
-    && typeof track.title === 'string'
-    && typeof track.island === 'string');
+    && (track === null || isExposedTrack(track)));
 }
 
 const ECHO_STATES = new Set([
@@ -120,7 +123,7 @@ export function validCachedEcho(value: unknown): value is EchoArchiveItem {
 }
 
 export function readArchiveCache<T>(
-  identity: Identity,
+  identity: ArchiveIdentity,
   section: ArchiveSectionName,
   validator: (value: unknown) => value is T,
 ): { items: T[]; savedAt: string; fresh: boolean } | null {
@@ -155,7 +158,7 @@ export function readArchiveCache<T>(
 }
 
 export function writeArchiveCache<T>(
-  identity: Identity,
+  identity: ArchiveIdentity,
   section: ArchiveSectionName,
   source: string,
   items: readonly T[],
@@ -181,7 +184,7 @@ export function writeArchiveCache<T>(
   }
 }
 
-export function clearArchiveCache(identity: Identity): void {
+export function clearArchiveCache(identity: ArchiveIdentity): void {
   if (typeof window === 'undefined') return;
   for (const section of Object.keys(SOURCE_BY_SECTION) as ArchiveSectionName[]) {
     const key = archiveCacheKey(identity, section);
