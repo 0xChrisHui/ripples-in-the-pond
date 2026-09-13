@@ -8,7 +8,7 @@
 
 **Phase**: **Phase 15 已完结 ✅**。P14-G 最终提交 `8f5a735` 已无损合入 P15，合并版 `2be3786` 的 Preview 与 Production 均成功；公开页面、35+1 ECHO、P15 渐进播放器 marker、scoped source cursor 与队列健康回归通过。P14 后续 observe/live 窗口与私密目验按用户决定保留为非阻塞 review。P8/P9/P11/P12/P15 已正式完结。
 
-**P15 发布后 review（2026-09-13）**：修复 P14 永久音频字段合入后遗留的 Track 公开合同漂移，首页与私人档案缓存会拒绝旧/损坏字段；`/me` 内存 owner、轮询回写和页面放行改用 `authSource + userId`，堵住同内部 ID 跨登录源的一帧串档窗口。TypeScript、定向 lint、P15 四组脚本、P14 播放器、Webpack production build 与 Foundry 56/56 已通过；详见 `reviews/2026-09-13-phase-15-post-release-review.md`。
+**P15 发布后 review（2026-09-13）**：修复 P14 永久音频字段合入后遗留的 Track 公开合同漂移，首页与私人档案缓存会拒绝旧/损坏字段；`/me` 内存 owner、轮询回写和页面放行改用 `authSource + userId`，堵住同内部 ID 跨登录源的一帧串档窗口。修复提交 `21ec63a` 已快进 `main`，Vercel Preview/Production 成功；正式域名五页 200、tracks 35 首与三网关合同通过。TypeScript、定向 lint、P15 四组脚本、P14 播放器、Webpack production build 与 Foundry 56/56 已通过；详见 `reviews/2026-09-13-phase-15-post-release-review.md`。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）

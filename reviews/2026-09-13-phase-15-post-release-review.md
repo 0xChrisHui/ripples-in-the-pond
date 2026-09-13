@@ -26,7 +26,10 @@ P15 的导航反馈、首页 LKG、私人档案分段刷新、永久媒体 resol
 - P14 配方渐进播放器状态机：通过。
 - Foundry：56/56 通过。
 - Webpack production build：37/37 路由通过；构建期 Arweave 超时按既有降级路径处理。
-- 默认 Turbopack build 在隔离工作树因 `node_modules` 指向工作树外被工具拒绝；这是本地依赖 junction 限制，不是源码失败，发布构建仍需以 Vercel 原生环境复核。
+- 默认 Turbopack build 在隔离工作树因 `node_modules` 指向工作树外被工具拒绝；这是本地依赖 junction 限制，不是源码失败。Vercel Preview 与 Production 均已在原生依赖环境构建成功。
+- 正式域名 `/`、`/me`、`/artist`、`/score/1`、`/echo/1` 均为 HTTP 200；`/api/tracks` 返回 35 首且首条包含 `arweave_url` 与 3 个永久网关候选。
+
+发布提交：`21ec63a`；Production deployment：`6417111916`。
 
 ## 保留边界
 
