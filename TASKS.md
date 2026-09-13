@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **P15-G 外部配置 Gate**：仓库代码、自动测试与 playbook 已完成；等待用户创建公开 Vercel Blob Store、上传按 Arweave txid 命名的音频，并配置三环境公开镜像基址后做 Preview/Production 真服务验收。
+- **P15-G 空配置保护层发布**：仓库代码、自动测试与本地提交已完成；2026-09-13 GitHub HTTPS 连续连接失败，待网络恢复后先快进 `main` 并完成环境变量仍为空的 Production 部署，再进入用户 Blob 配置与真服务验收。
 
 ## ⏳ Later / 开放项
 

@@ -6,10 +6,10 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 15 已完结 ✅；P15-G 镜像增量等待外部配置**。P14-G 最终提交 `8f5a735` 已无损合入 P15，合并版 `2be3786` 的 Preview 与 Production 均成功；公开页面、35+1 ECHO、P15 渐进播放器 marker、scoped source cursor 与队列健康回归通过。P14 后续 observe/live 窗口与私密目验按用户决定保留为非阻塞 review。P8/P9/P11/P12/P15 已正式完结。
+**Phase**: **Phase 15 已完结 ✅；P15-G 镜像增量等待空配置保护层发布与外部配置**。P14-G 最终提交 `8f5a735` 已无损合入 P15，合并版 `2be3786` 的 Preview 与 Production 均成功；公开页面、35+1 ECHO、P15 渐进播放器 marker、scoped source cursor 与队列健康回归通过。P14 后续 observe/live 窗口与私密目验按用户决定保留为非阻塞 review。P8/P9/P11/P12/P15 已正式完结。
 
 **P15 发布后 review（2026-09-13）**：修复 P14 永久音频字段合入后遗留的 Track 公开合同漂移，首页与私人档案缓存会拒绝旧/损坏字段；`/me` 内存 owner、轮询回写和页面放行改用 `authSource + userId`，堵住同内部 ID 跨登录源的一帧串档窗口。修复提交 `21ec63a` 已快进 `main`，Vercel Preview/Production 成功；正式域名五页 200、tracks 35 首与三网关合同通过。TypeScript、定向 lint、P15 四组脚本、P14 播放器、Webpack production build 与 Foundry 56/56 已通过；详见 `reviews/2026-09-13-phase-15-post-release-review.md`。
-**P15-G 镜像探针（2026-09-13）**：playbook 提交 `ea771b0` 冻结“永久曲谱真相 + Vercel 音频加速 + Arweave 自动回退”；实现提交 `c4a7b20` 与预算修复 `d27f613` 加入真实对象 `Range: bytes=0-0` 严格探针、800ms 探针/900ms 镜像总预算、同 origin single-flight、`5m → 1h → 6h → 24h` 持久退避与 half-open 自动恢复。缓存命中零探针；404/哈希错误只回退单对象；只有服务级错误进入 origin 熔断；Range 成功只准入，完整镜像对象验证成功才清零失败等级。独立终审 0 findings，完整 `scripts/verify.sh` 通过（37 路由、Foundry 56/56）。仓库侧 G0–G4 已完成，当前生产因变量为空仍直接走 Arweave。
+**P15-G 镜像探针（2026-09-13）**：playbook 提交 `ea771b0` 冻结“永久曲谱真相 + Vercel 音频加速 + Arweave 自动回退”；实现提交 `c4a7b20` 与预算修复 `d27f613` 加入真实对象 `Range: bytes=0-0` 严格探针、800ms 探针/900ms 镜像总预算、同 origin single-flight、`5m → 1h → 6h → 24h` 持久退避与 half-open 自动恢复。缓存命中零探针；404/哈希错误只回退单对象；只有服务级错误进入 origin 熔断；Range 成功只准入，完整镜像对象验证成功才清零失败等级。独立终审 0 findings，完整 `scripts/verify.sh` 通过（37 路由、Foundry 56/56）。仓库侧 G0–G4 已完成并提交；GitHub HTTPS 四次只读刷新均因 443 连接超时/重置失败，尚未推送或部署。当前生产变量为空，仍安全直连 Arweave。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）
@@ -94,7 +94,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：完成 P15-G 外部配置 Gate：用户创建公开 Vercel Blob Store，并上传路径为 `<base>/<arweave-txid>` 的 Score/Pond Echo 音频；再配置 Development/Preview/Production 的 `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL`，Development 本地 pull 后重启，Preview/Production 分别部署并完成 Range/CORS 与自动回退/恢复实测。此后额度耗尽与恢复均不需要改变量或按月重新部署。
+**当前权威下一步**：GitHub 网络恢复后，先把本地 P15-G 四个提交快进 `main`，在 `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL` 仍为空时完成 Production 部署；随后用户创建公开 Vercel Blob Store、上传精确 `<base>/<arweave-txid>` 路径的 Score/Pond Echo 音频并配置三环境。Development 本地 pull 后重启，Preview/Production 分别部署并完成 Range/CORS 与自动回退/恢复实测。此后额度耗尽与恢复均不需要改变量或按月重新部署。
 
 ---
 
