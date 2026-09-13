@@ -1,5 +1,6 @@
 import { permanentMediaCandidates } from './candidates';
 import { sharedPermanentMediaHealth } from './health';
+import { sharedPermanentMediaMirrorProbe } from './mirror-probe';
 import { AttemptError, readBounded, verifyResponse } from './response-validation';
 import { readVerifiedCache, sha256Hex, writeVerifiedCache } from './verified-cache';
 import {
@@ -117,7 +118,6 @@ export async function resolvePermanentMedia(
   options: PermanentMediaOptions,
 ): Promise<PermanentMediaResult> {
   const expected = expectedHash(options);
-  const candidates = permanentMediaCandidates(ref, options.mirrorBaseUrl);
   const health = options.health ?? sharedPermanentMediaHealth;
   const maxBytes = options.maxBytes ?? (options.kind === 'json' ? JSON_MAX_BYTES : DEFAULT_MAX_BYTES);
   const cacheable = options.validation.level === 'canonical' && expected !== undefined;
@@ -125,26 +125,52 @@ export async function resolvePermanentMedia(
   const cached = cacheable ? await readVerifiedCache(expected, maxBytes) : null;
   if (options.signal?.aborted) throw abortError();
   if (cached) {
+    if (options.kind === 'audio') performance.mark('p15:first-verified-audio-ready');
     return { ...cached, source: 'cache', verification: 'sha256' };
   }
+  const mirrorProbe = options.mirrorProbe ?? sharedPermanentMediaMirrorProbe;
+  const mirrorBaseUrl = options.kind === 'audio'
+    ? await mirrorProbe.select(ref, {
+      fetcher: options.fetcher ?? fetch, signal: options.signal,
+      mirrorBaseUrl: options.mirrorBaseUrl, timeoutMs: options.mirrorProbeTimeoutMs,
+    })
+    : '';
+  if (options.signal?.aborted) throw abortError();
+  const candidates = permanentMediaCandidates(ref, mirrorBaseUrl);
   const timeoutMs = Math.max(1, options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
   const rounds = Math.max(1, options.rounds ?? DEFAULT_ROUNDS);
   const failures: PermanentMediaFailure[] = [];
   const messages: string[] = [];
+  let mirrorDisabled = false;
   for (let round = 0; round < rounds; round += 1) {
     for (const candidate of candidates) {
+      if (candidate.source === 'mirror' && mirrorDisabled) continue;
       if (!health.canAttempt(candidate.healthKey)) continue;
       try {
         const result = await attempt(candidate, options, maxBytes, timeoutMs, expected);
         health.recordSuccess(candidate.healthKey);
+        if (candidate.source === 'mirror') {
+          mirrorProbe.recordServiceSuccess?.(candidate.healthKey);
+        }
         if (cacheable) await writeVerifiedCache(expected, result.bytes, result.contentType);
+        if (options.kind === 'audio') performance.mark('p15:first-verified-audio-ready');
         return result;
       } catch (error) {
         if (options.signal?.aborted) throw abortError();
         if (error instanceof PermanentMediaError && error.kind === 'aborted') throw error;
         const classified = error instanceof AttemptError ? error : classifyNetwork(error);
-        if (['timeout', 'dns', 'network', 'http'].includes(classified.kind)) {
-          health.recordFailure(candidate.healthKey, classified.kind);
+        const mirrorServiceFailure = candidate.source === 'mirror' && (
+          ['timeout', 'dns', 'network'].includes(classified.kind)
+          || (classified.kind === 'http' && (
+            classified.status === 403 || classified.status === 429 || (classified.status ?? 0) >= 500
+          ))
+        );
+        const candidateHealthFailure = candidate.source === 'mirror'
+          ? mirrorServiceFailure : ['timeout', 'dns', 'network', 'http'].includes(classified.kind);
+        if (candidateHealthFailure) health.recordFailure(candidate.healthKey, classified.kind);
+        if (mirrorServiceFailure) {
+          mirrorDisabled = true;
+          mirrorProbe.recordServiceFailure?.(candidate.healthKey);
         }
         failures.push({ source: candidate.source, kind: classified.kind, status: classified.status });
         messages.push(failureText(candidate, classified));

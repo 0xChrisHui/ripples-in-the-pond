@@ -2,11 +2,14 @@ import assert from 'node:assert/strict';
 import {
   PermanentMediaError,
   PermanentMediaHealth,
+  PermanentMediaMirrorProbe,
   permanentMediaCandidates,
   resolvePermanentMedia,
 } from '../../src/features/permanent-media';
 import { fetchPermanentJson } from '../../src/features/score-playback/sounds-map';
 import { verifyCanonicalCache } from './checks/canonical-cache';
+import { verifyMirrorObjectFallback } from './checks/mirror-object-fallback';
+import { verifyMirrorProbe } from './checks/mirror-probe';
 
 const REF = `ar://${'A'.repeat(43)}`;
 const AUDIO_HEADERS = { 'content-type': 'audio/mpeg', 'accept-ranges': 'bytes' };
@@ -161,6 +164,7 @@ async function verifyCooldown(): Promise<void> {
   const options = {
     kind: 'audio', validation: { level: 'compatibility' }, fetcher,
     mirrorBaseUrl: 'https://mirror.example', rounds: 1, health: candidateHealth,
+    mirrorProbe: new PermanentMediaMirrorProbe({ storage: null }),
   } as const;
   await resolvePermanentMedia(REF, options);
   await resolvePermanentMedia(REF, options);
@@ -182,6 +186,8 @@ async function main(): Promise<void> {
   await verifyTypeAndLength();
   await verifyHash();
   await verifyCanonicalCache();
+  await verifyMirrorProbe();
+  await verifyMirrorObjectFallback();
   await verifyCooldown();
   await verifyScoreCompatibilityErrors();
   console.log('永久媒体 resolver 验证通过');
