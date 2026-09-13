@@ -32,8 +32,9 @@ Arweave txid/content hash → CDN/object storage 镜像 → 当前站内播放�
 输入是永久 `ar://txid` 与可选内容哈希，候选顺序为：
 
 1. 已验证的同字节高速镜像；
-2. `arweave.net`；
-3. `ario.permagate.io`。
+2. `ardrive.net`；
+3. `arweave.tokyo`；
+4. `arweave.net`。
 
 合同要求：
 
@@ -41,6 +42,7 @@ Arweave txid/content hash → CDN/object storage 镜像 → 当前站内播放�
 - 镜像创建时校验 SHA-256；客户端不得把同 txid 的不同字节静默当成功。
 - 失败信息区分 DNS、超时、HTTP、解码和格式问题，便于定位而不泄露内部凭证。
 - Score 与 P14 共用解析能力，但各自保留独立播放状态机。
+- 发布后的镜像准入、800ms 回退与自动恢复由 `80-g-mirror-probe.md` 扩展，不改写本 Track 已完成证据。
 
 ---
 
@@ -78,7 +80,7 @@ Arweave txid/content hash → CDN/object storage 镜像 → 当前站内播放�
 
 | 故障 | 在线站内播放器 | 永久路径 |
 |---|---|---|
-| 高速镜像单对象缺失 | 回退 Arweave并异步修复镜像 | 不受影响 |
+| 高速镜像单对象缺失 | 本次会话按对象回退 Arweave 并记录证据 | 不受影响 |
 | Arweave 主网关失败 | 镜像或备用网关继续 | 用备用网关打开同一 txid |
 | 两个网关失败 | 已缓存/镜像可播放并明确永久层暂不可用 | 报可恢复错误，不声称绝对在线 |
 | 本站域名关闭 | 不适用 | tokenURI + 永久 Decoder 完整复现 |
