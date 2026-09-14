@@ -1541,3 +1541,4 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **预算拆分**：首版竞速 Production 证明 800ms 抢跑会让 Arweave 在 `0.824–0.976s` 的 Blob 探针完成前获胜，仍没有完整 Blob GET；最终把抢跑点校准为 1.2 秒。它只表示从 resolver 起点启动 Arweave 备用，不再表示取消镜像；Range 探针硬上限为 2 秒，镜像完整 GET 上限为 10 秒，Arweave 每候选保持 5 秒并顺序尝试。
 - **竞速边界**：只有完整类型、长度与 SHA/兼容验证通过的分支可以获胜；同一对象最多一条镜像与一条 Arweave 完整 GET，胜方立即 Abort 败方。接受短暂重复流量，以换取快速永久回退和慢冷边缘恢复同时成立；可信缓存命中后不再竞速。
 - **CORS 事实修正**：Vercel Blob 网络响应含正确 Content-Range，但未通过 `Access-Control-Expose-Headers` 暴露给跨源页面。发布 Gate 继续逐字核验该头；浏览器运行时在头不可见时改用 `206 + Content-Length 1 + 音频类型 + 实际 body 1 byte` 四重证据，可见但错误的 Range 仍硬拒绝，避免把平台固定 CORS 行为误判为额度耗尽。
+- **最终生产证据**：部署 `dpl_4XXpeA2Y9oKfsHK4czSbVH8N8bEC` 指向正式域名；冷浏览器中 Score 底曲与 ECHO 首片均出现严格一字节探针后的完整 Blob 200，后续窗口继续走 Blob。测试浏览器屏蔽 Blob 后，ECHO 首窗四片段均由 ArDrive 200 返回；配置保持不变，证明故障切源不依赖重新部署。

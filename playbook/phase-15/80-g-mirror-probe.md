@@ -75,3 +75,10 @@
 - 探针 ≤2 秒、镜像完整 GET ≤10 秒；Arweave 从 1.2 秒起独立推进，因此镜像不会把永久回退额外阻塞到自身截止。竞速败方均已 Abort，同一对象同时最多两条完整 GET。
 - 原 P15 NFT 冷首声 p95 ≤2.0s、热首声 p95 ≤500ms 继续成立。
 - half-open 成功后无需刷新、修改变量或重新部署，下一未缓存资源自动恢复高速镜像。
+
+## 最终生产证据（2026-09-15）
+
+- Production `dpl_4XXpeA2Y9oKfsHK4czSbVH8N8bEC` 为 READY，正式 `/`、`/score/1`、`/echo/1` 与 `/api/tracks` 均 HTTP 200。
+- 独立冷浏览器点击 Score #1：Blob 先返回 `206 + 1 byte`，随后完整底曲 GET 返回 `200 + 7,326,016 bytes`，后续音效继续使用 Blob。
+- 独立冷浏览器点击 ECHO #1：Blob 先返回 `206 + 1 byte`，随后首片与后续窗口完整 GET 均返回 `200 + 126,402 bytes`。
+- 只在测试浏览器屏蔽 Blob 域名后，ECHO 首窗四片段均自动改从 ArDrive 返回 `200 + 126,402 bytes`；未修改生产变量或重新部署。退避到期后的 half-open 自动恢复由确定性专项测试覆盖。

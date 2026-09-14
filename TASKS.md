@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **P15-G Production 最终 Gate**：Public Blob 的 63 个永久音频副本、三环境镜像基址、全量 SHA/Range/CORS 与 Preview 已通过；完成实测校准的 1.2 秒 Arweave 抢跑 + 镜像完整验证竞速、Production 重发和真实播放验收后关闭。
+- 当前无施工项；P15-G 已通过 Production 真实播放与故障回退 Gate，等待用户提出下一阶段。
 
 ## ⏳ Later / 开放项
 
@@ -213,7 +213,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - **Phase 12** — OP Mainnet 上线准备与部署
 - **Phase 13** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
 - **Phase 14（非阻塞观察）** — 首枚 ECHO #1、P14-G 索引恢复、首页第 36 枚访客与 G7 稳定前缀修复已交付；后续 observe/live 窗口及原钱包档案目验作为 review 保留（`playbook/phase-14/80-g-recovery-track36-eclipse.md`）
-- **Phase 15（已完结 ✅）** — P14-G 最终交付、全站性能/可靠性代码、证据、Preview/Production 与线上回归全部完成（`reviews/2026-09-13-phase-15-final-review.md`）
+- **Phase 15 + P15-G（已完结 ✅）** — P14-G 最终交付、全站性能/可靠性、63 个 Blob 高速副本、自动切源、Preview/Production 与线上真实播放回归全部完成（`reviews/2026-09-13-phase-15-final-review.md`、`playbook/phase-15/80-g-mirror-probe.md`）
 - **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
 - **未排期** — 音效系统扩展（原 P15：26→50 与输入键/音效 id 解耦；待以后重新编号）
 
