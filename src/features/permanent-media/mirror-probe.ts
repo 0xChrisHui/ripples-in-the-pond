@@ -116,7 +116,7 @@ export class PermanentMediaMirrorProbe implements PermanentMediaMirrorProbeContr
       });
       const range = response.headers.get('content-range');
       const valid = response.status === 206
-        && /^bytes 0-0\/[1-9]\d*$/.test(range ?? '')
+        && (range === null || /^bytes 0-0\/[1-9]\d*$/.test(range))
         && response.headers.get('content-length') === '1'
         && audioType(response.headers.get('content-type'));
       if (!valid) {

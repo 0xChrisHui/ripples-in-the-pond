@@ -17,8 +17,8 @@
 
 1. 曲谱就绪且首窗没有可信缓存时，用首个实际需要播放的音频 txid 构造镜像 URL。
 2. 浏览器直接发送 `GET` + `Range: bytes=0-0`，不访问普通应用页面或与本次播放无关的固定健康页。
-3. 只有以下条件同时成立才判定镜像可用：HTTP `206`、`Content-Range` 为 `bytes 0-0/<正整数>`、`Content-Length` 为 `1`、Content-Type 为音频或二进制。
-4. `200`（忽略 Range）、404、403/429/5xx、CORS/DNS/网络错误、响应头异常都不能进入镜像路径；立即取消响应体并回退。
+3. 发布 Gate 必须从网络层确认 HTTP `206`、`Content-Range` 为 `bytes 0-0/<正整数>`、`Content-Length` 为 `1`、Content-Type 为音频或二进制。浏览器运行时若 CORS 暴露 `Content-Range`，必须逐字匹配；Vercel Blob 当前未用 `Access-Control-Expose-Headers` 暴露该头，因此运行时在它不可见时仍须同时满足 `206 + Content-Length 1 + 音频/二进制类型 + 实际 body 1 byte` 才准入。
+4. `200`（忽略 Range）、404、403/429/5xx、CORS/DNS/网络错误、可见的 Content-Range 错误、长度/类型/body 异常都不能进入镜像路径；立即取消响应体并回退。
 5. 探针只证明“这个对象此刻可以下载”。后续完整音频仍逐对象执行类型、长度、SHA-256/兼容验证，单对象缺失或损坏只回退该对象，不伪造全局健康。
 
 ## G2 — 1.2 秒有界抢跑
@@ -50,7 +50,7 @@
 
 自动验证矩阵：
 
-- `206` 正常；`200` 忽略 Range；Content-Range/Length/Type 错误。
+- `206` 正常；`200` 忽略 Range；Content-Range 可见时严格匹配、被 CORS 隐藏时使用 206/Length/Type/body 四重准入；可见 Range、Length、Type 错误。
 - 404 对象级回退；403/429/5xx、CORS/DNS/超时的 origin 退避。
 - 1.2 秒 Arweave 抢跑、2 秒探针硬超时、10 秒镜像完整 GET 上限、Abort/路由离开、同 origin 并发探针去重与部分等待者取消。
 - localStorage 缺失、损坏、旧 schema、跨刷新熔断、half-open 成功恢复。

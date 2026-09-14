@@ -39,6 +39,12 @@ async function verifyStrictContract(): Promise<void> {
   assert.equal(validCalls[0].url, `${MIRROR}/${'A'.repeat(43)}`);
   assert.equal(new Headers(validCalls[0].init?.headers).get('range'), 'bytes=0-0');
   assert.equal(validCalls[0].init?.cache, 'no-store');
+  const hiddenRange = new Response(new Uint8Array([7]), {
+    status: 206, headers: { 'content-length': '1', 'content-type': 'audio/mpeg' },
+  });
+  assert.equal(await new PermanentMediaMirrorProbe({ storage: null })
+    .select(REF, request(async () => hiddenRange)), MIRROR,
+  'Vercel Blob 未暴露 Content-Range 时仍须用 206、长度与实际字节准入');
   const invalid: Array<[string, Response]> = [
     ['200', probeResponse(200)],
     ['坏 Range', probeResponse(206, { 'content-range': 'bytes 1-1/42' })],

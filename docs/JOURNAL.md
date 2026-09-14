@@ -1540,3 +1540,4 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **事实纠正**：Production 的 HKG Blob 一字节 Range TTFB 实测约 `0.824–0.976s`；旧 900ms 总预算虽能安全回退，却会在镜像完整 GET 前取消健康线路，7.3MB Score 底曲更不可能在该预算内完成。
 - **预算拆分**：首版竞速 Production 证明 800ms 抢跑会让 Arweave 在 `0.824–0.976s` 的 Blob 探针完成前获胜，仍没有完整 Blob GET；最终把抢跑点校准为 1.2 秒。它只表示从 resolver 起点启动 Arweave 备用，不再表示取消镜像；Range 探针硬上限为 2 秒，镜像完整 GET 上限为 10 秒，Arweave 每候选保持 5 秒并顺序尝试。
 - **竞速边界**：只有完整类型、长度与 SHA/兼容验证通过的分支可以获胜；同一对象最多一条镜像与一条 Arweave 完整 GET，胜方立即 Abort 败方。接受短暂重复流量，以换取快速永久回退和慢冷边缘恢复同时成立；可信缓存命中后不再竞速。
+- **CORS 事实修正**：Vercel Blob 网络响应含正确 Content-Range，但未通过 `Access-Control-Expose-Headers` 暴露给跨源页面。发布 Gate 继续逐字核验该头；浏览器运行时在头不可见时改用 `206 + Content-Length 1 + 音频类型 + 实际 body 1 byte` 四重证据，可见但错误的 Range 仍硬拒绝，避免把平台固定 CORS 行为误判为额度耗尽。
