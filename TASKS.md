@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **P15-G 空配置保护层发布**：仓库代码、自动测试与本地提交已完成；2026-09-13 GitHub HTTPS 连续连接失败，待网络恢复后先快进 `main` 并完成环境变量仍为空的 Production 部署，再进入用户 Blob 配置与真服务验收。
+- **P15-G 外部配置 Gate**：空配置保护层已快进 `main` 并完成 Production 部署；等待用户创建 Public Vercel Blob Store、上传按 Arweave txid 精确命名的音频并配置三环境镜像基址，再完成 Preview/Production 真服务验收。
 
 ## ⏳ Later / 开放项
 
