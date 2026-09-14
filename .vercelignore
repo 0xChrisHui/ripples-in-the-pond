@@ -3,5 +3,6 @@
 node_modules/
 .env*
 .codex-edge-*/
+.tmp*/
 supabase/.temp/
 reviews/evidence/**/*.png

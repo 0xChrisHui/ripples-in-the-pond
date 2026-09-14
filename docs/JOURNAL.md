@@ -1527,3 +1527,10 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **来源分层**：链上 tokenURI 与 Arweave 曲谱/音频继续作为永久真相；Vercel Blob 只保存按 txid 寻址、可删除重建的音频副本，范围限于共用永久媒体 resolver 的 Score 与 Pond Echo。
 - **准入决定**：不依赖普通健康页或月度开关；在首个未缓存真实音频上执行严格一字节 Range 探针，探针最多 800ms，探针与完整镜像 GET 共用 900ms 总预算，超时即回退三条 Arweave 网关；同 origin 并发请求共享一次探针。
 - **恢复决定**：服务级失败持久退避 `5m → 1h → 6h → 24h`，对象 404/哈希错误不污染 origin；half-open Range 成功只准入，完整对象验证成功才清零。环境变量长期保留，额度恢复后无需重新部署。
+
+## 2026-09-14 — P15-G Blob 首批迁移与凭证收口
+
+- **资产真相纠正**：Score 的 `public/sounds/*.mp3` 在首枚 NFT 铸造后改过，不能拿当前同名本地文件校验旧 NFT。首批镜像改由 Score #1 永久 sounds map 的 26 个 txid 直接读取并固化 SHA/bytes；Pond Echo 使用 P14 永久 ledger，底曲使用已完成 Arweave 对账的 Score #1 txid。
+- **不可变镜像**：63 个对象一律使用 `media/<arweave-txid>`、禁用随机后缀与覆盖；既有路径必须先全字节回读且 SHA 相同才算幂等成功。最终 63/63、`13,457,452` bytes 均通过 Arweave↔Blob 全字节 SHA、严格 Range、CORS 与 Content-Type Gate。
+- **最小凭证暴露**：Vercel Blob 的本地 OIDC 因 Store 未连接 Development 而拒绝写入，且敏感写变量不能投放 Development。采用只存在于受保护 Preview 的一次性白名单上传器完成迁移，随后删除上传密钥/白名单与 8 个临时部署、撤销 `BLOB_READ_WRITE_TOKEN`，Store 恢复 Production/Preview OIDC 且无静态凭证。
+- **部署输入隔离**：Vercel CLI 会扫描未被 `.vercelignore` 排除的浏览器验收 profile；`.tmp-p15-*` 中被 Edge 占用的配置会令上传报 EPERM。统一加入 `.tmp*/`，只排除本地测试副产物，不改变应用构建内容。

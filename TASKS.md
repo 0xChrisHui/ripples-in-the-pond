@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **P15-G 外部配置 Gate**：空配置保护层已快进 `main` 并完成 Production 部署；等待用户创建 Public Vercel Blob Store、上传按 Arweave txid 精确命名的音频并配置三环境镜像基址，再完成 Preview/Production 真服务验收。
+- **P15-G Production 最终 Gate**：Public Blob 的 63 个永久音频副本、三环境镜像基址、全量 SHA/Range/CORS 与 Preview 已通过；合入部署忽略修复并完成 Production 小流量验收后关闭。
 
 ## ⏳ Later / 开放项
 

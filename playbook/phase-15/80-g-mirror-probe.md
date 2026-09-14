@@ -58,11 +58,13 @@
 发布 Gate：
 
 1. 先在 `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL` 仍为空时把本 Track 代码合入 `main` 并完成一次 Production 部署，确保回退保护先于配置上线。
-2. 用户创建 **Public** Vercel Blob Store；`BLOB_READ_WRITE_TOKEN` 只留在 Vercel/本机，不进入浏览器或聊天。
-3. 选择固定目录前缀（推荐 `media/`），把每个对象 pathname 精确设为 `media/<arweave-txid>`，禁用随机文件名后缀并保留正确 Content-Type；例如 CLI 使用 `vercel blob put <本地音频> --pathname media/<arweave-txid> --content-type audio/mpeg`。
-4. `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL` 填 Public Blob origin 加固定目录前缀，例如 `https://<store-id>.public.blob.vercel-storage.com/media`；配置 Development/Preview/Production，Development 本地 pull 后重启，实际只部署 Preview/Production。
+2. 用户创建 **Public** Vercel Blob Store；写入优先使用 Vercel 部署内的短期 OIDC。若一次性迁移必须临时启用 `BLOB_READ_WRITE_TOKEN`，只准由固定资产白名单的 Preview 上传器使用，完成后删除上传器与临时变量、撤销长效 Token，并把 Store 恢复为 OIDC；凭证不进入浏览器、仓库、日志或聊天。
+3. 资产清单必须从当前 NFT 钉住的永久 txid 建立，不能把后来改过的同名本地文件当真相。选择固定目录前缀（推荐 `media/`），pathname 精确为 `media/<arweave-txid>`，禁用随机后缀与覆盖；既有同路径对象只有全字节 SHA-256 相同才视为幂等成功。
+4. `NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL` 填 Public Blob origin 加固定目录前缀，例如 `https://<store-id>.public.blob.vercel-storage.com/media`；配置 Development/Preview/Production。Public Blob 浏览器读取不需要 Development 写凭证；Development 只需 pull 新基址并重启，实际只部署 Preview/Production。
 5. Preview 真测 Range/CORS：必须返回严格 `206`、一字节 body 与正确 Content-Range，再推进 Production。
 6. Production 小流量验收成功、超时、超额模拟和自动恢复；以后额度变化不再重新部署。
+
+本次首批清单为 63 个当前已钉住对象：Pond Echo 的 36 段、Score #1 永久音效表的 26 个音效与 Score #1 底曲。首批 63 个对象全部通过 Arweave 原件与 Blob 副本全字节 SHA-256、严格 Range/CORS、pathname 和 Content-Type 核对后，才允许配置镜像基址。
 
 ## 完成预算
 
