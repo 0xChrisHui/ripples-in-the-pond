@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **P15-G Production 最终 Gate**：Public Blob 的 63 个永久音频副本、三环境镜像基址、全量 SHA/Range/CORS 与 Preview 已通过；合入部署忽略修复并完成 Production 小流量验收后关闭。
+- **P15-G Production 最终 Gate**：Public Blob 的 63 个永久音频副本、三环境镜像基址、全量 SHA/Range/CORS 与 Preview 已通过；完成 800ms Arweave 抢跑 + 镜像完整验证竞速的 review 修复、Production 重发和真实播放验收后关闭。
 
 ## ⏳ Later / 开放项
 

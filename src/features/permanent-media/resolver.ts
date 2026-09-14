@@ -1,8 +1,9 @@
 import { permanentMediaCandidates } from './candidates';
 import { sharedPermanentMediaHealth } from './health';
 import { sharedPermanentMediaMirrorProbe } from './mirror-probe';
-import { AttemptError, readBounded, verifyResponse } from './response-validation';
-import { readVerifiedCache, sha256Hex, writeVerifiedCache } from './verified-cache';
+import { abortError, attemptCandidate, classifyNetwork } from './race/attempt';
+import { AttemptError } from './response-validation';
+import { readVerifiedCache, writeVerifiedCache } from './verified-cache';
 import {
   PermanentMediaError,
   type PermanentMediaCandidate,
@@ -10,49 +11,19 @@ import {
   type PermanentMediaOptions,
   type PermanentMediaResult,
 } from './types';
+
 const DEFAULT_TIMEOUT_MS = 5_000;
-const DEFAULT_MIRROR_BUDGET_MS = 900;
+const DEFAULT_MIRROR_TIMEOUT_MS = 10_000;
+const DEFAULT_MIRROR_PROBE_TIMEOUT_MS = 2_000;
+const DEFAULT_MIRROR_FALLBACK_DELAY_MS = 800;
 const DEFAULT_ROUNDS = 2;
 const DEFAULT_RETRY_DELAY_MS = 300;
 const DEFAULT_MAX_BYTES = 64 * 1024 * 1024;
 const JSON_MAX_BYTES = 128 * 1024;
 const SHA256_RE = /^[0-9a-f]{64}$/;
-function abortError(): PermanentMediaError {
-  return new PermanentMediaError('aborted', '永久资源请求已取消');
-}
-function classifyNetwork(error: unknown): AttemptError {
-  const message = error instanceof Error ? error.message : String(error);
-  const kind = /dns|enotfound|name.?not.?resolved/i.test(message) ? 'dns' : 'network';
-  return new AttemptError(kind);
-}
-async function withDeadline<T>(
-  operation: (signal: AbortSignal) => Promise<T>,
-  externalSignal: AbortSignal | undefined,
-  timeoutMs: number,
-): Promise<T> {
-  if (externalSignal?.aborted) throw abortError();
-  const controller = new AbortController();
-  let timeout: ReturnType<typeof setTimeout> | undefined;
-  let removeAbort: (() => void) | undefined;
-  const deadline = new Promise<never>((_, reject) => {
-    timeout = setTimeout(() => {
-      controller.abort();
-      reject(new AttemptError('timeout'));
-    }, timeoutMs);
-    const onAbort = () => {
-      controller.abort(externalSignal?.reason);
-      reject(abortError());
-    };
-    externalSignal?.addEventListener('abort', onAbort, { once: true });
-    removeAbort = () => externalSignal?.removeEventListener('abort', onAbort);
-  });
-  try {
-    return await Promise.race([operation(controller.signal), deadline]);
-  } finally {
-    if (timeout) clearTimeout(timeout);
-    removeAbort?.();
-  }
-}
+
+type FailureLog = { failures: PermanentMediaFailure[]; messages: string[] };
+
 function expectedHash(options: PermanentMediaOptions): string | undefined {
   const expected = options.validation.sha256;
   if (expected === undefined && options.validation.level === 'compatibility') return undefined;
@@ -60,33 +31,6 @@ function expectedHash(options: PermanentMediaOptions): string | undefined {
     throw new PermanentMediaError('hash-mismatch', '永久资源 SHA-256 格式无效');
   }
   return expected;
-}
-
-async function attempt(
-  candidate: PermanentMediaCandidate,
-  options: PermanentMediaOptions,
-  maxBytes: number,
-  timeoutMs: number,
-  expected: string | undefined,
-): Promise<PermanentMediaResult> {
-  return withDeadline(async (signal) => {
-    let response: Response;
-    try {
-      response = await (options.fetcher ?? fetch)(candidate.url, { signal });
-    } catch (error) {
-      if (signal.aborted) throw new AttemptError('timeout');
-      throw classifyNetwork(error);
-    }
-    if (!response.ok) throw new AttemptError('http', response.status);
-    const contentType = response.headers.get('content-type');
-    verifyResponse(options, response, maxBytes);
-    const bytes = await readBounded(response, maxBytes);
-    if (expected && await sha256Hex(bytes) !== expected) throw new AttemptError('hash-mismatch');
-    return {
-      bytes, contentType, source: candidate.source,
-      verification: expected ? 'sha256' : 'compatibility',
-    };
-  }, options.signal, timeoutMs);
 }
 
 function failureText(candidate: PermanentMediaCandidate, error: AttemptError): string {
@@ -98,13 +42,15 @@ function failureText(candidate: PermanentMediaCandidate, error: AttemptError): s
   return `${candidate.label}: ${detail}`;
 }
 
+function logFailure(log: FailureLog, candidate: PermanentMediaCandidate, error: AttemptError): void {
+  log.failures.push({ source: candidate.source, kind: error.kind, status: error.status });
+  log.messages.push(failureText(candidate, error));
+}
+
 function delay(ms: number, signal?: AbortSignal): Promise<void> {
   if (signal?.aborted) return Promise.reject(abortError());
   return new Promise((resolve, reject) => {
-    const onAbort = () => {
-      clearTimeout(timer);
-      reject(abortError());
-    };
+    const onAbort = () => { clearTimeout(timer); reject(abortError()); };
     const timer = setTimeout(() => {
       signal?.removeEventListener('abort', onAbort);
       resolve();
@@ -113,13 +59,125 @@ function delay(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 
-/** 解析永久引用；只有字节通过当前验证等级后候选才算成功。 */
+async function resolveGateways(
+  candidates: readonly PermanentMediaCandidate[], options: PermanentMediaOptions,
+  maxBytes: number, expected: string | undefined, signal: AbortSignal | undefined, log: FailureLog,
+): Promise<PermanentMediaResult> {
+  const health = options.health ?? sharedPermanentMediaHealth;
+  const timeoutMs = Math.max(1, options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
+  const rounds = Math.max(1, options.rounds ?? DEFAULT_ROUNDS);
+  for (let round = 0; round < rounds; round += 1) {
+    for (const candidate of candidates) {
+      if (!health.canAttempt(candidate.healthKey)) continue;
+      try {
+        const result = await attemptCandidate(candidate, options, maxBytes, timeoutMs, expected, signal);
+        health.recordSuccess(candidate.healthKey);
+        return result;
+      } catch (error) {
+        if (signal?.aborted) throw abortError();
+        const classified = error instanceof AttemptError ? error : classifyNetwork(error);
+        if (['timeout', 'dns', 'network', 'http'].includes(classified.kind)) {
+          health.recordFailure(candidate.healthKey, classified.kind);
+        }
+        logFailure(log, candidate, classified);
+      }
+    }
+    if (round + 1 < rounds) await delay(options.retryDelayMs ?? DEFAULT_RETRY_DELAY_MS, signal);
+  }
+  throw new PermanentMediaError(
+    'unavailable', `永久资源暂时不可用（${log.messages.join('；') || '候选处于冷却中'}）`, log.failures,
+  );
+}
+
+function mirrorServiceFailure(error: AttemptError): boolean {
+  return ['timeout', 'dns', 'network'].includes(error.kind)
+    || (error.kind === 'http' && (
+      error.status === 403 || error.status === 429 || (error.status ?? 0) >= 500
+    ));
+}
+
+async function resolveWithMirrorRace(
+  ref: string, options: PermanentMediaOptions, maxBytes: number,
+  expected: string | undefined, candidates: readonly PermanentMediaCandidate[], log: FailureLog,
+): Promise<PermanentMediaResult> {
+  const mirror = candidates.find((candidate) => candidate.source === 'mirror');
+  if (!mirror) return resolveGateways(candidates, options, maxBytes, expected, options.signal, log);
+  const health = options.health ?? sharedPermanentMediaHealth;
+  const probe = options.mirrorProbe ?? sharedPermanentMediaMirrorProbe;
+  const mirrorController = new AbortController();
+  const gatewayController = new AbortController();
+  let startGateway!: () => void;
+  let rejectGateway!: (error: unknown) => void;
+  let gatewayStarted = false;
+  const gatewayStart = new Promise<void>((resolve, reject) => {
+    rejectGateway = reject;
+    startGateway = () => {
+      if (gatewayStarted) return;
+      gatewayStarted = true;
+      performance.mark('p15:ar-fallback-started');
+      resolve();
+    };
+  });
+  const onAbort = () => {
+    mirrorController.abort(options.signal?.reason);
+    gatewayController.abort(options.signal?.reason);
+    rejectGateway(abortError());
+  };
+  options.signal?.addEventListener('abort', onAbort, { once: true });
+  const hedge = setTimeout(startGateway,
+    Math.max(1, options.mirrorFallbackDelayMs ?? DEFAULT_MIRROR_FALLBACK_DELAY_MS));
+  const gatewayPromise = gatewayStart.then(() => resolveGateways(
+    candidates.filter((candidate) => candidate.source !== 'mirror'),
+    options, maxBytes, expected, gatewayController.signal, log,
+  ));
+  const mirrorPromise = (async () => {
+    const selected = await probe.select(ref, {
+      fetcher: options.fetcher ?? fetch, signal: mirrorController.signal,
+      mirrorBaseUrl: options.mirrorBaseUrl,
+      timeoutMs: Math.max(1, options.mirrorProbeTimeoutMs ?? DEFAULT_MIRROR_PROBE_TIMEOUT_MS),
+    });
+    if (!selected) { startGateway(); throw new AttemptError('network'); }
+    try {
+      const result = await attemptCandidate(mirror, options, maxBytes,
+        Math.max(1, options.mirrorTimeoutMs ?? DEFAULT_MIRROR_TIMEOUT_MS),
+        expected, mirrorController.signal);
+      health.recordSuccess(mirror.healthKey);
+      probe.recordServiceSuccess?.(mirror.healthKey);
+      return result;
+    } catch (error) {
+      if (mirrorController.signal.aborted) throw abortError();
+      const classified = error instanceof AttemptError ? error : classifyNetwork(error);
+      if (mirrorServiceFailure(classified)) {
+        health.recordFailure(mirror.healthKey, classified.kind);
+        probe.recordServiceFailure?.(mirror.healthKey);
+      }
+      logFailure(log, mirror, classified);
+      startGateway();
+      throw classified;
+    }
+  })();
+  try {
+    const result = await Promise.any([mirrorPromise, gatewayPromise]);
+    if (!gatewayStarted) rejectGateway(abortError());
+    mirrorController.abort();
+    gatewayController.abort();
+    return result;
+  } catch {
+    if (options.signal?.aborted) throw abortError();
+    throw new PermanentMediaError(
+      'unavailable', `永久资源暂时不可用（${log.messages.join('；') || '候选处于冷却中'}）`, log.failures,
+    );
+  } finally {
+    clearTimeout(hedge);
+    options.signal?.removeEventListener('abort', onAbort);
+  }
+}
+
+/** 解析永久引用；镜像与永久网关只以完整字节验证结果决胜。 */
 export async function resolvePermanentMedia(
-  ref: string,
-  options: PermanentMediaOptions,
+  ref: string, options: PermanentMediaOptions,
 ): Promise<PermanentMediaResult> {
   const expected = expectedHash(options);
-  const health = options.health ?? sharedPermanentMediaHealth;
   const maxBytes = options.maxBytes ?? (options.kind === 'json' ? JSON_MAX_BYTES : DEFAULT_MAX_BYTES);
   const cacheable = options.validation.level === 'canonical' && expected !== undefined;
   if (options.signal?.aborted) throw abortError();
@@ -129,62 +187,11 @@ export async function resolvePermanentMedia(
     if (options.kind === 'audio') performance.mark('p15:first-verified-audio-ready');
     return { ...cached, source: 'cache', verification: 'sha256' };
   }
-  const mirrorStartedAt = performance.now();
-  const mirrorBudgetMs = Math.max(1, options.mirrorBudgetMs ?? DEFAULT_MIRROR_BUDGET_MS);
-  const mirrorProbe = options.mirrorProbe ?? sharedPermanentMediaMirrorProbe;
-  const mirrorBaseUrl = options.kind === 'audio'
-    ? await mirrorProbe.select(ref, {
-      fetcher: options.fetcher ?? fetch, signal: options.signal,
-      mirrorBaseUrl: options.mirrorBaseUrl,
-      timeoutMs: Math.min(options.mirrorProbeTimeoutMs ?? 800, mirrorBudgetMs),
-    })
-    : '';
-  if (options.signal?.aborted) throw abortError();
-  const candidates = permanentMediaCandidates(ref, mirrorBaseUrl);
-  const timeoutMs = Math.max(1, options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
-  const rounds = Math.max(1, options.rounds ?? DEFAULT_ROUNDS);
-  const failures: PermanentMediaFailure[] = [];
-  const messages: string[] = [];
-  let mirrorDisabled = false;
-  for (let round = 0; round < rounds; round += 1) {
-    for (const candidate of candidates) {
-      if (candidate.source === 'mirror' && mirrorDisabled) continue;
-      if (!health.canAttempt(candidate.healthKey)) continue;
-      try {
-        const candidateTimeout = candidate.source === 'mirror'
-          ? Math.max(1, mirrorBudgetMs - (performance.now() - mirrorStartedAt)) : timeoutMs;
-        const result = await attempt(candidate, options, maxBytes, candidateTimeout, expected);
-        health.recordSuccess(candidate.healthKey);
-        if (candidate.source === 'mirror') {
-          mirrorProbe.recordServiceSuccess?.(candidate.healthKey);
-        }
-        if (cacheable) await writeVerifiedCache(expected, result.bytes, result.contentType);
-        if (options.kind === 'audio') performance.mark('p15:first-verified-audio-ready');
-        return result;
-      } catch (error) {
-        if (options.signal?.aborted) throw abortError();
-        if (error instanceof PermanentMediaError && error.kind === 'aborted') throw error;
-        const classified = error instanceof AttemptError ? error : classifyNetwork(error);
-        const mirrorServiceFailure = candidate.source === 'mirror' && (
-          ['timeout', 'dns', 'network'].includes(classified.kind)
-          || (classified.kind === 'http' && (
-            classified.status === 403 || classified.status === 429 || (classified.status ?? 0) >= 500
-          ))
-        );
-        const candidateHealthFailure = candidate.source === 'mirror'
-          ? mirrorServiceFailure : ['timeout', 'dns', 'network', 'http'].includes(classified.kind);
-        if (candidateHealthFailure) health.recordFailure(candidate.healthKey, classified.kind);
-        if (mirrorServiceFailure) {
-          mirrorDisabled = true;
-          mirrorProbe.recordServiceFailure?.(candidate.healthKey);
-        }
-        failures.push({ source: candidate.source, kind: classified.kind, status: classified.status });
-        messages.push(failureText(candidate, classified));
-      }
-    }
-    if (round + 1 < rounds) await delay(options.retryDelayMs ?? DEFAULT_RETRY_DELAY_MS, options.signal);
-  }
-  throw new PermanentMediaError(
-    'unavailable', `永久资源暂时不可用（${messages.join('；') || '候选处于冷却中'}）`, failures,
-  );
+  const mirrorBase = options.kind === 'audio' ? options.mirrorBaseUrl : '';
+  const candidates = permanentMediaCandidates(ref, mirrorBase);
+  const log: FailureLog = { failures: [], messages: [] };
+  const result = await resolveWithMirrorRace(ref, options, maxBytes, expected, candidates, log);
+  if (cacheable) await writeVerifiedCache(expected, result.bytes, result.contentType);
+  if (options.kind === 'audio') performance.mark('p15:first-verified-audio-ready');
+  return result;
 }

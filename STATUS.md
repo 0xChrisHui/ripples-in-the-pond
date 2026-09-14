@@ -9,8 +9,9 @@
 **Phase**: **Phase 15 已完结 ✅；P15-G 镜像增量进入 Production 最终 Gate**。P14-G 最终提交 `8f5a735` 已无损合入 P15，合并版 `2be3786` 的 Preview 与 Production 均成功；公开页面、35+1 ECHO、P15 渐进播放器 marker、scoped source cursor 与队列健康回归通过。P14 后续 observe/live 窗口与私密目验按用户决定保留为非阻塞 review。P8/P9/P11/P12/P15 已正式完结。
 
 **P15 发布后 review（2026-09-13）**：修复 P14 永久音频字段合入后遗留的 Track 公开合同漂移，首页与私人档案缓存会拒绝旧/损坏字段；`/me` 内存 owner、轮询回写和页面放行改用 `authSource + userId`，堵住同内部 ID 跨登录源的一帧串档窗口。修复提交 `21ec63a` 已快进 `main`，Vercel Preview/Production 成功；正式域名五页 200、tracks 35 首与三网关合同通过。TypeScript、定向 lint、P15 四组脚本、P14 播放器、Webpack production build 与 Foundry 56/56 已通过；详见 `reviews/2026-09-13-phase-15-post-release-review.md`。
-**P15-G 镜像探针（2026-09-14）**：playbook 提交 `ea771b0` 冻结“永久曲谱真相 + Vercel 音频加速 + Arweave 自动回退”；实现提交 `c4a7b20` 与预算修复 `d27f613` 加入真实对象 `Range: bytes=0-0` 严格探针、800ms 探针/900ms 镜像总预算、同 origin single-flight、`5m → 1h → 6h → 24h` 持久退避与 half-open 自动恢复。缓存命中零探针；404/哈希错误只回退单对象；只有服务级错误进入 origin 熔断；Range 成功只准入，完整镜像对象验证成功才清零失败等级。独立终审 0 findings，完整 `scripts/verify.sh` 通过（37 路由、Foundry 56/56）。系统代理未自动传给 Git，改用一次性 `http.proxy=127.0.0.1:7897` 后安全快进 `main` 至 `e5e9a15`；Vercel 部署 `B5UvyHLsLq9Xi8z5AQ4HFp6ZoJin` 成功，正式域名首页、Score、Echo 与 tracks API 均为 HTTP 200。生产变量仍为空，继续安全直连 Arweave。
+**P15-G 镜像探针（2026-09-14）**：playbook 提交 `ea771b0` 冻结“永久曲谱真相 + Vercel 音频加速 + Arweave 自动回退”；实现提交 `c4a7b20` 与首轮预算修复 `d27f613` 加入真实对象 `Range: bytes=0-0` 严格探针、同 origin single-flight、`5m → 1h → 6h → 24h` 持久退避与 half-open 自动恢复。缓存命中零探针；404/哈希错误只回退单对象；只有服务级错误进入 origin 熔断；Range 成功只准入，完整镜像对象验证成功才清零失败等级。首轮保护版完整 `scripts/verify.sh` 通过（37 路由、Foundry 56/56），并部署到 Production；当时变量仍为空，安全直连 Arweave。
 **P15-G Blob 配置（2026-09-14）**：Public Store `ripples-media`（HKG）已写入 63 个精确 `media/<txid>` 对象，总计 `13,457,452` bytes；范围为 Pond Echo 36 段、Score #1 永久音效 26 个与底曲 1 个。63/63 均完成 Arweave 原件与 Blob 副本全字节/SHA-256 核对，严格 Range 为 `206 + 1 byte + bytes 0-0/N`，CORS `*`、`audio/mpeg` 全通过。三环境镜像基址已配置；一次性 Preview 上传器及 8 个临时部署已删除，长效写 Token 已撤销，Store 恢复 `oidc (no static credentials)`。正式 P15 Preview `FCwnw7nDL1uwonxG1p6JfNCSjtnM` 构建 37 路由成功，公开路由最终响应均为 200，客户端 chunk 已命中 Blob 基址。下一步只剩合入本次部署忽略修复并完成 Production 小流量验收。
+**P15-G 生产实测优化（2026-09-15）**：首轮 Production 的 Blob Range 真实 TTFB 约 `0.824–0.976s`，旧“探针 + 完整镜像共用 900ms”会安全回退，但几乎不给镜像完整 GET 机会，7.3MB 底曲尤其无法命中。review 后把合同改为：resolver 起点 800ms 启动 Arweave 备用、Range 探针最多 2 秒、镜像完整 GET 最多 10 秒；镜像与单条顺序 Arweave 分支以完整类型/长度/SHA 验证结果竞速，胜方立即取消败方。下一步为完整 Gate、Production 重发与真实播放复验。
 **Phase 拆分（2026-06-04 新定）**：
   - **Phase 7**（已完结 ✅）= 修严重 BUG + Semi + 提速
   - **Phase 8**（已完结 ✅）= 水塘视觉重设计（首页星空 → 水塘）
@@ -95,7 +96,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：合入 `.tmp*/` 部署忽略修复，触发并验收 P15-G Production；确认正式页面、真实 Blob Range/CORS、镜像成功路径与自动回退/恢复测试后封存 P15-G。此后额度耗尽与恢复均不需要改变量或按月重新部署。
+**当前权威下一步**：完成 P15-G 有界镜像竞速 Gate，触发 Production 重发；确认正式页面、真实 Blob Range/CORS、镜像完整 GET 成功路径与自动回退/恢复后封存 P15-G。此后额度耗尽与恢复均不需要改变量或按月重新部署。
 
 ---
 

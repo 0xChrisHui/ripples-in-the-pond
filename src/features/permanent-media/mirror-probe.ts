@@ -5,7 +5,7 @@ import type {
   PermanentMediaMirrorProbeRequest,
 } from './types';
 const STORAGE_KEY = 'ripples:media-mirror-health:v1';
-const DEFAULT_TIMEOUT_MS = 800;
+const DEFAULT_TIMEOUT_MS = 2_000;
 const DEFAULT_HEALTHY_TTL_MS = 60_000;
 const DEFAULT_COOLDOWNS = [5 * 60_000, 60 * 60_000, 6 * 60 * 60_000, 24 * 60 * 60_000];
 type StoredEntry = { level: number; nextProbeAt: number };
@@ -65,7 +65,6 @@ export class PermanentMediaMirrorProbe implements PermanentMediaMirrorProbeContr
     const origin = new URL(candidate.url).origin;
     const blocked = this.entry(origin);
     if (blocked && blocked.nextProbeAt > this.now()) {
-      performance.mark('p15:ar-fallback-started');
       return '';
     }
     if ((this.healthyUntil.get(origin) ?? 0) > this.now()) return candidate.healthKey;
@@ -78,7 +77,6 @@ export class PermanentMediaMirrorProbe implements PermanentMediaMirrorProbeContr
     if (result.outcome === 'usable') return candidate.healthKey;
     if (result.outcome === 'object-miss' && result.ref !== ref) return candidate.healthKey;
     if (result.outcome === 'aborted') throw new DOMException('请求已取消', 'AbortError');
-    performance.mark('p15:ar-fallback-started');
     return '';
   }
   private startFlight(origin: string, ref: string, candidate: PermanentMediaCandidate,

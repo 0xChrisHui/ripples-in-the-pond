@@ -56,7 +56,8 @@ export type PermanentMediaOptions = Readonly<{
   health?: PermanentMediaHealthContract;
   mirrorProbe?: PermanentMediaMirrorProbeContract;
   mirrorProbeTimeoutMs?: number;
-  mirrorBudgetMs?: number;
+  mirrorFallbackDelayMs?: number;
+  mirrorTimeoutMs?: number;
 }>;
 
 export type PermanentMediaMirrorProbeRequest = Readonly<{

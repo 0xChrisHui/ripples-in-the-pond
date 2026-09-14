@@ -170,31 +170,9 @@ async function verifyServiceFailureKinds(): Promise<void> {
   }
 }
 
-async function verifyFullGetDeadline(): Promise<void> {
-  let fullGetAborted = false;
-  const fetcher: typeof fetch = async (input, init) => {
-    if (!String(input).startsWith(mirror)) return new Response('audio', { headers: audioHeaders });
-    if (new Headers(init?.headers).get('range')) return probeResponse();
-    return new Promise((_resolve, reject) => init?.signal?.addEventListener('abort', () => {
-      fullGetAborted = true;
-      reject(new DOMException('已取消', 'AbortError'));
-    }, { once: true }));
-  };
-  const started = performance.now();
-  const result = await resolvePermanentMedia(refs[0], {
-    kind: 'audio', validation: { level: 'compatibility' }, fetcher,
-    mirrorBaseUrl: mirror, rounds: 1, health: new PermanentMediaHealth(), mirrorBudgetMs: 10,
-    mirrorProbe: new PermanentMediaMirrorProbe({ storage: null }),
-  });
-  assert.equal(result.source, 'ardrive');
-  assert.equal(fullGetAborted, true, '完整镜像 GET 超过总预算必须 Abort');
-  assert.ok(performance.now() - started < 100, '镜像探针与完整 GET 必须共用有界总预算');
-}
-
 export async function verifyMirrorObjectFallback(): Promise<void> {
   await verifyDamagedObjectFallback();
   await verifyServiceAndObjectHealthSplit();
   await verifyConcurrentBackoff();
   await verifyServiceFailureKinds();
-  await verifyFullGetDeadline();
 }

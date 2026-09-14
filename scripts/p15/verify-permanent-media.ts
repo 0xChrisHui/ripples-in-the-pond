@@ -10,6 +10,7 @@ import { fetchPermanentJson } from '../../src/features/score-playback/sounds-map
 import { verifyCanonicalCache } from './checks/canonical-cache';
 import { verifyMirrorObjectFallback } from './checks/mirror-object-fallback';
 import { verifyMirrorProbe } from './checks/mirror-probe';
+import { verifyMirrorRace } from './checks/mirror-race';
 
 const REF = `ar://${'A'.repeat(43)}`;
 const AUDIO_HEADERS = { 'content-type': 'audio/mpeg', 'accept-ranges': 'bytes' };
@@ -187,6 +188,7 @@ async function main(): Promise<void> {
   await verifyHash();
   await verifyCanonicalCache();
   await verifyMirrorProbe();
+  await verifyMirrorRace();
   await verifyMirrorObjectFallback();
   await verifyCooldown();
   await verifyScoreCompatibilityErrors();

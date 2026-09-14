@@ -1534,3 +1534,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **不可变镜像**：63 个对象一律使用 `media/<arweave-txid>`、禁用随机后缀与覆盖；既有路径必须先全字节回读且 SHA 相同才算幂等成功。最终 63/63、`13,457,452` bytes 均通过 Arweave↔Blob 全字节 SHA、严格 Range、CORS 与 Content-Type Gate。
 - **最小凭证暴露**：Vercel Blob 的本地 OIDC 因 Store 未连接 Development 而拒绝写入，且敏感写变量不能投放 Development。采用只存在于受保护 Preview 的一次性白名单上传器完成迁移，随后删除上传密钥/白名单与 8 个临时部署、撤销 `BLOB_READ_WRITE_TOKEN`，Store 恢复 Production/Preview OIDC 且无静态凭证。
 - **部署输入隔离**：Vercel CLI 会扫描未被 `.vercelignore` 排除的浏览器验收 profile；`.tmp-p15-*` 中被 Edge 占用的配置会令上传报 EPERM。统一加入 `.tmp*/`，只排除本地测试副产物，不改变应用构建内容。
+
+## 2026-09-15 — P15-G 把镜像截止改为有界竞速
+
+- **事实纠正**：Production 的 HKG Blob 一字节 Range TTFB 实测约 `0.824–0.976s`；旧 900ms 总预算虽能安全回退，却会在镜像完整 GET 前取消健康线路，7.3MB Score 底曲更不可能在该预算内完成。
+- **预算拆分**：800ms 只表示从 resolver 起点启动 Arweave 备用，不再表示取消镜像；Range 探针硬上限改为 2 秒，镜像完整 GET 上限改为 10 秒，Arweave 每候选保持 5 秒并顺序尝试。
+- **竞速边界**：只有完整类型、长度与 SHA/兼容验证通过的分支可以获胜；同一对象最多一条镜像与一条 Arweave 完整 GET，胜方立即 Abort 败方。接受短暂重复流量，以换取快速永久回退和慢冷边缘恢复同时成立；可信缓存命中后不再竞速。
