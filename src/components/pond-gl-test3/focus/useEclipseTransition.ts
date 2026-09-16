@@ -8,25 +8,22 @@ import { getPointerFx, getCameraFx, depthOf } from '../pointer-fx';
 import { getEffectiveWaterLevel } from '../water/water-level';
 import { prefersReducedMotion } from '../reduced-motion';
 import {
-  advanceScenePresence, clearPlaybackFocus, resetScenePresence, setPlaybackFocus,
+  advanceEclipseMix, clearPlaybackFocus, resetEclipseMix, setPlaybackFocus,
 } from './playback-focus';
 
 function syncCss(value: number, active: boolean): void {
-  document.body.style.setProperty('--pond-scene-presence', value.toFixed(4));
-  document.body.style.setProperty('--pond-grain-opacity', (value * 0.028).toFixed(4));
+  document.body.style.setProperty('--pond-eclipse-mix', value.toFixed(4));
   const root = document.querySelector<HTMLElement>('[data-pond-root]');
   if (root) root.dataset.pondEclipseActive = active ? 'true' : 'false';
 }
 
-export function useScenePresence(
+export function useEclipseTransition(
   glSim: GlSim,
   visitor: RefObject<Track36VisitorState | null>,
   playingId: string | null,
 ): void {
   const playerRef = useRef(playingId);
-  useEffect(() => {
-    playerRef.current = playingId;
-  }, [playingId]);
+  useEffect(() => { playerRef.current = playingId; }, [playingId]);
 
   useEffect(() => {
     let raf = 0, last = performance.now();
@@ -52,16 +49,15 @@ export function useScenePresence(
         });
       } else clearPlaybackFocus();
       const isFocused = !!trackId && !!node;
-      const presence = advanceScenePresence(isFocused ? 0 : 1, now - last, prefersReducedMotion());
-      syncCss(presence, isFocused);
+      const mix = advanceEclipseMix(isFocused ? 1 : 0, now - last, prefersReducedMotion());
+      syncCss(mix, isFocused);
       last = now;
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
     return () => {
-      cancelAnimationFrame(raf); clearPlaybackFocus(); resetScenePresence(); syncCss(1, false);
-      document.body.style.removeProperty('--pond-scene-presence');
-      document.body.style.removeProperty('--pond-grain-opacity');
+      cancelAnimationFrame(raf); clearPlaybackFocus(); resetEclipseMix(); syncCss(0, false);
+      document.body.style.removeProperty('--pond-eclipse-mix');
     };
   }, [glSim.nodes, visitor]);
 }

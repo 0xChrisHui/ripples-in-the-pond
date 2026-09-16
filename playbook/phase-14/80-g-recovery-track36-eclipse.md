@@ -1,7 +1,7 @@
 # P14-G — 主网索引恢复、ECHO #1 水中访客与日食黑场
 
 > **建立日期**：2026-09-12
-> **状态**：G0–G6 已完成；G7 生产 observe/live 恢复正在执行。2026-09-12 已按产品纠正重写 #36 身份合同，旧 Track/MSTR 方案作废
+> **状态**：G0–G6 与 G7 发布/observe/live 恢复已完成；新的 24h/7d 观察从 `2026-09-12T17:58:09.356Z` 起算，F8 尚未完成。旧 Track/MSTR 方案作废
 > **进入条件**：P14 F1–F7 已完成；F8 暂停
 > **唯一顺序**：`G0 → G1 → G2 → G3 → G4 → G5 → G6 → G7 → F8`
 
@@ -15,7 +15,7 @@ P14 首枚主网空投成功后，生产 Score 事件源游标从约 1.567 亿�
 
 1. 修复并恢复生产 Score 事件索引，防止游标再次回退。
 2. 把 `/echo/1` 对应的 ECHO #1 作为首页周期穿越水塘的第 36 枚特殊音乐圆圈，可直接点击现场组合播放。
-3. 任何音乐圆进入日食模式时，让静息水塘和全部音乐圆同步淡出，形成纯黑背景。
+3. 任何音乐圆进入日食模式时，让全部音乐圆按原方案淡出，并把水底贴图丝滑切换为黑色贴图；水波与 P9 动画继续运行。
 
 这三项共享同一发布 Gate：先恢复数据源，再只读接入链上 ECHO #1 与其永久档案，最后完成视觉、浏览器和生产观察。不得为了先看视觉而在生产继续使用已知不安全的旧游标写入路径。
 
@@ -72,11 +72,12 @@ P3 = ( 0.58W, 1.12H)
 - transient Drop 队列必须有固定上限并由 WaterDistort 统一 drain；禁止高频广播 `bg-ripple:wave`，避免长期堆积和过度推挤普通球。
 - 如果需要推开附近圆圈，只允许两次穿水事件各产生一次现有 wake wave。
 
-### 2.4 日食纯黑合同
+### 2.4 日食黑色贴图合同
 
-- 点击任意普通音乐圆或 #36 后，约 500ms 内：静息塘底、水面常驻高光、倒影、植物、常驻花瓣、常驻微光、全局 grain 和全部 GL 音乐圆同步淡出到 0。
-- 播放圆自身也淡出，由现有 DOM 日食黑核与白环接管视觉焦点；背景最终为 `rgb(0,0,0)`。
-- `GlEclipse`、P9 Showcase/Stage 的临时微光、花瓣、水波和焦散不乘静息场景系数，仍可在纯黑底上演奏。
+- 点击任意普通音乐圆或 #36 后，约 500ms 内：当前水底贴图连续混合为独立黑色贴图；停止后按同一路径丝滑恢复。
+- 全部音乐圆（含播放圆自身与 #36）按原日食方案淡出，由现有 DOM 日食黑核与白环接管视觉焦点。
+- 水面、水波、月光、植物、常驻花瓣/微光、全局 grain 与全部 P9 消费者不乘日食背景系数；日食只换背景贴图，不停止或压暗这些动画。
+- `GlEclipse`、P9 Showcase/Stage 的临时微光、花瓣、水波和焦散继续在黑色贴图上演奏。
 - Header、合奏说明和 BottomPlayer 是操作界面，不属于“背景”，保持可见、可停止播放。
 - 不通过卸载 Canvas、重建 WebGL context 或给整棵 PondGL 盖黑幕实现，否则会丢失场景状态并遮掉 P9 动画。
 - 停止、自然结束、播放失败或失去有效焦点时恢复水塘。WebGL/context 异常必须 fail open，不能让用户困在无日食、无控制的黑屏。
@@ -273,30 +274,31 @@ migration/RLS/RPC read-back、真并发测试、route 测试、TypeScript、lint
 
 ---
 
-## 9. G5｜统一日食焦点与场景淡出
+## 9. G5｜统一日食焦点、背景贴图转换与音乐圆退场
 
 ### 状态模型
 
 - 普通音乐仍以 PlayerProvider 的 `playing/currentTrack` 为真值，#36 以既有 WalletRecipePlayerEngine snapshot 为真值；二者先互斥，再归一为一个只读 `PlaybackFocus`，不新增第二套日食事件总线。
 - 共享 `PlaybackFocus`/`focusPoseRef` 由 `renderNodes + ordinary player snapshot + ECHO player snapshot` 派生；普通 node 或 ECHO featured node 提供屏幕位置、半径、深度和有效性，GlEclipse 不复制第二套实现，也不把 ECHO 伪装为 Track。
 - `eclipseActive = playbackFocus.playing && focusPose.valid && glHealthy`。
-- 建立 `scenePresence`：普通态 `1`，日食态阻尼到 `0`，默认约 500ms；统一时钟/阻尼器每帧只更新一次，所有消费者只读同一值，快速切歌不闪回水塘。
+- 建立 `eclipseMix`：普通态 `0`，日食态阻尼到 `1`，默认约 500ms；统一时钟/阻尼器每帧只更新一次，仅供背景贴图/基调读取，快速切歌不闪回水底贴图。
 
 ### 分层接入
 
-将 `scenePresence` 接入以下静息内容，而不是整 Canvas opacity：
+将 `eclipseMix` 只接入背景内容，而不是整 Canvas opacity：
 
-- BaseTone、塘底、水面常驻高光、月光倒影、植物。
-- 常驻 motes/petals 和全局 body grain。
-- 普通音乐圆、#36 GL 球及其 DOM 命中/标题。
+- BaseTone 与当前水底贴图向独立黑色贴图连续混合。
+- 程序化塘底花纹随转换退场，避免透过黑色贴图重新显露。
+- 普通音乐圆与 #36 的 GL 球、DOM 命中/标题不读取 `eclipseMix`；它们按 `PlaybackFocus` 的原日食退场逻辑独立处理。
 
-以下内容绕过 `scenePresence`：
+以下内容必须绕过 `eclipseMix`：
 
 - GlEclipse 黑核/白环。
-- ShowcaseOverlay、P9StageOverlay 及 P9 临时 motes/petals/wave/caustics。
+- WaterDistort 的水波/高光/倒影/焦散、WaterSurface、植物、常驻与 P9 的 motes/petals/wave/caustics。
+- ShowcaseOverlay、P9StageOverlay 与全局 body grain。
 - Header、TestJam/合奏说明、BottomPlayer。
 
-Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把 idle 绘制 alpha 乘 `scenePresence`，P9 envelope 单独控制显现；WaterDistort 先拆开 ambient pond/highlight 与 P9 wave/caustic，再只淡出 ambient，不能在 shader 末尾把最终合成统一乘 0。
+Petals、motes、water 的模拟、对象池与绘制强度在黑场期间保持原样。WaterDistort 只能用 `eclipseMix` 降低塘底花纹，严禁在 shader 末尾把最终合成统一乘 0；这条约束用于保护水波和 P9 按键动画。
 
 接近文件硬线的 WaterDistort、shader setup、FloatingMotes 等不得直接堆逻辑；先把 transition/uniform/helper 拆入相应子目录。全局样式另建路由专用文件，不继续向已达 220 行硬线的 `app/globals.css` 追加。
 
@@ -311,10 +313,10 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 ### Gate G5
 
 - 普通圆与 #36 均进入同一 GlEclipse。
-- 0ms/250ms/650ms 与停止后 650ms 截图证明同步退场/恢复。
-- 排除 Header、日食和播放器后抽样背景像素接近 `rgb(0,0,0)`，body grain 为 0。
-- 日食中连续演奏 33 键，33 映射、13/20 门控不变，P9 临时动画仍可见。
-- 分别为 petals、motes、water、scene 选代表键保存黑场截图/像素证据，再运行完整 33 键注册表回归。
+- 0ms/250ms/650ms 与停止后 650ms 截图证明背景贴图连续转换、音乐圆退场与恢复。
+- 排除 Header、日食和播放器后，背景亮度显著低于常态，但水波相邻帧仍有可测变化。
+- 日食中连续演奏 33 键，33 映射、13/20 门控不变，P9 动画仍可见且不因背景转换减弱。
+- 分别为 petals、motes、water、scene 选代表键保存黑底截图/像素证据，再运行完整 33 键注册表回归。
 
 ---
 
@@ -337,7 +339,7 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 | 两次 crossing 与水下稀疏涟漪 | ✓ | ✓ | ✓ | 无尾波 |
 | click / Enter / Space 播放 #36 | ✓ | ✓ | ✓ | ✓ |
 | 播放冻结、停止续走 | ✓ | ✓ | ✓ | 保持静止 |
-| 普通圆/#36 日食纯黑 | ✓ | ✓ | ✓ | ≤80ms |
+| 普通圆/#36 消失、背景切黑色贴图、水波保留 | ✓ | ✓ | ✓ | ≤80ms |
 | 停止、ended、play reject 恢复 | ✓ | ✓ | ✓ | ✓ |
 | resize/转屏/前后台恢复 | ✓ | ✓ | ✓ | ✓ |
 | 日食中 33 键演奏 | ✓ | ✓ | ✓ | ✓ |
@@ -387,7 +389,7 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 - scoped source cursor 已连续 7 天无回退，24h/7d 新观察完成。
 - 全链/DB/queue/合约集合一致，无漏事件或错误资格。
 - ECHO #1 链上/永久档案身份、首页成功 35+1/失败 35+0、现场组合播放和零 Track/Material/录制副作用均通过。
-- 普通圆/#36 的日食黑场、P9、可访问性、移动端和性能 Gate 全绿。
+- 普通圆/#36 的日食黑色贴图转换、持续水波、P9、可访问性、移动端和性能 Gate 全绿。
 - 最终 review 明确记录本次 cursor incident 的根因、影响范围、修复、恢复区间与防复发测试。
 
 完成后执行 `70-f-testnet-mainnet.md` 的 F8，更新 STATUS/TASKS/JOURNAL/ERRORS/LEARNING 并再进入 P15-0。
@@ -402,6 +404,7 @@ Petals、motes、water 的模拟与对象池在黑场期间保持存活。只把
 - 不为 #36 复活旧 SVG 首页、旧 comet eclipse 事件或自制播放器；只复用 WalletRecipePlayerEngine。
 - 不把 #36 放进常规 35 球力导集合，不在 A/B/C 各复制一枚。
 - 不用整 Canvas opacity 或全屏黑幕遮掉 P9 动画。
+- 不把水波、motes、petals、焦散或 body grain 乘到日食背景系数；只允许背景贴图/基调消费 `eclipseMix`。
 - 首页 ECHO 路径不读取或新增 `tracks.week=36`，不把 ECHO #1 包装成 Track/MaterialNFT，也不让它进入 TestJam/Score 录制；这不限制未来常规 Track 36–108。
 - 不生成、上传或引用新的完整 MP3；只读使用 ECHO #1 已冻结的 tokenURI、metadata recipe 与 clips。
 - 不在 ECHO #1 尚未空投或链上/永久档案 Gate 失败时显示第 36 枚圆圈。

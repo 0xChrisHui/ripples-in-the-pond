@@ -7,7 +7,7 @@ import DraftSavedToast from '@/src/components/jam/DraftSavedToast';
 import TestJam from '@/src/components/jam/TestJam';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
 import { parseGLFlags, type GLFlags } from '@/src/components/pond-gl-test3/gl-flags';
-import { useScenePresence } from '@/src/components/pond-gl-test3/focus/useScenePresence';
+import { useEclipseTransition } from '@/src/components/pond-gl-test3/focus/useEclipseTransition';
 import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
 import GlEclipse from '@/src/components/pond-gl-test3/overlay/GlEclipse';
 import GlLoading from '@/src/components/pond-gl-test3/overlay/GlLoading';
@@ -51,7 +51,7 @@ export default function PondExperience({ mode }: { mode: PondMode }) {
   const playingId = echoPlayback.playing ? featuredEcho?.playbackId ?? null : regularPlayingId;
   const activePlaybackId = echoPlayback.active ? featuredEcho?.playbackId ?? null : regularPlayingId;
   const visitor = useTrack36Visitor(featuredEcho, glOk && glFlags.glSpheres, activePlaybackId);
-  useScenePresence(glSim, visitor, glOk ? playingId : null);
+  useEclipseTransition(glSim, visitor, glOk ? playingId : null);
   const mountGl = glFlags.glBase || glFlags.glSpheres || glFlags.water || glFlags.bgImage
     || glFlags.rtt || glFlags.waterFx || glFlags.floatMotes || glFlags.waterPlants
     || glFlags.reefStones || glFlags.crystalPillars;

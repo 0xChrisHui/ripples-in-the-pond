@@ -16,7 +16,7 @@ import {
   TRACK36_TRAVEL_MS,
 } from '../../src/components/pond-gl-test3/visitor/track36-state';
 import {
-  advanceScenePresence, getScenePresence, resetScenePresence,
+  advanceEclipseMix, getEclipseMix, resetEclipseMix,
 } from '../../src/components/pond-gl-test3/focus/playback-focus';
 import { project, type ProjCtx } from '../../src/components/pond-gl-test3/sphere-projection';
 
@@ -101,17 +101,17 @@ positionTrack36InSim(reduced, 1000, 800, projection);
 const projected = project(reduced.node.x ?? 0, reduced.node.y ?? 0, reduced.node.z, projection, reduced.node);
 assert.ok(Math.abs(projected.sx - 720) < 1e-9, '逆投影后必须回到同一屏幕路径');
 
-resetScenePresence();
-advanceScenePresence(0, 95, false);
-assert.ok(getScenePresence() > 0 && getScenePresence() < 1, '普通模式必须缓慢淡出');
-advanceScenePresence(0, 1, true);
-assert.equal(getScenePresence(), 0, 'reduced-motion 必须直接进入纯黑');
-resetScenePresence();
+resetEclipseMix();
+advanceEclipseMix(1, 95, false);
+assert.ok(getEclipseMix() > 0 && getEclipseMix() < 1, '水底贴图必须缓慢过渡');
+advanceEclipseMix(1, 1, true);
+assert.equal(getEclipseMix(), 1, 'reduced-motion 必须直接切到黑色贴图');
+resetEclipseMix();
 
 const hitTargetSource = readFileSync(resolve(
   process.cwd(), 'src/components/pond-gl-test3/visitor/Track36HitTarget.tsx',
 ), 'utf8');
-assert.ok(hitTargetSource.includes("presence > 0.1 || playbackState === 'playing'"),
+assert.ok(hitTargetSource.includes("!focus.active || ownFocus"),
   '只有正在播放的 ECHO 可在日食透明阶段保留停止入口');
 assert.ok(hitTargetSource.includes('document.activeElement === button) button.blur()'),
   '命中层隐藏时必须释放键盘焦点');

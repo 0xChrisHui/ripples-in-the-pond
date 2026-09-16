@@ -9,7 +9,7 @@ import {
 import { getPointerFx, getCameraFx, depthOf, displayDepthOf } from '../pointer-fx';
 import { project, type ProjCtx } from '../sphere-projection';
 import { getEffectiveWaterLevel, getSubmerge } from '../water/water-level';
-import { getScenePresence } from '../focus/playback-focus';
+import { getPlaybackFocus } from '../focus/playback-focus';
 import { SPHERE_LAYER } from '../water/composite/render-passes';
 import { sphereFragmentShader, sphereVertexShader, HALO_R } from '../spheres/sphere-shader';
 import { BODY_RATIO, hexToSRGB } from '../spheres/sphere-frame';
@@ -21,6 +21,7 @@ export default function Track36Visitor({ visitor }: { visitor: RefObject<Track36
   const matRef = useRef<ShaderMaterial>(null);
   const paramRef = useRef<InstancedBufferAttribute>(null);
   const submergeRef = useRef<InstancedBufferAttribute>(null);
+  const visibilityRef = useRef(1);
   const matrix = useMemo(() => new Matrix4(), []);
   const buffers = useMemo(() => ({
     color: new Float32Array(hexToSRGB('#d9e6df')),
@@ -60,11 +61,14 @@ export default function Track36Visitor({ visitor }: { visitor: RefObject<Track36
     };
     const pose = project(node.x ?? 0, node.y ?? 0, depthOf(node), ctx, node);
     const diameter = node.radius * 2 * HALO_R * pose.scale;
-    const presence = getScenePresence();
+    const focus = getPlaybackFocus();
+    const target = focus.active && focus.trackId !== node.id ? 0 : 1;
+    visibilityRef.current += (target - visibilityRef.current) * 0.12;
+    if (Math.abs(target - visibilityRef.current) < 0.006) visibilityRef.current = target;
     matrix.makeScale(diameter, diameter, 1).setPosition(pose.sx, pose.sy, 0);
     mesh.setMatrixAt(0, matrix); mesh.instanceMatrix.needsUpdate = true; mesh.visible = true;
     if (paramRef.current) {
-      paramRef.current.setZ(0, presence);
+      paramRef.current.setZ(0, visibilityRef.current);
       paramRef.current.needsUpdate = true;
     }
     if (submergeRef.current) {
@@ -72,7 +76,7 @@ export default function Track36Visitor({ visitor }: { visitor: RefObject<Track36
       submergeRef.current.needsUpdate = true;
     }
     mat.uniforms.uTime.value = performance.now() / 1000;
-    setTrack36VisualDim(state, presence);
+    setTrack36VisualDim(state, visibilityRef.current);
   });
 
   return (

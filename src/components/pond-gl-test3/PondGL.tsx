@@ -1,6 +1,7 @@
 'use client';
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useTexture } from '@react-three/drei';
 import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 import type { ShaderMaterial } from 'three';
 import { isWebGLAvailable, pickLifeFlags, type GLFlags } from './gl-flags';
@@ -19,7 +20,7 @@ import type { GlSim } from './spheres/use-gl-sim';
 import AutoDpr from './auto-dpr';
 import Track36Visitor from './visitor/Track36Visitor';
 import type { Track36VisitorState } from './visitor/track36-state';
-import { getScenePresence } from './focus/playback-focus';
+import { getEclipseMix } from './focus/playback-focus';
 
 /**
  * GL 渲染层入口 — P8-G G3。
@@ -32,11 +33,12 @@ import { getScenePresence } from './focus/playback-focus';
 // 基调层：全屏裁剪空间平面，按 artDir 输出深色水体基调或纯黑。
 function BaseTone({ artDir }: { artDir: GLFlags['artDir'] }) {
   const matRef = useRef<ShaderMaterial>(null);
+  const eclipseTex = useTexture('/pond-eclipse-black.svg');
   const uniforms = useMemo(
-    () => ({ uMode: { value: artDir === 'black' ? 1 : 0 }, uScenePresence: { value: 1 } }),
-    [artDir],
+    () => ({ uMode: { value: artDir === 'black' ? 1 : 0 }, uEclipseMix: { value: 0 }, uEclipseTex: { value: eclipseTex } }),
+    [artDir, eclipseTex],
   );
-  useFrame(() => { if (matRef.current) matRef.current.uniforms.uScenePresence.value = getScenePresence(); });
+  useFrame(() => { if (matRef.current) matRef.current.uniforms.uEclipseMix.value = getEclipseMix(); });
   return (
     <mesh frustumCulled={false} renderOrder={-1}>
       <planeGeometry args={[2, 2]} />
@@ -99,8 +101,9 @@ function GlFallback({ artDir }: { artDir: GLFlags['artDir'] }) {
   const bg = artDir === 'black'
     ? '#000'
     : 'radial-gradient(ellipse at 50% 50%, #030a09 0%, #010303 82%)';
-  return <div className="absolute inset-0 transition-opacity duration-500 motion-reduce:duration-75"
-    style={{ background: bg, opacity: 'var(--pond-scene-presence, 1)' }} aria-hidden="true" />;
+  return <div className="absolute inset-0" style={{ background: bg }} aria-hidden="true">
+    <div className="absolute inset-0 bg-black" style={{ opacity: 'var(--pond-eclipse-mix, 0)' }} />
+  </div>;
 }
 
 export interface PondGLProps {
@@ -162,7 +165,7 @@ export default function PondGL({ flags, glSim, pointerInteractive = true, onPerf
               <BgImage url="/test1-bg.png" />
             </Suspense>
           )}
-          {flags.glBase && !flags.bgImage && <BaseTone artDir={flags.artDir} />}
+          {flags.glBase && !flags.bgImage && <Suspense fallback={null}><BaseTone artDir={flags.artDir} /></Suspense>}
           {/* 旧程序化水面（renderOrder -0.5）；waterFx 开时退役、由 WaterDistort 全屏扭曲取代 */}
           {flags.water && !flags.waterFx && <WaterSurface artDir={flags.artDir} />}
           {/* K8 + P9：常驻零绘制以接按键临时编舞；开关只决定静息态是否可见，不改用户保存参数。 */}

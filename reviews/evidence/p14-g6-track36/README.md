@@ -1,7 +1,7 @@
 # P14-G6 ECHO #1 首页浏览器验收证据
 
-日期：2026-09-12
-环境：Production `https://pond-ripple.xyz/`，部署 `dpl_5j7YLuBbeEgZ5yVUDyTbmW8iWAQX`，Edge Headless + SwiftShader，CDP `9336`。
+日期：2026-09-12（生产基线）；2026-09-17（日食视觉纠正候选）
+环境：生产基线为 `https://pond-ripple.xyz/` 部署 `dpl_5j7YLuBbeEgZ5yVUDyTbmW8iWAQX`；视觉纠正候选在隔离 release worktree 的 `http://localhost:3014/` 以 Edge Headless + SwiftShader、CDP `9336` 复验，尚未发布。
 
 ## 本轮结论
 
@@ -21,7 +21,7 @@
 | 退出强制兜底后恢复 35+1 + WebGL | ✅ | `smoke-webgl-recovered-768.png` |
 | A/B/C 的 35 个 regular id 唯一，ECHO 唯一且不进 links | ✅ | `npx tsx scripts/p14/test-track36-visitor.ts` |
 | 普通 Track ↔ ECHO 双向停止合同 | ✅ | 同一定向测试的源码合同断言 |
-| 普通圆连续播放/停止 20 次、P9 33 键 | ✅ | `browser-track36-smoke.mjs`，日食黑度 `1.0` |
+| 普通圆连续播放/停止 20 次、P9 33 键 | ✅ | `browser-track36-smoke.mjs`，黑色贴图切换、水波保留 |
 | ECHO 暂停/继续/停止与 375×844 | ✅ | `smoke-desktop-echo-playing.png`、`smoke-mobile-375x844.png` |
 | ECHO 36 段自然 ended | ✅ | `soak-results.json`，`270346ms` |
 | 30 分钟资源收敛、0 error、0 mutation | ✅ | `soak-results.json`，31 个分钟样本 |
@@ -35,6 +35,12 @@
 真实 soak 只使用正式域名返回的 ECHO #1：`eip155:10:0xd2e884fa06c9a9bdef2350956cc4216d3e2b476c:1`。播放器从 `0` 自然走到 `269900ms`，实际经过 `270346ms`，结束后场景恢复；31 个样本中 DOM/Nodes 最长连续增长各 1，heap 最长显著增长 3，首段 heap 中位数 `79,633,632` bytes、尾段 `29,525,472` bytes，0 页面 error、0 非只读请求。
 
 Edge 内建 MetaMask/Base Account 会输出 `MaxListenersExceededWarning`、`ObjectMultiplex` 与 COOP 检查失败；脚本只把已识别的 COOP 第三方消息降为 warning，React/runtime exception 和其余 console error 仍严格失败。`THREE.Clock` 是既有弃用 warning，不属于本次回归。
+
+## 2026-09-17 日食视觉纠正
+
+用户纠正了 G5 的视觉合同：音乐圆继续按原方案消失，但水波不应退场；日食应把当前水底贴图丝滑换成黑色贴图，而不是让整个水塘共享一个透明度。候选实现已移除全局 `scenePresence`，改为背景专用 `eclipseMix`，并让音乐圆继续由 `PlaybackFocus` 独立退场。
+
+`browser-track36-smoke.mjs` 已在本地候选重新通过：20 次普通播放/停止、35 个非焦点音乐圆退场、ECHO 播放时 35 个普通圆退场、默认背景路径实际采样黑色 SVG 贴图、背景显著压暗、注入涟漪的局部帧差超过同区域自然动态、P9 事件 33/33 接受且 33 个效果 ID 唯一、同一 Canvas/WebGL context、375×844 与 fallback、0 console error。`smoke-desktop-eclipse-ripple.png` 是黑色贴图上涟漪仍活动的新增证据；`smoke-desktop-p9-33keys.png` 证明 P9 覆盖层未被日食背景系数压暗。
 
 ## 脚本
 

@@ -15,7 +15,6 @@ import { getWaterLevel } from '../water/water-level';
 import { getShowcasePose, sampleShowcase, type ShowcasePose, type ShowcaseSample } from '../showcase/showcase-state';
 import { sampleP9, type P9Frame } from '../p9/runtime/p9-sampler';
 import { getP9MoteStyle, modulateP9Mote } from '../p9/consumers/p9-motes';
-import { getScenePresence } from '../focus/playback-focus';
 
 /**
  * K8 — 水面漂浮微光层（夜塘冷调浮尘点阵）。
@@ -182,8 +181,6 @@ export default function FloatingMotes({ enabled = false, waterZoom = false }: { 
     const p9 = sampleP9(now);
     const p9Style = getP9MoteStyle(p9);
     const fx = exchange.energy;
-    const presence = getScenePresence();
-    const p9Active = p9.lanes.motes.length + p9.lanes.petals.length + p9.lanes.scene.length + p9.lanes.water.length > 0;
     // K8 第一要务：绕中心按 zoom 缩放，**与合成 shader 的 uZoomAmount 同款门控+公式** →
     // 当 K6 参照。waterZoom 开 → zoom=1+(水位−0.5)·zoomAmount（同 WaterDistort）；
     // 关 → zoom≡1（与水面"不缩放=现状"一致，微光也不缩，避免比水更早动 = 假参照）。
@@ -192,11 +189,9 @@ export default function FloatingMotes({ enabled = false, waterZoom = false }: { 
       : 1;
     // 写 material 真身 uniforms（R3F 拷贝坑：改外部 uniforms 对象无效）
     mat.uniforms.uSize.value = Math.max(0.5, (enabled ? t.motesSize + fx * 2.5 : 1.5 + fx * 4.5) + p9Style.size);
-    const ambientOpacity = enabled ? t.motesOpacity * presence : 0;
-    mat.uniforms.uOpacity.value = Math.max(0, Math.min(1, ambientOpacity + fx * 0.82 + p9Style.opacity));
+    mat.uniforms.uOpacity.value = Math.max(0, Math.min(1, (enabled ? t.motesOpacity + fx * 0.3 : fx * 0.82) + p9Style.opacity));
     (mat.uniforms.uColor.value as Color).set(p9Style.color);
-    const density = Math.min(1, (enabled ? t.motesCount * presence : 0)
-      + Math.max(fx * 0.38, p9Style.density, p9Active ? 0.14 : 0));
+    const density = enabled ? Math.min(1, t.motesCount + fx * 0.2 + p9Style.density) : fx * 0.38 + p9Style.density;
     const drift = enabled ? t.motesDrift + fx * 0.6 : 0.25 + fx * 1.2;
     const count = Math.max(0, Math.min(MAX_MOTES, Math.round(density * MAX_MOTES)));
     stepMotes(pts.geometry as BufferGeometry, state, s.clock.getElapsedTime(), zoom, drift, count, exchange, getShowcasePose(), p9);

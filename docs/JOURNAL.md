@@ -1542,3 +1542,8 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **竞速边界**：只有完整类型、长度与 SHA/兼容验证通过的分支可以获胜；同一对象最多一条镜像与一条 Arweave 完整 GET，胜方立即 Abort 败方。接受短暂重复流量，以换取快速永久回退和慢冷边缘恢复同时成立；可信缓存命中后不再竞速。
 - **CORS 事实修正**：Vercel Blob 网络响应含正确 Content-Range，但未通过 `Access-Control-Expose-Headers` 暴露给跨源页面。发布 Gate 继续逐字核验该头；浏览器运行时在头不可见时改用 `206 + Content-Length 1 + 音频类型 + 实际 body 1 byte` 四重证据，可见但错误的 Range 仍硬拒绝，避免把平台固定 CORS 行为误判为额度耗尽。
 - **最终生产证据**：部署 `dpl_4XXpeA2Y9oKfsHK4czSbVH8N8bEC` 指向正式域名；冷浏览器中 Score 底曲与 ECHO 首片均出现严格一字节探针后的完整 Blob 200，后续窗口继续走 Blob。测试浏览器屏蔽 Blob 后，ECHO 首窗四片段均由 ArDrive 200 返回；配置保持不变，证明故障切源不依赖重新部署。
+
+## 2026-09-17 — P14 日食视觉合同纠正
+
+- **职责拆分**：放弃让水塘、音乐圆与 P9 共用 `scenePresence`。背景只用 `eclipseMix` 在现有水底贴图和独立黑色贴图之间连续混合；普通圆与 ECHO 继续由 `PlaybackFocus` 按原日食逻辑退场。
+- **保护边界**：WaterDistort 仅让程序化塘底花纹随黑色贴图转换退场，水波、高光、倒影、焦散、motes、petals、grain 与 P9 通道不消费日食系数，避免背景换色再次改变按键动画。

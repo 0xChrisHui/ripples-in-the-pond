@@ -7,7 +7,7 @@ import type { GlSim } from '../spheres/use-gl-sim';
 import { getSubmerge } from '../water/water-level';
 import { project, applyFloat } from '../sphere-projection';
 import { depthOf, displayDepthOf } from '../pointer-fx';
-import { getScenePresence } from '../focus/playback-focus';
+import { getPlaybackFocus } from '../focus/playback-focus';
 import SphereHit, { currentSphereContext } from './SphereHit';
 
 type Props = {
@@ -44,7 +44,8 @@ export default function SphereOverlay({
   useEffect(() => {
     let frame = 0;
     const loop = () => {
-      const focusedId = playingIdRef.current;
+      const focus = getPlaybackFocus();
+      const focusedId = focus.active ? focus.trackId : playingIdRef.current;
       const context = currentSphereContext();
       for (const node of nodes) {
         const element = elements.current.get(node.id);
@@ -63,7 +64,7 @@ export default function SphereOverlay({
         element.style.transform = `translate(${point.sx - node.radius}px, ${point.sy - node.radius}px) scale(${point.scale})`;
         element.style.filter = point.blurAmt > 0.02 ? `blur(${(point.blurAmt * 3).toFixed(2)}px)` : '';
         element.style.opacity = dim ? '0' : String(
-          Math.max(0.4, 1 - submerge * 1.5) * (node._lifeDim ?? 1) * getScenePresence(),
+          Math.max(0.4, 1 - submerge * 1.5) * (node._lifeDim ?? 1),
         );
         element.style.pointerEvents = dim ? 'none' : 'auto';
         element.tabIndex = dim ? -1 : 0;

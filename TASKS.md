@@ -235,6 +235,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - [x] P14-G3：只读核验 `/echo/1` 的 ECHO #1 链上 tokenURI、永久 metadata、36 位 recipe 与 clips，并以独立 featured 输入接入首页；不读取/新增 `tracks.week=36`。
 - [x] P14-G4/G5：把已有水中访客与日食原型从 Track/PlayerProvider 假设改接 ECHO #1 + WalletRecipePlayerEngine；保留相对水位路径、有界 FBO 涟漪与纯黑日食，不产生录制/上传。
 - [x] P14-G6：Production 35+1/35+0、36 段自然 ended、日食/P9、375px/fallback、30 分钟性能与零副作用 Gate 全绿。
+- [x] P14-G5 日食视觉纠正：水底贴图平滑切黑，音乐圆按原方案退场，水波与 P9 保留；本地完整 Gate 已通过并进入 `main` 发布。
 - [x] P14-G7 代码修复：discovery 只消费 source 已完成落库与 CAS 的稳定前缀，fresh 小幅 lag 只作 telemetry，真实失败返回非 200。
 - [ ] P14-G7/F8 观察与私密目验：合并版发布后核对 mode/cron，并完成剩余 observe/live、24h/7d 与原钱包 `/me#pond-echoes` 目验；按用户决定不阻塞 P15 发布。
 

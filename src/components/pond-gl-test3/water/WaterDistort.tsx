@@ -29,7 +29,7 @@ import { collectP9Drops } from '../p9/runtime/p9-drops';
 import { sampleP9 } from '../p9/runtime/p9-sampler';
 import { getP9QuietWaves, getP9WaterUniform } from '../p9/consumers/p9-water';
 import { getPondRenderNodes, type Track36VisitorState } from '../visitor/track36-state';
-import { getScenePresence } from '../focus/playback-focus';
+import { getEclipseMix } from '../focus/playback-focus';
 import { drainTrack36Drops } from '../visitor/track36-ripples';
 
 /**
@@ -178,7 +178,7 @@ export default function WaterDistort(
     // K10：pondFloor prop 传进 helper → composite 的 uPondFloor（开=1 混合静止亮底花纹/关=0 现状）每帧刷新
     // K11：moonReflect prop 传进 helper → composite 的 uMoonReflect（开=1 叠大柔月华倒影/关=0 现状）每帧刷新
     const waterMod = { water: p9.channels.water, moon: p9.channels.moon };
-    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, { dark: sphereShadow, occlude: shadowOcclude, glow: shadowGlow, contact: shadowContact }, caustics, state.clock.getElapsedTime(), waterZoom, pondFloor, moonReflect, waterMod, quiet, p9Water, getScenePresence());
+    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, { dark: sphereShadow, occlude: shadowOcclude, glow: shadowGlow, contact: shadowContact }, caustics, state.clock.getElapsedTime(), waterZoom, pondFloor, moonReflect, waterMod, quiet, p9Water, getEclipseMix());
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
     // /test3 task 4：水位遮罩用与 GL 实例/命中层同款投影 → 透视/视差/深度尺寸下，"水上清晰/水下扭曲"始终贴着球
     const pf = getPointerFx();

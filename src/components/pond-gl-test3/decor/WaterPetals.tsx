@@ -14,7 +14,6 @@ import type { GlSim } from '../spheres/use-gl-sim';
 import { getShowcasePose } from '../showcase/showcase-state';
 import { sampleP9 } from '../p9/runtime/p9-sampler';
 import { applyP9PetalMotion, getP9PetalCount, getP9PetalVisual } from '../p9/consumers/p9-petals';
-import { getScenePresence } from '../focus/playback-focus';
 
 /**
  * 水面花瓣层（/test1 WaterPetals 的 fork，复刻 references/flower-water-ripples）：GL 水面之上的 2D overlay canvas。
@@ -82,9 +81,8 @@ export default function WaterPetals({ glSim }: { glSim?: GlSim }) {
           }
         }
       }
-      const baseCount = Math.max(0, Math.round(tn.petalCount * getScenePresence()));
-      const transientCount = p9.lanes.petals.length > 0 ? Math.min(12, Math.round(tn.petalCount)) : 0;
-      syncPetals(petals, getP9PetalCount(baseCount + transientCount, p9), W, H, dpr);
+      const baseCount = Math.max(0, Math.round(tn.petalCount));
+      syncPetals(petals, getP9PetalCount(baseCount, p9), W, H, dpr);
       if (!prefersReducedMotion()) updatePetals(petals, dt, t, tn.petalSens);
       applyP9PetalMotion(petals, p9, getShowcasePose());
       ctx.clearRect(0, 0, W, H);

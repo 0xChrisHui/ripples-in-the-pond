@@ -640,7 +640,7 @@
 - 😱 现象：cron-job.org 连续 HTTP 200，但路由 body 始终为 `transient/source_index_lagging`，`lastCronSuccessAt` 不更新；继续等待也不会满足 observe Gate。
 - 🧠 原因：P14 发现器要求 source cursor 精确等于“本次请求时”的 safe head；两个每分钟 job 异步执行且链头持续增长，这个等式天然易失效。discovery 与 last-success 写入失败又返回 HTTP 200，外部历史形成伪绿。
 - 🔧 修复：P14 只消费 source 已完成落库与 CAS 的稳定 cursor 上界；查询前仍拒绝 source/discovery 逆序和非法游标。正常小 lag 不报警，stale/>500/ahead 才报警；真实失败改为 500/503。
-- ✅ 结果：pure policy、health、source CAS 与静态查询上界测试通过；P14 cron 暂停，等待新 observe 部署后从零重启 15 分钟窗口。
+- ✅ 结果：pure policy、health、source CAS、静态查询上界与完整 verify 全绿；部署后 observe 从最后一次 503 重置，随后 22/22 次 HTTP 200、跨度 1261 秒，已恢复 live 并开启新 24h/7d 窗口。
 - 💡 异步流水线应以持久化 handoff cursor 作为下游上界，而不是要求两个独立调度器在同一瞬间追平移动链头；HTTP 状态必须表达任务结果，而不只是“函数有返回”。
 
 ### E051 — P15 合并验证工作树的依赖副本污染类型与构建扫描
@@ -651,3 +651,12 @@
 - 🔧 处理：排除临时依赖副本后重跑 TypeScript/Lint；P14/P15 专项、规模、危险扫描与 Forge 56/56 均独立通过；最终以同一提交的 Vercel 原生 Turbopack Preview 和 Production 双成功作为部署构建证据。
 - ✅ 结果：合并提交 `2be3786` 已上线，5 个页面、2 个 API、35+1、双功能 marker 与授权 health 回归通过；本机 webpack 异常未冒充绿色。
 - 💡 验证工作树的依赖拓扑也是测试条件；外链依赖只能做代码 Gate，发布构建应由相同提交的原生部署环境作最终裁决。
+
+### E052 — P14 日食全局淡出误伤水波与 P9 动画
+
+- 📅 2026-09-17 / P14-G5 视觉纠正
+- 😱 现象：播放音乐后背景、水波、常驻 motes/petals 与部分 P9 按键动画一起被压暗；这超出了“水底贴图切黑、音乐圆消失”的产品要求。
+- 🧠 原因：`scenePresence` 被接到 BaseTone、WaterSurface、WaterDistort、音乐圆、motes、petals 与 grain，背景状态错误地成为整个场景的全局透明度。
+- 🔧 修复：删除全局 `scenePresence`；新增仅供背景贴图/基调消费的 `eclipseMix`，音乐圆改回由 `PlaybackFocus` 独立退场，水波与全部 P9 消费者保持原渲染链路。
+- ✅ 结果：定向单测、TypeScript、ESLint、P9 33/33 静态注册表与浏览器 20 次播放回归通过；WaterDistort 源码合同保证最终水面/P9 合成不消费日食系数，黑色贴图上注入涟漪后局部帧差可测，P9 事件 33/33 接受且效果 ID 全部唯一，同一 Canvas/WebGL context 未重建。
+- 💡 视觉“背景切换”不能抽象成“全场透明度”；跨层状态必须只由明确消费者读取，并为未受影响的动态层写反向回归断言。

@@ -106,7 +106,6 @@ export function makeCompositeScene(
     uP9Arcs: { value: Array.from({ length: 5 }, () => new Vector4(0, 0, 0, 0)) },
     uP9Water: { value: new Vector4(0, 0, 0, 0) },
     uP9Caustic: { value: new Vector4(0, 0, 0, 0) },
-    uScenePresence: { value: 1 },
   });
 }
 
@@ -120,7 +119,7 @@ export function applyTuning(
   keyFx: { water: number; moon: number },
   quiet: readonly { x: number; y: number; progress: number; energy: number }[],
   p9Water: P9WaterUniform,
-  scenePresence: number,
+  eclipseMix: number,
 ): void {
   sim.mat.uniforms.uDamping.value = Math.max(0.9, Math.min(0.995, t.damping + keyFx.water * 0.012));
   sim.mat.uniforms.uWaveSpeed.value = Math.max(0.05, t.waveProp * (1 + keyFx.water * 0.12));
@@ -148,7 +147,7 @@ export function applyTuning(
   composite.mat.uniforms.uZoomAmount.value = waterZoom ? t.zoomAmount : 0;
   // K10：pondFloor 开 → shader 叠极淡静止暗纹塘底（动水面在其上产生视差）；关 → 0（跳过 = 纯黑塘底现状）
   composite.mat.uniforms.uPondFloor.value = pondFloor ? 1 : 0;
-  composite.mat.uniforms.uPondFloorStrength.value = t.pondFloorStrength;
+  composite.mat.uniforms.uPondFloorStrength.value = t.pondFloorStrength * (1 - eclipseMix);
   composite.mat.uniforms.uPondFloorStyle.value = t.pondFloorStyle;
   // K11：moonReflect 开 → shader 叠大柔冷白月华倒影（被涟漪扭碎、随 K6 缩放）；关 → 0（跳过 = 现状）
   composite.mat.uniforms.uMoonReflect.value = moonReflect ? 1 : 0;
@@ -168,7 +167,6 @@ export function applyTuning(
   }
   (composite.mat.uniforms.uP9Water.value as Vector4).fromArray(p9Water.wave);
   (composite.mat.uniforms.uP9Caustic.value as Vector4).fromArray(p9Water.caustic);
-  composite.mat.uniforms.uScenePresence.value = scenePresence;
 }
 
 /** 把球数据写进 uniform 数组（位置/半径×可见度/深度），供合成 shader 逐像素算水位遮罩。模块级避 immutability。 */

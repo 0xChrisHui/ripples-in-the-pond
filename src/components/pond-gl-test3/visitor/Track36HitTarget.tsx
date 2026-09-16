@@ -5,7 +5,7 @@ import type { FeaturedEcho } from '@/src/types/featured-echo';
 import { getPointerFx, getCameraFx, depthOf } from '../pointer-fx';
 import { project, type ProjCtx } from '../sphere-projection';
 import { getEffectiveWaterLevel } from '../water/water-level';
-import { getScenePresence } from '../focus/playback-focus';
+import { getPlaybackFocus } from '../focus/playback-focus';
 import {
   freezeTrack36Visitor, setTrack36InteractionSlow, type Track36VisitorState,
 } from './track36-state';
@@ -30,12 +30,13 @@ export default function Track36HitTarget({ echo, visitor, playbackState, fallbac
       const state = visitor.current, button = buttonRef.current;
       if (button) {
         const visible = fallback || !!state?.active;
-        const presence = getScenePresence();
-        const interactive = visible && (presence > 0.1 || playbackState === 'playing');
+        const focus = getPlaybackFocus();
+        const ownFocus = focus.active && focus.trackId === echo.playbackId;
+        const interactive = visible && (!focus.active || ownFocus);
         button.style.pointerEvents = interactive ? 'auto' : 'none';
         button.tabIndex = interactive ? 0 : -1;
         if (!interactive && document.activeElement === button) button.blur();
-        button.style.opacity = visible ? String(presence) : '0';
+        button.style.opacity = visible && !focus.active ? '1' : '0';
         if (fallback) {
           button.style.width = '64px'; button.style.height = '64px';
           button.style.transform = 'translate3d(calc(72vw - 32px),calc(30vh - 32px),0)';
@@ -56,7 +57,7 @@ export default function Track36HitTarget({ echo, visitor, playbackState, fallbac
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [fallback, playbackState, visitor]);
+  }, [echo.playbackId, fallback, playbackState, visitor]);
 
   return (
     <button ref={buttonRef} type="button"

@@ -23,7 +23,7 @@ export const waterFragmentShader = /* glsl */ `
   uniform vec2 uMoonDir;   // MOON_ANCHOR 派生月光方向（GL 坐标）
   uniform float uRefract;  // 折射强度
   uniform float uMoon;     // 月光强度
-  uniform float uScenePresence;
+  uniform float uEclipseMix;
   uniform vec4 uRipples[5]; // xy=uv 位置, z=起始时间(秒,-1=空), w=强度
 
   vec3 baseTone(vec2 uv) {
@@ -63,11 +63,11 @@ export const waterFragmentShader = /* glsl */ `
     float hY = heightAt(vUv + vec2(0.0, e));
     vec3 normal = normalize(vec3(hC - hX, hC - hY, e * 14.0));
 
-    vec3 col = baseTone(vUv + normal.xy * uRefract);
+    vec3 col = mix(baseTone(vUv + normal.xy * uRefract), vec3(0.0), uEclipseMix);
     vec3 lightDir = normalize(vec3(uMoonDir, 0.6));
     float spec = pow(max(dot(normal, lightDir), 0.0), 30.0);
     col += vec3(0.55, 0.68, 0.82) * spec * uMoon; // 冷白月光
 
-    gl_FragColor = vec4(col * uScenePresence, 1.0);
+    gl_FragColor = vec4(col, 1.0);
   }
 `;
