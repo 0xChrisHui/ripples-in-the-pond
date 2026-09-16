@@ -115,6 +115,17 @@ assert.ok(hitTargetSource.includes("!focus.active || ownFocus"),
   '只有正在播放的 ECHO 可在日食透明阶段保留停止入口');
 assert.ok(hitTargetSource.includes('document.activeElement === button) button.blur()'),
   '命中层隐藏时必须释放键盘焦点');
+const waterShaderSource = readFileSync(resolve(
+  process.cwd(), 'src/components/pond-gl-test3/water/water-distort-shaders.ts',
+), 'utf8');
+const waterSetupSource = readFileSync(resolve(
+  process.cwd(), 'src/components/pond-gl-test3/water/water-distort-setup.ts',
+), 'utf8');
+assert.ok(!waterShaderSource.includes('uScenePresence')
+  && !waterShaderSource.includes('uEclipseMix'),
+  '水波、高光与 P9 合成不得消费日食背景系数');
+assert.ok(waterSetupSource.includes('t.pondFloorStrength * (1 - eclipseMix)'),
+  '日食系数只能让程序化塘底花纹随黑色贴图退场');
 const echoPlaybackSource = readFileSync(resolve(
   process.cwd(), 'src/components/pond-gl-test3/visitor/useFeaturedEchoPlayback.ts',
 ), 'utf8');
@@ -137,7 +148,7 @@ async function verifyAudioOwnerRace(): Promise<void> {
 }
 
 void verifyAudioOwnerRace().then(() => {
-  console.log('P14-G Pond Echo #1 访客路径、焦点与音频 owner 竞态测试通过');
+  console.log('P14-G Pond Echo #1 访客路径、日食分层、焦点与音频 owner 竞态测试通过');
 }).catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;

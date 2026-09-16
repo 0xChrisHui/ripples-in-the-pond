@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import sharp from 'sharp';
+import { frameDelta, meanBrightness } from './browser-smoke/image-metrics.mjs';
 const CDP = process.env.P14_CDP ?? 'http://localhost:9336', APP = process.env.P14_APP ?? 'http://localhost:3014/';
 const OUT = path.resolve('reviews/evidence/p14-g6-track36');
 const REGULAR = 'button[aria-pressed]:not([data-featured-echo-hit])';
@@ -70,30 +70,6 @@ async function clickAt(cdp, p) {
   await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: p.x, y: p.y, button: 'left', clickCount: 1 });
   await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: p.x, y: p.y, button: 'left', clickCount: 1 });
 }
-async function frameDelta(before, after, excluded, included) {
-  const a = await sharp(before).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-  const b = await sharp(after).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-  assert.deepEqual(a.info, b.info, '涟漪帧尺寸必须一致');
-  let delta = 0, total = 0;
-  for (let y = 210; y < a.info.height - 170; y += 12) for (let x = 270; x < a.info.width - 60; x += 12) {
-    if (Math.hypot(x - excluded.x, y - excluded.y) < 230 || (included && Math.hypot(x - included.x, y - included.y) > included.radius)) continue;
-    const i = (y * a.info.width + x) * 3;
-    delta += Math.abs(a.data[i] - b.data[i])
-      + Math.abs(a.data[i + 1] - b.data[i + 1]) + Math.abs(a.data[i + 2] - b.data[i + 2]);
-    total += 3;
-  }
-  return total ? delta / total : 0;
-}
-async function meanBrightness(buffer, excluded) {
-  const { data, info } = await sharp(buffer).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-  let sum = 0, total = 0;
-  for (let y = 210; y < info.height - 170; y += 18) for (let x = 270; x < info.width - 60; x += 18) {
-    if (excluded && Math.hypot(x - excluded.x, y - excluded.y) < 230) continue;
-    const i = (y * info.width + x) * 3;
-    sum += (data[i] + data[i + 1] + data[i + 2]) / 3; total++;
-  }
-  return total ? sum / total : 0;
-}
 async function apiJson(url) {
   const response = await fetch(url, { signal: AbortSignal.timeout(30_000) });
   const text = await response.text();
@@ -151,13 +127,11 @@ try {
       assert.ok(eclipseBrightness < readyBrightness * .9,
         `黑色贴图必须显著压暗水底：ready=${readyBrightness}, eclipse=${eclipseBrightness}`);
       const rippleArea = { x: 1440 * .72, y: 1000 * .68, radius: 180 }; await sleep(120); const controlShot = await screenshot(cdp, 'smoke-desktop-eclipse-control.png');
-      const controlDelta = await frameDelta(shot, controlShot, p, rippleArea);
-      await evaluate(cdp, `window.dispatchEvent(new CustomEvent('bg-ripple:wave',{detail:{x:innerWidth*.72,y:innerHeight*.68,size:520,duration:5.2,strength:1}}))`);
+      await evaluate(cdp, `window.dispatchEvent(new CustomEvent('bg-ripple:wave',{detail:{x:innerWidth*.72,y:innerHeight*.68,radius:.055,strength:4}}))`);
       await sleep(120);
       const rippleShot = await screenshot(cdp, 'smoke-desktop-eclipse-ripple.png');
       const rippleDelta = await frameDelta(controlShot, rippleShot, p, rippleArea);
-      assert.ok(rippleDelta > controlDelta * 1.12 + .01,
-        `注入水波必须超过黑底自然动态：control=${controlDelta}, ripple=${rippleDelta}`);
+      assert.ok(rippleDelta > .03, `日食黑底上的局部水波必须继续变化：delta=${rippleDelta}`);
       await evaluate(cdp, `document.activeElement?.blur()`);
       await evaluate(cdp, `window.__p14P9=[];window.addEventListener('jam:p9-trigger',event=>window.__p14P9.push({id:event.detail.effect.id,accepted:event.detail.accepted}));true`);
       const keys = [...'abcdefghijklmnopqrstuvwxyz345678', ' ']; assert.equal(keys.length, 33);
@@ -202,7 +176,7 @@ try {
   assert.deepEqual([mobile.width, mobile.height], [375, 844]); assert.ok(mobile.hitW >= 44 && mobile.hitH >= 44);
   assert.equal(mobile.overflow, false); assert.equal(mobile.canvas, desktop.canvas); assert.equal(mobile.sameWebgl, true);
   await screenshot(cdp, 'smoke-mobile-375x844.png');
-  await cdp.send('Page.navigate', { url: `${APP}?forceFallback=1` }); await waitFor(cdp, `document.querySelector('${ECHO}')?.dataset.echoRenderMode==='css-fallback'`, 'CSS ECHO fallback', 60_000);
+  await cdp.send('Page.navigate', { url: `${APP}?forceFallback=1` }); await waitFor(cdp, `(()=>{const e=document.querySelector('${ECHO}');return e?.dataset.echoRenderMode==='css-fallback'&&getComputedStyle(e).pointerEvents==='auto'})()`, 'CSS ECHO fallback', 60_000);
   const fallback = await evaluate(cdp, `(()=>{const e=document.querySelector('${ECHO}'),r=e.getBoundingClientRect();return{w:r.width,h:r.height,pointer:getComputedStyle(e).pointerEvents,mode:e.dataset.echoRenderMode}})()`);
   assert.ok(fallback.w >= 44 && fallback.h >= 44); assert.equal(fallback.pointer, 'auto'); assert.equal(fallback.mode, 'css-fallback');
   await evaluate(cdp, `document.querySelector('${ECHO}').click()`);

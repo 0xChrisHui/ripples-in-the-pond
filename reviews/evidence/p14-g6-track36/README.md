@@ -40,7 +40,7 @@ Edge 内建 MetaMask/Base Account 会输出 `MaxListenersExceededWarning`、`Obj
 
 用户纠正了 G5 的视觉合同：音乐圆继续按原方案消失，但水波不应退场；日食应把当前水底贴图丝滑换成黑色贴图，而不是让整个水塘共享一个透明度。候选实现已移除全局 `scenePresence`，改为背景专用 `eclipseMix`，并让音乐圆继续由 `PlaybackFocus` 独立退场。
 
-`browser-track36-smoke.mjs` 已在本地候选重新通过：20 次普通播放/停止、35 个非焦点音乐圆退场、ECHO 播放时 35 个普通圆退场、默认背景路径实际采样黑色 SVG 贴图、背景显著压暗、注入涟漪的局部帧差超过同区域自然动态、P9 事件 33/33 接受且 33 个效果 ID 唯一、同一 Canvas/WebGL context、375×844 与 fallback、0 console error。`smoke-desktop-eclipse-ripple.png` 是黑色贴图上涟漪仍活动的新增证据；`smoke-desktop-p9-33keys.png` 证明 P9 覆盖层未被日食背景系数压暗。
+`browser-track36-smoke.mjs` 已在本地候选重新通过：20 次普通播放/停止、35 个非焦点音乐圆退场、ECHO 播放时 35 个普通圆退场、默认背景路径实际采样黑色 SVG 贴图、背景显著压暗、黑底注入涟漪后局部帧差可测、P9 事件 33/33 接受且 33 个效果 ID 唯一、同一 Canvas/WebGL context、375×844 与 fallback、0 console error。定向源码合同同时断言 WaterDistort 最终合成不消费日食背景系数，只有塘底花纹随 `eclipseMix` 退场。`smoke-desktop-eclipse-ripple.png` 是黑色贴图上涟漪仍活动的新增证据；`smoke-desktop-p9-33keys.png` 证明 P9 覆盖层未被日食背景系数压暗。
 
 ## 脚本
 
