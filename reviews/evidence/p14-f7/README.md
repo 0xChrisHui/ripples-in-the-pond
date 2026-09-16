@@ -72,3 +72,7 @@ ready/ended 截图保留在本目录；过程 partial 在最终报告成功写�
   已证明归档数据可发现。用户登录原钱包后的 `/me#pond-echoes` 仍保留一次最终人工目验。
 - 24h/7d 期间继续只读观察 cursor、队列唯一性、manual review、运营钱包余额、cron 与永久网关；
   严重异常先切 off、保留行/tx/cursor，不删除或重传未知结果。
+
+> 2026-09-12 补记：本文件记录的旧观察窗因 source cursor 回退事故作废，只保留为首枚 ECHO
+> 历史证据，不得拼接到 F8。修复后的新窗口从 `2026-09-12T17:58:09.356Z` 起算，见
+> `reviews/evidence/p14-g7-release/`。

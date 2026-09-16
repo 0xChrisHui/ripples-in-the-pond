@@ -1,0 +1,32 @@
+{
+  "deploymentId": "dpl_9hueV8kCLTiM6HcqYibhUMdsqGKL",
+  "liveRestoredAt": "2026-09-12T17:58:09.356Z",
+  "capturedAt": "2026-09-12T17:59:30.797Z",
+  "mode": "live",
+  "configured": true,
+  "activationMatches": true,
+  "sourceCursor": "156818562",
+  "sourceLastSuccessAt": "2026-09-12T17:59:04.466Z",
+  "sourceLagBlocks": "13",
+  "discoveryCursor": "156746674:188",
+  "lastCronSuccessAt": "2026-09-12T17:59:06.660Z",
+  "alerts": [],
+  "queue": {
+    "excluded": 2,
+    "success": 1,
+    "active": 0,
+    "failed": 0,
+    "manualReview": 0,
+    "uploadResultUnknown": 0
+  },
+  "pondEchoSupply": 1,
+  "homepage": {
+    "tracks": 35,
+    "featuredIdentity": "eip155:10:0xd2e884fa06c9a9bdef2350956cc4216d3e2b476c:1",
+    "recipeSegments": 36
+  },
+  "cronJobs": {
+    "source": { "id": 7520772, "enabled": true, "lastStatus": 1, "notifyOnFailure": true },
+    "walletRecipe": { "id": 8394060, "enabled": true, "lastStatus": 1, "notifyOnFailure": true }
+  }
+}
