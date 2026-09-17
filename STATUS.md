@@ -45,7 +45,7 @@
 
 **P15 发布（2026-09-13）**：P15-0/A/B/C/D/E/F 全部完成；合并 P14-G 的 `2be3786` 已通过 Vercel Preview 与 Production。150 次真实 Link 与初始 300 次冷热直达有效，首页 glHealth 健康、Long Task max 58ms、CLS 0；Pond Echo 10 次 cold 预计首声 p95 433.7ms、10 次 hot p95 125.4ms，第 5 段排程通过。线上 5 个公开页面均 200，tracks 精确 35、Featured ECHO #1 为 36 位 recipe/26 个唯一 clip，P14/P15 双 marker 存在，授权 health 为 DB/wallet ok、队列 1 success/2 excluded/0 active/failed/manual、alerts 空。真实双账号、物理手机、人耳听音及未覆盖矩阵按用户决定转为非阻塞 review；E4–E5 新镜像因无获批供应商保持关闭。P15 草稿 SQL 在仓库顺延为 `051` 且 blob 不变；远端 history 仅在核清既有 `050` 归属后补记，不重放 SQL。详见 `reviews/2026-09-13-phase-15-final-review.md`。
 
-**P14 日食视觉纠正（2026-09-17）**：撤销过宽的全场 `scenePresence` 淡出，改为背景专用 `eclipseMix` 与独立音乐圆焦点。日食只把水底贴图平滑换成黑色贴图，全部音乐圆按原方案退场；水波、高光、焦散、motes、petals、grain 与 P9 保持运行。P15 首屏 CSS fallback 先播放、WebGL 后恢复的 ECHO 焦点竞态已修复；20 次播放、ECHO、33/33 P9、移动端、fallback 与同一 WebGL context 的集成候选 Gate 已通过，等待 `main` 发布后的 Production 读回。
+**P14 日食视觉纠正（2026-09-17）**：撤销过宽的全场 `scenePresence` 淡出，改为背景专用 `eclipseMix` 与独立音乐圆焦点。日食只把水底贴图平滑换成黑色贴图，全部音乐圆按原方案退场；水波、高光、焦散、motes、petals、grain 与 P9 保持运行。P15 首屏 CSS fallback 先播放、WebGL 后恢复的 ECHO 焦点竞态已修复；代码提交 `c8e59d2` 已快进 `main`，Production `dpl_83R9rYQ1pU42GekUSudocQ79xtAi` READY。正式域名首页、35 首 API、ECHO #1 的 36 位配方/26 个唯一片段与黑色贴图均 200；线上 20 次播放、ECHO、33/33 P9、移动端、fallback 与同一 WebGL context Gate 全绿。
 
 **P8-L 动态验收微调（2026-08-23）**：视差/流场上限微调已完成。真透明 R3 最终维修已完成浏览器自动复验：球网格改为挂载时绑定独立 FBO layer，水上实体主体最后覆盖湿背景，水下球保留水纹；完全出水球中心点击时涟漪只绕过主体，`alphaFlicker` 开启后主体覆盖仍稳定。**2026-08-26 用户最终目验确认 R3 与 L 线“活而不乱”合适，验收门已关闭。**
 

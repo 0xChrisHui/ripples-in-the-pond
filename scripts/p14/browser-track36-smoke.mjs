@@ -102,7 +102,7 @@ assert.ok(target?.webSocketDebuggerUrl, `未找到 ${APP} 的 Edge page target`)
 await mkdir(OUT, { recursive: true }); const cdp = new Cdp(target.webSocketDebuggerUrl);
 try {
   await cdp.open(); await cdp.send('Page.enable'); await cdp.send('Runtime.enable'); await cdp.send('Network.enable');
-  await cdp.send('Page.bringToFront'); await cdp.send('Emulation.setDeviceMetricsOverride',
+  await cdp.send('Page.bringToFront'); await waitFor(cdp, `!document.hidden`, '测试页位于前台'); await cdp.send('Emulation.setDeviceMetricsOverride',
     { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
   await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] });
   const runUrl = `${APP}${APP.includes('?') ? '&' : '?'}p14Smoke=${Date.now()}`;
@@ -151,6 +151,7 @@ try {
   await screenshot(cdp, 'smoke-desktop-restored.png');
   // 重载后从首次 2–4 秒入场验证 ECHO，避免把随机复现和屏外路径误判为失败。
   await cdp.send('Page.reload', { ignoreCache: true });
+  await cdp.send('Page.bringToFront'); await waitFor(cdp, `!document.hidden`, '重载后测试页位于前台');
   await waitFor(cdp, `document.readyState==='complete'`, 'ECHO 验收重载');
   await waitFor(cdp, `document.querySelectorAll('${REGULAR}').length===35&&document.querySelectorAll('${ECHO}').length===1`, '重载后 35+1 DOM', 60_000);
   await waitFor(cdp, `(()=>{const e=document.querySelector('${ECHO}'),r=e.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,top=document.elementFromPoint(x,y);return getComputedStyle(e).pointerEvents==='auto'&&r.right>0&&r.left<innerWidth&&r.bottom>0&&r.top<innerHeight&&(top===e||!!top?.closest('${ECHO}'))})()`, 'ECHO 可点击首次入场', 45_000);
