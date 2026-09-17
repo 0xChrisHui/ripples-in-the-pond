@@ -120,7 +120,18 @@ export function advanceTrack36Visitor(state: Track36VisitorState, input: Track36
     state.node.z = input.waterLevel; state.node.displayZ = input.waterLevel;
     return;
   }
-  if (input.hidden || input.anyPlaying || input.now < state.frozenUntil) return;
+  if (input.hidden) return;
+  // 若用户在 WebGL 尚未就绪时从 CSS 圆开始播放，GL 恢复后也要立即建立真实焦点。
+  if (input.featuredPlaying) {
+    if (!state.active) {
+      state.active = true;
+      state.progress = 0.5;
+      state.lastTrailProgress = -1;
+    }
+    place(state, input.waterLevel);
+    return;
+  }
+  if (input.anyPlaying || input.now < state.frozenUntil) return;
   if (!state.active) {
     state.waitMs -= dt;
     if (state.waitMs > 0) return;

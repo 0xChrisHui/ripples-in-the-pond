@@ -1547,3 +1547,4 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 
 - **职责拆分**：放弃让水塘、音乐圆与 P9 共用 `scenePresence`。背景只用 `eclipseMix` 在现有水底贴图和独立黑色贴图之间连续混合；普通圆与 ECHO 继续由 `PlaybackFocus` 按原日食逻辑退场。
 - **保护边界**：WaterDistort 仅让程序化塘底花纹随黑色贴图转换退场，水波、高光、倒影、焦散、motes、petals、grain 与 P9 通道不消费日食系数，避免背景换色再次改变按键动画。
+- **恢复接管**：P15 首屏允许 ECHO 在 WebGL 健康前以 CSS fallback 播放；GL 随后恢复时，正在播放的 featured ECHO 必须主动激活真实访客节点并建立焦点，不能被通用 `anyPlaying` 冻结在未激活状态。

@@ -105,11 +105,13 @@ try {
   await cdp.send('Page.bringToFront'); await cdp.send('Emulation.setDeviceMetricsOverride',
     { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
   await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] });
-  await cdp.send('Page.navigate', { url: APP }); await sleep(250);
-  await waitFor(cdp, `document.readyState==='complete'`, '首页加载');
+  const runUrl = `${APP}${APP.includes('?') ? '&' : '?'}p14Smoke=${Date.now()}`;
+  await cdp.send('Page.navigate', { url: runUrl }); await sleep(250);
+  await waitFor(cdp, `location.href===${JSON.stringify(runUrl)}&&document.readyState==='complete'`, '首页加载');
   await waitFor(cdp, `document.querySelectorAll('${REGULAR}').length===35&&document.querySelectorAll('${ECHO}').length===1`, '35+1 DOM', 30_000);
   await waitFor(cdp, `(()=>{const e=document.querySelector('${ECHO}'),r=e.getBoundingClientRect();return getComputedStyle(e).pointerEvents==='auto'&&r.right>0&&r.left<innerWidth})()`, 'ECHO #1 入场', 45_000);
-  const desktop = await evaluate(cdp, `(()=>{const e=document.querySelector('${ECHO}'),r=e.getBoundingClientRect(),c=document.querySelector('canvas');window.__smokeCanvas=c;window.__smokeGl=c.getContext('webgl2')||c.getContext('webgl');return{regular:document.querySelectorAll('${REGULAR}').length,featured:document.querySelectorAll('${ECHO}').length,hitW:r.width,hitH:r.height,canvas:document.querySelectorAll('canvas').length,webgl:!!window.__smokeGl}})()`);
+  await waitFor(cdp, `document.querySelector('[data-pond-root]')?.dataset.glHealth==='healthy'&&!!document.querySelector('canvas:not(.pointer-events-none)')`, 'WebGL 就绪', 60_000);
+  const desktop = await evaluate(cdp, `(()=>{const e=document.querySelector('${ECHO}'),r=e.getBoundingClientRect(),c=document.querySelector('canvas:not(.pointer-events-none)');window.__smokeCanvas=c;window.__smokeGl=c?.getContext('webgl2')||c?.getContext('webgl');return{regular:document.querySelectorAll('${REGULAR}').length,featured:document.querySelectorAll('${ECHO}').length,hitW:r.width,hitH:r.height,canvas:document.querySelectorAll('canvas').length,webgl:!!window.__smokeGl}})()`);
   assert.deepEqual([desktop.regular, desktop.featured], [35, 1]); assert.ok(desktop.hitW >= 44 && desktop.hitH >= 44); assert.ok(desktop.webgl);
   const readyShot = await screenshot(cdp, 'smoke-desktop-ready.png');
   const readyBrightness = await meanBrightness(readyShot);
@@ -144,7 +146,7 @@ try {
     await stopRegular(cdp);
   }
   await waitFor(cdp, `Number(getComputedStyle(document.body).getPropertyValue('--pond-eclipse-mix'))<=.01`, '20 次后完全恢复');
-  const stable = await evaluate(cdp, `(()=>{const c=document.querySelector('canvas'),g=c.getContext('webgl2')||c.getContext('webgl');return{canvas:document.querySelectorAll('canvas').length,sameCanvas:c===window.__smokeCanvas,sameContext:g===window.__smokeGl}})()`);
+  const stable = await evaluate(cdp, `(()=>{const c=document.querySelector('canvas:not(.pointer-events-none)'),g=c?.getContext('webgl2')||c?.getContext('webgl');return{canvas:document.querySelectorAll('canvas').length,sameCanvas:c===window.__smokeCanvas,sameContext:g===window.__smokeGl}})()`);
   assert.deepEqual(stable, { canvas: desktop.canvas, sameCanvas: true, sameContext: true });
   await screenshot(cdp, 'smoke-desktop-restored.png');
   // 重载后从首次 2–4 秒入场验证 ECHO，避免把随机复现和屏外路径误判为失败。
@@ -152,7 +154,6 @@ try {
   await waitFor(cdp, `document.readyState==='complete'`, 'ECHO 验收重载');
   await waitFor(cdp, `document.querySelectorAll('${REGULAR}').length===35&&document.querySelectorAll('${ECHO}').length===1`, '重载后 35+1 DOM', 60_000);
   await waitFor(cdp, `(()=>{const e=document.querySelector('${ECHO}'),r=e.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,top=document.elementFromPoint(x,y);return getComputedStyle(e).pointerEvents==='auto'&&r.right>0&&r.left<innerWidth&&r.bottom>0&&r.top<innerHeight&&(top===e||!!top?.closest('${ECHO}'))})()`, 'ECHO 可点击首次入场', 45_000);
-  await evaluate(cdp, `(()=>{const c=document.querySelector('canvas');window.__echoCanvas=c;window.__echoGl=c.getContext('webgl2')||c.getContext('webgl');return true})()`);
   let echoPoint = await evaluate(cdp, `(()=>{const e=document.querySelector('${ECHO}'),r=e.getBoundingClientRect();window.__echoClicked=false;e.addEventListener('click',()=>{window.__echoClicked=true},{once:true});return{x:r.left+r.width/2,y:r.top+r.height/2}})()`);
   await evaluate(cdp, `(()=>{window.__echoOutcome=null;let seen=false;window.__echoWatch=setInterval(()=>{const s=document.querySelector('[data-featured-echo-player]')?.dataset.featuredEchoPlayer;if(s)seen=true;if(s==='playing'||s==='error'||(seen&&!s)){window.__echoOutcome=s??'error';clearInterval(window.__echoWatch)}},50);return true})()`);
   for (let attempt = 0; attempt < 5 && !await evaluate(cdp, `window.__echoClicked`); attempt++) { echoPoint = await evaluate(cdp, `(()=>{const r=document.querySelector('${ECHO}').getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2}})()`); await clickAt(cdp, echoPoint); await sleep(250); }
@@ -162,6 +163,7 @@ try {
   assert.equal(echoState.state, 'playing', `ECHO 永久片段未进入 playing；网络=${JSON.stringify(cdp.networkIssues.slice(-12))}`); assert.equal(echoState.favorite, false);
   await waitFor(cdp, `+document.querySelector('[data-featured-echo-player] [role=progressbar]').getAttribute('aria-valuenow')>${echoState.position + 250}`, 'ECHO 进度前进');
   await waitFor(cdp, `Number(getComputedStyle(document.body).getPropertyValue('--pond-eclipse-mix'))>=.99`, 'ECHO 日食黑色贴图');
+  assert.equal(await evaluate(cdp, `(()=>{const c=document.querySelector('canvas:not(.pointer-events-none)');window.__echoCanvas=c;window.__echoGl=c?.getContext('webgl2')||c?.getContext('webgl');return !!window.__echoGl})()`), true);
   await sleep(280);
   assert.equal(await evaluate(cdp, `[...document.querySelectorAll('${REGULAR}')].filter((b)=>+getComputedStyle(b).opacity>.05).length`), 0, 'ECHO 日食时 35 个普通圆必须消失');
   await screenshot(cdp, 'smoke-desktop-echo-playing.png');
@@ -172,7 +174,7 @@ try {
   await evaluate(cdp, `[...document.querySelectorAll('[data-featured-echo-player] button')].find((b)=>b.textContent==='停止').click()`); await waitFor(cdp, `!document.querySelector('[data-featured-echo-player]')`, 'ECHO 停止');
   await waitFor(cdp, `Number(getComputedStyle(document.body).getPropertyValue('--pond-eclipse-mix'))<=.01`, 'ECHO 后恢复');
   await cdp.send('Emulation.setDeviceMetricsOverride', { width: 375, height: 844, deviceScaleFactor: 1, mobile: true }); await sleep(900);
-  const mobile = await evaluate(cdp, `(()=>{const r=document.querySelector('${ECHO}').getBoundingClientRect(),c=document.querySelector('canvas'),g=c.getContext('webgl2')||c.getContext('webgl');return{width:innerWidth,height:innerHeight,hitW:r.width,hitH:r.height,overflow:document.documentElement.scrollWidth>innerWidth,canvas:document.querySelectorAll('canvas').length,sameWebgl:c===window.__echoCanvas&&g===window.__echoGl}})()`);
+  const mobile = await evaluate(cdp, `(()=>{const r=document.querySelector('${ECHO}').getBoundingClientRect(),c=document.querySelector('canvas:not(.pointer-events-none)'),g=c?.getContext('webgl2')||c?.getContext('webgl');return{width:innerWidth,height:innerHeight,hitW:r.width,hitH:r.height,overflow:document.documentElement.scrollWidth>innerWidth,canvas:document.querySelectorAll('canvas').length,sameWebgl:c===window.__echoCanvas&&g===window.__echoGl}})()`);
   assert.deepEqual([mobile.width, mobile.height], [375, 844]); assert.ok(mobile.hitW >= 44 && mobile.hitH >= 44);
   assert.equal(mobile.overflow, false); assert.equal(mobile.canvas, desktop.canvas); assert.equal(mobile.sameWebgl, true);
   await screenshot(cdp, 'smoke-mobile-375x844.png');

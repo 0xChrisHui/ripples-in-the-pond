@@ -134,6 +134,15 @@ assert.ok(echoPlaybackSource.indexOf('stopRegular();') < echoPlaybackSource.inde
 assert.ok(echoPlaybackSource.includes('onBeforePlay: () => {')
   && echoPlaybackSource.includes('includes(state)) stop();'), '普通 Track 开播前必须停止 ECHO');
 
+const recoveredDuringPlayback = createTrack36State(echo, 3_000);
+advanceTrack36Visitor(recoveredDuringPlayback, {
+  now: 1_000, width: 1440, height: 1000,
+  anyPlaying: true, featuredPlaying: true, hidden: false, reducedMotion: false,
+  nextDelayMs: 30_000, waterLevel: 0.5,
+});
+assert.equal(recoveredDuringPlayback.active, true, 'WebGL 恢复时必须接管已播放的 ECHO');
+assert.equal(recoveredDuringPlayback.progress, 0.5, '恢复焦点应对齐 CSS fallback 圆的位置');
+
 async function verifyAudioOwnerRace(): Promise<void> {
   let current = true, pauseCalls = 0, finishPlay = () => {};
   const sharedAudio = {
