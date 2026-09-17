@@ -3,15 +3,8 @@
 import { useFBO } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef, type RefObject } from 'react';
-import {
-  OrthographicCamera,
-  Vector4,
-  HalfFloatType,
-  RGBAFormat,
-  UnsignedByteType,
-  LinearFilter,
-  ClampToEdgeWrapping,
-} from 'three';
+import { OrthographicCamera, Vector4, HalfFloatType, RGBAFormat,
+  UnsignedByteType, LinearFilter, ClampToEdgeWrapping } from 'three';
 import { MAX_DROPS } from './spike/ripple-spike-shaders';
 import { getRippleTuning, ZOOM_MIN } from './spike/ripple-tuning';
 import { MAX_SPHERES } from './water-distort-shaders';
@@ -70,8 +63,8 @@ interface PingPong {
 const EMPTY_NODES: GlPhysNode[] = []; // glSim 未就绪时占位（无球 → 全屏扭）
 
 export default function WaterDistort(
-  { debug = false, glSim, visitor, sphereDrift = false, depthModel = false, sphereShadow = false, shadowOcclude = false, shadowGlow = false, shadowContact = false, caustics = false, waterZoom = false, pondFloor = false, moonReflect = false, glSpheres = false, pointerInteractive = true }:
-  { debug?: boolean; glSim?: GlSim; visitor?: RefObject<Track36VisitorState | null>; sphereDrift?: boolean; depthModel?: boolean; sphereShadow?: boolean; shadowOcclude?: boolean; shadowGlow?: boolean; shadowContact?: boolean; caustics?: boolean; waterZoom?: boolean; pondFloor?: boolean; moonReflect?: boolean; glSpheres?: boolean; pointerInteractive?: boolean },
+  { debug = false, glSim, visitor, sphereDrift = false, depthModel = false, sphereShadow = false, shadowOcclude = false, shadowGlow = false, shadowContact = false, caustics = false, waterZoom = false, pondFloor = false, moonReflect = false, glSpheres = false, pointerInteractive = true, presentationReady = false, onCompositeReady }:
+  { debug?: boolean; glSim?: GlSim; visitor?: RefObject<Track36VisitorState | null>; sphereDrift?: boolean; depthModel?: boolean; sphereShadow?: boolean; shadowOcclude?: boolean; shadowGlow?: boolean; shadowContact?: boolean; caustics?: boolean; waterZoom?: boolean; pondFloor?: boolean; moonReflect?: boolean; glSpheres?: boolean; pointerInteractive?: boolean; presentationReady?: boolean; onCompositeReady?: () => void },
 ) {
   const renderer = useThree((s) => s.gl);
   const canvasSize = useThree((s) => s.size);
@@ -86,6 +79,7 @@ export default function WaterDistort(
   const heightB = useFBO(heightSize.width, heightSize.height, SIM_OPTS);
   const bufs = useRef<PingPong>({ read: heightA, write: heightB });
   const resetHeightRef = useRef(true);
+  const compositeFramesRef = useRef(0);
   const pending = useRef<Drop[]>([]); // 指针/wave 滴水：事件回调里 push，useFrame 每帧排空
   const nodes = glSim?.nodes;
   // 点击涟漪推：onDown 在 [] useEffect 里读最新 sphereDrift/glSim → 用 ref 同步，避免进依赖反复重绑监听
@@ -113,6 +107,7 @@ export default function WaterDistort(
     const onRestore = () => {
       bufs.current = { read: heightA, write: heightB };
       resetHeightRef.current = true;
+      compositeFramesRef.current = 0;
     };
     canvas.addEventListener('webglcontextrestored', onRestore);
     return () => canvas.removeEventListener('webglcontextrestored', onRestore);
@@ -213,6 +208,8 @@ export default function WaterDistort(
     renderFrame(state.gl, state.scene, state.camera, targets, { sim, composite, quadCamera: quadCam }, {
       hasSpheres: glSpheres && renderNodes.length > 0,
     });
+    compositeFramesRef.current += 1;
+    if (compositeFramesRef.current >= 2 && !presentationReady) onCompositeReady?.();
     bufs.current = { read: targets.heightWrite, write: targets.heightRead };
   }, 1);
 

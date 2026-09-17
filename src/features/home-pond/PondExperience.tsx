@@ -35,6 +35,7 @@ export default function PondExperience({ mode }: { mode: PondMode }) {
   const p9Enabled = mode !== 'test4';
   const [glFlags, setGlFlags] = useState<GLFlags>(() => parseGLFlags(searchParams));
   const [runtimeGlHealth, setRuntimeGlHealth] = useState<GlHealth>('unavailable');
+  const [sceneReady, setSceneReady] = useState(false);
   const [featuredEcho, setFeaturedEcho] = useState<FeaturedEcho | null>(null);
   const onGl = useCallback((patch: Partial<GLFlags>) => {
     setGlFlags((flags) => ({ ...flags, ...patch }));
@@ -46,7 +47,7 @@ export default function PondExperience({ mode }: { mode: PondMode }) {
     echoPlayback.active,
   );
   const glHealth: GlHealth = glFlags.forceFallback ? 'forced' : runtimeGlHealth;
-  const glOk = glHealth === 'healthy';
+  const glOk = glHealth === 'healthy' && sceneReady;
   const regularPlayingId = playing && currentTrack ? currentTrack.id : null;
   const playingId = echoPlayback.playing ? featuredEcho?.playbackId ?? null : regularPlayingId;
   const activePlaybackId = echoPlayback.active ? featuredEcho?.playbackId ?? null : regularPlayingId;
@@ -79,11 +80,11 @@ export default function PondExperience({ mode }: { mode: PondMode }) {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black" data-pond-root="true"
-      data-pond-eclipse-active="false" data-gl-health={glHealth}>
+      data-pond-eclipse-active="false" data-gl-health={glHealth} data-scene-ready={sceneReady}>
       {mountGl && <PondGL flags={glFlags} glSim={glSim} visitor={visitor}
-        onHealthChange={setRuntimeGlHealth} />}
+        onHealthChange={setRuntimeGlHealth} onSceneReadyChange={setSceneReady} />}
       <PondHeader />
-      {glSim.ready && <GlNav glSim={glSim} playbackActive={echoPlayback.active}
+      {glSim.ready && glOk && <GlNav glSim={glSim} playbackActive={echoPlayback.active}
         featured={featuredEcho !== null} />}
       {glFlags.glSpheres && (glSim.loading || glSim.error) && (
         <GlLoading error={glSim.error} onRetry={glSim.retry} />
