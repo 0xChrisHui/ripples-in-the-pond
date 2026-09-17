@@ -14,6 +14,7 @@ import GlLoading from '@/src/components/pond-gl-test3/overlay/GlLoading';
 import GlNav from '@/src/components/pond-gl-test3/overlay/GlNav';
 import PondHeader from '@/src/components/pond-gl-test3/overlay/PondHeader';
 import SphereOverlay from '@/src/components/pond-gl-test3/overlay/SphereOverlay';
+import SceneCover from '@/src/components/pond-gl-test3/presentation/SceneCover';
 import { setCameraFx, usePointerFx } from '@/src/components/pond-gl-test3/pointer-fx';
 import { loadP9Tuning } from '@/src/components/pond-gl-test3/p9/tuning/p9-tuning-store';
 import { useGlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
@@ -83,6 +84,10 @@ export default function PondExperience({ mode }: { mode: PondMode }) {
       data-pond-eclipse-active="false" data-gl-health={glHealth} data-scene-ready={sceneReady}>
       {mountGl && <PondGL flags={glFlags} glSim={glSim} visitor={visitor}
         onHealthChange={setRuntimeGlHealth} onSceneReadyChange={setSceneReady} />}
+      {/* 跟随页面首屏挂载并高于 DOM 备用圆；最终水面或可用 fallback 就绪后再撤。 */}
+      <div className={`fixed inset-0 z-[25] ${mountGl && !sceneReady ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+        <SceneCover artDir={glFlags.artDir} visible={mountGl && !sceneReady} />
+      </div>
       <PondHeader />
       {glSim.ready && glOk && <GlNav glSim={glSim} playbackActive={echoPlayback.active}
         featured={featuredEcho !== null} />}
@@ -92,11 +97,11 @@ export default function PondExperience({ mode }: { mode: PondMode }) {
       <div data-pond-ui="true" className="pointer-events-none fixed left-6 z-30" style={{ top: '14rem' }}>
         <div className="pointer-events-auto"><TestJam p9Enabled={p9Enabled} /></div>
       </div>
-      {glFlags.glSpheres && glSim.ready && (
+      {glFlags.glSpheres && glSim.ready && sceneReady && (
         <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx}
           glHealthy={glOk} depthModel={glFlags.depthModel} showLabels={glFlags.sphereLabels} />
       )}
-      {glFlags.glSpheres && featuredEcho && (
+      {glFlags.glSpheres && featuredEcho && sceneReady && (
         <div className="pointer-events-none fixed inset-0 z-10">
           <Track36HitTarget echo={featuredEcho} visitor={visitor}
             playbackState={echoPlayback.state} fallback={!glOk} toggle={echoPlayback.toggle} />

@@ -127,10 +127,16 @@ export default function PondGL({ flags, glSim, pointerInteractive = true, onPerf
   const reportHealth = useCallback((health: GlHealth) => {
     setRuntimeHealth(health);
     onHealthChange(health);
-    publishSceneReady(health === 'healthy' && !flags.waterFx);
+    // lost/error/unavailable 已有 CSS fallback，可视为“可呈现”；恢复 healthy 后重新等待合成帧。
+    publishSceneReady(health === 'healthy' ? !flags.waterFx : true);
   }, [flags.waterFx, onHealthChange, publishSceneReady]);
   const webGlAvailable = useMemo(() => isWebGLAvailable(), []);
   const reportCompositeReady = useCallback(() => publishSceneReady(true), [publishSceneReady]);
+  useEffect(() => {
+    if (!active || webGlAvailable) return;
+    const timer = window.setTimeout(() => reportHealth('unavailable'), 0);
+    return () => window.clearTimeout(timer);
+  }, [active, reportHealth, webGlAvailable]);
   useWakeField(flags.wakeSpheres && flags.glSpheres && !!glSim); // L4：尾波扰球开 → 挂涟漪场（与花瓣层 refcount 共享）
   if (!active) return null;
   // J1：真没 WebGL → 不挂 Canvas，直接铺夜塘兜底（不白屏）
