@@ -8,7 +8,8 @@
 //   data/sounds-ar-map.json   本地索引：key -> { txId, url, hash, name }
 //   data/sounds-map-ar.json   v2 音效表自身的 Arweave txid（decoder ?sounds= 指向它）
 // 换血安全（Codex P0）：旧脚本"按 key 存在即 skip"，换血时新 mp3 仍叫 a-z 会全被跳过、静默产出旧表。
-//   本版按【内容 sha256】判变：内容变了必重传，内容没变才跳（Arweave 内容寻址，同内容同 txid）。
+//   本版按【内容 sha256】判变：内容变了必重传；内容没变且已有成功记录才跳过。
+//   注意：重复上传同一内容仍可能产生不同 txid，不能用内容 hash 推导 txid。
 //   上传 map 前打印每 key 新旧 txid 对照 + 变化计数，换血时肉眼确认全变。
 // 音效名：可选 data/sound-names.json (key->name)，缺省 name=key
 //   （v2 表 name 字段；命名空间 id ≡ DB sounds.key）
@@ -91,7 +92,7 @@ async function main() {
     const prev = map[key];
     const name = names[key] ?? prev?.name ?? key;
 
-    // 判变：有记录 && 内容 hash 相同 && 非 --force → 跳过（内容没变，重传也拿同 txid，纯浪费）
+    // 判变：有成功记录 && 内容 hash 相同 && 非 --force → 复用已记录 txid，避免重复付费。
     if (prev && prev.hash === hash && !FORCE) {
       console.log(`⏭  ${key} 内容未变 (${prev.txId})`);
       map[key] = { ...prev, name }; // 顺手同步 name（names 文件可能更新了）

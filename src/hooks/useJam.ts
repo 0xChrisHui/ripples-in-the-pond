@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback, useState } from 'react';
+import { getLocalSoundUrl, VALID_SOUND_KEYS } from '@/src/lib/sound-set';
 
 interface UseJamReturn {
   /** 本地 MP3 ArrayBuffer 已下载完毕 */
@@ -12,8 +13,7 @@ interface UseJamReturn {
   triggerDecode: () => void;
 }
 
-const LOCAL_SOUND_KEYS = [...'abcdefghijklmnopqrstuvwxyz', 'space', ...'345678'];
-const LOCAL_SOUND_FILES = LOCAL_SOUND_KEYS.map((key) => [key, `/sounds/${key}.mp3`] as const);
+const LOCAL_SOUND_FILES = VALID_SOUND_KEYS.map((key) => [key, getLocalSoundUrl(key)] as const);
 
 /**
  * 合奏音效引擎 — 预加载 33 个本地 MP3，按键即播放

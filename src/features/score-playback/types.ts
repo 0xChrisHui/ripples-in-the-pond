@@ -1,4 +1,5 @@
 import type { KeyEvent, ScorePlaybackManifest } from '@/src/types/jam';
+import { isSoundKey } from '@/src/lib/sound-set';
 
 export type ScorePlaybackState =
   | 'loading'
@@ -62,7 +63,8 @@ export function normalizeScoreEvents(raw: unknown): KeyEvent[] {
     const key = typeof item.key === 'string' ? item.key.trim().toLowerCase() : '';
     const time = typeof item.time === 'number' ? item.time : Number.NaN;
     const duration = typeof item.duration === 'number' ? item.duration : Number.NaN;
-    if (!key || !Number.isFinite(time) || time < 0 || !Number.isFinite(duration) || duration < 0) {
+    if (!isSoundKey(key) || !Number.isFinite(time) || time < 0
+      || !Number.isFinite(duration) || duration < 0) {
       throw new Error(`第 ${index + 1} 条事件字段无效`);
     }
     return { key, time, duration };

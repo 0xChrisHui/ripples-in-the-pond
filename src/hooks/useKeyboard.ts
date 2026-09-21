@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useCallback, useRef, useState } from 'react';
+import { isSoundKey } from '@/src/lib/sound-set';
 
 interface UseKeyboardReturn {
   /** 当前正在按住的键（a-z、3-8、space） */
@@ -17,10 +18,11 @@ interface UseKeyboardOptions {
 }
 
 function normalizeKey(e: KeyboardEvent): string | null {
-  if (e.code === 'Space') return 'space';
-  if (/^Key[A-Z]$/.test(e.code)) return e.code.slice(3).toLowerCase();
-  if (/^(Digit|Numpad)[3-8]$/.test(e.code)) return e.code.at(-1) ?? null;
-  return null;
+  let candidate = '';
+  if (e.code === 'Space') candidate = 'space';
+  else if (/^Key[A-Z]$/.test(e.code)) candidate = e.code.slice(3).toLowerCase();
+  else if (/^(?:Digit|Numpad)[0-9]$/.test(e.code)) candidate = e.code.at(-1) ?? '';
+  return isSoundKey(candidate) ? candidate : null;
 }
 
 function isEditableTarget(target: EventTarget | null): boolean {

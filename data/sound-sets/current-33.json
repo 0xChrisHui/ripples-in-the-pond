@@ -1,0 +1,373 @@
+{
+  "schema": "ripples.sound-set.v1",
+  "id": "current-33-v1",
+  "sourceCommit": "f7c507b5a07c8fc8a6b36fd0f1baafbe0e3e688c",
+  "publicationStatus": "not-published",
+  "keyOrder": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+    "space",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+  ],
+  "entries": [
+    {
+      "key": "a",
+      "localPath": "public/sounds/a.mp3",
+      "sha256": "b247eaf947b33ad05369eea63cae662c8bdcded32651557bcd6013108d5b04e8",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "b",
+      "localPath": "public/sounds/b.mp3",
+      "sha256": "b55903ee6e76e02b330f0cc0e706ab5a8b41579da412e57f28dc1d001782f937",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "c",
+      "localPath": "public/sounds/c.mp3",
+      "sha256": "9ac84ee89fd1ed59dcdd14121b6a39a890e16f51ace9762a1600f685539e26ae",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "d",
+      "localPath": "public/sounds/d.mp3",
+      "sha256": "0cf050aad5a7d50123f42c18cbfdfa430b059b3e09ea4ff6bb87fa0101c7961d",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "e",
+      "localPath": "public/sounds/e.mp3",
+      "sha256": "7326f83de77b141f64d4fd137b72f73a35df47bd50083b8bc247d6021d3cf0ee",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "f",
+      "localPath": "public/sounds/f.mp3",
+      "sha256": "f8d904bcb60a6dce27af1bf80c5b10c61389e43fd46f89727b0f3fae693cd5b7",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "g",
+      "localPath": "public/sounds/g.mp3",
+      "sha256": "021dbb7e0722c12edd6b7738c91a1a9119ad24eece830c2c0ec1bcefcb4bb182",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "h",
+      "localPath": "public/sounds/h.mp3",
+      "sha256": "55699715d87bf89aac559c1a5fb1b63732e9c5bc90769a64aab3479fc15bf0aa",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "i",
+      "localPath": "public/sounds/i.mp3",
+      "sha256": "684345f26921b4e86dd5d2afe35bbae1c48b47611c42c3dc804809d232439906",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "j",
+      "localPath": "public/sounds/j.mp3",
+      "sha256": "fe4c7c3662506ea19497b99f97f6b4b8267fc04610e7eb11f516a841fabf2b0f",
+      "bytes": 76321,
+      "durationMs": 3814,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "k",
+      "localPath": "public/sounds/k.mp3",
+      "sha256": "b2b1a4d68b47df88c3399017fa4376078515df639f139e3df05daf3374e47cd0",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "l",
+      "localPath": "public/sounds/l.mp3",
+      "sha256": "da55b19fb307168f3749f9be5c54b81b1a72da8c5ee911b482eea74da0cd1414",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "m",
+      "localPath": "public/sounds/m.mp3",
+      "sha256": "5b3634eae52a69d2e599e1a3e77630c424d8d89803ceba77e554a45b3cf5309f",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "n",
+      "localPath": "public/sounds/n.mp3",
+      "sha256": "8921038adaf2cf716fed9027135fef04b5442df0be2e1b79fdedaae59506d6d7",
+      "bytes": 41317,
+      "durationMs": 2064,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "o",
+      "localPath": "public/sounds/o.mp3",
+      "sha256": "425452771581fb3b18b10f01c32ee35e73362b4e82072c74caa67aeb39b3b474",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "p",
+      "localPath": "public/sounds/p.mp3",
+      "sha256": "2f32cc6041662e0052292827b7c18a757d3e14d1d7eb71dd960dadea5f73ba98",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "q",
+      "localPath": "public/sounds/q.mp3",
+      "sha256": "1b2c8a866b06b86dfa0c446ebb7b8800dcb25869fcf3e2a3e20aa25092f83881",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "r",
+      "localPath": "public/sounds/r.mp3",
+      "sha256": "9282ba0bfcfc597ce686282e0974d2340035553facfb789555345f3aaacf0d75",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "s",
+      "localPath": "public/sounds/s.mp3",
+      "sha256": "7fc0d1b625443b0553371c90c574d4bce1680bcdca700888a5dfe729ee550a25",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "t",
+      "localPath": "public/sounds/t.mp3",
+      "sha256": "a81e8e64a461d45c347782cfe719dbebb21d79cbc1e08d1ed97f876767c9308b",
+      "bytes": 61170,
+      "durationMs": 3056,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "u",
+      "localPath": "public/sounds/u.mp3",
+      "sha256": "e0f1f74be260f215078f86ef7521f0423b4548151c93289c527963ce97fbe650",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "v",
+      "localPath": "public/sounds/v.mp3",
+      "sha256": "30b72ebf3542746e557d57bd09cd075cd203e2da930d15581fc5a2150ef218e1",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "w",
+      "localPath": "public/sounds/w.mp3",
+      "sha256": "54799ad85f1858eae1ff0f790b0e65538359d3c0fd11d1c9c98e26edd87866bc",
+      "bytes": 41317,
+      "durationMs": 2064,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "x",
+      "localPath": "public/sounds/x.mp3",
+      "sha256": "d6ef710dfb0bd14affe672cfe8485703cc60236144eb6e203e2b451ff107c6d6",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "y",
+      "localPath": "public/sounds/y.mp3",
+      "sha256": "a31f0e0222dd8adf759149a5388c6845f1c1704724f6888f514c0a5952c8a955",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "z",
+      "localPath": "public/sounds/z.mp3",
+      "sha256": "d6ffd25441bc82f3392f246fa5c04651266590963f08ae3cc49d2a5f0cba3442",
+      "bytes": 41317,
+      "durationMs": 2064,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "space",
+      "localPath": "public/sounds/space.mp3",
+      "sha256": "ff8bdab5941878f2a06cd3ee2d9c031ab0d4de4cc8d48818d9c679f32b2a484f",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "3",
+      "localPath": "public/sounds/3.mp3",
+      "sha256": "f4ace680ce246b390c32c1f3a587f0758f188dc6f835ca026f223f78eea910e2",
+      "bytes": 41317,
+      "durationMs": 2064,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "4",
+      "localPath": "public/sounds/4.mp3",
+      "sha256": "2a0165146c775b8bdb4950514fa63e26a667bc59f19546d51e93ce5b385535fa",
+      "bytes": 81546,
+      "durationMs": 4075,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "5",
+      "localPath": "public/sounds/5.mp3",
+      "sha256": "1f93f6b0747a344c429f2889c626e4c79928c3ed2659216edbdb17ae4045294d",
+      "bytes": 61170,
+      "durationMs": 3056,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "6",
+      "localPath": "public/sounds/6.mp3",
+      "sha256": "1fc8649669045631229213bd4cfae6b7ba9342a7bc294b6375f8e4e5acd6708f",
+      "bytes": 53856,
+      "durationMs": 2691,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "7",
+      "localPath": "public/sounds/7.mp3",
+      "sha256": "55c742fc8835a31cac9d089ddce9043084b0a83c7171f8cf8c638fa2d94bae0c",
+      "bytes": 41317,
+      "durationMs": 2064,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    },
+    {
+      "key": "8",
+      "localPath": "public/sounds/8.mp3",
+      "sha256": "396c3c84f76977ef99de8f1c6b1d25266f48779dc8d37eb82c6bf01d08436700",
+      "bytes": 41317,
+      "durationMs": 2064,
+      "mime": "audio/mpeg",
+      "arTxId": null,
+      "blobKey": null
+    }
+  ]
+}

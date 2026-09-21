@@ -12,6 +12,8 @@
 
 **P15-H0 真相盘点（2026-09-21）✅**：主网动态枚举到 #1–#4；#1 在新版声音 Production 前铸造，保持 legacy-26；GitHub/Vercel deployment 与链上时间证明 #2/#3 录制时已是 current-33，因此分别恢复全部 10/18 个使用键。#4 已 mint 且取证期间由 `uploading_metadata` 推进到 `setting_uri`，未设 URI 前保持真实生命周期。当前 33 个本地 MP3 全为 44.1kHz 双声道；旧 26、三枚 ready Score 的 metadata/events/base/sounds/decoder 全部达到两网关同字节/MIME quorum。Blob 63/63 当前存在且完整可读，仅见一次立即恢复的 TLS 抖动，确认 Store 未挂、旧持久长冷却才是故障放大器。证据见 `reviews/2026-09-21-phase-15-h0-audit.md`。
 
+**P15-H1 33 键单一注册表（2026-09-21）✅**：`src/lib/sound-set.ts` 现为允许键与本地路径的唯一真相；录音预载、键盘、保存 API、Score 永久事件解析和 P9 都从它派生。`current-33-v1` 版本账本冻结 33 个真实 MP3 的 path/hash/bytes/duration/MIME，旧 26 账本按固定 hash 防漂移；重复键、缺文件、hash 漂移、损坏 MP3 与 P9 缺口反例均被 Gate 拒绝。定向 TypeScript、ESLint 与 H1 Gate 通过。
+
 **P15 发布后 review（2026-09-13）**：修复 P14 永久音频字段合入后遗留的 Track 公开合同漂移，首页与私人档案缓存会拒绝旧/损坏字段；`/me` 内存 owner、轮询回写和页面放行改用 `authSource + userId`，堵住同内部 ID 跨登录源的一帧串档窗口。修复提交 `21ec63a` 已快进 `main`，Vercel Preview/Production 成功；正式域名五页 200、tracks 35 首与三网关合同通过。TypeScript、定向 lint、P15 四组脚本、P14 播放器、Webpack production build 与 Foundry 56/56 已通过；详见 `reviews/2026-09-13-phase-15-post-release-review.md`。
 **P15-G 镜像探针（2026-09-14）**：playbook 提交 `ea771b0` 冻结“永久曲谱真相 + Vercel 音频加速 + Arweave 自动回退”；实现提交 `c4a7b20` 与首轮预算修复 `d27f613` 加入真实对象 `Range: bytes=0-0` 严格探针、同 origin single-flight、`5m → 1h → 6h → 24h` 持久退避与 half-open 自动恢复。缓存命中零探针；404/哈希错误只回退单对象；只有服务级错误进入 origin 熔断；Range 成功只准入，完整镜像对象验证成功才清零失败等级。首轮保护版完整 `scripts/verify.sh` 通过（37 路由、Foundry 56/56），并部署到 Production；当时变量仍为空，安全直连 Arweave。
 **P15-G Blob 配置（2026-09-14）**：Public Store `ripples-media`（HKG）已写入 63 个精确 `media/<txid>` 对象，总计 `13,457,452` bytes；范围为 Pond Echo 36 段、Score #1 永久音效 26 个与底曲 1 个。63/63 均完成 Arweave 原件与 Blob 副本全字节/SHA-256 核对，严格 Range 为 `206 + 1 byte + bytes 0-0/N`，CORS `*`、`audio/mpeg` 全通过。三环境镜像基址已配置；一次性 Preview 上传器及 8 个临时部署已删除，长效写 Token 已撤销，Store 恢复 `oidc (no static credentials)`。正式 P15 Preview `FCwnw7nDL1uwonxG1p6JfNCSjtnM` 构建 37 路由成功，公开路由最终响应均为 200，客户端 chunk 已命中 Blob 基址。
@@ -104,7 +106,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：执行 `playbook/phase-15/90-h-permanent-core-verified-edge.md` H1（33 键 SoundSet 单一注册表）；随后按 H2–H8 连续推进，只有永久写入结果未知、权限/余额缺失或生产不可逆目标无法核实时才停。
+**当前权威下一步**：执行 `playbook/phase-15/90-h-permanent-core-verified-edge.md` H2（队列版本 pin + mint 前永久闭包 Gate）；随后按 H3–H8 连续推进，只有永久写入结果未知、权限/余额缺失或生产不可逆目标无法核实时才停。
 
 ---
 

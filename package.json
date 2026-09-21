@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "env-sync": "npx tsx scripts/vercel-env-sync.ts"
+    "env-sync": "npx tsx scripts/vercel-env-sync.ts",
+    "p15:h1:generate": "tsx scripts/p15-h/build-current-sound-set.ts",
+    "p15:h1:verify": "tsx scripts/p15-h/sound-set-ledger.test.ts && tsx scripts/p15-h/verify-current-sound-set.ts"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.41.0",

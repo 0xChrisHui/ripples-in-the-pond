@@ -44,6 +44,16 @@ else
 fi
 echo ""
 
+# 2b. P15-H1：声音注册表、真实文件、P9 映射和旧档案必须保持闭包。
+echo "── 2b. 33 键 SoundSet Gate ──"
+if npm run p15:h1:verify 2>&1; then
+  echo "$OK SoundSet Gate 通过"
+else
+  echo "$FAIL SoundSet Gate 失败"
+  EXIT_CODE=1
+fi
+echo ""
+
 # 3. 文件大小检查（额外保险，hook 也会查）
 # 硬线与 .claude/hooks/check-file-size.js + docs/CONVENTIONS.md §1.1 同步：
 #   - 普通代码文件 ≤220 行

@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 import type { SaveScoreRequest, SaveScoreResponse, KeyEvent } from '@/src/types/jam';
 import { DRAFT_TTL_MS } from '@/src/lib/constants';
+import { isSoundKey } from '@/src/lib/sound-set';
 
 /**
  * POST /api/score/save
@@ -15,7 +16,6 @@ const MAX_EVENTS = 500;
 const MAX_TIME_MS = 60_000;
 const MAX_DURATION_MS = 5_000;
 const MAX_BODY_KB = 100;
-const VALID_KEY_RE = /^(?:[a-z]|[3-8]|space)$/;
 
 /** 验证单个 KeyEvent 的字段范围 */
 function isValidEvent(e: unknown): e is KeyEvent {
@@ -23,7 +23,7 @@ function isValidEvent(e: unknown): e is KeyEvent {
   const ev = e as Record<string, unknown>;
   return (
     typeof ev.key === 'string' &&
-    VALID_KEY_RE.test(ev.key) &&
+    isSoundKey(ev.key) &&
     typeof ev.time === 'number' &&
     ev.time >= 0 &&
     ev.time <= MAX_TIME_MS &&
