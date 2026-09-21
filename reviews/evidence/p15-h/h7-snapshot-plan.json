@@ -1,0 +1,1991 @@
+{
+  "schema": "p15-h7.snapshot-plan.v1",
+  "generatedAt": "2026-09-21T06:00:16.801Z",
+  "environment": "production",
+  "chainId": 10,
+  "contract": "0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa",
+  "snapshots": [
+    {
+      "tokenId": 1,
+      "queueId": "30c75936-515c-411e-a033-0d64357b19a6",
+      "schemaId": "ripples.score-snapshot.v1",
+      "originalTokenUri": "ar://YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo",
+      "metadata": {
+        "name": "Ripples #1",
+        "description": "A live jam on \"33\" recorded and minted as an on-chain Score NFT. All audio permanently stored on Arweave. Playable in the network-native web player.",
+        "image": "https://arweave.net/K0NAVlE00l6RhefjO7lZKqrG_HTSM9DglDhCC7UnhIo",
+        "external_url": "https://pond-ripple.xyz/score/1",
+        "animation_url": "https://arweave.net/NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0?events=ar://7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ&base=ar%3A%2F%2FM-NM7NGjnakWHaNE8Su3LLO5qAGckpNeVX3weToIqIQ&sounds=ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+        "attributes": [
+          {
+            "trait_type": "Track",
+            "value": "33"
+          },
+          {
+            "trait_type": "Week",
+            "value": 33
+          },
+          {
+            "trait_type": "Events",
+            "value": 35
+          },
+          {
+            "trait_type": "Minted At",
+            "value": "2026-08-23"
+          }
+        ]
+      },
+      "events": [
+        {
+          "key": "c",
+          "time": 126,
+          "duration": 67
+        },
+        {
+          "key": "b",
+          "time": 130,
+          "duration": 131
+        },
+        {
+          "key": "j",
+          "time": 274,
+          "duration": 74
+        },
+        {
+          "key": "d",
+          "time": 168,
+          "duration": 190
+        },
+        {
+          "key": "v",
+          "time": 367,
+          "duration": 185
+        },
+        {
+          "key": "n",
+          "time": 407,
+          "duration": 159
+        },
+        {
+          "key": "j",
+          "time": 541,
+          "duration": 109
+        },
+        {
+          "key": "d",
+          "time": 598,
+          "duration": 82
+        },
+        {
+          "key": "s",
+          "time": 527,
+          "duration": 217
+        },
+        {
+          "key": "l",
+          "time": 611,
+          "duration": 169
+        },
+        {
+          "key": "n",
+          "time": 817,
+          "duration": 115
+        },
+        {
+          "key": "v",
+          "time": 891,
+          "duration": 175
+        },
+        {
+          "key": "h",
+          "time": 994,
+          "duration": 180
+        },
+        {
+          "key": "f",
+          "time": 1052,
+          "duration": 172
+        },
+        {
+          "key": "b",
+          "time": 1159,
+          "duration": 226
+        },
+        {
+          "key": "h",
+          "time": 1392,
+          "duration": 100
+        },
+        {
+          "key": "v",
+          "time": 1232,
+          "duration": 267
+        },
+        {
+          "key": "k",
+          "time": 1403,
+          "duration": 143
+        },
+        {
+          "key": "f",
+          "time": 1479,
+          "duration": 134
+        },
+        {
+          "key": "v",
+          "time": 1601,
+          "duration": 242
+        },
+        {
+          "key": "c",
+          "time": 2057,
+          "duration": 109
+        },
+        {
+          "key": "d",
+          "time": 2150,
+          "duration": 182
+        },
+        {
+          "key": "c",
+          "time": 2317,
+          "duration": 206
+        },
+        {
+          "key": "s",
+          "time": 2528,
+          "duration": 135
+        },
+        {
+          "key": "d",
+          "time": 2491,
+          "duration": 200
+        },
+        {
+          "key": "v",
+          "time": 2674,
+          "duration": 236
+        },
+        {
+          "key": "f",
+          "time": 2874,
+          "duration": 190
+        },
+        {
+          "key": "v",
+          "time": 3169,
+          "duration": 50
+        },
+        {
+          "key": "r",
+          "time": 3234,
+          "duration": 11
+        },
+        {
+          "key": "r",
+          "time": 3277,
+          "duration": 119
+        },
+        {
+          "key": "t",
+          "time": 3267,
+          "duration": 145
+        },
+        {
+          "key": "b",
+          "time": 3425,
+          "duration": 186
+        },
+        {
+          "key": "r",
+          "time": 4061,
+          "duration": 55
+        },
+        {
+          "key": "t",
+          "time": 3940,
+          "duration": 216
+        },
+        {
+          "key": "h",
+          "time": 4107,
+          "duration": 0
+        }
+      ],
+      "sounds": {
+        "version": 2,
+        "sounds": {
+          "a": {
+            "txId": "IUhG1-KLOS141d5tezEiWWv6dU47-qhnHEWxi4pRCdc",
+            "name": "a"
+          },
+          "b": {
+            "txId": "h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+            "name": "b"
+          },
+          "c": {
+            "txId": "Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+            "name": "c"
+          },
+          "d": {
+            "txId": "oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+            "name": "d"
+          },
+          "e": {
+            "txId": "1hPCYBL0BqN5vGTtHQXC-IuRiujPyDRsc-S4D2gry48",
+            "name": "e"
+          },
+          "f": {
+            "txId": "rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+            "name": "f"
+          },
+          "g": {
+            "txId": "BCj9epEcMNcZ9WDtJ-S2nAHGQUbsAfOBRhcNkHfbXWk",
+            "name": "g"
+          },
+          "h": {
+            "txId": "635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw",
+            "name": "h"
+          },
+          "i": {
+            "txId": "xrXdGsdHZ2hR-AhGJAbOFuGJbetR_7R4PVHwh694mw4",
+            "name": "i"
+          },
+          "j": {
+            "txId": "-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+            "name": "j"
+          },
+          "k": {
+            "txId": "0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+            "name": "k"
+          },
+          "l": {
+            "txId": "4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg",
+            "name": "l"
+          },
+          "m": {
+            "txId": "aeKNhAXyIrYRmnc5LatUu47qWisQn05Prlu-Q3ECDU0",
+            "name": "m"
+          },
+          "n": {
+            "txId": "C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+            "name": "n"
+          },
+          "o": {
+            "txId": "pg9jl45z2pIBY-S7NuOOaKR8hiUtBVJWjTIjeYudQqA",
+            "name": "o"
+          },
+          "p": {
+            "txId": "m_MYgwcC_xGvxkQp0d_L93Cc9aa0JjaQohJYX3bGBjE",
+            "name": "p"
+          },
+          "q": {
+            "txId": "LcRjeZMvY00zUpGAUOXma38DMV5XjwPc8QRziJYvdic",
+            "name": "q"
+          },
+          "r": {
+            "txId": "l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+            "name": "r"
+          },
+          "s": {
+            "txId": "kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+            "name": "s"
+          },
+          "t": {
+            "txId": "B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+            "name": "t"
+          },
+          "u": {
+            "txId": "H7Cg0HZKsxeiASE8nCu_yVDqruOeSZoB_jggE77Ztt4",
+            "name": "u"
+          },
+          "v": {
+            "txId": "VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+            "name": "v"
+          },
+          "w": {
+            "txId": "oV4W66I49IvS_2edz2Dp0mDk5Vo7OROdQ_TfDreNzCg",
+            "name": "w"
+          },
+          "x": {
+            "txId": "7a4Wh_sVEipQ5TKRY3_floANKh_YY4og2TogJYVixyQ",
+            "name": "x"
+          },
+          "y": {
+            "txId": "g9AAq6zlwHVyPF4hR2PEseEqydJ9XweGSPWHXnageAE",
+            "name": "y"
+          },
+          "z": {
+            "txId": "4yeXCsGiIh7Aoa2o8RrA30oiGQEiKeNrJ0TRSzc7yrk",
+            "name": "z"
+          }
+        }
+      },
+      "resourceAttestations": {
+        "metadata": {
+          "arTxId": "YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo",
+          "bytes": 864,
+          "sha256": "47bba212f0e83e7c508b64479b8bd857a89c390cb03b3dd7ec06fb1c57975144",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "events": {
+          "arTxId": "7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ",
+          "bytes": 1345,
+          "sha256": "728a104ac691aadcf7f6ca0c9d66fd678d0dbe1a5c9205887d84d9b69eb1851d",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "base": {
+          "arTxId": "M-NM7NGjnakWHaNE8Su3LLO5qAGckpNeVX3weToIqIQ",
+          "bytes": 7326016,
+          "sha256": "c94083362491cdf9b84387a0e7d392017579478ece082df46a544d1b08b5b1ab",
+          "mime": "audio/mpeg",
+          "level": "attested"
+        },
+        "soundSet": {
+          "arTxId": "NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+          "bytes": 2558,
+          "sha256": "df59a2eaddc1ae63f26e7cf58da3c02e80cfe2558bbf17794dda697a36c98fb9",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "originalDecoder": {
+          "arTxId": "NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0",
+          "bytes": 23362,
+          "sha256": "399f94a78127fc9b34eb7ba5c52bb674e9ca128b39d5ec8bd0b45f639c4e4f05",
+          "mime": "text/html",
+          "level": "attested"
+        },
+        "decoder": {
+          "arTxId": "Yu9fOcdc8fzBnPzFWabCyeh3TRcXYTowN5cpv68dOO0",
+          "sha256": "08eb79642b8ece4e7df2cd427fdda4c65b2bb28a40a1b1a4b4b328dd7f6299ee",
+          "bytes": 19562,
+          "mime": "text/html",
+          "level": "attested"
+        },
+        "compatibility": {
+          "arTxId": "q7RCuvTx4vRgvqe0908o2XNvIQY-Qd75kPh5fAtinlw",
+          "sha256": "4460f5b8fea5d78ab1b1bb9557eda002c0d473fdb7d0c721bd5f20809bf38b51",
+          "bytes": 5875,
+          "mime": "application/json",
+          "level": "attested"
+        }
+      },
+      "compatibility": {
+        "canonicalDigest": "027e652e875755f5112bbf67fd8c87c3ccd1b99c0c454e401b691500ca671f5e",
+        "chainId": 10,
+        "effectiveSounds": {
+          "b": {
+            "arTxId": "h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+            "bytes": 71072,
+            "mime": "audio/mpeg",
+            "sha256": "9837f6d661706a85fec873767e0526a69e9ad7c01d37572b721057117b9f59c3"
+          },
+          "c": {
+            "arTxId": "Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+            "bytes": 71072,
+            "mime": "audio/mpeg",
+            "sha256": "d52db440da600ad8e2d20c481bd60883fa26312685bbe1a3d94f9defa01e446a"
+          },
+          "d": {
+            "arTxId": "oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+            "bytes": 70028,
+            "mime": "audio/mpeg",
+            "sha256": "737ba411e6449e0df42c6558c594e734fd3524a41a907ad092f777bec286f3ec"
+          },
+          "f": {
+            "arTxId": "rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+            "bytes": 51742,
+            "mime": "audio/mpeg",
+            "sha256": "14bdaf77c3b2e213415b75974293f4dd2add71562cae30b02d9bd0aac4f34518"
+          },
+          "h": {
+            "arTxId": "635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw",
+            "bytes": 39725,
+            "mime": "audio/mpeg",
+            "sha256": "6e5a97d56302f5fa4fd2cac8ebe8899709593aa1deff9483acadfeb26e9323cc"
+          },
+          "j": {
+            "arTxId": "-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+            "bytes": 54894,
+            "mime": "audio/mpeg",
+            "sha256": "feab8bb7610338d32968148fffb0d27cb0552cd5448414b9dc53a05d0d54edfc"
+          },
+          "k": {
+            "arTxId": "0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+            "bytes": 71072,
+            "mime": "audio/mpeg",
+            "sha256": "559bf64bba56ecdd4cbfcce2630c16257292711d7c8576b7a08e3a5ece0d960f"
+          },
+          "l": {
+            "arTxId": "4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg",
+            "bytes": 39725,
+            "mime": "audio/mpeg",
+            "sha256": "9c235838c484ec6d2935f14a24adccc1fd8be656c7f27e061958505efd614f2c"
+          },
+          "n": {
+            "arTxId": "C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+            "bytes": 49652,
+            "mime": "audio/mpeg",
+            "sha256": "8d55932e16435b820b87d4da0e416c7170e010162a1d7d658be6edb3346b155c"
+          },
+          "r": {
+            "arTxId": "l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+            "bytes": 49670,
+            "mime": "audio/mpeg",
+            "sha256": "0bd43ae8d0fea5b9b7c1058bfeeb78a038903068c79f12da95b245afdfe26fc8"
+          },
+          "s": {
+            "arTxId": "kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+            "bytes": 65325,
+            "mime": "audio/mpeg",
+            "sha256": "c036e66c986f9dcacfec4e32444ba1e7a6e3337ca76762b8fbc9568477d7526c"
+          },
+          "t": {
+            "arTxId": "B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+            "bytes": 49652,
+            "mime": "audio/mpeg",
+            "sha256": "94166c851ef84402df891dcf5aeb01b9de64a2ec86e028d6d9ccd97ad2b67cd3"
+          },
+          "v": {
+            "arTxId": "VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+            "bytes": 59579,
+            "mime": "audio/mpeg",
+            "sha256": "e6a173740c1493e7eaa3201be4d80057a0a865ac48b8fa9b249b0d1b746e814f"
+          }
+        },
+        "original": {
+          "base": "ar://M-NM7NGjnakWHaNE8Su3LLO5qAGckpNeVX3weToIqIQ",
+          "events": "ar://7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ",
+          "sounds": "ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8"
+        },
+        "originalTokenURI": "ar://YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo",
+        "publishedAt": "2026-09-21T05:50:23.582Z",
+        "resolution": {
+          "changes": [
+            {
+              "fromArTxId": "h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+              "key": "b",
+              "mode": "retained",
+              "toArTxId": "h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog"
+            },
+            {
+              "fromArTxId": "Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+              "key": "c",
+              "mode": "retained",
+              "toArTxId": "Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE"
+            },
+            {
+              "fromArTxId": "oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+              "key": "d",
+              "mode": "retained",
+              "toArTxId": "oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I"
+            },
+            {
+              "fromArTxId": "rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+              "key": "f",
+              "mode": "retained",
+              "toArTxId": "rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY"
+            },
+            {
+              "fromArTxId": "635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw",
+              "key": "h",
+              "mode": "retained",
+              "toArTxId": "635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw"
+            },
+            {
+              "fromArTxId": "-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+              "key": "j",
+              "mode": "retained",
+              "toArTxId": "-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800"
+            },
+            {
+              "fromArTxId": "0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+              "key": "k",
+              "mode": "retained",
+              "toArTxId": "0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY"
+            },
+            {
+              "fromArTxId": "4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg",
+              "key": "l",
+              "mode": "retained",
+              "toArTxId": "4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg"
+            },
+            {
+              "fromArTxId": "C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+              "key": "n",
+              "mode": "retained",
+              "toArTxId": "C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo"
+            },
+            {
+              "fromArTxId": "l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+              "key": "r",
+              "mode": "retained",
+              "toArTxId": "l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ"
+            },
+            {
+              "fromArTxId": "kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+              "key": "s",
+              "mode": "retained",
+              "toArTxId": "kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw"
+            },
+            {
+              "fromArTxId": "B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+              "key": "t",
+              "mode": "retained",
+              "toArTxId": "B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls"
+            },
+            {
+              "fromArTxId": "VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+              "key": "v",
+              "mode": "retained",
+              "toArTxId": "VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs"
+            }
+          ],
+          "reason": "Preserve the legacy sound identities used when Score #1 was recorded.",
+          "soundSet": "legacy-26",
+          "usedKeys": [
+            "b",
+            "c",
+            "d",
+            "f",
+            "h",
+            "j",
+            "k",
+            "l",
+            "n",
+            "r",
+            "s",
+            "t",
+            "v"
+          ]
+        },
+        "schema": "ripples.score-compatibility.v1",
+        "scoreContract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+        "signature": {
+          "adminRole": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "domain": {
+            "chainId": 10,
+            "name": "RipplesCompatibility",
+            "verifyingContract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+            "version": "1"
+          },
+          "message": {
+            "canonicalDigest": "0x027e652e875755f5112bbf67fd8c87c3ccd1b99c0c454e401b691500ca671f5e",
+            "effectiveSoundsDigest": "0xa407903b2344d65d8fa05bea8ab569ef6fed3eeb95265a4386a6acc01e7e53b5",
+            "originalBase": "ar://M-NM7NGjnakWHaNE8Su3LLO5qAGckpNeVX3weToIqIQ",
+            "originalEvents": "ar://7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ",
+            "originalSounds": "ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+            "originalTokenURI": "ar://YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo",
+            "publishedAt": "2026-09-21T05:50:23.582Z",
+            "roleBlockNumber": "157185522",
+            "tokenId": "1"
+          },
+          "roleBlockNumber": "157185522",
+          "scheme": "eip712",
+          "signer": "0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722",
+          "value": "0x50ef0e1397a52c168029b31b677b8f79afd2faec56f8008195d4d605171f897d46c943262236a12e34cab487572c8226c5da4a6e28719b11bd0bf89fbebeeff31c"
+        },
+        "tokenId": 1
+      },
+      "contentSha256": "7468dfb52769133c247104c53fc41e0e3408ec54dbe8a4160c9fb223952371fd"
+    },
+    {
+      "tokenId": 2,
+      "queueId": null,
+      "schemaId": "ripples.score-snapshot.v1",
+      "originalTokenUri": "ar://pcFFMK9tr5APGRb83xBnfKvX0DZbrsnqNvVf0bEXof0",
+      "metadata": {
+        "name": "Ripples #2",
+        "description": "A spontaneous live jam on music fragment 20, recorded and minted as an on-chain Score NFT. All audio is permanently stored on Arweave.",
+        "image": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+        "external_url": "https://pond-ripple.xyz/score/2",
+        "animation_url": "https://arweave.net/NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0?events=ar://8I3Sv1GspbT5yfsJ6HLROif69SQVRSL53aMC-WrpZaY&base=ar://by5Zw_MyjzuY13tfqYPsntkwaY2oSSjMcKOWkwnTMfY&sounds=ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+        "attributes": [
+          {
+            "trait_type": "Track",
+            "value": "20"
+          },
+          {
+            "trait_type": "Week",
+            "value": 20
+          },
+          {
+            "trait_type": "Events",
+            "value": 10
+          },
+          {
+            "trait_type": "Minted At",
+            "value": "2026-08-29"
+          }
+        ]
+      },
+      "events": [
+        {
+          "key": "a",
+          "time": 0,
+          "duration": 260
+        },
+        {
+          "key": "g",
+          "time": 420,
+          "duration": 260
+        },
+        {
+          "key": "k",
+          "time": 840,
+          "duration": 260
+        },
+        {
+          "key": "e",
+          "time": 1260,
+          "duration": 260
+        },
+        {
+          "key": "m",
+          "time": 1680,
+          "duration": 260
+        },
+        {
+          "key": "r",
+          "time": 2100,
+          "duration": 260
+        },
+        {
+          "key": "t",
+          "time": 2520,
+          "duration": 260
+        },
+        {
+          "key": "p",
+          "time": 2940,
+          "duration": 260
+        },
+        {
+          "key": "y",
+          "time": 3360,
+          "duration": 260
+        },
+        {
+          "key": "space",
+          "time": 3780,
+          "duration": 260
+        }
+      ],
+      "sounds": {
+        "version": 2,
+        "sounds": {
+          "a": {
+            "txId": "IUhG1-KLOS141d5tezEiWWv6dU47-qhnHEWxi4pRCdc",
+            "name": "a"
+          },
+          "b": {
+            "txId": "h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+            "name": "b"
+          },
+          "c": {
+            "txId": "Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+            "name": "c"
+          },
+          "d": {
+            "txId": "oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+            "name": "d"
+          },
+          "e": {
+            "txId": "1hPCYBL0BqN5vGTtHQXC-IuRiujPyDRsc-S4D2gry48",
+            "name": "e"
+          },
+          "f": {
+            "txId": "rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+            "name": "f"
+          },
+          "g": {
+            "txId": "BCj9epEcMNcZ9WDtJ-S2nAHGQUbsAfOBRhcNkHfbXWk",
+            "name": "g"
+          },
+          "h": {
+            "txId": "635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw",
+            "name": "h"
+          },
+          "i": {
+            "txId": "xrXdGsdHZ2hR-AhGJAbOFuGJbetR_7R4PVHwh694mw4",
+            "name": "i"
+          },
+          "j": {
+            "txId": "-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+            "name": "j"
+          },
+          "k": {
+            "txId": "0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+            "name": "k"
+          },
+          "l": {
+            "txId": "4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg",
+            "name": "l"
+          },
+          "m": {
+            "txId": "aeKNhAXyIrYRmnc5LatUu47qWisQn05Prlu-Q3ECDU0",
+            "name": "m"
+          },
+          "n": {
+            "txId": "C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+            "name": "n"
+          },
+          "o": {
+            "txId": "pg9jl45z2pIBY-S7NuOOaKR8hiUtBVJWjTIjeYudQqA",
+            "name": "o"
+          },
+          "p": {
+            "txId": "m_MYgwcC_xGvxkQp0d_L93Cc9aa0JjaQohJYX3bGBjE",
+            "name": "p"
+          },
+          "q": {
+            "txId": "LcRjeZMvY00zUpGAUOXma38DMV5XjwPc8QRziJYvdic",
+            "name": "q"
+          },
+          "r": {
+            "txId": "l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+            "name": "r"
+          },
+          "s": {
+            "txId": "kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+            "name": "s"
+          },
+          "t": {
+            "txId": "B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+            "name": "t"
+          },
+          "u": {
+            "txId": "H7Cg0HZKsxeiASE8nCu_yVDqruOeSZoB_jggE77Ztt4",
+            "name": "u"
+          },
+          "v": {
+            "txId": "VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+            "name": "v"
+          },
+          "w": {
+            "txId": "oV4W66I49IvS_2edz2Dp0mDk5Vo7OROdQ_TfDreNzCg",
+            "name": "w"
+          },
+          "x": {
+            "txId": "7a4Wh_sVEipQ5TKRY3_floANKh_YY4og2TogJYVixyQ",
+            "name": "x"
+          },
+          "y": {
+            "txId": "g9AAq6zlwHVyPF4hR2PEseEqydJ9XweGSPWHXnageAE",
+            "name": "y"
+          },
+          "z": {
+            "txId": "4yeXCsGiIh7Aoa2o8RrA30oiGQEiKeNrJ0TRSzc7yrk",
+            "name": "z"
+          }
+        }
+      },
+      "resourceAttestations": {
+        "metadata": {
+          "arTxId": "pcFFMK9tr5APGRb83xBnfKvX0DZbrsnqNvVf0bEXof0",
+          "bytes": 842,
+          "sha256": "fe6213b4eafaf00be5b8ecd2dd70b9a9933f9fef5f3c14329eb28c72fcea9b1b",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "events": {
+          "arTxId": "8I3Sv1GspbT5yfsJ6HLROif69SQVRSL53aMC-WrpZaY",
+          "bytes": 390,
+          "sha256": "8361d123c0db4bcdcbc7f17082055eb3e7e82fba85dbef6118cc2d92e4129882",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "base": {
+          "arTxId": "by5Zw_MyjzuY13tfqYPsntkwaY2oSSjMcKOWkwnTMfY",
+          "bytes": 6486016,
+          "sha256": "2b4f89d16899d54afaeb90bb0529e9a5a7159424c57cda842ad913ce2f451a84",
+          "mime": "audio/mpeg",
+          "level": "attested"
+        },
+        "soundSet": {
+          "arTxId": "NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+          "bytes": 2558,
+          "sha256": "df59a2eaddc1ae63f26e7cf58da3c02e80cfe2558bbf17794dda697a36c98fb9",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "originalDecoder": {
+          "arTxId": "NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0",
+          "bytes": 23362,
+          "sha256": "399f94a78127fc9b34eb7ba5c52bb674e9ca128b39d5ec8bd0b45f639c4e4f05",
+          "mime": "text/html",
+          "level": "attested"
+        },
+        "decoder": {
+          "arTxId": "Yu9fOcdc8fzBnPzFWabCyeh3TRcXYTowN5cpv68dOO0",
+          "sha256": "08eb79642b8ece4e7df2cd427fdda4c65b2bb28a40a1b1a4b4b328dd7f6299ee",
+          "bytes": 19562,
+          "mime": "text/html",
+          "level": "attested"
+        },
+        "compatibility": {
+          "arTxId": "sxHCI4EbU4dJMreF92NXfdAtIPEBSW2cNdXUYi2R05A",
+          "sha256": "39480bcb3b5fe673ccc36ac53da1c12c202ec0e23625451bb140e9b89cd3893d",
+          "bytes": 4906,
+          "mime": "application/json",
+          "level": "attested"
+        }
+      },
+      "compatibility": {
+        "canonicalDigest": "046da1cd712db89ac7763c7210ff176649291710648c9318549affb58f5e6506",
+        "chainId": 10,
+        "effectiveSounds": {
+          "a": {
+            "arTxId": "PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "b247eaf947b33ad05369eea63cae662c8bdcded32651557bcd6013108d5b04e8"
+          },
+          "e": {
+            "arTxId": "fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "7326f83de77b141f64d4fd137b72f73a35df47bd50083b8bc247d6021d3cf0ee"
+          },
+          "g": {
+            "arTxId": "65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "021dbb7e0722c12edd6b7738c91a1a9119ad24eece830c2c0ec1bcefcb4bb182"
+          },
+          "k": {
+            "arTxId": "WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "b2b1a4d68b47df88c3399017fa4376078515df639f139e3df05daf3374e47cd0"
+          },
+          "m": {
+            "arTxId": "ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "5b3634eae52a69d2e599e1a3e77630c424d8d89803ceba77e554a45b3cf5309f"
+          },
+          "p": {
+            "arTxId": "w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "2f32cc6041662e0052292827b7c18a757d3e14d1d7eb71dd960dadea5f73ba98"
+          },
+          "r": {
+            "arTxId": "AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "9282ba0bfcfc597ce686282e0974d2340035553facfb789555345f3aaacf0d75"
+          },
+          "space": {
+            "arTxId": "y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "ff8bdab5941878f2a06cd3ee2d9c031ab0d4de4cc8d48818d9c679f32b2a484f"
+          },
+          "t": {
+            "arTxId": "U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI",
+            "bytes": 61170,
+            "mime": "audio/mpeg",
+            "sha256": "a81e8e64a461d45c347782cfe719dbebb21d79cbc1e08d1ed97f876767c9308b"
+          },
+          "y": {
+            "arTxId": "6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "a31f0e0222dd8adf759149a5388c6845f1c1704724f6888f514c0a5952c8a955"
+          }
+        },
+        "original": {
+          "base": "ar://by5Zw_MyjzuY13tfqYPsntkwaY2oSSjMcKOWkwnTMfY",
+          "events": "ar://8I3Sv1GspbT5yfsJ6HLROif69SQVRSL53aMC-WrpZaY",
+          "sounds": "ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8"
+        },
+        "originalTokenURI": "ar://pcFFMK9tr5APGRb83xBnfKvX0DZbrsnqNvVf0bEXof0",
+        "publishedAt": "2026-09-21T05:50:23.582Z",
+        "resolution": {
+          "changes": [
+            {
+              "fromArTxId": "IUhG1-KLOS141d5tezEiWWv6dU47-qhnHEWxi4pRCdc",
+              "key": "a",
+              "mode": "override",
+              "toArTxId": "PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4"
+            },
+            {
+              "fromArTxId": "1hPCYBL0BqN5vGTtHQXC-IuRiujPyDRsc-S4D2gry48",
+              "key": "e",
+              "mode": "override",
+              "toArTxId": "fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw"
+            },
+            {
+              "fromArTxId": "BCj9epEcMNcZ9WDtJ-S2nAHGQUbsAfOBRhcNkHfbXWk",
+              "key": "g",
+              "mode": "override",
+              "toArTxId": "65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0"
+            },
+            {
+              "fromArTxId": "0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+              "key": "k",
+              "mode": "override",
+              "toArTxId": "WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8"
+            },
+            {
+              "fromArTxId": "aeKNhAXyIrYRmnc5LatUu47qWisQn05Prlu-Q3ECDU0",
+              "key": "m",
+              "mode": "override",
+              "toArTxId": "ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA"
+            },
+            {
+              "fromArTxId": "m_MYgwcC_xGvxkQp0d_L93Cc9aa0JjaQohJYX3bGBjE",
+              "key": "p",
+              "mode": "override",
+              "toArTxId": "w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c"
+            },
+            {
+              "fromArTxId": "l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+              "key": "r",
+              "mode": "override",
+              "toArTxId": "AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU"
+            },
+            {
+              "fromArTxId": null,
+              "key": "space",
+              "mode": "addition",
+              "toArTxId": "y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s"
+            },
+            {
+              "fromArTxId": "B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+              "key": "t",
+              "mode": "override",
+              "toArTxId": "U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI"
+            },
+            {
+              "fromArTxId": "g9AAq6zlwHVyPF4hR2PEseEqydJ9XweGSPWHXnageAE",
+              "key": "y",
+              "mode": "override",
+              "toArTxId": "6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w"
+            }
+          ],
+          "reason": "Restore every used key to the current-33 identities active when this Score was recorded.",
+          "soundSet": "current-33-v1",
+          "usedKeys": [
+            "a",
+            "e",
+            "g",
+            "k",
+            "m",
+            "p",
+            "r",
+            "space",
+            "t",
+            "y"
+          ]
+        },
+        "schema": "ripples.score-compatibility.v1",
+        "scoreContract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+        "signature": {
+          "adminRole": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "domain": {
+            "chainId": 10,
+            "name": "RipplesCompatibility",
+            "verifyingContract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+            "version": "1"
+          },
+          "message": {
+            "canonicalDigest": "0x046da1cd712db89ac7763c7210ff176649291710648c9318549affb58f5e6506",
+            "effectiveSoundsDigest": "0x99e0d7ae70ab0a26bd61157493cdedcae5bf408db3edf2737beada6e0e32d4b1",
+            "originalBase": "ar://by5Zw_MyjzuY13tfqYPsntkwaY2oSSjMcKOWkwnTMfY",
+            "originalEvents": "ar://8I3Sv1GspbT5yfsJ6HLROif69SQVRSL53aMC-WrpZaY",
+            "originalSounds": "ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+            "originalTokenURI": "ar://pcFFMK9tr5APGRb83xBnfKvX0DZbrsnqNvVf0bEXof0",
+            "publishedAt": "2026-09-21T05:50:23.582Z",
+            "roleBlockNumber": "157185522",
+            "tokenId": "2"
+          },
+          "roleBlockNumber": "157185522",
+          "scheme": "eip712",
+          "signer": "0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722",
+          "value": "0xce9949d3c4195dc818182a6a7fdeb0a2271fd8f86ec3d6a35b05f99724514c540f4f8928fac30e495a40732e097723f83101d27359b91fbb4641a63328d893921c"
+        },
+        "tokenId": 2
+      },
+      "contentSha256": "86ebc9699c300195321e1ac7d691fa204b40d3af3be3bfb3a4bde5c133be49fc"
+    },
+    {
+      "tokenId": 3,
+      "queueId": "623de3aa-31f7-4291-92be-bb6837afd218",
+      "schemaId": "ripples.score-snapshot.v1",
+      "originalTokenUri": "ar://TNm1k8lWm3FSxhkivzLN2TekOFBW1Y--QKN-Gv-zc3U",
+      "metadata": {
+        "name": "Ripples #3",
+        "description": "A live jam on \"17\" recorded and minted as an on-chain Score NFT. All audio permanently stored on Arweave. Playable in the network-native web player.",
+        "image": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+        "external_url": "https://pond-ripple.xyz/score/3",
+        "animation_url": "https://arweave.net/NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0?events=ar://1Euj208ds6JpeMkSfkqaAUB3qCfbDY5wE1ClpebP43A&base=ar%3A%2F%2FBkXfeDwndd6vXavoqym1uIIT1obTaxrnKrOfm0ln2DY&sounds=ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+        "attributes": [
+          {
+            "trait_type": "Track",
+            "value": "17"
+          },
+          {
+            "trait_type": "Week",
+            "value": 17
+          },
+          {
+            "trait_type": "Events",
+            "value": 44
+          },
+          {
+            "trait_type": "Minted At",
+            "value": "2026-09-11"
+          }
+        ]
+      },
+      "events": [
+        {
+          "key": "s",
+          "time": 294,
+          "duration": 261
+        },
+        {
+          "key": "b",
+          "time": 444,
+          "duration": 382
+        },
+        {
+          "key": "v",
+          "time": 6254,
+          "duration": 92
+        },
+        {
+          "key": "b",
+          "time": 6502,
+          "duration": 359
+        },
+        {
+          "key": "c",
+          "time": 7070,
+          "duration": 109
+        },
+        {
+          "key": "n",
+          "time": 7120,
+          "duration": 118
+        },
+        {
+          "key": "w",
+          "time": 7139,
+          "duration": 270
+        },
+        {
+          "key": "o",
+          "time": 7225,
+          "duration": 245
+        },
+        {
+          "key": "e",
+          "time": 7195,
+          "duration": 293
+        },
+        {
+          "key": "i",
+          "time": 7244,
+          "duration": 309
+        },
+        {
+          "key": "j",
+          "time": 7477,
+          "duration": 127
+        },
+        {
+          "key": "o",
+          "time": 7592,
+          "duration": 144
+        },
+        {
+          "key": "c",
+          "time": 7500,
+          "duration": 254
+        },
+        {
+          "key": "e",
+          "time": 7864,
+          "duration": 77
+        },
+        {
+          "key": "n",
+          "time": 7762,
+          "duration": 241
+        },
+        {
+          "key": "i",
+          "time": 8348,
+          "duration": 173
+        },
+        {
+          "key": "r",
+          "time": 8360,
+          "duration": 217
+        },
+        {
+          "key": "b",
+          "time": 8565,
+          "duration": 105
+        },
+        {
+          "key": "y",
+          "time": 8671,
+          "duration": 73
+        },
+        {
+          "key": "f",
+          "time": 8687,
+          "duration": 72
+        },
+        {
+          "key": "e",
+          "time": 8337,
+          "duration": 460
+        },
+        {
+          "key": "b",
+          "time": 8946,
+          "duration": 117
+        },
+        {
+          "key": "j",
+          "time": 9148,
+          "duration": 111
+        },
+        {
+          "key": "k",
+          "time": 9182,
+          "duration": 259
+        },
+        {
+          "key": "c",
+          "time": 9330,
+          "duration": 199
+        },
+        {
+          "key": "n",
+          "time": 9405,
+          "duration": 158
+        },
+        {
+          "key": "j",
+          "time": 9510,
+          "duration": 153
+        },
+        {
+          "key": "k",
+          "time": 9587,
+          "duration": 216
+        },
+        {
+          "key": "n",
+          "time": 9737,
+          "duration": 193
+        },
+        {
+          "key": "u",
+          "time": 14481,
+          "duration": 77
+        },
+        {
+          "key": "n",
+          "time": 14325,
+          "duration": 247
+        },
+        {
+          "key": "c",
+          "time": 14541,
+          "duration": 119
+        },
+        {
+          "key": "d",
+          "time": 14788,
+          "duration": 40
+        },
+        {
+          "key": "u",
+          "time": 14839,
+          "duration": 87
+        },
+        {
+          "key": "i",
+          "time": 14906,
+          "duration": 150
+        },
+        {
+          "key": "c",
+          "time": 14855,
+          "duration": 269
+        },
+        {
+          "key": "b",
+          "time": 15106,
+          "duration": 105
+        },
+        {
+          "key": "i",
+          "time": 15307,
+          "duration": 168
+        },
+        {
+          "key": "b",
+          "time": 15456,
+          "duration": 217
+        },
+        {
+          "key": "y",
+          "time": 15589,
+          "duration": 285
+        },
+        {
+          "key": "q",
+          "time": 15462,
+          "duration": 461
+        },
+        {
+          "key": "y",
+          "time": 16099,
+          "duration": 22
+        },
+        {
+          "key": "g",
+          "time": 15890,
+          "duration": 300
+        },
+        {
+          "key": "e",
+          "time": 15859,
+          "duration": 465
+        }
+      ],
+      "sounds": {
+        "version": 2,
+        "sounds": {
+          "a": {
+            "txId": "IUhG1-KLOS141d5tezEiWWv6dU47-qhnHEWxi4pRCdc",
+            "name": "a"
+          },
+          "b": {
+            "txId": "h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+            "name": "b"
+          },
+          "c": {
+            "txId": "Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+            "name": "c"
+          },
+          "d": {
+            "txId": "oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+            "name": "d"
+          },
+          "e": {
+            "txId": "1hPCYBL0BqN5vGTtHQXC-IuRiujPyDRsc-S4D2gry48",
+            "name": "e"
+          },
+          "f": {
+            "txId": "rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+            "name": "f"
+          },
+          "g": {
+            "txId": "BCj9epEcMNcZ9WDtJ-S2nAHGQUbsAfOBRhcNkHfbXWk",
+            "name": "g"
+          },
+          "h": {
+            "txId": "635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw",
+            "name": "h"
+          },
+          "i": {
+            "txId": "xrXdGsdHZ2hR-AhGJAbOFuGJbetR_7R4PVHwh694mw4",
+            "name": "i"
+          },
+          "j": {
+            "txId": "-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+            "name": "j"
+          },
+          "k": {
+            "txId": "0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+            "name": "k"
+          },
+          "l": {
+            "txId": "4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg",
+            "name": "l"
+          },
+          "m": {
+            "txId": "aeKNhAXyIrYRmnc5LatUu47qWisQn05Prlu-Q3ECDU0",
+            "name": "m"
+          },
+          "n": {
+            "txId": "C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+            "name": "n"
+          },
+          "o": {
+            "txId": "pg9jl45z2pIBY-S7NuOOaKR8hiUtBVJWjTIjeYudQqA",
+            "name": "o"
+          },
+          "p": {
+            "txId": "m_MYgwcC_xGvxkQp0d_L93Cc9aa0JjaQohJYX3bGBjE",
+            "name": "p"
+          },
+          "q": {
+            "txId": "LcRjeZMvY00zUpGAUOXma38DMV5XjwPc8QRziJYvdic",
+            "name": "q"
+          },
+          "r": {
+            "txId": "l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+            "name": "r"
+          },
+          "s": {
+            "txId": "kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+            "name": "s"
+          },
+          "t": {
+            "txId": "B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+            "name": "t"
+          },
+          "u": {
+            "txId": "H7Cg0HZKsxeiASE8nCu_yVDqruOeSZoB_jggE77Ztt4",
+            "name": "u"
+          },
+          "v": {
+            "txId": "VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+            "name": "v"
+          },
+          "w": {
+            "txId": "oV4W66I49IvS_2edz2Dp0mDk5Vo7OROdQ_TfDreNzCg",
+            "name": "w"
+          },
+          "x": {
+            "txId": "7a4Wh_sVEipQ5TKRY3_floANKh_YY4og2TogJYVixyQ",
+            "name": "x"
+          },
+          "y": {
+            "txId": "g9AAq6zlwHVyPF4hR2PEseEqydJ9XweGSPWHXnageAE",
+            "name": "y"
+          },
+          "z": {
+            "txId": "4yeXCsGiIh7Aoa2o8RrA30oiGQEiKeNrJ0TRSzc7yrk",
+            "name": "z"
+          }
+        }
+      },
+      "resourceAttestations": {
+        "metadata": {
+          "arTxId": "TNm1k8lWm3FSxhkivzLN2TekOFBW1Y--QKN-Gv-zc3U",
+          "bytes": 864,
+          "sha256": "943a16c8599fbf77bbef290217ebcbcbafb77ad421c2bd40808776fba60ef721",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "events": {
+          "arTxId": "1Euj208ds6JpeMkSfkqaAUB3qCfbDY5wE1ClpebP43A",
+          "bytes": 1722,
+          "sha256": "dda73d09653f53a536f6f08b22847c7bdb3e520633fdde33ad8488dbf4f21f0c",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "base": {
+          "arTxId": "BkXfeDwndd6vXavoqym1uIIT1obTaxrnKrOfm0ln2DY",
+          "bytes": 3966016,
+          "sha256": "0afe6742126dd3cb806462eabf820a662a1a5b5a85adc425c7ef398988504caf",
+          "mime": "audio/mpeg",
+          "level": "attested"
+        },
+        "soundSet": {
+          "arTxId": "NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+          "bytes": 2558,
+          "sha256": "df59a2eaddc1ae63f26e7cf58da3c02e80cfe2558bbf17794dda697a36c98fb9",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "originalDecoder": {
+          "arTxId": "NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0",
+          "bytes": 23362,
+          "sha256": "399f94a78127fc9b34eb7ba5c52bb674e9ca128b39d5ec8bd0b45f639c4e4f05",
+          "mime": "text/html",
+          "level": "attested"
+        },
+        "decoder": {
+          "arTxId": "Yu9fOcdc8fzBnPzFWabCyeh3TRcXYTowN5cpv68dOO0",
+          "sha256": "08eb79642b8ece4e7df2cd427fdda4c65b2bb28a40a1b1a4b4b328dd7f6299ee",
+          "bytes": 19562,
+          "mime": "text/html",
+          "level": "attested"
+        },
+        "compatibility": {
+          "arTxId": "HWa3c2mvzCvAtGbDATU9Li13mCOOdapGjfm17otHpDE",
+          "sha256": "3118f3cc63a324a7ec11437ae8ba39bbe96165c0a447af3f6b1462fa1ea41e07",
+          "bytes": 7503,
+          "mime": "application/json",
+          "level": "attested"
+        }
+      },
+      "compatibility": {
+        "canonicalDigest": "18cceec6cf9f737548c03b0aef4fb38abe16407c75df39b9729f69b9579ddef2",
+        "chainId": 10,
+        "effectiveSounds": {
+          "b": {
+            "arTxId": "ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "b55903ee6e76e02b330f0cc0e706ab5a8b41579da412e57f28dc1d001782f937"
+          },
+          "c": {
+            "arTxId": "e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "9ac84ee89fd1ed59dcdd14121b6a39a890e16f51ace9762a1600f685539e26ae"
+          },
+          "d": {
+            "arTxId": "qmRjePU6ybQoUm5gEsOBpfHvolGGAyJE2kKX_XK3Cxs",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "0cf050aad5a7d50123f42c18cbfdfa430b059b3e09ea4ff6bb87fa0101c7961d"
+          },
+          "e": {
+            "arTxId": "fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "7326f83de77b141f64d4fd137b72f73a35df47bd50083b8bc247d6021d3cf0ee"
+          },
+          "f": {
+            "arTxId": "JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "f8d904bcb60a6dce27af1bf80c5b10c61389e43fd46f89727b0f3fae693cd5b7"
+          },
+          "g": {
+            "arTxId": "65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "021dbb7e0722c12edd6b7738c91a1a9119ad24eece830c2c0ec1bcefcb4bb182"
+          },
+          "i": {
+            "arTxId": "e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "684345f26921b4e86dd5d2afe35bbae1c48b47611c42c3dc804809d232439906"
+          },
+          "j": {
+            "arTxId": "ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0",
+            "bytes": 76321,
+            "mime": "audio/mpeg",
+            "sha256": "fe4c7c3662506ea19497b99f97f6b4b8267fc04610e7eb11f516a841fabf2b0f"
+          },
+          "k": {
+            "arTxId": "WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "b2b1a4d68b47df88c3399017fa4376078515df639f139e3df05daf3374e47cd0"
+          },
+          "n": {
+            "arTxId": "S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
+            "bytes": 41317,
+            "mime": "audio/mpeg",
+            "sha256": "8921038adaf2cf716fed9027135fef04b5442df0be2e1b79fdedaae59506d6d7"
+          },
+          "o": {
+            "arTxId": "-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "425452771581fb3b18b10f01c32ee35e73362b4e82072c74caa67aeb39b3b474"
+          },
+          "q": {
+            "arTxId": "xA6W3OnBK4zC5b5vh6pnBIvJ9hLdmqDBp-89GP7Jl0g",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "1b2c8a866b06b86dfa0c446ebb7b8800dcb25869fcf3e2a3e20aa25092f83881"
+          },
+          "r": {
+            "arTxId": "AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "9282ba0bfcfc597ce686282e0974d2340035553facfb789555345f3aaacf0d75"
+          },
+          "s": {
+            "arTxId": "r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "7fc0d1b625443b0553371c90c574d4bce1680bcdca700888a5dfe729ee550a25"
+          },
+          "u": {
+            "arTxId": "4y0MSr4zw830Dvz6MODNX977D0bNaMd12kWtXMOSL78",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "e0f1f74be260f215078f86ef7521f0423b4548151c93289c527963ce97fbe650"
+          },
+          "v": {
+            "arTxId": "PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "30b72ebf3542746e557d57bd09cd075cd203e2da930d15581fc5a2150ef218e1"
+          },
+          "w": {
+            "arTxId": "IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
+            "bytes": 41317,
+            "mime": "audio/mpeg",
+            "sha256": "54799ad85f1858eae1ff0f790b0e65538359d3c0fd11d1c9c98e26edd87866bc"
+          },
+          "y": {
+            "arTxId": "6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "a31f0e0222dd8adf759149a5388c6845f1c1704724f6888f514c0a5952c8a955"
+          }
+        },
+        "original": {
+          "base": "ar://BkXfeDwndd6vXavoqym1uIIT1obTaxrnKrOfm0ln2DY",
+          "events": "ar://1Euj208ds6JpeMkSfkqaAUB3qCfbDY5wE1ClpebP43A",
+          "sounds": "ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8"
+        },
+        "originalTokenURI": "ar://TNm1k8lWm3FSxhkivzLN2TekOFBW1Y--QKN-Gv-zc3U",
+        "publishedAt": "2026-09-21T05:50:23.582Z",
+        "resolution": {
+          "changes": [
+            {
+              "fromArTxId": "h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+              "key": "b",
+              "mode": "override",
+              "toArTxId": "ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28"
+            },
+            {
+              "fromArTxId": "Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+              "key": "c",
+              "mode": "override",
+              "toArTxId": "e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc"
+            },
+            {
+              "fromArTxId": "oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+              "key": "d",
+              "mode": "override",
+              "toArTxId": "qmRjePU6ybQoUm5gEsOBpfHvolGGAyJE2kKX_XK3Cxs"
+            },
+            {
+              "fromArTxId": "1hPCYBL0BqN5vGTtHQXC-IuRiujPyDRsc-S4D2gry48",
+              "key": "e",
+              "mode": "override",
+              "toArTxId": "fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw"
+            },
+            {
+              "fromArTxId": "rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+              "key": "f",
+              "mode": "override",
+              "toArTxId": "JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM"
+            },
+            {
+              "fromArTxId": "BCj9epEcMNcZ9WDtJ-S2nAHGQUbsAfOBRhcNkHfbXWk",
+              "key": "g",
+              "mode": "override",
+              "toArTxId": "65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0"
+            },
+            {
+              "fromArTxId": "xrXdGsdHZ2hR-AhGJAbOFuGJbetR_7R4PVHwh694mw4",
+              "key": "i",
+              "mode": "override",
+              "toArTxId": "e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q"
+            },
+            {
+              "fromArTxId": "-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+              "key": "j",
+              "mode": "override",
+              "toArTxId": "ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0"
+            },
+            {
+              "fromArTxId": "0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+              "key": "k",
+              "mode": "override",
+              "toArTxId": "WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8"
+            },
+            {
+              "fromArTxId": "C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+              "key": "n",
+              "mode": "override",
+              "toArTxId": "S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU"
+            },
+            {
+              "fromArTxId": "pg9jl45z2pIBY-S7NuOOaKR8hiUtBVJWjTIjeYudQqA",
+              "key": "o",
+              "mode": "override",
+              "toArTxId": "-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs"
+            },
+            {
+              "fromArTxId": "LcRjeZMvY00zUpGAUOXma38DMV5XjwPc8QRziJYvdic",
+              "key": "q",
+              "mode": "override",
+              "toArTxId": "xA6W3OnBK4zC5b5vh6pnBIvJ9hLdmqDBp-89GP7Jl0g"
+            },
+            {
+              "fromArTxId": "l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+              "key": "r",
+              "mode": "override",
+              "toArTxId": "AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU"
+            },
+            {
+              "fromArTxId": "kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+              "key": "s",
+              "mode": "override",
+              "toArTxId": "r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk"
+            },
+            {
+              "fromArTxId": "H7Cg0HZKsxeiASE8nCu_yVDqruOeSZoB_jggE77Ztt4",
+              "key": "u",
+              "mode": "override",
+              "toArTxId": "4y0MSr4zw830Dvz6MODNX977D0bNaMd12kWtXMOSL78"
+            },
+            {
+              "fromArTxId": "VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+              "key": "v",
+              "mode": "override",
+              "toArTxId": "PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw"
+            },
+            {
+              "fromArTxId": "oV4W66I49IvS_2edz2Dp0mDk5Vo7OROdQ_TfDreNzCg",
+              "key": "w",
+              "mode": "override",
+              "toArTxId": "IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8"
+            },
+            {
+              "fromArTxId": "g9AAq6zlwHVyPF4hR2PEseEqydJ9XweGSPWHXnageAE",
+              "key": "y",
+              "mode": "override",
+              "toArTxId": "6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w"
+            }
+          ],
+          "reason": "Restore every used key to the current-33 identities active when this Score was recorded.",
+          "soundSet": "current-33-v1",
+          "usedKeys": [
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "i",
+            "j",
+            "k",
+            "n",
+            "o",
+            "q",
+            "r",
+            "s",
+            "u",
+            "v",
+            "w",
+            "y"
+          ]
+        },
+        "schema": "ripples.score-compatibility.v1",
+        "scoreContract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+        "signature": {
+          "adminRole": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "domain": {
+            "chainId": 10,
+            "name": "RipplesCompatibility",
+            "verifyingContract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+            "version": "1"
+          },
+          "message": {
+            "canonicalDigest": "0x18cceec6cf9f737548c03b0aef4fb38abe16407c75df39b9729f69b9579ddef2",
+            "effectiveSoundsDigest": "0x25461bc9ff62a3ca424cf88fb062c69abe33a39ccc160757c519c71a3f100f97",
+            "originalBase": "ar://BkXfeDwndd6vXavoqym1uIIT1obTaxrnKrOfm0ln2DY",
+            "originalEvents": "ar://1Euj208ds6JpeMkSfkqaAUB3qCfbDY5wE1ClpebP43A",
+            "originalSounds": "ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+            "originalTokenURI": "ar://TNm1k8lWm3FSxhkivzLN2TekOFBW1Y--QKN-Gv-zc3U",
+            "publishedAt": "2026-09-21T05:50:23.582Z",
+            "roleBlockNumber": "157185522",
+            "tokenId": "3"
+          },
+          "roleBlockNumber": "157185522",
+          "scheme": "eip712",
+          "signer": "0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722",
+          "value": "0x3b6c550ca8d773a5092d3f3528e3b4e551af6800807c665c6eed58c79a6f85d406888dde20fbfafee4f99a41a5279c409d229d27670b874f6173ebcefbb6f43e1c"
+        },
+        "tokenId": 3
+      },
+      "contentSha256": "e03e9e66fa26666e87deb8597d72109bedfc128be0cfd52b64bd64e214893504"
+    },
+    {
+      "tokenId": 4,
+      "queueId": "e4603e94-030e-4c3f-a7e6-156e8d7bc49f",
+      "schemaId": "ripples.score-snapshot.v1",
+      "originalTokenUri": "ar://DluJS7w-Xwze-VuUynOsE5bZES7IeP7gGZdKgDPigI8",
+      "metadata": {
+        "name": "Ripples #4",
+        "description": "A live jam on \"9\" recorded and minted as an on-chain Score NFT. All audio permanently stored on Arweave. Playable in the network-native web player.",
+        "image": "https://arweave.net/A74qnIoqKsnXw1fBw64Jdm0zbiecJSBm09KVXdMu3nk",
+        "external_url": "https://pond-ripple.xyz/score/4",
+        "animation_url": "https://arweave.net/NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0?events=ar://XVbfJXNAtx7xjuvPMMV50lRi9BUlo1p4NmdyC5lc_vA&base=ar%3A%2F%2FK5X3EQBDDCbp8BFxGQXyLb7kkP1A3BSwZlYIsIt-XhY&sounds=ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+        "attributes": [
+          {
+            "trait_type": "Track",
+            "value": "9"
+          },
+          {
+            "trait_type": "Week",
+            "value": 9
+          },
+          {
+            "trait_type": "Events",
+            "value": 2
+          },
+          {
+            "trait_type": "Minted At",
+            "value": "2026-09-21"
+          }
+        ]
+      },
+      "events": [
+        {
+          "key": "v",
+          "time": 144,
+          "duration": 182
+        },
+        {
+          "key": "f",
+          "time": 307,
+          "duration": 85
+        }
+      ],
+      "sounds": {
+        "version": 2,
+        "sounds": {
+          "a": {
+            "txId": "IUhG1-KLOS141d5tezEiWWv6dU47-qhnHEWxi4pRCdc",
+            "name": "a"
+          },
+          "b": {
+            "txId": "h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+            "name": "b"
+          },
+          "c": {
+            "txId": "Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+            "name": "c"
+          },
+          "d": {
+            "txId": "oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+            "name": "d"
+          },
+          "e": {
+            "txId": "1hPCYBL0BqN5vGTtHQXC-IuRiujPyDRsc-S4D2gry48",
+            "name": "e"
+          },
+          "f": {
+            "txId": "rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+            "name": "f"
+          },
+          "g": {
+            "txId": "BCj9epEcMNcZ9WDtJ-S2nAHGQUbsAfOBRhcNkHfbXWk",
+            "name": "g"
+          },
+          "h": {
+            "txId": "635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw",
+            "name": "h"
+          },
+          "i": {
+            "txId": "xrXdGsdHZ2hR-AhGJAbOFuGJbetR_7R4PVHwh694mw4",
+            "name": "i"
+          },
+          "j": {
+            "txId": "-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+            "name": "j"
+          },
+          "k": {
+            "txId": "0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+            "name": "k"
+          },
+          "l": {
+            "txId": "4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg",
+            "name": "l"
+          },
+          "m": {
+            "txId": "aeKNhAXyIrYRmnc5LatUu47qWisQn05Prlu-Q3ECDU0",
+            "name": "m"
+          },
+          "n": {
+            "txId": "C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+            "name": "n"
+          },
+          "o": {
+            "txId": "pg9jl45z2pIBY-S7NuOOaKR8hiUtBVJWjTIjeYudQqA",
+            "name": "o"
+          },
+          "p": {
+            "txId": "m_MYgwcC_xGvxkQp0d_L93Cc9aa0JjaQohJYX3bGBjE",
+            "name": "p"
+          },
+          "q": {
+            "txId": "LcRjeZMvY00zUpGAUOXma38DMV5XjwPc8QRziJYvdic",
+            "name": "q"
+          },
+          "r": {
+            "txId": "l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+            "name": "r"
+          },
+          "s": {
+            "txId": "kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+            "name": "s"
+          },
+          "t": {
+            "txId": "B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+            "name": "t"
+          },
+          "u": {
+            "txId": "H7Cg0HZKsxeiASE8nCu_yVDqruOeSZoB_jggE77Ztt4",
+            "name": "u"
+          },
+          "v": {
+            "txId": "VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+            "name": "v"
+          },
+          "w": {
+            "txId": "oV4W66I49IvS_2edz2Dp0mDk5Vo7OROdQ_TfDreNzCg",
+            "name": "w"
+          },
+          "x": {
+            "txId": "7a4Wh_sVEipQ5TKRY3_floANKh_YY4og2TogJYVixyQ",
+            "name": "x"
+          },
+          "y": {
+            "txId": "g9AAq6zlwHVyPF4hR2PEseEqydJ9XweGSPWHXnageAE",
+            "name": "y"
+          },
+          "z": {
+            "txId": "4yeXCsGiIh7Aoa2o8RrA30oiGQEiKeNrJ0TRSzc7yrk",
+            "name": "z"
+          }
+        }
+      },
+      "resourceAttestations": {
+        "metadata": {
+          "arTxId": "DluJS7w-Xwze-VuUynOsE5bZES7IeP7gGZdKgDPigI8",
+          "bytes": 860,
+          "sha256": "d30d7096bd4efcd1e688546f5d6dc68dd33a0d4ce7ca96c6e41a68f2b62ef482",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "events": {
+          "arTxId": "XVbfJXNAtx7xjuvPMMV50lRi9BUlo1p4NmdyC5lc_vA",
+          "bytes": 76,
+          "sha256": "9b390b44c2c358e22d2707c09eb0e98189ba4760b0df7142435eb4db0e26ff48",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "base": {
+          "arTxId": "K5X3EQBDDCbp8BFxGQXyLb7kkP1A3BSwZlYIsIt-XhY",
+          "bytes": 6076096,
+          "sha256": "7617fde2ceeb27dbb0e98888edbc60668a10f2495e95d90334f3aee74c519b7a",
+          "mime": "audio/mpeg",
+          "level": "attested"
+        },
+        "soundSet": {
+          "arTxId": "NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+          "bytes": 2558,
+          "sha256": "df59a2eaddc1ae63f26e7cf58da3c02e80cfe2558bbf17794dda697a36c98fb9",
+          "mime": "application/json",
+          "level": "attested"
+        },
+        "originalDecoder": {
+          "arTxId": "NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0",
+          "bytes": 23362,
+          "sha256": "399f94a78127fc9b34eb7ba5c52bb674e9ca128b39d5ec8bd0b45f639c4e4f05",
+          "mime": "text/html",
+          "level": "attested"
+        },
+        "decoder": {
+          "arTxId": "Yu9fOcdc8fzBnPzFWabCyeh3TRcXYTowN5cpv68dOO0",
+          "sha256": "08eb79642b8ece4e7df2cd427fdda4c65b2bb28a40a1b1a4b4b328dd7f6299ee",
+          "bytes": 19562,
+          "mime": "text/html",
+          "level": "attested"
+        },
+        "compatibility": {
+          "arTxId": "tzMA2WrIn8oBGEeZ7J7kZOWXzaWRFWuOmOsea0KLpaY",
+          "sha256": "3b149be71149097341f08b2fc1dc2e8827b295d8ea1b5e1648e4874fc9b3ec00",
+          "bytes": 2367,
+          "mime": "application/json",
+          "level": "attested"
+        }
+      },
+      "compatibility": {
+        "canonicalDigest": "091086d77fa87a9a0c8035d7c1ddce802eacd2039ff12b142cf292c479de6639",
+        "chainId": 10,
+        "effectiveSounds": {
+          "f": {
+            "arTxId": "JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "f8d904bcb60a6dce27af1bf80c5b10c61389e43fd46f89727b0f3fae693cd5b7"
+          },
+          "v": {
+            "arTxId": "PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+            "bytes": 81546,
+            "mime": "audio/mpeg",
+            "sha256": "30b72ebf3542746e557d57bd09cd075cd203e2da930d15581fc5a2150ef218e1"
+          }
+        },
+        "original": {
+          "base": "ar://K5X3EQBDDCbp8BFxGQXyLb7kkP1A3BSwZlYIsIt-XhY",
+          "events": "ar://XVbfJXNAtx7xjuvPMMV50lRi9BUlo1p4NmdyC5lc_vA",
+          "sounds": "ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8"
+        },
+        "originalTokenURI": "ar://DluJS7w-Xwze-VuUynOsE5bZES7IeP7gGZdKgDPigI8",
+        "publishedAt": "2026-09-21T05:50:23.582Z",
+        "resolution": {
+          "changes": [
+            {
+              "fromArTxId": "rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+              "key": "f",
+              "mode": "override",
+              "toArTxId": "JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM"
+            },
+            {
+              "fromArTxId": "VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+              "key": "v",
+              "mode": "override",
+              "toArTxId": "PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw"
+            }
+          ],
+          "reason": "Restore every used key to the current-33 identities active when this Score was recorded.",
+          "soundSet": "current-33-v1",
+          "usedKeys": [
+            "f",
+            "v"
+          ]
+        },
+        "schema": "ripples.score-compatibility.v1",
+        "scoreContract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+        "signature": {
+          "adminRole": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "domain": {
+            "chainId": 10,
+            "name": "RipplesCompatibility",
+            "verifyingContract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+            "version": "1"
+          },
+          "message": {
+            "canonicalDigest": "0x091086d77fa87a9a0c8035d7c1ddce802eacd2039ff12b142cf292c479de6639",
+            "effectiveSoundsDigest": "0x51604f18e40081851b01af322c0763ee71fe177f70ec958e82ad36ce5ecfff1a",
+            "originalBase": "ar://K5X3EQBDDCbp8BFxGQXyLb7kkP1A3BSwZlYIsIt-XhY",
+            "originalEvents": "ar://XVbfJXNAtx7xjuvPMMV50lRi9BUlo1p4NmdyC5lc_vA",
+            "originalSounds": "ar://NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+            "originalTokenURI": "ar://DluJS7w-Xwze-VuUynOsE5bZES7IeP7gGZdKgDPigI8",
+            "publishedAt": "2026-09-21T05:50:23.582Z",
+            "roleBlockNumber": "157185522",
+            "tokenId": "4"
+          },
+          "roleBlockNumber": "157185522",
+          "scheme": "eip712",
+          "signer": "0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722",
+          "value": "0xf9324e717e70347c50bbe4e4f49e961aabbed301251ef4355f4fef807023af622da4153c14b282432acb0f0155a7f3b6509b8dcf9df248932a1a78a808d479811b"
+        },
+        "tokenId": 4
+      },
+      "contentSha256": "e828413ecd1f21523a00abdb7d7329cef4b51b17340e7d8980c74e21c4949373"
+    }
+  ]
+}
