@@ -1,0 +1,1220 @@
+{
+  "schema": "p15-h7.track-bases.v1",
+  "generatedAt": "2026-09-21T05:45:20.766Z",
+  "environment": "production",
+  "activeQueueCount": 0,
+  "trackCount": 35,
+  "tracks": [
+    {
+      "id": "21029773-9978-4147-b106-f5b22fcddeb9",
+      "week": 1,
+      "title": "1",
+      "arweave_url": "https://arweave.net/qTfBmzoOJs6D4gYV5FJ0lBLKwdNzdzGEwnTEBcEiIJc",
+      "published": true,
+      "arTxId": "qTfBmzoOJs6D4gYV5FJ0lBLKwdNzdzGEwnTEBcEiIJc",
+      "bytes": 2846656,
+      "sha256": "51175ff814144907f603154c7d808cc8c30599dab0ffd53010df6fdd904f697f",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 2846656,
+          "sha256": "51175ff814144907f603154c7d808cc8c30599dab0ffd53010df6fdd904f697f",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 2846656,
+          "sha256": "51175ff814144907f603154c7d808cc8c30599dab0ffd53010df6fdd904f697f",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 2846656,
+          "sha256": "51175ff814144907f603154c7d808cc8c30599dab0ffd53010df6fdd904f697f",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "eb0287ec-45f1-4ce0-90ed-a9ea4057c34d",
+      "week": 2,
+      "title": "2",
+      "arweave_url": "https://arweave.net/mME4LZGy_tHUDwk9w_pimlZ76_MF9McBn23YHuq5RmM",
+      "published": true,
+      "arTxId": "mME4LZGy_tHUDwk9w_pimlZ76_MF9McBn23YHuq5RmM",
+      "bytes": 2286016,
+      "sha256": "eb63195e3cd32d659c47890b672c8d138e964548f88f9ae972cc4e436547790e",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 2286016,
+          "sha256": "eb63195e3cd32d659c47890b672c8d138e964548f88f9ae972cc4e436547790e",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 2286016,
+          "sha256": "eb63195e3cd32d659c47890b672c8d138e964548f88f9ae972cc4e436547790e",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 2286016,
+          "sha256": "eb63195e3cd32d659c47890b672c8d138e964548f88f9ae972cc4e436547790e",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "19aeeb04-f07d-4d08-ae0c-4f630ff5e864",
+      "week": 3,
+      "title": "3",
+      "arweave_url": "https://arweave.net/fTgpp_AwoC5O4BEthX1A8wGuoIx1N0eu-d2o6sts4X8",
+      "published": true,
+      "arTxId": "fTgpp_AwoC5O4BEthX1A8wGuoIx1N0eu-d2o6sts4X8",
+      "bytes": 4526656,
+      "sha256": "c8bd854d4df587b0dec573753f3ad4c4bd4512e1841cf3b3a003a44fae7d5b3d",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 4526656,
+          "sha256": "c8bd854d4df587b0dec573753f3ad4c4bd4512e1841cf3b3a003a44fae7d5b3d",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 4526656,
+          "sha256": "c8bd854d4df587b0dec573753f3ad4c4bd4512e1841cf3b3a003a44fae7d5b3d",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 4526656,
+          "sha256": "c8bd854d4df587b0dec573753f3ad4c4bd4512e1841cf3b3a003a44fae7d5b3d",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "7b7a6182-8cbb-44c7-809c-693263ff96cb",
+      "week": 4,
+      "title": "4",
+      "arweave_url": "https://arweave.net/jZhRDHcWg-huJsYyma-Nk_ak2Fw_cgwEULQO5ApZUAI",
+      "published": true,
+      "arTxId": "jZhRDHcWg-huJsYyma-Nk_ak2Fw_cgwEULQO5ApZUAI",
+      "bytes": 1726336,
+      "sha256": "ce883d052a0586307abf4792bea3fe955f7199e23721035ec4a25287ac4a32aa",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 1726336,
+          "sha256": "ce883d052a0586307abf4792bea3fe955f7199e23721035ec4a25287ac4a32aa",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 1726336,
+          "sha256": "ce883d052a0586307abf4792bea3fe955f7199e23721035ec4a25287ac4a32aa",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 1726336,
+          "sha256": "ce883d052a0586307abf4792bea3fe955f7199e23721035ec4a25287ac4a32aa",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "7ac769a9-902d-4f67-98da-da0849a8bed6",
+      "week": 5,
+      "title": "5",
+      "arweave_url": "https://arweave.net/eaeyebQmI4z5rLC-rVcVe6tje650IZEu8SDMoKLP-RI",
+      "published": true,
+      "arTxId": "eaeyebQmI4z5rLC-rVcVe6tje650IZEu8SDMoKLP-RI",
+      "bytes": 5246656,
+      "sha256": "68342dfd5d9532d7c4c977e0b8824db36fd9847d54e7c4a6ff6126bbedd75b78",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 5246656,
+          "sha256": "68342dfd5d9532d7c4c977e0b8824db36fd9847d54e7c4a6ff6126bbedd75b78",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 5246656,
+          "sha256": "68342dfd5d9532d7c4c977e0b8824db36fd9847d54e7c4a6ff6126bbedd75b78",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "8527a1b5-570c-4e37-b335-9a57b9aa170f",
+      "week": 6,
+      "title": "6",
+      "arweave_url": "https://arweave.net/qxwmywQi-QHUTSCxLrSrnafyhH-VUvPu912PGE1zuhE",
+      "published": true,
+      "arTxId": "qxwmywQi-QHUTSCxLrSrnafyhH-VUvPu912PGE1zuhE",
+      "bytes": 5226496,
+      "sha256": "17cb5341661afba10b47db10562f16438b29e707960e433eeabe80da6d10999c",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 5226496,
+          "sha256": "17cb5341661afba10b47db10562f16438b29e707960e433eeabe80da6d10999c",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 5226496,
+          "sha256": "17cb5341661afba10b47db10562f16438b29e707960e433eeabe80da6d10999c",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 5226496,
+          "sha256": "17cb5341661afba10b47db10562f16438b29e707960e433eeabe80da6d10999c",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "891dda4d-a243-4ca6-bd5a-b42697a3346b",
+      "week": 7,
+      "title": "7",
+      "arweave_url": "https://arweave.net/Y5qNtdfvqvQtYgenLPevqRFMdS4SxjscPqWCVsumYVY",
+      "published": true,
+      "arTxId": "Y5qNtdfvqvQtYgenLPevqRFMdS4SxjscPqWCVsumYVY",
+      "bytes": 4466176,
+      "sha256": "6a2e44e528b44facdc117aaa8da82fd00324926dc831e99ae80978b8428c2a82",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 4466176,
+          "sha256": "6a2e44e528b44facdc117aaa8da82fd00324926dc831e99ae80978b8428c2a82",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 4466176,
+          "sha256": "6a2e44e528b44facdc117aaa8da82fd00324926dc831e99ae80978b8428c2a82",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "7df38fb9-3fd8-4dd4-a109-a8d93f3cc063",
+      "week": 8,
+      "title": "8",
+      "arweave_url": "https://arweave.net/z-XL6LlP3kIZb-HYyn1gsK_gq6PaLiIpEo5WbhkDf5g",
+      "published": true,
+      "arTxId": "z-XL6LlP3kIZb-HYyn1gsK_gq6PaLiIpEo5WbhkDf5g",
+      "bytes": 2926336,
+      "sha256": "c2f2a58990c2b3ceea7c3e3c9190dc3cfbb010280ce70e3696c9d46980e5a876",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 2926336,
+          "sha256": "c2f2a58990c2b3ceea7c3e3c9190dc3cfbb010280ce70e3696c9d46980e5a876",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 2926336,
+          "sha256": "c2f2a58990c2b3ceea7c3e3c9190dc3cfbb010280ce70e3696c9d46980e5a876",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "de96230b-54a7-4b29-a7d0-82cebf07ab86",
+      "week": 9,
+      "title": "9",
+      "arweave_url": "https://arweave.net/K5X3EQBDDCbp8BFxGQXyLb7kkP1A3BSwZlYIsIt-XhY",
+      "published": true,
+      "arTxId": "K5X3EQBDDCbp8BFxGQXyLb7kkP1A3BSwZlYIsIt-XhY",
+      "bytes": 6076096,
+      "sha256": "7617fde2ceeb27dbb0e98888edbc60668a10f2495e95d90334f3aee74c519b7a",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 6076096,
+          "sha256": "7617fde2ceeb27dbb0e98888edbc60668a10f2495e95d90334f3aee74c519b7a",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 6076096,
+          "sha256": "7617fde2ceeb27dbb0e98888edbc60668a10f2495e95d90334f3aee74c519b7a",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "9417ff60-f1b6-4135-8f61-bd556a2220dc",
+      "week": 10,
+      "title": "10",
+      "arweave_url": "https://arweave.net/zG-__m1rM1DpuN6KgUzIZp7T8fUzjywz_8U4b9zVt9E",
+      "published": true,
+      "arTxId": "zG-__m1rM1DpuN6KgUzIZp7T8fUzjywz_8U4b9zVt9E",
+      "bytes": 3606016,
+      "sha256": "f0e1ba28d6c40de77f31cd3e1a5836abab677598433f84965b0ae41a4221b94a",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 3606016,
+          "sha256": "f0e1ba28d6c40de77f31cd3e1a5836abab677598433f84965b0ae41a4221b94a",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 3606016,
+          "sha256": "f0e1ba28d6c40de77f31cd3e1a5836abab677598433f84965b0ae41a4221b94a",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "f7430714-7d5a-4ae3-8804-698fdecdd1eb",
+      "week": 11,
+      "title": "11",
+      "arweave_url": "https://arweave.net/9PHQLzUxxvCJ2Dz2BpDj9hf1eQSPvCsoOUO0UEsFiBQ",
+      "published": true,
+      "arTxId": "9PHQLzUxxvCJ2Dz2BpDj9hf1eQSPvCsoOUO0UEsFiBQ",
+      "bytes": 6186496,
+      "sha256": "981f08aab1d4a623da2069b6ff93cfcfa40ebc92cd9d858ff9d07e2c7bf2a001",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 6186496,
+          "sha256": "981f08aab1d4a623da2069b6ff93cfcfa40ebc92cd9d858ff9d07e2c7bf2a001",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 6186496,
+          "sha256": "981f08aab1d4a623da2069b6ff93cfcfa40ebc92cd9d858ff9d07e2c7bf2a001",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "85289b10-d222-4502-8d6a-81ba7540860e",
+      "week": 12,
+      "title": "12",
+      "arweave_url": "https://arweave.net/d7RLmASL3etE7vAHGxvLtRD67v3ua3pOj81pKzpSfxk",
+      "published": true,
+      "arTxId": "d7RLmASL3etE7vAHGxvLtRD67v3ua3pOj81pKzpSfxk",
+      "bytes": 5046016,
+      "sha256": "e635a850d5776b12bf438da25e4aa4f28016e5758b2a6bd452a894e1c578ab3c",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 5046016,
+          "sha256": "e635a850d5776b12bf438da25e4aa4f28016e5758b2a6bd452a894e1c578ab3c",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 5046016,
+          "sha256": "e635a850d5776b12bf438da25e4aa4f28016e5758b2a6bd452a894e1c578ab3c",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "44220b86-a9db-4084-8f50-47f8e00a8573",
+      "week": 13,
+      "title": "13",
+      "arweave_url": "https://arweave.net/Kx0B6fLTJP8YPiuzhsnJkLUF1QeXzjR713VYdZ-aY5o",
+      "published": true,
+      "arTxId": "Kx0B6fLTJP8YPiuzhsnJkLUF1QeXzjR713VYdZ-aY5o",
+      "bytes": 4406656,
+      "sha256": "f942a0ea47a22b3400145a8dfc9d6176ba8b0d5645dd7211d551288f2e6d10ee",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 4406656,
+          "sha256": "f942a0ea47a22b3400145a8dfc9d6176ba8b0d5645dd7211d551288f2e6d10ee",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 4406656,
+          "sha256": "f942a0ea47a22b3400145a8dfc9d6176ba8b0d5645dd7211d551288f2e6d10ee",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "cc5b254c-f7f7-4446-a718-c58f15dae193",
+      "week": 14,
+      "title": "14",
+      "arweave_url": "https://arweave.net/MmEJPrjjYjzy9GeDP-jpLn0tqPEWpDqy0xlgswO9iDU",
+      "published": true,
+      "arTxId": "MmEJPrjjYjzy9GeDP-jpLn0tqPEWpDqy0xlgswO9iDU",
+      "bytes": 2246656,
+      "sha256": "dc2b23cadbac8c0cf769e23b1180d072a3720f47034a6d07ab5746e274ce0415",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 2246656,
+          "sha256": "dc2b23cadbac8c0cf769e23b1180d072a3720f47034a6d07ab5746e274ce0415",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 2246656,
+          "sha256": "dc2b23cadbac8c0cf769e23b1180d072a3720f47034a6d07ab5746e274ce0415",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "78326e66-0b5d-4650-9534-f8f8740bc0e9",
+      "week": 15,
+      "title": "15",
+      "arweave_url": "https://arweave.net/kMrlz6TPom33MhWdX1D0teF0wvStw3TGxICmtJcZ_2E",
+      "published": true,
+      "arTxId": "kMrlz6TPom33MhWdX1D0teF0wvStw3TGxICmtJcZ_2E",
+      "bytes": 5856256,
+      "sha256": "81fd031e16806dff943b42f30b60682aa7021d6ec97332260fa33596e9b9bed6",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 5856256,
+          "sha256": "81fd031e16806dff943b42f30b60682aa7021d6ec97332260fa33596e9b9bed6",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 5856256,
+          "sha256": "81fd031e16806dff943b42f30b60682aa7021d6ec97332260fa33596e9b9bed6",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "d43a6930-74d8-4ed3-af47-f817f1e7ab07",
+      "week": 16,
+      "title": "16",
+      "arweave_url": "https://arweave.net/YX1pF9noKVe6UFEiSSD6BQQ7J2gJBg8AQHW46zDqYGs",
+      "published": true,
+      "arTxId": "YX1pF9noKVe6UFEiSSD6BQQ7J2gJBg8AQHW46zDqYGs",
+      "bytes": 3946816,
+      "sha256": "d2a94c993ad954b1ea8b936678193f19eb25994192fc1b0fe27d9f22acbf8c9e",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 3946816,
+          "sha256": "d2a94c993ad954b1ea8b936678193f19eb25994192fc1b0fe27d9f22acbf8c9e",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 3946816,
+          "sha256": "d2a94c993ad954b1ea8b936678193f19eb25994192fc1b0fe27d9f22acbf8c9e",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "807a3c8a-6370-434d-8e91-5493ba19edcc",
+      "week": 17,
+      "title": "17",
+      "arweave_url": "https://arweave.net/BkXfeDwndd6vXavoqym1uIIT1obTaxrnKrOfm0ln2DY",
+      "published": true,
+      "arTxId": "BkXfeDwndd6vXavoqym1uIIT1obTaxrnKrOfm0ln2DY",
+      "bytes": 3966016,
+      "sha256": "0afe6742126dd3cb806462eabf820a662a1a5b5a85adc425c7ef398988504caf",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 3966016,
+          "sha256": "0afe6742126dd3cb806462eabf820a662a1a5b5a85adc425c7ef398988504caf",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 3966016,
+          "sha256": "0afe6742126dd3cb806462eabf820a662a1a5b5a85adc425c7ef398988504caf",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "695c20e3-5f26-44ed-99b7-388c2a7121da",
+      "week": 18,
+      "title": "18",
+      "arweave_url": "https://arweave.net/fKkADGwhnd140FLc8BTewe__hGvCaohRbIqSy-erCEI",
+      "published": true,
+      "arTxId": "fKkADGwhnd140FLc8BTewe__hGvCaohRbIqSy-erCEI",
+      "bytes": 3326656,
+      "sha256": "4e60cf830377cad9bf95009f92e51161dbdfb5ebe7243f177023ab52f5824dfc",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 3326656,
+          "sha256": "4e60cf830377cad9bf95009f92e51161dbdfb5ebe7243f177023ab52f5824dfc",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 3326656,
+          "sha256": "4e60cf830377cad9bf95009f92e51161dbdfb5ebe7243f177023ab52f5824dfc",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 3326656,
+          "sha256": "4e60cf830377cad9bf95009f92e51161dbdfb5ebe7243f177023ab52f5824dfc",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "80e08d48-cc78-4bef-972a-98d56c02d92b",
+      "week": 19,
+      "title": "19",
+      "arweave_url": "https://arweave.net/yt6RfHu7BGFOxlTS1W80_SpM8WLG87BwWgGLPVj4TY0",
+      "published": true,
+      "arTxId": "yt6RfHu7BGFOxlTS1W80_SpM8WLG87BwWgGLPVj4TY0",
+      "bytes": 5886016,
+      "sha256": "de3e2fec7a000d1e08253c4a74d56f21079f4ce4ae55fb91b68708173ec40191",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 5886016,
+          "sha256": "de3e2fec7a000d1e08253c4a74d56f21079f4ce4ae55fb91b68708173ec40191",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 5886016,
+          "sha256": "de3e2fec7a000d1e08253c4a74d56f21079f4ce4ae55fb91b68708173ec40191",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "beb124af-dd37-4ad3-b7c2-ceea3050fe5c",
+      "week": 20,
+      "title": "20",
+      "arweave_url": "https://arweave.net/by5Zw_MyjzuY13tfqYPsntkwaY2oSSjMcKOWkwnTMfY",
+      "published": true,
+      "arTxId": "by5Zw_MyjzuY13tfqYPsntkwaY2oSSjMcKOWkwnTMfY",
+      "bytes": 6486016,
+      "sha256": "2b4f89d16899d54afaeb90bb0529e9a5a7159424c57cda842ad913ce2f451a84",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 6486016,
+          "sha256": "2b4f89d16899d54afaeb90bb0529e9a5a7159424c57cda842ad913ce2f451a84",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 6486016,
+          "sha256": "2b4f89d16899d54afaeb90bb0529e9a5a7159424c57cda842ad913ce2f451a84",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "5a52e031-ee29-4b58-a0f3-9b779ce97f40",
+      "week": 21,
+      "title": "21",
+      "arweave_url": "https://arweave.net/5GpDkiHUdR91_DT99UFCoUhrDBuNxqg6RVYCGmKCt8w",
+      "published": true,
+      "arTxId": "5GpDkiHUdR91_DT99UFCoUhrDBuNxqg6RVYCGmKCt8w",
+      "bytes": 3046336,
+      "sha256": "dc1d63ed8d630ea6caa106358a28b109dc7c99bb838d4f90383b748aa62c280d",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 3046336,
+          "sha256": "dc1d63ed8d630ea6caa106358a28b109dc7c99bb838d4f90383b748aa62c280d",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 3046336,
+          "sha256": "dc1d63ed8d630ea6caa106358a28b109dc7c99bb838d4f90383b748aa62c280d",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 3046336,
+          "sha256": "dc1d63ed8d630ea6caa106358a28b109dc7c99bb838d4f90383b748aa62c280d",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "07b3b553-28fa-4090-b6d7-3e63e6d14f07",
+      "week": 22,
+      "title": "22",
+      "arweave_url": "https://arweave.net/CVDwW_hsF9CZD8dapihbfTt4nNL3v9_MdubPWHW6mbE",
+      "published": true,
+      "arTxId": "CVDwW_hsF9CZD8dapihbfTt4nNL3v9_MdubPWHW6mbE",
+      "bytes": 4406656,
+      "sha256": "52dca6be6fe0c61e223642ab0d8058ae3581ec674eed455e017881494f398563",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 4406656,
+          "sha256": "52dca6be6fe0c61e223642ab0d8058ae3581ec674eed455e017881494f398563",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 4406656,
+          "sha256": "52dca6be6fe0c61e223642ab0d8058ae3581ec674eed455e017881494f398563",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "325f93e5-3063-4ae0-806d-0b6d6363aba3",
+      "week": 23,
+      "title": "23",
+      "arweave_url": "https://arweave.net/DNu6UUW1GiwGa8Ndrb5LL3oYgDcXiuZsNWMd4HnZ31E",
+      "published": true,
+      "arTxId": "DNu6UUW1GiwGa8Ndrb5LL3oYgDcXiuZsNWMd4HnZ31E",
+      "bytes": 3106816,
+      "sha256": "16e8f258548305284038b5ac239eb728c63ffa0744cad3eae18a67d5c07ca596",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 3106816,
+          "sha256": "16e8f258548305284038b5ac239eb728c63ffa0744cad3eae18a67d5c07ca596",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 3106816,
+          "sha256": "16e8f258548305284038b5ac239eb728c63ffa0744cad3eae18a67d5c07ca596",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "6aab1b24-225c-4300-8b4d-ef86e74866e3",
+      "week": 24,
+      "title": "24",
+      "arweave_url": "https://arweave.net/CJTuz3trfBF40_WucOWFbONlH5zB-8WUATGqgTwlnt4",
+      "published": true,
+      "arTxId": "CJTuz3trfBF40_WucOWFbONlH5zB-8WUATGqgTwlnt4",
+      "bytes": 3526336,
+      "sha256": "4c0e6655726f251f619be2674b4059a0ec13c8311bf9f50545e9ed6e3854d312",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 3526336,
+          "sha256": "4c0e6655726f251f619be2674b4059a0ec13c8311bf9f50545e9ed6e3854d312",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 3526336,
+          "sha256": "4c0e6655726f251f619be2674b4059a0ec13c8311bf9f50545e9ed6e3854d312",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "410ce6d3-9541-4761-b29e-0a19d1872104",
+      "week": 25,
+      "title": "25",
+      "arweave_url": "https://arweave.net/bxPW11xFPGLTxySHVK_UyuZWvvio1jjfTsLPODufRGk",
+      "published": true,
+      "arTxId": "bxPW11xFPGLTxySHVK_UyuZWvvio1jjfTsLPODufRGk",
+      "bytes": 4336576,
+      "sha256": "1319282c82ce0701666fe4a0a5cf7e671b9c344fbd0de9c751541bb3ef607dba",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 4336576,
+          "sha256": "1319282c82ce0701666fe4a0a5cf7e671b9c344fbd0de9c751541bb3ef607dba",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 4336576,
+          "sha256": "1319282c82ce0701666fe4a0a5cf7e671b9c344fbd0de9c751541bb3ef607dba",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "516b404d-b443-40a1-8d61-ed6c6e197874",
+      "week": 26,
+      "title": "26",
+      "arweave_url": "https://arweave.net/PIlnRzH9lvDPQdJ92M92PGS85e3f4AS_v8hveAS7Eiw",
+      "published": true,
+      "arTxId": "PIlnRzH9lvDPQdJ92M92PGS85e3f4AS_v8hveAS7Eiw",
+      "bytes": 2426176,
+      "sha256": "45806fdb476d69891b37ba7200a572f81b16d057af62bfea68cb858a1f176750",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 2426176,
+          "sha256": "45806fdb476d69891b37ba7200a572f81b16d057af62bfea68cb858a1f176750",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 2426176,
+          "sha256": "45806fdb476d69891b37ba7200a572f81b16d057af62bfea68cb858a1f176750",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "73130478-7bef-48dc-806f-e76b6676c18d",
+      "week": 27,
+      "title": "27",
+      "arweave_url": "https://arweave.net/F2LinLvnw003miZT23AX6yocpo1NAgpZHnn961zKHnU",
+      "published": true,
+      "arTxId": "F2LinLvnw003miZT23AX6yocpo1NAgpZHnn961zKHnU",
+      "bytes": 5766016,
+      "sha256": "a0309dcac543f9176fb9038b497eeda24357e1747fbfa5cf440c03613d07de08",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 5766016,
+          "sha256": "a0309dcac543f9176fb9038b497eeda24357e1747fbfa5cf440c03613d07de08",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 5766016,
+          "sha256": "a0309dcac543f9176fb9038b497eeda24357e1747fbfa5cf440c03613d07de08",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "aad18d17-ec13-4438-ac4e-e350a50ec1fe",
+      "week": 28,
+      "title": "28",
+      "arweave_url": "https://arweave.net/NF8k00euCL7PvWHEE_muDVH_MYbWyRLrygP6J2dX5tA",
+      "published": true,
+      "arTxId": "NF8k00euCL7PvWHEE_muDVH_MYbWyRLrygP6J2dX5tA",
+      "bytes": 2126656,
+      "sha256": "e2cefd65fc46cae3321d577c2194ea7ff4aeaf7b92a73d6ee948abd81df0ed5a",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 2126656,
+          "sha256": "e2cefd65fc46cae3321d577c2194ea7ff4aeaf7b92a73d6ee948abd81df0ed5a",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 2126656,
+          "sha256": "e2cefd65fc46cae3321d577c2194ea7ff4aeaf7b92a73d6ee948abd81df0ed5a",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "cc304cf9-659d-47c0-b852-dc616484b9d1",
+      "week": 29,
+      "title": "29",
+      "arweave_url": "https://arweave.net/gW85tsAhsu8IPW4zxB2VyurCfcCeuU1y26lWh_wDIl4",
+      "published": true,
+      "arTxId": "gW85tsAhsu8IPW4zxB2VyurCfcCeuU1y26lWh_wDIl4",
+      "bytes": 4066816,
+      "sha256": "967c28ca160054f0ccbb136111a6256c61a493d3188eb37f16be20cb85ecb4ac",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 4066816,
+          "sha256": "967c28ca160054f0ccbb136111a6256c61a493d3188eb37f16be20cb85ecb4ac",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 4066816,
+          "sha256": "967c28ca160054f0ccbb136111a6256c61a493d3188eb37f16be20cb85ecb4ac",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "08550208-7473-4e89-92b0-8031c945d7c4",
+      "week": 30,
+      "title": "30",
+      "arweave_url": "https://arweave.net/1c3brOxotH7TDT6JhhE5iO2j5H6JUWynlM0u9PMuE-c",
+      "published": true,
+      "arTxId": "1c3brOxotH7TDT6JhhE5iO2j5H6JUWynlM0u9PMuE-c",
+      "bytes": 3966016,
+      "sha256": "edb69af236d68540b4e70719feed1cd37782bf9b2a5ae0274ec52b5f631e4388",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 3966016,
+          "sha256": "edb69af236d68540b4e70719feed1cd37782bf9b2a5ae0274ec52b5f631e4388",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 3966016,
+          "sha256": "edb69af236d68540b4e70719feed1cd37782bf9b2a5ae0274ec52b5f631e4388",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "4598fa9c-8e06-4823-b34f-89047af69864",
+      "week": 31,
+      "title": "31",
+      "arweave_url": "https://arweave.net/M6ZjJcBWNfl83Nf2kyRbLB93gooLwg85fbT0c5U2AXk",
+      "published": true,
+      "arTxId": "M6ZjJcBWNfl83Nf2kyRbLB93gooLwg85fbT0c5U2AXk",
+      "bytes": 6366016,
+      "sha256": "4ddec747d78c815996b434cd093b174e690d6de7f212069e66756ced75bb7a32",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 6366016,
+          "sha256": "4ddec747d78c815996b434cd093b174e690d6de7f212069e66756ced75bb7a32",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 6366016,
+          "sha256": "4ddec747d78c815996b434cd093b174e690d6de7f212069e66756ced75bb7a32",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "c3de4558-7a4b-4a07-a95e-58246e56157f",
+      "week": 32,
+      "title": "32",
+      "arweave_url": "https://arweave.net/jJxmfUr_q4lWIzm3-YoOyUmwEp8vkAoXg3a80zRVxSs",
+      "published": true,
+      "arTxId": "jJxmfUr_q4lWIzm3-YoOyUmwEp8vkAoXg3a80zRVxSs",
+      "bytes": 8086336,
+      "sha256": "df08610201c470ae35a174422e014c5a8bbaefea9ee93aff59d11f53573cb8a3",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 8086336,
+          "sha256": "df08610201c470ae35a174422e014c5a8bbaefea9ee93aff59d11f53573cb8a3",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 8086336,
+          "sha256": "df08610201c470ae35a174422e014c5a8bbaefea9ee93aff59d11f53573cb8a3",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "eeef9acd-b0f5-4846-ab6c-e72e06656598",
+      "week": 33,
+      "title": "33",
+      "arweave_url": "https://arweave.net/M-NM7NGjnakWHaNE8Su3LLO5qAGckpNeVX3weToIqIQ",
+      "published": true,
+      "arTxId": "M-NM7NGjnakWHaNE8Su3LLO5qAGckpNeVX3weToIqIQ",
+      "bytes": 7326016,
+      "sha256": "c94083362491cdf9b84387a0e7d392017579478ece082df46a544d1b08b5b1ab",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 7326016,
+          "sha256": "c94083362491cdf9b84387a0e7d392017579478ece082df46a544d1b08b5b1ab",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 7326016,
+          "sha256": "c94083362491cdf9b84387a0e7d392017579478ece082df46a544d1b08b5b1ab",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "2dd7e3ef-c992-4868-b08d-0c92ce440ef4",
+      "week": 34,
+      "title": "34",
+      "arweave_url": "https://arweave.net/viMvDlegjayDvrKQc7v60z2p2brKFs8qhMs6O3V6dqQ",
+      "published": true,
+      "arTxId": "viMvDlegjayDvrKQc7v60z2p2brKFs8qhMs6O3V6dqQ",
+      "bytes": 6486016,
+      "sha256": "73f33af99eb8d8ab4f974a07d3734b0dd49b9797dfd258e0e6dbaf1b07e3cd37",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 6486016,
+          "sha256": "73f33af99eb8d8ab4f974a07d3734b0dd49b9797dfd258e0e6dbaf1b07e3cd37",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 6486016,
+          "sha256": "73f33af99eb8d8ab4f974a07d3734b0dd49b9797dfd258e0e6dbaf1b07e3cd37",
+          "mime": "audio/mpeg"
+        }
+      ]
+    },
+    {
+      "id": "8ae0e6d5-b10d-4368-a430-90ce6a9dead7",
+      "week": 35,
+      "title": "35",
+      "arweave_url": "https://arweave.net/kI9FOTW3iALMXl86Bx_ZftND4ADMDzKtISZKMPSm65M",
+      "published": true,
+      "arTxId": "kI9FOTW3iALMXl86Bx_ZftND4ADMDzKtISZKMPSm65M",
+      "bytes": 8886016,
+      "sha256": "6cd95c4fb5d36d2766ab11e27dff2b13f1ede95b36f2bd1d6d38bacc0e10d1b5",
+      "mime": "audio/mpeg",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 8886016,
+          "sha256": "6cd95c4fb5d36d2766ab11e27dff2b13f1ede95b36f2bd1d6d38bacc0e10d1b5",
+          "mime": "audio/mpeg"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 8886016,
+          "sha256": "6cd95c4fb5d36d2766ab11e27dff2b13f1ede95b36f2bd1d6d38bacc0e10d1b5",
+          "mime": "audio/mpeg"
+        }
+      ]
+    }
+  ]
+}
