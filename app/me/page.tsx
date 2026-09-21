@@ -127,11 +127,6 @@ export default function MePage() {
         ) : (
           <div className="me-archive__workspace">
             <aside className="me-archive__rail">
-              <div className="me-archive__intro">
-                <p className="me-archive__kicker">PRIVATE ARCHIVE</p>
-                <h1>我的音乐档案</h1>
-                <p>被保存的声音，按它们的下一步去向留在这里。</p>
-              </div>
               <nav className="me-archive__index" aria-label="音乐档案目录">
                 {navItems.map((item) => (
                   <button key={item.id} type="button" data-active={active === item.id || undefined}

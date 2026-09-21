@@ -28,7 +28,7 @@ export default function ScoreArchiveRow({ score, index }: { score: OwnedScoreNFT
 
   return (
     <article className="me-archive-row" data-status={score.status}>
-      <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')} · RECORD</p>
+      <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')}</p>
       <div className="me-archive-row__main">
         <h3>{title}</h3>
         <p>{score.trackTitle}{score.eventCount == null ? ' · 事件数待核验' : ` · ${score.eventCount} 个永久事件`}</p>

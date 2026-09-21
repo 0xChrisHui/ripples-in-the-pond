@@ -88,7 +88,7 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
   return (
     <article className="me-archive-row" data-status={recording.pendingScoreId ? 'ready' : 'local'}
       data-expiry={expiry.urgent ? 'urgent' : 'normal'}>
-      <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')} · RECORDING</p>
+      <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')}</p>
       <div className="me-archive-row__main">
         <h3>{recording.title}</h3>
         <p>{recording.eventCount} 个演奏事件</p>
@@ -112,8 +112,10 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
           {mintState === 'queued' || mintState === 'success' ? (
             <span>{mintState === 'queued' ? '正在提交…' : '已进入制作'}</span>
           ) : (
-            <button type="button" onClick={() => void mint(recording.pendingScoreId!)}>
-              {mintState === 'error' ? '重试制作' : '制作唱片'}
+            <button className="me-archive-row__mint" type="button"
+              aria-label={`将${recording.title}制作成唱片`}
+              onClick={() => void mint(recording.pendingScoreId!)}>
+              {mintState === 'error' ? '重试制作' : '制作唱片'} <span aria-hidden="true">→</span>
             </button>
           )}
         </div>

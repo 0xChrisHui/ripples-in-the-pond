@@ -9,11 +9,6 @@ export default function MeLoading() {
         <ArchiveHeader authState="checking" />
         <div className="me-archive__workspace" aria-busy="true" aria-label="正在读取音乐档案">
           <aside className="me-archive__rail">
-            <div className="me-archive__intro">
-              <p className="me-archive__kicker">PRIVATE ARCHIVE</p>
-              <h1>我的音乐档案</h1>
-              <p>被保存的声音，按它们的下一步去向留在这里。</p>
-            </div>
             <div className="me-archive__index" aria-hidden="true">
               {['我的唱片', '待铸造', '收藏'].map((label, index) => (
                 <button key={label} type="button" data-active={index === 0 || undefined} disabled>

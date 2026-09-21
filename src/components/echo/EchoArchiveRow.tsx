@@ -17,7 +17,7 @@ export default function EchoArchiveRow({ echo, index }: { echo: EchoArchiveItem;
         : '由你的首枚 Score 触发，尚未成为可转让作品';
   return (
     <article className="me-archive-row" data-status={echo.status === 'owned' ? 'finalized' : echo.status}>
-      <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')} · ECHO</p>
+      <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')}</p>
       <div className="me-archive-row__main"><h3>{echo.name}</h3><p>{detail}</p></div>
       <div className="me-archive-row__state"><span>{STATUS[echo.status]}</span>{echo.hasError && <small>已失败关闭，详情保留在运维记录</small>}</div>
       <Link className="me-archive-row__action" href={href}>

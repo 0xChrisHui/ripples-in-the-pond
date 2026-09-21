@@ -7,7 +7,7 @@ export default function MaterialArchiveRow({ nft, index }: { nft: OwnedNFT; inde
 
   return (
     <article className="me-archive-row" data-status={pending ? 'processing' : 'finalized'}>
-      <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')} · MATERIAL</p>
+      <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')}</p>
       <div className="me-archive-row__main">
         <h3>{title}</h3>
         <p>Token #{nft.token_id}{nft.track?.island ? ` · ${nft.track.island}` : ''}</p>
