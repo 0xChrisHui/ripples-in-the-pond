@@ -9,7 +9,7 @@
 .score-pond-page__hero {
   position: relative;
   z-index: 30;
-  min-height: 100svh;
+  min-height: calc(100svh - clamp(120px, 14svh, 168px));
   background:
     radial-gradient(ellipse at 52% 58%, color-mix(in srgb, var(--p11-moss) 8%, transparent), transparent 44%),
     linear-gradient(to bottom, transparent 68%, var(--p11-ink));
@@ -105,7 +105,7 @@
 
 .score-pond-page__anchor {
   position: absolute;
-  top: 57%;
+  top: 57svh;
   left: 50%;
   z-index: 42;
   width: min(90vw, 400px);
@@ -205,7 +205,7 @@
   .score-pond-page .score-pond-header { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
   .score-pond-page .score-pond-header__edition { grid-column: auto; grid-row: auto; }
   .score-pond-page__identity { top: 132px; max-width: 460px; }
-  .score-pond-page__anchor { left: 56%; width: 430px; }
+  .score-pond-page__anchor { left: 50%; width: 430px; }
   .score-archive { gap: var(--p11-space-64); padding-block: var(--p11-space-96) var(--p11-space-128); }
 }
 
