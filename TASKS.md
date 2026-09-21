@@ -10,12 +10,12 @@
 - **当前唯一施工项：P15-H Permanent Core + Verified Edge（执行中）**
   - [x] H0 主网 Score/33 键/旧 26/Blob 版本证据与 hash 账本
   - [x] H1 33 键 SoundSet 单一注册表
-  - [ ] **H2 队列版本 pin + mint 前永久闭包 Gate（当前）**
-  - [ ] H3 当前 33 音频、新 manifest/decoder、逐 Token 兼容清单永久上传
-  - [ ] H4 从 AR 已验证字节建立 Verified Edge 副本
-  - [ ] H5 不可变 playback snapshot + HTML/RSC bootstrap
-  - [ ] H6 Blob 直连 + 1.2s AR hedge + Score #2 真实 space 恢复
-  - [ ] H7 历史回填、三环境未来铸造切换
+  - [x] H2 队列版本 pin + mint 前永久闭包 Gate
+  - [x] H3 当前 33 音频、新 manifest/decoder、逐 Token 兼容清单永久上传
+  - [ ] **H4 从 AR 已验证字节建立 Verified Edge 副本（当前：等待 Store 开放 Development OIDC）**
+  - [x] H5 不可变 playback snapshot + HTML/RSC bootstrap
+  - [x] H6 Blob 直连 + 1.2s AR hedge + Score #2 真实 space 恢复
+  - [ ] H7 历史回填、三环境未来铸造切换（35 首 base 与四枚 snapshot 计划已验证，待 H4 后写入）
   - [ ] H8 全部已铸数字 Score 的 Preview/Production、故障演练与封存
 
 ## ⏳ Later / 开放项

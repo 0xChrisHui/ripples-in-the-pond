@@ -1561,3 +1561,10 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **新作品先封包再 mint**：采用 `ripples.score-package.v3` 在 tokenId 出现前冻结 events/base/soundSet/decoder 的 txid/hash/bytes/MIME，双网关读回闭包通过后才允许广播 mint；mint 后 metadata/setURI 的残余孤儿风险留给未来合约版本，不在 P15 偷改主网合约。
 - **速度不改变真相**：每枚 Score 一条不可变 verified snapshot，页面把 events/effective sounds 安全内嵌进 HTML；音频直接取 Blob，1.2 秒后与 AR 竞速并验证完整 hash。删除强制 Range 和持久 24h 冷却，Supabase/Blob 始终只是可重建副本。
 - **上传不把内容寻址误当幂等**：events/package/metadata 在外部写入前用数据库事务同时固定内容身份和上传账本；外部结果不明立即进入 `manual_review`，只有已记录 txid 的对象通过双网关全字节验证后才推进。
+
+## 2026-09-21 — P15-H 永久核心发布边界
+
+- 首版 decoder 会把 `blobKey: null` 误判为非法；旧 `QWKu…Efb7g` 不覆盖，修正版作为 append-only revision `Yu9f…dOO0` 重新永久上传并双网关验证。
+- Score #1–#4 兼容恢复采用 runbook 已登记的独立 admin 钱包做 EIP-712 token-scoped 签名；四份对象均永久上传，#1 保持 legacy，#2–#4 精确恢复录制时 current-33。
+- H7 发布编排把 35 首 base、注册表和 snapshot 作为可重放的 additive 写入，只有最后一步才切 `permanent_core_active`，避免部分成功影响未来入队。
+- Vercel Blob 保持 OIDC，不恢复长期 RW token；当前项目连接缺 Development scope，H4 在权限层 fail closed，待临时开放 Development 后执行并完成 readback。
