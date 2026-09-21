@@ -4,6 +4,7 @@ import { connectCdp } from '../p15/browser/runtime-cdp.mjs';
 
 const cdpBase = process.env.P15_CDP_URL ?? 'http://127.0.0.1:9341';
 const siteBase = (process.env.P15_SITE_URL ?? 'https://pond-ripple.xyz').replace(/\/$/, '');
+const bypassSecret = process.env.P15_BYPASS_SECRET;
 const output = process.env.P15_OUTPUT ?? 'reviews/evidence/p15-i/i0-production-baseline.json';
 const tokens = (process.env.P15_SCORE_TOKENS ?? '1,2,3,4,1,2,3,4,2,3')
   .split(',').map(Number).filter((value) => Number.isSafeInteger(value) && value > 0);
@@ -101,6 +102,9 @@ try {
   cdp = await connectCdp(cdpBase, siteBase);
   await Promise.all(['Page.enable', 'Runtime.enable', 'Log.enable', 'Network.enable']
     .map((method) => cdp.send(method)));
+  if (bypassSecret) await cdp.send('Network.setExtraHTTPHeaders', {
+    headers: { 'x-vercel-protection-bypass': bypassSecret },
+  });
   const cold = [];
   for (let index = 0; index < tokens.length; index += 1) cold.push(await sample(cdp, tokens[index], 'cold', index + 1));
   const hot = [];
