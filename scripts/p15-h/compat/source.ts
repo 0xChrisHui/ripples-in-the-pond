@@ -137,4 +137,3 @@ export function loadCompatibilityIdentity(): { chainId: 10; scoreContract: `0x${
     || !/^0x[0-9a-fA-F]{40}$/.test(String(scoreNft.contract))) throw new Error('H0 identity 无效');
   return { chainId: 10, scoreContract: scoreNft.contract as `0x${string}`, generatedAt: h0.generatedAt };
 }
-

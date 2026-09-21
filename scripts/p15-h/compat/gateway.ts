@@ -75,4 +75,3 @@ export async function verifyCompatibilityQuorum(
 export function hasCompatibilityQuorum(evidence: readonly CompatGatewayEvidence[]): boolean {
   return new Set(evidence.filter(({ ok }) => ok).map(({ gateway }) => gateway)).size >= 2;
 }
-

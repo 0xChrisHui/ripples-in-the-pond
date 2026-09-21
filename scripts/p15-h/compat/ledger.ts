@@ -120,4 +120,3 @@ export async function withCompatUploadLock<T>(operation: () => Promise<T>): Prom
     unlinkSync(LOCK_PATH);
   }
 }
-
