@@ -1,5 +1,21 @@
 import type { PermanentMediaHealthContract } from './types';
 
+const LEGACY_STORAGE_KEY = 'ripples:media-mirror-health:v1';
+let legacyStateCleared = false;
+
+/** 清除旧版跨刷新镜像冷却；Storage 不可用时保持可重试。 */
+export function clearLegacyMirrorHealthState(): void {
+  if (legacyStateCleared) return;
+  try {
+    const storage = globalThis.localStorage;
+    if (!storage) return;
+    storage.removeItem(LEGACY_STORAGE_KEY);
+    legacyStateCleared = true;
+  } catch {
+    // 隐私模式或沙箱可能拒绝 Storage，解析热路径不得因此失败。
+  }
+}
+
 type HealthOptions = Readonly<{
   failureThreshold?: number;
   cooldownMs?: number;

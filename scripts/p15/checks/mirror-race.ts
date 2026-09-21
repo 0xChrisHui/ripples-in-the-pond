@@ -3,7 +3,7 @@ import { PermanentMediaHealth, resolvePermanentMedia } from '../../../src/featur
 
 const REF = `ar://${'R'.repeat(43)}`;
 const MIRROR = 'https://mirror.example/media';
-const HEADERS = { 'content-type': 'audio/mpeg', 'accept-ranges': 'bytes' };
+const HEADERS = { 'content-type': 'audio/mpeg' };
 
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -22,21 +22,23 @@ async function sha256(bytes: Uint8Array): Promise<string> {
     .map((value) => value.toString(16).padStart(2, '0')).join('');
 }
 
-async function verifyLateProbeCanStillWin(): Promise<void> {
-  let gatewayStartedAt = 0;
-  let probeSettledAt = 0;
+async function verifyMirrorWinsAfterHedge(): Promise<void> {
   let gatewayAborted = false;
   let activeGets = 0;
   let peakGets = 0;
+  const requestOrder: string[] = [];
+  let mirrorRangeHeader: string | null = '未发起';
   const fetcher: typeof fetch = async (input, init) => {
+    const isMirror = String(input).startsWith(MIRROR);
+    requestOrder.push(isMirror ? 'mirror' : 'gateway');
     activeGets += 1;
     peakGets = Math.max(peakGets, activeGets);
-    if (String(input).startsWith(MIRROR)) {
-      await wait(2);
+    if (isMirror) {
+      mirrorRangeHeader = new Headers(init?.headers).get('range');
+      await wait(30);
       activeGets -= 1;
       return new Response('mirror', { headers: HEADERS });
     }
-    gatewayStartedAt = performance.now();
     return pendingResponse(init?.signal, () => {
       activeGets -= 1;
       gatewayAborted = true;
@@ -46,14 +48,10 @@ async function verifyLateProbeCanStillWin(): Promise<void> {
     kind: 'audio', validation: { level: 'compatibility' }, fetcher,
     mirrorBaseUrl: MIRROR, mirrorFallbackDelayMs: 5, rounds: 1,
     health: new PermanentMediaHealth(),
-    mirrorProbe: { select: async () => {
-      await wait(30);
-      probeSettledAt = performance.now();
-      return MIRROR;
-    } },
   });
   assert.equal(result.source, 'mirror');
-  assert.ok(gatewayStartedAt < probeSettledAt, 'AR 必须按 resolver 绝对时钟抢跑');
+  assert.equal(requestOrder[0], 'mirror', 'Blob 必须作为第一条请求立即开始');
+  assert.equal(mirrorRangeHeader, null, 'Blob 必须直接完整 GET，不发送一字节 Range');
   assert.equal(gatewayAborted, true, '镜像完整验证胜出后必须取消 AR');
   assert.equal(peakGets, 2, '同一对象最多两条完整 GET');
   assert.equal(activeGets, 0, '竞速结束后不得遗留活动 GET');
@@ -61,7 +59,6 @@ async function verifyLateProbeCanStillWin(): Promise<void> {
 
 async function verifyGatewayWinsAndAbortsMirror(): Promise<void> {
   let mirrorAborted = false;
-  let serviceFailures = 0;
   const fetcher: typeof fetch = async (input, init) => {
     if (String(input).startsWith(MIRROR)) {
       return pendingResponse(init?.signal, () => { mirrorAborted = true; });
@@ -72,32 +69,23 @@ async function verifyGatewayWinsAndAbortsMirror(): Promise<void> {
     kind: 'audio', validation: { level: 'compatibility' }, fetcher,
     mirrorBaseUrl: MIRROR, mirrorFallbackDelayMs: 5, mirrorTimeoutMs: 100,
     rounds: 1, health: new PermanentMediaHealth(),
-    mirrorProbe: {
-      select: async () => MIRROR,
-      recordServiceFailure: () => { serviceFailures += 1; },
-    },
   });
   assert.equal(result.source, 'ardrive');
   assert.equal(mirrorAborted, true, 'AR 完整验证胜出后必须取消镜像 GET');
-  assert.equal(serviceFailures, 0, '竞速败方取消不得写入镜像熔断');
 }
 
-async function verifyHangingProbeIsAborted(): Promise<void> {
-  let probeAborted = false;
+async function verifyExplicitFailureFallsBackImmediately(): Promise<void> {
+  const started = performance.now();
   const result = await resolvePermanentMedia(REF, {
     kind: 'audio', validation: { level: 'compatibility' },
-    fetcher: async () => new Response('gateway', { headers: HEADERS }),
-    mirrorBaseUrl: MIRROR, mirrorFallbackDelayMs: 5, rounds: 1,
+    fetcher: async (input) => String(input).startsWith(MIRROR)
+      ? new Response(null, { status: 503 })
+      : new Response('gateway', { headers: HEADERS }),
+    mirrorBaseUrl: MIRROR, mirrorFallbackDelayMs: 1_000, rounds: 1,
     health: new PermanentMediaHealth(),
-    mirrorProbe: { select: async (_ref, request) => new Promise((_resolve, reject) => {
-      request.signal?.addEventListener('abort', () => {
-        probeAborted = true;
-        reject(new DOMException('已取消', 'AbortError'));
-      }, { once: true });
-    }) },
   });
   assert.equal(result.source, 'ardrive');
-  assert.equal(probeAborted, true, 'AR 胜出后必须取消仍在途的探针');
+  assert.ok(performance.now() - started < 250, '明确失败必须立即回退，不等待 hedge');
 }
 
 async function verifyInvalidFastBranchCannotWin(): Promise<void> {
@@ -109,7 +97,7 @@ async function verifyInvalidFastBranchCannotWin(): Promise<void> {
       String(input).startsWith(MIRROR) ? 'wrong' : good, { headers: HEADERS },
     ),
     mirrorBaseUrl: MIRROR, mirrorFallbackDelayMs: 20, rounds: 1,
-    health: new PermanentMediaHealth(), mirrorProbe: { select: async () => MIRROR },
+    health: new PermanentMediaHealth(),
   });
   assert.equal(result.source, 'ardrive', '先返回但哈希错误的镜像不得获胜');
 }
@@ -125,7 +113,7 @@ async function verifyInvalidGatewayCannotWin(): Promise<void> {
       return new Response(good, { headers: HEADERS });
     },
     mirrorBaseUrl: MIRROR, mirrorFallbackDelayMs: 2, rounds: 1,
-    health: new PermanentMediaHealth(), mirrorProbe: { select: async () => MIRROR },
+    health: new PermanentMediaHealth(),
   });
   assert.equal(result.source, 'mirror', '先返回但哈希错误的 AR 不得获胜');
 }
@@ -139,7 +127,7 @@ async function verifyExternalAbortCancelsBoth(): Promise<void> {
   const pending = resolvePermanentMedia(REF, {
     kind: 'audio', validation: { level: 'compatibility' }, fetcher, signal: controller.signal,
     mirrorBaseUrl: MIRROR, mirrorFallbackDelayMs: 2, rounds: 1,
-    health: new PermanentMediaHealth(), mirrorProbe: { select: async () => MIRROR },
+    health: new PermanentMediaHealth(),
   });
   await wait(8);
   controller.abort();
@@ -148,11 +136,11 @@ async function verifyExternalAbortCancelsBoth(): Promise<void> {
   assert.equal(gatewayAborted, true);
 }
 
-/** 覆盖有界抢跑、完整验证决胜与竞速败方取消。 */
+/** 覆盖直接完整 GET、1.2 秒策略、完整验证决胜与竞速败方取消。 */
 export async function verifyMirrorRace(): Promise<void> {
-  await verifyLateProbeCanStillWin();
+  await verifyMirrorWinsAfterHedge();
   await verifyGatewayWinsAndAbortsMirror();
-  await verifyHangingProbeIsAborted();
+  await verifyExplicitFailureFallsBackImmediately();
   await verifyInvalidFastBranchCannotWin();
   await verifyInvalidGatewayCannotWin();
   await verifyExternalAbortCancelsBoth();

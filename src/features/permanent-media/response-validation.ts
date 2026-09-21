@@ -28,10 +28,6 @@ export function verifyResponse(
     || (contentType && !acceptedType(options.kind, contentType))) {
     throw new AttemptError('content-type');
   }
-  const ranges = response.headers.get('accept-ranges')?.toLowerCase();
-  if (options.kind === 'audio' && ranges !== 'bytes' && response.status !== 206) {
-    throw new AttemptError('range');
-  }
   const rawLength = response.headers.get('content-length');
   if (!rawLength) return;
   const length = Number(rawLength);

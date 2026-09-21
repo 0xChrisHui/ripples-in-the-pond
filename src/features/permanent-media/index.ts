@@ -1,6 +1,9 @@
 export { permanentMediaCandidates, parseArweaveRef } from './candidates';
-export { PermanentMediaHealth, sharedPermanentMediaHealth } from './health';
-export { PermanentMediaMirrorProbe, sharedPermanentMediaMirrorProbe } from './mirror-probe';
+export {
+  clearLegacyMirrorHealthState,
+  PermanentMediaHealth,
+  sharedPermanentMediaHealth,
+} from './health';
 export { resolvePermanentMedia } from './resolver';
 export {
   PermanentMediaError,
@@ -8,8 +11,6 @@ export {
   type PermanentMediaFailure,
   type PermanentMediaFailureKind,
   type PermanentMediaKind,
-  type PermanentMediaMirrorProbeContract,
-  type PermanentMediaMirrorProbeRequest,
   type PermanentMediaOptions,
   type PermanentMediaResult,
   type PermanentMediaSource,

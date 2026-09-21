@@ -2,14 +2,12 @@ import assert from 'node:assert/strict';
 import {
   PermanentMediaError,
   PermanentMediaHealth,
-  PermanentMediaMirrorProbe,
   permanentMediaCandidates,
   resolvePermanentMedia,
 } from '../../src/features/permanent-media';
 import { fetchPermanentJson } from '../../src/features/score-playback/sounds-map';
 import { verifyCanonicalCache } from './checks/canonical-cache';
 import { verifyMirrorObjectFallback } from './checks/mirror-object-fallback';
-import { verifyMirrorProbe } from './checks/mirror-probe';
 import { verifyMirrorRace } from './checks/mirror-race';
 
 const REF = `ar://${'A'.repeat(43)}`;
@@ -112,10 +110,11 @@ async function verifyTypeAndLength(): Promise<void> {
   const noRange: typeof fetch = async () => new Response('sound', {
     headers: { 'content-type': 'audio/mpeg' },
   });
-  await expectFailure(resolvePermanentMedia(REF, {
+  const noRangeResult = await resolvePermanentMedia(REF, {
     kind: 'audio', validation: { level: 'compatibility' }, fetcher: noRange,
     mirrorBaseUrl: '', rounds: 1, health: health(),
-  }), 'unavailable', 'range');
+  });
+  assert.equal(noRangeResult.source, 'ardrive', '完整音频不应强制要求 Range 响应头');
 
   const tooLong: typeof fetch = async () => response('x', {
     'content-type': 'audio/mpeg', 'content-length': '99',
@@ -165,7 +164,6 @@ async function verifyCooldown(): Promise<void> {
   const options = {
     kind: 'audio', validation: { level: 'compatibility' }, fetcher,
     mirrorBaseUrl: 'https://mirror.example', rounds: 1, health: candidateHealth,
-    mirrorProbe: new PermanentMediaMirrorProbe({ storage: null }),
   } as const;
   await resolvePermanentMedia(REF, options);
   await resolvePermanentMedia(REF, options);
@@ -187,7 +185,6 @@ async function main(): Promise<void> {
   await verifyTypeAndLength();
   await verifyHash();
   await verifyCanonicalCache();
-  await verifyMirrorProbe();
   await verifyMirrorRace();
   await verifyMirrorObjectFallback();
   await verifyCooldown();

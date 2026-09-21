@@ -1,6 +1,5 @@
 import { permanentMediaCandidates } from './candidates';
-import { sharedPermanentMediaHealth } from './health';
-import { sharedPermanentMediaMirrorProbe } from './mirror-probe';
+import { clearLegacyMirrorHealthState, sharedPermanentMediaHealth } from './health';
 import { abortError, attemptCandidate, classifyNetwork } from './race/attempt';
 import { AttemptError } from './response-validation';
 import { readVerifiedCache, writeVerifiedCache } from './verified-cache';
@@ -14,7 +13,6 @@ import {
 
 const DEFAULT_TIMEOUT_MS = 5_000;
 const DEFAULT_MIRROR_TIMEOUT_MS = 10_000;
-const DEFAULT_MIRROR_PROBE_TIMEOUT_MS = 2_000;
 const DEFAULT_MIRROR_FALLBACK_DELAY_MS = 1_200;
 const DEFAULT_ROUNDS = 2;
 const DEFAULT_RETRY_DELAY_MS = 300;
@@ -36,7 +34,7 @@ function expectedHash(options: PermanentMediaOptions): string | undefined {
 function failureText(candidate: PermanentMediaCandidate, error: AttemptError): string {
   const detail = error.kind === 'http' ? `HTTP ${error.status}` : {
     timeout: '超时', dns: 'DNS 失败', network: '网络错误',
-    'content-type': '类型不符', range: '不支持 Range',
+    'content-type': '类型不符',
     'too-large': '长度超限', 'hash-mismatch': '哈希不符',
   }[error.kind];
   return `${candidate.label}: ${detail}`;
@@ -97,13 +95,12 @@ function mirrorServiceFailure(error: AttemptError): boolean {
 }
 
 async function resolveWithMirrorRace(
-  ref: string, options: PermanentMediaOptions, maxBytes: number,
+  options: PermanentMediaOptions, maxBytes: number,
   expected: string | undefined, candidates: readonly PermanentMediaCandidate[], log: FailureLog,
 ): Promise<PermanentMediaResult> {
   const mirror = candidates.find((candidate) => candidate.source === 'mirror');
   if (!mirror) return resolveGateways(candidates, options, maxBytes, expected, options.signal, log);
   const health = options.health ?? sharedPermanentMediaHealth;
-  const probe = options.mirrorProbe ?? sharedPermanentMediaMirrorProbe;
   const mirrorController = new AbortController();
   const gatewayController = new AbortController();
   let startGateway!: () => void;
@@ -131,25 +128,21 @@ async function resolveWithMirrorRace(
     options, maxBytes, expected, gatewayController.signal, log,
   ));
   const mirrorPromise = (async () => {
-    const selected = await probe.select(ref, {
-      fetcher: options.fetcher ?? fetch, signal: mirrorController.signal,
-      mirrorBaseUrl: options.mirrorBaseUrl,
-      timeoutMs: Math.max(1, options.mirrorProbeTimeoutMs ?? DEFAULT_MIRROR_PROBE_TIMEOUT_MS),
-    });
-    if (!selected) { startGateway(); throw new AttemptError('network'); }
+    if (!health.canAttempt(mirror.healthKey)) {
+      startGateway();
+      throw new AttemptError('network');
+    }
     try {
       const result = await attemptCandidate(mirror, options, maxBytes,
         Math.max(1, options.mirrorTimeoutMs ?? DEFAULT_MIRROR_TIMEOUT_MS),
         expected, mirrorController.signal);
       health.recordSuccess(mirror.healthKey);
-      probe.recordServiceSuccess?.(mirror.healthKey);
       return result;
     } catch (error) {
       if (mirrorController.signal.aborted) throw abortError();
       const classified = error instanceof AttemptError ? error : classifyNetwork(error);
       if (mirrorServiceFailure(classified)) {
         health.recordFailure(mirror.healthKey, classified.kind);
-        probe.recordServiceFailure?.(mirror.healthKey);
       }
       logFailure(log, mirror, classified);
       startGateway();
@@ -177,6 +170,7 @@ async function resolveWithMirrorRace(
 export async function resolvePermanentMedia(
   ref: string, options: PermanentMediaOptions,
 ): Promise<PermanentMediaResult> {
+  clearLegacyMirrorHealthState();
   const expected = expectedHash(options);
   const maxBytes = options.maxBytes ?? (options.kind === 'json' ? JSON_MAX_BYTES : DEFAULT_MAX_BYTES);
   const cacheable = options.validation.level === 'canonical' && expected !== undefined;
@@ -190,7 +184,7 @@ export async function resolvePermanentMedia(
   const mirrorBase = options.kind === 'audio' ? options.mirrorBaseUrl : '';
   const candidates = permanentMediaCandidates(ref, mirrorBase);
   const log: FailureLog = { failures: [], messages: [] };
-  const result = await resolveWithMirrorRace(ref, options, maxBytes, expected, candidates, log);
+  const result = await resolveWithMirrorRace(options, maxBytes, expected, candidates, log);
   if (cacheable) await writeVerifiedCache(expected, result.bytes, result.contentType);
   if (options.kind === 'audio') performance.mark('p15:first-verified-audio-ready');
   return result;
