@@ -115,10 +115,13 @@ function audioRef(attestations: Record<string, unknown>, role: string): `ar://${
   return `ar://${txId(item.arTxId ?? item.txId ?? item.ref, `${role} attestation`)}`;
 }
 
-function decoderUrl(attestations: Record<string, unknown>): string {
+function decoderUrl(
+  attestations: Record<string, unknown>, compatibility: Record<string, unknown> | null,
+): string {
   const decoder = audioRef(attestations, 'decoder').slice(5);
   const params = new URLSearchParams();
-  if (attestations.package) params.set('package', audioRef(attestations, 'package'));
+  if (compatibility) params.set('compat', audioRef(attestations, 'compatibility'));
+  else if (attestations.package) params.set('package', audioRef(attestations, 'package'));
   else {
     params.set('events', audioRef(attestations, 'events'));
     params.set('base', audioRef(attestations, 'base'));
@@ -152,7 +155,7 @@ export async function parseScoreSnapshot(row: ScoreSnapshotRow): Promise<ParsedS
   const base = identity(attestations.base, 'base attestation', canonical ? 'canonical' : 'attested');
   const sounds = effectiveSounds(row.sounds, compatibility, events, canonical);
   const manifest: ScorePlaybackManifest = {
-    permanentDecoderUrl: decoderUrl(attestations),
+    permanentDecoderUrl: decoderUrl(attestations, compatibility),
     eventsRef: audioRef(attestations, 'events'), baseAudioRef: base.ref,
     soundsMapRef: audioRef(attestations, 'soundSet'),
   };

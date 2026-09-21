@@ -38,6 +38,7 @@ async function rowOf(options: { compatibility?: unknown; omitSpace?: boolean } =
       ...(options.omitSpace ? [] : [{ key: 'space', ...soundSpace }]),
     ],
   };
+  const compatibility = options.compatibility ?? null;
   const resourceAttestations = {
     metadata: { arTxId: tx('M'), sha256: '1'.repeat(64), bytes: 100, mime: 'application/json' },
     package: { arTxId: tx('P'), sha256: '2'.repeat(64), bytes: 100, mime: 'application/json' },
@@ -45,8 +46,10 @@ async function rowOf(options: { compatibility?: unknown; omitSpace?: boolean } =
     soundSet: { arTxId: tx('T'), sha256: '4'.repeat(64), bytes: 100, mime: 'application/json' },
     base,
     decoder: { arTxId: tx('D'), sha256: '5'.repeat(64), bytes: 100, mime: 'text/html' },
+    ...(compatibility ? { compatibility: {
+      arTxId: tx('C'), sha256: '7'.repeat(64), bytes: 300, mime: 'application/json',
+    } } : {}),
   };
-  const compatibility = options.compatibility ?? null;
   const digest = {
     schemaId: 'ripples.score-snapshot.v1', originalTokenUri: `ar://${tx('M')}`,
     metadata, events, sounds, resourceAttestations, compatibility,
@@ -107,6 +110,8 @@ async function verifyCompatibilityAndFailClosed(): Promise<void> {
   const parsed = await parseScoreSnapshot(fixture.row);
   assert.equal(parsed.playbackBootstrap.sounds.space.ref, `ar://${override.arTxId}`);
   assert.equal(parsed.playbackBootstrap.sounds.space.integrity, 'attested');
+  assert.equal(parsed.manifest.permanentDecoderUrl,
+    `https://arweave.net/${tx('D')}?compat=ar%3A%2F%2F${tx('C')}`);
 
   const tampered = structuredClone(fixture.row) as ScoreSnapshotRow;
   (tampered.events as Array<{ duration: number }>)[0].duration = 999;
