@@ -12,9 +12,11 @@ type Props = { score: ScoreProcessingData | ScoreFailedData; network: string };
 const statusLabels = {
   pending: '已进入作品制作队列',
   uploading_events: '正在保存演奏动作',
+  preparing_package: '正在核验永久资源',
   minting_onchain: '正在写入 OP Mainnet',
   uploading_metadata: '正在装配永久作品',
   setting_uri: '正在绑定永久播放器',
+  finalizing_snapshot: '正在生成验证快照',
   success: '永久作品已完成',
   failed: '作品制作没有完成',
 } as const;

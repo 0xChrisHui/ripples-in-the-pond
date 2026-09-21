@@ -1,4 +1,6 @@
 import { SCORE_NFT_ADDRESS } from '@/src/lib/chain/contracts';
+import { supabaseAdmin } from '@/src/lib/supabase';
+import type { ScoreMintQueueRow, ScoreUploadState } from '@/src/types/jam';
 
 /**
  * 链上 step 共用的 helper：解析 ScoreNFT mint receipt 拿 tokenId
@@ -29,4 +31,54 @@ export function extractTokenIdFromLogs(logs: readonly ReceiptLog[]): number {
     throw new Error('Transfer event not found in receipt');
   }
   return Number(BigInt(matches[0].topics[3]));
+}
+
+export type UploadKind = 'events' | 'package' | 'metadata';
+
+type UploadColumns = Readonly<{
+  tx: keyof ScoreMintQueueRow;
+  sha: keyof ScoreMintQueueRow;
+  bytes: keyof ScoreMintQueueRow;
+  mime: keyof ScoreMintQueueRow;
+  state: keyof ScoreMintQueueRow;
+  verified: keyof ScoreMintQueueRow;
+}>;
+
+export const UPLOAD_COLUMNS: Record<UploadKind, UploadColumns> = {
+  events: {
+    tx: 'events_ar_tx_id', sha: 'events_sha256', bytes: 'events_bytes',
+    mime: 'events_mime', state: 'events_upload_state', verified: 'events_verified_at',
+  },
+  package: {
+    tx: 'package_ar_tx_id', sha: 'package_sha256', bytes: 'package_bytes',
+    mime: 'package_mime', state: 'package_upload_state', verified: 'package_verified_at',
+  },
+  metadata: {
+    tx: 'metadata_ar_tx_id', sha: 'metadata_sha256', bytes: 'metadata_bytes',
+    mime: 'metadata_mime', state: 'metadata_upload_state', verified: 'metadata_verified_at',
+  },
+};
+
+export async function writeUploadState(
+  rowId: string,
+  leaseOwner: string,
+  kind: UploadKind,
+  identity: { sha256: string; bytes: number; mime: string },
+  state: Exclude<ScoreUploadState, 'none'>,
+  txId?: string,
+  error?: string,
+): Promise<boolean> {
+  const { data, error: rpcError } = await supabaseAdmin.rpc('write_score_upload_state', {
+    p_queue_id: rowId,
+    p_lease_owner: leaseOwner,
+    p_kind: kind,
+    p_content_sha256: identity.sha256,
+    p_bytes: identity.bytes,
+    p_mime: identity.mime,
+    p_state: state,
+    p_arweave_tx_id: txId ?? null,
+    p_last_error: error?.slice(0, 2000) ?? null,
+  });
+  if (rpcError) throw new Error(`上传状态原子写入失败：${rpcError.message}`);
+  return data === true;
 }

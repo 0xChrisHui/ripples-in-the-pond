@@ -1560,3 +1560,4 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **历史恢复按 Token 精确登记**：链上时间与 GitHub/Vercel Production 记录已证明 #1 使用旧 26 键、#2/#3 使用新 33 键。兼容身份绑定 chain/contract/token/tokenURI；#2/#3 只覆盖各自实际使用的 10/18 键。兼容清单以 EIP-712 由发布时持有 ScoreNFT admin role 的地址签名，并与不可修改的原始档案并列展示。
 - **新作品先封包再 mint**：采用 `ripples.score-package.v3` 在 tokenId 出现前冻结 events/base/soundSet/decoder 的 txid/hash/bytes/MIME，双网关读回闭包通过后才允许广播 mint；mint 后 metadata/setURI 的残余孤儿风险留给未来合约版本，不在 P15 偷改主网合约。
 - **速度不改变真相**：每枚 Score 一条不可变 verified snapshot，页面把 events/effective sounds 安全内嵌进 HTML；音频直接取 Blob，1.2 秒后与 AR 竞速并验证完整 hash。删除强制 Range 和持久 24h 冷却，Supabase/Blob 始终只是可重建副本。
+- **上传不把内容寻址误当幂等**：events/package/metadata 在外部写入前用数据库事务同时固定内容身份和上传账本；外部结果不明立即进入 `manual_review`，只有已记录 txid 的对象通过双网关全字节验证后才推进。

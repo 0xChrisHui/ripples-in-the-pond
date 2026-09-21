@@ -14,7 +14,7 @@ const ATTEMPT_WINDOW_MS = 10 * 60 * 1000;
 const RECEIPT_TIMEOUT_MS = 15 * 60 * 1000;
 
 /**
- * Step: setting_uri → success（Phase 6 A1：拆步 + lease CAS）
+ * Step: setting_uri → finalizing_snapshot（Phase 6 A1：拆步 + lease CAS）
  *
  * 没 uri_tx_hash → 发 setTokenURI tx + 立刻存 hash → 返回 setting_uri（不等确认）
  * 有 uri_tx_hash → 查 receipt → 写 token_uri + 写 mint_events → 推到 success
@@ -163,6 +163,6 @@ export async function stepSetTokenUri(
     }
   }
 
-  console.log(`[score-cron] success, tokenId=${row.token_id}`);
-  return 'success';
+  console.log(`[score-cron] tokenURI confirmed, tokenId=${row.token_id}`);
+  return 'finalizing_snapshot';
 }

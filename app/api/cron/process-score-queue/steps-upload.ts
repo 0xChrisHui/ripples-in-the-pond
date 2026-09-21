@@ -1,162 +1,120 @@
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { uploadBuffer, resolveArUrl } from '@/src/lib/arweave';
+import { attestPermanentResource } from '@/src/lib/permanent-core/attestation';
+import { sha256Hex } from '@/src/lib/score-package';
+import { isSoundKey } from '@/src/lib/sound-set';
 import type {
-  ScoreMintQueueRow,
-  ScoreMintStatus,
-  ScoreMetadata,
-  KeyEvent,
+  ScoreMintQueueRow, ScoreMintStatus, ScoreMetadata, KeyEvent,
 } from '@/src/types/jam';
+import { UPLOAD_COLUMNS, writeUploadState, type UploadKind } from './_shared';
 
-/**
- * Arweave 上传相关步骤（Phase 6 A1：所有 update 加 lease CAS）：
- *   stepUploadEvents  → pending/uploading_events → minting_onchain
- *   stepUploadMetadata → uploading_metadata → setting_uri
- *
- * 幂等性：Arweave 内容寻址，同内容重传拿到同 txid。
- * lease lost 时（CAS 失败）静默返回原 status，让下次 cron 重新 claim。
- */
+const JSON_MIME = 'application/json';
 
-// ─────────────────────────────────────────────────
-// Step: uploading events.json
-// ─────────────────────────────────────────────────
+function existingValue<T>(row: ScoreMintQueueRow, key: keyof ScoreMintQueueRow): T {
+  return row[key] as T;
+}
+
+/** 先落上传意图；结果不明时熔断，绝不靠“同内容同 txid”的错误假设重传。 */
+export async function uploadAndVerifyJson(
+  row: ScoreMintQueueRow,
+  leaseOwner: string,
+  kind: UploadKind,
+  buffer: Buffer,
+): Promise<boolean> {
+  const columns = UPLOAD_COLUMNS[kind];
+  const identity = { sha256: await sha256Hex(buffer), bytes: buffer.length, mime: JSON_MIME };
+  const state = existingValue<string>(row, columns.state);
+  const txId = existingValue<string | null>(row, columns.tx);
+  const stored = {
+    sha256: existingValue<string | null>(row, columns.sha),
+    bytes: existingValue<number | null>(row, columns.bytes),
+    mime: existingValue<string | null>(row, columns.mime),
+  };
+  if (state !== 'none' && (stored.sha256 !== identity.sha256
+    || stored.bytes !== identity.bytes || stored.mime !== identity.mime)) {
+    throw new Error(`CRITICAL: ${kind} 固定内容与重建内容不一致，manual review`);
+  }
+  if (state === 'upload_result_unknown' || state === 'uploading') {
+    throw new Error(`CRITICAL: ${kind} 上传结果未知，禁止盲重传，manual review`);
+  }
+  if (state === 'verified') return true;
+  if (state === 'uploaded' && txId) {
+    await attestPermanentResource({ arTxId: txId, ...identity });
+    if (!await writeUploadState(row.id, leaseOwner, kind, identity, 'verified', txId)) {
+      return false;
+    }
+    return true;
+  }
+  if (state !== 'none') throw new Error(`CRITICAL: ${kind} 上传状态损坏：${state}`);
+
+  if (!await writeUploadState(row.id, leaseOwner, kind, identity, 'uploading')) return false;
+  let uploadedTxId: string;
+  try {
+    uploadedTxId = (await uploadBuffer(buffer, JSON_MIME, [
+      { name: 'App-Name', value: 'Ripples-in-the-Pond' },
+      { name: 'Resource-Kind', value: `score-${kind}` },
+      { name: 'Content-SHA256', value: identity.sha256 },
+    ])).txId;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    await writeUploadState(row.id, leaseOwner, kind, identity, 'upload_result_unknown', undefined, message);
+    throw new Error(`CRITICAL: ${kind} 上传返回失败且结果未知，manual review`);
+  }
+  if (!await writeUploadState(row.id, leaseOwner, kind, identity, 'uploaded', uploadedTxId)) {
+    throw new Error(`CRITICAL: ${kind} 已上传 ${uploadedTxId} 但数据库回写失败，manual review`);
+  }
+  return false;
+}
+
 export async function stepUploadEvents(
   row: ScoreMintQueueRow,
   leaseOwner: string,
 ): Promise<ScoreMintStatus> {
-  if (row.events_ar_tx_id) {
-    console.log(`[score-cron] events already uploaded: ${row.events_ar_tx_id}`);
-    return 'minting_onchain';
-  }
-
-  const { data: draft, error } = await supabaseAdmin
-    .from('pending_scores')
-    .select('events_data')
-    .eq('id', row.pending_score_id)
-    .single();
-  if (error || !draft) {
-    throw new Error(`pending_score not found: ${row.pending_score_id}`);
-  }
-
+  const { data: draft, error } = await supabaseAdmin.from('pending_scores')
+    .select('events_data').eq('id', row.pending_score_id).single();
+  if (error || !draft) throw new Error(`pending_score not found: ${row.pending_score_id}`);
   const events = draft.events_data as KeyEvent[];
-  const buf = Buffer.from(JSON.stringify(events), 'utf-8');
-
-  console.log(
-    `[score-cron] uploading events.json (${buf.length} bytes, ${events.length} keys)`,
-  );
-  const { txId } = await uploadBuffer(buf, 'application/json');
-
-  // 写回 events_ar_tx_id（CAS）
-  const nowIso = new Date().toISOString();
-  const { data: dbOk } = await supabaseAdmin
-    .from('score_nft_queue')
-    .update({ events_ar_tx_id: txId, updated_at: nowIso })
-    .eq('id', row.id)
-    .eq('locked_by', leaseOwner)
-    .gt('lease_expires_at', nowIso)
-    .select('id')
-    .maybeSingle();
-
-  if (!dbOk) {
-    console.warn(`[score-cron] lease lost when writing events_ar_tx_id for ${row.id}`);
-    return 'uploading_events'; // 不推进，下次重做（Arweave 内容寻址同 txId）
+  if (!Array.isArray(events) || events.some((event) => !isSoundKey(event.key))) {
+    throw new Error('录制事件包含不属于当前 33 键注册表的按键');
   }
-
-  console.log(`[score-cron] events uploaded: ${txId}`);
-  return 'minting_onchain';
+  const verified = await uploadAndVerifyJson(
+    row, leaseOwner, 'events', Buffer.from(JSON.stringify(events), 'utf-8'),
+  );
+  return verified ? 'preparing_package' : 'uploading_events';
 }
 
-// ─────────────────────────────────────────────────
-// Step: uploading metadata.json
-// ─────────────────────────────────────────────────
 export async function stepUploadMetadata(
   row: ScoreMintQueueRow,
   leaseOwner: string,
 ): Promise<ScoreMintStatus> {
-  if (row.metadata_ar_tx_id) {
-    console.log(
-      `[score-cron] metadata already uploaded: ${row.metadata_ar_tx_id}`,
-    );
-    return 'setting_uri';
+  if (!row.token_id || !row.package_ar_tx_id || !row.decoder_ar_tx_id) {
+    throw new Error('metadata 前缺少 token、package 或 decoder identity');
   }
-
-  if (!row.token_id) {
-    throw new Error('token_id missing before metadata step');
-  }
-  if (!row.events_ar_tx_id) {
-    throw new Error('events_ar_tx_id missing before metadata step');
-  }
-
-  const { data: track } = await supabaseAdmin
-    .from('tracks')
-    .select('title, week, arweave_url')
-    .eq('id', row.track_id)
-    .single();
+  const { data: track } = await supabaseAdmin.from('tracks')
+    .select('title, week').eq('id', row.track_id).single();
   if (!track) throw new Error(`track not found: ${row.track_id}`);
-
-  const decoderTxId = process.env.SCORE_DECODER_AR_TX_ID;
-  const soundsMapTxId = process.env.SOUNDS_MAP_AR_TX_ID;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-  if (!decoderTxId) throw new Error('SCORE_DECODER_AR_TX_ID not configured');
-  if (!soundsMapTxId) throw new Error('SOUNDS_MAP_AR_TX_ID not configured');
   if (!appUrl) throw new Error('NEXT_PUBLIC_APP_URL not configured');
-
-  if (!track.arweave_url) {
-    throw new Error(`track ${row.track_id} missing arweave_url, cannot mint`);
-  }
-  const baseArUrl = (track.arweave_url as string).replace(
-    'https://arweave.net/',
-    'ar://',
-  );
-
-  const animationUrl =
-    `https://arweave.net/${decoderTxId}` +
-    `?events=ar://${row.events_ar_tx_id}` +
-    `&base=${encodeURIComponent(baseArUrl)}` +
-    `&sounds=ar://${soundsMapTxId}`;
-
-  const { data: draft } = await supabaseAdmin
-    .from('pending_scores')
-    .select('events_data')
-    .eq('id', row.pending_score_id)
-    .single();
-  const events = (draft?.events_data as KeyEvent[]) ?? [];
-
   const metadata: ScoreMetadata = {
     name: `Ripples #${row.token_id}`,
-    description:
-      `A live jam on "${track.title}" recorded and minted as an on-chain Score NFT. ` +
-      `All audio permanently stored on Arweave. Playable in the network-native web player.`,
+    description: `A live jam on "${track.title}" recorded and minted as an on-chain Score NFT. All audio permanently stored on Arweave.`,
     image: resolveArUrl(row.cover_ar_tx_id),
     external_url: `${appUrl}/score/${row.token_id}`,
-    animation_url: animationUrl,
+    animation_url: `https://arweave.net/${row.decoder_ar_tx_id}?package=ar://${row.package_ar_tx_id}`,
     attributes: [
       { trait_type: 'Track', value: track.title },
       { trait_type: 'Week', value: track.week },
-      { trait_type: 'Events', value: events.length },
-      { trait_type: 'Minted At', value: new Date().toISOString().slice(0, 10) },
+      { trait_type: 'Minted At', value: row.created_at.slice(0, 10) },
     ],
+    properties: {
+      playback: {
+        schema: 'ripples.score-package.v3', package: `ar://${row.package_ar_tx_id}`,
+        sha256: row.package_sha256!, bytes: row.package_bytes!, mime: JSON_MIME,
+      },
+    },
   };
-
-  const buf = Buffer.from(JSON.stringify(metadata, null, 2), 'utf-8');
-  console.log(`[score-cron] uploading metadata.json (${buf.length} bytes)`);
-  const { txId } = await uploadBuffer(buf, 'application/json');
-
-  // 写回 metadata_ar_tx_id（CAS）
-  const nowIso = new Date().toISOString();
-  const { data: dbOk } = await supabaseAdmin
-    .from('score_nft_queue')
-    .update({ metadata_ar_tx_id: txId, updated_at: nowIso })
-    .eq('id', row.id)
-    .eq('locked_by', leaseOwner)
-    .gt('lease_expires_at', nowIso)
-    .select('id')
-    .maybeSingle();
-
-  if (!dbOk) {
-    console.warn(`[score-cron] lease lost when writing metadata_ar_tx_id for ${row.id}`);
-    return 'uploading_metadata';
-  }
-
-  console.log(`[score-cron] metadata uploaded: ${txId}`);
-  return 'setting_uri';
+  const verified = await uploadAndVerifyJson(
+    row, leaseOwner, 'metadata', Buffer.from(JSON.stringify(metadata), 'utf-8'),
+  );
+  return verified ? 'setting_uri' : 'uploading_metadata';
 }

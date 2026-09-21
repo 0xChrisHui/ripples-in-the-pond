@@ -9,7 +9,8 @@
     "lint": "eslint",
     "env-sync": "npx tsx scripts/vercel-env-sync.ts",
     "p15:h1:generate": "tsx scripts/p15-h/build-current-sound-set.ts",
-    "p15:h1:verify": "tsx scripts/p15-h/sound-set-ledger.test.ts && tsx scripts/p15-h/verify-current-sound-set.ts"
+    "p15:h1:verify": "tsx scripts/p15-h/sound-set-ledger.test.ts && tsx scripts/p15-h/verify-current-sound-set.ts",
+    "p15:h2:verify": "tsx scripts/p15-h/score-package-v3.test.ts && tsx scripts/p15-h/queue-contract.test.ts"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.41.0",

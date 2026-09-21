@@ -4,9 +4,11 @@ import type { OwnedScoreNFT, ScoreMintStatus } from '@/src/types/jam';
 const STATUS_LABELS: Record<ScoreMintStatus, string> = {
   pending: '等待制作',
   uploading_events: '保存演奏中',
+  preparing_package: '核验永久资源',
   minting_onchain: '写入链上',
   uploading_metadata: '装配唱片',
   setting_uri: '绑定永久播放器',
+  finalizing_snapshot: '生成验证快照',
   success: '永久唱片',
   failed: '制作未完成',
 };

@@ -6,15 +6,17 @@ import { supabaseAdmin } from '@/src/lib/supabase';
 import { sendAlert } from '@/src/lib/alerts/resend';
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
 import { stepUploadEvents, stepUploadMetadata } from './steps-upload';
+import { stepPreparePackage } from './steps-package';
 import { stepMintOnchain } from './steps-mint';
 import { stepSetTokenUri } from './steps-set-uri';
+import { stepFinalizeSnapshot } from './steps-finalize';
 
 /**
  * GET /api/cron/process-score-queue?secret=xxx
  *
  * Phase 3 S5.b — 5 步状态机 cron，每次处理一条：
- *   pending → uploading_events → minting_onchain →
- *   uploading_metadata → setting_uri → success
+ *   pending → uploading_events → preparing_package → minting_onchain →
+ *   uploading_metadata → setting_uri → finalizing_snapshot → success
  *
  * Phase 6 A0：入口拿运营钱包全局锁（防 nonce race）
  * Phase 6 A1：每次 claim 分配 leaseOwner，所有 update 必须 CAS owner + 未过期
@@ -24,7 +26,7 @@ import { stepSetTokenUri } from './steps-set-uri';
  * Phase 7 A3 ：mint / setTokenURI 入口加 mint_attempted_at / uri_attempted_at 窗口（详见 step 文件）
  *
  * 幂等核心：
- *   - 上传步骤：Arweave 内容寻址，同内容重传得到同 txid
+ *   - 上传步骤：先写意图、后上传、再双网关验真；结果不明立即转人工核验
  *   - mint / setTokenURI：tx_hash / uri_tx_hash 立刻入库，崩溃重启不重发
  *   - "CRITICAL: ..." 错误（chain 已发但 DB 失败 / mint 卡死窗口超限）→ 直接 failed=manual_review，alert 邮件
  */
@@ -74,6 +76,9 @@ export async function GET(req: NextRequest) {
       case 'uploading_events':
         newStatus = await stepUploadEvents(row, leaseOwner);
         break;
+      case 'preparing_package':
+        newStatus = await stepPreparePackage(row, leaseOwner);
+        break;
       case 'minting_onchain':
         newStatus = await stepMintOnchain(row, leaseOwner);
         break;
@@ -82,6 +87,9 @@ export async function GET(req: NextRequest) {
         break;
       case 'setting_uri':
         newStatus = await stepSetTokenUri(row, leaseOwner);
+        break;
+      case 'finalizing_snapshot':
+        newStatus = await stepFinalizeSnapshot(row, leaseOwner);
         break;
       default:
         throw new Error(`unexpected status: ${row.status}`);

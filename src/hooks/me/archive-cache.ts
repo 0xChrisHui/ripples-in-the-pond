@@ -1,6 +1,6 @@
 import type { ArchiveRecording } from './archive-data';
 import type { EchoArchiveItem } from '@/src/data/echo/types';
-import type { OwnedScoreNFT, ScoreMintStatus } from '@/src/types/jam';
+import { SCORE_STATUSES, type OwnedScoreNFT } from '@/src/types/jam';
 import type { OwnedNFT } from '@/src/types/tracks';
 import { isExposedTrack } from '@/src/lib/track-contract';
 
@@ -17,10 +17,7 @@ const SOURCE_BY_SECTION: Record<ArchiveSectionName, string> = {
   recordings: '/api/me/scores?light=1',
   materials: '/api/me/nfts',
 };
-const SCORE_STATES = new Set<ScoreMintStatus>([
-  'pending', 'uploading_events', 'minting_onchain', 'uploading_metadata',
-  'setting_uri', 'success', 'failed',
-]);
+const SCORE_STATES = new Set<string>(SCORE_STATUSES);
 
 export type ArchiveIdentity = {
   authSource: ArchiveAuthSource; userId: string; evmAddress?: string | null;
@@ -76,7 +73,7 @@ export function validCachedScore(value: unknown): value is OwnedScoreNFT {
     && typeof item.queueId === 'string'
     && typeof item.trackTitle === 'string'
     && typeof item.status === 'string'
-    && SCORE_STATES.has(item.status as ScoreMintStatus)
+    && SCORE_STATES.has(item.status)
     && typeof item.submittedAt === 'string');
 }
 
