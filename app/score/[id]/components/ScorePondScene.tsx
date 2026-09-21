@@ -1,14 +1,16 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { preload } from 'react-dom';
 import EditionStamp from '@/src/components/p11/EditionStamp';
 import ScorePondHeader from '@/src/components/p11/ScorePondHeader';
+import { useEclipseTransition } from '@/src/components/pond-gl-test3/focus/useEclipseTransition';
 import { DEFAULT_GL_FLAGS } from '@/src/components/pond-gl-test3/gl-flags';
 import GlEclipse from '@/src/components/pond-gl-test3/overlay/GlEclipse';
 import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
 import { resetDepthShift, setCameraFx, usePointerFx } from '@/src/components/pond-gl-test3/pointer-fx';
+import type { Track36VisitorState } from '@/src/components/pond-gl-test3/visitor/track36-state';
 import type { ScoreReadyData } from '@/src/data/score-source';
 import { permanentMediaCandidates } from '@/src/features/permanent-media';
 import { startupSoundKeys } from '@/src/features/score-playback/resource-loader';
@@ -76,6 +78,8 @@ export default function ScorePondScene({ score, network }: Props) {
   const isPlaying = playback.state === 'playing';
   const visualTrack = useMemo(() => visualTrackOf(score), [score]);
   const glSim = useScorePondSim(visualTrack, isPlaying);
+  const emptyVisitor = useRef<Track36VisitorState | null>(null);
+  useEclipseTransition(glSim!, emptyVisitor, health === 'healthy' && isPlaying ? visualTrack.id : null);
   const interactive = capabilities.fine && !capabilities.reduced && !performanceReduced;
   const flags = useMemo(() => ({
     ...DEFAULT_GL_FLAGS,
@@ -109,6 +113,8 @@ export default function ScorePondScene({ score, network }: Props) {
       className="score-pond-page"
       data-p11-theme="score"
       data-theme="dark"
+      data-pond-root="true"
+      data-pond-eclipse-active="false"
       data-capability={capabilities.fine ? 'fine' : 'coarse'}
       data-reduced-motion={capabilities.reduced}
       data-score-state="ready"

@@ -14,6 +14,17 @@ import type { BgWave } from '@/src/components/pond-gl-test3/spheres/gl-sim-waves
 import { resetWaterLine } from '@/src/components/pond-gl-test3/water/water-level';
 import type { Track } from '@/src/types/tracks';
 
+function pinToRecord(node: GlPhysNode, width: number, height: number): void {
+  const record = document.querySelector<HTMLElement>(
+    '.score-pond-page__anchor .record-anchor__visual',
+  );
+  const bounds = record?.getBoundingClientRect();
+  const x = bounds?.width ? bounds.left + bounds.width / 2 : width / 2;
+  const y = bounds?.height ? bounds.top + bounds.height / 2 : height / 2;
+  node.x = node.fx = x;
+  node.y = node.fy = y;
+}
+
 /** 一枚真实 Track 建一枚固定水面球；播放状态只写 ref，不建立第二套时钟。 */
 export function useScorePondSim(track: Track | null, playing: boolean): GlSim | null {
   const [nodes, setNodes] = useState<GlPhysNode[]>([]);
@@ -44,10 +55,7 @@ export function useScorePondSim(track: Track | null, playing: boolean): GlSim | 
     const { sim } = setupGlSimulation(built.nodes, built.links, built.assignment, w, h);
     const node = built.nodes[0];
     if (node) {
-      node.x = w >= 768 ? w * 0.56 : w / 2;
-      node.y = h * 0.55;
-      node.fx = node.x;
-      node.fy = node.y;
+      pinToRecord(node, w, h);
       node.radius = 70;
     }
     simRef.current = sim;
@@ -58,23 +66,35 @@ export function useScorePondSim(track: Track | null, playing: boolean): GlSim | 
 
   useEffect(() => {
     if (!track) return;
+    let raf = 0;
     const onResize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
       sizeRef.current = { w, h };
-      const node = nodes[0];
-      if (!node) return;
-      node.x = node.fx = w >= 768 ? w * 0.56 : w / 2;
-      node.y = node.fy = h * 0.55;
-      simRef.current?.alpha(0.08).restart();
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const node = nodes[0];
+        if (!node) return;
+        pinToRecord(node, w, h);
+        simRef.current?.alpha(0.08).restart();
+      });
     };
     window.addEventListener('resize', onResize);
     window.addEventListener('orientationchange', onResize);
     return () => {
+      cancelAnimationFrame(raf);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('orientationchange', onResize);
     };
   }, [nodes, track]);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      const node = nodes[0];
+      if (node) pinToRecord(node, window.innerWidth, window.innerHeight);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [nodes, playing]);
 
   useEffect(() => {
     const onWave = (event: Event) => {
