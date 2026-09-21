@@ -89,7 +89,7 @@ export default function PondHeader() {
       <nav aria-label="主导航" className="pointer-events-auto hidden min-h-11 items-center gap-7 md:flex">
         <PublicLinks echoLabel={echoLabel} />
         <span className="h-4 w-px bg-[var(--p11-line)]" aria-hidden="true" />
-        <LoginButton hideArchiveLink />
+        <LoginButton />
       </nav>
 
       <div className="pointer-events-auto relative md:hidden">
@@ -116,7 +116,7 @@ export default function PondHeader() {
             <div className="flex flex-col">
               <PublicLinks echoLabel={echoLabel} onNavigate={() => setMenuOpen(false)} />
               <div className="flex min-h-14 items-center justify-end pt-2">
-                <LoginButton hideArchiveLink />
+                <LoginButton />
               </div>
             </div>
           </div>

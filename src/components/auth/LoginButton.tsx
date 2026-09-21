@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { useAuth } from '@/src/hooks/useAuth';
 
 /**
- * 登录按钮 — 未登录显示"登录"，已登录显示地址缩写 + 独立"登出"链接
- * 地址按钮点击跳 /me（用户的直觉期待），登出必须显式点"登出"链接
+ * 登录按钮 — 未登录显示"登录"，已登录显示"我的音乐" + 独立"登出"链接
+ * "我的音乐"点击跳 /me，登出必须显式点"登出"链接
  */
-export default function LoginButton({ hideArchiveLink = false }: { hideArchiveLink?: boolean }) {
+export default function LoginButton() {
   const { ready, authenticated, openLoginModal, logout } = useAuth();
 
   if (!ready) return null;
@@ -26,14 +26,12 @@ export default function LoginButton({ hideArchiveLink = false }: { hideArchiveLi
 
   return (
     <div className="flex items-center gap-3">
-      {!hideArchiveLink && (
-        <Link
-          href="/me"
-          className="rounded-full border border-white/20 px-4 py-1.5 text-sm text-white transition-colors hover:bg-white/10"
-        >
-          我的音乐
-        </Link>
-      )}
+      <Link
+        href="/me"
+        className="rounded-full border border-white/20 px-4 py-1.5 text-sm text-white transition-colors hover:bg-white/10"
+      >
+        我的音乐
+      </Link>
       <button
         type="button"
         onClick={logout}
