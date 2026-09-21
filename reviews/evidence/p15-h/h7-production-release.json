@@ -1,22 +1,18 @@
 {
   "schema": "p15-h7.production-release.v1",
-  "releasedAt": "2026-09-21T07:32:16.300Z",
+  "releasedAt": "2026-09-21T07:49:45.331Z",
   "soundSetId": "current-33-v1",
   "decoderId": "score-decoder-v3-08eb79642b8e",
+  "snapshotEnvironments": [
+    "development",
+    "preview",
+    "production"
+  ],
   "snapshotTokenIds": [
     1,
     2,
     3,
     4
   ],
-  "trackCount": 35,
-  "readbackAt": "2026-09-21T07:33:16.976Z",
-  "readback": {
-    "soundSets": 1,
-    "decoders": 1,
-    "activeCorePointers": 1,
-    "verifiedTracks": 35,
-    "activeSnapshots": 4,
-    "activeLegacyQueues": 0
-  }
+  "trackCount": 35
 }

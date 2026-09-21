@@ -5,6 +5,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 const ROOT = process.cwd();
 const OUTPUT = join(ROOT, 'reviews/evidence/p15-h/h7-production-release.json');
+const SNAPSHOT_ENVIRONMENTS = ['development', 'preview', 'production'] as const;
 
 type BaseTrack = {
   id: string; arTxId: string; sha256: string; bytes: number; mime: 'audio/mpeg';
@@ -99,16 +100,18 @@ async function applyBases(client: SupabaseClient, tracks: BaseTrack[], verifiedA
 }
 
 async function applySnapshots(client: SupabaseClient, input: ReturnType<typeof releaseInputs>) {
-  for (const snapshot of input.plan.snapshots) {
-    const result = await client.rpc('publish_score_playback_snapshot', {
-      p_environment: input.plan.environment, p_chain_id: input.plan.chainId,
-      p_contract: input.plan.contract, p_token_id: snapshot.tokenId, p_queue_id: snapshot.queueId,
-      p_schema_id: snapshot.schemaId, p_original_token_uri: snapshot.originalTokenUri,
-      p_metadata: snapshot.metadata, p_events: snapshot.events, p_sounds: snapshot.sounds,
-      p_resource_attestations: snapshot.resourceAttestations,
-      p_compatibility: snapshot.compatibility, p_content_sha256: snapshot.contentSha256,
-    });
-    if (result.error) throw result.error;
+  for (const environment of SNAPSHOT_ENVIRONMENTS) {
+    for (const snapshot of input.plan.snapshots) {
+      const result = await client.rpc('publish_score_playback_snapshot', {
+        p_environment: environment, p_chain_id: input.plan.chainId,
+        p_contract: input.plan.contract, p_token_id: snapshot.tokenId, p_queue_id: snapshot.queueId,
+        p_schema_id: snapshot.schemaId, p_original_token_uri: snapshot.originalTokenUri,
+        p_metadata: snapshot.metadata, p_events: snapshot.events, p_sounds: snapshot.sounds,
+        p_resource_attestations: snapshot.resourceAttestations,
+        p_compatibility: snapshot.compatibility, p_content_sha256: snapshot.contentSha256,
+      });
+      if (result.error) throw result.error;
+    }
   }
 }
 
@@ -143,10 +146,11 @@ async function main(): Promise<void> {
   const temporary = `${OUTPUT}.${process.pid}.tmp`;
   writeFileSync(temporary, `${JSON.stringify({
     schema: 'p15-h7.production-release.v1', releasedAt: verifiedAt,
-    soundSetId: input.sounds.id, decoderId, snapshotTokenIds: [1, 2, 3, 4], trackCount: 35,
+    soundSetId: input.sounds.id, decoderId, snapshotEnvironments: SNAPSHOT_ENVIRONMENTS,
+    snapshotTokenIds: [1, 2, 3, 4], trackCount: 35,
   }, null, 2)}\n`);
   renameSync(temporary, OUTPUT);
-  console.log('H7 Production registry、35 首 base 与 4 枚 snapshot 已发布');
+  console.log('H7 Production registry、35 首 base 与三环境各 4 枚 snapshot 已发布');
 }
 
 void main().catch((error) => {
