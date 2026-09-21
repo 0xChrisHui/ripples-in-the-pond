@@ -25,7 +25,13 @@ export type SoundSetLedger = {
   schema: typeof SOUND_SET_SCHEMA;
   id: typeof CURRENT_SOUND_SET_ID;
   sourceCommit: string;
-  publicationStatus: 'not-published' | 'published';
+  publicationStatus: 'not-published' | 'publishing' | 'published' | 'edge-mirrored';
+  manifest: {
+    arTxId: string;
+    sha256: string;
+    bytes: number;
+    mime: 'application/json';
+  } | null;
   keyOrder: readonly SoundKey[];
   entries: readonly SoundSetEntry[];
 };
@@ -96,6 +102,7 @@ export function buildSoundSetLedger(root: string): SoundSetLedger {
     id: CURRENT_SOUND_SET_ID,
     sourceCommit: SOUND_SET_SOURCE_COMMIT,
     publicationStatus: 'not-published',
+    manifest: null,
     keyOrder: VALID_SOUND_KEYS,
     entries: inspectSoundDirectory(root),
   };
@@ -124,8 +131,28 @@ export function validateSoundSetLedger(
     if (entry.mime !== 'audio/mpeg' || entry.durationMs <= 0) errors.push(`声音格式错误：${entry.key}`);
     const validTx = entry.arTxId === null || /^[A-Za-z0-9_-]{43}$/.test(entry.arTxId);
     if (!validTx) errors.push(`AR txid 非法：${entry.key}`);
-    const expectedBlob = entry.arTxId === null ? null : `media/${entry.arTxId}`;
-    if (entry.blobKey !== expectedBlob) errors.push(`Blob key 与 AR txid 不一致：${entry.key}`);
+    if (entry.arTxId === null && entry.blobKey !== null) errors.push(`Blob key 缺少 AR 身份：${entry.key}`);
+    if (entry.blobKey !== null && entry.blobKey !== `media/${entry.arTxId}`) {
+      errors.push(`Blob key 与 AR txid 不一致：${entry.key}`);
+    }
+  }
+  const manifestOk = ledger.manifest === null || (
+    /^[A-Za-z0-9_-]{43}$/.test(ledger.manifest.arTxId)
+    && /^[0-9a-f]{64}$/.test(ledger.manifest.sha256)
+    && ledger.manifest.bytes > 0 && ledger.manifest.mime === 'application/json'
+  );
+  if (!manifestOk) errors.push('声音 manifest 身份非法');
+  if (ledger.publicationStatus === 'not-published'
+    && (ledger.manifest !== null || ledger.entries.some(({ arTxId }) => arTxId !== null))) {
+    errors.push('未发布账本不得包含永久 txid');
+  }
+  if (ledger.publicationStatus === 'published'
+    && (!ledger.manifest || ledger.entries.some(({ arTxId }) => arTxId === null))) {
+    errors.push('已发布账本缺少完整永久身份');
+  }
+  if (ledger.publicationStatus === 'edge-mirrored'
+    && (!ledger.manifest || ledger.entries.some(({ blobKey }) => blobKey === null))) {
+    errors.push('Edge 镜像账本不完整');
   }
   const p9Unique = [...new Set(p9Keys)];
   if (p9Keys.length !== 33 || p9Unique.length !== 33) errors.push('P9 必须有 33 个唯一声音键');

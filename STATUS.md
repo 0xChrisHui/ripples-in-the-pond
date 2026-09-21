@@ -10,7 +10,7 @@
 
 **P15-H 新发现（2026-09-21）**：2026-08-23 的本地声音变更不仅新增 `space + 3–8`，还替换了 `a–z` 全部 26 个 MP3；因此新 Permanent Core 必须是当前 33 音频的独立版本，旧 26 表继续原样服务历史真相。Score #1–#3 都钉住旧 decoder/旧 26 表；#2 明确缺 `space`，#2/#3 还必须按各自铸造时 Production deployment 证据判断已用字母是否需要兼容 override，不能只补 7 键后宣称完全对齐。
 
-**P15-H0 真相盘点（2026-09-21）✅**：主网动态枚举到 #1–#4；#1 在新版声音 Production 前铸造，保持 legacy-26；GitHub/Vercel deployment 与链上时间证明 #2/#3 录制时已是 current-33，因此分别恢复全部 10/18 个使用键。#4 已 mint 且取证期间由 `uploading_metadata` 推进到 `setting_uri`，未设 URI 前保持真实生命周期。当前 33 个本地 MP3 全为 44.1kHz 双声道；旧 26、三枚 ready Score 的 metadata/events/base/sounds/decoder 全部达到两网关同字节/MIME quorum。Blob 63/63 当前存在且完整可读，仅见一次立即恢复的 TLS 抖动，确认 Store 未挂、旧持久长冷却才是故障放大器。证据见 `reviews/2026-09-21-phase-15-h0-audit.md`。
+**P15-H0 真相盘点（2026-09-21）✅**：主网动态枚举到 #1–#4；#1 在新版声音 Production 前铸造，保持 legacy-26；GitHub/Vercel deployment 与链上时间证明 #2/#3/#4 录制时已是 current-33，因此分别恢复全部 10/18/2 个使用键。#4 已在复核时完成 tokenURI，现为 ready。当前 33 个本地 MP3 全为 44.1kHz 双声道；旧 26、四枚 ready Score 的 metadata/events/base/sounds/decoder 全部达到两网关同字节/MIME quorum。Blob 63/63 当前存在且完整可读，仅见一次立即恢复的 TLS 抖动，确认 Store 未挂、旧持久长冷却才是故障放大器。证据见 `reviews/2026-09-21-phase-15-h0-audit.md`。
 
 **P15-H1 33 键单一注册表（2026-09-21）✅**：`src/lib/sound-set.ts` 现为允许键与本地路径的唯一真相；录音预载、键盘、保存 API、Score 永久事件解析和 P9 都从它派生。`current-33-v1` 版本账本冻结 33 个真实 MP3 的 path/hash/bytes/duration/MIME，旧 26 账本按固定 hash 防漂移；重复键、缺文件、hash 漂移、损坏 MP3 与 P9 缺口反例均被 Gate 拒绝。定向 TypeScript、ESLint 与 H1 Gate 通过。
 

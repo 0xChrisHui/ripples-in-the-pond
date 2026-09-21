@@ -1,8 +1,8 @@
 {
   "schema": "p15-h0.permanent-core.v2",
-  "generatedAt": "2026-09-21T04:06:32.058Z",
+  "generatedAt": "2026-09-21T04:42:21.288Z",
   "git": {
-    "head": "166ee0faef1c620d31a4ff7414f9b22e7f7acc04",
+    "head": "7195fe200a66679e84bede379816996c9937bb96",
     "soundSetCommit": "f7c507b5a07c8fc8a6b36fd0f1baafbe0e3e688c"
   },
   "scoreNft": {
@@ -1759,8 +1759,11 @@
             },
             {
               "gateway": "https://arweave.net",
-              "ok": false,
-              "error": "This operation was aborted"
+              "ok": true,
+              "status": 200,
+              "bytes": 3966016,
+              "sha256": "0afe6742126dd3cb806462eabf820a662a1a5b5a85adc425c7ef398988504caf",
+              "contentType": "audio/mpeg"
             }
           ]
         },
@@ -1850,8 +1853,165 @@
     },
     {
       "tokenId": "4",
-      "tokenUri": "",
-      "lifecycle": "minted_without_uri"
+      "tokenUri": "ar://DluJS7w-Xwze-VuUynOsE5bZES7IeP7gGZdKgDPigI8",
+      "lifecycle": "ready",
+      "metadataTxId": "DluJS7w-Xwze-VuUynOsE5bZES7IeP7gGZdKgDPigI8",
+      "metadataGateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 860,
+          "sha256": "d30d7096bd4efcd1e688546f5d6dc68dd33a0d4ce7ca96c6e41a68f2b62ef482",
+          "contentType": "application/json; charset=utf-8"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 860,
+          "sha256": "d30d7096bd4efcd1e688546f5d6dc68dd33a0d4ce7ca96c6e41a68f2b62ef482",
+          "contentType": "application/json; charset=utf-8"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 860,
+          "sha256": "d30d7096bd4efcd1e688546f5d6dc68dd33a0d4ce7ca96c6e41a68f2b62ef482",
+          "contentType": "application/json"
+        }
+      ],
+      "refs": {
+        "decoderTxId": "NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0",
+        "eventsTxId": "XVbfJXNAtx7xjuvPMMV50lRi9BUlo1p4NmdyC5lc_vA",
+        "baseTxId": "K5X3EQBDDCbp8BFxGQXyLb7kkP1A3BSwZlYIsIt-XhY",
+        "soundsTxId": "NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8"
+      },
+      "eventsGateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 76,
+          "sha256": "9b390b44c2c358e22d2707c09eb0e98189ba4760b0df7142435eb4db0e26ff48",
+          "contentType": "application/json; charset=utf-8"
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "ok": true,
+          "status": 200,
+          "bytes": 76,
+          "sha256": "9b390b44c2c358e22d2707c09eb0e98189ba4760b0df7142435eb4db0e26ff48",
+          "contentType": "application/json; charset=utf-8"
+        },
+        {
+          "gateway": "https://arweave.net",
+          "ok": true,
+          "status": 200,
+          "bytes": 76,
+          "sha256": "9b390b44c2c358e22d2707c09eb0e98189ba4760b0df7142435eb4db0e26ff48",
+          "contentType": "application/json"
+        }
+      ],
+      "dependencies": [
+        {
+          "txId": "K5X3EQBDDCbp8BFxGQXyLb7kkP1A3BSwZlYIsIt-XhY",
+          "kind": "audio",
+          "gateways": [
+            {
+              "gateway": "https://ardrive.net",
+              "ok": true,
+              "status": 200,
+              "bytes": 6076096,
+              "sha256": "7617fde2ceeb27dbb0e98888edbc60668a10f2495e95d90334f3aee74c519b7a",
+              "contentType": "audio/mpeg"
+            },
+            {
+              "gateway": "https://arweave.tokyo",
+              "ok": true,
+              "status": 200,
+              "bytes": 6076096,
+              "sha256": "7617fde2ceeb27dbb0e98888edbc60668a10f2495e95d90334f3aee74c519b7a",
+              "contentType": "audio/mpeg"
+            },
+            {
+              "gateway": "https://arweave.net",
+              "ok": true,
+              "status": 200,
+              "bytes": 6076096,
+              "sha256": "7617fde2ceeb27dbb0e98888edbc60668a10f2495e95d90334f3aee74c519b7a",
+              "contentType": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "txId": "NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+          "kind": "json",
+          "gateways": [
+            {
+              "gateway": "https://ardrive.net",
+              "ok": true,
+              "status": 200,
+              "bytes": 2558,
+              "sha256": "df59a2eaddc1ae63f26e7cf58da3c02e80cfe2558bbf17794dda697a36c98fb9",
+              "contentType": "application/json; charset=utf-8"
+            },
+            {
+              "gateway": "https://arweave.tokyo",
+              "ok": true,
+              "status": 200,
+              "bytes": 2558,
+              "sha256": "df59a2eaddc1ae63f26e7cf58da3c02e80cfe2558bbf17794dda697a36c98fb9",
+              "contentType": "application/json; charset=utf-8"
+            },
+            {
+              "gateway": "https://arweave.net",
+              "ok": true,
+              "status": 200,
+              "bytes": 2558,
+              "sha256": "df59a2eaddc1ae63f26e7cf58da3c02e80cfe2558bbf17794dda697a36c98fb9",
+              "contentType": "application/json"
+            }
+          ]
+        },
+        {
+          "txId": "NMCjKLoaRNWKgH0AyCDB6p8qjjv2iD2Fidzf7VAZmb0",
+          "kind": "html",
+          "gateways": [
+            {
+              "gateway": "https://ardrive.net",
+              "ok": true,
+              "status": 200,
+              "bytes": 23362,
+              "sha256": "399f94a78127fc9b34eb7ba5c52bb674e9ca128b39d5ec8bd0b45f639c4e4f05",
+              "contentType": "text/html; charset=utf-8"
+            },
+            {
+              "gateway": "https://arweave.tokyo",
+              "ok": true,
+              "status": 200,
+              "bytes": 23362,
+              "sha256": "399f94a78127fc9b34eb7ba5c52bb674e9ca128b39d5ec8bd0b45f639c4e4f05",
+              "contentType": "text/html; charset=utf-8"
+            },
+            {
+              "gateway": "https://arweave.net",
+              "ok": true,
+              "status": 200,
+              "bytes": 23362,
+              "sha256": "399f94a78127fc9b34eb7ba5c52bb674e9ca128b39d5ec8bd0b45f639c4e4f05",
+              "contentType": "text/html"
+            }
+          ]
+        }
+      ],
+      "eventCount": 2,
+      "usedKeys": [
+        "f",
+        "v"
+      ],
+      "spaceEvents": []
     }
   ]
 }

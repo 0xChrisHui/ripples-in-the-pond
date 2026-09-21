@@ -187,7 +187,7 @@ Vercel Blob `media/<arTxId>` 直接完整 GET ──慢 1.2s──▶ Arweave he
 5. #2 的 space 与 P9 同步，旧 `animation_url` 的限制在 UI/证据中透明说明。
 6. 写最终 review、更新 STATUS/TASKS/Architecture/Runbook，封存 P15-H。
 
-**完成线**：已验证 commit 推送成功、Production Ready、`/score/1–3` 正式域名 Gate 通过即结束，不扩张为全站 review。
+**完成线**：已验证 commit 推送成功、Production Ready、`/score/1–4` 正式域名 Gate 通过即结束，不扩张为全站 review。
 
 ---
 

@@ -1,0 +1,1298 @@
+{
+  "schema": "ripples.p15-h3-upload-ledger.v1",
+  "soundSetId": "current-33-v1",
+  "assets": {
+    "sound:a": {
+      "kind": "sound",
+      "key": "a",
+      "fileName": "a.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "b247eaf947b33ad05369eea63cae662c8bdcded32651557bcd6013108d5b04e8",
+      "state": "verified",
+      "arweaveTxId": "PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:49:54.655Z",
+      "uploadedAt": "2026-09-21T04:49:57.778Z",
+      "verifiedAt": "2026-09-21T04:50:50.347Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "b247eaf947b33ad05369eea63cae662c8bdcded32651557bcd6013108d5b04e8",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "b247eaf947b33ad05369eea63cae662c8bdcded32651557bcd6013108d5b04e8",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:b": {
+      "kind": "sound",
+      "key": "b",
+      "fileName": "b.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "b55903ee6e76e02b330f0cc0e706ab5a8b41579da412e57f28dc1d001782f937",
+      "state": "verified",
+      "arweaveTxId": "ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:49:57.788Z",
+      "uploadedAt": "2026-09-21T04:50:00.432Z",
+      "verifiedAt": "2026-09-21T04:51:02.003Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "b55903ee6e76e02b330f0cc0e706ab5a8b41579da412e57f28dc1d001782f937",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "b55903ee6e76e02b330f0cc0e706ab5a8b41579da412e57f28dc1d001782f937",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:c": {
+      "kind": "sound",
+      "key": "c",
+      "fileName": "c.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "9ac84ee89fd1ed59dcdd14121b6a39a890e16f51ace9762a1600f685539e26ae",
+      "state": "verified",
+      "arweaveTxId": "e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:00.442Z",
+      "uploadedAt": "2026-09-21T04:50:01.166Z",
+      "verifiedAt": "2026-09-21T04:51:11.772Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "9ac84ee89fd1ed59dcdd14121b6a39a890e16f51ace9762a1600f685539e26ae",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "9ac84ee89fd1ed59dcdd14121b6a39a890e16f51ace9762a1600f685539e26ae",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:d": {
+      "kind": "sound",
+      "key": "d",
+      "fileName": "d.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "0cf050aad5a7d50123f42c18cbfdfa430b059b3e09ea4ff6bb87fa0101c7961d",
+      "state": "verified",
+      "arweaveTxId": "qmRjePU6ybQoUm5gEsOBpfHvolGGAyJE2kKX_XK3Cxs",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:01.171Z",
+      "uploadedAt": "2026-09-21T04:50:01.927Z",
+      "verifiedAt": "2026-09-21T04:51:21.145Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "0cf050aad5a7d50123f42c18cbfdfa430b059b3e09ea4ff6bb87fa0101c7961d",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "0cf050aad5a7d50123f42c18cbfdfa430b059b3e09ea4ff6bb87fa0101c7961d",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:e": {
+      "kind": "sound",
+      "key": "e",
+      "fileName": "e.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "7326f83de77b141f64d4fd137b72f73a35df47bd50083b8bc247d6021d3cf0ee",
+      "state": "verified",
+      "arweaveTxId": "fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:01.936Z",
+      "uploadedAt": "2026-09-21T04:50:02.610Z",
+      "verifiedAt": "2026-09-21T04:51:30.008Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "7326f83de77b141f64d4fd137b72f73a35df47bd50083b8bc247d6021d3cf0ee",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "7326f83de77b141f64d4fd137b72f73a35df47bd50083b8bc247d6021d3cf0ee",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:f": {
+      "kind": "sound",
+      "key": "f",
+      "fileName": "f.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "f8d904bcb60a6dce27af1bf80c5b10c61389e43fd46f89727b0f3fae693cd5b7",
+      "state": "verified",
+      "arweaveTxId": "JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:02.618Z",
+      "uploadedAt": "2026-09-21T04:50:03.312Z",
+      "verifiedAt": "2026-09-21T04:51:38.352Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "f8d904bcb60a6dce27af1bf80c5b10c61389e43fd46f89727b0f3fae693cd5b7",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "f8d904bcb60a6dce27af1bf80c5b10c61389e43fd46f89727b0f3fae693cd5b7",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:g": {
+      "kind": "sound",
+      "key": "g",
+      "fileName": "g.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "021dbb7e0722c12edd6b7738c91a1a9119ad24eece830c2c0ec1bcefcb4bb182",
+      "state": "verified",
+      "arweaveTxId": "65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:03.324Z",
+      "uploadedAt": "2026-09-21T04:50:03.998Z",
+      "verifiedAt": "2026-09-21T04:51:47.556Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "021dbb7e0722c12edd6b7738c91a1a9119ad24eece830c2c0ec1bcefcb4bb182",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "021dbb7e0722c12edd6b7738c91a1a9119ad24eece830c2c0ec1bcefcb4bb182",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:h": {
+      "kind": "sound",
+      "key": "h",
+      "fileName": "h.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "55699715d87bf89aac559c1a5fb1b63732e9c5bc90769a64aab3479fc15bf0aa",
+      "state": "verified",
+      "arweaveTxId": "N7Z7O4tlLzrjMB88rMoI96mjEc8nVV0rLcEc9rIuTIc",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:04.007Z",
+      "uploadedAt": "2026-09-21T04:50:04.703Z",
+      "verifiedAt": "2026-09-21T04:51:57.012Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "55699715d87bf89aac559c1a5fb1b63732e9c5bc90769a64aab3479fc15bf0aa",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "55699715d87bf89aac559c1a5fb1b63732e9c5bc90769a64aab3479fc15bf0aa",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:i": {
+      "kind": "sound",
+      "key": "i",
+      "fileName": "i.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "684345f26921b4e86dd5d2afe35bbae1c48b47611c42c3dc804809d232439906",
+      "state": "verified",
+      "arweaveTxId": "e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:04.713Z",
+      "uploadedAt": "2026-09-21T04:50:05.409Z",
+      "verifiedAt": "2026-09-21T04:52:06.712Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "684345f26921b4e86dd5d2afe35bbae1c48b47611c42c3dc804809d232439906",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "684345f26921b4e86dd5d2afe35bbae1c48b47611c42c3dc804809d232439906",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:j": {
+      "kind": "sound",
+      "key": "j",
+      "fileName": "j.mp3",
+      "bytes": 76321,
+      "contentType": "audio/mpeg",
+      "contentSha256": "fe4c7c3662506ea19497b99f97f6b4b8267fc04610e7eb11f516a841fabf2b0f",
+      "state": "verified",
+      "arweaveTxId": "ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:05.419Z",
+      "uploadedAt": "2026-09-21T04:50:06.068Z",
+      "verifiedAt": "2026-09-21T04:52:15.255Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 76321,
+          "sha256": "fe4c7c3662506ea19497b99f97f6b4b8267fc04610e7eb11f516a841fabf2b0f",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 76321,
+          "sha256": "fe4c7c3662506ea19497b99f97f6b4b8267fc04610e7eb11f516a841fabf2b0f",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:k": {
+      "kind": "sound",
+      "key": "k",
+      "fileName": "k.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "b2b1a4d68b47df88c3399017fa4376078515df639f139e3df05daf3374e47cd0",
+      "state": "verified",
+      "arweaveTxId": "WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:06.079Z",
+      "uploadedAt": "2026-09-21T04:50:06.737Z",
+      "verifiedAt": "2026-09-21T04:52:23.933Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "b2b1a4d68b47df88c3399017fa4376078515df639f139e3df05daf3374e47cd0",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "b2b1a4d68b47df88c3399017fa4376078515df639f139e3df05daf3374e47cd0",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:l": {
+      "kind": "sound",
+      "key": "l",
+      "fileName": "l.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "da55b19fb307168f3749f9be5c54b81b1a72da8c5ee911b482eea74da0cd1414",
+      "state": "verified",
+      "arweaveTxId": "8ADqo5sJ-nUvNSA3rR5kDJnjPTYpe1G6_yx3eBcku-A",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:06.748Z",
+      "uploadedAt": "2026-09-21T04:50:07.414Z",
+      "verifiedAt": "2026-09-21T04:52:32.740Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "da55b19fb307168f3749f9be5c54b81b1a72da8c5ee911b482eea74da0cd1414",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "da55b19fb307168f3749f9be5c54b81b1a72da8c5ee911b482eea74da0cd1414",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:m": {
+      "kind": "sound",
+      "key": "m",
+      "fileName": "m.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "5b3634eae52a69d2e599e1a3e77630c424d8d89803ceba77e554a45b3cf5309f",
+      "state": "verified",
+      "arweaveTxId": "ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:07.424Z",
+      "uploadedAt": "2026-09-21T04:50:08.064Z",
+      "verifiedAt": "2026-09-21T04:52:42.029Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "5b3634eae52a69d2e599e1a3e77630c424d8d89803ceba77e554a45b3cf5309f",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "5b3634eae52a69d2e599e1a3e77630c424d8d89803ceba77e554a45b3cf5309f",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:n": {
+      "kind": "sound",
+      "key": "n",
+      "fileName": "n.mp3",
+      "bytes": 41317,
+      "contentType": "audio/mpeg",
+      "contentSha256": "8921038adaf2cf716fed9027135fef04b5442df0be2e1b79fdedaae59506d6d7",
+      "state": "verified",
+      "arweaveTxId": "S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:08.073Z",
+      "uploadedAt": "2026-09-21T04:50:08.687Z",
+      "verifiedAt": "2026-09-21T04:52:50.736Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "8921038adaf2cf716fed9027135fef04b5442df0be2e1b79fdedaae59506d6d7",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "8921038adaf2cf716fed9027135fef04b5442df0be2e1b79fdedaae59506d6d7",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:o": {
+      "kind": "sound",
+      "key": "o",
+      "fileName": "o.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "425452771581fb3b18b10f01c32ee35e73362b4e82072c74caa67aeb39b3b474",
+      "state": "verified",
+      "arweaveTxId": "-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:08.697Z",
+      "uploadedAt": "2026-09-21T04:50:09.359Z",
+      "verifiedAt": "2026-09-21T04:53:00.704Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "425452771581fb3b18b10f01c32ee35e73362b4e82072c74caa67aeb39b3b474",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "425452771581fb3b18b10f01c32ee35e73362b4e82072c74caa67aeb39b3b474",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:p": {
+      "kind": "sound",
+      "key": "p",
+      "fileName": "p.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "2f32cc6041662e0052292827b7c18a757d3e14d1d7eb71dd960dadea5f73ba98",
+      "state": "verified",
+      "arweaveTxId": "w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:09.371Z",
+      "uploadedAt": "2026-09-21T04:50:10.082Z",
+      "verifiedAt": "2026-09-21T04:53:09.937Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "2f32cc6041662e0052292827b7c18a757d3e14d1d7eb71dd960dadea5f73ba98",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "2f32cc6041662e0052292827b7c18a757d3e14d1d7eb71dd960dadea5f73ba98",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:q": {
+      "kind": "sound",
+      "key": "q",
+      "fileName": "q.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "1b2c8a866b06b86dfa0c446ebb7b8800dcb25869fcf3e2a3e20aa25092f83881",
+      "state": "verified",
+      "arweaveTxId": "xA6W3OnBK4zC5b5vh6pnBIvJ9hLdmqDBp-89GP7Jl0g",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:10.092Z",
+      "uploadedAt": "2026-09-21T04:50:10.739Z",
+      "verifiedAt": "2026-09-21T04:53:20.234Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "1b2c8a866b06b86dfa0c446ebb7b8800dcb25869fcf3e2a3e20aa25092f83881",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "1b2c8a866b06b86dfa0c446ebb7b8800dcb25869fcf3e2a3e20aa25092f83881",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:r": {
+      "kind": "sound",
+      "key": "r",
+      "fileName": "r.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "9282ba0bfcfc597ce686282e0974d2340035553facfb789555345f3aaacf0d75",
+      "state": "verified",
+      "arweaveTxId": "AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:10.748Z",
+      "uploadedAt": "2026-09-21T04:50:11.642Z",
+      "verifiedAt": "2026-09-21T04:53:30.069Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "9282ba0bfcfc597ce686282e0974d2340035553facfb789555345f3aaacf0d75",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "9282ba0bfcfc597ce686282e0974d2340035553facfb789555345f3aaacf0d75",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:s": {
+      "kind": "sound",
+      "key": "s",
+      "fileName": "s.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "7fc0d1b625443b0553371c90c574d4bce1680bcdca700888a5dfe729ee550a25",
+      "state": "verified",
+      "arweaveTxId": "r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:11.652Z",
+      "uploadedAt": "2026-09-21T04:50:12.317Z",
+      "verifiedAt": "2026-09-21T04:53:39.892Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "7fc0d1b625443b0553371c90c574d4bce1680bcdca700888a5dfe729ee550a25",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "7fc0d1b625443b0553371c90c574d4bce1680bcdca700888a5dfe729ee550a25",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:t": {
+      "kind": "sound",
+      "key": "t",
+      "fileName": "t.mp3",
+      "bytes": 61170,
+      "contentType": "audio/mpeg",
+      "contentSha256": "a81e8e64a461d45c347782cfe719dbebb21d79cbc1e08d1ed97f876767c9308b",
+      "state": "verified",
+      "arweaveTxId": "U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:12.329Z",
+      "uploadedAt": "2026-09-21T04:50:12.953Z",
+      "verifiedAt": "2026-09-21T04:53:50.445Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 61170,
+          "sha256": "a81e8e64a461d45c347782cfe719dbebb21d79cbc1e08d1ed97f876767c9308b",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 61170,
+          "sha256": "a81e8e64a461d45c347782cfe719dbebb21d79cbc1e08d1ed97f876767c9308b",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:u": {
+      "kind": "sound",
+      "key": "u",
+      "fileName": "u.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "e0f1f74be260f215078f86ef7521f0423b4548151c93289c527963ce97fbe650",
+      "state": "verified",
+      "arweaveTxId": "4y0MSr4zw830Dvz6MODNX977D0bNaMd12kWtXMOSL78",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:12.961Z",
+      "uploadedAt": "2026-09-21T04:50:13.649Z",
+      "verifiedAt": "2026-09-21T04:54:01.977Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "e0f1f74be260f215078f86ef7521f0423b4548151c93289c527963ce97fbe650",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "e0f1f74be260f215078f86ef7521f0423b4548151c93289c527963ce97fbe650",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:v": {
+      "kind": "sound",
+      "key": "v",
+      "fileName": "v.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "30b72ebf3542746e557d57bd09cd075cd203e2da930d15581fc5a2150ef218e1",
+      "state": "verified",
+      "arweaveTxId": "PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:13.659Z",
+      "uploadedAt": "2026-09-21T04:50:14.338Z",
+      "verifiedAt": "2026-09-21T04:54:11.041Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "30b72ebf3542746e557d57bd09cd075cd203e2da930d15581fc5a2150ef218e1",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "30b72ebf3542746e557d57bd09cd075cd203e2da930d15581fc5a2150ef218e1",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:w": {
+      "kind": "sound",
+      "key": "w",
+      "fileName": "w.mp3",
+      "bytes": 41317,
+      "contentType": "audio/mpeg",
+      "contentSha256": "54799ad85f1858eae1ff0f790b0e65538359d3c0fd11d1c9c98e26edd87866bc",
+      "state": "verified",
+      "arweaveTxId": "IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:14.350Z",
+      "uploadedAt": "2026-09-21T04:50:14.939Z",
+      "verifiedAt": "2026-09-21T04:54:20.032Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "54799ad85f1858eae1ff0f790b0e65538359d3c0fd11d1c9c98e26edd87866bc",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "54799ad85f1858eae1ff0f790b0e65538359d3c0fd11d1c9c98e26edd87866bc",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:x": {
+      "kind": "sound",
+      "key": "x",
+      "fileName": "x.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "d6ef710dfb0bd14affe672cfe8485703cc60236144eb6e203e2b451ff107c6d6",
+      "state": "verified",
+      "arweaveTxId": "4KYAvxgKeKP2RmRC-K5cl9toQyxrGDgHYuCqIhYst-c",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:14.945Z",
+      "uploadedAt": "2026-09-21T04:50:15.608Z",
+      "verifiedAt": "2026-09-21T04:54:29.797Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "d6ef710dfb0bd14affe672cfe8485703cc60236144eb6e203e2b451ff107c6d6",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "d6ef710dfb0bd14affe672cfe8485703cc60236144eb6e203e2b451ff107c6d6",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:y": {
+      "kind": "sound",
+      "key": "y",
+      "fileName": "y.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "a31f0e0222dd8adf759149a5388c6845f1c1704724f6888f514c0a5952c8a955",
+      "state": "verified",
+      "arweaveTxId": "6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:15.612Z",
+      "uploadedAt": "2026-09-21T04:50:16.359Z",
+      "verifiedAt": "2026-09-21T04:54:41.204Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "a31f0e0222dd8adf759149a5388c6845f1c1704724f6888f514c0a5952c8a955",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "a31f0e0222dd8adf759149a5388c6845f1c1704724f6888f514c0a5952c8a955",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:z": {
+      "kind": "sound",
+      "key": "z",
+      "fileName": "z.mp3",
+      "bytes": 41317,
+      "contentType": "audio/mpeg",
+      "contentSha256": "d6ffd25441bc82f3392f246fa5c04651266590963f08ae3cc49d2a5f0cba3442",
+      "state": "verified",
+      "arweaveTxId": "DyEsgI8--RQ985W7HkTKdlFN4PfspSzZ_AATE4FFlTw",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:16.362Z",
+      "uploadedAt": "2026-09-21T04:50:17.187Z",
+      "verifiedAt": "2026-09-21T04:54:52.543Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "d6ffd25441bc82f3392f246fa5c04651266590963f08ae3cc49d2a5f0cba3442",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "d6ffd25441bc82f3392f246fa5c04651266590963f08ae3cc49d2a5f0cba3442",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:space": {
+      "kind": "sound",
+      "key": "space",
+      "fileName": "space.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "ff8bdab5941878f2a06cd3ee2d9c031ab0d4de4cc8d48818d9c679f32b2a484f",
+      "state": "verified",
+      "arweaveTxId": "y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:17.191Z",
+      "uploadedAt": "2026-09-21T04:50:18.090Z",
+      "verifiedAt": "2026-09-21T04:55:01.937Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "ff8bdab5941878f2a06cd3ee2d9c031ab0d4de4cc8d48818d9c679f32b2a484f",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "ff8bdab5941878f2a06cd3ee2d9c031ab0d4de4cc8d48818d9c679f32b2a484f",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:3": {
+      "kind": "sound",
+      "key": "3",
+      "fileName": "3.mp3",
+      "bytes": 41317,
+      "contentType": "audio/mpeg",
+      "contentSha256": "f4ace680ce246b390c32c1f3a587f0758f188dc6f835ca026f223f78eea910e2",
+      "state": "verified",
+      "arweaveTxId": "_GthZkudJWpDyhWD22xvw8e7UWOPgfBWpgMOHLjgpA4",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:18.094Z",
+      "uploadedAt": "2026-09-21T04:50:18.717Z",
+      "verifiedAt": "2026-09-21T04:55:11.814Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "f4ace680ce246b390c32c1f3a587f0758f188dc6f835ca026f223f78eea910e2",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "f4ace680ce246b390c32c1f3a587f0758f188dc6f835ca026f223f78eea910e2",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:4": {
+      "kind": "sound",
+      "key": "4",
+      "fileName": "4.mp3",
+      "bytes": 81546,
+      "contentType": "audio/mpeg",
+      "contentSha256": "2a0165146c775b8bdb4950514fa63e26a667bc59f19546d51e93ce5b385535fa",
+      "state": "verified",
+      "arweaveTxId": "UJu1_YixUDKe4L7QafVT5DuUhryCqoFuLm-P8dCaW2M",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:18.721Z",
+      "uploadedAt": "2026-09-21T04:50:19.367Z",
+      "verifiedAt": "2026-09-21T04:55:20.811Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "2a0165146c775b8bdb4950514fa63e26a667bc59f19546d51e93ce5b385535fa",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 81546,
+          "sha256": "2a0165146c775b8bdb4950514fa63e26a667bc59f19546d51e93ce5b385535fa",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:5": {
+      "kind": "sound",
+      "key": "5",
+      "fileName": "5.mp3",
+      "bytes": 61170,
+      "contentType": "audio/mpeg",
+      "contentSha256": "1f93f6b0747a344c429f2889c626e4c79928c3ed2659216edbdb17ae4045294d",
+      "state": "verified",
+      "arweaveTxId": "1uAjsmBLfPMJSWfjQyN1U2YVx1h3rGtq2nYxSOceTpM",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:19.372Z",
+      "uploadedAt": "2026-09-21T04:50:20.041Z",
+      "verifiedAt": "2026-09-21T04:55:32.651Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 61170,
+          "sha256": "1f93f6b0747a344c429f2889c626e4c79928c3ed2659216edbdb17ae4045294d",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 61170,
+          "sha256": "1f93f6b0747a344c429f2889c626e4c79928c3ed2659216edbdb17ae4045294d",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:6": {
+      "kind": "sound",
+      "key": "6",
+      "fileName": "6.mp3",
+      "bytes": 53856,
+      "contentType": "audio/mpeg",
+      "contentSha256": "1fc8649669045631229213bd4cfae6b7ba9342a7bc294b6375f8e4e5acd6708f",
+      "state": "verified",
+      "arweaveTxId": "manGGcfkyvf8DA4e5uA-1v5_qPXoEtQ6juVG4WMdtYY",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:20.045Z",
+      "uploadedAt": "2026-09-21T04:50:20.661Z",
+      "verifiedAt": "2026-09-21T04:55:41.321Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 53856,
+          "sha256": "1fc8649669045631229213bd4cfae6b7ba9342a7bc294b6375f8e4e5acd6708f",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 53856,
+          "sha256": "1fc8649669045631229213bd4cfae6b7ba9342a7bc294b6375f8e4e5acd6708f",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:7": {
+      "kind": "sound",
+      "key": "7",
+      "fileName": "7.mp3",
+      "bytes": 41317,
+      "contentType": "audio/mpeg",
+      "contentSha256": "55c742fc8835a31cac9d089ddce9043084b0a83c7171f8cf8c638fa2d94bae0c",
+      "state": "verified",
+      "arweaveTxId": "psWLXXxaUWx7oZgBICPzG8avfDEraNYmd1g6hIIMO8c",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:20.666Z",
+      "uploadedAt": "2026-09-21T04:50:21.252Z",
+      "verifiedAt": "2026-09-21T04:55:49.465Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "55c742fc8835a31cac9d089ddce9043084b0a83c7171f8cf8c638fa2d94bae0c",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "55c742fc8835a31cac9d089ddce9043084b0a83c7171f8cf8c638fa2d94bae0c",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "sound:8": {
+      "kind": "sound",
+      "key": "8",
+      "fileName": "8.mp3",
+      "bytes": 41317,
+      "contentType": "audio/mpeg",
+      "contentSha256": "396c3c84f76977ef99de8f1c6b1d25266f48779dc8d37eb82c6bf01d08436700",
+      "state": "verified",
+      "arweaveTxId": "Hsg90Kt7hjPFd54yFYm5mRkP1XAlC4_D_tFGw-T0y8s",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:50:21.291Z",
+      "uploadedAt": "2026-09-21T04:50:21.868Z",
+      "verifiedAt": "2026-09-21T04:55:59.532Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "396c3c84f76977ef99de8f1c6b1d25266f48779dc8d37eb82c6bf01d08436700",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 41317,
+          "sha256": "396c3c84f76977ef99de8f1c6b1d25266f48779dc8d37eb82c6bf01d08436700",
+          "contentType": "audio/mpeg",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "manifest:current-33-v1": {
+      "kind": "manifest",
+      "key": "current-33-v1",
+      "fileName": "current-33-v1.json",
+      "bytes": 8855,
+      "contentType": "application/json",
+      "contentSha256": "97a724305e5c1e2b659935ae9d64830091c0bf3735ea0129634ebe1242c95ba3",
+      "state": "verified",
+      "arweaveTxId": "-93vQHgv6u7csNm4ImhDh48NU8Ys3ZGk4KRQAB0l4mg",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T04:58:30.868Z",
+      "uploadedAt": "2026-09-21T04:58:32.676Z",
+      "verifiedAt": "2026-09-21T04:59:11.308Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 8855,
+          "sha256": "97a724305e5c1e2b659935ae9d64830091c0bf3735ea0129634ebe1242c95ba3",
+          "contentType": "application/json; charset=utf-8",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 8855,
+          "sha256": "97a724305e5c1e2b659935ae9d64830091c0bf3735ea0129634ebe1242c95ba3",
+          "contentType": "application/json; charset=utf-8",
+          "decoded": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    }
+  }
+}

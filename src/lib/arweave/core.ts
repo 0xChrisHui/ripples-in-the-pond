@@ -83,7 +83,9 @@ function getTurboClient(): TurboAuthenticatedClient {
   let wallet: WalletFile;
   const jwkEnv = process.env.TURBO_WALLET_JWK;
   if (jwkEnv) {
-    wallet = JSON.parse(jwkEnv) as WalletFile;
+    // Vercel CLI pull 会把多行值写成字面量 \n；还原后再解析，不记录密钥内容。
+    const normalized = jwkEnv.replace(/\\r\\n|\\n|\\r/g, '').trim();
+    wallet = JSON.parse(normalized) as WalletFile;
   } else {
     const path = process.env.TURBO_WALLET_PATH;
     if (!path) {

@@ -2,7 +2,13 @@
   "schema": "ripples.sound-set.v1",
   "id": "current-33-v1",
   "sourceCommit": "f7c507b5a07c8fc8a6b36fd0f1baafbe0e3e688c",
-  "publicationStatus": "not-published",
+  "publicationStatus": "published",
+  "manifest": {
+    "arTxId": "-93vQHgv6u7csNm4ImhDh48NU8Ys3ZGk4KRQAB0l4mg",
+    "sha256": "97a724305e5c1e2b659935ae9d64830091c0bf3735ea0129634ebe1242c95ba3",
+    "bytes": 8855,
+    "mime": "application/json"
+  },
   "keyOrder": [
     "a",
     "b",
@@ -46,7 +52,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
       "blobKey": null
     },
     {
@@ -56,7 +62,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
       "blobKey": null
     },
     {
@@ -66,7 +72,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
       "blobKey": null
     },
     {
@@ -76,7 +82,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "qmRjePU6ybQoUm5gEsOBpfHvolGGAyJE2kKX_XK3Cxs",
       "blobKey": null
     },
     {
@@ -86,7 +92,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
       "blobKey": null
     },
     {
@@ -96,7 +102,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
       "blobKey": null
     },
     {
@@ -106,7 +112,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
       "blobKey": null
     },
     {
@@ -116,7 +122,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "N7Z7O4tlLzrjMB88rMoI96mjEc8nVV0rLcEc9rIuTIc",
       "blobKey": null
     },
     {
@@ -126,7 +132,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
       "blobKey": null
     },
     {
@@ -136,7 +142,7 @@
       "bytes": 76321,
       "durationMs": 3814,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0",
       "blobKey": null
     },
     {
@@ -146,7 +152,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
       "blobKey": null
     },
     {
@@ -156,7 +162,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "8ADqo5sJ-nUvNSA3rR5kDJnjPTYpe1G6_yx3eBcku-A",
       "blobKey": null
     },
     {
@@ -166,7 +172,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA",
       "blobKey": null
     },
     {
@@ -176,7 +182,7 @@
       "bytes": 41317,
       "durationMs": 2064,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
       "blobKey": null
     },
     {
@@ -186,7 +192,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs",
       "blobKey": null
     },
     {
@@ -196,7 +202,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c",
       "blobKey": null
     },
     {
@@ -206,7 +212,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "xA6W3OnBK4zC5b5vh6pnBIvJ9hLdmqDBp-89GP7Jl0g",
       "blobKey": null
     },
     {
@@ -216,7 +222,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
       "blobKey": null
     },
     {
@@ -226,7 +232,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
       "blobKey": null
     },
     {
@@ -236,7 +242,7 @@
       "bytes": 61170,
       "durationMs": 3056,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI",
       "blobKey": null
     },
     {
@@ -246,7 +252,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "4y0MSr4zw830Dvz6MODNX977D0bNaMd12kWtXMOSL78",
       "blobKey": null
     },
     {
@@ -256,7 +262,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
       "blobKey": null
     },
     {
@@ -266,7 +272,7 @@
       "bytes": 41317,
       "durationMs": 2064,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
       "blobKey": null
     },
     {
@@ -276,7 +282,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "4KYAvxgKeKP2RmRC-K5cl9toQyxrGDgHYuCqIhYst-c",
       "blobKey": null
     },
     {
@@ -286,7 +292,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
       "blobKey": null
     },
     {
@@ -296,7 +302,7 @@
       "bytes": 41317,
       "durationMs": 2064,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "DyEsgI8--RQ985W7HkTKdlFN4PfspSzZ_AATE4FFlTw",
       "blobKey": null
     },
     {
@@ -306,7 +312,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s",
       "blobKey": null
     },
     {
@@ -316,7 +322,7 @@
       "bytes": 41317,
       "durationMs": 2064,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "_GthZkudJWpDyhWD22xvw8e7UWOPgfBWpgMOHLjgpA4",
       "blobKey": null
     },
     {
@@ -326,7 +332,7 @@
       "bytes": 81546,
       "durationMs": 4075,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "UJu1_YixUDKe4L7QafVT5DuUhryCqoFuLm-P8dCaW2M",
       "blobKey": null
     },
     {
@@ -336,7 +342,7 @@
       "bytes": 61170,
       "durationMs": 3056,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "1uAjsmBLfPMJSWfjQyN1U2YVx1h3rGtq2nYxSOceTpM",
       "blobKey": null
     },
     {
@@ -346,7 +352,7 @@
       "bytes": 53856,
       "durationMs": 2691,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "manGGcfkyvf8DA4e5uA-1v5_qPXoEtQ6juVG4WMdtYY",
       "blobKey": null
     },
     {
@@ -356,7 +362,7 @@
       "bytes": 41317,
       "durationMs": 2064,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "psWLXXxaUWx7oZgBICPzG8avfDEraNYmd1g6hIIMO8c",
       "blobKey": null
     },
     {
@@ -366,7 +372,7 @@
       "bytes": 41317,
       "durationMs": 2064,
       "mime": "audio/mpeg",
-      "arTxId": null,
+      "arTxId": "Hsg90Kt7hjPFd54yFYm5mRkP1XAlC4_D_tFGw-T0y8s",
       "blobKey": null
     }
   ]

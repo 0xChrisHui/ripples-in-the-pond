@@ -1,0 +1,30 @@
+{
+  "schema": "ripples.decoder-publication.v1",
+  "sha256": "b4837f813a589a8257b7243fa973bc4f4e3d83f707c29b72723d82d707c87183",
+  "bytes": 19568,
+  "mime": "text/html",
+  "state": "verified",
+  "arTxId": "QWKuOts_jqy8EKnqHvKZs9hV3aEA6brEFntK5yEfb7g",
+  "attemptedAt": "2026-09-21T05:01:51.343Z",
+  "uploadedAt": "2026-09-21T05:01:53.482Z",
+  "verifiedAt": "2026-09-21T05:02:34.960Z",
+  "lastError": null,
+  "gateways": [
+    {
+      "gateway": "https://ardrive.net",
+      "status": 200,
+      "bytes": 19568,
+      "sha256": "b4837f813a589a8257b7243fa973bc4f4e3d83f707c29b72723d82d707c87183",
+      "mime": "text/html",
+      "ok": true
+    },
+    {
+      "gateway": "https://arweave.tokyo",
+      "status": 200,
+      "bytes": 19568,
+      "sha256": "b4837f813a589a8257b7243fa973bc4f4e3d83f707c29b72723d82d707c87183",
+      "mime": "text/html",
+      "ok": true
+    }
+  ]
+}
