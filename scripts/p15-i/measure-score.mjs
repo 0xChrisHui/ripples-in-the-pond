@@ -43,6 +43,16 @@ async function clickWhenHandled(cdp, selector, timeoutMs) {
   }
   throw new Error(`${selector} 未在 ${timeoutMs}ms 内接收播放意图`);
 }
+async function enterProtectedPreview(cdp) {
+  if (!bypassSecret) return;
+  await cdp.send('Network.setExtraHTTPHeaders', { headers: {
+    'x-vercel-protection-bypass': bypassSecret, 'x-vercel-set-bypass-cookie': 'true',
+  } });
+  await cdp.send('Page.navigate', { url: `${siteBase}/api/ping` });
+  await waitFor(cdp, `location.origin===${JSON.stringify(new URL(siteBase).origin)}
+    &&document.readyState==='complete'`, 15_000, 'Preview 保护会话');
+  await cdp.send('Network.setExtraHTTPHeaders', { headers: {} });
+}
 async function sample(cdp, tokenId, classification, index) {
   const origin = new URL(siteBase).origin;
   if (classification === 'cold') {
@@ -102,9 +112,7 @@ try {
   cdp = await connectCdp(cdpBase, siteBase);
   await Promise.all(['Page.enable', 'Runtime.enable', 'Log.enable', 'Network.enable']
     .map((method) => cdp.send(method)));
-  if (bypassSecret) await cdp.send('Network.setExtraHTTPHeaders', {
-    headers: { 'x-vercel-protection-bypass': bypassSecret },
-  });
+  await enterProtectedPreview(cdp);
   const cold = [];
   for (let index = 0; index < tokens.length; index += 1) cold.push(await sample(cdp, tokens[index], 'cold', index + 1));
   const hot = [];
