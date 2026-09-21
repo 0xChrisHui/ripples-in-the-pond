@@ -15,9 +15,10 @@ type State = {
 
 const root = process.cwd();
 const sourcePath = join(root, 'src/score-decoder/index.html');
-const statePath = join(root, 'data/score-decoder/v3-publication.json');
 const bytes = readFileSync(sourcePath);
 const hash = createHash('sha256').update(bytes).digest('hex');
+// 每个内容身份一份账本：永久对象只能追加新 revision，绝不覆盖或复用旧 txid。
+const statePath = join(root, 'data/score-decoder/v3-publications', `${hash}.json`);
 const mode = process.argv.find((arg) => /^--(audit|preflight|upload|verify)$/.test(arg));
 const confirmed = process.argv.includes('--confirm-permanent-write');
 const txPattern = /^[A-Za-z0-9_-]{43}$/;
@@ -98,6 +99,7 @@ async function main(): Promise<void> {
       { name: 'App-Name', value: 'Ripples in the Pond' },
       { name: 'P15-Phase', value: 'H3' },
       { name: 'Asset-Kind', value: 'score-decoder-v3' },
+      { name: 'Asset-Revision', value: hash.slice(0, 12) },
       { name: 'Content-SHA256', value: hash },
     ]);
     if (!txPattern.test(result.txId)) throw new Error('Turbo 返回非法 txid');
