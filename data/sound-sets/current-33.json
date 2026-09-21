@@ -2,7 +2,7 @@
   "schema": "ripples.sound-set.v1",
   "id": "current-33-v1",
   "sourceCommit": "f7c507b5a07c8fc8a6b36fd0f1baafbe0e3e688c",
-  "publicationStatus": "published",
+  "publicationStatus": "edge-mirrored",
   "manifest": {
     "arTxId": "-93vQHgv6u7csNm4ImhDh48NU8Ys3ZGk4KRQAB0l4mg",
     "sha256": "97a724305e5c1e2b659935ae9d64830091c0bf3735ea0129634ebe1242c95ba3",
@@ -53,7 +53,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
-      "blobKey": null
+      "blobKey": "media/PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4"
     },
     {
       "key": "b",
@@ -63,7 +63,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
-      "blobKey": null
+      "blobKey": "media/ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28"
     },
     {
       "key": "c",
@@ -73,7 +73,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
-      "blobKey": null
+      "blobKey": "media/e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc"
     },
     {
       "key": "d",
@@ -83,7 +83,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "qmRjePU6ybQoUm5gEsOBpfHvolGGAyJE2kKX_XK3Cxs",
-      "blobKey": null
+      "blobKey": "media/qmRjePU6ybQoUm5gEsOBpfHvolGGAyJE2kKX_XK3Cxs"
     },
     {
       "key": "e",
@@ -93,7 +93,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
-      "blobKey": null
+      "blobKey": "media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw"
     },
     {
       "key": "f",
@@ -103,7 +103,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
-      "blobKey": null
+      "blobKey": "media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM"
     },
     {
       "key": "g",
@@ -113,7 +113,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
-      "blobKey": null
+      "blobKey": "media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0"
     },
     {
       "key": "h",
@@ -123,7 +123,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "N7Z7O4tlLzrjMB88rMoI96mjEc8nVV0rLcEc9rIuTIc",
-      "blobKey": null
+      "blobKey": "media/N7Z7O4tlLzrjMB88rMoI96mjEc8nVV0rLcEc9rIuTIc"
     },
     {
       "key": "i",
@@ -133,7 +133,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
-      "blobKey": null
+      "blobKey": "media/e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q"
     },
     {
       "key": "j",
@@ -143,7 +143,7 @@
       "durationMs": 3814,
       "mime": "audio/mpeg",
       "arTxId": "ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0",
-      "blobKey": null
+      "blobKey": "media/ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0"
     },
     {
       "key": "k",
@@ -153,7 +153,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
-      "blobKey": null
+      "blobKey": "media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8"
     },
     {
       "key": "l",
@@ -163,7 +163,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "8ADqo5sJ-nUvNSA3rR5kDJnjPTYpe1G6_yx3eBcku-A",
-      "blobKey": null
+      "blobKey": "media/8ADqo5sJ-nUvNSA3rR5kDJnjPTYpe1G6_yx3eBcku-A"
     },
     {
       "key": "m",
@@ -173,7 +173,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA",
-      "blobKey": null
+      "blobKey": "media/ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA"
     },
     {
       "key": "n",
@@ -183,7 +183,7 @@
       "durationMs": 2064,
       "mime": "audio/mpeg",
       "arTxId": "S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
-      "blobKey": null
+      "blobKey": "media/S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU"
     },
     {
       "key": "o",
@@ -193,7 +193,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs",
-      "blobKey": null
+      "blobKey": "media/-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs"
     },
     {
       "key": "p",
@@ -203,7 +203,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c",
-      "blobKey": null
+      "blobKey": "media/w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c"
     },
     {
       "key": "q",
@@ -213,7 +213,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "xA6W3OnBK4zC5b5vh6pnBIvJ9hLdmqDBp-89GP7Jl0g",
-      "blobKey": null
+      "blobKey": "media/xA6W3OnBK4zC5b5vh6pnBIvJ9hLdmqDBp-89GP7Jl0g"
     },
     {
       "key": "r",
@@ -223,7 +223,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
-      "blobKey": null
+      "blobKey": "media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU"
     },
     {
       "key": "s",
@@ -233,7 +233,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
-      "blobKey": null
+      "blobKey": "media/r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk"
     },
     {
       "key": "t",
@@ -243,7 +243,7 @@
       "durationMs": 3056,
       "mime": "audio/mpeg",
       "arTxId": "U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI",
-      "blobKey": null
+      "blobKey": "media/U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI"
     },
     {
       "key": "u",
@@ -253,7 +253,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "4y0MSr4zw830Dvz6MODNX977D0bNaMd12kWtXMOSL78",
-      "blobKey": null
+      "blobKey": "media/4y0MSr4zw830Dvz6MODNX977D0bNaMd12kWtXMOSL78"
     },
     {
       "key": "v",
@@ -263,7 +263,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
-      "blobKey": null
+      "blobKey": "media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw"
     },
     {
       "key": "w",
@@ -273,7 +273,7 @@
       "durationMs": 2064,
       "mime": "audio/mpeg",
       "arTxId": "IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
-      "blobKey": null
+      "blobKey": "media/IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8"
     },
     {
       "key": "x",
@@ -283,7 +283,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "4KYAvxgKeKP2RmRC-K5cl9toQyxrGDgHYuCqIhYst-c",
-      "blobKey": null
+      "blobKey": "media/4KYAvxgKeKP2RmRC-K5cl9toQyxrGDgHYuCqIhYst-c"
     },
     {
       "key": "y",
@@ -293,7 +293,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
-      "blobKey": null
+      "blobKey": "media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w"
     },
     {
       "key": "z",
@@ -303,7 +303,7 @@
       "durationMs": 2064,
       "mime": "audio/mpeg",
       "arTxId": "DyEsgI8--RQ985W7HkTKdlFN4PfspSzZ_AATE4FFlTw",
-      "blobKey": null
+      "blobKey": "media/DyEsgI8--RQ985W7HkTKdlFN4PfspSzZ_AATE4FFlTw"
     },
     {
       "key": "space",
@@ -313,7 +313,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s",
-      "blobKey": null
+      "blobKey": "media/y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s"
     },
     {
       "key": "3",
@@ -323,7 +323,7 @@
       "durationMs": 2064,
       "mime": "audio/mpeg",
       "arTxId": "_GthZkudJWpDyhWD22xvw8e7UWOPgfBWpgMOHLjgpA4",
-      "blobKey": null
+      "blobKey": "media/_GthZkudJWpDyhWD22xvw8e7UWOPgfBWpgMOHLjgpA4"
     },
     {
       "key": "4",
@@ -333,7 +333,7 @@
       "durationMs": 4075,
       "mime": "audio/mpeg",
       "arTxId": "UJu1_YixUDKe4L7QafVT5DuUhryCqoFuLm-P8dCaW2M",
-      "blobKey": null
+      "blobKey": "media/UJu1_YixUDKe4L7QafVT5DuUhryCqoFuLm-P8dCaW2M"
     },
     {
       "key": "5",
@@ -343,7 +343,7 @@
       "durationMs": 3056,
       "mime": "audio/mpeg",
       "arTxId": "1uAjsmBLfPMJSWfjQyN1U2YVx1h3rGtq2nYxSOceTpM",
-      "blobKey": null
+      "blobKey": "media/1uAjsmBLfPMJSWfjQyN1U2YVx1h3rGtq2nYxSOceTpM"
     },
     {
       "key": "6",
@@ -353,7 +353,7 @@
       "durationMs": 2691,
       "mime": "audio/mpeg",
       "arTxId": "manGGcfkyvf8DA4e5uA-1v5_qPXoEtQ6juVG4WMdtYY",
-      "blobKey": null
+      "blobKey": "media/manGGcfkyvf8DA4e5uA-1v5_qPXoEtQ6juVG4WMdtYY"
     },
     {
       "key": "7",
@@ -363,7 +363,7 @@
       "durationMs": 2064,
       "mime": "audio/mpeg",
       "arTxId": "psWLXXxaUWx7oZgBICPzG8avfDEraNYmd1g6hIIMO8c",
-      "blobKey": null
+      "blobKey": "media/psWLXXxaUWx7oZgBICPzG8avfDEraNYmd1g6hIIMO8c"
     },
     {
       "key": "8",
@@ -373,7 +373,7 @@
       "durationMs": 2064,
       "mime": "audio/mpeg",
       "arTxId": "Hsg90Kt7hjPFd54yFYm5mRkP1XAlC4_D_tFGw-T0y8s",
-      "blobKey": null
+      "blobKey": "media/Hsg90Kt7hjPFd54yFYm5mRkP1XAlC4_D_tFGw-T0y8s"
     }
   ]
 }

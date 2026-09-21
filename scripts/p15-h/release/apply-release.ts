@@ -43,7 +43,7 @@ function releaseInputs() {
     `data/score-decoder/v3-publications/${name}`,
   )).filter((value) => value.state === 'verified');
   if (edge.mode !== 'execute' || edge.inventoryCount !== 37
-    || edge.results.some(({ state }) => !['existing', 'uploaded'].includes(state))) {
+    || edge.results.some(({ state }) => !['existing_verified', 'uploaded_verified'].includes(state))) {
     throw new Error('H4 Verified Edge 尚未执行完成');
   }
   if (sounds.publicationStatus !== 'edge-mirrored' || sounds.keyOrder.length !== 33) {

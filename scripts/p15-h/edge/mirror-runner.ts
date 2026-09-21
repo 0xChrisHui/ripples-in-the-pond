@@ -27,14 +27,25 @@ async function probeBlob(
   asset: MirrorAsset,
   fetcher: FetchLike,
 ): Promise<{ missing: true } | { missing: false; proof: Awaited<ReturnType<typeof verifyBlob>> }> {
-  const response = await fetcher(url, {
-    method: 'HEAD',
-    headers: { Origin: 'https://pond-ripple.xyz' },
-    signal: AbortSignal.timeout(30_000),
-  });
-  if (response.status === 404) return { missing: true };
-  if (response.status !== 200) throw new Error(`${url}: Blob 存在性未知（HTTP ${response.status}），禁止上传`);
-  return { missing: false, proof: await verifyBlob(url, asset, fetcher) };
+  let lastError: unknown;
+  for (const delayMs of [0, 500, 1_000, 2_000, 4_000]) {
+    if (delayMs) await new Promise((resolve) => { setTimeout(resolve, delayMs); });
+    try {
+      const response = await fetcher(url, {
+        method: 'HEAD', headers: { Origin: 'https://pond-ripple.xyz' },
+        signal: AbortSignal.timeout(30_000),
+      });
+      if (response.status === 404) return { missing: true };
+      if (response.status === 200) {
+        return { missing: false, proof: await verifyBlobEventually(url, asset, fetcher) };
+      }
+      lastError = new Error(`${url}: Blob 存在性未知（HTTP ${response.status}）`);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw new Error(`${url}: Blob 存在性核验失败，禁止上传；${
+    lastError instanceof Error ? lastError.message : String(lastError)}`);
 }
 
 async function uploadVerifiedBytes(
@@ -50,6 +61,21 @@ async function uploadVerifiedBytes(
   } finally {
     rmSync(tempRoot, { recursive: true, force: true });
   }
+}
+
+async function verifyBlobEventually(
+  url: string, asset: MirrorAsset, fetcher: FetchLike,
+): Promise<Awaited<ReturnType<typeof verifyBlob>>> {
+  let lastError: unknown;
+  for (const delayMs of [0, 1_000, 2_000, 4_000, 8_000]) {
+    if (delayMs) await new Promise((resolve) => { setTimeout(resolve, delayMs); });
+    try {
+      return await verifyBlob(url, asset, fetcher);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
 }
 
 export async function runMirror(options: RunOptions): Promise<MirrorResult[]> {
@@ -74,7 +100,7 @@ export async function runMirror(options: RunOptions): Promise<MirrorResult[]> {
       continue;
     }
     await uploadVerifiedBytes(asset, ar.bytes, options.writer);
-    const proof = await verifyBlob(url, asset, fetcher);
+    const proof = await verifyBlobEventually(url, asset, fetcher);
     results.push({
       arTxId: asset.arTxId, blobKey: asset.blobKey, sources: asset.sources,
       state: 'uploaded_verified', arGateways: ar.gateways, blob: proof,

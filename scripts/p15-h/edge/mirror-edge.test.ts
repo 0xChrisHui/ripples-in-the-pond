@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { buildInventory, type MirrorAsset } from './inventory';
 import { runMirror } from './mirror-runner';
 import { sha256, type SoundSetLedger } from '../sound-set-ledger';
-import type { BlobWriter } from './vercel-blob';
+import { buildPutArguments, type BlobWriter } from './vercel-blob';
 
 const tx = (char: string) => char.repeat(43);
 const soundBytes = Buffer.from('sound-from-ar');
@@ -88,7 +88,15 @@ function testInventory(): void {
   assert.equal(buildInventory(ledger, evidence).length, 34);
 }
 
+function testCliBooleanDefaults(): void {
+  const args = buildPutArguments([], [], 'sound.mp3', `media/${tx('a')}`, 'audio/mpeg');
+  assert.equal(args.includes('--add-random-suffix'), false);
+  assert.equal(args.includes('--allow-overwrite'), false);
+  assert.deepEqual(args.slice(-2), ['audio/mpeg', '--non-interactive']);
+}
+
 void testRunner().then(() => {
   testInventory();
+  testCliBooleanDefaults();
   console.log('H4 Edge 镜像 Gate 测试通过');
 });

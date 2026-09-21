@@ -8,6 +8,15 @@ export type BlobWriter = {
   put(localPath: string, pathname: `media/${string}`, mime: 'audio/mpeg'): Promise<void>;
 };
 
+export function buildPutArguments(
+  prefix: string[], auth: string[], localPath: string,
+  pathname: `media/${string}`, mime: 'audio/mpeg',
+): string[] {
+  // Vercel CLI 的布尔参数出现即为 true；false 必须依赖官方默认值，不能传成下一个 argv。
+  return [...prefix, 'blob', ...auth, 'put', localPath,
+    '--pathname', pathname, '--access', 'public', '--content-type', mime, '--non-interactive'];
+}
+
 export function createVercelBlobWriter(): BlobWriter {
   return {
     async put(localPath, pathname, mime) {
@@ -22,15 +31,9 @@ export function createVercelBlobWriter(): BlobWriter {
         ? ['--oidc-token', oidc, '--store-id', store]
         : rwToken ? ['--rw-token', rwToken] : [];
       try {
-        await execFileAsync(executable, [...prefix,
-          'blob', ...auth, 'put', localPath,
-          '--pathname', pathname,
-          '--access', 'public',
-          '--add-random-suffix', 'false',
-          '--allow-overwrite', 'false',
-          '--content-type', mime,
-          '--non-interactive',
-        ], { windowsHide: true, maxBuffer: 1024 * 1024, timeout: 120_000 });
+        await execFileAsync(executable, buildPutArguments(
+          prefix, auth, localPath, pathname, mime,
+        ), { windowsHide: true, maxBuffer: 1024 * 1024, timeout: 120_000 });
       } catch (error) {
         const stderr = typeof error === 'object' && error && 'stderr' in error
           ? String(error.stderr) : 'unknown CLI failure';
