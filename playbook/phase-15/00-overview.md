@@ -1,7 +1,7 @@
 # Phase 15 — 全站丝滑体验与永久播放可靠性（Overview）
 
 > **立项日期**：2026-09-05
-> **状态**：P15-0/A–H 已发布并封存；P15-H「Permanent Core + Verified Edge」于 2026-09-21 完成
+> **状态**：P15-0/A–H 已发布；P15-I「Instant Start」于 2026-09-21 获授权并执行中
 > **取代范围**：取代旧 P15“音效系统扩展”；旧项退回未排期清单，不挤占 P16
 > **覆盖页面**：`/`、`/me`、`/score/[id]`、`/artist`、登录入口，以及完成后的 P14 页面
 
@@ -112,6 +112,7 @@
 | **P15-F 回归与上线观察** | `70-f-regression-rollout.md` | 设备/网络/故障矩阵、灰度、回滚、生产证据 | 用户最终体感验收 |
 | **P15-G 镜像探针与自动恢复** | `80-g-mirror-probe.md` | 真实素材一字节探针、800ms 回退、持久长熔断与 half-open 恢复 | 仓库自动 Gate 后集中完成 Vercel 配置 |
 | **P15-H Permanent Core + Verified Edge** | `90-h-permanent-core-verified-edge.md` | 33 键永久版本、历史兼容、已验证快照、HTML bootstrap、直连镜像与铸造前闭包 | 全部已铸数字 Score 与新 33 键 fixture 通过 |
+| **P15-I Instant Start** | `95-i-instant-start.md` | ownerOf 解耦、播放意图排队、启动闭包与条件流式底曲 | 冷播放 p95 ≤2s、热播放 p95 ≤500ms |
 
 原始推荐顺序：`P15-0 → A → B → C → E → D → F`。这些 Track 已完成。P15-H 是生产故障暴露后的恢复与终局对齐轨，按 `H0 → H8` 独立连续执行；它明确取代 P15-G 的“播放前 Range 探针 + 持久长冷却”热路径，不重写 P15-G 已完成的 Blob 建库证据。
 
@@ -144,4 +145,4 @@
 
 ## 8. 当前停点
 
-P15-0/A–G 已完成并发布。当前唯一施工项是 P15-H，完成后 P15 再次封存。
+P15-0/A–H 已完成并发布。当前唯一施工项是 P15-I；I0–I3 达标则关闭条件 I4 并直接发布封存。

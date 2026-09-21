@@ -7,7 +7,13 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **当前无进行中施工项**：P15-H 已封存，等待用户安排下一项。
+- **当前唯一施工项：P15-I Instant Start（执行中）**
+  - [ ] I0 Score #1–#4 冷/热播放基线与分段计时
+  - [ ] I1 verified snapshot 与 ownerOf 解耦
+  - [ ] I2 底曲/前 8 秒音效启动闭包与 preload
+  - [ ] I3 loading 点击排队、解码与状态语义
+  - [ ] I4 条件流式底曲（仅 I0–I3 生产冷播放 p95 >2s 时执行）
+  - [ ] I5 Preview/Production 发布与复测封存
 
 ## ⏳ Later / 开放项
 
