@@ -20,6 +20,8 @@ type Props = {
   detailText?: string;
   disabled?: boolean;
   playingActionLabel?: string;
+  allowBusyAction?: boolean;
+  loadingActionLabel?: string;
 };
 
 const stateCopy: Record<RecordAnchorState, { action: string; status: string }> = {
@@ -42,14 +44,16 @@ export default function RecordAnchor({
   detailText,
   disabled = false,
   playingActionLabel = '停止',
+  allowBusyAction = false,
+  loadingActionLabel = '正在准备',
 }: Props) {
   const statusId = useId();
   const copy = stateCopy[state];
   const isPlaying = state === 'playing';
   const isBusy = state === 'loading';
-  const actionDisabled = disabled || isBusy;
+  const actionDisabled = disabled || (isBusy && !allowBusyAction);
   const showsEclipse = isPlaying && eclipseVisual != null;
-  const actionLabel = isPlaying ? playingActionLabel : copy.action;
+  const actionLabel = isPlaying ? playingActionLabel : isBusy ? loadingActionLabel : copy.action;
 
   return (
     <section

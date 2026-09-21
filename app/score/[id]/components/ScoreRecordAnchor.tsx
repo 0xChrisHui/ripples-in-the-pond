@@ -39,7 +39,11 @@ export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAv
         ? `已完整播放 ${timeLabel(playback.durationMs)}`
         : playback.state === 'playing'
           ? '永久录音、日食与按键编舞保持同一时钟。'
-          : '永久音频只会在你主动点击后建立播放会话。';
+          : playback.state === 'loading'
+            ? playback.playRequested
+              ? '已记录播放请求，资源验证完成后会自动开始。'
+              : '正在优先准备底曲与开场音效，现在点击即可排队播放。'
+            : '永久音频只会在你主动点击后建立播放会话。';
   const eclipse = eclipseAvailable
     ? <span className="score-eclipse-viewport-anchor" />
     : <span className="score-eclipse-fallback" />;
@@ -53,8 +57,9 @@ export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAv
         onAction={perform}
         eclipseVisual={eclipse}
         playingActionLabel="暂停"
+        allowBusyAction
+        loadingActionLabel={playback.playRequested ? '取消等待' : '准备好后播放'}
         detailText={detail}
-        disabled={playback.state === 'loading'}
       />
       <div
         className="score-record-anchor__progress"
