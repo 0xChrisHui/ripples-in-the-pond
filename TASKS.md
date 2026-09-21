@@ -8,7 +8,7 @@
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
 - **当前唯一施工项：P15-I Instant Start（执行中）**
-  - [ ] I0 Score #1–#4 冷/热播放基线与分段计时
+  - [x] I0 Score #1–#4 冷/热播放基线与分段计时
   - [ ] I1 verified snapshot 与 ownerOf 解耦
   - [ ] I2 底曲/前 8 秒音效启动闭包与 preload
   - [ ] I3 loading 点击排队、解码与状态语义

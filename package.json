@@ -23,7 +23,8 @@
     "p15:h7:build-snapshots": "tsx scripts/p15-h/release/build-snapshot-plan.ts",
     "p15:h7:verify-snapshots": "tsx scripts/p15-h/release/verify-snapshot-plan.ts",
     "p15:h7:release": "tsx scripts/p15-h/release/apply-release.ts --execute --confirm-production-write",
-    "p15:h7:verify-production": "tsx scripts/p15-h/release/verify-production-release.ts"
+    "p15:h7:verify-production": "tsx scripts/p15-h/release/verify-production-release.ts",
+    "p15:i:measure-score": "node scripts/p15-i/measure-score.mjs"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.41.0",
