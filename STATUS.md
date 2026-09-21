@@ -6,7 +6,11 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 15 与 P15-G 高速镜像增量全部完结 ✅**。P14-G 最终提交 `8f5a735` 已无损合入 P15；公开页面、35+1 ECHO、渐进播放器、永久媒体三网关回退与 Vercel Blob 高速副本均已发布并通过 Production 真实播放。P14 后续 observe/live 窗口与私密目验按用户决定保留为非阻塞 review。P8/P9/P11/P12/P15 已正式完结。
+**Phase**: **Phase 15-H「Permanent Core + Verified Edge」执行中**。用户于 2026-09-21 明确授权：把当前 33 键永久版本、历史 Score 精确兼容、已验证页面快照、HTML bootstrap、Vercel Blob 直连回退和铸造前依赖闭包作为 P15 最终对齐轨，并在 playbook 完成后连续执行。P15-0/A–G 的发布证据保留；H 将取代 G 的热路径探针/长冷却，不否定 G 的 Blob 建库成果。
+
+**P15-H 新发现（2026-09-21）**：2026-08-23 的本地声音变更不仅新增 `space + 3–8`，还替换了 `a–z` 全部 26 个 MP3；因此新 Permanent Core 必须是当前 33 音频的独立版本，旧 26 表继续原样服务历史真相。Score #1–#3 都钉住旧 decoder/旧 26 表；#2 明确缺 `space`，#2/#3 还必须按各自铸造时 Production deployment 证据判断已用字母是否需要兼容 override，不能只补 7 键后宣称完全对齐。
+
+**P15-H0 真相盘点（2026-09-21）✅**：主网动态枚举到 #1–#4；#1 在新版声音 Production 前铸造，保持 legacy-26；GitHub/Vercel deployment 与链上时间证明 #2/#3 录制时已是 current-33，因此分别恢复全部 10/18 个使用键。#4 已 mint 且取证期间由 `uploading_metadata` 推进到 `setting_uri`，未设 URI 前保持真实生命周期。当前 33 个本地 MP3 全为 44.1kHz 双声道；旧 26、三枚 ready Score 的 metadata/events/base/sounds/decoder 全部达到两网关同字节/MIME quorum。Blob 63/63 当前存在且完整可读，仅见一次立即恢复的 TLS 抖动，确认 Store 未挂、旧持久长冷却才是故障放大器。证据见 `reviews/2026-09-21-phase-15-h0-audit.md`。
 
 **P15 发布后 review（2026-09-13）**：修复 P14 永久音频字段合入后遗留的 Track 公开合同漂移，首页与私人档案缓存会拒绝旧/损坏字段；`/me` 内存 owner、轮询回写和页面放行改用 `authSource + userId`，堵住同内部 ID 跨登录源的一帧串档窗口。修复提交 `21ec63a` 已快进 `main`，Vercel Preview/Production 成功；正式域名五页 200、tracks 35 首与三网关合同通过。TypeScript、定向 lint、P15 四组脚本、P14 播放器、Webpack production build 与 Foundry 56/56 已通过；详见 `reviews/2026-09-13-phase-15-post-release-review.md`。
 **P15-G 镜像探针（2026-09-14）**：playbook 提交 `ea771b0` 冻结“永久曲谱真相 + Vercel 音频加速 + Arweave 自动回退”；实现提交 `c4a7b20` 与首轮预算修复 `d27f613` 加入真实对象 `Range: bytes=0-0` 严格探针、同 origin single-flight、`5m → 1h → 6h → 24h` 持久退避与 half-open 自动恢复。缓存命中零探针；404/哈希错误只回退单对象；只有服务级错误进入 origin 熔断；Range 成功只准入，完整镜像对象验证成功才清零失败等级。首轮保护版完整 `scripts/verify.sh` 通过（37 路由、Foundry 56/56），并部署到 Production；当时变量仍为空，安全直连 Arweave。
@@ -100,7 +104,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：P15/P15-G 无剩余施工项；等待用户提出下一阶段。额度耗尽与恢复不需要改变量或按月重新部署，真实探针、持久退避与 half-open 会自动切源。
+**当前权威下一步**：执行 `playbook/phase-15/90-h-permanent-core-verified-edge.md` H1（33 键 SoundSet 单一注册表）；随后按 H2–H8 连续推进，只有永久写入结果未知、权限/余额缺失或生产不可逆目标无法核实时才停。
 
 ---
 

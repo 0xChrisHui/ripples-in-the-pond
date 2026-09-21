@@ -1553,3 +1553,10 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 
 - **层级边界**：WebGL 内部遮罩无法覆盖页面级 CSS fallback 圆；首页启动遮罩必须位于场景所有视觉替代层之上、导航与播放器之下，并从 `PondExperience` 首帧存在。
 - **就绪语义**：`sceneReady` 表示“最终 GL 或可用 fallback 已可呈现”，不只代表 GL 合成成功。启动/恢复中的健康 GL 等待两帧合成；lost、error、unavailable 与强制 fallback 则立即交给 CSS 圆，避免永久黑场。
+
+## 2026-09-21 — P15-H Permanent Core + Verified Edge
+
+- **33 键不是旧表补 7 键**：2026-08-23 同时新增 `space + 3–8` 并替换全部 `a–z` MP3；新 Permanent Core 上传当前 33 个声音为独立版本，旧 26 表和历史 NFT 原样保留。
+- **历史恢复按 Token 精确登记**：链上时间与 GitHub/Vercel Production 记录已证明 #1 使用旧 26 键、#2/#3 使用新 33 键。兼容身份绑定 chain/contract/token/tokenURI；#2/#3 只覆盖各自实际使用的 10/18 键。兼容清单以 EIP-712 由发布时持有 ScoreNFT admin role 的地址签名，并与不可修改的原始档案并列展示。
+- **新作品先封包再 mint**：采用 `ripples.score-package.v3` 在 tokenId 出现前冻结 events/base/soundSet/decoder 的 txid/hash/bytes/MIME，双网关读回闭包通过后才允许广播 mint；mint 后 metadata/setURI 的残余孤儿风险留给未来合约版本，不在 P15 偷改主网合约。
+- **速度不改变真相**：每枚 Score 一条不可变 verified snapshot，页面把 events/effective sounds 安全内嵌进 HTML；音频直接取 Blob，1.2 秒后与 AR 竞速并验证完整 hash。删除强制 Range 和持久 24h 冷却，Supabase/Blob 始终只是可重建副本。

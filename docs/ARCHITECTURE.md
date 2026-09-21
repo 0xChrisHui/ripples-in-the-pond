@@ -121,11 +121,14 @@
 1. **封面图不是单独的 NFT**——它是 ScoreNFT 的视觉外观（PNG 文件），不是一个独立 token
 2. **乐谱不是子 NFT**——乐谱是一段 events JSON，描述"哪个键在第几毫秒按下、用了哪个 sound"。它**就是**母 NFT 的内容，不是装在母 NFT 里的另一个 token
 
-**回放数据的 4 层可用性链**（P11 v3 修订）：
+**回放数据的分层可用性链**（P15-H 修订）：
 1. OP 主网 `tokenURI`：已铸作品的不可变入口，指向该 Token 的 Arweave metadata。
-2. metadata `animation_url`：永久钉住 `events/base/sounds` 与 Decoder；这是已铸作品正式回放输入的唯一真值。
-3. Arweave 主网关 + 多网关 fallback（决策 9）：提高同一永久内容的可用性，不改变资源身份。
-4. Supabase `score_nft_queue`、`pending_scores.events_data`：负责 UUID 生命周期、快速定位、创作者关系、交叉核验与运维镜像；不得替换已铸 Token 的永久输入。
+2. metadata `animation_url`：历史作品永久钉住 `events/base/sounds` 与 Decoder；新作品指向 Decoder v3 + `ripples.score-package.v3`。package 在 mint 前冻结 events/base/soundSet/decoder 的 txid、SHA-256、字节数与 MIME。
+3. Arweave 主网关 + 多网关 fallback（决策 9）：提供永久原件，不改变资源身份。
+4. `score_playback_snapshots`：保存从链上/Arweave 读回验证的不可变页面快照。旧作品的读回 hash 标为 `attested`，新 package 内钉住的 hash 才标为 `canonical`；快照可重建且不替代永久原件。
+5. Score HTML/RSC：服务端从快照安全序列化 events 与有效 sounds index，浏览器正常路径不再请求两个 Arweave JSON。当前 holder 是独立可变态，不写入永久快照。
+6. Vercel Blob `media/<arTxId>`：保存从 Arweave 已验证字节生成的高速音频副本；完整对象校验失败即回退 Arweave，副本可删除重建。
+7. Supabase `score_nft_queue`、`pending_scores.events_data`：负责 UUID 生命周期、快速定位、创作者关系、交叉核验与运维；不得替换已铸 Token 的永久输入。
    - `mint_events.score_data` 继续作为链上事件账本，cron 仍写但 UI 不读。
 
 `pending_scores` 24h **不再过期已被铸造的草稿**（B8 P2 起入队后 status='draft' 不变）；`events_data` 保留为队列记录与永久输入的可核验镜像，不再是已铸详情页的 canonical 回放来源。
@@ -148,15 +151,23 @@
 - 10,000+ 张封面图（HashLips 预生成 → Turbo SDK 批量 → score_covers 表，按 usage_count 升序分配）
 - score-decoder.html（见决策 13）
 
-**每次铸造真正"新增"的 Arweave 内容只有 2 个**：
+**历史 v2 每次铸造新增 2 个 Arweave 内容；P15-H v3 新增 3 个**：
 - `events.json`（~3 KB，这次合奏的按键时间序列）
+- `score-package.v3.json`（~1–5 KB，mint 前冻结并验证 events/base/soundSet/decoder 的身份与 hash）
 - `metadata.json`（~500 B，索引卡，指向 cover/events/decoder 的 ar:// 地址）
 
-每次铸造的 Arweave 增量成本 ≈ **$0.002**，不是 $15。
+每次铸造的 Arweave 增量成本仍约为 **$0.002 量级**，不是 $15；精确金额以 Turbo 上传前预算为准。
 
 ### 决策 9：Arweave 多网关 fallback
 
 合约存 `ar://txid`（不绑定特定网关）。`src/lib/arweave.ts` 维护多个网关，主网关失败自动切换。
+
+**P15-H 高速读取补充**：
+- 页面结构化数据从已验证快照进入 HTML，不把实时 Arweave JSON 放在用户首屏热路径。
+- 音频立即请求按 txid 寻址的 Blob 完整对象；1.2 秒仍未完整校验成功时启动一条 Arweave hedge，首个完整且 hash 正确的响应获胜。
+- WebAudio 完整 GET 接受合法 `200`，不强制 `Accept-Ranges`；Range 只用于发布能力检查或真正的分段读取。
+- 不再用一次预探针触发最长 24 小时的持久 origin 冷却；旧健康状态版本必须迁移失效。
+- 历史兼容清单按 chain/contract/token/tokenURI 精确登记并与原档案并列展示，绝不改写或冒充历史 metadata。
 
 ### 决策 10：Vercel Cron 而非独立 Worker（Phase 1-3）
 
@@ -356,7 +367,7 @@ Phase 2 spike 已验证 Web Audio 可行（commit `da9210d`）。
 
 **路由双兼容**：纯数字 → `getScoreByTokenId`（兼容旧分享卡 / 链上 external_url）/ UUID → `getScoreByQueueId`（B8 主路径，含未上链中间态"上链中"灰卡）。
 
-**永久输入**：数据库负责路由定位、创作者关系和未完成 UUID 的真实生命周期；已铸 Token 只从该 NFT metadata `animation_url` 校验并解析 `events/base/sounds`，不使用当前环境变量或数据库事件镜像替换历史资源。数据库失败或 miss 时，数字 Token 走 OP Mainnet `tokenURI → Arweave metadata → ownerOf`。永久 Decoder 只由用户主动在新页面打开，站内不执行其脚本、也不嵌 iframe。
+**永久输入**：数据库负责路由定位、创作者关系和未完成 UUID 的真实生命周期。已铸 Token 的 canonical identity 只来自链上 tokenURI 与其永久 package/legacy refs；站内页面默认读取由这些原件验证生成的不可变 snapshot，并将 events/sounds bootstrap 写入 HTML。snapshot miss 或损坏时 fail closed，不使用当前环境变量或普通事件镜像冒充历史资源；运维重建才回源链上/Arweave。永久 Decoder 只由用户主动在新页面打开，站内不执行其脚本、也不嵌 iframe。
 
 **渲染合同**：Score 复用生产 PondGL、水面、花瓣与既有 P9 能力；首页输入自己的 35 个节点，Score 只输入 1 个作品节点。`idle/loading/paused/ended` 显示 Token 永久封面的静态唱片，`playing` 在同一锚点切为日食。一页最多一棵现有 R3F Canvas 与花瓣 Canvas，不复制渲染器、Canvas 树或第二个 P9 注册表。
 
@@ -366,7 +377,7 @@ Phase 2 spike 已验证 Web Audio 可行（commit `da9210d`）。
 
 **降级与首包边界**：作品身份、播放控制、首屏分享、永久凭证与 Decoder 出口先由 DOM 提供；无 WebGL、context lost、低性能或音频/资源失败时仍保留唱片、阅读、重试与核验。Score PondGL 与播放内核只进入 `/score` 路由，不得进入首页首包；首页仍只加载自己的 35 节点数据。P11 不新增渲染依赖。
 
-**任何人可访问，OG meta tags 三件套**。数字 Token 在数据库失败或 miss 时走已落地的链上 `tokenURI → Arweave metadata` 灾备，并从同一 metadata 构建站内播放 manifest；`ownerOf` 只表示当前持有人。未完成 UUID 只能依赖数据库展示生命周期，不伪造永久资源。
+**任何人可访问，OG meta tags 三件套**。数字 Token 的正常路径从已验证 snapshot 构建站内播放 bootstrap；运维可从 `tokenURI → Arweave metadata/package` 确定性重建。`ownerOf` 只表示当前持有人并独立短缓存刷新。未完成 UUID 只能依赖数据库展示生命周期，不伪造永久资源。
 
 ---
 
@@ -400,7 +411,7 @@ Phase 2 spike 已验证 Web Audio 可行（commit `da9210d`）。
 
 | 项 | 成本 |
 |---|---:|
-| Arweave 新增（events.json + metadata.json）| ~$0.002 |
+| Arweave 新增（events + score-package.v3 + metadata）| ~$0.002 量级 |
 | Gas（OP 典型，~561k gas，含 L2 execution + L1 data fee）| ~$0.10 |
 | **每张合计** | **~$0.10** |
 

@@ -1,0 +1,136 @@
+{
+  "schema": "p15-h0.production-state.v1",
+  "generatedAt": "2026-09-21T04:07:57.013Z",
+  "queue": [
+    {
+      "id": "30c75936-515c-411e-a033-0d64357b19a6",
+      "pending_score_id": "edf615be-002b-4ac9-ac72-dd56f95d0a73",
+      "track_id": "eeef9acd-b0f5-4846-ab6c-e72e06656598",
+      "events_ar_tx_id": "7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ",
+      "metadata_ar_tx_id": "YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo",
+      "token_id": 1,
+      "token_uri": "ar://YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo",
+      "status": "success",
+      "retry_count": 0,
+      "last_error": null,
+      "tx_hash": "0x1d2de0a47e73114e87ecb7d81b5b49e61edb5f7b4a4c2871317811b53f182f4a",
+      "uri_tx_hash": "0xaa72331c194da27e56c6243f27223b089a37ddbf2a94e5c5ca1774a8784550dc",
+      "created_at": "2026-08-23T08:13:21.05722+00:00",
+      "updated_at": "2026-08-23T08:14:30.382+00:00",
+      "event_count": 35,
+      "used_keys": [
+        "b",
+        "c",
+        "d",
+        "f",
+        "h",
+        "j",
+        "k",
+        "l",
+        "n",
+        "r",
+        "s",
+        "t",
+        "v"
+      ]
+    },
+    {
+      "id": "623de3aa-31f7-4291-92be-bb6837afd218",
+      "pending_score_id": "220f559f-bb57-4d4f-8ca7-3f966c50fe49",
+      "track_id": "807a3c8a-6370-434d-8e91-5493ba19edcc",
+      "events_ar_tx_id": "1Euj208ds6JpeMkSfkqaAUB3qCfbDY5wE1ClpebP43A",
+      "metadata_ar_tx_id": "TNm1k8lWm3FSxhkivzLN2TekOFBW1Y--QKN-Gv-zc3U",
+      "token_id": 3,
+      "token_uri": "ar://TNm1k8lWm3FSxhkivzLN2TekOFBW1Y--QKN-Gv-zc3U",
+      "status": "success",
+      "retry_count": 0,
+      "last_error": null,
+      "tx_hash": "0xf81cfa621706eeafeda22bd20cfbb16a88bd9916f51dab8f8eddfe16c9772446",
+      "uri_tx_hash": "0x2409ed9aaa1eb3095c859330e2fcabf6ee93d09a8f825fe326dc5738e72ca310",
+      "created_at": "2026-09-11T02:00:19.767427+00:00",
+      "updated_at": "2026-09-11T02:07:05.043+00:00",
+      "event_count": 44,
+      "used_keys": [
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "i",
+        "j",
+        "k",
+        "n",
+        "o",
+        "q",
+        "r",
+        "s",
+        "u",
+        "v",
+        "w",
+        "y"
+      ]
+    },
+    {
+      "id": "e4603e94-030e-4c3f-a7e6-156e8d7bc49f",
+      "pending_score_id": "d041dafb-abbf-4c5b-b63f-5dd4c62b7916",
+      "track_id": "de96230b-54a7-4b29-a7d0-82cebf07ab86",
+      "events_ar_tx_id": "XVbfJXNAtx7xjuvPMMV50lRi9BUlo1p4NmdyC5lc_vA",
+      "metadata_ar_tx_id": "DluJS7w-Xwze-VuUynOsE5bZES7IeP7gGZdKgDPigI8",
+      "token_id": 4,
+      "token_uri": null,
+      "status": "setting_uri",
+      "retry_count": 0,
+      "last_error": null,
+      "tx_hash": "0xa15e61f8219046d00b308bff2973d146a63083fca73b112fac543000b45a7778",
+      "uri_tx_hash": null,
+      "created_at": "2026-09-21T03:54:09.909663+00:00",
+      "updated_at": "2026-09-21T04:05:05.97+00:00",
+      "event_count": 2,
+      "used_keys": [
+        "f",
+        "v"
+      ]
+    }
+  ],
+  "chainEvents": [
+    {
+      "tx_hash": "0x1d2de0a47e73114e87ecb7d81b5b49e61edb5f7b4a4c2871317811b53f182f4a",
+      "log_index": 71,
+      "block_number": 155937041,
+      "token_id": 1,
+      "created_at": "2026-08-23T08:15:09.282787+00:00",
+      "chain_id": 10
+    },
+    {
+      "tx_hash": "0xdbc760988b59faff3636e70f51614d59de599eab69b87378680a143b880050f0",
+      "log_index": 80,
+      "block_number": 156213815,
+      "token_id": 2,
+      "created_at": "2026-08-29T18:00:22.953988+00:00",
+      "chain_id": 10
+    },
+    {
+      "tx_hash": "0xf81cfa621706eeafeda22bd20cfbb16a88bd9916f51dab8f8eddfe16c9772446",
+      "log_index": 188,
+      "block_number": 156746674,
+      "token_id": 3,
+      "created_at": "2026-09-11T02:03:02.447586+00:00",
+      "chain_id": 10
+    },
+    {
+      "tx_hash": "0xa15e61f8219046d00b308bff2973d146a63083fca73b112fac543000b45a7778",
+      "log_index": 111,
+      "block_number": 157182094,
+      "token_id": 4,
+      "created_at": "2026-09-21T03:57:03.554434+00:00",
+      "chain_id": 10
+    }
+  ],
+  "parity": {
+    "chainMissingFromQueue": [
+      "2"
+    ],
+    "indexMissingFromChainEvents": []
+  }
+}
