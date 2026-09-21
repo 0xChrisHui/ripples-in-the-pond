@@ -9,7 +9,8 @@ const INITIAL_SNAPSHOT: ScorePlaybackSnapshot = Object.freeze({
 });
 type StreamFactory = (url: string, onFailure: () => void) => ScoreBaseStream;
 type EngineOptions = { fetcher?: typeof fetch; createAudioContext?: () => AudioContext; createBaseStream?: StreamFactory };
-const safeMessage = (error: unknown): string => error instanceof Error ? error.message : 'Score 播放资源暂时不可用';
+const safeMessage = (error: unknown): string => error instanceof Error
+  ? error.message : 'Score 播放资源暂时不可用';
 export class ScorePlaybackEngine implements ScorePlaybackController {
   private readonly fetcher: typeof fetch;
   private readonly createContext: () => AudioContext;
@@ -46,7 +47,6 @@ export class ScorePlaybackEngine implements ScorePlaybackController {
     this.abortController?.abort(); this.abortController = new AbortController();
     const released = this.releaseAudio();
     this.resources = null; this.streamingUrl = scoreStreamingBaseUrl(manifest);
-    this.ensureStream()?.prime();
     this.update({ ...INITIAL_SNAPSHOT }); await released;
     try {
       const resources = await loadScoreResources(manifest, this.fetcher, this.abortController.signal);

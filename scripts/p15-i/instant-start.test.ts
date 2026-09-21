@@ -83,8 +83,7 @@ class FakeAudioContext {
 class FakeBaseStream {
   primeCalls = 0;
   startCalls = 0;
-  private primed = false;
-  prime() { if (!this.primed) { this.primed = true; this.primeCalls += 1; } }
+  prime() { this.primeCalls += 1; }
   async start() { this.startCalls += 1; }
   pause() {}
   positionMs() { return 0; }
@@ -122,12 +121,10 @@ async function verifyQueuedIntent(): Promise<void> {
   });
   try {
     const loading = engine.load(bootstrap);
-    assert.equal(stream.primeCalls, 1, '页面加载只静音预热一次');
-    assert.equal(stream.startCalls, 0, '预热不得在用户手势前出声');
     await engine.play();
     assert.equal(engine.getSnapshot().playRequested, true);
     assert.equal(contexts, 1, 'AudioContext 应在首次用户手势中创建一次');
-    assert.equal(stream.primeCalls, 1, '用户手势应复用既有预热');
+    assert.equal(stream.primeCalls, 1, '用户手势应立即预热流式底曲');
     releaseStartup();
     await loading;
     assert.equal(engine.getSnapshot().state, 'playing');
