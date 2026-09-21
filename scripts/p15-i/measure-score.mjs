@@ -31,6 +31,17 @@ async function click(cdp, selector) {
   });
   if (!result.result.value) throw new Error(`${selector} 尚不可点击`);
 }
+async function clickWhenHandled(cdp, selector, timeoutMs) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const before = await cdp.evaluate("performance.getEntriesByName('p15:audio-intent').length");
+    try { await click(cdp, selector); } catch { /* 水合或按钮状态尚未就绪 */ }
+    await new Promise((resolve) => setTimeout(resolve, 80));
+    const after = await cdp.evaluate("performance.getEntriesByName('p15:audio-intent').length");
+    if (after > before) return;
+  }
+  throw new Error(`${selector} 未在 ${timeoutMs}ms 内接收播放意图`);
+}
 async function sample(cdp, tokenId, classification, index) {
   const origin = new URL(siteBase).origin;
   if (classification === 'cold') {
@@ -43,8 +54,9 @@ async function sample(cdp, tokenId, classification, index) {
     const shellAt = await waitFor(cdp,
       `location.pathname==='/score/${tokenId}'&&document.querySelector('.record-anchor')?performance.now():0`,
       30_000, `Score #${tokenId} 页面主体`);
-    await waitFor(cdp, `['ready','error'].includes(document.querySelector('main')?.dataset.playbackState)`,
-      45_000, `Score #${tokenId} 资源 ready`);
+    await clickWhenHandled(cdp, '.record-anchor__action', 5_000);
+    await waitFor(cdp, `performance.getEntriesByName('p15:first-sound-scheduled').length>0
+      ||document.querySelector('main')?.dataset.playbackState==='error'`, 45_000, `Score #${tokenId} 首声排程`);
     const beforeClick = await cdp.evaluate(`(() => { const main=document.querySelector('main');
       const nav=performance.getEntriesByType('navigation')[0];
       return { state:main?.dataset.playbackState??null, shellAt:${shellAt}, responseStart:nav?.responseStart??null,
@@ -53,17 +65,15 @@ async function sample(cdp, tokenId, classification, index) {
         audioResources:performance.getEntriesByType('resource').filter((item)=>
           item.name.includes('/media/')||item.name.includes('ardrive.net')||item.name.includes('arweave'))
           .map((item)=>({name:item.name,duration:item.duration,transferSize:item.transferSize})) }; })()`);
-    if (beforeClick.state === 'ready') {
-      await click(cdp, '.record-anchor__action');
-      await waitFor(cdp, `performance.getEntriesByName('p15:first-sound-scheduled').length>0
-        ||document.querySelector('main')?.dataset.playbackState==='error'`, 45_000, `Score #${tokenId} 首声排程`);
-    }
     const afterClick = await cdp.evaluate(`(() => { const main=document.querySelector('main');
       const mark=(name)=>performance.getEntriesByName(name).at(-1)?.startTime??null;
       const intent=mark('p15:audio-intent'),scheduled=mark('p15:first-sound-scheduled');
       return {state:main?.dataset.playbackState??null,decodeMs:Number(main?.dataset.decodeMs)||null,
         firstSoundExpectedMs:Number(main?.dataset.firstSoundExpectedMs)||null,
-        intentToScheduledMs:intent==null||scheduled==null?null:scheduled-intent};})()`);
+        startupClosureAt:mark('p15:score-startup-closure-ready'),
+        allResourcesAt:mark('p15:score-all-resources-ready'),
+        intentToScheduledMs:intent==null||scheduled==null?null:scheduled-intent,
+        shellToScheduledMs:scheduled==null?null:scheduled-${shellAt}};})()`);
     return { classification, index, tokenId, beforeClick, afterClick,
       consoleErrors: cdp.consoleErrors.slice(starts.console), pageErrors: cdp.pageErrors.slice(starts.page) };
   } catch (error) {
@@ -75,14 +85,16 @@ function summary(samples) {
   const values = (path) => samples.map(path).filter(Number.isFinite);
   const load = values((item) => item.beforeClick?.resourceLoadMs);
   const first = values((item) => item.afterClick?.firstSoundExpectedMs);
+  const perceived = values((item) => item.afterClick?.shellToScheduledMs);
   const shell = values((item) => item.beforeClick?.shellAt);
   return { requested: samples.length, valid: samples.filter((item) => !item.error).length,
     shellP50Ms: percentile(shell, .5), shellP95Ms: percentile(shell, .95),
     resourceP50Ms: percentile(load, .5), resourceP95Ms: percentile(load, .95),
-    firstSoundP50Ms: percentile(first, .5), firstSoundP95Ms: percentile(first, .95), samples };
+    firstSoundP50Ms: percentile(first, .5), firstSoundP95Ms: percentile(first, .95),
+    shellToSoundP50Ms: percentile(perceived, .5), shellToSoundP95Ms: percentile(perceived, .95), samples };
 }
 
-const report = { schema: 'p15-i.score-start.v1', measuredAt: new Date().toISOString(), siteBase,
+const report = { schema: 'p15-i.score-start.v2', measuredAt: new Date().toISOString(), siteBase,
   cacheBoundary: 'cold 每次清 HTTP/Cache Storage；hot 连续完整导航且不清缓存', cold: null, hot: null };
 let cdp;
 try {
