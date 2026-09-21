@@ -1,11 +1,6 @@
 import '../../_env';
-import { readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { createClient } from '@supabase/supabase-js';
 import { parseScoreSnapshot, type ScoreSnapshotRow } from '../../../src/data/score/snapshot-contract';
-
-const ROOT = process.cwd();
-const EVIDENCE = join(ROOT, 'reviews/evidence/p15-h/h7-production-release.json');
 
 function required(name: string): string {
   const value = process.env[name]?.trim();
@@ -51,16 +46,6 @@ async function main(): Promise<void> {
       throw new Error('Score #2: Production snapshot 缺少 space');
     }
   }
-  const evidence = JSON.parse(readFileSync(EVIDENCE, 'utf8')) as Record<string, unknown>;
-  const result = {
-    ...evidence, readbackAt: new Date().toISOString(), readback: {
-      soundSets: 1, decoders: 1, activeCorePointers: 1,
-      verifiedTracks: 35, activeSnapshots: 4, activeLegacyQueues: 0,
-    },
-  };
-  const temporary = `${EVIDENCE}.${process.pid}.tmp`;
-  writeFileSync(temporary, `${JSON.stringify(result, null, 2)}\n`);
-  renameSync(temporary, EVIDENCE);
   console.log('H7 Production readback：33 键 Core、35 首 base、4 枚 snapshot 全部通过');
 }
 

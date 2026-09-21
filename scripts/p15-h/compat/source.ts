@@ -54,7 +54,8 @@ function quorum(entry: H0Entry, label: string): PermanentSoundIdentity {
 function currentSounds(value: unknown): Map<SoundKey, PermanentSoundIdentity> {
   const root = record(value, 'current-33');
   if (root.schema !== 'ripples.sound-set.v1' || root.id !== 'current-33-v1'
-    || root.publicationStatus !== 'published' || !Array.isArray(root.entries)) {
+    || !['published', 'edge-mirrored'].includes(String(root.publicationStatus))
+    || !Array.isArray(root.entries)) {
     throw new Error('current-33 尚未发布');
   }
   const map = new Map<SoundKey, PermanentSoundIdentity>();

@@ -54,12 +54,12 @@ else
 fi
 echo ""
 
-# 2c. P15-H3：上传工具本地 Gate 不连接钱包，也不会产生永久写入。
-echo "── 2c. SoundSet 永久上传工具 Gate ──"
-if npm run p15:h3:audit 2>&1; then
-  echo "$OK 永久上传工具 Gate 通过"
+# 2c. P15-H2/H3：队列闭包、上传工具、decoder 与 compat 合同。
+echo "── 2c. Permanent Core 合同 Gate ──"
+if npm run p15:h2:verify 2>&1 && npm run p15:h3:audit 2>&1 && npm run p15:h3:verify 2>&1; then
+  echo "$OK Permanent Core 合同 Gate 通过"
 else
-  echo "$FAIL 永久上传工具 Gate 失败"
+  echo "$FAIL Permanent Core 合同 Gate 失败"
   EXIT_CODE=1
 fi
 echo ""
@@ -80,6 +80,18 @@ if npm run p15:h5:verify 2>&1; then
   echo "$OK Score snapshot Gate 通过"
 else
   echo "$FAIL Score snapshot Gate 失败"
+  EXIT_CODE=1
+fi
+echo ""
+
+# 2f. P15-H6/H7：媒体竞速、历史 snapshot 与 Production readback。
+echo "── 2f. 播放回退与 Production snapshot Gate ──"
+if npm run p15:h6:verify 2>&1 \
+  && npm run p15:h7:verify-snapshots 2>&1 \
+  && npm run p15:h7:verify-production 2>&1; then
+  echo "$OK 播放回退与 Production snapshot Gate 通过"
+else
+  echo "$FAIL 播放回退与 Production snapshot Gate 失败"
   EXIT_CODE=1
 fi
 echo ""
