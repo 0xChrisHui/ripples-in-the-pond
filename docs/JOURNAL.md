@@ -1568,3 +1568,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - Score #1–#4 兼容恢复采用 runbook 已登记的独立 admin 钱包做 EIP-712 token-scoped 签名；四份对象均永久上传，#1 保持 legacy，#2–#4 精确恢复录制时 current-33。
 - H7 发布编排把 35 首 base、注册表和 snapshot 作为可重放的 additive 写入，只有最后一步才切 `permanent_core_active`，避免部分成功影响未来入队。
 - Vercel Blob 保持 OIDC，不恢复长期 RW token；当前项目连接缺 Development scope，H4 在权限层 fail closed，待临时开放 Development 后执行并完成 readback。
+
+## 2026-09-21 — P15-H 三环境发布闭环
+
+- **精确路径而非随机后缀**：Vercel CLI 的布尔 flag 传入字符串 `false` 会被解释为启用；上传器改为省略该 flag、使用平台默认的精确 pathname。误建的 1 个未引用随机后缀副本已删除，永久对象与正式 Edge inventory 均未受影响。
+- **环境隔离必须与发布同步**：Score snapshot 读取按 `VERCEL_ENV` fail closed；首轮只写 Production 导致 Preview 正确显示不可播放。发布器现幂等写入 Development/Preview/Production，并在 readback 中要求三环境各有 #1–#4，避免再次把“Production 有数据”误当作“Preview 可验收”。
+- **最小权限收口**：H4 使用临时开放的 Development OIDC 完成 37 个对象写入与读回；发布后不保留静态 Blob 写 Token。Development scope 不再是运行时依赖，应在 Vercel Store 项目连接中撤回。

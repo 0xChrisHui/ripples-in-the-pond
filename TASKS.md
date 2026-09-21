@@ -7,16 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **当前唯一施工项：P15-H Permanent Core + Verified Edge（执行中）**
-  - [x] H0 主网 Score/33 键/旧 26/Blob 版本证据与 hash 账本
-  - [x] H1 33 键 SoundSet 单一注册表
-  - [x] H2 队列版本 pin + mint 前永久闭包 Gate
-  - [x] H3 当前 33 音频、新 manifest/decoder、逐 Token 兼容清单永久上传
-  - [ ] **H4 从 AR 已验证字节建立 Verified Edge 副本（当前：等待 Store 开放 Development OIDC）**
-  - [x] H5 不可变 playback snapshot + HTML/RSC bootstrap
-  - [x] H6 Blob 直连 + 1.2s AR hedge + Score #2 真实 space 恢复
-  - [ ] H7 历史回填、三环境未来铸造切换（35 首 base 与四枚 snapshot 计划已验证，待 H4 后写入）
-  - [ ] H8 全部已铸数字 Score 的 Preview/Production、故障演练与封存
+- **当前无进行中施工项**：P15-H 已封存，等待用户安排下一项。
 
 ## ⏳ Later / 开放项
 
@@ -289,6 +280,8 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 ---
 
 ## ✅ Done
+
+- **[P15-H Permanent Core + Verified Edge]** ✅ 完成（2026-09-21）— H0–H8 全部闭合：33 键单一注册表与永久 SoundSet、新 decoder/package v3、四枚历史 Score 的 token-scoped 兼容清单、37 个 Verified Edge 音频对象、三环境各四枚不可变 snapshot、HTML bootstrap 与 Blob→AR 有界竞速均已发布；#2 的真实 `space` 恢复。证据见 `reviews/2026-09-21-phase-15-h-completion-review.md`。
 
 - **[Phase 11 正式发布]** ✅ 完成（2026-09-06）— 发布提交 `2e55d65` 已进入 `main` 并由 Vercel Production 成功部署；`/`、`/artist`、`/me`、`/score/1` 新 UI 与受保护健康检查均完成线上冒烟。外部动态补证与 Artist 正式文案保留为非阻塞开放项。
 - **[Phase 9 最终封存]** ✅ 完成（2026-09-05）— 33 键 / 33 唯一音效 / 33 生产动画已通过最终静态审计、浏览器压力 Gate、首页同步、Production 发布与线上复验；P9 遗留项为 0，后续体感反馈转独立热修或新阶段。

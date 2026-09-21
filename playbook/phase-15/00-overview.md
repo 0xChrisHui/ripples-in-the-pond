@@ -1,7 +1,7 @@
 # Phase 15 — 全站丝滑体验与永久播放可靠性（Overview）
 
 > **立项日期**：2026-09-05
-> **状态**：P15-0/A–G 已发布；P15-H「Permanent Core + Verified Edge」已获用户授权并执行中
+> **状态**：P15-0/A–H 已发布并封存；P15-H「Permanent Core + Verified Edge」于 2026-09-21 完成
 > **取代范围**：取代旧 P15“音效系统扩展”；旧项退回未排期清单，不挤占 P16
 > **覆盖页面**：`/`、`/me`、`/score/[id]`、`/artist`、登录入口，以及完成后的 P14 页面
 

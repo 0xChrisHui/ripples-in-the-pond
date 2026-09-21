@@ -454,3 +454,22 @@ commit;
 `manual_review` 时只发一次，内容应含 queue id、origin、source Score token 与已有 tx hash；
 恢复后才清 `alerted_at`。运营钱包低余额、角色缺失、active 积压、上游 safe-head 落后或永久
 输入异常，同样先 `off`、留证，再按以上顺序诊断。
+
+## 11. P15-H Score 永久播放运维
+
+数字 `/score/<tokenId>` 的正常路径只读对应环境的 active verified snapshot，events 与实际使用的
+sounds 身份随 HTML/RSC 内嵌；浏览器只下载底曲与事件用到的音效。音频优先完整读取
+`NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL/media/<arTxId>`，1.2 秒未完成才启动 Arweave hedge，
+最终仍以 bytes、MIME 与 SHA-256 验证结果决定是否可播放。
+
+出现“身份与凭证仍可核验，但播放不可用”时按以下顺序处理：
+
+1. 查对应环境的 `score_playback_snapshot_active`，确认指向同环境、同 chain/contract/token 的 revision。
+2. 用 `npm run p15:h7:verify-production` 只读核对 Permanent Core、35 首 base、三环境各四枚历史 snapshot 与 #2 `space`。
+3. 查 `reviews/evidence/p15-h/h4-edge-mirror.json`，再对单个 `media/<arTxId>` 做完整 GET；Blob 失败不改永久引用，确认 AR 原件可读即可让 resolver 自动回退。
+4. snapshot 损坏或缺失时，从已验证 plan 发布新 revision 并原子前移 active pointer；禁止原地修改 revision，也禁止改历史 tokenURI/metadata/decoder。
+5. 外部上传结果未知时保持 `manual_review`，先按 content hash 与既有 txid 对账，禁止盲目重传付费永久对象。
+
+新作品必须经 `preparing_package` 完成 `ripples.score-package.v3` 双网关闭包后才能广播 mint，
+`setting_uri` 后还必须完成 `finalizing_snapshot` 才能进入 `success`。旧作品的 compatibility 是
+token-scoped 签名恢复层；原始 `animation_url` 不可修改，UI 必须同时保留原始档案和恢复说明。

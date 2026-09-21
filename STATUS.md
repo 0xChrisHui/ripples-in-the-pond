@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 15-H「Permanent Core + Verified Edge」执行中**。用户于 2026-09-21 明确授权：把当前 33 键永久版本、历史 Score 精确兼容、已验证页面快照、HTML bootstrap、Vercel Blob 直连回退和铸造前依赖闭包作为 P15 最终对齐轨，并在 playbook 完成后连续执行。P15-0/A–G 的发布证据保留；H 将取代 G 的热路径探针/长冷却，不否定 G 的 Blob 建库成果。
+**Phase**: **Phase 15-H「Permanent Core + Verified Edge」已完结 ✅**。当前 33 键永久版本、历史 Score 精确兼容、三环境已验证页面快照、HTML bootstrap、Vercel Blob 直连回退和铸造前依赖闭包已作为 P15 最终对齐轨发布；P15-0/A–G 的历史证据继续保留。
 
 **P15-H 新发现（2026-09-21）**：2026-08-23 的本地声音变更不仅新增 `space + 3–8`，还替换了 `a–z` 全部 26 个 MP3；因此新 Permanent Core 必须是当前 33 音频的独立版本，旧 26 表继续原样服务历史真相。Score #1–#3 都钉住旧 decoder/旧 26 表；#2 明确缺 `space`，#2/#3 还必须按各自铸造时 Production deployment 证据判断已用字母是否需要兼容 override，不能只补 7 键后宣称完全对齐。
 
@@ -16,7 +16,7 @@
 
 **P15-H2/H3/H5/H6（2026-09-21）✅**：队列已实现 SoundSet/decoder/base 原子 pin、上传账本、mint 前 `ripples.score-package.v3` 闭包与 `finalizing_snapshot`；当前 33 音频、manifest、修正版 decoder `Yu9f…dOO0` 和 Score #1–#4 的 admin EIP-712 兼容证明均已永久上传并完成双网关读回。数字 Score 已改为 verified snapshot 内嵌 events/effective sounds，播放器采用 Blob 立即完整 GET + 1.2 秒 AR hedge，移除 Range 热探针与跨刷新长冷却。H7 已冻结 35/35 base 双网关身份、0 活跃旧队列与四枚可运行 snapshot 计划。
 
-**P15-H 当前外部 Gate（2026-09-21）**：H4 写工具与 37 对象 dry-run 已通过，但 `ripples-media` 项目连接只允许 Preview/Production；Vercel 本地 CLI 按官方规则签发 Development OIDC，因此写入被权限层拒绝，既不是 Blob 宕机也不是资源过大。下一步只需在 Store 的项目连接临时加入 Development 后重拉 OIDC；工具会禁止覆盖、完成 37/37 全字节 readback，随后才允许 migration、H7 active pointer、Preview/Production。
+**P15-H4/H7/H8 发布封存（2026-09-21）✅**：`ripples-media` 已按精确 `media/<txid>` 补齐 37 个本轨对象（4 个原有对象复验、33 个新对象上传），全字节 hash/bytes/MIME readback 通过；远端 migration `052` 已执行，Permanent Core 注册表、35 首 base 身份与 Development/Preview/Production 各 4 枚 active snapshot 已读回。Preview `dpl_FTBGG1jF99PoTa4zDS1tuZsfif1m` READY，`/score/1–4` 均内嵌 bootstrap，#2 含真实 `space`；正式发布与 smoke 证据见 `reviews/2026-09-21-phase-15-h-completion-review.md`。
 
 **P15 发布后 review（2026-09-13）**：修复 P14 永久音频字段合入后遗留的 Track 公开合同漂移，首页与私人档案缓存会拒绝旧/损坏字段；`/me` 内存 owner、轮询回写和页面放行改用 `authSource + userId`，堵住同内部 ID 跨登录源的一帧串档窗口。修复提交 `21ec63a` 已快进 `main`，Vercel Preview/Production 成功；正式域名五页 200、tracks 35 首与三网关合同通过。TypeScript、定向 lint、P15 四组脚本、P14 播放器、Webpack production build 与 Foundry 56/56 已通过；详见 `reviews/2026-09-13-phase-15-post-release-review.md`。
 **P15-G 镜像探针（2026-09-14）**：playbook 提交 `ea771b0` 冻结“永久曲谱真相 + Vercel 音频加速 + Arweave 自动回退”；实现提交 `c4a7b20` 与首轮预算修复 `d27f613` 加入真实对象 `Range: bytes=0-0` 严格探针、同 origin single-flight、`5m → 1h → 6h → 24h` 持久退避与 half-open 自动恢复。缓存命中零探针；404/哈希错误只回退单对象；只有服务级错误进入 origin 熔断；Range 成功只准入，完整镜像对象验证成功才清零失败等级。首轮保护版完整 `scripts/verify.sh` 通过（37 路由、Foundry 56/56），并部署到 Production；当时变量仍为空，安全直连 Arweave。
@@ -110,7 +110,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：解除 `ripples-media` 的 Development OIDC 环境 Gate，执行 H4 37 对象镜像与 readback；随后按 `playbook/phase-15/90-h-permanent-core-verified-edge.md` 连续完成 migration、H7 生产切换和 H8 发布封存。
+**当前权威下一步**：P15-H 已封存；回到 `TASKS.md` 的 Later 项按用户后续优先级安排，不自动开启新 Phase。
 
 ---
 
