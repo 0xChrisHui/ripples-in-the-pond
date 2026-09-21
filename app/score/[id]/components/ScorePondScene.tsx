@@ -43,14 +43,15 @@ type Props = { score: ScoreReadyData; network: string };
 
 function preloadStartupAudio(score: ScoreReadyData): void {
   const bootstrap = score.playbackBootstrap;
-  const identities = [bootstrap.base, ...startupSoundKeys(bootstrap.events)
-    .map((key) => bootstrap.sounds[key]).filter(Boolean)];
-  identities.forEach((identity, index) => {
+  const identities = startupSoundKeys(bootstrap.events)
+    .map((key) => bootstrap.sounds[key]).filter(Boolean);
+  [bootstrap.base, ...identities].forEach((identity, index) => {
     const mirror = permanentMediaCandidates(identity.ref)
       .find((candidate) => candidate.source === 'mirror');
     if (!mirror) return;
     preload(mirror.url, {
-      as: 'fetch', crossOrigin: 'anonymous', fetchPriority: index === 0 ? 'high' : 'auto',
+      as: index === 0 ? 'audio' : 'fetch', crossOrigin: 'anonymous',
+      fetchPriority: index === 0 ? 'high' : 'auto',
     });
   });
 }

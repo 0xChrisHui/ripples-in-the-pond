@@ -20,6 +20,7 @@ export async function decodeScoreSounds(
 export async function decodeScoreAudio(
   context: AudioContext, resources: ScorePlaybackResources,
 ): Promise<DecodedScoreAudio> {
+  if (!resources.baseBytes) throw new Error('Score 底曲尚未完成验证');
   const [base, sounds] = await Promise.all([
     context.decodeAudioData(resources.baseBytes.slice(0)),
     decodeScoreSounds(context, resources.soundBytes),
@@ -34,4 +35,15 @@ export async function decodeScoreAudio(
       base.duration * 1000, soundEnd, getScoreP9EndMs(resources.events),
     )),
   };
+}
+
+export async function decodeScoreEffects(
+  context: AudioContext, resources: ScorePlaybackResources,
+): Promise<Pick<DecodedScoreAudio, 'sounds' | 'durationMs'>> {
+  const sounds = await decodeScoreSounds(context, resources.soundBytes);
+  const soundEnd = resources.events.reduce((end, event) => {
+    const duration = sounds[event.key]?.duration ?? 0;
+    return Math.max(end, event.time + duration * 1000);
+  }, 0);
+  return { sounds, durationMs: Math.round(Math.max(soundEnd, getScoreP9EndMs(resources.events))) };
 }

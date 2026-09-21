@@ -1,5 +1,5 @@
 import type { ScorePlaybackManifest } from '@/src/types/jam';
-import { resolvePermanentMedia } from '@/src/features/permanent-media';
+import { permanentMediaCandidates, resolvePermanentMedia } from '@/src/features/permanent-media';
 import { fetchPermanentBytes, fetchPermanentJson, parseSoundsMap } from './sounds-map';
 import type {
   ScoreAudioIdentity, ScorePlaybackBootstrap, ScorePlaybackResources,
@@ -11,6 +11,12 @@ export const SCORE_STARTUP_WINDOW_MS = 8_000;
 function bootstrapOf(manifest: ScorePlaybackManifest): ScorePlaybackBootstrap | null {
   const value = manifest as Partial<ScorePlaybackBootstrap>;
   return value.schema === 'ripples.score-bootstrap.v1' ? value as ScorePlaybackBootstrap : null;
+}
+
+export function scoreStreamingBaseUrl(manifest: ScorePlaybackManifest): string | null {
+  const bootstrap = bootstrapOf(manifest);
+  return bootstrap ? permanentMediaCandidates(bootstrap.base.ref)
+    .find(({ source }) => source === 'mirror')?.url ?? null : null;
 }
 
 async function fetchSnapshotAudio(
@@ -63,17 +69,16 @@ export async function loadScoreResources(
     });
     const startupEntries = ordered.filter(([key]) => startup.has(key));
     const backgroundEntries = ordered.filter(([key]) => !startup.has(key));
-    const baseRequest = fetchSnapshotAudio(bootstrap.base, fetcher, signal);
-    const [baseBytes, firstSounds] = await Promise.all([
-      baseRequest,
-      fetchSoundEntries(startupEntries, fetcher, signal),
-    ]);
+    const streamingBaseUrl = scoreStreamingBaseUrl(bootstrap) ?? undefined;
+    const loadBaseBytes = () => fetchSnapshotAudio(bootstrap.base, fetcher, signal);
+    const firstSounds = await fetchSoundEntries(startupEntries, fetcher, signal);
     performance.mark('p15:score-startup-closure-ready');
     const backgroundSoundBytes = fetchSoundEntries(backgroundEntries, fetcher, signal)
       .then((entries) => Object.fromEntries(entries));
     return {
-      manifest, events: [...bootstrap.events], baseBytes,
+      manifest, events: [...bootstrap.events], baseBytes: null,
       soundBytes: Object.fromEntries(firstSounds), backgroundSoundBytes,
+      loadBaseBytes, streamingBaseUrl,
     };
   }
   const [eventsRaw, soundsRaw, baseBytes] = await Promise.all([

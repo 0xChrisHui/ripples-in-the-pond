@@ -95,7 +95,9 @@ async function verifyBootstrapAndZeroJson(): Promise<void> {
     if (configuredMirror) process.env.NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL = configuredMirror;
   }
   assert.equal(resources.events.length, 2);
-  assert.equal(calls.length, 3, 'bootstrap 只能请求 base + 两个实际使用音效');
+  assert.equal(calls.length, 2, '流式启动只请求两个实际使用音效，不整首下载底曲');
+  await resources.loadBaseBytes?.();
+  assert.equal(calls.length, 3, '流式失败时才完整验证并下载底曲');
   assert.equal(calls.some((url) => /events|sounds/i.test(url)), false, '浏览器不得请求 JSON');
 }
 

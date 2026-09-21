@@ -1,10 +1,12 @@
 import { ScoreP9Session } from './score-p9-session';
+import type { ScoreBaseStream } from './streaming/stream-base';
 import type { ScorePlaybackResources } from './types';
 
 type Options = Readonly<{
   context: AudioContext;
   resources: ScorePlaybackResources;
-  baseBuffer: AudioBuffer;
+  baseBuffer: AudioBuffer | null;
+  baseStream: ScoreBaseStream | null;
   soundBuffers: Readonly<Record<string, AudioBuffer>>;
   durationMs: number;
   onProgress: (positionMs: number, activeKeys: readonly string[]) => void;
@@ -27,13 +29,15 @@ export class ScoreTimelineSession {
   }
 
   start(offsetMs: number): void {
-    const { context, resources, baseBuffer } = this.options;
-    const when = context.currentTime + 0.06;
+    const { context, resources, baseBuffer, baseStream } = this.options;
+    const when = context.currentTime + (baseStream ? 0.02 : 0.06);
     this.stopSources();
     this.p9.destroy();
     this.p9 = new ScoreP9Session();
     this.p9.start(resources.events, offsetMs);
-    if (offsetMs < baseBuffer.duration * 1000) this.startSource(baseBuffer, when, offsetMs / 1000);
+    if (baseBuffer && offsetMs < baseBuffer.duration * 1000) {
+      this.startSource(baseBuffer, when, offsetMs / 1000);
+    }
     this.scheduleEvents(offsetMs, when);
     this.startedAt = when;
     this.startOffsetMs = offsetMs;
@@ -67,6 +71,7 @@ export class ScoreTimelineSession {
   }
 
   position(): number {
+    if (this.options.baseStream) return this.options.baseStream.positionMs();
     return Math.min(this.options.durationMs, Math.max(
       this.startOffsetMs,
       this.startOffsetMs + (this.options.context.currentTime - this.startedAt) * 1000,
@@ -101,6 +106,7 @@ export class ScoreTimelineSession {
 
   pause(): number {
     const position = this.position();
+    this.options.baseStream?.pause();
     this.destroy();
     return position;
   }
@@ -114,6 +120,7 @@ export class ScoreTimelineSession {
 
   destroy(): void {
     this.stopSources();
+    this.options.baseStream?.pause();
     this.p9.destroy();
   }
 }

@@ -80,6 +80,17 @@ class FakeAudioContext {
   }
 }
 
+class FakeBaseStream {
+  primeCalls = 0;
+  startCalls = 0;
+  prime() { this.primeCalls += 1; }
+  async start() { this.startCalls += 1; }
+  pause() {}
+  positionMs() { return 0; }
+  durationMs() { return 1_000; }
+  destroy() {}
+}
+
 async function verifyQueuedIntent(): Promise<void> {
   const { bootstrap, bodies } = await fixture();
   let releaseStartup!: () => void;
@@ -101,20 +112,24 @@ async function verifyQueuedIntent(): Promise<void> {
     configurable: true, value: { getItem: () => null, setItem() {}, removeItem() {} },
   });
   let contexts = 0;
+  const stream = new FakeBaseStream();
   const engine = new ScorePlaybackEngine({
     fetcher, createAudioContext: () => {
       contexts += 1; return new FakeAudioContext() as unknown as AudioContext;
     },
+    createBaseStream: () => stream,
   });
   try {
     const loading = engine.load(bootstrap);
     await engine.play();
     assert.equal(engine.getSnapshot().playRequested, true);
     assert.equal(contexts, 1, 'AudioContext 应在首次用户手势中创建一次');
+    assert.equal(stream.primeCalls, 1, '用户手势应立即预热流式底曲');
     releaseStartup();
     await loading;
     assert.equal(engine.getSnapshot().state, 'playing');
     assert.equal(engine.getSnapshot().playRequested, false);
+    assert.equal(stream.startCalls, 1);
   } finally {
     await engine.destroy();
     globalThis.requestAnimationFrame = previousRaf;

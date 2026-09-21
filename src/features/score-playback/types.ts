@@ -59,9 +59,11 @@ export type ScoreSnapshotReceipt = Readonly<{
 export type ScorePlaybackResources = Readonly<{
   manifest: ScorePlaybackManifest;
   events: readonly KeyEvent[];
-  baseBytes: ArrayBuffer;
+  baseBytes: ArrayBuffer | null;
   soundBytes: Readonly<Record<string, ArrayBuffer>>;
   backgroundSoundBytes?: Promise<Readonly<Record<string, ArrayBuffer>>>;
+  loadBaseBytes?: () => Promise<ArrayBuffer>;
+  streamingBaseUrl?: string;
 }>;
 
 export interface ScorePlaybackController {
