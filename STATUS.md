@@ -20,6 +20,8 @@
 
 **P15-I0 基线（2026-09-21）✅**：正式域名同一独立浏览器完成 10 cold + 10 hot，四枚 Score 轮换且 20/20 有效、0 console/page error。cold 页面主体 p95 `2251.9ms`、整批资源 ready p95 `4353ms`、点击到预计首声 p95 `582ms`；hot 分别为 `1746ms`、`2609ms`、`573ms`。结论：3–5 秒主要发生在按钮可点击前，#3 冷样本最多出现 43 个音频资源请求，证明 ownerOf 等待与底曲/全部音效并发竞争是当前主瓶颈；证据为 `reviews/evidence/p15-i/i0-production-baseline.json`。
 
+**P15-I1 ownerOf 解耦（2026-09-21）✅**：数字 Score 的服务端关键路径现只等 active verified snapshot；当前持有人改由短 CDN 缓存的只读 endpoint 在客户端独立补齐，只更新永久凭证中的单行。RPC 慢、失败或离页 abort 不再延迟播放器主体，也不改变 finalized 与永久播放身份。
+
 **P15 发布后 review（2026-09-13）**：修复 P14 永久音频字段合入后遗留的 Track 公开合同漂移，首页与私人档案缓存会拒绝旧/损坏字段；`/me` 内存 owner、轮询回写和页面放行改用 `authSource + userId`，堵住同内部 ID 跨登录源的一帧串档窗口。修复提交 `21ec63a` 已快进 `main`，Vercel Preview/Production 成功；正式域名五页 200、tracks 35 首与三网关合同通过。TypeScript、定向 lint、P15 四组脚本、P14 播放器、Webpack production build 与 Foundry 56/56 已通过；详见 `reviews/2026-09-13-phase-15-post-release-review.md`。
 **P15-G 镜像探针（2026-09-14）**：playbook 提交 `ea771b0` 冻结“永久曲谱真相 + Vercel 音频加速 + Arweave 自动回退”；实现提交 `c4a7b20` 与首轮预算修复 `d27f613` 加入真实对象 `Range: bytes=0-0` 严格探针、同 origin single-flight、`5m → 1h → 6h → 24h` 持久退避与 half-open 自动恢复。缓存命中零探针；404/哈希错误只回退单对象；只有服务级错误进入 origin 熔断；Range 成功只准入，完整镜像对象验证成功才清零失败等级。首轮保护版完整 `scripts/verify.sh` 通过（37 路由、Foundry 56/56），并部署到 Production；当时变量仍为空，安全直连 Arweave。
 **P15-G Blob 配置（2026-09-14）**：Public Store `ripples-media`（HKG）已写入 63 个精确 `media/<txid>` 对象，总计 `13,457,452` bytes；范围为 Pond Echo 36 段、Score #1 永久音效 26 个与底曲 1 个。63/63 均完成 Arweave 原件与 Blob 副本全字节/SHA-256 核对，严格 Range 为 `206 + 1 byte + bytes 0-0/N`，CORS `*`、`audio/mpeg` 全通过。三环境镜像基址已配置；一次性 Preview 上传器及 8 个临时部署已删除，长效写 Token 已撤销，Store 恢复 `oidc (no static credentials)`。正式 P15 Preview `FCwnw7nDL1uwonxG1p6JfNCSjtnM` 构建 37 路由成功，公开路由最终响应均为 200，客户端 chunk 已命中 Blob 基址。

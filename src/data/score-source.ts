@@ -81,26 +81,24 @@ export const getScoreById = cache(async (id: string): Promise<ScorePageData | nu
 });
 
 async function getScoreByTokenId(tokenId: number): Promise<ScorePageData | null> {
-  const [snapshotResult, holderResult] = await Promise.allSettled([
-    getActiveScoreSnapshot(tokenId), getScoreOwner(tokenId),
-  ]);
-  const holder = holderResult.status === 'fulfilled' ? holderResult.value : null;
-  if (snapshotResult.status === 'rejected') {
-    console.error('[score-source] verified snapshot invalid:', tokenId, snapshotResult.reason);
-    return snapshotFailure(tokenId, holder);
+  let snapshot: Awaited<ReturnType<typeof getActiveScoreSnapshot>>;
+  try {
+    snapshot = await getActiveScoreSnapshot(tokenId);
+  } catch (error) {
+    console.error('[score-source] verified snapshot invalid:', tokenId, error);
+    return snapshotFailure(tokenId, null);
   }
-  const snapshot = snapshotResult.value;
-  if (!snapshot) return snapshotFailure(tokenId, holder);
+  if (!snapshot) return snapshotFailure(tokenId, null);
   const eventCount = snapshot.playbackBootstrap.events.length;
   return {
     state: 'ready', source: 'snapshot', id: String(tokenId), queueId: snapshot.queueId,
     tokenId, queueStatus: 'success', trackTitle: snapshot.trackTitle ?? snapshot.name ?? `Ripples #${tokenId}`,
-    creatorAddress: '', currentHolder: holder, coverUrl: snapshot.coverUrl,
+    creatorAddress: '', currentHolder: null, coverUrl: snapshot.coverUrl,
     eventCount, permanentEventCount: eventCount, createdAt: null,
     confirmedAt: snapshot.receipt.verifiedAt, mintedAt: snapshot.mintedAt ?? snapshot.receipt.verifiedAt,
     metadataRef: snapshot.metadataRef, manifest: snapshot.manifest,
     playbackBootstrap: snapshot.playbackBootstrap, snapshot: snapshot.receipt,
-    provenance: provenance({ tokenId, holder, metadataRef: snapshot.metadataRef,
+    provenance: provenance({ tokenId, holder: null, metadataRef: snapshot.metadataRef,
       manifest: snapshot.manifest, tokenUriSource: 'contract' }),
   };
 }

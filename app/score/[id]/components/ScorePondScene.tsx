@@ -15,6 +15,7 @@ import ScoreArchive from './ScoreArchive';
 import ScoreRecordAnchor from './ScoreRecordAnchor';
 import ShareActions from './ShareActions';
 import { useScorePondSim } from './use-score-pond-sim';
+import { useScoreHolder } from './use-score-holder';
 
 const PondGL = dynamic(() => import('@/src/components/pond-gl-test3/PondGL'), { ssr: false });
 
@@ -49,6 +50,7 @@ function visualTrackOf(score: ScoreReadyData): Track {
 
 export default function ScorePondScene({ score, network }: Props) {
   const playback = useScorePlayback(score.playbackBootstrap);
+  const holder = useScoreHolder(score.tokenId);
   const capabilities = useCapabilities();
   const [health, setHealth] = useState<GlHealth>('unavailable');
   const [performanceReduced, setPerformanceReduced] = useState(false);
@@ -133,7 +135,7 @@ export default function ScorePondScene({ score, network }: Props) {
           />
         </div>
       </section>
-      <ScoreArchive score={score} />
+      <ScoreArchive score={score} holder={holder} />
     </main>
   );
 }

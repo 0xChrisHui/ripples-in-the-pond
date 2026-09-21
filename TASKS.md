@@ -9,7 +9,7 @@
 
 - **当前唯一施工项：P15-I Instant Start（执行中）**
   - [x] I0 Score #1–#4 冷/热播放基线与分段计时
-  - [ ] I1 verified snapshot 与 ownerOf 解耦
+  - [x] I1 verified snapshot 与 ownerOf 解耦
   - [ ] I2 底曲/前 8 秒音效启动闭包与 preload
   - [ ] I3 loading 点击排队、解码与状态语义
   - [ ] I4 条件流式底曲（仅 I0–I3 生产冷播放 p95 >2s 时执行）

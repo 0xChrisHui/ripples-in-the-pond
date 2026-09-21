@@ -1,6 +1,7 @@
 import EditionStamp, { type EditionStatus } from '@/src/components/p11/EditionStamp';
 import ProvenanceLedger, { type ProvenanceEntry } from '@/src/components/p11/ProvenanceLedger';
 import type { ScorePageData, ScoreProvenance } from '@/src/data/score-source';
+import type { ScoreHolderState } from './use-score-holder';
 
 const sourceLabels = {
   contract: 'OP 合约',
@@ -24,8 +25,15 @@ const fields: Array<{ key: keyof ScoreProvenance; label: string; missing?: strin
   { key: 'decoder', label: '永久播放器' },
 ];
 
-function ledgerEntries(provenance: ScoreProvenance): ProvenanceEntry[] {
+function ledgerEntries(provenance: ScoreProvenance, holder?: ScoreHolderState): ProvenanceEntry[] {
   return fields.map(({ key, label, missing }) => {
+    if (key === 'currentHolder' && holder) {
+      return {
+        id: key, label, value: holder.value, source: sourceLabels.contract,
+        href: holder.href ?? undefined, copyable: true,
+        missingLabel: holder.status === 'loading' ? '正在核对当前持有者' : missing,
+      };
+    }
     const item = provenance[key];
     return {
       id: key,
@@ -52,7 +60,9 @@ function dateLabel(score: ScorePageData): string {
   return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('zh-CN');
 }
 
-export default function ScoreArchive({ score }: { score: ScorePageData }) {
+export default function ScoreArchive({
+  score, holder,
+}: { score: ScorePageData; holder?: ScoreHolderState }) {
   const token = score.tokenId == null ? '制作中' : `Token #${score.tokenId}`;
   return (
     <section className="score-archive" aria-labelledby="score-archive-title">
@@ -69,7 +79,7 @@ export default function ScoreArchive({ score }: { score: ScorePageData }) {
           </a>
         )}
       </div>
-      <ProvenanceLedger entries={ledgerEntries(score.provenance)} />
+      <ProvenanceLedger entries={ledgerEntries(score.provenance, holder)} />
       <div className="score-archive__edition">
         <EditionStamp status={statusFor(score)} detail={`${token} · ${dateLabel(score)}`} />
       </div>
