@@ -1,4 +1,5 @@
 import type { Draft } from '@/src/lib/draft-store';
+import { DRAFT_TTL_MS } from '@/src/lib/constants';
 import type { KeyEvent, MyScoresResponse, SaveScoreResponse } from '@/src/types/jam';
 import type { OwnedNFT, Track } from '@/src/types/tracks';
 
@@ -6,6 +7,7 @@ export type ArchiveRecording = {
   key: string;
   title: string;
   createdAt: string;
+  expiresAt: string;
   pendingScoreId?: string;
   track?: Track;
   events?: KeyEvent[];
@@ -22,6 +24,7 @@ export function uploadedRecording(
     key: `server-${result.scoreId}`,
     title: '已上传录音',
     createdAt: draft.createdAt,
+    expiresAt: result.expiresAt,
     pendingScoreId: result.scoreId,
     events: draft.eventsData,
     eventCount: draft.eventsData.length,
@@ -39,6 +42,7 @@ export function recordingsFrom(
     key: `server-${score.id}`,
     title: `${score.track.title} · 第 ${score.seq} 次录音`,
     createdAt: score.createdAt,
+    expiresAt: score.expiresAt,
     pendingScoreId: score.id,
     track: score.track,
     events: score.events,
@@ -52,6 +56,7 @@ export function recordingsFrom(
     key: `local-${draft.trackId}`,
     title: `本机录音 · ${String(index + 1).padStart(2, '0')}`,
     createdAt: draft.createdAt,
+    expiresAt: new Date(new Date(draft.createdAt).getTime() + DRAFT_TTL_MS).toISOString(),
     eventCount: draft.eventsData.length,
     uploadFailed: failedUploads.has(draft.clientDraftId),
   }));

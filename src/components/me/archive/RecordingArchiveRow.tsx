@@ -11,6 +11,19 @@ import type { KeyEvent } from '@/src/types/jam';
 
 type Props = { recording: ArchiveRecording; index: number; onQueued: () => void };
 
+function remainingLabel(expiresAt: string, now: number): { label: string; urgent: boolean; expired: boolean } {
+  const remaining = new Date(expiresAt).getTime() - now;
+  if (remaining <= 0) return { label: '即将消失', urgent: true, expired: true };
+  const totalSeconds = Math.ceil(remaining / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const clock = hours > 0
+    ? `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+    : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  return { label: `${clock} 后消失`, urgent: remaining <= 60 * 60 * 1000, expired: false };
+}
+
 /** 录音行复用全局 Player 与既有入队 hook，不创建第二条音频路径。 */
 export default function RecordingArchiveRow({ recording, index, onQueued }: Props) {
   const { getAccessToken } = useAuth();
@@ -19,9 +32,15 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
   const [events, setEvents] = useState<KeyEvent[] | null>(recording.events ?? null);
   const [eventsLoading, setEventsLoading] = useState(false);
   const [eventsError, setEventsError] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
   const queuedRef = useRef(false);
+  const expiredRef = useRef(false);
   const callbackRef = useRef(onQueued);
   useEffect(() => { callbackRef.current = onQueued; });
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const trackId = recording.track?.id ?? '';
   const isPlaying = playing && currentTrack?.id === trackId;
@@ -59,8 +78,16 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
   }
 
   const localState = recording.uploadFailed ? '上传失败，仍保存在此设备' : '仅保存在此设备';
+  const expiry = remainingLabel(recording.expiresAt, now);
+  useEffect(() => {
+    if (expiry.expired && !expiredRef.current) {
+      expiredRef.current = true;
+      callbackRef.current();
+    }
+  }, [expiry.expired]);
   return (
-    <article className="me-archive-row" data-status={recording.pendingScoreId ? 'ready' : 'local'}>
+    <article className="me-archive-row" data-status={recording.pendingScoreId ? 'ready' : 'local'}
+      data-expiry={expiry.urgent ? 'urgent' : 'normal'}>
       <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')} · RECORDING</p>
       <div className="me-archive-row__main">
         <h3>{recording.title}</h3>
@@ -71,6 +98,8 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
       </div>
       <div className="me-archive-row__state">
         <span>{recording.awaitingRefresh ? '已上传，等待档案刷新' : recording.pendingScoreId ? '已保存录音' : localState}</span>
+        <strong className="me-archive-row__expiry">{expiry.label}</strong>
+        <small>有效期从创作时间起算</small>
         {eventsError && <small role="alert">试听加载失败，可重试</small>}
       </div>
       {recording.pendingScoreId ? (
