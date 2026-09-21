@@ -28,7 +28,7 @@ async function copyText(value: string): Promise<boolean> {
   try { return document.execCommand('copy'); } catch { return false; } finally { field.remove(); }
 }
 
-/** 首屏保留一个明确分享主动作，完整渠道紧邻展开，不再埋到账本之后。 */
+/** 首屏分享入口直接展开站内渠道，不触发操作系统的原生分享面板。 */
 export default function ShareActions({ id, tokenId, trackTitle }: Props) {
   const [feedback, setFeedback] = useState('复制链接');
   const slug = tokenId ?? id;
@@ -43,29 +43,14 @@ export default function ShareActions({ id, tokenId, trackTitle }: Props) {
     if (!popup) window.location.href = target;
   };
 
-  const share = async () => {
-    const url = canonicalUrl(id, tokenId);
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: `Ripples #${tokenId ?? ''}`.trim(), text: shareText(trackTitle, tokenId), url });
-        setFeedback('已分享');
-      } else {
-        setFeedback(await copyText(url) ? '已复制' : '复制失败');
-      }
-    } catch (error) {
-      if (!(error instanceof DOMException && error.name === 'AbortError')) setFeedback('重试分享');
-    }
-  };
-
   const copy = async () => {
     setFeedback(await copyText(canonicalUrl(id, tokenId)) ? '已复制' : '复制失败');
   };
 
   return (
     <div className="score-share-actions" data-pond-ui="true">
-      <button className="score-share-actions__primary" type="button" onClick={share}>分享</button>
       <details>
-        <summary aria-label="展开其他分享方式">更多</summary>
+        <summary aria-label="展开分享方式">分享</summary>
         <div className="score-share-actions__menu">
           <button type="button" onClick={copy}>{feedback}</button>
           <button type="button" onClick={() => openIntent('x')}>分享到 X</button>

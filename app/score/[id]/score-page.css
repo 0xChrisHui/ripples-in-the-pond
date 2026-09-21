@@ -57,7 +57,6 @@
   cursor: pointer;
 }
 
-.score-share-actions__primary,
 .score-share-actions summary {
   padding: var(--p11-space-8) var(--p11-space-12);
   border: var(--p11-hairline) solid var(--p11-brass) !important;
@@ -200,7 +199,6 @@
 
 @media (hover: hover) and (pointer: fine) {
   .score-share-actions :is(button, a, summary):hover { color: var(--p11-brass-strong); }
-  .score-share-actions__primary:hover { background: var(--p11-brass) !important; color: var(--p11-on-brass) !important; }
 }
 
 @media (min-width: 768px) {
@@ -216,5 +214,5 @@
 }
 
 @media (forced-colors: active) {
-  .score-share-actions__primary, .score-share-actions summary, .score-archive, .score-fallback { forced-color-adjust: auto; }
+  .score-share-actions summary, .score-archive, .score-fallback { forced-color-adjust: auto; }
 }
