@@ -48,7 +48,7 @@ function visualTrackOf(score: ScoreReadyData): Track {
 }
 
 export default function ScorePondScene({ score, network }: Props) {
-  const playback = useScorePlayback(score.manifest);
+  const playback = useScorePlayback(score.playbackBootstrap);
   const capabilities = useCapabilities();
   const [health, setHealth] = useState<GlHealth>('unavailable');
   const [performanceReduced, setPerformanceReduced] = useState(false);

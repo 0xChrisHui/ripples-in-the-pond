@@ -10,7 +10,14 @@
     "env-sync": "npx tsx scripts/vercel-env-sync.ts",
     "p15:h1:generate": "tsx scripts/p15-h/build-current-sound-set.ts",
     "p15:h1:verify": "tsx scripts/p15-h/sound-set-ledger.test.ts && tsx scripts/p15-h/verify-current-sound-set.ts",
-    "p15:h2:verify": "tsx scripts/p15-h/score-package-v3.test.ts && tsx scripts/p15-h/queue-contract.test.ts"
+    "p15:h2:verify": "tsx scripts/p15-h/score-package-v3.test.ts && tsx scripts/p15-h/queue-contract.test.ts",
+    "p15:h3:audit": "tsx scripts/arweave/p15-h/upload-sound-set.ts sounds --audit && tsx scripts/arweave/p15-h/verify-upload-tool.ts",
+    "p15:h3:verify": "tsx scripts/p15-h/decoder/score-decoder-v3.test.ts && tsx scripts/p15-h/compat/compat.test.ts",
+    "p15:h3:compat:audit": "tsx scripts/p15-h/compat/cli.ts --audit",
+    "p15:h4:verify": "tsx scripts/p15-h/edge/mirror-edge.test.ts",
+    "p15:h4:dry-run": "tsx scripts/p15-h/edge/mirror-edge.ts",
+    "p15:h4:execute": "tsx scripts/p15-h/edge/mirror-edge.ts --execute",
+    "p15:h5:verify": "tsx scripts/p15-h/snapshot/score-snapshot.test.ts"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.41.0",

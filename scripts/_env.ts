@@ -8,7 +8,8 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-const envPath = join(process.cwd(), '.env.local');
+const selectedEnv = process.env.RIPPLES_ENV_FILE ?? '.env.local';
+const envPath = join(process.cwd(), selectedEnv);
 
 if (existsSync(envPath)) {
   const content = readFileSync(envPath, 'utf-8');

@@ -4,15 +4,17 @@ import { supabaseAdmin } from '@/src/lib/supabase';
 import { resolveArUrl } from '@/src/lib/arweave';
 import { explorerTxUrl } from '@/src/lib/chain/chain-config';
 import { SCORE_NFT_ADDRESS } from '@/src/lib/chain/contracts';
-import { getScoreFromChain, getScoreOwner } from './score-fallback';
-import { createScoreProvenance, loadScoreMetadata } from './score/metadata';
+import { getScoreOwner } from './score-fallback';
+import { createScoreProvenance } from './score/metadata';
 import type { ScoreProvenance } from './score/metadata';
+import { getActiveScoreSnapshot } from './score/snapshot-source';
 import type { ScoreMintStatus, ScorePlaybackManifest } from '@/src/types/jam';
+import type { ScorePlaybackBootstrap, ScoreSnapshotReceipt } from '@/src/features/score-playback/types';
 import type { Track } from '@/src/types/tracks';
 import { exposeTrack, type TrackRow } from '@/src/lib/track-contract';
 
-type ScoreSource = 'database' | 'chain';
-type PublicFailure = 'data_unavailable' | 'queue_failed' | 'metadata_unavailable';
+type ScoreSource = 'database' | 'chain' | 'snapshot';
+type PublicFailure = 'data_unavailable' | 'queue_failed' | 'metadata_unavailable' | 'snapshot_unavailable';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 type ScorePageBase = {
   state: 'ready' | 'processing' | 'failed'; source: ScoreSource;
@@ -27,6 +29,7 @@ type ScorePageBase = {
 export type ScoreReadyData = ScorePageBase & {
   state: 'ready'; tokenId: number; track?: Track; eventCount: number;
   metadataRef: string; manifest: ScorePlaybackManifest;
+  playbackBootstrap: ScorePlaybackBootstrap; snapshot: ScoreSnapshotReceipt;
 };
 export type ScoreProcessingData = ScorePageBase & {
   state: 'processing'; track: Track; eventCount: number; manifest?: never;
@@ -41,7 +44,7 @@ export type { ScoreProvenance } from './score/metadata';
 type QueueRow = {
   id: string; status: ScoreMintStatus; token_id: number | null; token_uri: string | null;
   tx_hash: string | null; uri_tx_hash: string | null; created_at: string;
-  cover_ar_tx_id: string; metadata_ar_tx_id: string | null; failure_kind: string | null;
+  cover_ar_tx_id: string; failure_kind: string | null;
   user_id: string; pending_score_id: string; track_id: string;
 };
 const provenance = (input: Partial<Parameters<typeof createScoreProvenance>[0]> = {}) => (
@@ -78,29 +81,53 @@ export const getScoreById = cache(async (id: string): Promise<ScorePageData | nu
 });
 
 async function getScoreByTokenId(tokenId: number): Promise<ScorePageData | null> {
-  try {
-    const { data, error } = await supabaseAdmin.from('score_nft_queue').select('id')
-      .eq('token_id', tokenId).order('created_at', { ascending: false }).limit(1).maybeSingle();
-    if (error) throw error;
-    if (!data) return getScoreFromChain(tokenId);
-    return (await getScoreByQueueId(data.id)) ?? getScoreFromChain(tokenId);
-  } catch (error) {
-    console.error('[score-source] database path failed, using chain:', tokenId, error);
-    return getScoreFromChain(tokenId);
+  const [snapshotResult, holderResult] = await Promise.allSettled([
+    getActiveScoreSnapshot(tokenId), getScoreOwner(tokenId),
+  ]);
+  const holder = holderResult.status === 'fulfilled' ? holderResult.value : null;
+  if (snapshotResult.status === 'rejected') {
+    console.error('[score-source] verified snapshot invalid:', tokenId, snapshotResult.reason);
+    return snapshotFailure(tokenId, holder);
   }
+  const snapshot = snapshotResult.value;
+  if (!snapshot) return snapshotFailure(tokenId, holder);
+  const eventCount = snapshot.playbackBootstrap.events.length;
+  return {
+    state: 'ready', source: 'snapshot', id: String(tokenId), queueId: snapshot.queueId,
+    tokenId, queueStatus: 'success', trackTitle: snapshot.trackTitle ?? snapshot.name ?? `Ripples #${tokenId}`,
+    creatorAddress: '', currentHolder: holder, coverUrl: snapshot.coverUrl,
+    eventCount, permanentEventCount: eventCount, createdAt: null,
+    confirmedAt: snapshot.receipt.verifiedAt, mintedAt: snapshot.mintedAt ?? snapshot.receipt.verifiedAt,
+    metadataRef: snapshot.metadataRef, manifest: snapshot.manifest,
+    playbackBootstrap: snapshot.playbackBootstrap, snapshot: snapshot.receipt,
+    provenance: provenance({ tokenId, holder, metadataRef: snapshot.metadataRef,
+      manifest: snapshot.manifest, tokenUriSource: 'contract' }),
+  };
+}
+
+function snapshotFailure(tokenId: number, holder: string | null): ScoreFailedData {
+  return {
+    state: 'failed', source: 'snapshot', id: String(tokenId), queueId: null, tokenId,
+    queueStatus: null, trackTitle: `Ripples #${tokenId}`, creatorAddress: '', currentHolder: holder,
+    coverUrl: '', eventCount: null, permanentEventCount: null, createdAt: null,
+    confirmedAt: null, mintedAt: '', degraded: true, publicFailure: 'snapshot_unavailable',
+    failureKind: null, provenance: provenance({ tokenId, holder }),
+  };
 }
 
 async function getScoreByQueueId(queueId: string): Promise<ScorePageData | null> {
   const { data, error } = await supabaseAdmin.from('score_nft_queue').select(
     'id,status,token_id,token_uri,tx_hash,uri_tx_hash,created_at,cover_ar_tx_id,'
-    + 'metadata_ar_tx_id,failure_kind,user_id,pending_score_id,track_id',
+    + 'failure_kind,user_id,pending_score_id,track_id',
   ).eq('id', queueId).maybeSingle();
   if (error) {
     console.error('[score-source] queue query failed:', error);
     throw new Error('作品数据库暂时不可用');
   }
   if (!data) return null;
-  return buildQueueScore(data as unknown as QueueRow);
+  const row = data as unknown as QueueRow;
+  if (row.status === 'success' && row.token_id != null) return getScoreByTokenId(row.token_id);
+  return buildQueueScore(row);
 }
 
 async function buildQueueScore(queue: QueueRow): Promise<ScorePageData> {
@@ -130,13 +157,6 @@ async function buildQueueScore(queue: QueueRow): Promise<ScorePageData> {
     txHash: queue.tx_hash ?? undefined,
     etherscanUrl: queue.tx_hash ? explorerTxUrl(queue.tx_hash) : undefined,
   };
-  const metadataFailure = (): ScoreFailedData => ({
-    ...base, track: undefined, state: 'failed',
-    id: queue.token_id == null ? queue.id : String(queue.token_id),
-    publicFailure: 'metadata_unavailable', failureKind: queue.failure_kind,
-    provenance: provenance({ tokenId: queue.token_id, holder, creator, mintTx: queue.tx_hash,
-      setUriTx: queue.uri_tx_hash, metadataRef: queue.token_uri }),
-  });
   if (queue.status === 'failed') {
     return { ...base, track: undefined, state: 'failed',
       id: queue.token_id == null ? queue.id : String(queue.token_id),
@@ -149,25 +169,5 @@ async function buildQueueScore(queue: QueueRow): Promise<ScorePageData> {
       provenance: provenance({ tokenId: queue.token_id, holder, creator, mintTx: queue.tx_hash,
         setUriTx: queue.uri_tx_hash }) };
   }
-  if (queue.token_id == null || !queue.metadata_ar_tx_id
-    || queue.token_uri !== `ar://${queue.metadata_ar_tx_id}`) {
-    return metadataFailure();
-  }
-  try {
-    const metadata = await loadScoreMetadata(queue.token_uri);
-    const manifest = metadata.manifest;
-    return {
-      ...base, state: 'ready', id: String(queue.token_id), tokenId: queue.token_id,
-      trackTitle: metadata.trackTitle ?? metadata.name ?? track.title,
-      coverUrl: metadata.coverUrl ?? coverUrl, eventCount: metadata.eventCount ?? eventCount,
-      permanentEventCount: metadata.eventCount,
-      confirmedAt: null, mintedAt: metadata.mintedAt ?? queue.created_at,
-      metadataRef: metadata.metadataRef, manifest,
-      provenance: provenance({ tokenId: queue.token_id, holder, creator, mintTx: queue.tx_hash,
-        setUriTx: queue.uri_tx_hash, metadataRef: metadata.metadataRef, manifest }),
-    };
-  } catch (error) {
-    console.error('[score-source] permanent metadata invalid:', queue.id, error);
-    return metadataFailure();
-  }
+  return unavailable(queue, eventCount);
 }

@@ -22,6 +22,7 @@ const statusLabels = {
 } as const;
 
 function failureMessage(score: ScoreFailedData): string {
+  if (score.publicFailure === 'snapshot_unavailable') return '已验证播放快照暂时不可用';
   if (score.publicFailure === 'metadata_unavailable') return '永久资料暂时无法读取';
   if (score.publicFailure === 'queue_failed') return '这枚唱片制作未能完成';
   return '作品资料暂时不可用';

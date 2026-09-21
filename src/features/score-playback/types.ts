@@ -30,6 +30,31 @@ export type NormalizedSound = Readonly<{
 
 export type NormalizedSoundsMap = Readonly<Record<string, NormalizedSound>>;
 
+export type ScoreAudioIdentity = Readonly<{
+  ref: `ar://${string}`;
+  sha256: string;
+  bytes: number;
+  mime: 'audio/mpeg';
+  integrity: 'canonical' | 'attested';
+}>;
+
+/** 服务端从 active verified snapshot 生成；JSON 已随 HTML/RSC 安全序列化。 */
+export type ScorePlaybackBootstrap = ScorePlaybackManifest & Readonly<{
+  schema: 'ripples.score-bootstrap.v1';
+  events: readonly KeyEvent[];
+  base: ScoreAudioIdentity;
+  sounds: Readonly<Record<string, ScoreAudioIdentity>>;
+}>;
+
+export type ScoreSnapshotReceipt = Readonly<{
+  revision: number;
+  schemaId: string;
+  contentSha256: string;
+  verifiedAt: string;
+  attestations: Readonly<Record<string, unknown>>;
+  compatibility: Readonly<Record<string, unknown>> | null;
+}>;
+
 export type ScorePlaybackResources = Readonly<{
   manifest: ScorePlaybackManifest;
   events: readonly KeyEvent[];

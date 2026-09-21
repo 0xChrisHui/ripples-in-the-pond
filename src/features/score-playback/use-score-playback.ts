@@ -1,13 +1,12 @@
 'use client';
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
-import type { ScorePlaybackManifest } from '@/src/types/jam';
 import { ScorePlaybackEngine } from './engine';
-import type { UseScorePlaybackResult } from './types';
+import type { ScorePlaybackBootstrap, UseScorePlaybackResult } from './types';
 
 /** 页面只消费状态和动作；AudioContext 仍要等用户调用 play/toggle 才创建。 */
 export function useScorePlayback(
-  manifest: ScorePlaybackManifest | null,
+  bootstrap: ScorePlaybackBootstrap | null,
 ): UseScorePlaybackResult {
   const [engine] = useState(() => new ScorePlaybackEngine());
   const snapshot = useSyncExternalStore(
@@ -17,9 +16,9 @@ export function useScorePlayback(
   );
 
   useEffect(() => {
-    if (manifest) void engine.load(manifest);
+    if (bootstrap) void engine.load(bootstrap);
     return () => { void engine.destroy(); };
-  }, [engine, manifest]);
+  }, [bootstrap, engine]);
 
   return {
     ...snapshot,

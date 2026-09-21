@@ -54,6 +54,36 @@ else
 fi
 echo ""
 
+# 2c. P15-H3：上传工具本地 Gate 不连接钱包，也不会产生永久写入。
+echo "── 2c. SoundSet 永久上传工具 Gate ──"
+if npm run p15:h3:audit 2>&1; then
+  echo "$OK 永久上传工具 Gate 通过"
+else
+  echo "$FAIL 永久上传工具 Gate 失败"
+  EXIT_CODE=1
+fi
+echo ""
+
+# 2d. P15-H4：固定路径、已有对象不覆盖、AR 双网关与 Blob 回读 Gate。
+echo "── 2d. Verified Edge 工具 Gate ──"
+if npm run p15:h4:verify 2>&1; then
+  echo "$OK Verified Edge 工具 Gate 通过"
+else
+  echo "$FAIL Verified Edge 工具 Gate 失败"
+  EXIT_CODE=1
+fi
+echo ""
+
+# 2e. P15-H5：数字 Score 只读 verified snapshot，HTML bootstrap 不请求 JSON。
+echo "── 2e. Score verified snapshot Gate ──"
+if npm run p15:h5:verify 2>&1; then
+  echo "$OK Score snapshot Gate 通过"
+else
+  echo "$FAIL Score snapshot Gate 失败"
+  EXIT_CODE=1
+fi
+echo ""
+
 # 3. 文件大小检查（额外保险，hook 也会查）
 # 硬线与 .claude/hooks/check-file-size.js + docs/CONVENTIONS.md §1.1 同步：
 #   - 普通代码文件 ≤220 行
