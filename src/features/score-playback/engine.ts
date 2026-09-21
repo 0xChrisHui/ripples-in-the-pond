@@ -84,7 +84,7 @@ export class ScorePlaybackEngine implements ScorePlaybackController {
       if (generation !== this.generation) return;
       Object.assign(this.soundBuffers, decoded);
       this.timeline?.addSoundBuffers(decoded);
-      if (this.pendingIntentAt != null) {
+      if (this.pendingIntentAt != null && this.snapshot.positionMs > 0) {
         await this.beginPlayback(this.pendingIntentAt, generation);
       }
     } catch (error) {

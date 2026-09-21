@@ -96,6 +96,16 @@ else
 fi
 echo ""
 
+# 2g. P15-I：启动闭包先返回，loading 点击只建立一次可取消播放意图。
+echo "── 2g. Score Instant Start Gate ──"
+if npm run p15:i:verify 2>&1; then
+  echo "$OK Instant Start Gate 通过"
+else
+  echo "$FAIL Instant Start Gate 失败"
+  EXIT_CODE=1
+fi
+echo ""
+
 # 3. 文件大小检查（额外保险，hook 也会查）
 # 硬线与 .claude/hooks/check-file-size.js + docs/CONVENTIONS.md §1.1 同步：
 #   - 普通代码文件 ≤220 行

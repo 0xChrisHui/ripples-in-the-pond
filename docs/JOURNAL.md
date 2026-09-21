@@ -1574,3 +1574,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **精确路径而非随机后缀**：Vercel CLI 的布尔 flag 传入字符串 `false` 会被解释为启用；上传器改为省略该 flag、使用平台默认的精确 pathname。误建的 1 个未引用随机后缀副本已删除，永久对象与正式 Edge inventory 均未受影响。
 - **环境隔离必须与发布同步**：Score snapshot 读取按 `VERCEL_ENV` fail closed；首轮只写 Production 导致 Preview 正确显示不可播放。发布器现幂等写入 Development/Preview/Production，并在 readback 中要求三环境各有 #1–#4，避免再次把“Production 有数据”误当作“Preview 可验收”。
 - **最小权限收口**：H4 使用临时开放的 Development OIDC 完成 37 个对象写入与读回；发布后不保留静态 Blob 写 Token。Development scope 不再是运行时依赖，应在 Vercel Store 项目连接中撤回。
+
+## 2026-09-21 — P15-I 保留完整校验的即时启动
+
+- **启动闭包**：底曲与前 8 秒唯一音效保持浏览器端全字节 SHA-256 验证后才开播；其余音效仅改变下载时序，以 4 路并发后台补齐。若后续事件临近仍未就绪，播放器暂停等待并续播，不用漏音换速度。
+- **手势边界**：页面加载不创建 AudioContext；用户可在 `loading` 阶段先点击，手势同步创建/恢复音频上下文并记录可取消意图，资源到齐后自动排程。
+- **条件流式仍关闭**：I4 继续只由同口径 Preview/Production 冷播放 p95 大于 2 秒触发，不因实现了渐进加载就提前放松客户端 hash-before-play。
