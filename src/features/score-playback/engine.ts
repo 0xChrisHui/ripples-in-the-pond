@@ -1,23 +1,19 @@
 import type { ScorePlaybackManifest } from '@/src/types/jam';
-import { ScoreP9Session, getScoreP9EndMs } from './score-p9-session';
+import { decodeScoreAudio, decodeScoreSounds } from './audio-decode';
 import { loadScoreResources } from './resource-loader';
-import type {
-  ScorePlaybackController,
-  ScorePlaybackListener,
-  ScorePlaybackResources,
-  ScorePlaybackSnapshot,
-} from './types';
+import { ScoreTimelineSession } from './timeline-session';
+import type { ScorePlaybackController, ScorePlaybackListener,
+  ScorePlaybackResources, ScorePlaybackSnapshot } from './types';
 const INITIAL_SNAPSHOT: ScorePlaybackSnapshot = Object.freeze({
   state: 'loading', positionMs: 0, durationMs: 0, activeKeys: [], errorMessage: null,
-  resourceLoadMs: null, decodeMs: null, firstSoundExpectedMs: null,
+  playRequested: false, resourceLoadMs: null, decodeMs: null, firstSoundExpectedMs: null,
 });
 type EngineOptions = {
   fetcher?: typeof fetch;
   createAudioContext?: () => AudioContext;
 };
-function safeMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'Score 播放资源暂时不可用';
-}
+const safeMessage = (error: unknown): string => error instanceof Error
+  ? error.message : 'Score 播放资源暂时不可用';
 export class ScorePlaybackEngine implements ScorePlaybackController {
   private readonly fetcher: typeof fetch;
   private readonly createContext: () => AudioContext;
@@ -27,14 +23,11 @@ export class ScorePlaybackEngine implements ScorePlaybackController {
   private context: AudioContext | null = null;
   private baseBuffer: AudioBuffer | null = null;
   private soundBuffers: Record<string, AudioBuffer> = {};
-  private sources = new Set<AudioBufferSourceNode>();
-  private p9 = new ScoreP9Session();
+  private timeline: ScoreTimelineSession | null = null;
   private abortController: AbortController | null = null;
   private generation = 0;
-  private raf = 0;
-  private startedAt = 0;
   private startOffsetMs = 0;
-  private lastSnapshotAt = 0;
+  private pendingIntentAt: number | null = null;
   constructor(options: EngineOptions = {}) {
     this.fetcher = options.fetcher ?? fetch;
     this.createContext = options.createAudioContext ?? (() => new AudioContext());
@@ -53,161 +46,168 @@ export class ScorePlaybackEngine implements ScorePlaybackController {
     const generation = ++this.generation;
     this.abortController?.abort();
     this.abortController = new AbortController();
-    await this.releaseAudio();
+    const released = this.releaseAudio();
     this.resources = null;
     this.update({ ...INITIAL_SNAPSHOT });
+    await released;
     try {
       const signal = this.abortController.signal;
       const resources = await loadScoreResources(manifest, this.fetcher, signal);
       if (generation !== this.generation) return;
       this.resources = resources;
-      this.update({ state: 'ready', resourceLoadMs: Math.round(performance.now() - loadStartedAt) });
+      void this.hydrateBackground(resources, generation);
+      const resourceLoadMs = Math.round(performance.now() - loadStartedAt);
+      this.update({
+        state: this.pendingIntentAt == null ? 'ready' : 'loading', resourceLoadMs,
+      });
       performance.mark('p15:score-resources-ready');
+      if (this.pendingIntentAt != null) await this.beginPlayback(this.pendingIntentAt, generation);
     } catch (error) {
       if (generation !== this.generation || this.abortController.signal.aborted) return;
       this.update({ state: 'error', errorMessage: safeMessage(error) });
+    }
+  }
+  private async hydrateBackground(
+    resources: ScorePlaybackResources, generation: number,
+  ): Promise<void> {
+    if (!resources.backgroundSoundBytes) return;
+    try {
+      const bytes = await resources.backgroundSoundBytes;
+      if (generation !== this.generation) return;
+      this.resources = {
+        ...resources, soundBytes: { ...resources.soundBytes, ...bytes },
+        backgroundSoundBytes: undefined,
+      };
+      performance.mark('p15:score-all-resources-ready');
+      if (!this.context || !this.baseBuffer) return;
+      const decoded = await decodeScoreSounds(this.context, bytes);
+      if (generation !== this.generation) return;
+      Object.assign(this.soundBuffers, decoded);
+      this.timeline?.addSoundBuffers(decoded);
+      if (this.pendingIntentAt != null) {
+        await this.beginPlayback(this.pendingIntentAt, generation);
+      }
+    } catch (error) {
+      if (generation === this.generation && !this.abortController?.signal.aborted) {
+        this.failPlayback(error);
+      }
     }
   }
   private async ensureDecoded(): Promise<void> {
     if (this.context && this.baseBuffer) return;
     if (!this.resources) throw new Error('Score 播放资源尚未就绪');
     const decodeStartedAt = performance.now();
-    const context = this.context ?? this.createContext();
-    this.context = context;
-    await context.resume();
-    const [base, sounds] = await Promise.all([
-      context.decodeAudioData(this.resources.baseBytes.slice(0)),
-      Promise.all(Object.entries(this.resources.soundBytes).map(async ([key, bytes]) => [
-        key, await context.decodeAudioData(bytes.slice(0)),
-      ] as const)),
-    ]);
-    this.baseBuffer = base;
-    this.soundBuffers = Object.fromEntries(sounds);
-    const soundEnd = this.resources.events.reduce((end, event) => {
-      const duration = this.soundBuffers[event.key]?.duration ?? 0;
-      return Math.max(end, event.time + duration * 1000);
-    }, 0);
-    const durationMs = Math.max(base.duration * 1000, soundEnd, getScoreP9EndMs(this.resources.events));
-    this.update({ durationMs: Math.round(durationMs), decodeMs: Math.round(performance.now() - decodeStartedAt) });
+    const context = await this.resumeContext();
+    const decoded = await decodeScoreAudio(context, this.resources);
+    this.baseBuffer = decoded.base;
+    this.soundBuffers = decoded.sounds;
+    const missingBytes = Object.fromEntries(Object.entries(this.resources?.soundBytes ?? {})
+      .filter(([key]) => !this.soundBuffers[key]));
+    Object.assign(this.soundBuffers, await decodeScoreSounds(context, missingBytes));
+    this.update({ durationMs: decoded.durationMs, decodeMs: Math.round(performance.now() - decodeStartedAt) });
     performance.mark('p15:score-decoded');
   }
+  private async resumeContext(): Promise<AudioContext> {
+    const context = this.context ?? this.createContext();
+    this.context = context;
+    if (context.state !== 'running') await context.resume();
+    return context;
+  }
   async play(): Promise<void> {
-    if (!this.resources || !['ready', 'paused', 'ended'].includes(this.snapshot.state)) return;
+    if (['playing', 'error'].includes(this.snapshot.state)) return;
+    const previousState = this.snapshot.state;
     const intentAt = performance.now();
     performance.mark('p15:audio-intent');
     const generation = this.generation;
-    if (this.snapshot.state === 'ended') this.startOffsetMs = 0;
+    this.pendingIntentAt = intentAt;
+    this.update({ state: 'loading', playRequested: true, errorMessage: null });
+    try { await this.resumeContext(); }
+    catch (error) { this.failPlayback(error); return; }
+    if (!this.resources) return;
+    if (previousState === 'ended') this.startOffsetMs = 0;
     else this.startOffsetMs = this.snapshot.positionMs;
-    this.update({ state: 'loading', errorMessage: null });
+    await this.beginPlayback(intentAt, generation);
+  }
+  private async beginPlayback(intentAt: number, generation: number): Promise<void> {
     try {
       await this.ensureDecoded();
-      if (generation !== this.generation) return;
+      if (generation !== this.generation || this.pendingIntentAt !== intentAt) return;
       if (!this.context || !this.baseBuffer) throw new Error('浏览器无法建立音频会话');
       if (this.context.state !== 'running') await this.context.resume();
       this.schedule(this.startOffsetMs, intentAt);
     } catch (error) {
-      this.update({ state: 'error', activeKeys: [], errorMessage: safeMessage(error) });
+      this.failPlayback(error);
     }
+  }
+  private failPlayback(error: unknown): void {
+    this.timeline?.destroy();
+    this.timeline = null;
+    this.pendingIntentAt = null;
+    this.update({
+      state: 'error', playRequested: false, activeKeys: [], errorMessage: safeMessage(error),
+    });
   }
   private schedule(offsetMs: number, intentAt: number): void {
-    const context = this.context!;
-    const when = context.currentTime + 0.06;
-    this.stopSources();
-    this.p9.destroy();
-    this.p9 = new ScoreP9Session();
-    this.p9.start(this.resources!.events, offsetMs);
-    if (offsetMs < this.baseBuffer!.duration * 1000) {
-      this.startSource(this.baseBuffer!, when, offsetMs / 1000);
-    }
-    for (const event of this.resources!.events) {
-      const buffer = this.soundBuffers[event.key]; if (!buffer || event.time + buffer.duration * 1000 <= offsetMs) continue;
-      const tailOffset = Math.max(0, (offsetMs - event.time) / 1000);
-      this.startSource(buffer, when + Math.max(0, event.time - offsetMs) / 1000, tailOffset);
-    }
-    this.startedAt = when;
+    this.timeline?.destroy();
+    this.timeline = new ScoreTimelineSession({
+      context: this.context!, resources: this.resources!, baseBuffer: this.baseBuffer!,
+      soundBuffers: this.soundBuffers, durationMs: this.snapshot.durationMs,
+      onProgress: (positionMs, activeKeys) => this.update({ positionMs, activeKeys }),
+      onBuffering: (positionMs) => this.waitForBackground(positionMs),
+      onEnded: () => this.update({
+        state: 'ended', positionMs: this.snapshot.durationMs, activeKeys: [],
+      }),
+    });
+    this.timeline.start(offsetMs);
     this.startOffsetMs = offsetMs;
-    this.lastSnapshotAt = 0;
     this.update({
-      state: 'playing', positionMs: offsetMs, activeKeys: [],
+      state: 'playing', playRequested: false, positionMs: offsetMs, activeKeys: [],
       firstSoundExpectedMs: Math.round(performance.now() - intentAt + 60),
     });
+    this.pendingIntentAt = null;
     performance.mark('p15:first-sound-scheduled');
-    this.raf = requestAnimationFrame(this.tick);
   }
-  private startSource(buffer: AudioBuffer, when: number, offset = 0): void {
-    const source = this.context!.createBufferSource();
-    source.buffer = buffer;
-    source.connect(this.context!.destination);
-    source.addEventListener('ended', () => this.sources.delete(source), { once: true });
-    source.start(when, offset);
-    this.sources.add(source);
+  private waitForBackground(positionMs: number): void {
+    const frozenAt = this.timeline?.pause() ?? positionMs;
+    this.timeline = null;
+    this.startOffsetMs = frozenAt;
+    this.pendingIntentAt = performance.now();
+    this.update({
+      state: 'loading', playRequested: true, positionMs: Math.round(frozenAt), activeKeys: [],
+    });
   }
-  private currentPosition(): number {
-    if (!this.context) return this.snapshot.positionMs;
-    return Math.min(this.snapshot.durationMs, Math.max(
-      this.startOffsetMs,
-      this.startOffsetMs + (this.context.currentTime - this.startedAt) * 1000,
-    ));
-  }
-  private tick = (): void => {
-    const positionMs = this.currentPosition();
-    this.p9.advance(positionMs);
-    if (positionMs - this.lastSnapshotAt >= 50 || positionMs >= this.snapshot.durationMs) {
-      const activeKeys = this.resources!.events
-        .filter((event) => event.time <= positionMs && event.time + event.duration > positionMs)
-        .map((event) => event.key);
-      this.lastSnapshotAt = positionMs;
-      this.update({ positionMs: Math.round(positionMs), activeKeys: [...new Set(activeKeys)] });
-    }
-    if (positionMs >= this.snapshot.durationMs) {
-      this.stopSources();
-      this.p9.destroy();
-      this.update({ state: 'ended', positionMs: this.snapshot.durationMs, activeKeys: [] });
-      return;
-    }
-    this.raf = requestAnimationFrame(this.tick);
-  };
   pause(): void {
     if (this.snapshot.state !== 'playing') return;
-    const positionMs = this.currentPosition();
-    this.stopSources();
-    this.p9.destroy();
-    this.p9 = new ScoreP9Session();
+    const positionMs = this.timeline?.pause() ?? this.snapshot.positionMs;
+    this.timeline = null;
     this.update({ state: 'paused', positionMs: Math.round(positionMs), activeKeys: [] });
   }
-
   async toggle(): Promise<void> {
     if (this.snapshot.state === 'playing') this.pause();
+    else if (this.snapshot.state === 'loading' && this.snapshot.playRequested) {
+      this.pendingIntentAt = null;
+      this.update({ state: this.resources ? 'ready' : 'loading', playRequested: false });
+      if (this.context?.state === 'running') await this.context.suspend();
+    }
     else await this.play();
   }
-
   async replay(): Promise<void> {
     if (!this.resources) return;
-    this.stopSources();
-    this.p9.destroy();
-    this.p9 = new ScoreP9Session();
-    this.update({ state: 'ready', positionMs: 0, activeKeys: [], errorMessage: null });
+    this.timeline?.destroy();
+    this.timeline = null;
+    this.update({ state: 'ready', playRequested: false, positionMs: 0, activeKeys: [], errorMessage: null });
     await this.play();
   }
-
-  private stopSources(): void {
-    if (this.raf) cancelAnimationFrame(this.raf);
-    this.raf = 0;
-    this.sources.forEach((source) => { try { source.stop(); } catch { /* 已自然结束 */ } });
-    this.sources.clear();
-  }
-
   private async releaseAudio(): Promise<void> {
-    this.stopSources();
-    this.p9.destroy();
-    this.p9 = new ScoreP9Session();
+    this.timeline?.destroy();
+    this.timeline = null;
     const context = this.context;
     this.context = null;
+    this.pendingIntentAt = null;
     this.baseBuffer = null;
     this.soundBuffers = {};
     if (context && context.state !== 'closed') await context.close();
   }
-
   async destroy(): Promise<void> {
     ++this.generation;
     this.abortController?.abort();

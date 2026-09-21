@@ -15,6 +15,7 @@ export type ScorePlaybackSnapshot = Readonly<{
   durationMs: number;
   activeKeys: readonly string[];
   errorMessage: string | null;
+  playRequested: boolean;
   resourceLoadMs: number | null;
   decodeMs: number | null;
   firstSoundExpectedMs: number | null;
@@ -60,6 +61,7 @@ export type ScorePlaybackResources = Readonly<{
   events: readonly KeyEvent[];
   baseBytes: ArrayBuffer;
   soundBytes: Readonly<Record<string, ArrayBuffer>>;
+  backgroundSoundBytes?: Promise<Readonly<Record<string, ArrayBuffer>>>;
 }>;
 
 export interface ScorePlaybackController {

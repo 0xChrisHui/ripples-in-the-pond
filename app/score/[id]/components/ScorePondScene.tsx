@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
+import { preload } from 'react-dom';
 import EditionStamp from '@/src/components/p11/EditionStamp';
 import ScorePondHeader from '@/src/components/p11/ScorePondHeader';
 import { DEFAULT_GL_FLAGS } from '@/src/components/pond-gl-test3/gl-flags';
@@ -9,6 +10,8 @@ import GlEclipse from '@/src/components/pond-gl-test3/overlay/GlEclipse';
 import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
 import { resetDepthShift, setCameraFx, usePointerFx } from '@/src/components/pond-gl-test3/pointer-fx';
 import type { ScoreReadyData } from '@/src/data/score-source';
+import { permanentMediaCandidates } from '@/src/features/permanent-media';
+import { startupSoundKeys } from '@/src/features/score-playback/resource-loader';
 import { useScorePlayback } from '@/src/features/score-playback/use-score-playback';
 import type { Track } from '@/src/types/tracks';
 import ScoreArchive from './ScoreArchive';
@@ -38,6 +41,20 @@ function useCapabilities() {
 
 type Props = { score: ScoreReadyData; network: string };
 
+function preloadStartupAudio(score: ScoreReadyData): void {
+  const bootstrap = score.playbackBootstrap;
+  const identities = [bootstrap.base, ...startupSoundKeys(bootstrap.events)
+    .map((key) => bootstrap.sounds[key]).filter(Boolean)];
+  identities.forEach((identity, index) => {
+    const mirror = permanentMediaCandidates(identity.ref)
+      .find((candidate) => candidate.source === 'mirror');
+    if (!mirror) return;
+    preload(mirror.url, {
+      as: 'fetch', crossOrigin: 'anonymous', fetchPriority: index === 0 ? 'high' : 'auto',
+    });
+  });
+}
+
 /** 链上降级时仅给渲染器补形状契约；所有值仍来自该 Token，不替换永久播放输入。 */
 function visualTrackOf(score: ScoreReadyData): Track {
   return score.track ?? {
@@ -49,6 +66,7 @@ function visualTrackOf(score: ScoreReadyData): Track {
 }
 
 export default function ScorePondScene({ score, network }: Props) {
+  preloadStartupAudio(score);
   const playback = useScorePlayback(score.playbackBootstrap);
   const holder = useScoreHolder(score.tokenId);
   const capabilities = useCapabilities();

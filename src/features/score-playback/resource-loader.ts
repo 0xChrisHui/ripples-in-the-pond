@@ -6,6 +6,8 @@ import type {
 } from './types';
 import { normalizeScoreEvents } from './types';
 
+export const SCORE_STARTUP_WINDOW_MS = 8_000;
+
 function bootstrapOf(manifest: ScorePlaybackManifest): ScorePlaybackBootstrap | null {
   const value = manifest as Partial<ScorePlaybackBootstrap>;
   return value.schema === 'ripples.score-bootstrap.v1' ? value as ScorePlaybackBootstrap : null;
@@ -24,6 +26,28 @@ async function fetchSnapshotAudio(
   return result.bytes;
 }
 
+export function startupSoundKeys(events: readonly { key: string; time: number }[]): string[] {
+  return [...new Set(events.filter(({ time }) => time <= SCORE_STARTUP_WINDOW_MS)
+    .map(({ key }) => key))];
+}
+
+async function fetchSoundEntries(
+  entries: ReadonlyArray<readonly [string, ScoreAudioIdentity]>,
+  fetcher: typeof fetch, signal: AbortSignal, concurrency = 4,
+): Promise<Array<readonly [string, ArrayBuffer]>> {
+  const results: Array<readonly [string, ArrayBuffer]> = new Array(entries.length);
+  let cursor = 0;
+  const worker = async () => {
+    while (cursor < entries.length) {
+      const index = cursor; cursor += 1;
+      const [key, identity] = entries[index];
+      results[index] = [key, await fetchSnapshotAudio(identity, fetcher, signal)];
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(concurrency, entries.length) }, worker));
+  return results;
+}
+
 /** Score 保持自己的全文件兼容路径；这里只共享资源解析，不共享 P14 播放状态机。 */
 export async function loadScoreResources(
   manifest: ScorePlaybackManifest,
@@ -32,15 +56,24 @@ export async function loadScoreResources(
 ): Promise<ScorePlaybackResources> {
   const bootstrap = bootstrapOf(manifest);
   if (bootstrap) {
-    const [baseBytes, entries] = await Promise.all([
-      fetchSnapshotAudio(bootstrap.base, fetcher, signal),
-      Promise.all(Object.entries(bootstrap.sounds).map(async ([key, identity]) => [
-        key, await fetchSnapshotAudio(identity, fetcher, signal),
-      ] as const)),
+    const startup = new Set(startupSoundKeys(bootstrap.events));
+    const ordered = Object.entries(bootstrap.sounds).sort((left, right) => {
+      const first = (key: string) => bootstrap.events.find((event) => event.key === key)?.time ?? Infinity;
+      return first(left[0]) - first(right[0]);
+    });
+    const startupEntries = ordered.filter(([key]) => startup.has(key));
+    const backgroundEntries = ordered.filter(([key]) => !startup.has(key));
+    const baseRequest = fetchSnapshotAudio(bootstrap.base, fetcher, signal);
+    const [baseBytes, firstSounds] = await Promise.all([
+      baseRequest,
+      fetchSoundEntries(startupEntries, fetcher, signal),
     ]);
+    performance.mark('p15:score-startup-closure-ready');
+    const backgroundSoundBytes = fetchSoundEntries(backgroundEntries, fetcher, signal)
+      .then((entries) => Object.fromEntries(entries));
     return {
       manifest, events: [...bootstrap.events], baseBytes,
-      soundBytes: Object.fromEntries(entries),
+      soundBytes: Object.fromEntries(firstSounds), backgroundSoundBytes,
     };
   }
   const [eventsRaw, soundsRaw, baseBytes] = await Promise.all([
