@@ -1,0 +1,145 @@
+{
+  "schema": "ripples.compat-upload-ledger.v1",
+  "assets": {
+    "1": {
+      "tokenId": 1,
+      "bytes": 5875,
+      "contentSha256": "4460f5b8fea5d78ab1b1bb9557eda002c0d473fdb7d0c721bd5f20809bf38b51",
+      "state": "verified",
+      "arweaveTxId": "q7RCuvTx4vRgvqe0908o2XNvIQY-Qd75kPh5fAtinlw",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T05:51:37.216Z",
+      "uploadedAt": "2026-09-21T05:51:39.375Z",
+      "verifiedAt": "2026-09-21T05:52:33.665Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 5875,
+          "sha256": "4460f5b8fea5d78ab1b1bb9557eda002c0d473fdb7d0c721bd5f20809bf38b51",
+          "contentType": "application/json; charset=utf-8",
+          "signatureValid": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 5875,
+          "sha256": "4460f5b8fea5d78ab1b1bb9557eda002c0d473fdb7d0c721bd5f20809bf38b51",
+          "contentType": "application/json; charset=utf-8",
+          "signatureValid": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "2": {
+      "tokenId": 2,
+      "bytes": 4906,
+      "contentSha256": "39480bcb3b5fe673ccc36ac53da1c12c202ec0e23625451bb140e9b89cd3893d",
+      "state": "verified",
+      "arweaveTxId": "sxHCI4EbU4dJMreF92NXfdAtIPEBSW2cNdXUYi2R05A",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T05:51:39.383Z",
+      "uploadedAt": "2026-09-21T05:51:41.096Z",
+      "verifiedAt": "2026-09-21T05:52:42.039Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 4906,
+          "sha256": "39480bcb3b5fe673ccc36ac53da1c12c202ec0e23625451bb140e9b89cd3893d",
+          "contentType": "application/json; charset=utf-8",
+          "signatureValid": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 4906,
+          "sha256": "39480bcb3b5fe673ccc36ac53da1c12c202ec0e23625451bb140e9b89cd3893d",
+          "contentType": "application/json; charset=utf-8",
+          "signatureValid": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "3": {
+      "tokenId": 3,
+      "bytes": 7503,
+      "contentSha256": "3118f3cc63a324a7ec11437ae8ba39bbe96165c0a447af3f6b1462fa1ea41e07",
+      "state": "verified",
+      "arweaveTxId": "HWa3c2mvzCvAtGbDATU9Li13mCOOdapGjfm17otHpDE",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T05:51:41.106Z",
+      "uploadedAt": "2026-09-21T05:51:41.722Z",
+      "verifiedAt": "2026-09-21T05:52:50.194Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 7503,
+          "sha256": "3118f3cc63a324a7ec11437ae8ba39bbe96165c0a447af3f6b1462fa1ea41e07",
+          "contentType": "application/json; charset=utf-8",
+          "signatureValid": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 7503,
+          "sha256": "3118f3cc63a324a7ec11437ae8ba39bbe96165c0a447af3f6b1462fa1ea41e07",
+          "contentType": "application/json; charset=utf-8",
+          "signatureValid": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    "4": {
+      "tokenId": 4,
+      "bytes": 2367,
+      "contentSha256": "3b149be71149097341f08b2fc1dc2e8827b295d8ea1b5e1648e4874fc9b3ec00",
+      "state": "verified",
+      "arweaveTxId": "tzMA2WrIn8oBGEeZ7J7kZOWXzaWRFWuOmOsea0KLpaY",
+      "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "attemptedAt": "2026-09-21T05:51:41.732Z",
+      "uploadedAt": "2026-09-21T05:51:42.339Z",
+      "verifiedAt": "2026-09-21T05:52:59.047Z",
+      "lastError": null,
+      "gatewayEvidence": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "bytes": 2367,
+          "sha256": "3b149be71149097341f08b2fc1dc2e8827b295d8ea1b5e1648e4874fc9b3ec00",
+          "contentType": "application/json; charset=utf-8",
+          "signatureValid": true,
+          "ok": true,
+          "error": null
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "bytes": 2367,
+          "sha256": "3b149be71149097341f08b2fc1dc2e8827b295d8ea1b5e1648e4874fc9b3ec00",
+          "contentType": "application/json; charset=utf-8",
+          "signatureValid": true,
+          "ok": true,
+          "error": null
+        }
+      ]
+    }
+  }
+}

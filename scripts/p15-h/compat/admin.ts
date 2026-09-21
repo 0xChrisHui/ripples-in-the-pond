@@ -33,9 +33,10 @@ const COMPAT_TYPES = {
 } as const;
 
 function rpcUrl(): string {
-  const value = process.env.OP_MAINNET_RPC_URL
-    ?? process.env.ALCHEMY_OP_MAINNET_RPC_URL
-    ?? process.env.MAINNET_RPC_URL;
+  const value = [
+    'OP_MAINNET_RPC_URL', 'ALCHEMY_OP_MAINNET_RPC_URL', 'MAINNET_RPC_URL',
+    'ALCHEMY_RPC_URL', 'NEXT_PUBLIC_ALCHEMY_RPC_URL',
+  ].map((name) => process.env[name]?.trim()).find(Boolean);
   if (!value) throw new Error('缺少 OP Mainnet RPC；签名与上传必须实时核验 admin role');
   return value;
 }
