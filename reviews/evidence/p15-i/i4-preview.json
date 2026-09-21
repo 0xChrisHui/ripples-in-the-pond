@@ -1,0 +1,2095 @@
+{
+  "schema": "p15-i.score-start.v2",
+  "measuredAt": "2026-09-21T10:11:39.141Z",
+  "siteBase": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app",
+  "cacheBoundary": "cold 每次清 HTTP/Cache Storage；hot 连续完整导航且不清缓存",
+  "cold": {
+    "requested": 10,
+    "valid": 10,
+    "shellP50Ms": 1662.0999999940395,
+    "shellP95Ms": 3649.0999999940395,
+    "resourceP50Ms": 25,
+    "resourceP95Ms": 365,
+    "firstSoundP50Ms": 1306,
+    "firstSoundP95Ms": 1775,
+    "shellToSoundP50Ms": 3625.5,
+    "shellToSoundP95Ms": 4801.200000017881,
+    "samples": [
+      {
+        "classification": "cold",
+        "index": 1,
+        "tokenId": 1,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 3649.0999999940395,
+          "responseStart": 270.40000000596046,
+          "domContentLoaded": 3646,
+          "resourceLoadMs": 122,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 902.5999999940395,
+              "transferSize": 38076
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 964,
+              "transferSize": 26516
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 813.5999999940395,
+              "transferSize": 23408
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 653.5,
+              "transferSize": 29588
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+              "duration": 1563.0999999940395,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+              "duration": 1614.4000000059605,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+              "duration": 1296.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+              "duration": 1563.0999999940395,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+              "duration": 1738,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+              "duration": 1707,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+              "duration": 1563.300000011921,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg",
+              "duration": 1151.7999999821186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw",
+              "duration": 1648.4000000059605,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+              "duration": 1364.5999999940395,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+              "duration": 1768.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+              "duration": 1677.3999999761581,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+              "duration": 1511.4000000059605,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/K0NAVlE00l6RhefjO7lZKqrG_HTSM9DglDhCC7UnhIo",
+              "duration": 3020.199999988079,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 28,
+          "firstSoundExpectedMs": 658,
+          "startupClosureAt": 6764.5,
+          "allResourcesAt": 6768.4000000059605,
+          "intentToScheduledMs": 658.3000000119209,
+          "shellToScheduledMs": 3681
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "cold",
+        "index": 2,
+        "tokenId": 2,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 2169.4000000059605,
+          "responseStart": 486.09999999403954,
+          "domContentLoaded": 2142.0999999940395,
+          "resourceLoadMs": 21,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 370.69999998807907,
+              "transferSize": 38076
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 387.5,
+              "transferSize": 26516
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 325.5,
+              "transferSize": 23408
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 401.5,
+              "transferSize": 29588
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
+              "duration": 2587.7000000178814,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+              "duration": 2841.4000000059605,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 2907.4000000059605,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 2742.4000000059605,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 2677.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA",
+              "duration": 2791.899999976158,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI",
+              "duration": 2536.800000011921,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c",
+              "duration": 2868.7000000178814,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 2641,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s",
+              "duration": 2960.0999999940395,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 2924.5,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 84,
+          "firstSoundExpectedMs": 561,
+          "startupClosureAt": 5480.699999988079,
+          "allResourcesAt": 5483.699999988079,
+          "intentToScheduledMs": 560.5,
+          "shellToScheduledMs": 3878.5
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "cold",
+        "index": 3,
+        "tokenId": 3,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 2082.399999976158,
+          "responseStart": 1026.5,
+          "domContentLoaded": 2051.7999999821186,
+          "resourceLoadMs": 365,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 27.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 30.299999982118607,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 33.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 36.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
+              "duration": 4869.199999988079,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
+              "duration": 4763.800000011921,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+              "duration": 4862.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
+              "duration": 4826.100000023842,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
+              "duration": 4998.9000000059605,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
+              "duration": 5076.9000000059605,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs",
+              "duration": 4895.799999982119,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 5027.399999976158,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
+              "duration": 5046.299999982119,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0",
+              "duration": 4936.5999999940395,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 1526.0999999940395,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 54,
+          "firstSoundExpectedMs": 476,
+          "startupClosureAt": 6758.5,
+          "allResourcesAt": null,
+          "intentToScheduledMs": 475.59999999403954,
+          "shellToScheduledMs": 4801.200000017881
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "cold",
+        "index": 4,
+        "tokenId": 4,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1565.300000011921,
+          "responseStart": 303.60000002384186,
+          "domContentLoaded": 1566,
+          "resourceLoadMs": 10,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 20.900000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 25.19999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 26.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 27.30000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+              "duration": 526.1999999880791,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+              "duration": 549.2000000178814,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/A74qnIoqKsnXw1fBw64Jdm0zbiecJSBm09KVXdMu3nk",
+              "duration": 2429,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 55,
+          "firstSoundExpectedMs": 1775,
+          "startupClosureAt": 3341.600000023842,
+          "allResourcesAt": 3342.7000000178814,
+          "intentToScheduledMs": 1775.4000000059605,
+          "shellToScheduledMs": 3625.5
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "cold",
+        "index": 5,
+        "tokenId": 1,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1514.300000011921,
+          "responseStart": 500.59999999403954,
+          "domContentLoaded": 1511.5,
+          "resourceLoadMs": 97,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 283.30000001192093,
+              "transferSize": 38076
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 283.2000000178814,
+              "transferSize": 26516
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 292.69999998807907,
+              "transferSize": 29588
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 301.69999998807907,
+              "transferSize": 23408
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+              "duration": 449,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+              "duration": 289.59999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+              "duration": 244.59999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+              "duration": 305.30000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+              "duration": 402.10000002384186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+              "duration": 409.7000000178814,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg",
+              "duration": 409.09999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+              "duration": 528.1999999880791,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+              "duration": 402.09999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw",
+              "duration": 459.59999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+              "duration": 492.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+              "duration": 332.90000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+              "duration": 509.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/K0NAVlE00l6RhefjO7lZKqrG_HTSM9DglDhCC7UnhIo",
+              "duration": 596.0999999940395,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 26,
+          "firstSoundExpectedMs": 1306,
+          "startupClosureAt": 3344.2000000178814,
+          "allResourcesAt": 3347.5999999940395,
+          "intentToScheduledMs": 1306,
+          "shellToScheduledMs": 3052.0999999940395
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "cold",
+        "index": 6,
+        "tokenId": 2,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1662.0999999940395,
+          "responseStart": 556.4000000059605,
+          "domContentLoaded": 1662.9000000059605,
+          "resourceLoadMs": 32,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 305.90000000596046,
+              "transferSize": 38076
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 291.5,
+              "transferSize": 26516
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 307.39999997615814,
+              "transferSize": 23408
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 299.09999999403954,
+              "transferSize": 29588
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
+              "duration": 839.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+              "duration": 1080.5999999940395,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 820.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 1085.699999988079,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 743.0999999940395,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA",
+              "duration": 829.8000000119209,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI",
+              "duration": 881,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c",
+              "duration": 701,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s",
+              "duration": 878.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 898.6999999880791,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 651.1999999880791,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 55,
+          "firstSoundExpectedMs": 1603,
+          "startupClosureAt": 3609.5,
+          "allResourcesAt": 3611.5,
+          "intentToScheduledMs": 1602.7000000178814,
+          "shellToScheduledMs": 3554.2000000178814
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "cold",
+        "index": 7,
+        "tokenId": 3,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1836.199999988079,
+          "responseStart": 645.6999999880791,
+          "domContentLoaded": 1836.5,
+          "resourceLoadMs": 19,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 422.40000000596046,
+              "transferSize": 38076
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 409.90000000596046,
+              "transferSize": 26516
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 408,
+              "transferSize": 23408
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 427.7000000178814,
+              "transferSize": 29588
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
+              "duration": 442.7000000178814,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
+              "duration": 460.40000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+              "duration": 451.2999999821186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
+              "duration": 411.19999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
+              "duration": 424.7999999821186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
+              "duration": 443.09999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs",
+              "duration": 389.90000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 396.40000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
+              "duration": 475.60000002384186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0",
+              "duration": 487.90000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 686.6000000238419,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 263,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 307.2999999821186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+              "duration": 228.90000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 280.90000000596046,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 52,
+          "firstSoundExpectedMs": 1695,
+          "startupClosureAt": 3960.7999999821186,
+          "allResourcesAt": null,
+          "intentToScheduledMs": 1695.199999988079,
+          "shellToScheduledMs": 3863.699999988079
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "cold",
+        "index": 8,
+        "tokenId": 4,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1428.2999999821186,
+          "responseStart": 359.2999999821186,
+          "domContentLoaded": 1418,
+          "resourceLoadMs": 18,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 35.29999998211861,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 40.80000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 43,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 45.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+              "duration": 277.90000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+              "duration": 307.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/A74qnIoqKsnXw1fBw64Jdm0zbiecJSBm09KVXdMu3nk",
+              "duration": 655.3000000119209,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 30,
+          "firstSoundExpectedMs": 369,
+          "startupClosureAt": 3112.2999999821186,
+          "allResourcesAt": 3114.5,
+          "intentToScheduledMs": 368.5,
+          "shellToScheduledMs": 2057.5
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "cold",
+        "index": 9,
+        "tokenId": 2,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1398.699999988079,
+          "responseStart": 346.59999999403954,
+          "domContentLoaded": 1386,
+          "resourceLoadMs": 25,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 23.80000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 33.20000001788139,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 34.69999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 36.19999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
+              "duration": 384.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 305.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+              "duration": 322.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 417.40000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA",
+              "duration": 437.59999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 374.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c",
+              "duration": 257.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI",
+              "duration": 452.90000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 285.10000002384186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s",
+              "duration": 358.2999999821186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 598.7999999821186,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 59,
+          "firstSoundExpectedMs": 1670,
+          "startupClosureAt": 3421,
+          "allResourcesAt": 3423.0999999940395,
+          "intentToScheduledMs": 1670.4000000059605,
+          "shellToScheduledMs": 3709.4000000059605
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "cold",
+        "index": 10,
+        "tokenId": 3,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1855.5,
+          "responseStart": 258.2000000178814,
+          "domContentLoaded": 1817.800000011921,
+          "resourceLoadMs": 64,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 660.1999999880791,
+              "transferSize": 38076
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 666.3999999761581,
+              "transferSize": 26516
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 673.9000000059605,
+              "transferSize": 23408
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 691.3000000119209,
+              "transferSize": 29588
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
+              "duration": 236.40000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
+              "duration": 257.59999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
+              "duration": 332.59999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+              "duration": 356,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
+              "duration": 287.09999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
+              "duration": 312.40000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs",
+              "duration": 378.30000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 391.69999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
+              "duration": 286.40000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0",
+              "duration": 318.09999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 635.5999999940395,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 289.30000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 253.90000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+              "duration": 273.59999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 304.09999999403954,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 60,
+          "firstSoundExpectedMs": 1614,
+          "startupClosureAt": 3840.4000000059605,
+          "allResourcesAt": null,
+          "intentToScheduledMs": 1613.5,
+          "shellToScheduledMs": 3603.0999999940395
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      }
+    ]
+  },
+  "hot": {
+    "requested": 10,
+    "valid": 10,
+    "shellP50Ms": 1425.5999999940395,
+    "shellP95Ms": 1883,
+    "resourceP50Ms": 197,
+    "resourceP95Ms": 231,
+    "firstSoundP50Ms": 1127,
+    "firstSoundP95Ms": 1814,
+    "shellToSoundP50Ms": 1201.8999999761581,
+    "shellToSoundP95Ms": 1850.6000000238419,
+    "samples": [
+      {
+        "classification": "hot",
+        "index": 1,
+        "tokenId": 1,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1425.5999999940395,
+          "responseStart": 549.8999999761581,
+          "domContentLoaded": 1412.2999999821186,
+          "resourceLoadMs": 225,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+              "duration": 349,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+              "duration": 332.09999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+              "duration": 275.7000000178814,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+              "duration": 314.90000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+              "duration": 244.59999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg",
+              "duration": 227.90000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+              "duration": 236,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+              "duration": 276,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+              "duration": 288.40000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw",
+              "duration": 292.69999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+              "duration": 210.2000000178814,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+              "duration": 255,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+              "duration": 314,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/K0NAVlE00l6RhefjO7lZKqrG_HTSM9DglDhCC7UnhIo",
+              "duration": 974.6999999880791,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 30,
+          "firstSoundExpectedMs": 1691,
+          "startupClosureAt": 1723.5999999940395,
+          "allResourcesAt": 1728,
+          "intentToScheduledMs": 1691.300000011921,
+          "shellToScheduledMs": 1775
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "hot",
+        "index": 2,
+        "tokenId": 2,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1455.2999999821186,
+          "responseStart": 579.6999999880791,
+          "domContentLoaded": 1402.5999999940395,
+          "resourceLoadMs": 197,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
+              "duration": 293.60000002384186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+              "duration": 31.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 33.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 34,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 34.20000001788139,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA",
+              "duration": 310.59999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI",
+              "duration": 317.60000002384186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 24.399999976158142,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c",
+              "duration": 328.69999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s",
+              "duration": 298.59999999403954,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 392.19999998807907,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 105,
+          "firstSoundExpectedMs": 1814,
+          "startupClosureAt": 1675.4000000059605,
+          "allResourcesAt": 1678.5,
+          "intentToScheduledMs": 1814,
+          "shellToScheduledMs": 1850.6000000238419
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "hot",
+        "index": 3,
+        "tokenId": 3,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1222.7999999821186,
+          "responseStart": 366.5,
+          "domContentLoaded": 1168.5,
+          "resourceLoadMs": 197,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
+              "duration": 20.700000017881393,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
+              "duration": 33.60000002384186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+              "duration": 33.80000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
+              "duration": 34,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 28.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
+              "duration": 32.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
+              "duration": 33.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs",
+              "duration": 29.69999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
+              "duration": 30.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0",
+              "duration": 31,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 368,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 9.599999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 14.299999982118607,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+              "duration": 18,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 18.299999982118607,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/4y0MSr4zw830Dvz6MODNX977D0bNaMd12kWtXMOSL78",
+              "duration": 6.199999988079071,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/qmRjePU6ybQoUm5gEsOBpfHvolGGAyJE2kKX_XK3Cxs",
+              "duration": 5.9000000059604645,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/xA6W3OnBK4zC5b5vh6pnBIvJ9hLdmqDBp-89GP7Jl0g",
+              "duration": 5.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+              "duration": 5.0999999940395355,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 84,
+          "firstSoundExpectedMs": 940,
+          "startupClosureAt": 1436.8999999761581,
+          "allResourcesAt": 2062.5,
+          "intentToScheduledMs": 939.7999999821186,
+          "shellToScheduledMs": 973.5999999940395
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "hot",
+        "index": 4,
+        "tokenId": 4,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1360.699999988079,
+          "responseStart": 407.69999998807907,
+          "domContentLoaded": 1292.5999999940395,
+          "resourceLoadMs": 114,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+              "duration": 22.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+              "duration": 24.599999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/A74qnIoqKsnXw1fBw64Jdm0zbiecJSBm09KVXdMu3nk",
+              "duration": 1217.699999988079,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 40,
+          "firstSoundExpectedMs": 1564,
+          "startupClosureAt": 1495.199999988079,
+          "allResourcesAt": 1514.3999999761581,
+          "intentToScheduledMs": 1563.699999988079,
+          "shellToScheduledMs": 1604.0999999940395
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "hot",
+        "index": 5,
+        "tokenId": 1,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1336.4000000059605,
+          "responseStart": 378.90000000596046,
+          "domContentLoaded": 1303.2000000178814,
+          "resourceLoadMs": 205,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/Rv8MMgZu6lOSLGQd1WywpkPxCYx_tisZHF7_pkYGCAE",
+              "duration": 20.100000023841858,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/h6OOWdHVsn2c9pYBnquflx85ZtHyd8g-GzzxOZOxaog",
+              "duration": 35.29999998211861,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/oFxlJVSb6E6w2KkF36NL_KnqFr52BW2UrEMoCJDZ5-I",
+              "duration": 35.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800",
+              "duration": 32.79999998211861,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/kjJ_QTKcRa2EvpDWwhzimBSYQ81LdxF0R2QHwxHMlbw",
+              "duration": 23,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/VUUx4yagjA8btYUA-4xau-NZ4X2sbfK_JAan_NcLxOs",
+              "duration": 33.900000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/C9UePmBtqDrf5W-rvCuddxLgBlxSECbz57udhhUABmo",
+              "duration": 34.900000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/4CHkWf7R_rS-UtE5LBdT4MHr7PIU6k6Fr1b-EZGEiBg",
+              "duration": 24.80000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/635_HX8ANvnE8Nf3fiAdno8ughVCcY9ze4QjPzscbvw",
+              "duration": 26.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/rvi2aOKxmPW7ZNgKGzihn5l16D1L_ayz1KqxSYhbkFY",
+              "duration": 27.100000023841858,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/0gFdJVk4FrmGxuKQOwiovH3AINgfxcoPnb4MCo3BAPY",
+              "duration": 34,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/l6yepHwX_OGAEjhmKsMXuuLcwQRpMa4q9kkq-j_t2dQ",
+              "duration": 28.900000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/B8PW3wlyDJBiwAJXs4oUafoIcUaJLvVBEB4zonrGkls",
+              "duration": 29.599999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/K0NAVlE00l6RhefjO7lZKqrG_HTSM9DglDhCC7UnhIo",
+              "duration": 375.7000000178814,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 32,
+          "firstSoundExpectedMs": 1064,
+          "startupClosureAt": 1601.5,
+          "allResourcesAt": 1605,
+          "intentToScheduledMs": 1063.5999999940395,
+          "shellToScheduledMs": 1136.4000000059605
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "hot",
+        "index": 6,
+        "tokenId": 2,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1473.4000000059605,
+          "responseStart": 499.30000001192093,
+          "domContentLoaded": 1432.4000000059605,
+          "resourceLoadMs": 183,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
+              "duration": 23.399999976158142,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+              "duration": 35.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 35.70000001788139,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 35.80000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA",
+              "duration": 35.900000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 30.599999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI",
+              "duration": 27.69999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c",
+              "duration": 30.80000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 31.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s",
+              "duration": 35.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 377.59999999403954,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 50,
+          "firstSoundExpectedMs": 1051,
+          "startupClosureAt": 1710.2000000178814,
+          "allResourcesAt": 1715.7000000178814,
+          "intentToScheduledMs": 1050.9000000059605,
+          "shellToScheduledMs": 1115.5
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "hot",
+        "index": 7,
+        "tokenId": 3,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1883,
+          "responseStart": 749.5999999940395,
+          "domContentLoaded": 1794,
+          "resourceLoadMs": 231,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
+              "duration": 8.699999988079071,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
+              "duration": 22.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+              "duration": 22.900000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
+              "duration": 24.200000017881393,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
+              "duration": 18.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
+              "duration": 20.599999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 26.799999982118607,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs",
+              "duration": 27.19999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
+              "duration": 27.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0",
+              "duration": 27.69999998807907,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 373.40000000596046,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 10.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 12.199999988079071,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+              "duration": 16.599999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 17,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/4y0MSr4zw830Dvz6MODNX977D0bNaMd12kWtXMOSL78",
+              "duration": 5.5999999940395355,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/qmRjePU6ybQoUm5gEsOBpfHvolGGAyJE2kKX_XK3Cxs",
+              "duration": 5.5999999940395355,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/xA6W3OnBK4zC5b5vh6pnBIvJ9hLdmqDBp-89GP7Jl0g",
+              "duration": 8.300000011920929,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+              "duration": 8.099999994039536,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 572,
+          "firstSoundExpectedMs": 1260,
+          "startupClosureAt": 2053.199999988079,
+          "allResourcesAt": 3308.5,
+          "intentToScheduledMs": 1259.699999988079,
+          "shellToScheduledMs": 1294.199999988079
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "hot",
+        "index": 8,
+        "tokenId": 4,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1434.0999999940395,
+          "responseStart": 240,
+          "domContentLoaded": 1377.9000000059605,
+          "resourceLoadMs": 32,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+              "duration": 5.9000000059604645,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+              "duration": 7.799999982118607,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/A74qnIoqKsnXw1fBw64Jdm0zbiecJSBm09KVXdMu3nk",
+              "duration": 330.09999999403954,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 57,
+          "firstSoundExpectedMs": 1262,
+          "startupClosureAt": 1439.699999988079,
+          "allResourcesAt": 1441.9000000059605,
+          "intentToScheduledMs": 1261.7000000178814,
+          "shellToScheduledMs": 1271.4000000059605
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "hot",
+        "index": 9,
+        "tokenId": 2,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1737.9000000059605,
+          "responseStart": 766.5,
+          "domContentLoaded": 1665.0999999940395,
+          "resourceLoadMs": 186,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
+              "duration": 26.299999982118607,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+              "duration": 37.30000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 37.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 37.60000002384186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA",
+              "duration": 37.80000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 37.89999997615814,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI",
+              "duration": 36.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c",
+              "duration": 36.30000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 36.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s",
+              "duration": 36.60000002384186,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 354.19999998807907,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 106,
+          "firstSoundExpectedMs": 1122,
+          "startupClosureAt": 1949.9000000059605,
+          "allResourcesAt": 1953.0999999940395,
+          "intentToScheduledMs": 1122.199999988079,
+          "shellToScheduledMs": 1164
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "classification": "hot",
+        "index": 10,
+        "tokenId": 3,
+        "beforeClick": {
+          "state": "playing",
+          "shellAt": 1425.2000000178814,
+          "responseStart": 374.5,
+          "domContentLoaded": 1388.800000011921,
+          "resourceLoadMs": 204,
+          "audioResources": [
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/01e4147cff8141ee-s.p.7787e134.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/2f059f8bf31de55f-s.p.38faf0fb.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://ripples-in-the-pond-jbhy42k8o-0x991-thomas-projects.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2",
+              "duration": 0,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
+              "duration": 24.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
+              "duration": 35.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw",
+              "duration": 35.599999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
+              "duration": 36.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
+              "duration": 34,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
+              "duration": 39.599999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw",
+              "duration": 45.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/-d3JbmbtQDBOu9ED5kI03a-CXe5zFnShxbBU5kQeiWs",
+              "duration": 46,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
+              "duration": 46.400000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/ZBPDmzqtgEgMNzWDfsn2nws9krcdevQdpPJhWNMeLI0",
+              "duration": 34.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://arweave.net/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE",
+              "duration": 379.80000001192093,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU",
+              "duration": 8.199999988079071,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+              "duration": 8.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM",
+              "duration": 8.800000011920929,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8",
+              "duration": 10.099999994039536,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/4y0MSr4zw830Dvz6MODNX977D0bNaMd12kWtXMOSL78",
+              "duration": 10.699999988079071,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/qmRjePU6ybQoUm5gEsOBpfHvolGGAyJE2kKX_XK3Cxs",
+              "duration": 9.900000005960464,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/xA6W3OnBK4zC5b5vh6pnBIvJ9hLdmqDBp-89GP7Jl0g",
+              "duration": 9.5,
+              "transferSize": 0
+            },
+            {
+              "name": "https://snyugncezabohwf6.public.blob.vercel-storage.com/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0",
+              "duration": 11,
+              "transferSize": 0
+            }
+          ]
+        },
+        "afterClick": {
+          "state": "playing",
+          "decodeMs": 112,
+          "firstSoundExpectedMs": 1127,
+          "startupClosureAt": 1691.4000000059605,
+          "allResourcesAt": 1746.2000000178814,
+          "intentToScheduledMs": 1127.2999999821186,
+          "shellToScheduledMs": 1201.8999999761581
+        },
+        "consoleErrors": [],
+        "pageErrors": []
+      }
+    ]
+  },
+  "pass": true
+}

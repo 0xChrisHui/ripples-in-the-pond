@@ -12,7 +12,7 @@
   - [x] I1 verified snapshot 与 ownerOf 解耦
   - [x] I2 底曲/前 8 秒音效启动闭包与 preload
   - [x] I3 loading 点击排队、解码与状态语义
-  - [ ] I4 条件流式底曲（仅 I0–I3 生产冷播放 p95 >2s 时执行）
+  - [x] I4 条件流式底曲（I3 Preview 超预算后触发；I4 cold p95 1775ms）
   - [ ] I5 Preview/Production 发布与复测封存
 
 ## ⏳ Later / 开放项
