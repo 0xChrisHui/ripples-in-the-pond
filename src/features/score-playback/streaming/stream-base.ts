@@ -21,8 +21,11 @@ export class HtmlScoreBaseStream implements ScoreBaseStream {
     if (this.primed) return;
     this.audio.src = this.url;
     this.audio.muted = true;
-    this.primed = this.audio.play().then(() => undefined);
-    this.primed.catch(() => undefined);
+    const attempt = this.audio.play().then(() => {
+      this.audio.pause(); this.audio.currentTime = 0;
+    });
+    this.primed = attempt;
+    attempt.catch(() => { if (this.primed === attempt) this.primed = null; });
   }
   async start(offsetMs: number): Promise<void> {
     this.prime();
@@ -34,7 +37,7 @@ export class HtmlScoreBaseStream implements ScoreBaseStream {
     await this.audio.play();
     performance.mark('p15:streaming-base-started');
   }
-  pause(): void { this.revision += 1; this.audio.pause(); this.primed = null; }
+  pause(): void { this.revision += 1; this.audio.pause(); }
   positionMs(): number { return this.audio.currentTime * 1000; }
   durationMs(): number { return Number.isFinite(this.audio.duration) ? this.audio.duration * 1000 : 0; }
   destroy(): void {
