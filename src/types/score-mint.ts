@@ -61,6 +61,7 @@ export interface ScoreMintQueueRow {
   base_sha256: string | null;
   base_bytes: number | null;
   base_mime: string | null;
+  requires_package_v3: boolean;
   events_sha256: string | null;
   events_bytes: number | null;
   events_mime: string | null;
