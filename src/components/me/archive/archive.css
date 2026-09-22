@@ -24,17 +24,37 @@
 .me-archive__folio { display: none; color: var(--p11-brass); font: var(--p11-text-xs)/1 var(--p11-font-mono); letter-spacing: var(--p11-tracking-label); }
 .me-archive__identity { min-width: 0; max-width: 48vw; overflow: hidden; justify-self: end; color: var(--p11-faint); font: var(--p11-text-xs)/1.4 var(--p11-font-mono); text-align: right; text-overflow: ellipsis; white-space: nowrap; }
 .me-archive__dashboard { display: grid; gap: var(--p11-space-24); padding-top: var(--p11-space-24); }
-.me-archive__panel { min-width: 0; padding-inline: var(--p11-space-20, 20px); border: 1px solid var(--p11-line); border-radius: var(--p11-radius-sm); background: color-mix(in srgb, var(--p11-surface) 72%, transparent); }
+.me-archive__panel { position: relative; min-width: 0; }
+.me-archive__panel + .me-archive__panel { padding-top: var(--p11-space-8); }
 .me-archive__panel--pending .archive-section__header h2 { color: var(--p11-brass-strong); }
 .me-archive__panel--favorites .archive-section__header h2 { color: var(--p11-moss); }
 .archive-section { min-width: 0; height: 100%; }
-.archive-section__header { display: flex; min-height: 64px; align-items: center; justify-content: space-between; gap: var(--p11-space-16); border-bottom: 1px solid var(--p11-line-strong); }
+.archive-section__header { position: relative; display: flex; min-height: 64px; align-items: center; justify-content: space-between; gap: var(--p11-space-16); }
+.archive-section__header::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--p11-line-strong), var(--p11-line) 70%, transparent);
+  content: '';
+}
 .archive-section__header h2 { font: 300 clamp(1.75rem, 7vw, 2.35rem)/1 var(--p11-font-display); }
 .archive-section__header > span { color: var(--p11-faint); font: var(--p11-text-xs)/1 var(--p11-font-mono); }
 .archive-section__notice { display: flex; min-height: var(--p11-touch-target); align-items: center; justify-content: space-between; gap: var(--p11-space-12); padding-block: var(--p11-space-8); border-bottom: 1px solid var(--p11-line); color: var(--p11-status-degraded); font-size: var(--p11-text-xs); }
 .archive-section__notice button { min-height: var(--p11-touch-target); color: var(--p11-brass-strong); text-decoration: underline; text-underline-offset: 4px; }
 .archive-section__body { min-height: 60px; }
-.me-archive-row { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: var(--p11-space-8) var(--p11-space-12); min-height: 72px; padding: var(--p11-space-12) 0; border-bottom: 1px solid var(--p11-line); }
+.me-archive-row { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: var(--p11-space-8) var(--p11-space-12); min-height: 72px; padding: var(--p11-space-12) 0; }
+.me-archive-row::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--p11-line), color-mix(in srgb, var(--p11-line) 55%, transparent) 72%, transparent);
+  content: '';
+  pointer-events: none;
+}
 .me-archive-row__index { grid-row: 1 / span 3; color: var(--p11-faint); font: var(--p11-text-xs)/1 var(--p11-font-mono); letter-spacing: .08em; white-space: nowrap; }
 .me-archive-row__main { min-width: 0; }
 .me-archive-row__main h3 { overflow: hidden; color: var(--p11-bone); font: 300 1.28rem/1.1 var(--p11-font-display); text-overflow: ellipsis; white-space: nowrap; }
@@ -98,10 +118,19 @@
 }
 
 @media (min-width: 900px) {
-  .me-archive__dashboard { grid-template-areas: 'records favorites' 'pending favorites'; grid-template-columns: minmax(0, 2.35fr) minmax(250px, .85fr); align-items: stretch; gap: var(--p11-space-24); padding-top: var(--p11-space-32); }
+  .me-archive__dashboard { grid-template-areas: 'records favorites' 'pending favorites'; grid-template-columns: minmax(0, 2.35fr) minmax(250px, .85fr); align-items: start; gap: var(--p11-space-32) clamp(2rem, 4vw, 4.5rem); padding-top: var(--p11-space-32); }
   .me-archive__panel--records { grid-area: records; }
-  .me-archive__panel--pending { grid-area: pending; }
-  .me-archive__panel--favorites { grid-area: favorites; }
+  .me-archive__panel--pending { grid-area: pending; padding-top: 0; }
+  .me-archive__panel--favorites { grid-area: favorites; align-self: stretch; padding: 0 0 0 clamp(1.5rem, 3vw, 3rem); }
+  .me-archive__panel--favorites::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--p11-line-strong) 10%, var(--p11-line) 88%, transparent);
+    content: '';
+  }
 }
 
 @media (min-width: 1100px) {
