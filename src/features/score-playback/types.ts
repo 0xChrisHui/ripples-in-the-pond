@@ -72,6 +72,7 @@ export interface ScorePlaybackController {
   load(manifest: ScorePlaybackManifest): Promise<void>;
   play(): Promise<void>;
   pause(): void;
+  seek(positionMs: number): void;
   toggle(): Promise<void>;
   replay(): Promise<void>;
   destroy(): Promise<void>;
@@ -80,6 +81,7 @@ export interface ScorePlaybackController {
 export type UseScorePlaybackResult = ScorePlaybackSnapshot & Readonly<{
   play: () => Promise<void>;
   pause: () => void;
+  seek: (positionMs: number) => void;
   toggle: () => Promise<void>;
   replay: () => Promise<void>;
 }>;

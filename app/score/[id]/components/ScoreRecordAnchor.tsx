@@ -1,6 +1,7 @@
 'use client';
 
 import RecordAnchor, { type RecordAnchorState } from '@/src/components/p11/RecordAnchor';
+import PlaybackSeekBar from '@/src/components/common/PlaybackSeekBar';
 import type { UseScorePlaybackResult } from '@/src/features/score-playback/types';
 
 type Props = {
@@ -22,7 +23,6 @@ function timeLabel(ms: number): string {
 
 export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAvailable }: Props) {
   const state = anchorState(playback);
-  const progress = playback.durationMs > 0 ? playback.positionMs / playback.durationMs : 0;
   const perform = () => {
     if (playback.state === 'error') {
       window.location.reload();
@@ -61,17 +61,14 @@ export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAv
         loadingActionLabel={playback.playRequested ? '取消等待' : '准备好后播放'}
         detailText={detail}
       />
-      <div
+      <PlaybackSeekBar
         className="score-record-anchor__progress"
-        role="progressbar"
-        aria-label="播放进度"
-        aria-valuemin={0}
-        aria-valuemax={Math.max(1, playback.durationMs)}
-        aria-valuenow={playback.positionMs}
-        aria-valuetext={`${timeLabel(playback.positionMs)} / ${timeLabel(playback.durationMs)}`}
-      >
-        <span style={{ transform: `scaleX(${Math.min(1, progress)})` }} />
-      </div>
+        value={playback.positionMs}
+        duration={playback.durationMs}
+        onSeek={playback.seek}
+        formatValue={timeLabel}
+        disabled={playback.state === 'loading' || playback.state === 'error'}
+      />
     </div>
   );
 }

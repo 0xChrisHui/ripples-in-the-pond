@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import PlaybackSeekBar from '@/src/components/common/PlaybackSeekBar';
 import { usePlayer } from './PlayerProvider';
 import { useFavorite } from '@/src/hooks/useFavorite';
 import './bottom-player.css';
@@ -16,7 +17,7 @@ function formatTime(sec: number): string {
 /** 全局试听的窄唱片标签；Score 路由拥有独立播放会话，因此精确隐藏。 */
 export default function BottomPlayer() {
   const pathname = usePathname();
-  const { playing, currentTrack, duration, startedAt, stop, getCurrentTime } =
+  const { playing, currentTrack, duration, startedAt, stop, seek, getCurrentTime } =
     usePlayer();
   const [progress, setProgress] = useState(0);
   // hooks 不能 conditional，currentTrack null 时用 placeholder（不会触发 favorite()）
@@ -42,6 +43,11 @@ export default function BottomPlayer() {
   if (!currentTrack || pathname.startsWith('/score/')) return null;
 
   const elapsed = duration > 0 ? progress * duration : 0;
+  const handleSeek = (positionMs: number) => {
+    const positionSeconds = positionMs / 1000;
+    setProgress(duration > 0 ? Math.min(positionSeconds / duration, 1) : 0);
+    seek(positionSeconds);
+  };
 
   return (
     <>
@@ -52,17 +58,13 @@ export default function BottomPlayer() {
         aria-label="全局播放器"
       >
         <div className="bottom-player">
-          <div
+          <PlaybackSeekBar
             className="bottom-player__progress"
-            role="progressbar"
-            aria-label="播放进度"
-            aria-valuemin={0}
-            aria-valuemax={Math.max(1, Math.round(duration))}
-            aria-valuenow={Math.round(elapsed)}
-            aria-valuetext={`${formatTime(elapsed)} / ${formatTime(duration)}`}
-          >
-            <span style={{ transform: `scaleX(${progress})` }} />
-          </div>
+            value={elapsed * 1000}
+            duration={duration * 1000}
+            onSeek={handleSeek}
+            formatValue={(positionMs) => formatTime(positionMs / 1000)}
+          />
 
           <div className="bottom-player__body">
             <span className="bottom-player__record" aria-hidden="true">

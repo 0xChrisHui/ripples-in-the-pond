@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import PlaybackSeekBar from '@/src/components/common/PlaybackSeekBar';
 import { useWalletRecipePlayer } from '@/src/features/wallet-recipe/player/use-wallet-recipe-player';
 import type { WalletRecipeMetadataClipV1 } from '@/src/types/wallet-recipe';
 import EchoRecipe from './EchoRecipe';
@@ -21,7 +22,6 @@ export default function EchoPlayer({ recipe, clips }: {
 }) {
   const input = useMemo(() => ({ recipe, clips }), [recipe, clips]);
   const player = useWalletRecipePlayer(input);
-  const progress = player.durationMs > 0 ? player.positionMs / player.durationMs : 0;
   const waiting = player.state === 'idle' || player.state === 'loading';
 
   async function primaryAction() {
@@ -47,9 +47,9 @@ export default function EchoPlayer({ recipe, clips }: {
         <p className="echo-player__loading">
           {waiting ? `已取得 ${player.loadedUniqueCount} / ${player.totalUniqueCount} 个唯一片段` : '60ms 等功率衔接 · 无自动播放'}
         </p>
-        <div className="echo-player__track" aria-hidden="true">
-          <span style={{ transform: `scaleX(${Math.min(1, progress)})` }} />
-        </div>
+        <PlaybackSeekBar className="echo-player__track" value={player.positionMs}
+          duration={player.durationMs} onSeek={player.seek} formatValue={timeLabel}
+          disabled={waiting || player.state === 'error'} />
         <div className="echo-player__time">
           <time>{timeLabel(player.positionMs)}</time><time>{timeLabel(player.durationMs)}</time>
         </div>

@@ -119,19 +119,12 @@
 }
 
 .score-record-anchor__progress {
+  --seek-line-size: 1px;
+  --seek-track: var(--p11-line-strong);
+  --seek-fill: var(--p11-brass-strong);
   width: min(240px, 64vw);
   height: 1px;
   margin: var(--p11-space-16) auto 0;
-  overflow: hidden;
-  background: var(--p11-line-strong);
-}
-.score-record-anchor__progress span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: var(--p11-brass-strong);
-  transform-origin: left;
-  transition: transform var(--p11-fast) linear;
 }
 
 .score-eclipse-fallback {

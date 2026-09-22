@@ -12,23 +12,16 @@ type EngineOptions = { fetcher?: typeof fetch; createAudioContext?: () => AudioC
 const safeMessage = (error: unknown): string => error instanceof Error
   ? error.message : 'Score 播放资源暂时不可用';
 export class ScorePlaybackEngine implements ScorePlaybackController {
-  private readonly fetcher: typeof fetch;
-  private readonly createContext: () => AudioContext;
+  private readonly fetcher: typeof fetch; private readonly createContext: () => AudioContext;
   private readonly createStream: StreamFactory;
   private snapshot = INITIAL_SNAPSHOT;
   private listeners = new Set<ScorePlaybackListener>();
-  private resources: ScorePlaybackResources | null = null;
-  private context: AudioContext | null = null;
-  private baseBuffer: AudioBuffer | null = null;
-  private soundBuffers: Record<string, AudioBuffer> = {};
-  private stream: ScoreBaseStream | null = null;
-  private streamingUrl: string | null = null;
-  private decoded = false;
-  private timeline: ScoreTimelineSession | null = null;
-  private abortController: AbortController | null = null;
-  private generation = 0;
-  private startOffsetMs = 0;
-  private pendingIntentAt: number | null = null;
+  private resources: ScorePlaybackResources | null = null; private context: AudioContext | null = null;
+  private baseBuffer: AudioBuffer | null = null; private soundBuffers: Record<string, AudioBuffer> = {};
+  private stream: ScoreBaseStream | null = null; private streamingUrl: string | null = null;
+  private decoded = false; private timeline: ScoreTimelineSession | null = null;
+  private abortController: AbortController | null = null; private generation = 0;
+  private startOffsetMs = 0; private pendingIntentAt: number | null = null;
   constructor(options: EngineOptions = {}) {
     this.fetcher = options.fetcher ?? fetch;
     this.createContext = options.createAudioContext ?? (() => new AudioContext());
@@ -192,6 +185,13 @@ export class ScorePlaybackEngine implements ScorePlaybackController {
     if (this.snapshot.state !== 'playing') return;
     const positionMs = this.timeline?.pause() ?? this.snapshot.positionMs; this.timeline = null;
     this.update({ state: 'paused', positionMs: Math.round(positionMs), activeKeys: [] });
+  }
+  seek(positionMs: number): void {
+    if (!this.resources || this.snapshot.durationMs <= 0 || !Number.isFinite(positionMs)) return;
+    const target = Math.min(this.snapshot.durationMs, Math.max(0, Math.round(positionMs))); const wasPlaying = this.snapshot.state === 'playing'; this.timeline?.destroy(); this.timeline = null; this.pendingIntentAt = null; this.startOffsetMs = target;
+    if (target >= this.snapshot.durationMs) { this.update({ state: 'ended', playRequested: false, positionMs: target, activeKeys: [] }); return; }
+    if (!wasPlaying) { this.update({ state: 'paused', playRequested: false, positionMs: target, activeKeys: [] }); return; }
+    const intentAt = performance.now(); this.pendingIntentAt = intentAt; this.update({ state: 'loading', playRequested: true, positionMs: target, activeKeys: [] }); void this.beginPlayback(intentAt, this.generation);
   }
   async toggle(): Promise<void> {
     if (this.snapshot.state === 'playing') this.pause();

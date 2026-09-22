@@ -165,6 +165,16 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
     if (this.snapshot.state === 'paused') await this.play();
   }
 
+  seek(positionMs: number): void {
+    if (!this.timeline || !Number.isFinite(positionMs)) return;
+    const target = Math.min(this.timeline.durationMs, Math.max(0, Math.round(positionMs)));
+    const wasPlaying = this.snapshot.state === 'playing';
+    this.clock?.stop();
+    if (target >= this.timeline.durationMs) this.updatePosition(target, 'ended');
+    else if (wasPlaying && this.clock) this.clock.start(target);
+    else this.updatePosition(target, 'paused');
+  }
+
   async replay(): Promise<void> {
     if (!this.timeline) return;
     this.clock?.stop();

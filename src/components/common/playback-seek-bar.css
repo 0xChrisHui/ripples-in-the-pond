@@ -1,0 +1,88 @@
+.playback-seek {
+  --seek-line-size: 2px;
+  --seek-track: var(--p11-line);
+  --seek-fill: var(--p11-brass-strong);
+  --seek-thumb: var(--seek-fill);
+  position: relative;
+  height: var(--seek-line-size);
+  outline: none;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.playback-seek::before {
+  position: absolute;
+  inset: -13px 0;
+  content: '';
+}
+
+.playback-seek__rail {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  left: 6px;
+  height: var(--seek-line-size);
+  border-radius: 999px;
+  background: var(--seek-track);
+  transform: translateY(-50%);
+  transition: height var(--p11-fast) ease;
+}
+
+.playback-seek__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--seek-fill);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.playback-seek__thumb {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--p11-ink);
+  border-radius: 50%;
+  background: var(--seek-thumb);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--seek-thumb) 70%, transparent), 0 2px 8px rgba(0, 0, 0, .35);
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform var(--p11-fast) ease, box-shadow var(--p11-fast) ease;
+}
+
+.playback-seek[data-dragging='true'] { cursor: grabbing; }
+
+.playback-seek:is(:hover, :focus-visible) .playback-seek__rail,
+.playback-seek[data-dragging='true'] .playback-seek__rail {
+  height: max(4px, var(--seek-line-size));
+}
+
+.playback-seek:is(:hover, :focus-visible) .playback-seek__thumb,
+.playback-seek[data-dragging='true'] .playback-seek__thumb {
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--seek-thumb) 20%, transparent), 0 3px 10px rgba(0, 0, 0, .45);
+}
+
+.playback-seek:focus-visible .playback-seek__rail {
+  outline: var(--p11-focus-width) var(--p11-focus-style) var(--p11-focus-color);
+  outline-offset: 4px;
+}
+
+.playback-seek[data-disabled='true'] { cursor: default; opacity: .5; }
+
+@media (pointer: coarse) {
+  .playback-seek::before { inset-block: -21px; }
+  .playback-seek__thumb { width: 16px; height: 16px; }
+  .playback-seek__rail { right: 8px; left: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playback-seek__rail, .playback-seek__thumb { transition: none; }
+}
+
+@media (forced-colors: active) {
+  .playback-seek__rail { border: 1px solid CanvasText; }
+  .playback-seek__fill, .playback-seek__thumb { background: Highlight; }
+}

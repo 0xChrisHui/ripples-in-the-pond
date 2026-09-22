@@ -24,6 +24,7 @@ export function useScorePlayback(
     ...snapshot,
     play: () => engine.play(),
     pause: () => engine.pause(),
+    seek: (positionMs) => engine.seek(positionMs),
     toggle: () => engine.toggle(),
     replay: () => engine.replay(),
   };

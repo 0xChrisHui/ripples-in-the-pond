@@ -24,6 +24,7 @@ export function useWalletRecipePlayer(input: WalletRecipePlayerInput | null) {
     play: engine.play.bind(engine),
     pause: engine.pause.bind(engine),
     resume: engine.resume.bind(engine),
+    seek: engine.seek.bind(engine),
     replay: engine.replay.bind(engine),
     retryLoad: () => input ? engine.load(input) : Promise.resolve(),
   };

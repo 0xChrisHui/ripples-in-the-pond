@@ -52,6 +52,7 @@ export type WalletRecipePlayerController = {
   play: () => Promise<void>;
   pause: () => void;
   resume: () => Promise<void>;
+  seek: (positionMs: number) => void;
   replay: () => Promise<void>;
   destroy: () => Promise<void>;
 };

@@ -26,6 +26,7 @@ interface PlayerState {
   startedAt: number;
   toggle: (track: Track) => Promise<void>;
   stop: () => void;
+  seek: (positionSeconds: number) => void;
   subscribe: (lifecycle: PlayerLifecycle) => () => void;
   /** 当前 audio.currentTime（秒） */
   getCurrentTime: () => number;
@@ -180,12 +181,19 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     return audioRef.current?.currentTime ?? 0;
   }, []);
 
+  const seek = useCallback((positionSeconds: number) => {
+    const audio = audioRef.current;
+    if (!audio || !Number.isFinite(positionSeconds)) return;
+    const limit = Number.isFinite(audio.duration) ? audio.duration : duration;
+    audio.currentTime = Math.min(Math.max(0, limit), Math.max(0, positionSeconds));
+  }, [duration]);
+
   const getAudioElement = useCallback(() => audioRef.current, []);
 
   return (
     <PlayerContext value={{
       playing, currentTrack, duration, startedAt,
-      toggle, stop, subscribe, getCurrentTime, getAudioElement,
+      toggle, stop, seek, subscribe, getCurrentTime, getAudioElement,
     }}>
       {children}
     </PlayerContext>
