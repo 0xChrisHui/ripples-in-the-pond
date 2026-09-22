@@ -1,0 +1,53 @@
+.me-pond-test {
+  min-height: 100svh;
+  background: #010504;
+}
+
+.me-pond-test__scene {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  filter: brightness(.72) saturate(.78);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.me-pond-test[data-scene-ready='true'] .me-pond-test__scene { opacity: .86; }
+
+.me-pond-test__veil {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgb(0 3 3 / 74%) 0%, transparent 26%, rgb(0 3 3 / 18%) 72%, rgb(0 2 2 / 54%) 100%),
+    radial-gradient(ellipse at 33% 42%, rgb(0 3 3 / 58%) 0%, rgb(0 3 3 / 28%) 46%, transparent 72%),
+    radial-gradient(ellipse at 88% 44%, rgb(0 3 3 / 44%) 0%, transparent 62%);
+  pointer-events: none;
+}
+
+.me-archive[data-me-variant='pond'] {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  text-shadow: 0 1px 18px rgb(0 0 0 / 72%);
+}
+
+.me-archive[data-me-variant='pond'] .me-archive__header {
+  border-image: linear-gradient(90deg, transparent, var(--p11-line-strong) 16%, var(--p11-line-strong) 84%, transparent) 1;
+}
+
+.me-archive[data-me-variant='pond'] :is(.archive-section__header, .me-archive-row)::after {
+  opacity: .55;
+}
+
+.me-archive[data-me-variant='pond'] .me-archive__panel--favorites::before {
+  opacity: .65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .me-pond-test__scene { transition: none; }
+}
+
+@media (forced-colors: active) {
+  .me-pond-test__scene, .me-pond-test__veil { display: none; }
+}
