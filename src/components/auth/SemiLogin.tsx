@@ -21,6 +21,7 @@ function RegisterPrompt() {
         href={SEMI_REGISTER_URL}
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="前往注册 Semi 钱包（新窗口打开）"
       >
         前往注册 Semi 钱包
       </a>
