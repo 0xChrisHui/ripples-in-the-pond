@@ -38,9 +38,10 @@
 ### G-D1｜共享 Layout 持有唯一池塘
 
 - `/` 与 `/me` 进入同一个无 URL 前缀的 route group，并由共享 Layout 挂载 `PersistentPondShell`。
-- Shell 持有唯一生产 PondGL、WaterPetals、GL health、scene ready、pointer 水场和首页 `glSim`。
+- Shell 把唯一生产 PondGL 拆成 `PersistentWaterCore` 与路由 Scene Adapter：Water Core 持有 WaterDistort、WaterPetals、GL health、scene ready 与 pointer 水场，首页 `glSim` 留在 `HomeSceneAdapter`。
 - 页面只渲染前景 Surface；从 `/` 到 `/me` 时 Shell 不卸载、不换 key、不重建 Canvas。
-- `/score/[id]`、`/artist`、登录与其他页面不进入该 route group，避免全站承担首页 WebGL 成本。
+- G 阶段 `/score/[id]` 仍在共享 Shell 外；Water Core/Scene API 不硬编码只有 home/archive 两态，为后续 P11-H 的单作品 Adapter 留稳定接缝。
+- `/artist`、登录与其他页面不进入该 route group，避免全站承担首页 WebGL 成本。
 - `/test3` 保持独立诊断沙盒；它不与生产 Shell 共享运行状态。
 
 ### G-D2｜水面永不参与转场
@@ -97,10 +98,10 @@
 ```text
 app/(pond)/layout.tsx
 └─ PersistentPondShell
-   ├─ PersistentScene                      永不随 / ↔ /me 卸载
-   │  ├─ PondGL + WaterDistort
-   │  ├─ WaterPetals
-   │  └─ 首页 glSim / scenePresence
+   ├─ PersistentWaterCore                  永不随 / ↔ /me 卸载
+   │  ├─ PondGL 基调 + WaterDistort
+   │  └─ WaterPetals / pointer / health
+   ├─ HomeSceneAdapter                     首页 glSim / 圆圈 / scenePresence
    ├─ PondRouteTransition                  pathname → 可逆状态机
    └─ RouteSurface
       ├─ /        首页导航、圆圈命中、演奏 UI
@@ -154,14 +155,15 @@ home ──进入档案──> leaving-home ──> archive
 ### 实现
 
 - 建立只覆盖 `/` 与 `/me` 的 route group 共享 Layout，URL 不变。
-- 把生产 PondGL、scene-ready、health、pointer 和水面级 state 上提到 Shell。
-- 首页和 `/me` 改为消费同一 Scene API；`/me/test` 暂时保留作并排对照。
+- 把生产 PondGL 的水体、scene-ready、health、pointer 和水面级 state 收敛为 `PersistentWaterCore`。
+- 把首页节点、命中层与 `glSim` 收敛为 `HomeSceneAdapter`，不写入 Water Core。
+- 首页和 `/me` 改为消费稳定 Scene API；`/me/test` 暂时保留作并排对照。
 - 为 Shell 增加只读诊断：稳定 `mountId`、Canvas/花瓣计数与 scene mode；生产不显示调试面板。
 
 ### 禁止
 
 - 不把 PondGL 放进根 `app/layout.tsx`。
-- 不让 `/score` 复用首页 glSim 或 Player session。
+- 不让 `/score` 复用首页 glSim 或 Player session；P11-H 只能复用 Water Core。
 - 不复制 `PondGL.tsx`、WaterDistort shader 或花瓣模拟。
 
 ### Gate
@@ -247,7 +249,7 @@ home ──进入档案──> leaving-home ──> archive
 - 不重复注册 pointer、resize、keyboard、P9 或播放器订阅。
 - `/me` 不响应首页演奏键；输入框、range、弹窗操作不制造意外水波。
 - 转场不新建 AudioContext，不停止或重启正在播放的全局音频。
-- `/score` 仍按原合同隔离并清理自己的水塘/音频会话。
+- P11-H 执行前，`/score` 仍按原合同隔离并清理自己的水塘/音频会话。
 
 ### Gate
 
@@ -301,6 +303,7 @@ bash scripts/verify.sh
 ## 6. Track G 完成定义
 
 - [ ] `/` 与 `/me` 共享唯一且不重挂的生产 PondGL/花瓣会话。
+- [ ] Water Core 与 Home Scene 已分层，后续接入 Score 不需要搬迁或复制水面状态。
 - [ ] 进入档案时音乐圆圈连续退场，返回时从已准备状态连续浮现。
 - [ ] 水面、花瓣、pointer 涟漪与导航前已有波纹全程连续。
 - [ ] 档案认证、收藏播放、待铸造倒计时与铸造动作无回退。
