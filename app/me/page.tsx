@@ -1,5 +1,5 @@
-import MeArchivePage from '@/src/components/me/archive/MeArchivePage';
+import MePondArchive from './MePondArchive';
 
 export default function MePage() {
-  return <MeArchivePage />;
+  return <MePondArchive />;
 }

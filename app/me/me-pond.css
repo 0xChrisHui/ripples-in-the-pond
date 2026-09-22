@@ -1,9 +1,9 @@
-.me-pond-test {
+.me-pond {
   min-height: 100svh;
   background: #010504;
 }
 
-.me-pond-test__scene {
+.me-pond__scene {
   position: fixed;
   z-index: 0;
   inset: 0;
@@ -12,9 +12,9 @@
   transition: opacity 1.2s ease;
 }
 
-.me-pond-test[data-scene-ready='true'] .me-pond-test__scene { opacity: 1; }
+.me-pond[data-scene-ready='true'] .me-pond__scene { opacity: 1; }
 
-.me-pond-test__veil {
+.me-pond__veil {
   position: fixed;
   z-index: 1;
   inset: 0;
@@ -45,7 +45,7 @@
   opacity: .65;
 }
 
-.me-pond-test__controls {
+.me-pond__controls {
   position: fixed;
   z-index: 30;
   right: max(var(--p11-space-16), env(safe-area-inset-right));
@@ -66,23 +66,23 @@
   backdrop-filter: blur(14px);
 }
 
-.me-pond-test__controls button,
-.me-pond-test__controls label { display: inline-flex; min-height: var(--p11-touch-target); align-items: center; gap: var(--p11-space-8); }
-.me-pond-test__controls button { padding-inline: var(--p11-space-8); color: var(--p11-muted); }
-.me-pond-test__controls button > span { width: 7px; height: 7px; border-radius: 50%; background: var(--p11-faint); }
-.me-pond-test__controls button[aria-pressed='true'] { color: var(--p11-brass-strong); }
-.me-pond-test__controls button[aria-pressed='true'] > span { background: var(--p11-brass-strong); box-shadow: 0 0 10px var(--p11-brass); }
-.me-pond-test__controls input { width: min(24vw, 110px); accent-color: var(--p11-brass); }
-.me-pond-test__controls output { width: 4ch; color: var(--p11-faint); text-align: right; }
+.me-pond__controls button,
+.me-pond__controls label { display: inline-flex; min-height: var(--p11-touch-target); align-items: center; gap: var(--p11-space-8); }
+.me-pond__controls button { padding-inline: var(--p11-space-8); color: var(--p11-muted); }
+.me-pond__controls button > span { width: 7px; height: 7px; border-radius: 50%; background: var(--p11-faint); }
+.me-pond__controls button[aria-pressed='true'] { color: var(--p11-brass-strong); }
+.me-pond__controls button[aria-pressed='true'] > span { background: var(--p11-brass-strong); box-shadow: 0 0 10px var(--p11-brass); }
+.me-pond__controls input { width: min(24vw, 110px); accent-color: var(--p11-brass); }
+.me-pond__controls output { width: 4ch; color: var(--p11-faint); text-align: right; }
 
 @media (min-width: 640px) {
-  .me-pond-test__controls { left: auto; }
+  .me-pond__controls { left: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .me-pond-test__scene, .me-pond-test__veil { transition: none; }
+  .me-pond__scene, .me-pond__veil { transition: none; }
 }
 
 @media (forced-colors: active) {
-  .me-pond-test__scene, .me-pond-test__veil { display: none; }
+  .me-pond__scene, .me-pond__veil { display: none; }
 }
