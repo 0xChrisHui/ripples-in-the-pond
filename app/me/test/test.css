@@ -7,12 +7,12 @@
   position: fixed;
   z-index: 0;
   inset: 0;
-  filter: brightness(.72) saturate(.78);
+  filter: saturate(.88);
   opacity: 0;
   transition: opacity 1.2s ease;
 }
 
-.me-pond-test[data-scene-ready='true'] .me-pond-test__scene { opacity: .86; }
+.me-pond-test[data-scene-ready='true'] .me-pond-test__scene { opacity: 1; }
 
 .me-pond-test__veil {
   position: fixed;
@@ -23,6 +23,7 @@
     radial-gradient(ellipse at 33% 42%, rgb(0 3 3 / 58%) 0%, rgb(0 3 3 / 28%) 46%, transparent 72%),
     radial-gradient(ellipse at 88% 44%, rgb(0 3 3 / 44%) 0%, transparent 62%);
   pointer-events: none;
+  transition: opacity .35s ease;
 }
 
 .me-archive[data-me-variant='pond'] {
@@ -44,8 +45,42 @@
   opacity: .65;
 }
 
+.me-pond-test__controls {
+  position: fixed;
+  z-index: 30;
+  right: max(var(--p11-space-16), env(safe-area-inset-right));
+  bottom: max(var(--p11-space-16), env(safe-area-inset-bottom));
+  left: max(var(--p11-space-16), env(safe-area-inset-left));
+  display: flex;
+  min-height: var(--p11-touch-target);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--p11-space-12);
+  padding: var(--p11-space-4) var(--p11-space-8);
+  border: 1px solid color-mix(in srgb, var(--p11-bone) 12%, transparent);
+  border-radius: var(--p11-radius-round);
+  background: rgb(1 7 6 / 72%);
+  box-shadow: 0 12px 36px rgb(0 0 0 / 28%);
+  color: var(--p11-muted);
+  font: var(--p11-text-xs)/1 var(--p11-font-mono);
+  backdrop-filter: blur(14px);
+}
+
+.me-pond-test__controls button,
+.me-pond-test__controls label { display: inline-flex; min-height: var(--p11-touch-target); align-items: center; gap: var(--p11-space-8); }
+.me-pond-test__controls button { padding-inline: var(--p11-space-8); color: var(--p11-muted); }
+.me-pond-test__controls button > span { width: 7px; height: 7px; border-radius: 50%; background: var(--p11-faint); }
+.me-pond-test__controls button[aria-pressed='true'] { color: var(--p11-brass-strong); }
+.me-pond-test__controls button[aria-pressed='true'] > span { background: var(--p11-brass-strong); box-shadow: 0 0 10px var(--p11-brass); }
+.me-pond-test__controls input { width: min(24vw, 110px); accent-color: var(--p11-brass); }
+.me-pond-test__controls output { width: 4ch; color: var(--p11-faint); text-align: right; }
+
+@media (min-width: 640px) {
+  .me-pond-test__controls { left: auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .me-pond-test__scene { transition: none; }
+  .me-pond-test__scene, .me-pond-test__veil { transition: none; }
 }
 
 @media (forced-colors: active) {
