@@ -34,11 +34,14 @@ export default function MeArchivePage({ variant = 'default' }: { variant?: 'defa
   const auth = useAuth();
   const { ownerId, scores, recordings, materials, retry } = useMeArchive({
     authenticated: auth.authenticated,
+    authSource: auth.authSource,
     userId: auth.userId,
     getAccessToken: auth.getAccessToken,
   });
   const echoes = useOwnedEchoes({
     authenticated: auth.authenticated,
+    authSource: auth.authSource,
+    userId: auth.userId,
     evmAddress: auth.evmAddress,
     getAccessToken: auth.getAccessToken,
   });
