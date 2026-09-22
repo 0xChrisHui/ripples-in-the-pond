@@ -77,15 +77,15 @@ export default function ScorePondScene({ score, network }: Props) {
   const [performanceReduced, setPerformanceReduced] = useState(false);
   const isPlaying = playback.state === 'playing';
   const visualTrack = useMemo(() => visualTrackOf(score), [score]);
-  const glSim = useScorePondSim(visualTrack, isPlaying);
+  const { glSim, visualActive, returning } = useScorePondSim(visualTrack, isPlaying);
   const emptyVisitor = useRef<Track36VisitorState | null>(null);
-  useEclipseTransition(glSim!, emptyVisitor, health === 'healthy' && isPlaying ? visualTrack.id : null);
+  useEclipseTransition(glSim!, emptyVisitor, health === 'healthy' && visualActive ? visualTrack.id : null);
   const interactive = capabilities.fine && !capabilities.reduced && !performanceReduced;
   const flags = useMemo(() => ({
     ...DEFAULT_GL_FLAGS,
-    glSpheres: isPlaying,
-    sphereMotion: false,
-    sphereDrift: false,
+    glSpheres: visualActive,
+    sphereMotion: isPlaying,
+    sphereDrift: isPlaying,
     perspective: interactive,
     parallax: interactive,
     parallaxDesync: interactive,
@@ -94,7 +94,7 @@ export default function ScorePondScene({ score, network }: Props) {
     flowerPetals: !capabilities.reduced && !performanceReduced,
     floatMotes: !capabilities.reduced && !performanceReduced,
     autoDegrade: true,
-  }), [capabilities.reduced, interactive, isPlaying, performanceReduced]);
+  }), [capabilities.reduced, interactive, isPlaying, performanceReduced, visualActive]);
 
   // Score 是纵向阅读页：保留鼠标视差，但滚轮必须始终交还给页面滚动。
   usePointerFx(Boolean(glSim) && health === 'healthy' && interactive, false);
@@ -119,6 +119,7 @@ export default function ScorePondScene({ score, network }: Props) {
       data-reduced-motion={capabilities.reduced}
       data-score-state="ready"
       data-playback-state={playback.state}
+      data-record-motion={returning ? 'returning' : isPlaying ? 'flowing' : 'resting'}
       data-resource-load-ms={playback.resourceLoadMs ?? undefined}
       data-decode-ms={playback.decodeMs ?? undefined}
       data-first-sound-expected-ms={playback.firstSoundExpectedMs ?? undefined}
@@ -134,7 +135,7 @@ export default function ScorePondScene({ score, network }: Props) {
           pointerInteractive={interactive}
         />
       )}
-      {isPlaying && glSim?.ready && health === 'healthy' && (
+      {visualActive && glSim?.ready && health === 'healthy' && (
         <div className="pointer-events-none fixed inset-0 z-[35]">
           <GlEclipse glSim={glSim} />
         </div>
