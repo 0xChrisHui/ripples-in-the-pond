@@ -1,23 +1,25 @@
+'use client';
+
+import { usePlayer } from '@/src/components/player/PlayerProvider';
 import type { OwnedNFT } from '@/src/types/tracks';
 
-/** 素材只呈现 API 的真实名称、Token 与时间；旧页面没有外链，因此不补假入口。 */
-export default function MaterialArchiveRow({ nft, index }: { nft: OwnedNFT; index: number }) {
-  const pending = !nft.track || !nft.tx_hash;
-  const title = nft.track?.title ?? `素材 #${nft.token_id}`;
+/** 收藏行本身就是播放按钮，不再增加第二个“试听”入口。 */
+export default function MaterialArchiveRow({ nft }: { nft: OwnedNFT }) {
+  const { toggle, playing, currentTrack } = usePlayer();
+  const track = nft.track ?? null;
+  const isPlaying = Boolean(track && playing && currentTrack?.id === track.id);
+  const title = track?.title ?? '收藏处理中';
 
   return (
-    <article className="me-archive-row" data-status={pending ? 'processing' : 'finalized'}>
-      <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')}</p>
-      <div className="me-archive-row__main">
-        <h3>{title}</h3>
-        <p>Token #{nft.token_id}{nft.track?.island ? ` · ${nft.track.island}` : ''}</p>
-        <time dateTime={nft.minted_at}>
-          {pending ? '提交于' : '铸造于'} {new Date(nft.minted_at).toLocaleDateString('zh-CN')}
-        </time>
-      </div>
-      <div className="me-archive-row__state">
-        <span>{pending ? '等待上链' : '已收藏'}</span>
-      </div>
-    </article>
+    <button type="button" className="me-archive-row me-archive-row--favorite"
+      data-playing={isPlaying || undefined} disabled={!track}
+      aria-label={`${isPlaying ? '停止播放' : '播放'}${title}`}
+      onClick={() => { if (track) void toggle(track); }}>
+      <div className="me-archive-row__main"><h3>{title}</h3></div>
+      <span className="me-archive-row__play">
+        <span aria-hidden="true">{isPlaying ? '■' : '▶'}</span>
+        {isPlaying ? '停止' : track ? '播放' : '处理中'}
+      </span>
+    </button>
   );
 }

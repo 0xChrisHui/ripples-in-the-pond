@@ -91,31 +91,27 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
       <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')}</p>
       <div className="me-archive-row__main">
         <h3>{recording.title}</h3>
-        <p>{recording.eventCount} 个演奏事件</p>
-        <time dateTime={recording.createdAt}>
-          保存于 {new Date(recording.createdAt).toLocaleDateString('zh-CN')}
-        </time>
       </div>
       <div className="me-archive-row__state">
-        <span>{recording.awaitingRefresh ? '已上传，等待档案刷新' : recording.pendingScoreId ? '已保存录音' : localState}</span>
         <strong className="me-archive-row__expiry">{expiry.label}</strong>
-        <small>有效期从创作时间起算</small>
+        {recording.awaitingRefresh && <small>正在同步</small>}
+        {!recording.pendingScoreId && <small>{localState}</small>}
         {eventsError && <small role="alert">试听加载失败，可重试</small>}
       </div>
       {recording.pendingScoreId ? (
         <div className="me-archive-row__actions">
           {canPlay && (
             <button type="button" onClick={playRecording} disabled={eventsLoading}>
-              {eventsLoading ? '读取中…' : eventsError ? '重试播放' : isPlaying ? '停止试听' : '试听'}
+              {eventsLoading ? '读取中…' : eventsError ? '重试播放' : isPlaying ? '停止' : '播放'}
             </button>
           )}
           {mintState === 'queued' || mintState === 'success' ? (
-            <span>{mintState === 'queued' ? '正在提交…' : '已进入制作'}</span>
+            <span>{mintState === 'queued' ? '正在铸造…' : '已提交'}</span>
           ) : (
             <button className="me-archive-row__mint" type="button"
-              aria-label={`将${recording.title}制作成唱片`}
+              aria-label={`将${recording.title}铸造为唱片`}
               onClick={() => void mint(recording.pendingScoreId!)}>
-              {mintState === 'error' ? '重试制作' : '制作唱片'} <span aria-hidden="true">→</span>
+              {mintState === 'error' ? '重试铸造' : '铸造唱片'} <span aria-hidden="true">→</span>
             </button>
           )}
         </div>

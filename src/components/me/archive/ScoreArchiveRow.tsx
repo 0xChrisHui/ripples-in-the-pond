@@ -31,10 +31,7 @@ export default function ScoreArchiveRow({ score, index }: { score: OwnedScoreNFT
       <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')}</p>
       <div className="me-archive-row__main">
         <h3>{title}</h3>
-        <p>{score.trackTitle}{score.eventCount == null ? ' · 事件数待核验' : ` · ${score.eventCount} 个永久事件`}</p>
-        <time dateTime={score.submittedAt}>
-          提交于 {new Date(score.submittedAt).toLocaleDateString('zh-CN')}
-        </time>
+        {isPermanent && <p>{score.trackTitle}</p>}
       </div>
       <div className="me-archive-row__state">
         <span>{STATUS_LABELS[score.status]}</span>

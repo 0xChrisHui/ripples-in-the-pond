@@ -14,7 +14,7 @@ import EchoArchiveRow from '@/src/components/echo/EchoArchiveRow';
 import '@/src/components/me/archive/archive.css';
 
 type SectionId = 'records' | 'pending' | 'favorites';
-const PAGE_SIZE = 6;
+const PAGE_SIZES: Record<SectionId, number> = { records: 3, pending: 3, favorites: 7 };
 
 function countOf<T>(slice: ArchiveSlice<T>): number | null {
   return slice.resolved || slice.phase === 'error' || slice.items.length > 0
@@ -25,7 +25,11 @@ function isLoading<T>(slice: ArchiveSlice<T>): boolean {
   return slice.phase === 'idle' || slice.phase === 'loading';
 }
 
-/** `/me` 私人音乐档案：桌面用目录选择内容，手机保持同一阅读顺序。 */
+function pagesFor(count: number | null, size: number): number {
+  return Math.max(1, Math.ceil((count ?? 0) / size));
+}
+
+/** `/me` 三区仪表盘：唱片、待铸造和收藏同时可见，不再通过目录切换。 */
 export default function MePage() {
   const auth = useAuth();
   const { ownerId, scores, recordings, materials, retry } = useMeArchive({
@@ -41,8 +45,9 @@ export default function MePage() {
     evmAddress: auth.evmAddress,
     getAccessToken: auth.getAccessToken,
   });
-  const [selectedSection, setSelectedSection] = useState<SectionId | null>(null);
-  const [page, setPage] = useState(0);
+  const [pages, setPages] = useState<Record<SectionId, number>>({
+    records: 0, pending: 0, favorites: 0,
+  });
   const archiveReady = Boolean(auth.userId && ownerId === auth.userId);
   const identityPending = !auth.ready || (auth.authenticated && !archiveReady);
   const authState = identityPending ? 'checking' as const
@@ -57,94 +62,82 @@ export default function MePage() {
   const recordCount = recordItems.length > 0 || recordsSettled ? recordItems.length : null;
   const pendingCount = countOf(recordings);
   const favoriteCount = countOf(materials);
-
-  const defaultSection: SectionId = recordCount === 0 && (pendingCount ?? 0) > 0
-    ? 'pending'
-    : recordCount === 0 && pendingCount === 0 && (favoriteCount ?? 0) > 0
-      ? 'favorites' : 'records';
-  const active = selectedSection ?? defaultSection;
-
-  const navItems: Array<{ id: SectionId; label: string; note: string; count: number | null }> = [
-    { id: 'records', label: '我的唱片', note: '永久作品与制作进度', count: recordCount },
-    { id: 'pending', label: '待铸造', note: '24 小时内完成铸造', count: pendingCount },
-    { id: 'favorites', label: '收藏', note: '收藏的声音', count: favoriteCount },
-  ];
-  const activeMeta = navItems.find((item) => item.id === active)!;
-  const activeTotal = activeMeta.count ?? 0;
-  const pageCount = Math.max(1, Math.ceil(activeTotal / PAGE_SIZE));
-  const safePage = Math.min(page, pageCount - 1);
-  const start = safePage * PAGE_SIZE;
-  const selectSection = (id: SectionId) => {
-    setSelectedSection(id);
-    setPage(0);
+  const pageCounts = {
+    records: pagesFor(recordCount, PAGE_SIZES.records),
+    pending: pagesFor(pendingCount, PAGE_SIZES.pending),
+    favorites: pagesFor(favoriteCount, PAGE_SIZES.favorites),
+  };
+  const safePages = {
+    records: Math.min(pages.records, pageCounts.records - 1),
+    pending: Math.min(pages.pending, pageCounts.pending - 1),
+    favorites: Math.min(pages.favorites, pageCounts.favorites - 1),
+  };
+  const changePage = (section: SectionId, page: number) => {
+    setPages((current) => ({ ...current, [section]: page }));
   };
   const refreshRecordings = () => {
     void retry('recordings');
     void retry('scores');
   };
-
-  let loading = false;
-  let error: string | null = null;
-  let warning: string | null = null;
-  let emptyDescription = '';
-  let rows = null;
-  if (active === 'records') {
-    loading = isLoading(scores) || echoes.phase === 'idle' || echoes.phase === 'loading';
-    error = [scores.error, echoes.error].filter(Boolean).join('；') || null;
-    warning = echoes.warning;
-    emptyDescription = '待铸造的录音提交后，会在这里成为永久唱片。';
-    rows = recordItems.slice(start, start + PAGE_SIZE).map((row, index) => row.kind === 'score'
-      ? <ScoreArchiveRow key={row.key} score={row.item} index={start + index} />
-      : <EchoArchiveRow key={row.key} echo={row.item} index={start + index} />);
-  } else if (active === 'pending') {
-    loading = isLoading(recordings);
-    error = recordings.error;
-    emptyDescription = '回到池塘加入一次演奏，录音会在这里保留 24 小时。';
-    rows = recordings.items.slice(start, start + PAGE_SIZE).map((recording, index) => (
-      <RecordingArchiveRow key={recording.key} recording={recording}
-        index={start + index} onQueued={refreshRecordings} />
-    ));
-  } else {
-    loading = isLoading(materials);
-    error = materials.error;
-    warning = materials.cached ? '正在后台更新收藏…' : null;
-    emptyDescription = '在池塘里收藏喜欢的声音，它们会留在这里。';
-    rows = materials.items.slice(start, start + PAGE_SIZE).map((nft, index) => (
-      <MaterialArchiveRow key={nft.tx_hash || `pending-${nft.token_id}`}
-        nft={nft} index={start + index} />
-    ));
-  }
+  const recordStart = safePages.records * PAGE_SIZES.records;
+  const pendingStart = safePages.pending * PAGE_SIZES.pending;
+  const favoriteStart = safePages.favorites * PAGE_SIZES.favorites;
 
   return (
     <main className="me-archive" data-p11-theme="archive">
       <div className="me-archive__inner">
         <ArchiveHeader authState={authState} authSource={auth.authSource} evmAddress={auth.evmAddress} />
         {identityPending ? (
-          <ArchiveEmpty title="正在确认你的档案" description="身份确认后，你的唱片与收藏会分别刷新。" />
+          <ArchiveEmpty title="正在确认你的档案" description="身份确认后，你的音乐会立即出现。" />
         ) : !auth.authenticated ? (
           <ArchiveEmpty title="登录后找回你的音乐" description="登录用于找回你的私人音乐档案。"
             action={<button type="button" onClick={auth.openLoginModal}>登录</button>} />
         ) : (
-          <div className="me-archive__workspace">
-            <aside className="me-archive__rail">
-              <nav className="me-archive__index" aria-label="音乐档案目录">
-                {navItems.map((item) => (
-                  <button key={item.id} type="button" data-active={active === item.id || undefined}
-                    aria-pressed={active === item.id} onClick={() => selectSection(item.id)}>
-                    <span><strong>{item.label}</strong><small>{item.note}</small></span>
-                    {item.count != null && item.count > 0 && <b>{item.count}</b>}
-                  </button>
+          <div className="me-archive__dashboard">
+            <div className="me-archive__panel me-archive__panel--records" id="pond-echoes">
+              <ArchiveSection id="records" title="我的唱片" count={recordCount}
+                loading={isLoading(scores) || echoes.phase === 'idle' || echoes.phase === 'loading'}
+                error={[scores.error, echoes.error].filter(Boolean).join('；') || null}
+                warning={echoes.warning} onRetry={() => { void retry('scores'); void echoes.retry(); }}
+                emptyDescription="铸造完成的唱片会留在这里。"
+                page={safePages.records} pageCount={pageCounts.records}
+                onPageChange={(page) => changePage('records', page)}>
+                {recordItems.slice(recordStart, recordStart + PAGE_SIZES.records).map((row, index) => (
+                  row.kind === 'score'
+                    ? <ScoreArchiveRow key={row.key} score={row.item} index={recordStart + index} />
+                    : <EchoArchiveRow key={row.key} echo={row.item} index={recordStart + index} />
                 ))}
-              </nav>
-            </aside>
-            <div className="me-archive__content" id="pond-echoes">
-              <ArchiveSection title={activeMeta.label} count={activeMeta.count} loading={loading}
-                error={error} warning={warning} onRetry={() => {
-                  if (active === 'records') { void retry('scores'); void echoes.retry(); }
-                  else void retry(active === 'pending' ? 'recordings' : 'materials');
-                }} emptyDescription={emptyDescription} page={safePage} pageCount={pageCount} onPageChange={setPage}>
-                {rows}
-                {loading && activeTotal === 0 && <div className="me-archive__skeleton" />}
+                {(recordCount ?? 0) === 0 && !recordsSettled && <div className="me-archive__skeleton" />}
+              </ArchiveSection>
+            </div>
+
+            <div className="me-archive__panel me-archive__panel--pending">
+              <ArchiveSection id="pending" title="待铸造" count={pendingCount}
+                loading={isLoading(recordings)} refreshing={recordings.phase === 'refreshing'}
+                error={recordings.error} onRetry={() => { void retry('recordings'); }}
+                emptyDescription="新录音会在这里保留 24 小时。"
+                page={safePages.pending} pageCount={pageCounts.pending}
+                onPageChange={(page) => changePage('pending', page)}>
+                {recordings.items.slice(pendingStart, pendingStart + PAGE_SIZES.pending).map((recording, index) => (
+                  <RecordingArchiveRow key={recording.key} recording={recording}
+                    index={pendingStart + index} onQueued={refreshRecordings} />
+                ))}
+                {isLoading(recordings) && (pendingCount ?? 0) === 0 && <div className="me-archive__skeleton" />}
+              </ArchiveSection>
+            </div>
+
+            <div className="me-archive__panel me-archive__panel--favorites">
+              <ArchiveSection id="favorites" title="收藏" count={favoriteCount}
+                loading={isLoading(materials)} error={materials.error}
+                warning={materials.cached ? '正在更新…' : null}
+                onRetry={() => { void retry('materials'); }}
+                emptyDescription="收藏的声音会留在这里。"
+                page={safePages.favorites} pageCount={pageCounts.favorites}
+                onPageChange={(page) => changePage('favorites', page)}>
+                {materials.items.slice(favoriteStart, favoriteStart + PAGE_SIZES.favorites).map((nft) => (
+                  <MaterialArchiveRow key={nft.tx_hash || `pending-${nft.token_id}`} nft={nft} />
+                ))}
+                {isLoading(materials) && (favoriteCount ?? 0) === 0 && <div className="me-archive__skeleton" />}
               </ArchiveSection>
             </div>
           </div>
