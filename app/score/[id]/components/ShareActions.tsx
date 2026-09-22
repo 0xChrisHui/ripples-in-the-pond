@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = { id: string; tokenId: number | null; trackTitle: string };
 
@@ -31,7 +31,20 @@ async function copyText(value: string): Promise<boolean> {
 /** 首屏分享入口直接展开站内渠道，不触发操作系统的原生分享面板。 */
 export default function ShareActions({ id, tokenId, trackTitle }: Props) {
   const [feedback, setFeedback] = useState('复制链接');
+  const detailsRef = useRef<HTMLDetailsElement>(null);
   const slug = tokenId ?? id;
+
+  useEffect(() => {
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      const details = detailsRef.current;
+      if (details?.open && event.target instanceof Node && !details.contains(event.target)) {
+        details.open = false;
+      }
+    };
+
+    document.addEventListener('pointerdown', closeOnOutsidePointer);
+    return () => document.removeEventListener('pointerdown', closeOnOutsidePointer);
+  }, []);
 
   const openIntent = (kind: 'x' | 'weibo') => {
     const url = canonicalUrl(id, tokenId);
@@ -49,7 +62,7 @@ export default function ShareActions({ id, tokenId, trackTitle }: Props) {
 
   return (
     <div className="score-share-actions" data-pond-ui="true">
-      <details>
+      <details ref={detailsRef}>
         <summary aria-label="展开分享方式">分享</summary>
         <div className="score-share-actions__menu">
           <button type="button" onClick={copy}>{feedback}</button>
