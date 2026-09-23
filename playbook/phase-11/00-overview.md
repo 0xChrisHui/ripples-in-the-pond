@@ -3,6 +3,7 @@
 > **启动日期**：2026-09-01
 > **v3 拍板**：2026-09-01
 > **v3.2 后续扩展**：2026-09-22，新增 P11-G「永续水塘转场」与 P11-H「档案到作品水塘」；原 P11 完成事实不变，G/H 独立待排期
+> **v3.3 交付轨**：2026-09-24，新增 P11-I「主线重放与效果对齐」，负责把 G/H 从最新 main 重放并对照验收
 > **视觉哲学**：Immersive Generative Pond × Archival Provenance
 > **真实基线**：`/score-lab/1` 与 `reviews/evidence/p11-score-single-sphere/`
 
@@ -120,8 +121,11 @@
 | **P11-F** | `60-f-final-gate.md` | 功能、视觉、可访问性、性能与永久性 Gate | 生产前授权 |
 | **P11-G** | `70-g-persistent-pond-transition.md` | `/ ↔ /me` 共用一棵永续水塘，圆圈与档案层丝滑换场 | 真实账号往返目验 |
 | **P11-H** | `80-h-archive-score-transition.md` | `/me ↔ /score` 延续同一 Water Core，Score 演出会话保持隔离 | 真实唱片往返目验 |
+| **P11-I** | `90-i-mainline-replay.md` | 从最新 main 逐步重放 G/H，每步对照 main 效果基准表 | 基准表确认、作品页日食与真实账号目验 |
 
 原 v3 施工顺序 `A → 架构同步门 → B → C → D → E → F` 已完成。后续扩展顺序冻结为 `G → H`：先证明首页与档案共用水面，再把 Score 单作品 Scene 接入；只有用户明确点名执行时才开始，不改变当前 P14-G 与 P15 的权威优先级。
+
+2026-09-24 起，G/H 的交付改由 P11-I 执行：G/H 曾在未推送的本地分支上完成，但没有对照 main 的精修效果验收（作品页日食已确认回归）。70-g、80-h 仍是设计真值，P11-I 负责从最新 main 重放并逐项对照。
 
 ---
 
