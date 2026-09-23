@@ -1,0 +1,43 @@
+{
+  "base": "http://127.0.0.1:3011",
+  "startedAt": "2026-09-23T18:38:00.316Z",
+  "samples": [
+    {
+      "label": "home-1440",
+      "path": "/",
+      "title": "Ripples in the Pond",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "headings": [],
+      "links": [
+        {
+          "text": "Ripples in the Pond",
+          "href": "/"
+        },
+        {
+          "text": "池中回声",
+          "href": "/me"
+        },
+        {
+          "text": "艺术家",
+          "href": "/artist"
+        }
+      ],
+      "bodyText": "Ripples in the Pond\n池中回声\n艺术家\n\n按 A–Z、3–8 或空格演奏 33 个声音动画",
+      "canvasCount": 1,
+      "glHealth": "unavailable",
+      "playback": null,
+      "recordVisual": null,
+      "horizontalOverflow": false,
+      "mainCount": 1,
+      "reduced": false,
+      "webgl": true,
+      "loaded": true
+    }
+  ],
+  "errors": [],
+  "homeCirclesReady": false,
+  "finishedAt": "2026-09-23T18:38:50.292Z"
+}

@@ -1,0 +1,43 @@
+{
+  "base": "http://127.0.0.1:3011",
+  "startedAt": "2026-09-23T18:39:15.109Z",
+  "samples": [
+    {
+      "label": "home-1440",
+      "path": "/",
+      "title": "Ripples in the Pond",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "headings": [],
+      "links": [
+        {
+          "text": "Ripples in the Pond",
+          "href": "/"
+        },
+        {
+          "text": "池中回声",
+          "href": "/me"
+        },
+        {
+          "text": "艺术家",
+          "href": "/artist"
+        }
+      ],
+      "bodyText": "Ripples in the Pond\n池中回声\n艺术家\n唤醒水塘…\n\n音效加载中...",
+      "canvasCount": 0,
+      "glHealth": "unavailable",
+      "playback": null,
+      "recordVisual": null,
+      "horizontalOverflow": false,
+      "mainCount": 1,
+      "reduced": false,
+      "webgl": true,
+      "loaded": true
+    }
+  ],
+  "errors": [],
+  "homeCirclesReady": false,
+  "finishedAt": "2026-09-23T18:40:08.332Z"
+}

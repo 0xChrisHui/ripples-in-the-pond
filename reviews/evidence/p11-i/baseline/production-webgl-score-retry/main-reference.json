@@ -1,0 +1,149 @@
+{
+  "base": "https://pond-ripple.xyz",
+  "startedAt": "2026-09-23T18:36:21.377Z",
+  "samples": [
+    {
+      "label": "-score-1-1440",
+      "path": "/score/1",
+      "title": "Ripples #1 — 33",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "headings": [
+        "Ripples #1",
+        "作品凭证"
+      ],
+      "links": [
+        {
+          "text": "←\n返回池塘",
+          "href": "/"
+        },
+        {
+          "text": "",
+          "href": "/score/1/poster"
+        },
+        {
+          "text": "在新标签打开永久播放器\n↗",
+          "href": "/Yu9fOcdc8fzBnPzFWabCyeh3TRcXYTowN5cpv68dOO0"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/address/0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/address/0x19da4b170dF5CcA47414b04f04a24f67E2E6bA54"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/M-NM7NGjnakWHaNE8Su3LLO5qAGckpNeVX3weToIqIQ"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/Yu9fOcdc8fzBnPzFWabCyeh3TRcXYTowN5cpv68dOO0"
+        }
+      ],
+      "bodyText": "←\n返回池塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n已定稿\nFINALIZED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n点击唱片，开始播放\n\n永久音频只会在你主动点击后建立播放会话。\n开始播放\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xAc3F7471…6c20A4AA\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：OP 合约\n创作者\n永久来源未提供创作者地址\n来源：作品数据库\n当前持有者\n0x19da4b17…E2E6bA54\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\n铸造交易\n当前来源未记录铸造交易\n来源：作品数据库\n定稿交易\n当前来源未记录定稿交易\n来源：作品数据库\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadata",
+      "canvasCount": 1,
+      "glHealth": "unavailable",
+      "playback": "ready",
+      "recordVisual": "record",
+      "horizontalOverflow": false,
+      "mainCount": 1,
+      "reduced": false,
+      "webgl": true,
+      "loaded": true
+    },
+    {
+      "label": "score-after-click-unavailable",
+      "path": "/score/1",
+      "title": "Ripples #1 — 33",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "headings": [
+        "Ripples #1",
+        "作品凭证",
+        "Ripples #1",
+        "作品凭证"
+      ],
+      "links": [
+        {
+          "text": "←\n返回池塘",
+          "href": "/"
+        },
+        {
+          "text": "",
+          "href": "/score/1/poster"
+        },
+        {
+          "text": "在新标签打开永久播放器\n↗",
+          "href": "/Yu9fOcdc8fzBnPzFWabCyeh3TRcXYTowN5cpv68dOO0"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/address/0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/address/0x19da4b170dF5CcA47414b04f04a24f67E2E6bA54"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/M-NM7NGjnakWHaNE8Su3LLO5qAGckpNeVX3weToIqIQ"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/Yu9fOcdc8fzBnPzFWabCyeh3TRcXYTowN5cpv68dOO0"
+        }
+      ],
+      "bodyText": "←\n返回池塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n已定稿\nFINALIZED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n正在准备永久录音…\n\n已记录播放请求，资源验证完成后会自动开始。\n取消等待\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xAc3F7471…6c20A4AA\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：OP 合约\n创作者\n永久来源未提供创作者地址\n来源：作品数据库\n当前持有者\n0x19da4b17…E2E6bA54\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\n铸造交易\n当前来源未记录铸造交易\n来源：作品数据库\n定稿交易\n当前来源未记录定稿交易\n来源：作品数据库\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadat",
+      "canvasCount": 1,
+      "glHealth": "unavailable",
+      "playback": "loading",
+      "recordVisual": "record",
+      "horizontalOverflow": false,
+      "mainCount": 2,
+      "reduced": false,
+      "webgl": true
+    }
+  ],
+  "errors": [],
+  "playClick": true,
+  "playingReached": false,
+  "finishedAt": "2026-09-23T18:37:13.556Z"
+}

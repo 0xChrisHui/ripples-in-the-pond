@@ -1,0 +1,81 @@
+{
+  "base": "http://127.0.0.1:3011",
+  "startedAt": "2026-09-23T18:31:02.222Z",
+  "samples": [
+    {
+      "label": "home-1440",
+      "path": "/",
+      "title": "Ripples in the Pond",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "headings": [],
+      "links": [
+        {
+          "text": "Ripples in the Pond",
+          "href": "/"
+        },
+        {
+          "text": "池中回声",
+          "href": "/me"
+        },
+        {
+          "text": "艺术家",
+          "href": "/artist"
+        }
+      ],
+      "bodyText": "Ripples in the Pond\n池中回声\n艺术家\n\n按 A–Z、3–8 或空格演奏 33 个声音动画",
+      "canvasCount": 1,
+      "glHealth": "unavailable",
+      "playback": null,
+      "recordVisual": null,
+      "horizontalOverflow": false,
+      "mainCount": 1,
+      "reduced": false,
+      "webgl": true,
+      "loaded": true
+    },
+    {
+      "label": "-score-1-1440",
+      "path": "/score/1",
+      "title": "Ripples #1 — Ripples #1",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "headings": [
+        "Ripples #1",
+        "作品凭证"
+      ],
+      "links": [
+        {
+          "text": "←\n返回池塘",
+          "href": "/"
+        },
+        {
+          "text": "",
+          "href": "/score/1/poster"
+        },
+        {
+          "text": "查看外部记录 ↗",
+          "href": "/address/0xE0fAed842283F3D689AA8619CBb0ccc232A1DB23"
+        }
+      ],
+      "bodyText": "←\n返回池塘\n\nOP SEPOLIA\n·\nTOKEN #001\n\n分享\n处理失败\nFAILED\nToken #001\nRipples #1\n\nRipples #1\n\n已验证播放快照暂时不可用\n\n已知链上身份与永久凭证仍保留在下方，可据此独立核验。\n重试\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xE0fAed84…32A1DB23\n来源：OP 合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：OP 合约\n创作者\n永久来源未提供创作者地址\n来源：作品数据库\n当前持有者\n暂时无法读取当前持有者\n来源：OP 合约\n铸造交易\n当前来源未记录铸造交易\n来源：作品数据库\n定稿交易\n当前来源未记录定稿交易\n来源：作品数据库\n链上 Token URI\n未记录 · 原始来源未提供\n来源：作品数据库\n永久 Metadata\n未记录 · 原始来源未提供\n来源：永久 metadata\n永久事件\n未记录 · 原始来源未提供\n来源：metadata.animation_url\n永久底曲\n未记录 · 原始来源未提供\n来源：metadata.animation_url\n永久音效表\n未记录 · 原始来源未提供\n来源：m",
+      "canvasCount": 0,
+      "glHealth": null,
+      "playback": null,
+      "recordVisual": "record",
+      "horizontalOverflow": false,
+      "mainCount": 1,
+      "reduced": false,
+      "webgl": true,
+      "loaded": true
+    }
+  ],
+  "errors": [],
+  "playClick": true,
+  "playingReached": false,
+  "finishedAt": "2026-09-23T18:32:00.940Z"
+}

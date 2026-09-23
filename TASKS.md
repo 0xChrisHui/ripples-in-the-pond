@@ -7,16 +7,16 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **当前唯一施工项：P15-I Instant Start（执行中）**
-  - [x] I0 Score #1–#4 冷/热播放基线与分段计时
-  - [x] I1 verified snapshot 与 ownerOf 解耦
-  - [x] I2 底曲/前 8 秒音效启动闭包与 preload
-  - [x] I3 loading 点击排队、解码与状态语义
-  - [x] I4 条件流式底曲（I3 Preview 超预算后触发；I4 cold p95 1775ms）
-  - [ ] I5 Preview/Production 发布与复测封存
+- **当前唯一施工项：P11-I 主线重放与效果对齐（夜间执行中）**
+  - [x] I0 main 效果基准表（18 项自动记录；用户确认与动态缺口列晨报）
+  - [ ] I1 独立修复
+  - [ ] I2–I5 共享水塘、路由转场与私人档案
+  - [ ] I6–I7 作品页与档案唱片锚点
+  - [ ] I8 自动总验收与晨报
 
 ## ⏳ Later / 开放项
 
+- **P15-I5 发布与复测封存**：P15-I0–I4 已完成；本轨结束后另行处理，当前不推送或部署。
 - **P14 live 观察与私密目验**：保持两项每分钟 cron，完成首枚 Pond Echo 上线后的 24h/7d 只读观察；原钱包本人补 `/me#pond-echoes` 私密档案目验。
 - **Phase 11 外部动态证据补档**（不阻塞，2026-09-05 历史条件）：代码与自动 Gate 已完成；当时因 `arweave.net` 与 `ario.permagate.io` 瞬时同时失败，未补 Mainnet Token #1 ready Score 的 cold-start reduced-motion 与日食黑盘复拍。该历史状态不代表当前三候选 resolver；Artist 正式文案以后替换，第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 仅作隔离历史 fixture。
 
