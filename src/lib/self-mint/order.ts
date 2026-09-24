@@ -68,6 +68,13 @@ export type SelfMintOrderRow = {
 
 export type UploadState = 'none' | 'uploading' | 'uploaded' | 'verified' | 'upload_result_unknown';
 
+function assetStage(row: SelfMintOrderRow): 'events' | 'package' | 'metadata' | 'complete' {
+  if (row.events_upload_state !== 'verified') return 'events';
+  if (row.package_upload_state !== 'verified') return 'package';
+  if (row.metadata_upload_state !== 'verified') return 'metadata';
+  return 'complete';
+}
+
 export function publicOrder(row: SelfMintOrderRow) {
   return {
     orderId: row.order_id,
@@ -87,5 +94,6 @@ export function publicOrder(row: SelfMintOrderRow) {
     failureCode: row.failure_code,
     authorizationDigest: row.typed_data_digest,
     sendAttempted: row.send_attempted_at !== null,
+    assetStage: assetStage(row),
   };
 }

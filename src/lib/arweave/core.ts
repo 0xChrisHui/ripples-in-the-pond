@@ -56,6 +56,8 @@ export type UploadResult = {
   url: string;
   uploaderAddress: string;
   costWinc: string;
+  dataCaches: string[];
+  fastFinalityIndexes: string[];
 };
 export type UploadTag = { name: string; value: string };
 export type TurboUploadBudget = {
@@ -127,6 +129,8 @@ export async function uploadBuffer(
     url: resolveArUrl(result.id),
     uploaderAddress: result.owner,
     costWinc: result.winc,
+    dataCaches: result.dataCaches,
+    fastFinalityIndexes: result.fastFinalityIndexes,
   };
 }
 

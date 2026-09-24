@@ -1694,3 +1694,4 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **保留成熟地基**：旧 P16 的 claim SQL 与 v2 作品包不迁入；`054` 从 P15 最新 `mint_score_enqueue` 增量加入共享 claim，Ethereum 也冻结并发布 `ripples.score-package.v3`。
 - **复用同一播放合同**：Ethereum 铸造确认后按完整 `environment + chainId + contract + tokenId` 发布既有 verified snapshot，P11 Score 页面只增加多链薄路由，不创建第二套播放器或永久数据读取路径。
 - **外部 Gate 边界**：本地代码与自动专项检查完成后停在 M6；隔离库重建必须先按 Sepolia 历史 Token 初始化 sequence，真实钱包 Gate 通过前不合入主线。
+- 2026-09-24：P16 自付铸造的前台准备由订单创建后的 `after()` 和认证续跑入口立即驱动，Cron 只负责恢复；Turbo 上传必须同时返回 data cache 与 fast-finality index 才可进入签名，公共双网关传播不再阻塞钱包弹窗。

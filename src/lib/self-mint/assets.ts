@@ -71,8 +71,15 @@ async function uploadAndVerify(
   }
   if (stored.state === 'verified') return true;
   if (stored.state === 'uploaded' && stored.txId) {
-    await attestPermanentResource({ arTxId: stored.txId, ...identity });
-    return writeUpload(row, owner, kind, identity, 'verified', stored.txId);
+    try {
+      await attestPermanentResource({ arTxId: stored.txId, ...identity });
+      return writeUpload(row, owner, kind, identity, 'verified', stored.txId);
+    } catch (error) {
+      if (error instanceof Error && error.message.startsWith('永久资源未达到双网关 quorum')) {
+        return false;
+      }
+      throw new Error(`CRITICAL: ${kind} 永久资源身份冲突`, { cause: error });
+    }
   }
   if (stored.state !== 'none') throw new Error(`CRITICAL: ${kind} 上传状态损坏`);
   if (!await writeUpload(row, owner, kind, identity, 'uploading')) return false;
@@ -85,13 +92,17 @@ async function uploadAndVerify(
     if (!await writeUpload(row, owner, kind, identity, 'uploaded', uploaded.txId)) {
       throw new Error(`${kind} 已上传但数据库回写失败`);
     }
+    const turboFinalized = uploaded.dataCaches.length > 0
+      && uploaded.fastFinalityIndexes.length > 0;
+    return turboFinalized
+      ? writeUpload(row, owner, kind, identity, 'verified', uploaded.txId)
+      : false;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     await writeUpload(row, owner, kind, identity, 'upload_result_unknown', null, message.slice(0, 2000))
       .catch(() => undefined);
     throw error;
   }
-  return false;
 }
 
 async function draftEvents(row: SelfMintOrderRow): Promise<KeyEvent[]> {

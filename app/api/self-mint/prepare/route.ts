@@ -1,9 +1,12 @@
 import { randomBytes } from 'node:crypto';
+import { after } from 'next/server';
 import { getConfiguredScoreAddress, getChainDefinition } from '@/src/lib/chain/multichain/registry';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { requireSelfMintContext, selfMintErrorResponse } from '@/src/lib/self-mint/access';
+import { runSelfMintAssetOrder } from '@/src/lib/self-mint/asset-job';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const maxDuration = 60;
 
 export async function POST(request: Request) {
   try {
@@ -45,6 +48,10 @@ export async function POST(request: Request) {
     }
     const row = Array.isArray(data) ? data[0] : data;
     if (!row) throw new Error('prepare RPC 未返回订单');
+    after(async () => {
+      try { await runSelfMintAssetOrder(row.order_id); }
+      catch (caught) { console.error('[self-mint-assets]', caught); }
+    });
     return Response.json({
       orderId: row.order_id,
       tokenId: String(row.token_id),

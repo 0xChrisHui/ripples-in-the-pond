@@ -8,7 +8,7 @@ import { useAuth } from '@/src/hooks/useAuth';
 import { useEthereumScoreMint } from '@/src/hooks/useEthereumScoreMint';
 import { forgetMintHash, readMintHash, recoverMintHash } from '@/src/lib/self-mint/client-hash';
 import ReconnectMintWallet from './ReconnectMintWallet';
-import { STATUS_COPY, type PublicOrder } from './self-mint-copy';
+import { ASSET_STAGE_COPY, STATUS_COPY, type PublicOrder } from './self-mint-copy';
 import './self-mint-status.css';
 
 export default function SelfMintOrderView({ orderId, onClose }: {
@@ -25,6 +25,7 @@ export default function SelfMintOrderView({ orderId, onClose }: {
   const dialogRef = useRef<HTMLElement>(null);
   const closeRef = useRef(onClose);
   const busyRef = useRef(busy);
+  const lastAssetKickRef = useRef(0);
   closeRef.current = onClose;
   busyRef.current = busy;
   const walletAddress = auth.selectedExternalWallet?.address ?? null;
@@ -63,6 +64,12 @@ export default function SelfMintOrderView({ orderId, onClose }: {
     const result = await response.json() as PublicOrder & { error?: string };
     if (!response.ok) throw new Error(result.error ?? '订单读取失败');
     setOrder(result);
+    if (result.status === 'preparing_assets' && Date.now() - lastAssetKickRef.current >= 5_000) {
+      lastAssetKickRef.current = Date.now();
+      void fetch(`/api/self-mint/order/${orderId}/advance`, {
+        method: 'POST', headers: { Authorization: `Bearer ${token}` },
+      }).catch(() => undefined);
+    }
     if (!result.sendAttempted || result.status === 'submitted'
       || result.status === 'confirming' || result.status === 'success') {
       forgetMintHash(orderId);
@@ -78,7 +85,7 @@ export default function SelfMintOrderView({ orderId, onClose }: {
       if (active) setError(caught instanceof Error ? caught.message : '订单读取失败');
     });
     refresh();
-    const timer = window.setInterval(refresh, 5_000);
+    const timer = window.setInterval(refresh, 2_000);
     return () => { active = false; window.clearInterval(timer); };
   }, [load]);
 
@@ -124,8 +131,10 @@ export default function SelfMintOrderView({ orderId, onClose }: {
     }
   }
 
-  const copy = order && (order.status === 'ready_to_sign' && order.sendAttempted
-    ? STATUS_COPY.manual_review : STATUS_COPY[order.status]);
+  const copy = order && (order.status === 'preparing_assets'
+    ? ASSET_STAGE_COPY[order.assetStage]
+    : order.status === 'ready_to_sign' && order.sendAttempted
+      ? STATUS_COPY.manual_review : STATUS_COPY[order.status]);
   const hash = order && (order.replacementTxHash ?? order.txHash ?? order.failedTxHash);
   const canSend = order && !order.sendAttempted && !recoverableHash
     && order.canContinue && auth.walletCapability.canSelfPayEthGas
