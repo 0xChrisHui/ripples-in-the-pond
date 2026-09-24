@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
         .from('score_nft_queue')
         .select(`
           id, token_id, tx_hash, created_at, status, failure_kind,
-          tracks(title),
+          tracks:tracks!score_nft_queue_track_id_fkey(title),
           pending_scores(event_count)
         `)
         .eq('user_id', auth.userId)
