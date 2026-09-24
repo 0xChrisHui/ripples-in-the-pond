@@ -19,6 +19,17 @@ import type { GlPhysNode } from '../spheres/gl-sim-setup';
 
 export interface Drop { ux: number; uy: number; radius: number; strength: number }
 
+export function blocksRipplePointer(target: EventTarget | null): boolean {
+  return target instanceof Element && Boolean(target.closest(
+    'button, a, input, textarea, select, [contenteditable="true"], [data-pond-no-ripple="true"]',
+  ));
+}
+
+export function markRipplePointerInput(): void {
+  const shell = document.querySelector<HTMLElement>('[data-pond-shell]');
+  if (shell) shell.dataset.pondRippleInputs = String(Number(shell.dataset.pondRippleInputs ?? 0) + 1);
+}
+
 const CROSS = 0.5;     // 没入程度穿过此阈值（升/降水位扫过球）= 穿越水面 → 溅起
 const TRAIL_MIN = 16;  // 拖拽位移超过此像素才落一滴尾迹（节流，免拖动时水花风暴）
 const MERGE_OVER = 6;  // 单帧穿越数 >6 → 合并成一道大涟漪（限流，验收"无水花风暴"）

@@ -96,7 +96,7 @@
 .archive-empty[data-compact] h2 { font-size: 1.35rem; }
 .archive-empty__description { margin-top: var(--p11-space-8); color: var(--p11-muted); font-size: var(--p11-text-xs); line-height: 1.6; }
 .archive-empty__action { margin-top: var(--p11-space-20, 20px); }
-.archive-empty__action :is(a, button) { display: inline-flex; min-height: var(--p11-touch-target); align-items: center; padding: var(--p11-space-8) var(--p11-space-24); border: 1px solid var(--p11-brass); border-radius: var(--p11-radius-round); color: var(--p11-brass-strong); font-size: var(--p11-text-sm); }
+.archive-empty__action :is(a, button) { display: inline-flex; height: var(--p11-touch-target, 44px); min-height: var(--p11-touch-target, 44px); align-items: center; padding: var(--p11-space-8) var(--p11-space-24); border: 1px solid var(--p11-brass); border-radius: var(--p11-radius-round); color: var(--p11-brass-strong); font-size: var(--p11-text-sm); }
 .archive-section__pagination { display: grid; grid-template-columns: 1fr auto 1fr; min-height: 48px; align-items: center; gap: var(--p11-space-12); color: var(--p11-faint); font: var(--p11-text-xs)/1 var(--p11-font-mono); }
 .archive-section__pagination button { min-height: var(--p11-touch-target); color: var(--p11-muted); font-family: var(--p11-font-body); font-size: var(--p11-text-xs); }
 .archive-section__pagination button:last-child { justify-self: end; }

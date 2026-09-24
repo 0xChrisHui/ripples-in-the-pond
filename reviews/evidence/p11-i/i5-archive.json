@@ -1,0 +1,146 @@
+{
+  "measuredAt": "2026-09-24T04:18:32.591Z",
+  "passed": true,
+  "home": {
+    "path": "/",
+    "phase": "home",
+    "archiveReady": "true",
+    "archiveCount": 1,
+    "sameArchive": true,
+    "inert": true,
+    "ariaHidden": "true",
+    "active": "false",
+    "interactive": "false",
+    "loginCopy": false,
+    "dashboardVisible": false,
+    "canvasCount": 2,
+    "overflow": false,
+    "rippleInputs": 0
+  },
+  "archive": {
+    "path": "/me",
+    "phase": "archive",
+    "archiveReady": "true",
+    "archiveCount": 1,
+    "sameArchive": true,
+    "inert": false,
+    "ariaHidden": "false",
+    "active": "true",
+    "interactive": "true",
+    "loginCopy": true,
+    "dashboardVisible": false,
+    "canvasCount": 2,
+    "overflow": false,
+    "rippleInputs": 0
+  },
+  "returned": {
+    "path": "/",
+    "phase": "home",
+    "archiveReady": "true",
+    "archiveCount": 1,
+    "sameArchive": true,
+    "inert": true,
+    "ariaHidden": "true",
+    "active": "false",
+    "interactive": "false",
+    "loginCopy": false,
+    "dashboardVisible": false,
+    "canvasCount": 2,
+    "overflow": false,
+    "rippleInputs": 0
+  },
+  "performance": {
+    "firstCirclesMs": 419.5,
+    "archivePreparedMs": 1079.3999999761581,
+    "longTaskCount": 0,
+    "longTaskMaxMs": 0,
+    "tasks": []
+  },
+  "viewports": [
+    {
+      "width": 375,
+      "height": 812,
+      "overflow": false,
+      "archiveRight": 355,
+      "loginButtonSize": [
+        78,
+        44
+      ],
+      "loginButtonStyle": {
+        "height": "44px",
+        "minHeight": "44px",
+        "transform": "none",
+        "target": "44px"
+      }
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "overflow": false,
+      "archiveRight": 737.28125,
+      "loginButtonSize": [
+        78,
+        44
+      ],
+      "loginButtonStyle": {
+        "height": "44px",
+        "minHeight": "44px",
+        "transform": "none",
+        "target": "44px"
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "overflow": false,
+      "archiveRight": 983.046875,
+      "loginButtonSize": [
+        78,
+        44
+      ],
+      "loginButtonStyle": {
+        "height": "44px",
+        "minHeight": "44px",
+        "transform": "none",
+        "target": "44px"
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "overflow": false,
+      "archiveRight": 1382.40625,
+      "loginButtonSize": [
+        78,
+        44
+      ],
+      "loginButtonStyle": {
+        "height": "44px",
+        "minHeight": "44px",
+        "transform": "none",
+        "target": "44px"
+      }
+    }
+  ],
+  "keyboard": {
+    "before": {
+      "audio": 0,
+      "drafts": null,
+      "pressed": false
+    },
+    "after": {
+      "audio": 0,
+      "drafts": null,
+      "pressedBadge": false
+    }
+  },
+  "veil": {
+    "pointerEvents": "none",
+    "backgroundDelta": 1,
+    "controlsDelta": 0,
+    "enabled": true
+  },
+  "privateRequests": [],
+  "writeRequests": [],
+  "pageErrors": []
+}

@@ -14,7 +14,7 @@ import type { ProjCtx } from '../sphere-projection';
 import { makeSimScene, makeCompositeScene, applyTuning, applySpheres, disposeQuadScene, getHeightFieldSize, type QuadScene } from './water-distort-setup';
 import { clearHeightTargets, renderFrame, type FrameTargets } from './composite/render-passes';
 import { collectObjectDrops, collectAmbientDrop, writeDrops, resetRippleFeed,
-  pointerPathDrops, resetPointerPath, type Drop } from './ripple-feed';
+  pointerPathDrops, resetPointerPath, blocksRipplePointer, markRipplePointerInput, type Drop } from './ripple-feed';
 import type { GlSim } from '../spheres/use-gl-sim';
 import type { GlPhysNode } from '../spheres/gl-sim-setup';
 import { getShowcasePose, sampleShowcase } from '../showcase/showcase-state';
@@ -24,7 +24,6 @@ import { getP9QuietWaves, getP9WaterUniform } from '../p9/consumers/p9-water';
 import { getPondRenderNodes, type Track36VisitorState } from '../visitor/track36-state';
 import { getEclipseMix } from '../focus/playback-focus';
 import { drainTrack36Drops } from '../visitor/track36-ripples';
-
 /**
  * H2/H3/H4 — 全屏动态扭曲水面（真场景 + 水位深度遮罩 + 涟漪交互全集）。
  *
@@ -121,9 +120,13 @@ export default function WaterDistort(
     };
     // K2：划水改路径插值（按位移触发、上帧↔当前补点连成线）→ 快划连续不"咚咚"
     const onMove = (e: PointerEvent) => {
-      pending.current.push(...pointerPathDrops(e.clientX, e.clientY, window.innerWidth, window.innerHeight, getRippleTuning()));
+      if (e.pointerType === 'touch' || blocksRipplePointer(e.target)) return;
+      const drops = pointerPathDrops(e.clientX, e.clientY, window.innerWidth, window.innerHeight, getRippleTuning());
+      if (drops.length > 0) markRipplePointerInput(); pending.current.push(...drops);
     };
     const onDown = (e: PointerEvent) => {
+      if (blocksRipplePointer(e.target)) return;
+      markRipplePointerInput();
       resetPointerPath();
       push(e.clientX, e.clientY, getRippleTuning().dropClick);
       // 点击同位置投一道 BgWave（sim 像素坐标）→ pushGlSpheresByWaves 推水下球（深度衰减 + 滑行惯性）。复刻 /test1

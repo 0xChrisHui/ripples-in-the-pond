@@ -28,15 +28,18 @@ import type { FeaturedEcho, FeaturedEchoResponse } from '@/src/types/featured-ec
 import PersistentWaterCore from '@/src/components/pond-shell/PersistentWaterCore';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScenePresence } from '@/src/components/pond-shell/motion/use-scene-presence';
+import { usePreparedArchive } from '@/src/components/pond-shell/use-prepared-archive';
 
 const SandboxControls = dynamic(() => import('./SandboxControls'), { ssr: false });
+const PreparedArchive = dynamic(() => import('@/app/(pond)/me/MePondArchive'), { ssr: false });
 
 type PondMode = 'production' | 'test3' | 'test4';
 
 /** 生产与沙盒共用同一水塘；沙盒控制器保持在独立异步 chunk。 */
 const ARCHIVE_FLAGS: GLFlags = {
   ...DEFAULT_GL_FLAGS,
-  glSpheres: false,
+  // presence 已让圆圈不可见；保留实例避免返回首页时重编译着色器。
+  glSpheres: true,
   sphereLabels: false,
   sphereMotion: false,
   sphereDrift: false,
@@ -61,6 +64,12 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const homeVisible = !persistent || phase === 'home' || phase === 'entering-home';
   const homeInteractive = !persistent || phase === 'home';
   const renderHomeScene = !persistent || (phase !== 'archive' && phase !== 'score');
+  const prepareArchive = usePreparedArchive(pathname, persistent);
+  const archiveVisible = (phase === 'leaving-home'
+    && (pathname === '/me' || transition?.destination === '/me'))
+    || (phase === 'archive' && pathname === '/me');
+  const archiveInteractive = archiveVisible && pathname === '/me'
+    && phase === 'archive' && Boolean(transition?.archiveReady);
   const sceneMotion = useScenePresence(phase, transition?.duration ?? 0);
   const [homeInitialized, setHomeInitialized] = useState(homeVisible);
   const [glFlags, setGlFlags] = useState<GLFlags>(DEFAULT_GL_FLAGS);
@@ -156,7 +165,9 @@ export default function PondExperience({ mode, persistent = false, children }: {
         <GlLoading error={glSim.error} onRetry={glSim.retry} />
       )}
       <div data-pond-ui="true" className="pointer-events-none fixed left-6 z-30" style={{ top: '14rem' }}>
-        <div className="pointer-events-auto"><TestJam p9Enabled={p9Enabled && homeInteractive} /></div>
+        <div className="pointer-events-auto">
+          {homeInitialized && <TestJam p9Enabled={p9Enabled} enabled={homeInteractive} />}
+        </div>
       </div>
       {glFlags.glSpheres && glSim.ready && sceneReady && (
         <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx}
@@ -175,7 +186,13 @@ export default function PondExperience({ mode, persistent = false, children }: {
       <DraftSavedToast />
       <FeaturedEchoBottomPlayer echo={featuredEcho} playback={echoPlayback} />
       </main>
-      {persistent && <div className="pond-route-surface" onTransitionEnd={settleOnReveal}>
+      {prepareArchive && <div className="pond-prepared-archive" data-active={archiveVisible}
+        data-interactive={archiveInteractive} data-prepared={transition?.archiveReady}
+        aria-hidden={!archiveInteractive} inert={!archiveInteractive} onTransitionEnd={settleOnReveal}>
+        <PreparedArchive onPrepared={transition?.setArchiveReady} />
+      </div>}
+      {persistent && <div className="pond-route-surface"
+        data-archive-placeholder={pathname === '/me'} onTransitionEnd={settleOnReveal}>
         <Suspense fallback={null}>{children}</Suspense>
       </div>}
     </div>

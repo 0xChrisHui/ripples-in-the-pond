@@ -19,6 +19,33 @@
 
 .persistent-pond-shell[data-pond-transition='home'] .pond-home-surface { pointer-events: auto; }
 
+.pond-prepared-archive {
+  position: absolute;
+  z-index: 2;
+  inset: 0 0 auto;
+  min-height: 100svh;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity var(--pond-route-duration, var(--p11-reveal)) var(--p11-ease-out),
+    transform var(--pond-route-duration, var(--p11-reveal)) var(--p11-ease-out),
+    visibility 0s linear var(--pond-route-duration, var(--p11-reveal));
+}
+
+.pond-prepared-archive[data-active='true'] {
+  position: relative;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+.pond-prepared-archive[data-interactive='true'] { pointer-events: auto; }
+
+/* 预备期间先计算真实数据，切换时只播放整层入场。 */
+.pond-prepared-archive :is(.me-archive__header, .me-archive__panel) { animation: none; }
+
 .pond-route-surface {
   position: relative;
   z-index: 2;
@@ -28,6 +55,8 @@
   transition: opacity var(--pond-route-duration, var(--p11-reveal)) var(--p11-ease-out),
     transform var(--pond-route-duration, var(--p11-reveal)) var(--p11-ease-out);
 }
+
+.pond-route-surface[data-archive-placeholder='true'] { display: none; }
 
 /* 稳定态必须是 transform:none，否则档案里的 fixed 层会以本层为包含块。 */
 .persistent-pond-shell:is([data-pond-transition='archive'], [data-pond-transition='score'], [data-pond-transition='leaving-home']) .pond-route-surface {
@@ -41,5 +70,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pond-route-surface { transform: none; }
+  .pond-route-surface, .pond-prepared-archive { transform: none; }
 }

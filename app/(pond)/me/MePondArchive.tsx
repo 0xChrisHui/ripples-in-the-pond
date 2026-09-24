@@ -1,56 +1,29 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import MeArchivePage from '@/src/components/me/archive/MeArchivePage';
-import { DEFAULT_GL_FLAGS, type GLFlags } from '@/src/components/pond-gl-test3/gl-flags';
-import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
 import './me-pond.css';
 
-const PondGL = dynamic(() => import('@/src/components/pond-gl-test3/PondGL'), { ssr: false });
 const STANDARD_VEIL_OPACITY = 75;
-
-const ARCHIVE_POND_FLAGS: GLFlags = {
-  ...DEFAULT_GL_FLAGS,
-  glSpheres: false,
-  sphereLabels: false,
-  sphereMotion: false,
-  sphereDrift: false,
-  glEclipse: false,
-  floatMotes: false,
-  waterPlants: false,
-  reefStones: false,
-  crystalPillars: false,
-};
 
 type MePondArchiveProps = {
   showControls?: boolean;
+  onPrepared?: (ready: boolean) => void;
 };
 
 /** 正式个人档案复用首页水面，只留下池塘、月光与花瓣。 */
-export default function MePondArchive({ showControls = false }: MePondArchiveProps) {
-  const [health, setHealth] = useState<GlHealth>('unavailable');
-  const [sceneReady, setSceneReady] = useState(false);
+export default function MePondArchive({ showControls = false, onPrepared }: MePondArchiveProps) {
   const [veilEnabled, setVeilEnabled] = useState(false);
   const [veilOpacity, setVeilOpacity] = useState(STANDARD_VEIL_OPACITY);
 
   return (
-    <div className="me-pond" data-pond-health={showControls ? health : 'shared'}
-      data-scene-ready={showControls ? sceneReady : true}>
-      {showControls ? <div className="me-pond__scene" aria-hidden="true">
-          <PondGL
-            flags={ARCHIVE_POND_FLAGS}
-            pointerInteractive
-            onHealthChange={setHealth}
-            onSceneReadyChange={setSceneReady}
-          />
-        </div> : null}
+    <div className="me-pond" data-pond-health="shared" data-scene-ready="true">
       <div
         className="me-pond__veil"
         aria-hidden="true"
         style={{ opacity: veilEnabled ? veilOpacity / 100 : 0 }}
       />
-      <MeArchivePage variant="pond" />
+      <MeArchivePage variant="pond" onPrepared={onPrepared} />
       {showControls ? (
         <div
           className="me-pond__controls"

@@ -10,9 +10,11 @@ type TransitionValue = {
   phase: PondTransitionPhase;
   destination: string | null;
   duration: number;
+  archiveReady: boolean;
   navigate: (href: string) => void;
   prefetch: (href: string) => void;
   settle: () => void;
+  setArchiveReady: (ready: boolean) => void;
 };
 
 const PondTransitionContext = createContext<TransitionValue | null>(null);
@@ -38,6 +40,7 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<PondTransitionPhase>(() => stablePhase(pathname));
   const [destination, setDestination] = useState<string | null>(null);
   const [duration, setDuration] = useState(520);
+  const [archiveReady, setArchiveReady] = useState(false);
   const intentRef = useRef<string | null>(null);
   const originRef = useRef<string | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -58,6 +61,7 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
   const settle = useCallback(() => {
     // 旧地址上的兜底计时器与过渡事件不能结束尚未落地的新导航。
     if (intentRef.current && pathname !== intentRef.current) return;
+    if (pathname === '/me' && !archiveReady) return;
     const moving = intentRef.current !== null || phase === 'leaving-home' || phase === 'entering-home';
     if (timerRef.current !== null) window.clearTimeout(timerRef.current);
     timerRef.current = null;
@@ -65,7 +69,7 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     originRef.current = null;
     flushSync(() => { setDestination(null); setPhase(stablePhase(pathname)); });
     if (moving) focusEntry();
-  }, [pathname, phase]);
+  }, [archiveReady, pathname, phase]);
 
   const armFallback = useCallback(() => {
     if (timerRef.current !== null) window.clearTimeout(timerRef.current);
@@ -83,13 +87,14 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     intentRef.current = targetPath;
     flushSync(() => {
       setDestination(targetPath);
-      setPhase(targetPath === '/' ? 'entering-home'
-        : current === '/' ? 'leaving-home' : stablePhase(targetPath));
+      setPhase(targetPath === '/me' && !archiveReady ? stablePhase(current)
+        : targetPath === '/' ? 'entering-home'
+          : current === '/' ? 'leaving-home' : stablePhase(targetPath));
     });
     router.prefetch(targetPath);
-    armFallback();
+    if (targetPath !== '/me' || archiveReady) armFallback();
     router.push(href);
-  }, [armFallback, router]);
+  }, [archiveReady, armFallback, router]);
 
   useEffect(() => {
     const intended = intentRef.current;
@@ -102,25 +107,27 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     }
     if (phase === 'home' || phase === 'archive' || phase === 'score') {
       const next = stablePhase(pathname);
+      if (pathname === '/me' && !archiveReady) return;
       if (next !== phase) queueMicrotask(() => setPhase(
         next === 'home' ? 'entering-home' : phase === 'home' ? 'leaving-home' : next,
       ));
     }
     armFallback();
-  }, [armFallback, pathname, phase, router]);
+  }, [archiveReady, armFallback, pathname, phase, router]);
 
   useEffect(() => {
-    const landed = phase === 'leaving-home' ? pathname.startsWith('/me')
+    const landed = phase === 'leaving-home' ? pathname === '/me' && archiveReady
       : phase === 'entering-home' ? pathname === '/' : false;
     if (!landed) return;
     const timer = window.setTimeout(settle, duration + 120);
     return () => window.clearTimeout(timer);
-  }, [duration, pathname, phase, settle]);
+  }, [archiveReady, duration, pathname, phase, settle]);
 
   useEffect(() => {
     if (intentRef.current !== pathname || phase !== stablePhase(pathname)) return;
+    if (pathname === '/me' && !archiveReady) return;
     queueMicrotask(settle);
-  }, [pathname, phase, settle]);
+  }, [archiveReady, pathname, phase, settle]);
 
   useEffect(() => {
     const onPopState = () => {
@@ -133,12 +140,12 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
       // 地址监听可能已先把相位推到 leaving-home；这里不能再跳到终态，否则既无淡入也不收场。
       setPhase((current) => target === '/'
         ? current === 'home' ? 'home' : 'entering-home'
-        : current === 'home' || current === 'entering-home' || current === 'leaving-home'
-          ? 'leaving-home' : stablePhase(target));
+        : target === '/me' && (current === 'home' || current === 'entering-home' || current === 'leaving-home')
+          ? archiveReady ? 'leaving-home' : 'home' : stablePhase(target));
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
-  }, []);
+  }, [archiveReady]);
 
   useEffect(() => {
     const onVisibility = () => { if (document.hidden) settle(); };
@@ -150,9 +157,9 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
   }, [settle]);
 
   const value = useMemo<TransitionValue>(() => ({
-    phase, destination, duration, navigate,
-    prefetch: (href) => router.prefetch(href.split('#')[0] || '/'), settle,
-  }), [destination, duration, navigate, phase, router, settle]);
+    phase, destination, duration, archiveReady, navigate,
+    prefetch: (href) => router.prefetch(href.split('#')[0] || '/'), settle, setArchiveReady,
+  }), [archiveReady, destination, duration, navigate, phase, router, settle]);
   return <PondTransitionContext.Provider value={value}>{children}</PondTransitionContext.Provider>;
 }
 

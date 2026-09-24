@@ -12,7 +12,10 @@ import { triggerP9Effect } from '@/src/components/pond-gl-test3/p9/runtime/p9-st
  * 保留：键盘音效 + 录制 + 草稿存储。
  * 旧的 keyVisual 视觉反馈在此关闭，由 SvgAnimationLayer 接管视觉。
  */
-export default function TestJam({ p9Enabled = false }: { p9Enabled?: boolean }) {
+export default function TestJam({ p9Enabled = false, enabled = true }: {
+  p9Enabled?: boolean;
+  enabled?: boolean;
+}) {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -42,10 +45,10 @@ export default function TestJam({ p9Enabled = false }: { p9Enabled?: boolean }) 
     );
   }
 
-  return <TestJamDesktop p9Enabled={p9Enabled} />;
+  return <TestJamDesktop p9Enabled={p9Enabled} enabled={enabled} />;
 }
 
-function TestJamDesktop({ p9Enabled }: { p9Enabled: boolean }) {
+function TestJamDesktop({ p9Enabled, enabled }: { p9Enabled: boolean; enabled: boolean }) {
   const { ready, playSound } = useJam();
 
   const handleRecordComplete = useCallback(
@@ -66,7 +69,7 @@ function TestJamDesktop({ p9Enabled }: { p9Enabled: boolean }) {
   });
 
   const { pressedKeys } = useKeyboard({
-    enabled: ready,
+    enabled: ready && enabled,
     onKeyDown: (key) => {
       if (p9Enabled) triggerP9Effect(key);
       playSound(key);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useMeArchive, type ArchiveSlice } from '@/src/hooks/me/useMeArchive';
 import { useOwnedEchoes } from '@/src/hooks/me/useOwnedEchoes';
@@ -30,7 +30,10 @@ function pagesFor(count: number | null, size: number): number {
 }
 
 /** 唱片、待铸造和收藏共用的数据视图；页面外壳可以替换，档案行为保持一致。 */
-export default function MeArchivePage({ variant = 'default' }: { variant?: 'default' | 'pond' }) {
+export default function MeArchivePage({ variant = 'default', onPrepared }: {
+  variant?: 'default' | 'pond';
+  onPrepared?: (ready: boolean) => void;
+}) {
   const auth = useAuth();
   const { ownerId, scores, recordings, materials, retry } = useMeArchive({
     authenticated: auth.authenticated,
@@ -53,8 +56,13 @@ export default function MeArchivePage({ variant = 'default' }: { variant?: 'defa
   const authState = identityPending ? 'checking' as const
     : auth.authenticated ? 'authenticated' as const : 'unauthenticated' as const;
 
-  const echoSettled = echoes.phase === 'ready' || echoes.phase === 'error';
+  const echoSettled = !auth.evmAddress || echoes.resolved || echoes.phase === 'error';
   const recordsSettled = (scores.resolved || scores.phase === 'error') && echoSettled;
+  const prepared = auth.ready && (!auth.authenticated || (archiveReady && recordsSettled
+    && (recordings.resolved || recordings.phase === 'error')
+    && (materials.resolved || materials.phase === 'error')));
+  useEffect(() => { onPrepared?.(prepared); }, [onPrepared, prepared]);
+  useEffect(() => () => { onPrepared?.(false); }, [onPrepared]);
   const recordItems = [
     ...scores.items.map((item) => ({ kind: 'score' as const, key: `score-${item.queueId}`, item })),
     ...echoes.items.map((item) => ({ kind: 'echo' as const, key: `echo-${item.key}`, item })),
@@ -84,7 +92,8 @@ export default function MeArchivePage({ variant = 'default' }: { variant?: 'defa
   const favoriteStart = safePages.favorites * PAGE_SIZES.favorites;
 
   return (
-    <main className="me-archive" data-p11-theme="archive" data-me-variant={variant}>
+    <main className="me-archive" data-p11-theme="archive" data-me-variant={variant}
+      data-archive-prepared={prepared}>
       <div className="me-archive__inner">
         <ArchiveHeader authState={authState} authSource={auth.authSource} evmAddress={auth.evmAddress} />
         {identityPending ? (
@@ -96,7 +105,8 @@ export default function MeArchivePage({ variant = 'default' }: { variant?: 'defa
           <div className="me-archive__dashboard">
             <div className="me-archive__panel me-archive__panel--records" id="pond-echoes">
               <ArchiveSection id="records" title="我的唱片" count={recordCount}
-                loading={isLoading(scores) || echoes.phase === 'idle' || echoes.phase === 'loading'}
+                loading={isLoading(scores) || (Boolean(auth.evmAddress)
+                  && (echoes.phase === 'idle' || echoes.phase === 'loading'))}
                 error={[scores.error, echoes.error].filter(Boolean).join('；') || null}
                 warning={echoes.warning} onRetry={() => { void retry('scores'); void echoes.retry(); }}
                 emptyDescription="铸造完成的唱片会留在这里。"
