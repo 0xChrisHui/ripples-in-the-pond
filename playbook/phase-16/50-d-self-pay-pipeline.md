@@ -20,7 +20,7 @@
 → 客户端校验当前钱包与凭证
 → 切换 Ethereum
 → viem simulate / estimateGas / encodeFunctionData
-→ Privy useSendTransaction 让用户确认并广播
+→ Privy ConnectedWallet provider + viem 让用户确认并广播
 → 客户端拿到 txHash 就登记；漏报也不阻塞恢复
 → cron 始终先查询 order mapping，再核验事件、owner 与 tokenURI
 → success 后发布资产页
@@ -83,13 +83,13 @@ HTTP 路由不得等待交易确认；客户端关闭页面后，服务端仍能
 4. 读取余额与当前 fee 数据；
 5. viem `simulateContract` / `estimateContractGas` 并 `encodeFunctionData`；
 6. 调 attempt API 盖 `send_attempted_at`；
-7. Privy `useSendTransaction` 按官方两参数接口调用 `sendTransaction({ to: scoreContract, data, chainId }, { address: selectedWallet.address, sponsor: false })`；`chainId` 必须显式为当前目标链；
+7. 从已核验的 Privy `ConnectedWallet` 取得 EIP-1193 provider，创建 viem wallet client，并用固定的 account、chain、ScoreNFT 地址和 calldata 调用 `sendTransaction`；
 8. 一拿到哈希就调用 submission API；
 9. 页面可继续轻量轮询，但不成为最终真理来源。
 
-不手搓 provider、wallet client、交易 modal 或 WalletConnect 广播。本轮不保留 `wallet.getEthereumProvider()` + viem wallet client 的第二发送路径；若 Privy 标准接口真实失败，保存原始错误并停止该钱包 Gate，不能在同一实现中静默换广播方式。钱包展示的最终交易详情优先于站内估算。
+不直接读取 `window.ethereum`，也不按 MetaMask、WalletConnect、Phantom 或 OKX 分叉发送实现。Privy `ConnectedWallet` provider + viem wallet client 是唯一广播路径；钱包展示的最终交易详情优先于站内估算。
 
-Privy 的交易类型虽然把 `chainId` 设为可选，但其交易确认 modal 需要该值才能正确显示网络和费用；本项目禁止依赖“当前钱包链”的隐式默认值。切链完成后还要重新读取钱包 chainId，匹配才允许打开交易弹窗。
+切链后重新取得 provider，并把目标 chain 与已核验 account 显式交给 viem wallet client；禁止依赖“当前钱包链”和“当前账户”的隐式默认值。
 
 ---
 

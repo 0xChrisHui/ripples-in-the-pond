@@ -67,7 +67,7 @@
 
 **约束**：API Route（除 `cron/` 外）禁止 `await waitForTransactionReceipt`。这条由 hook 强制。
 
-**P16 Ethereum 例外**：只有通过 Privy 核验的外部钱包用户可以选择 Ethereum ScoreNFT，并由该钱包通过 Privy `useSendTransaction` 自付 Gas。前端只发送服务端签发的短期 voucher 对应 `redeem` 调用；viem 只负责编码、模拟、估算和读链。邮箱、SEMI 与 embedded wallet 继续只使用 OP 代付路径。
+**P16 Ethereum 例外**：只有通过 Privy 核验的外部钱包用户可以选择 Ethereum ScoreNFT，并由 Privy `ConnectedWallet` 提供的 EIP-1193 provider 接入 viem 单一路径自付 Gas。前端只发送服务端签发的短期 voucher 对应 `redeem` 调用；交易目标、链、账户和 calldata 均固定。邮箱、SEMI 与 embedded wallet 继续只使用 OP 代付路径。
 
 ### 决策 2：合约权限用 allowlist，不用 onlyOwner
 

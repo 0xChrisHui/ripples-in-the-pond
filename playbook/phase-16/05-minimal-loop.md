@@ -9,7 +9,7 @@
 
 ## 1. 成熟系统的五条真值
 
-1. **一条钱包写入路径**：Privy 负责连接、SIWE、切链和 `useSendTransaction`；viem 只负责编码、模拟、估算与读链。
+1. **一条钱包写入路径**：Privy 负责连接、SIWE、切链和提供已核验外部钱包 provider；viem 负责模拟、估算、编码与发送。
 2. **一个链上成功真值**：`tokenIdByOrderId`、ScoreNFT 合约事件、owner 和 tokenURI 共同证明成功；浏览器是否保存 txHash 不决定 NFT 是否存在。
 3. **一个数据库状态机**：OP 与 ETH 共用 mint claim 防双铸；ETH 使用独立订单，所有成功写回与 claim consumed 在同一事务完成。
 4. **一个恢复入口**：后台按 orderId 对账。钱包直发、钱包路由交易、页面关闭、hash 漏报都走相同恢复规则，不按钱包品牌写分支。
@@ -73,10 +73,9 @@
 
 - 外部钱包登录、关联地址和付款地址全部由 Privy 事实与服务端 linked-wallet guard 核验；
 - 邮箱、SEMI、embedded wallet 保持 OP-only；
-- 最终发送只调用 Privy `useSendTransaction`，显式固定 chainId、ScoreNFT 地址、`redeem` calldata 和 `sponsor:false`；
-- 按 Privy 当前接口把交易放在第一个参数，把外部钱包 `address` 与 `sponsor:false` 放在第二个 options 参数，并从返回对象读取 `hash`；
-- 删除前端 `createWalletClient(...).sendTransaction()` 发送路径；
-- viem 保留模拟、Gas 估算、编码和只读链上查询。
+- 最终发送只使用 Privy `ConnectedWallet.getEthereumProvider()` 创建的 viem wallet client；
+- 显式固定已核验外部钱包 account、目标 chain、ScoreNFT 地址和 `redeem` calldata；
+- viem 同时承担模拟、Gas 估算、编码、发送和只读链上查询；禁止并存其他发送路径。
 
 退出条件：MetaMask 与 WalletConnect 能完成连接、SIWE、切链和调起交易确认；没有第二套钱包广播实现。
 
@@ -88,7 +87,7 @@
 prepare order + claim
 → freeze permanent assets
 → issue short-lived voucher
-→ Privy sendTransaction
+→ Privy ConnectedWallet provider + viem sendTransaction
 → hash available 时登记提示
 → cron 始终按 orderId 查询链上
 → mapping + event + owner + tokenURI 全匹配

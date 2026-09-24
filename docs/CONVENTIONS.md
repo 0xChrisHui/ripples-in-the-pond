@@ -66,7 +66,7 @@
 ### 3.2 前端
 - ❌ 前端文件 import `operator-wallet.ts` 或 `OPERATOR_PRIVATE_KEY`（hook 强制）
 - ❌ 前端直接调用平台代付合约（所有 OP 写入走 API Route）
-- ✅ P16 受控例外：已认证外部钱包可用 Privy `useSendTransaction` 调用 allowlisted Ethereum ScoreNFT `redeem`；viem 仅编码、模拟、估算和读链，禁止第二套钱包发送客户端
+- ✅ P16 受控例外：已认证外部钱包可用 Privy `ConnectedWallet.getEthereumProvider()` 接入 viem 调用 allowlisted Ethereum ScoreNFT `redeem`；只保留这一套外部钱包发送客户端
 - ❌ 页面加载时 `new AudioContext()`（必须在用户手势后）
 
 ### 3.3 依赖

@@ -1,9 +1,10 @@
 'use client';
 
-import { useSendTransaction } from '@privy-io/react-auth';
 import { useCallback } from 'react';
 import {
   createPublicClient,
+  createWalletClient,
+  custom,
   encodeFunctionData,
   getAddress,
   http,
@@ -40,7 +41,6 @@ function userRejected(error: unknown): boolean {
 }
 
 export function useEthereumScoreMint() {
-  const { sendTransaction } = useSendTransaction();
   const { selectedExternalWallet, walletCapability, getAccessToken } = useAuth();
 
   const authorizedFetch = useCallback(async (url: string, init: RequestInit) => {
@@ -60,6 +60,7 @@ export function useEthereumScoreMint() {
     if (!wallet || !walletCapability.canSelfPayEthGas) {
       throw new Error('当前外部钱包不可用于自付铸造');
     }
+    if (!await wallet.isConnected()) throw new Error('请重新连接原钱包后再试');
     const walletAddress = getAddress(wallet.address);
     const voucher = await authorizedFetch('/api/self-mint/authorization', {
       method: 'POST', body: JSON.stringify({ orderId, walletAddress }),
@@ -97,17 +98,25 @@ export function useEthereumScoreMint() {
     const data = encodeFunctionData({
       abi: ETHEREUM_SCORE_ABI, functionName: 'redeem', args,
     });
+    const provider = await wallet.getEthereumProvider();
+    const walletClient = createWalletClient({
+      account: walletAddress,
+      chain,
+      transport: custom(provider),
+    });
 
     await authorizedFetch('/api/self-mint/attempt', {
       method: 'POST', body: JSON.stringify({ orderId, digest: voucher.digest, walletAddress }),
     });
     let hash: Hex;
     try {
-      const result = await sendTransaction(
-        { to: voucher.scoreContract, data, chainId: voucher.chainId, gasLimit },
-        { address: walletAddress, sponsor: false },
-      );
-      hash = result.hash.toLowerCase() as Hex;
+      hash = (await walletClient.sendTransaction({
+        account: walletAddress,
+        chain,
+        to: voucher.scoreContract,
+        data,
+        gas: gasLimit,
+      })).toLowerCase() as Hex;
       rememberMintHash(orderId, hash);
     } catch (error) {
       await authorizedFetch('/api/self-mint/attempt', {
@@ -134,7 +143,7 @@ export function useEthereumScoreMint() {
       throw new Error(`交易已广播 ${hash}，后台正在按订单恢复${detail}`);
     }
     return hash;
-  }, [authorizedFetch, selectedExternalWallet, sendTransaction, walletCapability.canSelfPayEthGas]);
+  }, [authorizedFetch, selectedExternalWallet, walletCapability.canSelfPayEthGas]);
 
   return { sendOrder };
 }

@@ -59,7 +59,7 @@ ScoreNFT 铸造确认
        → 服务端原子占用作品并预留 Token ID
        → 复用现有永久上传管线冻结素材与 metadata
        → 服务端签发一次性 EIP-712 lazy-mint 凭证
-       → Privy useSendTransaction 让用户发送一笔交易并自付 Gas
+       → Privy ConnectedWallet provider 让用户发送一笔交易并自付 Gas
        → Ethereum ScoreNFT.redeem 原子完成 mint + tokenURI
        → 后台始终按 orderId + 合约事件对账，txHash 只是加速提示
 ```
@@ -89,7 +89,7 @@ OP 与 ETH 是两条独立执行路径。不得为“复用代码”把 ETH 状�
 - 不自建 WalletConnect modal、二维码、深链或钱包安装检测；交给 Privy；
 - 不自建 SIWE challenge/nonce/session；交给 Privy；
 - 新增的服务端 linked-wallet 校验使用 Privy 当前 `@privy-io/node`，通过现有认证 helper 隔离迁移，不继续扩散旧 `@privy-io/server-auth`；
-- 不自行包装 EIP-1193 wallet client；优先 `wallet.switchChain` + `useSendTransaction`，仅 viem 负责只读模拟和 calldata；
+- 外部钱包只走 `wallet.switchChain` + `wallet.getEthereumProvider()` + viem wallet client；不再并存第二套广播路径；
 - 不手写 ECDSA、EIP-712 domain、RBAC 或暂停逻辑；使用 OpenZeppelin 4.9.6；
 - 不新建第二套 Arweave uploader、RPC 客户端或 cron 框架；抽取并复用项目现有模块；
 - 不因“成熟”而盲目增加 Reown、wagmi、ethers、第三方 lazy-mint 平台或 webhook 服务；现有官方栈能闭环时，新增供应商不是复用而是额外依赖。

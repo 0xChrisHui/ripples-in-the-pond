@@ -131,7 +131,9 @@ export default function SelfMintOrderView({ orderId, onClose }: {
     }
   }
 
-  const copy = order && (order.status === 'preparing_assets'
+  const copy = order && (busy && order.status === 'ready_to_sign'
+    ? { title: '正在打开 MetaMask', detail: '请在钱包窗口中检查并确认这笔 Sepolia 铸造交易。' }
+    : order.status === 'preparing_assets'
     ? ASSET_STAGE_COPY[order.assetStage]
     : order.status === 'ready_to_sign' && order.sendAttempted
       ? STATUS_COPY.manual_review : STATUS_COPY[order.status]);
@@ -170,7 +172,7 @@ export default function SelfMintOrderView({ orderId, onClose }: {
           <div><dt>Order ID</dt><dd>{order.orderId}</dd></div>
           {hash && <div><dt>交易</dt><dd><a href={explorerTxUrlFor(order.chainId, hash)} target="_blank" rel="noreferrer">{hash} ↗</a></dd></div>}
         </dl>
-        {needsWallet && !order.canContinue && (
+        {needsWallet && !busy && !order.canContinue && (
           <p className="self-mint-status__notice">{walletAddress
             ? '当前钱包与接收地址不同；你可以查看进度，但不能继续签名。'
             : auth.walletsReady
@@ -182,7 +184,7 @@ export default function SelfMintOrderView({ orderId, onClose }: {
           钱包已返回交易哈希：<a href={explorerTxUrlFor(order.chainId, recoverableHash)} target="_blank" rel="noreferrer">{recoverableHash} ↗</a>
         </p>}
         <div className="self-mint-status__actions">
-          {needsWallet && !walletAddress && auth.authSource === 'privy' && auth.walletsReady && (
+          {needsWallet && !busy && !walletAddress && auth.authSource === 'privy' && auth.walletsReady && (
             <ReconnectMintWallet expectedAddress={order.recipientAddress}
               walletClientType={auth.walletCapability.walletClientType} />
           )}

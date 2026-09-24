@@ -13,12 +13,13 @@ function forbidPattern(source: string, pattern: RegExp, message: string): void {
 }
 
 const wallet = read('src/hooks/useEthereumScoreMint.ts');
-requirePattern(wallet, /useSendTransaction/, '钱包发送必须使用 Privy useSendTransaction');
-requirePattern(wallet, /sponsor:\s*false/, '钱包发送必须显式禁止平台赞助');
-requirePattern(wallet, /address:\s*walletAddress/, '钱包发送必须固定已验证外部钱包');
-requirePattern(wallet, /chainId:\s*voucher\.chainId/, '钱包发送必须显式固定凭证链');
-forbidPattern(wallet, /createWalletClient|getEthereumProvider|custom\(/,
-  '禁止保留 viem wallet client 或原始 provider 广播路径');
+requirePattern(wallet, /getEthereumProvider/, '钱包发送必须使用 Privy 已连接钱包 provider');
+requirePattern(wallet, /createWalletClient/, '钱包发送必须使用唯一 viem wallet client');
+requirePattern(wallet, /account:\s*walletAddress/, '钱包发送必须固定已验证外部钱包');
+requirePattern(wallet, /chain,/, '钱包发送必须显式固定凭证链');
+requirePattern(wallet, /walletClient\.sendTransaction/, '钱包发送必须走已核验 wallet client');
+forbidPattern(wallet, /useSendTransaction|window\.ethereum/,
+  '禁止误用 embedded-wallet 发送接口或绕过 Privy 直接读取注入 provider');
 
 const reconcile = read('src/lib/self-mint/reconcile.ts');
 for (const truth of ['tokenIdByOrderId', 'ScoreRedeemed', 'ownerOf', 'tokenURI']) {

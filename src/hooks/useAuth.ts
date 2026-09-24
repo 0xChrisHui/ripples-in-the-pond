@@ -1,6 +1,6 @@
 'use client';
 
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { usePrivy, useWallets, type ConnectedWallet } from '@privy-io/react-auth';
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { getAddress } from 'viem';
 import { clearNftCache } from '@/src/lib/nft-cache';
@@ -57,6 +57,7 @@ export function useAuth() {
     userId: string;
     check: ExternalWalletCheck;
   } | null>(null);
+  const [stableExternalWallet, setStableExternalWallet] = useState<ConnectedWallet | null>(null);
 
   const semiAuth = jwtState.jwt !== null && jwtState.payload !== null;
 
@@ -96,13 +97,43 @@ export function useAuth() {
     catch { return null; }
   })();
 
-  const selectedExternalWallet = useMemo(() => {
+  const matchedExternalWallet = useMemo(() => {
     if (loginEntry !== 'external_wallet' || !selectedWalletAddress) return null;
     return wallets.find((wallet) => {
       if (wallet.walletClientType === 'privy' || wallet.connectorType === 'embedded') return false;
       try { return getAddress(wallet.address) === selectedWalletAddress; } catch { return false; }
     }) ?? null;
   }, [loginEntry, selectedWalletAddress, wallets]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (matchedExternalWallet) {
+      const timer = window.setTimeout(() => {
+        if (cancelled) return;
+        setStableExternalWallet((current) => {
+          try {
+            return current && getAddress(current.address) === getAddress(matchedExternalWallet.address)
+              ? current : matchedExternalWallet;
+          } catch { return matchedExternalWallet; }
+        });
+      }, 0);
+      return () => { cancelled = true; window.clearTimeout(timer); };
+    }
+    if (!walletsReady || !stableExternalWallet) return;
+    void stableExternalWallet.isConnected().then((connected) => {
+      if (!cancelled && !connected) {
+        setStableExternalWallet((current) => current === stableExternalWallet ? null : current);
+      }
+    }).catch(() => {
+      if (!cancelled) setStableExternalWallet((current) => (
+        current === stableExternalWallet ? null : current
+      ));
+    });
+    return () => { cancelled = true; };
+  }, [matchedExternalWallet, stableExternalWallet, walletsReady]);
+
+  const selectedExternalWallet = loginEntry === 'external_wallet'
+    && selectedWalletAddress ? stableExternalWallet : null;
 
   useEffect(() => {
     if (loginSession.loginEntry !== 'external_wallet' && recoverableWalletAddress) {

@@ -57,8 +57,8 @@ P16-0 实施时一次性同步：
    - 保持 `wagmi / ethers / Reown AppKit` 不引入。
 3. `docs/CONVENTIONS.md`
    - 把“前端禁止调合约”收窄为“前端禁止使用平台/operator 钱包调合约”；
-   - 登记唯一受控例外：P16 ETH 自付路径可由已认证外部钱包通过 Privy `useSendTransaction` 调用 allowlisted ScoreNFT `redeem`；
-   - 交易目标、chainId、ABI 方法和 `sponsor:false` 必须固定，禁止任意 calldata 透传。
+   - 登记唯一受控例外：P16 ETH 自付路径可由已认证外部钱包通过 Privy `ConnectedWallet` provider 调用 allowlisted ScoreNFT `redeem`；
+   - 交易账户、目标、chainId 和 ABI 方法必须固定，禁止任意 calldata 透传。
 4. 环境变量合同
    - 按链分组，不再用一个模糊的全局 `CHAIN_ID` 推导所有地址；
    - 客户端只暴露公开配置，签名密钥只在服务端；
@@ -119,9 +119,9 @@ Privy linked external wallet + matching selected address → OP sponsored + ETH 
 
 实施以当前锁定版本为基线：
 
-- `@privy-io/react-auth 3.20.0`：`useConnectWallet`、`ConnectedWallet.loginOrLink`、`switchChain`、`useSendTransaction`；
+- `@privy-io/react-auth 3.20.0`：`useConnectWallet`、`ConnectedWallet.loginOrLink`、`switchChain`、`getEthereumProvider`；
 - 当前 `@privy-io/server-auth 1.32.5` 只作为迁移起点；P16-A 按 Privy 官方迁移指南换为锁定版本的 `@privy-io/node`，承担 access token 验证与 Privy 用户读取；
-- `viem 2.47.11`：地址规范化、typed data、calldata、只读模拟、Gas 与 receipt/event 读取；
+- `viem 2.47.11`：地址规范化、typed data、calldata、外部钱包发送、模拟、Gas 与 receipt/event 读取；
 - `OpenZeppelin Contracts 4.9.6`：ERC721URIStorage、EIP712、SignatureChecker、AccessControl、Pausable；
 - 现有 Supabase、Vercel cron、Alchemy RPC 与 Arweave 上传模块。
 
