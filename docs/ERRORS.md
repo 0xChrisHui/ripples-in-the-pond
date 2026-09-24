@@ -696,3 +696,12 @@
 - 🔧 修复：证据工具默认使用系统 D3D11，保留 `P11_EDGE_SOFTWARE=1` 显式降级；脚本新增采样迟到、端点实质变化、反向、同一涟漪和 reduced-motion 无缩放断言。
 - ✅ 结果：硬件路径获得连续采样，离场 `1→0.2109→0.0258→0`、回场 `0→0.7558→0.9607→1`，页面错误 0。
 - 💡 动态 Gate 必须验证采样本身有足够帧率；最终状态正确不能替代过程证据，软件渲染结果也不能冒充硬件视觉节奏。
+
+### E057 — Scene 注册清空已就绪 Core 状态导致 Score 日食永久失活
+
+- 📅 2026-09-24 / P11-I6
+- 😱 现象：共享 Shell 已报告 `sceneReady=true`、Canvas 正常，Score 根节点却一直是 `sceneReady=false`，日食门永远不打开。
+- 🧠 原因：SceneSlot 在 Score descriptor 首次注册时把自己的 ready 镜像重置为 false；此时 Water Core 本身已经 ready，底层值没有再次变化，因此不会重新触发回报。
+- 🔧 修复：ready/health 只由 Water Core 报告，Scene 注册不再改写；单节点自身是否 ready 继续由 `glSim.ready` 独立门控。
+- ✅ 结果：硬件 Edge 中 Score Scene 正常 ready，日食 `0.1709→0.8124→0.9934→1`，同一 Canvas 和花瓣实例保持不变。
+- 💡 镜像底层生命周期状态时，消费者注册不能擅自制造假边沿；否则已经稳定的生产者没有理由重复通知。

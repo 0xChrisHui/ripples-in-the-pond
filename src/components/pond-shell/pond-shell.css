@@ -3,6 +3,8 @@
   background: #010504;
 }
 
+.persistent-pond-shell .score-pond-page { background: transparent; }
+
 .pond-home-surface {
   opacity: 0;
   visibility: hidden;

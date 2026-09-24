@@ -1614,3 +1614,11 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **准备门槛**：未登录以认证状态完成作为 ready；已登录必须等四块私人数据分别成功或明确失败。档案未准备好时导航保持当前稳定相位，避免半空页面。
 - **身份隔离**：私人请求继续由现有身份 generation、abort 与缓存 key 管理；未登录样本不发 `/api/me/**` 请求，登出或账号变化会使旧准备结果失效。
 - **输入归属**：`/me` 禁用首页演奏键；按钮、链接、输入框、滑块和可编辑元素不再向水面发送指针涟漪，空白水面仍保持响应。
+
+## 2026-09-24 — P11-I6 Score Scene 接管边界
+
+- **共享范围**：Score 只把单作品 `glSim`、交互能力与性能回报注册给 SceneSlot；Water Core、FBO、水位、花瓣数组和 pointer 波场继续由持久 Shell 单独拥有。
+- **日食所有权**：首页日食驱动在 Score phase 卸载，Score 驱动同时要求 `health=healthy`、`sceneReady` 和真实播放视觉激活；避免两个 RAF 对全局 PlaybackFocus 与 eclipse mix 反向写入。
+- **原子替换**：同 owner 的 descriptor 更新不先注销，卸载时只清除同一 descriptor；播放状态变化不会短暂回退到首页 Scene。
+- **音频接管**：进入 Score 不停止全局播放器，只有 Score 真实进入 playing 才接管；Score AudioContext 与 P9 会话在离页时销毁，不写回首页播放器或多节点模拟。
+- **水面连续性**：Score 不再调用 `resetWaterLine()`，页面背景在共享 Shell 内透明。若用户肉眼认为沿用水位改变日食构图，早上再决定是否增加平滑归默认水位。

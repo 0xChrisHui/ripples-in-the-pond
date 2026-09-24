@@ -1,0 +1,757 @@
+{
+  "measuredAt": "2026-09-24T04:56:06.764Z",
+  "routes": [
+    {
+      "token": 1,
+      "status": "ready",
+      "title": "Ripples #1",
+      "canonical": "/score/1",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "token": 2,
+      "status": "ready",
+      "title": "Ripples #2",
+      "canonical": "/score/2",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "token": 3,
+      "status": "ready",
+      "title": "Ripples #3",
+      "canonical": "/score/3",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "token": 4,
+      "status": "ready",
+      "title": "Ripples #4",
+      "canonical": "/score/4",
+      "overflow": false,
+      "errors": []
+    }
+  ],
+  "viewports": [
+    {
+      "width": 375,
+      "height": 812,
+      "capability": "coarse",
+      "overflow": false,
+      "touchTarget": [
+        142.5,
+        142.5
+      ],
+      "headerRight": 355
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "capability": "coarse",
+      "overflow": false,
+      "touchTarget": [
+        168,
+        168
+      ],
+      "headerRight": 737.28125
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "capability": "fine",
+      "overflow": false,
+      "touchTarget": [
+        168,
+        168
+      ],
+      "headerRight": 983.046875
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "capability": "fine",
+      "overflow": false,
+      "touchTarget": [
+        168,
+        168
+      ],
+      "headerRight": 1382.40625
+    }
+  ],
+  "checks": {
+    "identity": true,
+    "uniqueCore": true,
+    "eclipse": true,
+    "audioAndP9": true,
+    "pauseReturn": true,
+    "playbackLifecycle": true,
+    "scroll": true,
+    "reading": true,
+    "continuity": true,
+    "routeMatrix": true,
+    "viewports": true,
+    "reduced": true,
+    "fallback": true,
+    "cleanup": true,
+    "readOnly": true,
+    "errors": true
+  },
+  "direct": {
+    "label": "direct-idle",
+    "at": 3039.2999999821186,
+    "path": "/score/1",
+    "phase": "score",
+    "owner": "score",
+    "shellReady": "true",
+    "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+    "sameCore": true,
+    "sameCanvas": true,
+    "samePetals": true,
+    "canvasCount": 2,
+    "scoreState": "ready",
+    "playback": "ready",
+    "glHealth": "healthy",
+    "sceneReady": "true",
+    "eclipse": "false",
+    "eclipseMix": "0.0000",
+    "recordVisual": "record",
+    "recordMotion": "resting",
+    "recordRect": {
+      "x": 619,
+      "y": 286.625,
+      "width": 168,
+      "height": 168
+    },
+    "overflow": false,
+    "audio": {
+      "created": 0,
+      "closed": 0
+    },
+    "p9Count": 0
+  },
+  "identity": {
+    "title": "Ripples #1",
+    "token": true,
+    "networkText": "OP Mainnet·Token #001",
+    "canonical": "/score/1",
+    "backHref": "/me",
+    "backText": "←返回档案",
+    "ledgerRows": 12,
+    "archiveVisible": true,
+    "pageBackground": "rgba(0, 0, 0, 0)"
+  },
+  "share": {
+    "initiallyOpen": false,
+    "opened": true,
+    "closedOutside": true
+  },
+  "copy": {
+    "expected": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+    "actual": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA"
+  },
+  "queued": {
+    "label": "after-click",
+    "at": 4815.5,
+    "path": "/score/1",
+    "phase": "score",
+    "owner": "score",
+    "shellReady": "true",
+    "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+    "sameCore": true,
+    "sameCanvas": true,
+    "samePetals": true,
+    "canvasCount": 2,
+    "scoreState": "ready",
+    "playback": "loading",
+    "glHealth": "healthy",
+    "sceneReady": "true",
+    "eclipse": "false",
+    "eclipseMix": "0.0000",
+    "recordVisual": "record",
+    "recordMotion": "resting",
+    "recordRect": {
+      "x": 619,
+      "y": 284.625,
+      "width": 168,
+      "height": 168
+    },
+    "overflow": false,
+    "audio": {
+      "created": 1,
+      "closed": 0
+    },
+    "p9Count": 0
+  },
+  "playing": [
+    {
+      "label": "playing-0",
+      "at": 5877,
+      "path": "/score/1",
+      "phase": "score",
+      "owner": "score",
+      "shellReady": "true",
+      "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+      "sameCore": true,
+      "sameCanvas": true,
+      "samePetals": true,
+      "canvasCount": 2,
+      "scoreState": "ready",
+      "playback": "playing",
+      "glHealth": "healthy",
+      "sceneReady": "true",
+      "eclipse": "true",
+      "eclipseMix": "0.1709",
+      "recordVisual": "eclipse",
+      "recordMotion": "flowing",
+      "recordRect": {
+        "x": 619,
+        "y": 284.625,
+        "width": 168,
+        "height": 168
+      },
+      "overflow": false,
+      "audio": {
+        "created": 1,
+        "closed": 0
+      },
+      "p9Count": 0
+    },
+    {
+      "label": "playing-150",
+      "at": 6014.899999976158,
+      "path": "/score/1",
+      "phase": "score",
+      "owner": "score",
+      "shellReady": "true",
+      "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+      "sameCore": true,
+      "sameCanvas": true,
+      "samePetals": true,
+      "canvasCount": 2,
+      "scoreState": "ready",
+      "playback": "playing",
+      "glHealth": "healthy",
+      "sceneReady": "true",
+      "eclipse": "true",
+      "eclipseMix": "0.8124",
+      "recordVisual": "eclipse",
+      "recordMotion": "flowing",
+      "recordRect": {
+        "x": 619,
+        "y": 284.625,
+        "width": 168,
+        "height": 168
+      },
+      "overflow": false,
+      "audio": {
+        "created": 1,
+        "closed": 0
+      },
+      "p9Count": 0
+    },
+    {
+      "label": "playing-450",
+      "at": 6330.399999976158,
+      "path": "/score/1",
+      "phase": "score",
+      "owner": "score",
+      "shellReady": "true",
+      "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+      "sameCore": true,
+      "sameCanvas": true,
+      "samePetals": true,
+      "canvasCount": 2,
+      "scoreState": "ready",
+      "playback": "playing",
+      "glHealth": "healthy",
+      "sceneReady": "true",
+      "eclipse": "true",
+      "eclipseMix": "0.9934",
+      "recordVisual": "eclipse",
+      "recordMotion": "flowing",
+      "recordRect": {
+        "x": 619,
+        "y": 284.625,
+        "width": 168,
+        "height": 168
+      },
+      "overflow": false,
+      "audio": {
+        "created": 1,
+        "closed": 0
+      },
+      "p9Count": 4
+    },
+    {
+      "label": "playing-1500",
+      "at": 7363.199999988079,
+      "path": "/score/1",
+      "phase": "score",
+      "owner": "score",
+      "shellReady": "true",
+      "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+      "sameCore": true,
+      "sameCanvas": true,
+      "samePetals": true,
+      "canvasCount": 2,
+      "scoreState": "ready",
+      "playback": "playing",
+      "glHealth": "healthy",
+      "sceneReady": "true",
+      "eclipse": "true",
+      "eclipseMix": "1.0000",
+      "recordVisual": "eclipse",
+      "recordMotion": "flowing",
+      "recordRect": {
+        "x": 619,
+        "y": 284.625,
+        "width": 168,
+        "height": 168
+      },
+      "overflow": false,
+      "audio": {
+        "created": 1,
+        "closed": 0
+      },
+      "p9Count": 16
+    }
+  ],
+  "paused": [
+    {
+      "label": "paused-0",
+      "at": 7477,
+      "path": "/score/1",
+      "phase": "score",
+      "owner": "score",
+      "shellReady": "true",
+      "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+      "sameCore": true,
+      "sameCanvas": true,
+      "samePetals": true,
+      "canvasCount": 2,
+      "scoreState": "ready",
+      "playback": "paused",
+      "glHealth": "healthy",
+      "sceneReady": "true",
+      "eclipse": "true",
+      "eclipseMix": "1.0000",
+      "recordVisual": "record",
+      "recordMotion": "returning",
+      "recordRect": {
+        "x": 619,
+        "y": 295.625,
+        "width": 168,
+        "height": 168
+      },
+      "overflow": false,
+      "audio": {
+        "created": 1,
+        "closed": 0
+      },
+      "p9Count": 18
+    },
+    {
+      "label": "paused-150",
+      "at": 7626,
+      "path": "/score/1",
+      "phase": "score",
+      "owner": "score",
+      "shellReady": "true",
+      "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+      "sameCore": true,
+      "sameCanvas": true,
+      "samePetals": true,
+      "canvasCount": 2,
+      "scoreState": "ready",
+      "playback": "paused",
+      "glHealth": "healthy",
+      "sceneReady": "true",
+      "eclipse": "true",
+      "eclipseMix": "1.0000",
+      "recordVisual": "record",
+      "recordMotion": "returning",
+      "recordRect": {
+        "x": 619,
+        "y": 295.625,
+        "width": 168,
+        "height": 168
+      },
+      "overflow": false,
+      "audio": {
+        "created": 1,
+        "closed": 0
+      },
+      "p9Count": 18
+    },
+    {
+      "label": "paused-450",
+      "at": 7922.0999999940395,
+      "path": "/score/1",
+      "phase": "score",
+      "owner": "score",
+      "shellReady": "true",
+      "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+      "sameCore": true,
+      "sameCanvas": true,
+      "samePetals": true,
+      "canvasCount": 2,
+      "scoreState": "ready",
+      "playback": "paused",
+      "glHealth": "healthy",
+      "sceneReady": "true",
+      "eclipse": "true",
+      "eclipseMix": "1.0000",
+      "recordVisual": "record",
+      "recordMotion": "returning",
+      "recordRect": {
+        "x": 619,
+        "y": 295.625,
+        "width": 168,
+        "height": 168
+      },
+      "overflow": false,
+      "audio": {
+        "created": 1,
+        "closed": 0
+      },
+      "p9Count": 18
+    },
+    {
+      "label": "paused-1500",
+      "at": 8981,
+      "path": "/score/1",
+      "phase": "score",
+      "owner": "score",
+      "shellReady": "true",
+      "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+      "sameCore": true,
+      "sameCanvas": true,
+      "samePetals": true,
+      "canvasCount": 2,
+      "scoreState": "ready",
+      "playback": "paused",
+      "glHealth": "healthy",
+      "sceneReady": "true",
+      "eclipse": "false",
+      "eclipseMix": "0.0094",
+      "recordVisual": "record",
+      "recordMotion": "resting",
+      "recordRect": {
+        "x": 619,
+        "y": 295.625,
+        "width": 168,
+        "height": 168
+      },
+      "overflow": false,
+      "audio": {
+        "created": 1,
+        "closed": 0
+      },
+      "p9Count": 18
+    }
+  ],
+  "resumed": {
+    "label": "resumed",
+    "at": 9045.59999999404,
+    "path": "/score/1",
+    "phase": "score",
+    "owner": "score",
+    "shellReady": "true",
+    "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+    "sameCore": true,
+    "sameCanvas": true,
+    "samePetals": true,
+    "canvasCount": 2,
+    "scoreState": "ready",
+    "playback": "playing",
+    "glHealth": "healthy",
+    "sceneReady": "true",
+    "eclipse": "false",
+    "eclipseMix": "0.0000",
+    "recordVisual": "eclipse",
+    "recordMotion": "flowing",
+    "recordRect": {
+      "x": 619,
+      "y": 284.625,
+      "width": 168,
+      "height": 168
+    },
+    "overflow": false,
+    "audio": {
+      "created": 1,
+      "closed": 0
+    },
+    "p9Count": 18
+  },
+  "ended": {
+    "label": "ended",
+    "at": 9078,
+    "path": "/score/1",
+    "phase": "score",
+    "owner": "score",
+    "shellReady": "true",
+    "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+    "sameCore": true,
+    "sameCanvas": true,
+    "samePetals": true,
+    "canvasCount": 2,
+    "scoreState": "ready",
+    "playback": "ended",
+    "glHealth": "healthy",
+    "sceneReady": "true",
+    "eclipse": "true",
+    "eclipseMix": "0.3074",
+    "recordVisual": "record",
+    "recordMotion": "returning",
+    "recordRect": {
+      "x": 619,
+      "y": 295.625,
+      "width": 168,
+      "height": 168
+    },
+    "overflow": false,
+    "audio": {
+      "created": 1,
+      "closed": 0
+    },
+    "p9Count": 18
+  },
+  "replayed": {
+    "label": "replayed",
+    "at": 9152.899999976158,
+    "path": "/score/1",
+    "phase": "score",
+    "owner": "score",
+    "shellReady": "true",
+    "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+    "sameCore": true,
+    "sameCanvas": true,
+    "samePetals": true,
+    "canvasCount": 2,
+    "scoreState": "ready",
+    "playback": "playing",
+    "glHealth": "healthy",
+    "sceneReady": "true",
+    "eclipse": "true",
+    "eclipseMix": "0.6720",
+    "recordVisual": "eclipse",
+    "recordMotion": "flowing",
+    "recordRect": {
+      "x": 619,
+      "y": 284.625,
+      "width": 168,
+      "height": 168
+    },
+    "overflow": false,
+    "audio": {
+      "created": 1,
+      "closed": 0
+    },
+    "p9Count": 18
+  },
+  "scroll": {
+    "before": 0,
+    "after": 620
+  },
+  "archiveReturn": {
+    "label": "archive-return",
+    "at": 10062.5,
+    "path": "/me",
+    "phase": "archive",
+    "owner": "archive",
+    "shellReady": "true",
+    "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+    "sameCore": true,
+    "sameCanvas": true,
+    "samePetals": true,
+    "canvasCount": 2,
+    "scoreState": null,
+    "playback": null,
+    "glHealth": null,
+    "sceneReady": null,
+    "eclipse": null,
+    "eclipseMix": "",
+    "recordVisual": null,
+    "recordMotion": null,
+    "recordRect": null,
+    "overflow": false,
+    "audio": {
+      "created": 1,
+      "closed": 1
+    },
+    "p9Count": 26
+  },
+  "afterLeave": {
+    "label": "after-leave",
+    "at": 10575.799999982119,
+    "path": "/me",
+    "phase": "archive",
+    "owner": "archive",
+    "shellReady": "true",
+    "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+    "sameCore": true,
+    "sameCanvas": true,
+    "samePetals": true,
+    "canvasCount": 2,
+    "scoreState": null,
+    "playback": null,
+    "glHealth": null,
+    "sceneReady": null,
+    "eclipse": null,
+    "eclipseMix": "",
+    "recordVisual": null,
+    "recordMotion": null,
+    "recordRect": null,
+    "overflow": false,
+    "audio": {
+      "created": 1,
+      "closed": 1
+    },
+    "p9Count": 26
+  },
+  "historyReturn": {
+    "label": "history-return",
+    "at": 10610.199999988079,
+    "path": "/score/1",
+    "phase": "score",
+    "owner": "score",
+    "shellReady": "true",
+    "mountId": "pond-266c79d4-450e-4497-a240-b7e7cec21bf7",
+    "sameCore": true,
+    "sameCanvas": true,
+    "samePetals": true,
+    "canvasCount": 2,
+    "scoreState": "ready",
+    "playback": "loading",
+    "glHealth": "healthy",
+    "sceneReady": "true",
+    "eclipse": "false",
+    "eclipseMix": "0.0000",
+    "recordVisual": "record",
+    "recordMotion": "resting",
+    "recordRect": {
+      "x": 619,
+      "y": 286.625,
+      "width": 168,
+      "height": 168
+    },
+    "overflow": false,
+    "audio": {
+      "created": 1,
+      "closed": 1
+    },
+    "p9Count": 26
+  },
+  "reduced": {
+    "label": "reduced-playing",
+    "at": 1502.7999999821186,
+    "path": "/score/1",
+    "phase": "score",
+    "owner": "score",
+    "shellReady": "true",
+    "mountId": "pond-f0a60989-b71d-4d7a-b30e-62dba92274ad",
+    "sameCore": false,
+    "sameCanvas": false,
+    "samePetals": false,
+    "canvasCount": 2,
+    "scoreState": "ready",
+    "playback": "playing",
+    "glHealth": "healthy",
+    "sceneReady": "true",
+    "eclipse": "true",
+    "eclipseMix": "1.0000",
+    "recordVisual": "eclipse",
+    "recordMotion": "flowing",
+    "recordRect": {
+      "x": 636,
+      "y": 342.5,
+      "width": 168,
+      "height": 168
+    },
+    "overflow": false,
+    "audio": {
+      "created": 1,
+      "closed": 0
+    },
+    "p9Count": 0
+  },
+  "fallback": {
+    "label": "forced-fallback",
+    "at": 1144,
+    "path": "/score/1",
+    "phase": "score",
+    "owner": "score",
+    "shellReady": "true",
+    "mountId": "pond-4f0f8e3f-266c-47a7-bb84-5a14c54908a6",
+    "sameCore": false,
+    "sameCanvas": false,
+    "samePetals": true,
+    "canvasCount": 1,
+    "scoreState": "ready",
+    "playback": "ready",
+    "glHealth": "forced",
+    "sceneReady": "true",
+    "eclipse": "false",
+    "eclipseMix": "0.0000",
+    "recordVisual": "record",
+    "recordMotion": "resting",
+    "recordRect": {
+      "x": 636,
+      "y": 340.5,
+      "width": 168,
+      "height": 168
+    },
+    "overflow": false,
+    "audio": {
+      "created": 0,
+      "closed": 0
+    },
+    "p9Count": 0
+  },
+  "fallbackAfterClick": {
+    "label": "forced-fallback-click",
+    "at": 1485.9000000059605,
+    "path": "/score/1",
+    "phase": "score",
+    "owner": "score",
+    "shellReady": "true",
+    "mountId": "pond-4f0f8e3f-266c-47a7-bb84-5a14c54908a6",
+    "sameCore": false,
+    "sameCanvas": false,
+    "samePetals": true,
+    "canvasCount": 1,
+    "scoreState": "ready",
+    "playback": "playing",
+    "glHealth": "forced",
+    "sceneReady": "true",
+    "eclipse": "false",
+    "eclipseMix": "0.0000",
+    "recordVisual": "eclipse",
+    "recordMotion": "flowing",
+    "recordRect": {
+      "x": 636,
+      "y": 340.5,
+      "width": 168,
+      "height": 168
+    },
+    "overflow": false,
+    "audio": {
+      "created": 1,
+      "closed": 0
+    },
+    "p9Count": 0
+  },
+  "requests": {
+    "sameOriginWrites": [],
+    "total": 678
+  },
+  "errors": [
+    "[score-holder] 当前持有人读取失败: TypeError: Failed to fetch\n    at http://127.0.0.1:3000/_next/static/chunks/a9277ccdb088f84d.js:1:31197\n    at ih (http://127.0.0.1:3000/_next/static/chunks/4af27f77bd5de33b.js:1:102202)\n    at uf (http://127.0.0.1:3000/_next/static/chunks/4af27f77bd5de33b.js:1:126052)\n    "
+  ],
+  "expectedFallbackErrors": [
+    "[score-holder] 当前持有人读取失败: TypeError: Failed to fetch\n    at http://127.0.0.1:3000/_next/static/chunks/a9277ccdb088f84d.js:1:31197\n    at ih (http://127.0.0.1:3000/_next/static/chunks/4af27f77bd5de33b.js:1:102202)\n    at uf (http://127.0.0.1:3000/_next/static/chunks/4af27f77bd5de33b.js:1:126052)\n    "
+  ],
+  "passed": true
+}

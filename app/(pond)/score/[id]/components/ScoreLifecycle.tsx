@@ -51,7 +51,8 @@ export default function ScoreLifecycle({ score, network }: Props) {
     >
       <section className="score-pond-page__hero">
         <ScorePondHeader
-          backHref="/"
+          backHref="/me"
+          backLabel="返回档案"
           network={network}
           tokenLabel={tokenLabel}
           shareAction={<ShareActions id={score.id} tokenId={score.tokenId ?? null} trackTitle={score.trackTitle} />}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ForceCenter, Simulation } from 'd3-force';
 import type { GroupId, SimLink, SimNode } from '@/src/components/archipelago/sphere-config';
 import { resetDepthShift } from '@/src/components/pond-gl-test3/pointer-fx';
@@ -12,7 +12,6 @@ import {
 } from '@/src/components/pond-gl-test3/spheres/gl-sim-setup';
 import type { BgWave } from '@/src/components/pond-gl-test3/spheres/gl-sim-waves';
 import { prefersReducedMotion } from '@/src/components/pond-gl-test3/reduced-motion';
-import { resetWaterLine } from '@/src/components/pond-gl-test3/water/water-level';
 import type { Track } from '@/src/types/tracks';
 
 const RETURN_DURATION_MS = 1050;
@@ -88,7 +87,6 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
     const w = window.innerWidth;
     const h = window.innerHeight;
     const built = buildGlNodes([track], 'A');
-    resetWaterLine();
     resetDepthShift();
     sizeRef.current = { w, h };
     const { sim } = setupGlSimulation(built.nodes, built.links, built.assignment, w, h);
@@ -178,7 +176,6 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
     simRef.current?.stop();
     wavesRef.current = [];
     resetDepthShift();
-    resetWaterLine();
   }, []);
 
   const retry = useCallback(() => setGeneration((value) => value + 1), []);
@@ -186,12 +183,12 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
   const setGroup = useCallback(() => undefined, []) as (id: GroupId) => void;
   const toggle = useCallback(async () => undefined, []) as (track: Track) => Promise<void>;
 
-  if (!track) return { glSim: null, visualActive: false, returning: false };
-  const glSim: GlSim = {
+  const glSim = useMemo<GlSim>(() => ({
     ready: nodes.length === 1, loading: nodes.length === 0, error: false,
     retry, groupId: 'A', nodes, simRef, wavesRef, playingIdRef, hoverIdRef,
     sizeRef, setHover, setGroup, toggle,
-  };
+  }), [nodes, retry, setGroup, setHover, toggle]);
+  if (!track) return { glSim: null, visualActive: false, returning: false };
   return {
     glSim,
     visualActive: playing || !atRest,

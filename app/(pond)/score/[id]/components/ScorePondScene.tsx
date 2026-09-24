@@ -1,6 +1,5 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { preload } from 'react-dom';
 import EditionStamp from '@/src/components/p11/EditionStamp';
@@ -8,21 +7,22 @@ import ScorePondHeader from '@/src/components/p11/ScorePondHeader';
 import { useEclipseTransition } from '@/src/components/pond-gl-test3/focus/useEclipseTransition';
 import { DEFAULT_GL_FLAGS } from '@/src/components/pond-gl-test3/gl-flags';
 import GlEclipse from '@/src/components/pond-gl-test3/overlay/GlEclipse';
-import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
 import { resetDepthShift, setCameraFx, usePointerFx } from '@/src/components/pond-gl-test3/pointer-fx';
 import type { Track36VisitorState } from '@/src/components/pond-gl-test3/visitor/track36-state';
 import type { ScoreReadyData } from '@/src/data/score-source';
 import { permanentMediaCandidates } from '@/src/features/permanent-media';
 import { startupSoundKeys } from '@/src/features/score-playback/resource-loader';
 import { useScorePlayback } from '@/src/features/score-playback/use-score-playback';
+import { usePlayer } from '@/src/components/player/PlayerProvider';
+import {
+  useRegisterPondScene, type PondSceneDescriptor,
+} from '@/src/components/pond-shell/scene-slot';
 import type { Track } from '@/src/types/tracks';
 import ScoreArchive from './ScoreArchive';
 import ScoreRecordAnchor from './ScoreRecordAnchor';
 import ShareActions from './ShareActions';
 import { useScorePondSim } from './use-score-pond-sim';
 import { useScoreHolder } from './use-score-holder';
-
-const PondGL = dynamic(() => import('@/src/components/pond-gl-test3/PondGL'), { ssr: false });
 
 function useCapabilities() {
   const [value, setValue] = useState({ fine: false, reduced: false });
@@ -71,15 +71,14 @@ function visualTrackOf(score: ScoreReadyData): Track {
 export default function ScorePondScene({ score, network }: Props) {
   preloadStartupAudio(score);
   const playback = useScorePlayback(score.playbackBootstrap);
+  const { stop: stopGlobalPlayer } = usePlayer();
   const holder = useScoreHolder(score.tokenId);
   const capabilities = useCapabilities();
-  const [health, setHealth] = useState<GlHealth>('unavailable');
   const [performanceReduced, setPerformanceReduced] = useState(false);
   const isPlaying = playback.state === 'playing';
   const visualTrack = useMemo(() => visualTrackOf(score), [score]);
   const { glSim, visualActive, returning } = useScorePondSim(visualTrack, isPlaying);
   const emptyVisitor = useRef<Track36VisitorState | null>(null);
-  useEclipseTransition(glSim!, emptyVisitor, health === 'healthy' && visualActive ? visualTrack.id : null);
   const interactive = capabilities.fine && !capabilities.reduced && !performanceReduced;
   const flags = useMemo(() => ({
     ...DEFAULT_GL_FLAGS,
@@ -95,6 +94,19 @@ export default function ScorePondScene({ score, network }: Props) {
     floatMotes: !capabilities.reduced && !performanceReduced,
     autoDegrade: true,
   }), [capabilities.reduced, interactive, isPlaying, performanceReduced, visualActive]);
+  const scene = useMemo<PondSceneDescriptor>(() => ({
+    owner: 'score', flags, glSim: glSim ?? undefined,
+    pointerInteractive: interactive, onPerformanceChange: setPerformanceReduced,
+  }), [flags, glSim, interactive]);
+  const { health, sceneReady } = useRegisterPondScene(scene);
+  useEclipseTransition(
+    glSim!, emptyVisitor,
+    health === 'healthy' && sceneReady && visualActive ? visualTrack.id : null,
+  );
+
+  useEffect(() => {
+    if (playback.state === 'playing') stopGlobalPlayer();
+  }, [playback.state, stopGlobalPlayer]);
 
   // Score 是纵向阅读页：保留鼠标视差，但滚轮必须始终交还给页面滚动。
   usePointerFx(Boolean(glSim) && health === 'healthy' && interactive, false);
@@ -124,25 +136,18 @@ export default function ScorePondScene({ score, network }: Props) {
       data-decode-ms={playback.decodeMs ?? undefined}
       data-first-sound-expected-ms={playback.firstSoundExpectedMs ?? undefined}
       data-gl-health={health}
+      data-scene-ready={sceneReady}
       lang="zh-CN"
     >
-      {glSim && (
-        <PondGL
-          flags={flags}
-          glSim={glSim}
-          onHealthChange={setHealth}
-          onPerformanceChange={setPerformanceReduced}
-          pointerInteractive={interactive}
-        />
-      )}
-      {visualActive && glSim?.ready && health === 'healthy' && (
+      {visualActive && glSim?.ready && health === 'healthy' && sceneReady && (
         <div className="pointer-events-none fixed inset-0 z-[35]">
           <GlEclipse glSim={glSim} />
         </div>
       )}
       <section className="score-pond-page__hero">
         <ScorePondHeader
-          backHref="/"
+          backHref="/me"
+          backLabel="返回档案"
           network={network}
           tokenLabel={tokenLabel}
           shareAction={<ShareActions id={score.id} tokenId={score.tokenId} trackTitle={score.trackTitle} />}
@@ -157,7 +162,7 @@ export default function ScorePondScene({ score, network }: Props) {
             title={title}
             coverUrl={score.coverUrl}
             playback={playback}
-            eclipseAvailable={Boolean(glSim?.ready && health === 'healthy')}
+            eclipseAvailable={Boolean(glSim?.ready && health === 'healthy' && sceneReady)}
           />
         </div>
       </section>

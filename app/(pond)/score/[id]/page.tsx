@@ -5,7 +5,6 @@ import type { ScorePageData } from '@/src/data/score-source';
 import FallbackShell from './FallbackShell';
 import ScoreLifecycle from './components/ScoreLifecycle';
 import ScorePondScene from './components/ScorePondScene';
-import './score-page.css';
 
 type Props = { params: Promise<{ id: string }> };
 

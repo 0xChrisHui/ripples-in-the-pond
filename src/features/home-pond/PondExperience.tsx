@@ -2,14 +2,11 @@
 
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import {
-  Suspense, useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode, type TransitionEvent,
-} from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode, type TransitionEvent } from 'react';
 import DraftSavedToast from '@/src/components/jam/DraftSavedToast';
 import TestJam from '@/src/components/jam/TestJam';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
 import { DEFAULT_GL_FLAGS, parseGLFlags, type GLFlags } from '@/src/components/pond-gl-test3/gl-flags';
-import { useEclipseTransition } from '@/src/components/pond-gl-test3/focus/useEclipseTransition';
 import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
 import GlEclipse from '@/src/components/pond-gl-test3/overlay/GlEclipse';
 import GlLoading from '@/src/components/pond-gl-test3/overlay/GlLoading';
@@ -29,6 +26,8 @@ import PersistentWaterCore from '@/src/components/pond-shell/PersistentWaterCore
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScenePresence } from '@/src/components/pond-shell/motion/use-scene-presence';
 import { usePreparedArchive } from '@/src/components/pond-shell/use-prepared-archive';
+import { useOptionalPondSceneSlot } from '@/src/components/pond-shell/scene-slot';
+import HomeEclipseDriver from '@/src/components/pond-shell/HomeEclipseDriver';
 
 const SandboxControls = dynamic(() => import('./SandboxControls'), { ssr: false });
 const PreparedArchive = dynamic(() => import('@/app/(pond)/me/MePondArchive'), { ssr: false });
@@ -57,6 +56,8 @@ export default function PondExperience({ mode, persistent = false, children }: {
 }) {
   const pathname = usePathname();
   const transition = usePondTransition();
+  const sceneSlot = useOptionalPondSceneSlot();
+  const reportCore = sceneSlot?.reportCore;
   const [mountId, setMountId] = useState<string | null>(null);
   const sandbox = mode !== 'production';
   const p9Enabled = mode !== 'test4';
@@ -95,10 +96,17 @@ export default function PondExperience({ mode, persistent = false, children }: {
     echoPlayback.active,
     homeInteractive,
   );
+  const registeredScene = persistent && phase === 'score' ? sceneSlot?.scene ?? null : null;
   const sceneFlags = useMemo(
     () => persistent && !renderHomeScene ? ARCHIVE_FLAGS : glFlags,
     [glFlags, persistent, renderHomeScene],
   );
+  const coreFlags = useMemo(() => registeredScene ? {
+    ...registeredScene.flags,
+    // 水面花瓣属于持久 Water Core，路由 Scene 不得卸载并重排它。
+    flowerPetals: glFlags.flowerPetals,
+    forceFallback: glFlags.forceFallback,
+  } : sceneFlags, [glFlags.flowerPetals, glFlags.forceFallback, registeredScene, sceneFlags]);
   const glHealth: GlHealth = glFlags.forceFallback ? 'forced' : runtimeGlHealth;
   const glOk = glHealth === 'healthy' && sceneReady;
   const regularPlayingId = playing && currentTrack ? currentTrack.id : null;
@@ -107,15 +115,21 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const visitor = useTrack36Visitor(
     featuredEcho, glOk && glFlags.glSpheres && renderHomeScene, activePlaybackId,
   );
-  useEclipseTransition(glSim, visitor, glOk && homeInteractive ? playingId : null);
-  const mountGl = glFlags.glBase || glFlags.glSpheres || glFlags.water || glFlags.bgImage
-    || glFlags.rtt || glFlags.waterFx || glFlags.floatMotes || glFlags.waterPlants
-    || glFlags.reefStones || glFlags.crystalPillars;
+  const coreSim = phase === 'score' ? registeredScene?.glSim : glSim;
+  const coreVisitor = phase === 'score' ? registeredScene?.visitor : visitor;
+  const mountGl = coreFlags.glBase || coreFlags.glSpheres || coreFlags.water || coreFlags.bgImage
+    || coreFlags.rtt || coreFlags.waterFx || coreFlags.floatMotes || coreFlags.waterPlants
+    || coreFlags.reefStones || coreFlags.crystalPillars;
+
+  useEffect(() => {
+    reportCore?.(glHealth, sceneReady);
+  }, [glHealth, reportCore, sceneReady]);
 
   usePointerFx(homeInteractive && glOk && glFlags.glSpheres && (glFlags.perspective || glFlags.parallax));
   useEffect(() => {
+    if (registeredScene) return;
     setCameraFx({ dof: glFlags.dof, perspective: glFlags.perspective, parallax: glFlags.parallax });
-  }, [glFlags.dof, glFlags.perspective, glFlags.parallax]);
+  }, [glFlags.dof, glFlags.perspective, glFlags.parallax, registeredScene]);
   useEffect(() => { if (p9Enabled && homeInteractive) loadP9Tuning(); }, [homeInteractive, p9Enabled]);
   // 只由完全显现的入场层收场：渐隐离场层的 transitionend 会被浏览器延迟补发，子元素事件也会冒泡上来。
   const settleOnReveal = (event: TransitionEvent<HTMLElement>) => {
@@ -142,17 +156,21 @@ export default function PondExperience({ mode, persistent = false, children }: {
   return (
     <div className={persistent ? 'persistent-pond-shell' : undefined}
       data-pond-shell={persistent || undefined} data-pond-mount-id={persistent ? mountId ?? undefined : undefined}
-      data-pond-scene-owner={homeVisible ? 'home' : 'archive'}
-      data-pond-scene={homeVisible ? 'home' : 'archive'} data-pond-transition={persistent ? phase : undefined}
+      data-pond-scene-owner={registeredScene?.owner ?? (homeVisible ? 'home' : 'archive')}
+      data-pond-scene={registeredScene?.owner ?? (homeVisible ? 'home' : 'archive')}
+      data-pond-scene-ready={sceneReady} data-pond-transition={persistent ? phase : undefined}
       data-pond-reduced-scene-motion={persistent ? sceneMotion.reduced : undefined}
       style={persistent ? { '--pond-route-duration': `${transition?.duration ?? 0}ms` } as CSSProperties : undefined}>
-      {mountGl && <PersistentWaterCore flags={sceneFlags} glSim={glSim} visitor={visitor}
-        scenePresence={sceneMotion.presence} reducedSceneMotion={sceneMotion.reduced}
+      {mountGl && <PersistentWaterCore flags={coreFlags} glSim={coreSim} visitor={coreVisitor}
+        scenePresence={registeredScene ? undefined : sceneMotion.presence}
+        reducedSceneMotion={registeredScene ? undefined : sceneMotion.reduced}
+        pointerInteractive={registeredScene?.pointerInteractive}
+        onPerformanceChange={registeredScene?.onPerformanceChange}
         onHealthChange={setRuntimeGlHealth} onSceneReadyChange={setSceneReady} />}
       <main className={`${persistent ? 'pond-home-surface fixed inset-0 bg-transparent' : 'relative bg-black'} min-h-screen overflow-hidden`}
         data-active={homeVisible} aria-hidden={!homeVisible} inert={persistent && !homeInteractive}
         onTransitionEnd={settleOnReveal}
-        data-pond-root="true"
+        data-pond-root={phase === 'score' ? undefined : 'true'}
         data-pond-eclipse-active="false" data-gl-health={glHealth} data-scene-ready={sceneReady}>
       {/* 跟随页面首屏挂载并高于 DOM 备用圆；最终水面或可用 fallback 就绪后再撤。 */}
       <div className={`fixed inset-0 z-[25] ${mountGl && !sceneReady ? 'pointer-events-auto' : 'pointer-events-none'}`}>
@@ -182,6 +200,8 @@ export default function PondExperience({ mode, persistent = false, children }: {
         </div>
       )}
       {glFlags.glSpheres && glFlags.glEclipse && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
+      {renderHomeScene && <HomeEclipseDriver glSim={glSim} visitor={visitor}
+        playingId={glOk && homeInteractive ? playingId : null} />}
       {sandbox && <SandboxControls flags={glFlags} p9={mode === 'test3'} onChange={onGl} />}
       <DraftSavedToast />
       <FeaturedEchoBottomPlayer echo={featuredEcho} playback={echoPlayback} />
