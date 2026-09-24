@@ -42,7 +42,7 @@
 | I5 档案前景 | ✅ 完成 | `564e2d7` | 唯一预备档案、未登录零私人请求、键盘/控件涟漪隔离、四视口与完整 verify 通过 | `reviews/evidence/p11-i/i5-gate.md`、`i5-archive.json` |
 | I6 作品页接入 | ✅ 完成 | `1c23650` | 四枚 ready；共享 Core/Canvas/花瓣、日食/播放/P9/离页清理、四视口/reduced/fallback 与完整 verify 通过 | `reviews/evidence/p11-i/i6/i6-gate.md`、`i6-score.json` |
 | I7 档案↔作品锚点 | ✅ 自动部分完成 | `da131b1` | ready 唯一锚点、按钮/Back 来源恢复、双击/换目标/失败/Escape/新标签/身份切换、完整 verify 通过 | `reviews/evidence/p11-i/i7/i7-gate.md`、`i7-anchor.json` |
-| I8 总验收（自动部分） | ✅ 完成 | 本步提交 | 两类各 20 次往返、资源趋势、能力矩阵、历史/反向/降级、完整 verify 38/38、Forge 56/56 | `reviews/evidence/p11-i/i8-gate.md`、`i8-continuity.json`、完成审查 |
+| I8 总验收（自动部分） | ✅ 完成 | `a38997d` | 两类各 20 次往返、资源趋势、能力矩阵、历史/反向/降级、完整 verify 38/38、Forge 56/56 | `reviews/evidence/p11-i/i8-gate.md`、`i8-continuity.json`、完成审查 |
 
 ---
 
