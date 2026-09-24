@@ -18,6 +18,7 @@ import { usePlayer } from '@/src/components/player/PlayerProvider';
 import {
   useRegisterPondScene, type PondSceneDescriptor,
 } from '@/src/components/pond-shell/scene-slot';
+import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/score/score-origin';
 import type { Track } from '@/src/types/tracks';
 import ScoreArchive from './ScoreArchive';
@@ -75,7 +76,9 @@ export default function ScorePondScene({ score, network }: Props) {
   const playback = useScorePlayback(score.playbackBootstrap);
   const { stop: stopGlobalPlayer } = usePlayer();
   const pathname = usePathname();
-  const { origin, confirmScore } = useScoreOrigin();
+  const scoreOrigin = useScoreOrigin();
+  const { origin, confirmScore } = scoreOrigin;
+  const transition = usePondTransition();
   const holder = useScoreHolder(score.tokenId);
   const capabilities = useCapabilities();
   const [performanceReduced, setPerformanceReduced] = useState(false);
@@ -124,9 +127,20 @@ export default function ScorePondScene({ score, network }: Props) {
   const title = `Ripples #${score.tokenId}`;
   const editionStatus = score.degraded ? 'degraded' : 'finalized';
   const anchored = origin?.href === pathname && origin.tokenId === score.tokenId;
+  const transaction = transition?.transaction;
+  const ownsAnchor = anchored && (transaction?.target === 'score'
+    && transaction.stage !== 'preparing'
+    || transaction?.current === 'score' && transaction.target === 'archive'
+      && transaction.stage === 'preparing');
   useLayoutEffect(() => {
     confirmScore(score.tokenId, pathname);
   }, [confirmScore, pathname, score.tokenId]);
+  useEffect(() => {
+    if (transaction?.current !== 'score' || transaction.target === 'score'
+      || transaction.stage === 'stable') return;
+    if (transaction.target === 'home') scoreOrigin.clear();
+    if (playback.state === 'playing') void playback.pause();
+  }, [playback, scoreOrigin, transaction]);
 
   return (
     <main
@@ -138,7 +152,7 @@ export default function ScorePondScene({ score, network }: Props) {
       data-capability={capabilities.fine ? 'fine' : 'coarse'}
       data-reduced-motion={capabilities.reduced}
       data-score-state="ready"
-      data-score-anchor-transition={anchored || undefined}
+      data-score-anchor-transition={ownsAnchor || undefined}
       data-playback-state={playback.state}
       data-record-motion={returning ? 'returning' : isPlaying ? 'flowing' : 'resting'}
       data-resource-load-ms={playback.resourceLoadMs ?? undefined}
@@ -159,7 +173,7 @@ export default function ScorePondScene({ score, network }: Props) {
           backLabel="返回档案"
           network={network}
           tokenLabel={tokenLabel}
-          onBeforeBack={() => { void playback.pause(); }}
+          onBeforeLeave={() => { void playback.pause(); }}
           shareAction={<ShareActions id={score.id} tokenId={score.tokenId} trackTitle={score.trackTitle} />}
         />
         <div className="score-pond-page__identity" data-pond-ui="true">
@@ -169,7 +183,7 @@ export default function ScorePondScene({ score, network }: Props) {
         </div>
         <div className="score-pond-page__anchor" data-pond-ui="true"
           data-score-token-id={score.tokenId} data-score-anchor-ready={anchored || undefined}
-          style={anchored ? { viewTransitionName: viewTransitionName() } as CSSProperties : undefined}>
+          style={ownsAnchor ? { viewTransitionName: viewTransitionName() } as CSSProperties : undefined}>
           <ScoreRecordAnchor
             title={title}
             coverUrl={score.coverUrl}

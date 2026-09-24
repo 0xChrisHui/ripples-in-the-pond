@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode,
+  createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode,
 } from 'react';
 import { flushSync } from 'react-dom';
 
@@ -18,44 +18,27 @@ export type ScoreOrigin = {
   stage: 'forward' | 'score' | 'returning';
 };
 
-type Transition = { finished: Promise<void>; skipTransition: () => void };
-type TransitionDocument = Document & {
-  startViewTransition?: (update: () => Promise<void>) => Transition;
-};
 type Value = {
   origin: ScoreOrigin | null;
   capture: (origin: Omit<ScoreOrigin, 'id' | 'stage'>) => number;
   confirmScore: (tokenId: number, href: string) => boolean;
   beginReturn: (id?: number, sync?: boolean) => number | null;
   clear: (id?: number) => boolean;
-  run: (update: () => void, ready: () => boolean, id: number,
-    failed?: () => boolean) => Promise<boolean>;
 };
 
 const ScoreOriginContext = createContext<Value | null>(null);
 
-async function waitUntil(ready: () => boolean, cancelled: () => boolean, timeout = 30_000) {
-  const deadline = performance.now() + timeout;
-  while (performance.now() < deadline) {
-    if (cancelled()) return false;
-    if (ready()) return true;
-    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-  }
-  return ready();
-}
-
+/** 仅保存唱片来源、分页、滚动与锚点阶段；不拥有导航或动画时序。 */
 export function ScoreOriginProvider({ children }: { children: ReactNode }) {
   const [origin, setOrigin] = useState<ScoreOrigin | null>(null);
   const originRef = useRef<ScoreOrigin | null>(null);
   const nextId = useRef(0);
-  const active = useRef<Transition | null>(null);
   const write = useCallback((value: ScoreOrigin | null) => {
     originRef.current = value;
     setOrigin(value);
   }, []);
   const capture = useCallback((next: Omit<ScoreOrigin, 'id' | 'stage'>) => {
     const value: ScoreOrigin = { ...next, id: ++nextId.current, stage: 'forward' };
-    try { active.current?.skipTransition(); } catch { active.current = null; }
     flushSync(() => write(value));
     return value.id;
   }, [write]);
@@ -81,92 +64,9 @@ export function ScoreOriginProvider({ children }: { children: ReactNode }) {
     else write(next);
     return current.id;
   }, [write]);
-  const run = useCallback(async (update: () => void, ready: () => boolean, id: number,
-    failed: () => boolean = () => false) => {
-    const previous = active.current;
-    if (previous) {
-      try { previous.skipTransition(); } catch { /* 已结束的转场无需再取消。 */ }
-      if (active.current === previous) active.current = null;
-    }
-    let landed = false;
-    let committed = false;
-    const commit = async () => {
-      if (committed) return;
-      committed = true;
-      update();
-      landed = await waitUntil(ready, () => originRef.current?.id !== id || failed());
-    };
-    const doc = document as TransitionDocument;
-    if (!doc.startViewTransition) {
-      await commit();
-      return landed;
-    }
-    let transition: Transition;
-    try {
-      transition = doc.startViewTransition(commit);
-    } catch {
-      await commit();
-      return landed;
-    }
-    active.current = transition;
-    const kick = window.setTimeout(() => { void commit(); }, 100);
-    let disposed = false;
-    let cancelFrame = 0;
-    const cancelled = new Promise<void>((resolve) => {
-      const check = () => {
-        if (disposed || landed) return;
-        if (originRef.current?.id !== id) resolve();
-        else cancelFrame = requestAnimationFrame(check);
-      };
-      check();
-    });
-    let deadline = 0;
-    const timedOut = new Promise<void>((resolve) => {
-      deadline = window.setTimeout(resolve, 31_000);
-    });
-    try {
-      await Promise.race([transition.finished.catch(() => undefined), cancelled, timedOut]);
-    } finally {
-      disposed = true;
-      window.clearTimeout(kick);
-      window.clearTimeout(deadline);
-      if (cancelFrame) cancelAnimationFrame(cancelFrame);
-    }
-    if (active.current === transition) {
-      try { transition.skipTransition(); } catch { /* 已自然结束。 */ }
-      active.current = null;
-    }
-    return landed;
-  }, []);
-
-  useEffect(() => {
-    const onPopState = () => {
-      const current = originRef.current;
-      if (!current || current.stage === 'returning' || window.location.pathname !== '/me') return;
-      const id = beginReturn();
-      if (id == null) return;
-      void run(() => undefined, () => Boolean(document.querySelector(
-        `.pond-prepared-archive[data-interactive="true"] [data-score-origin-key="${CSS.escape(current.key)}"]`,
-      )), id);
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      const current = originRef.current;
-      if (event.key !== 'Escape' || current?.stage !== 'forward') return;
-      try { active.current?.skipTransition(); } catch { active.current = null; }
-      clear(current.id);
-      if (window.location.pathname !== '/me') window.history.back();
-    };
-    window.addEventListener('popstate', onPopState);
-    window.addEventListener('keydown', onKeyDown);
-    return () => {
-      window.removeEventListener('popstate', onPopState);
-      window.removeEventListener('keydown', onKeyDown);
-    };
-  }, [beginReturn, clear, run]);
-
   const value = useMemo<Value>(() => ({
-    origin, capture, confirmScore, beginReturn, clear, run,
-  }), [beginReturn, capture, clear, confirmScore, origin, run]);
+    origin, capture, confirmScore, beginReturn, clear,
+  }), [beginReturn, capture, clear, confirmScore, origin]);
   return <ScoreOriginContext.Provider value={value}>{children}</ScoreOriginContext.Provider>;
 }
 
@@ -176,10 +76,5 @@ export function useScoreOrigin() {
   return context;
 }
 
-export function useOptionalScoreOrigin() {
-  return useContext(ScoreOriginContext);
-}
-
-export function viewTransitionName() {
-  return 'score-record';
-}
+export function useOptionalScoreOrigin() { return useContext(ScoreOriginContext); }
+export function viewTransitionName() { return 'score-record'; }

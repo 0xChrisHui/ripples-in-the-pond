@@ -2,7 +2,6 @@
 
 import type { MouseEvent, ReactNode } from 'react';
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
-import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useOptionalScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
 
 type Props = {
@@ -11,7 +10,7 @@ type Props = {
   network: string;
   tokenLabel: string;
   shareAction: ReactNode;
-  onBeforeBack?: () => void;
+  onBeforeLeave?: () => void;
 };
 
 /** 作品水塘首屏导航；分享行为由页面传入，保留既有分享能力。 */
@@ -21,32 +20,30 @@ export default function ScorePondHeader({
   network,
   tokenLabel,
   shareAction,
-  onBeforeBack,
+  onBeforeLeave,
 }: Props) {
-  const transition = usePondTransition();
   const scoreOrigin = useOptionalScoreOrigin();
   const back = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    onBeforeBack?.();
+    onBeforeLeave?.();
     const origin = scoreOrigin?.origin;
-    if (!origin || origin.stage !== 'score' || !transition || backHref !== '/me') return;
-    const id = scoreOrigin.beginReturn();
-    if (id == null) return;
-    event.preventDefault();
-    transition.navigate(backHref);
-    void scoreOrigin.run(
-      () => undefined,
-      () => Boolean(document.querySelector(
-        `.pond-prepared-archive[data-interactive="true"] [data-score-origin-key="${CSS.escape(origin.key)}"]`,
-      )), id,
-    );
+    if (origin?.stage === 'score' && backHref === '/me') scoreOrigin?.beginReturn();
+  };
+  const home = () => {
+    onBeforeLeave?.();
+    scoreOrigin?.clear();
   };
   return (
     <header className="score-pond-header" data-pond-ui="true">
-      <PondRouteLink className="score-pond-header__back" href={backHref} onClick={back}>
-        <span aria-hidden="true">←</span>
-        <span>{backLabel}</span>
-      </PondRouteLink>
+      <nav className="score-pond-header__routes" aria-label="离开作品">
+        <PondRouteLink className="score-pond-header__back" href={backHref} onClick={back}>
+          <span aria-hidden="true">←</span>
+          <span>{backLabel}</span>
+        </PondRouteLink>
+        <PondRouteLink className="score-pond-header__home" href="/" onClick={home}>
+          回到水塘
+        </PondRouteLink>
+      </nav>
 
       <p className="score-pond-header__edition" aria-label={`${network}，${tokenLabel}`}>
         <span>{network}</span>

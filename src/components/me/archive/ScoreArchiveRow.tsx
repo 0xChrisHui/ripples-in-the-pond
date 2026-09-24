@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef, useState, type CSSProperties, type MouseEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
 import type { OwnedScoreNFT, ScoreMintStatus } from '@/src/types/jam';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/score/score-origin';
@@ -37,56 +37,56 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
   const key = `score-${score.queueId}`;
   const href = `/score/${score.id}`;
   const selected = isPermanent && scoreOrigin.origin?.key === key;
+  const transaction = transition?.transaction;
+  const ownsAnchor = selected && (transaction?.target === 'score'
+    && transaction.stage === 'preparing'
+    || scoreOrigin.origin?.stage === 'returning' && transaction?.target === 'archive'
+      && transaction.stage !== 'preparing');
   const title = isPermanent ? `Ripples #${score.tokenId}` : score.trackTitle;
   const detail = failureDetail(score);
   const action = isPermanent ? '打开唱片' : score.status === 'failed' ? '查看详情' : '查看进度';
 
   const openScore = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!isPermanent || event.button !== 0 || event.metaKey || event.ctrlKey
+    if (event.button !== 0 || event.metaKey || event.ctrlKey
       || event.shiftKey || event.altKey || event.currentTarget.target === '_blank') return;
     event.preventDefault();
     if (pendingRef.current) return;
+    if (!transition) return;
     const row = rowRef.current;
     const rect = row?.getBoundingClientRect();
-    if (!row || !rect || score.tokenId == null || !transition) {
-      transition?.navigate(href);
-      return;
-    }
     pendingRef.current = true;
     setPending(true);
-    const section = row.closest<HTMLElement>('[data-archive-section]');
-    const id = scoreOrigin.capture({
-      key, href, tokenId: score.tokenId, ownerKey,
-      section: section?.dataset.archiveSection ?? 'records',
-      page: Number(section?.dataset.archivePage ?? 0), scrollY: window.scrollY,
-      rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-    });
-    void scoreOrigin.run(
-      () => transition.navigate(href),
-      () => Boolean(document.querySelector(
-        `[data-score-token-id="${score.tokenId}"][data-score-anchor-ready="true"]`,
-      )), id, () => Boolean(document.querySelector(
-        'main[data-score-state]:not([data-score-state="ready"]), .score-fallback',
-      )),
-    ).then(async (landed) => {
-      if (!landed) {
-        const returning = scoreOrigin.beginReturn(id, false);
-        if (returning != null) {
-          await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-          transition.navigate('/me');
-        }
-      }
-    }).finally(() => {
-      pendingRef.current = false;
-      setPending(false);
-    });
+    if (isPermanent && row && rect && score.tokenId != null) {
+      const section = row.closest<HTMLElement>('[data-archive-section]');
+      scoreOrigin.capture({
+        key, href, tokenId: score.tokenId, ownerKey,
+        section: section?.dataset.archiveSection ?? 'records',
+        page: Number(section?.dataset.archivePage ?? 0), scrollY: window.scrollY,
+        rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+      });
+    } else scoreOrigin.clear();
+    transition.navigate(href);
   };
+
+  useEffect(() => {
+    if (!pendingRef.current || !transaction) return;
+    const stillOpening = transaction.target === 'score' && transaction.href === href;
+    if (stillOpening) return;
+    pendingRef.current = false;
+    queueMicrotask(() => setPending(false));
+  }, [href, transaction]);
+
+  useEffect(() => {
+    const origin = scoreOrigin.origin;
+    if (origin?.stage === 'forward' && transaction?.stage === 'stable'
+      && transaction.current === 'archive') scoreOrigin.clear(origin.id);
+  }, [scoreOrigin, transaction]);
 
   return (
     <article ref={rowRef} className="me-archive-row" data-status={score.status}
       data-score-origin-key={key} data-score-origin-selected={selected || undefined}
       aria-busy={pending || undefined}
-      style={selected ? { viewTransitionName: viewTransitionName() } as CSSProperties : undefined}>
+      style={ownsAnchor ? { viewTransitionName: viewTransitionName() } as CSSProperties : undefined}>
       <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')}</p>
       <div className="me-archive-row__main">
         <h3>{title}</h3>
@@ -97,6 +97,8 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
         {detail && <small>{detail}</small>}
       </div>
       <Link className="me-archive-row__action" href={href} onClick={openScore}
+        onMouseEnter={() => transition?.prefetch(href)} onFocus={() => transition?.prefetch(href)}
+        onTouchStart={() => transition?.prefetch(href)}
         aria-disabled={pending || undefined}>
         {action} <span aria-hidden="true">→</span>
       </Link>

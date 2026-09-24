@@ -13,13 +13,13 @@
     visibility 0s linear var(--pond-route-duration, var(--p11-reveal));
 }
 
-.persistent-pond-shell:is([data-pond-transition='home'], [data-pond-transition='entering-home']) .pond-home-surface {
+.pond-home-surface[data-active='true'] {
   opacity: 1;
   visibility: visible;
   transition-delay: 0s;
 }
 
-.persistent-pond-shell[data-pond-transition='home'] .pond-home-surface { pointer-events: auto; }
+.pond-home-surface[data-interactive='true'] { pointer-events: auto; }
 
 .pond-prepared-archive {
   position: absolute;
@@ -61,11 +61,12 @@
 .pond-route-surface[data-archive-placeholder='true'] { display: none; }
 
 /* 稳定态必须是 transform:none，否则档案里的 fixed 层会以本层为包含块。 */
-.persistent-pond-shell:is([data-pond-transition='archive'], [data-pond-transition='score'], [data-pond-transition='leaving-home']) .pond-route-surface {
+.pond-route-surface[data-active='true'] {
   opacity: 1;
-  pointer-events: auto;
   transform: none;
 }
+
+.pond-route-surface[data-interactive='true'] { pointer-events: auto; }
 
 @supports (view-transition-name: score-record) {
   ::view-transition { pointer-events: none; }
@@ -80,14 +81,6 @@
   ::view-transition-new(score-record) { mix-blend-mode: normal; }
 }
 
-.score-pond-page:not([data-score-anchor-transition='true']),
-.score-fallback { animation: score-surface-in var(--pond-route-duration, 520ms) var(--p11-ease-out) both; }
-
-@keyframes score-surface-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 @media (pointer: coarse) {
   .pond-route-surface { transform: translateY(4px); }
 }
@@ -95,5 +88,4 @@
 @media (prefers-reduced-motion: reduce) {
   .pond-route-surface, .pond-prepared-archive { transform: none; }
   ::view-transition-group(score-record) { animation-duration: 140ms; }
-  .score-pond-page, .score-fallback { animation-duration: 140ms; }
 }

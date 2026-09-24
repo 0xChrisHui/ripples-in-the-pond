@@ -1,0 +1,50 @@
+{
+  "checkedAt": "2026-09-24T17:15:44+08:00",
+  "scope": "P11-J J0/J7 browser gate foundation and minimal interaction gate",
+  "checks": {
+    "nodeSyntax": true,
+    "entryWithin220Lines": true,
+    "helpersWithin220Lines": true,
+    "readOnlyBoundary": true,
+    "minimalBrowserGate": true
+  },
+  "lineCounts": {
+    "scripts/p11/score-route-handoff.mjs": 78,
+    "scripts/p11/score-route-handoff/assertions.mjs": 60,
+    "scripts/p11/score-route-handoff/fixtures.mjs": 41,
+    "scripts/p11/score-route-handoff/flows.mjs": 103,
+    "scripts/p11/score-route-handoff/interactions.mjs": 120,
+    "scripts/p11/score-route-handoff/request-harness.mjs": 90,
+    "scripts/p11/score-route-handoff/screencast.mjs": 50,
+    "scripts/p11/score-route-handoff/stress.mjs": 75,
+    "scripts/p11/score-route-handoff/telemetry.mjs": 134
+  },
+  "readOnlyBoundary": {
+    "fixtureEndpoints": [
+      "/api/me/score-nfts",
+      "/api/me/scores",
+      "/api/me/nfts",
+      "/api/me/pond-echoes"
+    ],
+    "publicScoreTargets": ["/score/1", "/score/2", "/score/99999999"],
+    "productionWrites": 0,
+    "devDiagnosticPosts": 2,
+    "policy": "生产同源非 GET/HEAD/OPTIONS 请求由 CDP Fetch 阻断并使 Gate 失败；Next dev 栈帧请求单列"
+  },
+  "eslint": {
+    "applicable": false,
+    "reason": "项目 ESLint 配置忽略 .mjs；脚本使用 node --check 与浏览器实跑验证"
+  },
+  "minimalBrowserGate": {
+    "command": "node scripts/p11/score-route-handoff.mjs --minimal",
+    "passed": true,
+    "evidence": "reviews/evidence/p11-j/baseline/minimal-interactions.json",
+    "scenarios": [
+      "browser Back",
+      "cold preparing Escape with late RSC release",
+      "last target wins",
+      "failed score shell recovery",
+      "Score audio cleanup and single player"
+    ]
+  }
+}

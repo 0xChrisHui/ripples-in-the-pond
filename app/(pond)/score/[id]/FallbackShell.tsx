@@ -3,19 +3,17 @@
 import { useEffect } from 'react';
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import { useScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
-import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 
 /** 无法确认作品身份时的安全壳；不伪造 Token、日期或永久资源。 */
 export default function FallbackShell() {
   const scoreOrigin = useScoreOrigin();
-  const transition = usePondTransition();
   useEffect(() => {
-    if (scoreOrigin.origin?.stage === 'forward' && scoreOrigin.beginReturn(undefined, false) != null) {
-      queueMicrotask(() => transition?.navigate('/me'));
-    } else if (scoreOrigin.origin?.stage !== 'returning') scoreOrigin.clear();
-  }, [scoreOrigin, transition]);
+    const origin = scoreOrigin.origin;
+    if (origin) scoreOrigin.clear(origin.id);
+  }, [scoreOrigin]);
   return (
-    <main className="score-fallback" data-p11-theme="score" data-theme="dark" lang="zh-CN">
+    <main className="score-fallback" data-p11-theme="score" data-theme="dark"
+      data-score-state="fallback" lang="zh-CN">
       <section className="score-fallback__content">
         <span className="score-fallback__mark" aria-hidden="true">○</span>
         <h1>这枚唱片暂时无法读取</h1>
@@ -26,6 +24,7 @@ export default function FallbackShell() {
         <div className="score-fallback__actions">
           <button type="button" onClick={() => window.location.reload()}>重新读取</button>
           <PondRouteLink href="/me">← 返回档案</PondRouteLink>
+          <PondRouteLink href="/">回到水塘</PondRouteLink>
         </div>
       </section>
     </main>

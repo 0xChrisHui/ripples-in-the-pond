@@ -1,0 +1,96 @@
+.score-pond-page {
+  --score-archive-surface-top: color-mix(in srgb, var(--p11-ink) 80%, transparent);
+  --score-archive-surface-bottom: color-mix(in srgb, var(--p11-ink) 92%, transparent);
+}
+
+.score-archive {
+  position: relative;
+  z-index: 50;
+  display: grid;
+  min-height: 100svh;
+  justify-items: center;
+  gap: var(--p11-space-48);
+  padding: var(--p11-space-64) var(--p11-page-inset) var(--p11-space-96);
+  border-top: 1px solid var(--p11-line-strong);
+  background: linear-gradient(
+    to bottom,
+    var(--score-archive-surface-top),
+    var(--score-archive-surface-bottom)
+  );
+  color: var(--p11-bone);
+  opacity: 1;
+}
+
+.score-archive__intro,
+.score-archive__edition { width: min(100%, var(--p11-ledger-max)); }
+.score-archive__intro { display: grid; gap: var(--p11-space-12); }
+.score-archive__eyebrow {
+  color: var(--p11-brass);
+  font: var(--p11-text-xs)/1 var(--p11-font-mono);
+  letter-spacing: var(--p11-tracking-label);
+  text-transform: uppercase;
+}
+.score-archive__intro h2 {
+  font: 300 clamp(2.25rem, 6vw, 4.5rem)/1 var(--p11-font-display);
+  letter-spacing: var(--p11-tracking-tight);
+}
+.score-archive__intro > p:last-of-type {
+  max-width: 62ch;
+  color: var(--p11-muted);
+  font-size: var(--p11-text-body);
+  line-height: var(--p11-leading-body);
+}
+.score-archive__decoder {
+  display: inline-flex;
+  min-height: var(--p11-touch-target);
+  align-items: center;
+  color: var(--p11-brass-strong);
+  font-size: var(--p11-text-sm);
+  text-underline-offset: 4px;
+}
+.score-archive .provenance-ledger {
+  border-color: var(--p11-line-strong);
+  background:
+    linear-gradient(115deg, color-mix(in srgb, var(--p11-brass) 3%, transparent), transparent 42%),
+    color-mix(in srgb, var(--p11-surface-solid) 96%, transparent);
+  box-shadow: var(--p11-shadow-raised);
+}
+.score-archive .provenance-ledger code {
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}
+.score-archive__edition {
+  padding-top: var(--p11-space-24);
+  border-top: 1px solid var(--p11-line-strong);
+}
+
+@media (min-width: 768px) {
+  .score-pond-page {
+    --score-archive-surface-top: color-mix(in srgb, var(--p11-ink) 72%, transparent);
+    --score-archive-surface-bottom: color-mix(in srgb, var(--p11-ink) 84%, transparent);
+  }
+
+  .score-archive {
+    gap: var(--p11-space-64);
+    padding-block: var(--p11-space-96) var(--p11-space-128);
+  }
+
+  .score-archive .provenance-ledger {
+    background:
+      linear-gradient(115deg, color-mix(in srgb, var(--p11-brass) 3%, transparent), transparent 42%),
+      color-mix(in srgb, var(--p11-surface-solid) 92%, transparent);
+  }
+}
+
+@media (forced-colors: active) {
+  .score-archive,
+  .score-archive .provenance-ledger {
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+    forced-color-adjust: auto;
+  }
+
+  .score-archive__decoder { color: LinkText; }
+}

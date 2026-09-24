@@ -13,6 +13,7 @@ import RecordingArchiveRow from './RecordingArchiveRow';
 import ScoreArchiveRow from './ScoreArchiveRow';
 import EchoArchiveRow from '@/src/components/echo/EchoArchiveRow';
 import { useScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
+import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import './archive.css';
 
 type SectionId = 'records' | 'pending' | 'favorites';
@@ -38,6 +39,7 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
 }) {
   const pathname = usePathname();
   const scoreOrigin = useScoreOrigin();
+  const transition = usePondTransition();
   const auth = useAuth();
   const { ownerId, scores, recordings, materials, retry } = useMeArchive({
     authenticated: auth.authenticated,
@@ -92,12 +94,19 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
   }, [auth.ready, ownerKey, scoreOrigin]);
   useLayoutEffect(() => {
     const origin = scoreOrigin.origin;
-    if (!origin || origin.stage !== 'returning' || pathname !== '/me'
+    const transaction = transition?.transaction;
+    const returning = transaction?.current === 'score' && transaction.target === 'archive'
+      && transaction.stage === 'preparing';
+    if (origin?.stage === 'score' && returning) {
+      scoreOrigin.beginReturn(origin.id, false);
+      return;
+    }
+    if (!origin || origin.stage !== 'returning' || !returning
       || !archiveReady || !recordsSettled) return;
     const index = recordItems.findIndex((row) => row.key === origin.key);
     if (index < 0) {
       document.querySelector<HTMLElement>('[data-pond-focus-entry]')?.focus({ preventScroll: true });
-      scoreOrigin.clear(origin.id);
+      transition?.reportVisualReady('archive', transaction.generation);
       return;
     }
     const targetPage = Math.floor(index / PAGE_SIZES.records);
@@ -113,10 +122,17 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
       );
       window.scrollTo({ top: origin.scrollY, behavior: 'auto' });
       row?.querySelector<HTMLElement>('a[href]')?.focus({ preventScroll: true });
-      scoreOrigin.clear(origin.id);
+      transition?.reportVisualReady('archive', transaction.generation);
     });
     return () => cancelAnimationFrame(frame);
-  }, [archiveReady, pathname, recordItems, recordsSettled, safePages.records, scoreOrigin]);
+  }, [archiveReady, recordItems, recordsSettled, safePages.records, scoreOrigin, transition]);
+  useEffect(() => {
+    const transaction = transition?.transaction;
+    const origin = scoreOrigin.origin;
+    if (!origin || origin.stage !== 'returning' || pathname !== '/me'
+      || transaction?.stage !== 'stable' || transaction.current !== 'archive') return;
+    scoreOrigin.clear(origin.id);
+  }, [pathname, scoreOrigin, transition?.transaction]);
   const changePage = (section: SectionId, page: number) => {
     setPages((current) => ({ ...current, [section]: page }));
   };
