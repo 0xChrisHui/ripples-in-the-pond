@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "initial": {
+    "label": "initial",
+    "path": "/",
+    "mountId": "pond-d461e136-d8bf-4d63-9523-0b35103bf236",
+    "owner": "home",
+    "sameShell": true,
+    "sameCanvas": true,
+    "canvasCount": 2,
+    "glHealth": "healthy"
+  },
+  "loops": [
+    {
+      "label": "me-1",
+      "path": "/me",
+      "mountId": "pond-d461e136-d8bf-4d63-9523-0b35103bf236",
+      "owner": "archive",
+      "sameShell": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy"
+    },
+    {
+      "label": "home-1",
+      "path": "/",
+      "mountId": "pond-d461e136-d8bf-4d63-9523-0b35103bf236",
+      "owner": "home",
+      "sameShell": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy"
+    },
+    {
+      "label": "me-2",
+      "path": "/me",
+      "mountId": "pond-d461e136-d8bf-4d63-9523-0b35103bf236",
+      "owner": "archive",
+      "sameShell": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy"
+    },
+    {
+      "label": "home-2",
+      "path": "/",
+      "mountId": "pond-d461e136-d8bf-4d63-9523-0b35103bf236",
+      "owner": "home",
+      "sameShell": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy"
+    },
+    {
+      "label": "me-3",
+      "path": "/me",
+      "mountId": "pond-d461e136-d8bf-4d63-9523-0b35103bf236",
+      "owner": "archive",
+      "sameShell": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy"
+    },
+    {
+      "label": "home-3",
+      "path": "/",
+      "mountId": "pond-d461e136-d8bf-4d63-9523-0b35103bf236",
+      "owner": "home",
+      "sameShell": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy"
+    }
+  ],
+  "directMe": {
+    "label": "direct-me",
+    "path": "/me",
+    "mountId": "pond-405f8af5-86f7-4930-9e71-c1dbd10c40c6",
+    "owner": "archive",
+    "sameShell": false,
+    "sameCanvas": false,
+    "canvasCount": 2,
+    "glHealth": "healthy"
+  },
+  "refreshMe": {
+    "label": "refresh-me",
+    "path": "/me",
+    "mountId": "pond-f307e297-f471-490f-a542-2cca2bfc860a",
+    "owner": "archive",
+    "sameShell": false,
+    "sameCanvas": false,
+    "canvasCount": 2,
+    "glHealth": "healthy"
+  },
+  "fallbackMe": {
+    "label": "fallback-me",
+    "path": "/me",
+    "mountId": "pond-044a26bc-e32c-4768-8409-c5d41f796951",
+    "owner": "archive",
+    "sameShell": false,
+    "sameCanvas": false,
+    "canvasCount": 2,
+    "glHealth": "forced"
+  }
+}

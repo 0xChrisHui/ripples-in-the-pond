@@ -35,15 +35,16 @@ export default function MePondArchive({ showControls = false }: MePondArchivePro
   const [veilOpacity, setVeilOpacity] = useState(STANDARD_VEIL_OPACITY);
 
   return (
-    <div className="me-pond" data-pond-health={health} data-scene-ready={sceneReady}>
-      <div className="me-pond__scene" aria-hidden="true">
-        <PondGL
-          flags={ARCHIVE_POND_FLAGS}
-          pointerInteractive
-          onHealthChange={setHealth}
-          onSceneReadyChange={setSceneReady}
-        />
-      </div>
+    <div className="me-pond" data-pond-health={showControls ? health : 'shared'}
+      data-scene-ready={showControls ? sceneReady : true}>
+      {showControls ? <div className="me-pond__scene" aria-hidden="true">
+          <PondGL
+            flags={ARCHIVE_POND_FLAGS}
+            pointerInteractive
+            onHealthChange={setHealth}
+            onSceneReadyChange={setSceneReady}
+          />
+        </div> : null}
       <div
         className="me-pond__veil"
         aria-hidden="true"

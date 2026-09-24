@@ -1,0 +1,26 @@
+.persistent-pond-shell {
+  min-height: 100svh;
+  background: #010504;
+}
+
+.pond-home-surface {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--p11-reveal) var(--p11-ease-out);
+}
+
+.pond-home-surface[data-active='true'] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.pond-route-surface {
+  position: relative;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pond-home-surface { transition-duration: 80ms; }
+}

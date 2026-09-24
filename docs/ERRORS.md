@@ -669,3 +669,12 @@
 - 🔧 处理：经用户明确批准，本地临时移除字体初始化完成一次无远程字体构建，38/38 页面通过；随即恢复 `app/layout.tsx`，文件 hash 与 `HEAD` 一致，不提交字体变更。
 - ✅ 结果：I1-a 核心代码及其余完整 Gate 均通过，线上字体行为保持不变。
 - 💡 外部字体可达性与业务编译要分开记录；临时绕过必须可逆、不得混入产品提交，也不能冒充字体链路本身已验证。
+
+### E054 — 浏览器验收用的 Edge 临时资料目录让全仓 ESLint EPERM
+
+- 📅 2026-09-24 / P11-I2
+- 😱 现象：完整 `verify.sh` 的 ESLint 阶段报 `EPERM: operation not permitted, open '.edge-i2-profile\Default\Extensions\...js'`；其余阶段全部通过。
+- 🧠 原因：I2 连续性脚本在仓库根目录创建 Edge 用户资料目录，扩展 JS 被 Edge 锁定；ESLint 9 flat config 只读 `globalIgnores`，**不读 `.gitignore`**，所以只在 `.gitignore` 加忽略规则无效。
+- 🔧 修复：`eslint.config.mjs` 的 `globalIgnores` 增加 `.edge-*-profile/**`，只重跑失败的 lint 阶段。
+- ✅ 结果：全仓 ESLint 0 error（3 个既有 warning），其余阶段沿用同一源码的通过结果。
+- 💡 新建任何浏览器资料或缓存目录时，要同时核对 Git 与各工具自己的忽略机制；不能假设所有工具共享 `.gitignore`。

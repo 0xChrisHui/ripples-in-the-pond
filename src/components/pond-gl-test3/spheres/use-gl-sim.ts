@@ -53,7 +53,11 @@ export interface GlSim {
   toggle: (t: Track) => Promise<void>;
 }
 
-export function useGlSim(active: boolean, externalPlaybackActive = false): GlSim {
+export function useGlSim(
+  initialized: boolean,
+  externalPlaybackActive = false,
+  interactive = initialized,
+): GlSim {
   const { playing, currentTrack, toggle } = usePlayer();
   const playingId = playing && currentTrack ? currentTrack.id : null;
   const playingIdRef = useRef<string | null>(null);
@@ -73,8 +77,8 @@ export function useGlSim(active: boolean, externalPlaybackActive = false): GlSim
   const setHover = useCallback((id: string | null) => { hoverIdRef.current = id; }, []);
   // I1 — GL nav 点击切组（取代旧 Archipelago nav；直接驱动 GL 组、修 G4"nav 点击 GL 不跟随"）
   const setGroup = useCallback((id: GroupId) => {
-    if (!playingIdRef.current && !externalPlaybackActive) setGroupId(id);
-  }, [externalPlaybackActive]);
+    if (interactive && !playingIdRef.current && !externalPlaybackActive) setGroupId(id);
+  }, [externalPlaybackActive, interactive]);
 
   // 取数（仅 active；与 Archipelago 各取一次，/api/tracks 有 ISR 缓存，重复成本低）。
   // J4：加 res.ok 判定 + error 态 + retry（失败不再静默 console.error、无 UI）。
@@ -102,14 +106,14 @@ export function useGlSim(active: boolean, externalPlaybackActive = false): GlSim
     }
   }, []);
   useEffect(() => {
-    if (!active) return;
+    if (!initialized) return;
     void loadTracks();
     return () => requestRef.current?.abort();
-  }, [active, loadTracks]);
+  }, [initialized, loadTracks]);
 
   // 键盘 ←→ 切组（复刻 Archipelago.tsx:135-149 的并行逻辑，初始同为 A → 同步）
   useEffect(() => {
-    if (!active) return;
+    if (!interactive) return;
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
@@ -119,11 +123,11 @@ export function useGlSim(active: boolean, externalPlaybackActive = false): GlSim
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [active, groupId, setGroup]);
+  }, [groupId, interactive, setGroup]);
 
   // 涟漪事件桥：订阅 bg-ripple:wave → wavesRef（duration 秒→ms，复刻 use-wave-events.ts）
   useEffect(() => {
-    if (!active) return;
+    if (!initialized) return;
     const onWave = (e: Event) => {
       const ce = e as CustomEvent<{ x: number; y: number; size: number; duration: number }>;
       wavesRef.current.push({
@@ -133,12 +137,12 @@ export function useGlSim(active: boolean, externalPlaybackActive = false): GlSim
     };
     window.addEventListener('bg-ripple:wave', onWave);
     return () => window.removeEventListener('bg-ripple:wave', onWave);
-  }, [active]);
+  }, [initialized]);
 
   // 建 sim（tracks/group 变 → 重建）；尺寸取 window（正交相机像素 1:1）
   useEffect(() => {
     // queueMicrotask 包 setState：避 React 19 react-hooks/set-state-in-effect lint（同 SphereCanvas pattern）
-    if (!active || tracks.length === 0) {
+    if (!initialized || tracks.length === 0) {
       simRef.current?.stop();
       simRef.current = null;
       queueMicrotask(() => setNodes([]));
@@ -160,11 +164,11 @@ export function useGlSim(active: boolean, externalPlaybackActive = false): GlSim
     wavesRef.current = [];
     queueMicrotask(() => setNodes(built));
     return () => { simRef.current?.stop(); };
-  }, [active, tracks, groupId, snapshot?.dataVersion]);
+  }, [initialized, tracks, groupId, snapshot?.dataVersion]);
 
   // document.hidden 时暂停 sim（性能预算：后台标签不跑物理）
   useEffect(() => {
-    if (!active) return;
+    if (!initialized) return;
     const onVis = () => {
       const sim = simRef.current;
       if (!sim) return;
@@ -173,12 +177,12 @@ export function useGlSim(active: boolean, externalPlaybackActive = false): GlSim
     };
     document.addEventListener('visibilitychange', onVis);
     return () => document.removeEventListener('visibilitychange', onVis);
-  }, [active]);
+  }, [initialized]);
 
   // J2 — 窗口/转屏后把 sim + cluster 锚点等比缩放到新尺寸（配合 SphereInstances 相机跟随 sizeRef）→
   // GL 球与 DOM 命中层不错位、球随尺寸重适配。sizeRef 始终同步当前窗口（相机/水面/overlay 都读它）。
   useEffect(() => {
-    if (!active) return;
+    if (!initialized) return;
     const onResize = () => {
       const old = sizeRef.current;
       const w = window.innerWidth, h = window.innerHeight;
@@ -193,15 +197,15 @@ export function useGlSim(active: boolean, externalPlaybackActive = false): GlSim
       window.removeEventListener('resize', onResize);
       window.removeEventListener('orientationchange', onResize);
     };
-  }, [active, nodes]);
+  }, [initialized, nodes]);
 
   // P15-B：真实圆圈建立后再 idle 预热；切组/隐藏/离页用 AbortController 真取消。
   useEffect(() => {
-    if (!active || nodes.length === 0 || tracks.length === 0) return;
+    if (!initialized || nodes.length === 0 || tracks.length === 0) return;
     const target = Math.min(REGULAR_TRACK_COUNT, getGroupTargetCount(groupId));
     const padded = padTracksToTarget(getGroupTracks(groupId, tracks), target);
     return scheduleAudioPrewarm(padded);
-  }, [active, tracks, groupId, nodes.length]);
+  }, [initialized, tracks, groupId, nodes.length]);
 
   return {
     ready: nodes.length > 0,

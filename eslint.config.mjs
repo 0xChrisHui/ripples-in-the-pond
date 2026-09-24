@@ -18,6 +18,7 @@ const eslintConfig = defineConfig([
     // 浏览器视觉验收与诊断使用的临时用户配置
     ".tmp-*/**",
     ".codex-edge-*/**",
+    ".edge-*-profile/**",
     // reviews 只保存结果与脚本，Edge 用户配置不是项目源码
     "reviews/evidence/**/edge-profile/**",
     // 项目统一临时目录（缓存隔离、诊断产物，不属于源码）

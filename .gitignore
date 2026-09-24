@@ -70,6 +70,7 @@ data/covers/
 /.tmp-*/
 /.codex-edge-*/
 /.edge-baseline-profile/
+/.edge-i2-profile/
 /.next-*/
 # Supabase CLI 的本机状态与缓存
 /supabase/.temp/
