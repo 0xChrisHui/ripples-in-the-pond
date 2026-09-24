@@ -8,8 +8,18 @@ import {
 import { getAddress } from 'viem';
 
 type EthereumWallet = Extract<LinkedAccountWithMetadata, { type: 'wallet' }>;
+type ExternalWalletIdentity = {
+  address: string;
+  walletClientType: string | null;
+  connectorType: string | null;
+};
 
 let client: PrivyClient | null = null;
+const LINKED_WALLET_CACHE_MS = 30_000;
+const linkedWalletCache = new Map<string, {
+  expiresAt: number;
+  value: Promise<ExternalWalletIdentity | null>;
+}>();
 
 function getClient(): PrivyClient {
   const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
@@ -51,25 +61,35 @@ export function preferredEvmAddress(user: User): string | null {
 export async function findLinkedExternalWallet(
   privyUserId: string,
   requestedAddress: string,
-): Promise<{ address: string; walletClientType: string | null; connectorType: string | null } | null> {
+): Promise<ExternalWalletIdentity | null> {
   let address: string;
   try { address = getAddress(requestedAddress); } catch { return null; }
+  const key = `${privyUserId}:${address}`;
+  const cached = linkedWalletCache.get(key);
+  if (cached && cached.expiresAt > Date.now()) return cached.value;
 
-  try {
-    const user = await getClient().getUserByWalletAddress(address);
-    if (!user || user.id !== privyUserId) return null;
-    const wallet = user.linkedAccounts.filter(isEthereumWallet).find((account) => {
-      if (!isExternal(account)) return false;
-      try { return getAddress(account.address) === address; } catch { return false; }
-    });
-    return wallet ? {
-      address,
-      walletClientType: wallet.walletClientType ?? null,
-      connectorType: wallet.connectorType ?? null,
-    } : null;
-  } catch {
-    return null;
-  }
+  const value = (async () => {
+    try {
+      const user = await getClient().getUserByWalletAddress(address);
+      if (!user || user.id !== privyUserId) return null;
+      const wallet = user.linkedAccounts.filter(isEthereumWallet).find((account) => {
+        if (!isExternal(account)) return false;
+        try { return getAddress(account.address) === address; } catch { return false; }
+      });
+      return wallet ? {
+        address,
+        walletClientType: wallet.walletClientType ?? null,
+        connectorType: wallet.connectorType ?? null,
+      } : null;
+    } catch {
+      return null;
+    }
+  })();
+  linkedWalletCache.set(key, { expiresAt: Date.now() + LINKED_WALLET_CACHE_MS, value });
+  void value.then((result) => {
+    if (!result && linkedWalletCache.get(key)?.value === value) linkedWalletCache.delete(key);
+  });
+  return value;
 }
 
 function enabledForUser(mode: string | undefined, allowlist: string | undefined, userId: string): boolean {

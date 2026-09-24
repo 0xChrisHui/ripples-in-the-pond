@@ -1,6 +1,6 @@
 'use client';
 
-import { usePrivy, useWallets, type ConnectedWallet } from '@privy-io/react-auth';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { getAddress } from 'viem';
 import { clearNftCache } from '@/src/lib/nft-cache';
@@ -19,7 +19,12 @@ import {
   subscribeSemiJwt,
   type JwtState,
 } from '@/src/lib/auth/client-jwt';
+import {
+  clearWalletCapabilityCache,
+  getCachedWalletCapability,
+} from '@/src/lib/auth/client/wallet-capability';
 import type { ExternalWalletCheck, WalletCapability } from '@/src/types/auth';
+import { useStableExternalWallet } from './auth/useStableExternalWallet';
 
 const EMPTY_STATE: JwtState = { jwt: null, payload: null };
 const DENIED: ExternalWalletCheck = {
@@ -57,7 +62,6 @@ export function useAuth() {
     userId: string;
     check: ExternalWalletCheck;
   } | null>(null);
-  const [stableExternalWallet, setStableExternalWallet] = useState<ConnectedWallet | null>(null);
 
   const semiAuth = jwtState.jwt !== null && jwtState.payload !== null;
 
@@ -97,43 +101,9 @@ export function useAuth() {
     catch { return null; }
   })();
 
-  const matchedExternalWallet = useMemo(() => {
-    if (loginEntry !== 'external_wallet' || !selectedWalletAddress) return null;
-    return wallets.find((wallet) => {
-      if (wallet.walletClientType === 'privy' || wallet.connectorType === 'embedded') return false;
-      try { return getAddress(wallet.address) === selectedWalletAddress; } catch { return false; }
-    }) ?? null;
-  }, [loginEntry, selectedWalletAddress, wallets]);
-
-  useEffect(() => {
-    let cancelled = false;
-    if (matchedExternalWallet) {
-      const timer = window.setTimeout(() => {
-        if (cancelled) return;
-        setStableExternalWallet((current) => {
-          try {
-            return current && getAddress(current.address) === getAddress(matchedExternalWallet.address)
-              ? current : matchedExternalWallet;
-          } catch { return matchedExternalWallet; }
-        });
-      }, 0);
-      return () => { cancelled = true; window.clearTimeout(timer); };
-    }
-    if (!walletsReady || !stableExternalWallet) return;
-    void stableExternalWallet.isConnected().then((connected) => {
-      if (!cancelled && !connected) {
-        setStableExternalWallet((current) => current === stableExternalWallet ? null : current);
-      }
-    }).catch(() => {
-      if (!cancelled) setStableExternalWallet((current) => (
-        current === stableExternalWallet ? null : current
-      ));
-    });
-    return () => { cancelled = true; };
-  }, [matchedExternalWallet, stableExternalWallet, walletsReady]);
-
-  const selectedExternalWallet = loginEntry === 'external_wallet'
-    && selectedWalletAddress ? stableExternalWallet : null;
+  const selectedExternalWallet = useStableExternalWallet({
+    loginEntry, selectedWalletAddress, wallets, walletsReady,
+  });
 
   useEffect(() => {
     if (loginSession.loginEntry !== 'external_wallet' && recoverableWalletAddress) {
@@ -144,18 +114,14 @@ export function useAuth() {
   useEffect(() => {
     let cancelled = false;
     if (!privyAuth || !userId || loginEntry !== 'external_wallet' || !selectedWalletAddress) return;
-    void (async () => {
-      const token = await privyToken();
-      if (!token) return;
-      const response = await fetch('/api/auth/wallet-capability', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: selectedWalletAddress }),
-      });
-      if (!response.ok) return;
-      const result = await response.json() as ExternalWalletCheck;
-      if (!cancelled) setVerifiedWallet({ address: selectedWalletAddress, userId, check: result });
-    })().catch(() => undefined);
+    void getCachedWalletCapability({
+      address: selectedWalletAddress, userId, getAccessToken: privyToken,
+    }).then((result) => {
+      if (!cancelled) setVerifiedWallet((current) => (
+        current?.address === result.address && current.userId === result.userId
+          && current.check === result.check ? current : result
+      ));
+    }).catch(() => undefined);
     return () => { cancelled = true; };
   }, [loginEntry, privyAuth, privyToken, selectedWalletAddress, userId]);
 
@@ -185,6 +151,7 @@ export function useAuth() {
     if (userId && authSource) clearArchiveCache({ userId, authSource, evmAddress });
     clearSemiJwt();
     clearLoginSession();
+    clearWalletCapabilityCache();
     if (privyAuth) {
       await privyLogout();
     }

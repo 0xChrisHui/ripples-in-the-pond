@@ -8,6 +8,8 @@ import { useAuth } from '@/src/hooks/useAuth';
 import { useEthereumScoreMint } from '@/src/hooks/useEthereumScoreMint';
 import { forgetMintHash, readMintHash, recoverMintHash } from '@/src/lib/self-mint/client-hash';
 import ReconnectMintWallet from './ReconnectMintWallet';
+import { useMintDialogFocus } from './hooks/useMintDialogFocus';
+import { useSerialRefresh } from './hooks/useSerialRefresh';
 import { ASSET_STAGE_COPY, STATUS_COPY, type PublicOrder } from './self-mint-copy';
 import './self-mint-status.css';
 
@@ -16,7 +18,7 @@ export default function SelfMintOrderView({ orderId, onClose }: {
 }) {
   const auth = useAuth();
   const getAccessToken = auth.getAccessToken;
-  const { sendOrder } = useEthereumScoreMint();
+  const { prepareOrder, sendOrder } = useEthereumScoreMint();
   const [order, setOrder] = useState<PublicOrder | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lastCheckedAt, setLastCheckedAt] = useState<string | null>(null);
@@ -31,28 +33,7 @@ export default function SelfMintOrderView({ orderId, onClose }: {
   const walletAddress = auth.selectedExternalWallet?.address ?? null;
 
   useEffect(() => { setRecoverableHash(readMintHash(orderId)); }, [orderId]);
-
-  useEffect(() => {
-    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    dialogRef.current?.focus();
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !busyRef.current) closeRef.current();
-      if (event.key !== 'Tab' || !dialogRef.current) return;
-      const items = [...dialogRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      )];
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (!first || !last) return;
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault(); last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault(); first.focus();
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => { document.removeEventListener('keydown', onKeyDown); previous?.focus(); };
-  }, []);
+  useMintDialogFocus(dialogRef, closeRef, busyRef);
 
   const load = useCallback(async () => {
     const token = await getAccessToken();
@@ -79,20 +60,14 @@ export default function SelfMintOrderView({ orderId, onClose }: {
     setError((current) => result.status === 'manual_review' || result.sendAttempted ? current : null);
   }, [getAccessToken, orderId, walletAddress]);
 
-  useEffect(() => {
-    let active = true;
-    const refresh = () => void load().catch((caught) => {
-      if (active) setError(caught instanceof Error ? caught.message : '订单读取失败');
-    });
-    refresh();
-    const timer = window.setInterval(refresh, 2_000);
-    return () => { active = false; window.clearInterval(timer); };
-  }, [load]);
+  useSerialRefresh(load, busy, (caught) => {
+    setError(caught instanceof Error ? caught.message : '订单读取失败');
+  });
 
   async function send() {
     setBusy(true);
     setError(null);
-    try { await sendOrder(orderId); await load(); }
+    try { if (order) await sendOrder(orderId, order.chainId); await load(); }
     catch (caught) { setError(caught instanceof Error ? caught.message : '钱包交易没有完成'); }
     finally { setRecoverableHash(readMintHash(orderId)); setBusy(false); }
   }
@@ -144,6 +119,10 @@ export default function SelfMintOrderView({ orderId, onClose }: {
   const needsWallet = order && (order.status === 'ready_to_sign' || order.status === 'expired'
     || (order.status === 'failed' && order.retryable));
   const assetHref = order && `/score/${order.chainId}/${order.scoreContract.toLowerCase()}/${order.tokenId}`;
+
+  useEffect(() => {
+    if (canSend) void prepareOrder(orderId).catch(() => undefined);
+  }, [canSend, orderId, prepareOrder]);
 
   return (
     <div className="self-mint-status" data-p11-theme="archive" data-status={order?.status}
