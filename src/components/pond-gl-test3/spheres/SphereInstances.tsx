@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, type RefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { DoubleSide, InstancedMesh, OrthographicCamera, ShaderMaterial } from 'three';
 import { sphereVertexShader, sphereFragmentShader } from './sphere-shader';
@@ -77,7 +77,7 @@ function configurePixelCamera(cam: OrthographicCamera, w: number, h: number): vo
 }
 
 export default function SphereInstances(
-  { glSim, waterOn, motionOn, sphereDrift, separatePass = false, colorGrade = false, life }: { glSim: GlSim; waterOn: boolean; motionOn: boolean; sphereDrift: boolean; separatePass?: boolean; colorGrade?: boolean; life: LifeFlags },
+  { glSim, waterOn, motionOn, sphereDrift, separatePass = false, colorGrade = false, life, scenePresence, reducedSceneMotion = false }: { glSim: GlSim; waterOn: boolean; motionOn: boolean; sphereDrift: boolean; separatePass?: boolean; colorGrade?: boolean; life: LifeFlags; scenePresence?: RefObject<number>; reducedSceneMotion?: boolean },
 ) {
   const { nodes, sizeRef } = glSim;
   const count = nodes.length;
@@ -141,6 +141,7 @@ export default function SphereInstances(
     writeFrame(mesh, buf, {
       nodes, wavesRef: glSim.wavesRef, playingId: glSim.playingIdRef.current, hoverId: glSim.hoverIdRef.current,
       tuning, waterOn, motionOn, proj, drift: sphereDrift, life, waveSpeed: 0.2 * (sz.h || 900), waterComposite: separatePass,
+      scenePresence: scenePresence?.current ?? 1, reducedSceneMotion,
     });
   });
 

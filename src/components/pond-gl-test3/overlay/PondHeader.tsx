@@ -74,7 +74,7 @@ export default function PondHeader() {
       data-p11-theme="pond"
       className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex items-start justify-between gap-4 px-5 pt-[max(12px,env(safe-area-inset-top))] md:px-8 md:pt-5"
     >
-      <Link
+      <PondRouteLink
         href="/"
         className="pointer-events-auto min-w-0 py-2 text-[var(--p11-bone)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--p11-focus-color)]"
       >
@@ -86,7 +86,7 @@ export default function PondHeader() {
             {pathname} · GL sandbox
           </span>
         )}
-      </Link>
+      </PondRouteLink>
 
       <nav aria-label="主导航" className="pointer-events-auto hidden min-h-11 items-center gap-7 md:flex">
         <PublicLinks echoLabel={echoLabel} />

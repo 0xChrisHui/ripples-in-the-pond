@@ -10,8 +10,12 @@ export const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export async function openEdge({ port = 9223, profile = '.edge-i2-profile' } = {}) {
   const browser = spawn(EDGE, [
     '--headless=new', '--no-first-run', '--disable-features=msEdgeFirstRunExperience',
+    '--disable-background-timer-throttling', '--disable-renderer-backgrounding',
+    '--disable-backgrounding-occluded-windows',
     `--remote-debugging-port=${port}`, `--user-data-dir=${path.resolve(profile)}`,
-    '--ignore-gpu-blocklist', '--enable-unsafe-swiftshader', '--use-angle=swiftshader',
+    '--ignore-gpu-blocklist',
+    ...(process.env.P11_EDGE_SOFTWARE === '1'
+      ? ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'] : ['--use-angle=d3d11']),
     '--window-size=1440,900', 'about:blank',
   ], { stdio: ['ignore', 'ignore', 'pipe'] });
   const cdp = `http://127.0.0.1:${port}`;
@@ -70,6 +74,7 @@ export async function openEdge({ port = 9223, profile = '.edge-i2-profile' } = {
       `加载 ${pathname}`, 60_000);
   };
   await Promise.all([send('Page.enable'), send('Runtime.enable')]);
+  await send('Page.bringToFront');
   const close = () => { socket.close(); browser.kill(); };
   return { send, evaluate, until, load, errors, close };
 }

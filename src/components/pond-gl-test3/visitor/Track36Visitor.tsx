@@ -16,7 +16,11 @@ import { BODY_RATIO, hexToSRGB } from '../spheres/sphere-frame';
 import { setTrack36VisualDim, type Track36VisitorState } from './track36-state';
 
 /** #36 仍使用常规音乐圆 shader；这里只给单实例轨迹单独写矩阵和透明度。 */
-export default function Track36Visitor({ visitor }: { visitor: RefObject<Track36VisitorState | null> }) {
+export default function Track36Visitor({ visitor, scenePresence, reducedSceneMotion = false }: {
+  visitor: RefObject<Track36VisitorState | null>;
+  scenePresence?: RefObject<number>;
+  reducedSceneMotion?: boolean;
+}) {
   const meshRef = useRef<InstancedMesh>(null);
   const matRef = useRef<ShaderMaterial>(null);
   const paramRef = useRef<InstancedBufferAttribute>(null);
@@ -60,7 +64,9 @@ export default function Track36Visitor({ visitor }: { visitor: RefObject<Track36
       perspective: camera.perspective, parallax: camera.parallax,
     };
     const pose = project(node.x ?? 0, node.y ?? 0, depthOf(node), ctx, node);
-    const diameter = node.radius * 2 * HALO_R * pose.scale;
+    const presence = scenePresence?.current ?? 1;
+    const sceneScale = reducedSceneMotion ? 1 : 0.88 + presence * 0.12;
+    const diameter = node.radius * 2 * HALO_R * pose.scale * sceneScale;
     const focus = getPlaybackFocus();
     const target = focus.active && focus.trackId !== node.id ? 0 : 1;
     visibilityRef.current += (target - visibilityRef.current) * 0.12;
@@ -68,7 +74,7 @@ export default function Track36Visitor({ visitor }: { visitor: RefObject<Track36
     matrix.makeScale(diameter, diameter, 1).setPosition(pose.sx, pose.sy, 0);
     mesh.setMatrixAt(0, matrix); mesh.instanceMatrix.needsUpdate = true; mesh.visible = true;
     if (paramRef.current) {
-      paramRef.current.setZ(0, visibilityRef.current);
+      paramRef.current.setZ(0, visibilityRef.current * presence);
       paramRef.current.needsUpdate = true;
     }
     if (submergeRef.current) {
@@ -76,7 +82,7 @@ export default function Track36Visitor({ visitor }: { visitor: RefObject<Track36
       submergeRef.current.needsUpdate = true;
     }
     mat.uniforms.uTime.value = performance.now() / 1000;
-    setTrack36VisualDim(state, visibilityRef.current);
+    setTrack36VisualDim(state, visibilityRef.current * presence);
   });
 
   return (

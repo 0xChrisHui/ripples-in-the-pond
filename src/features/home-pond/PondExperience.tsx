@@ -27,6 +27,7 @@ import { useTrack36Visitor } from '@/src/components/pond-gl-test3/visitor/useTra
 import type { FeaturedEcho, FeaturedEchoResponse } from '@/src/types/featured-echo';
 import PersistentWaterCore from '@/src/components/pond-shell/PersistentWaterCore';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
+import { useScenePresence } from '@/src/components/pond-shell/motion/use-scene-presence';
 
 const SandboxControls = dynamic(() => import('./SandboxControls'), { ssr: false });
 
@@ -59,6 +60,8 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const phase = transition?.phase ?? (pathname === '/' ? 'home' : 'archive');
   const homeVisible = !persistent || phase === 'home' || phase === 'entering-home';
   const homeInteractive = !persistent || phase === 'home';
+  const renderHomeScene = !persistent || (phase !== 'archive' && phase !== 'score');
+  const sceneMotion = useScenePresence(phase, transition?.duration ?? 0);
   const [homeInitialized, setHomeInitialized] = useState(homeVisible);
   const [glFlags, setGlFlags] = useState<GLFlags>(DEFAULT_GL_FLAGS);
   const [runtimeGlHealth, setRuntimeGlHealth] = useState<GlHealth>('unavailable');
@@ -84,16 +87,18 @@ export default function PondExperience({ mode, persistent = false, children }: {
     homeInteractive,
   );
   const sceneFlags = useMemo(
-    () => persistent && !homeVisible ? ARCHIVE_FLAGS : glFlags,
-    [glFlags, homeVisible, persistent],
+    () => persistent && !renderHomeScene ? ARCHIVE_FLAGS : glFlags,
+    [glFlags, persistent, renderHomeScene],
   );
   const glHealth: GlHealth = glFlags.forceFallback ? 'forced' : runtimeGlHealth;
   const glOk = glHealth === 'healthy' && sceneReady;
   const regularPlayingId = playing && currentTrack ? currentTrack.id : null;
   const playingId = echoPlayback.playing ? featuredEcho?.playbackId ?? null : regularPlayingId;
   const activePlaybackId = echoPlayback.active ? featuredEcho?.playbackId ?? null : regularPlayingId;
-  const visitor = useTrack36Visitor(featuredEcho, glOk && glFlags.glSpheres, activePlaybackId);
-  useEclipseTransition(glSim, visitor, glOk ? playingId : null);
+  const visitor = useTrack36Visitor(
+    featuredEcho, glOk && glFlags.glSpheres && renderHomeScene, activePlaybackId,
+  );
+  useEclipseTransition(glSim, visitor, glOk && homeInteractive ? playingId : null);
   const mountGl = glFlags.glBase || glFlags.glSpheres || glFlags.water || glFlags.bgImage
     || glFlags.rtt || glFlags.waterFx || glFlags.floatMotes || glFlags.waterPlants
     || glFlags.reefStones || glFlags.crystalPillars;
@@ -130,8 +135,10 @@ export default function PondExperience({ mode, persistent = false, children }: {
       data-pond-shell={persistent || undefined} data-pond-mount-id={persistent ? mountId ?? undefined : undefined}
       data-pond-scene-owner={homeVisible ? 'home' : 'archive'}
       data-pond-scene={homeVisible ? 'home' : 'archive'} data-pond-transition={persistent ? phase : undefined}
+      data-pond-reduced-scene-motion={persistent ? sceneMotion.reduced : undefined}
       style={persistent ? { '--pond-route-duration': `${transition?.duration ?? 0}ms` } as CSSProperties : undefined}>
       {mountGl && <PersistentWaterCore flags={sceneFlags} glSim={glSim} visitor={visitor}
+        scenePresence={sceneMotion.presence} reducedSceneMotion={sceneMotion.reduced}
         onHealthChange={setRuntimeGlHealth} onSceneReadyChange={setSceneReady} />}
       <main className={`${persistent ? 'pond-home-surface fixed inset-0 bg-transparent' : 'relative bg-black'} min-h-screen overflow-hidden`}
         data-active={homeVisible} aria-hidden={!homeVisible} inert={persistent && !homeInteractive}
@@ -149,13 +156,15 @@ export default function PondExperience({ mode, persistent = false, children }: {
         <GlLoading error={glSim.error} onRetry={glSim.retry} />
       )}
       <div data-pond-ui="true" className="pointer-events-none fixed left-6 z-30" style={{ top: '14rem' }}>
-        <div className="pointer-events-auto"><TestJam p9Enabled={p9Enabled} /></div>
+        <div className="pointer-events-auto"><TestJam p9Enabled={p9Enabled && homeInteractive} /></div>
       </div>
       {glFlags.glSpheres && glSim.ready && sceneReady && (
         <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx}
-          glHealthy={glOk} depthModel={glFlags.depthModel} showLabels={glFlags.sphereLabels} />
+          glHealthy={glOk} depthModel={glFlags.depthModel} showLabels={glFlags.sphereLabels}
+          scenePresence={sceneMotion.presence} interactive={homeInteractive}
+          reducedSceneMotion={sceneMotion.reduced} />
       )}
-      {glFlags.glSpheres && featuredEcho && sceneReady && (
+      {glFlags.glSpheres && featuredEcho && sceneReady && homeInteractive && (
         <div className="pointer-events-none fixed inset-0 z-10">
           <Track36HitTarget echo={featuredEcho} visitor={visitor}
             playbackState={echoPlayback.state} fallback={!glOk} toggle={echoPlayback.toggle} />

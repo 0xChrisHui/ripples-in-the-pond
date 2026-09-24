@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 /**
  * J4 — GL 水塘加载/失败浮层（居中，盖在夜塘基调之上）。
- * 取数中：「唤醒水塘…」脉动；慢网（>3s）追加一行提示。失败：「加载失败，点击重试」按钮。
+ * 水面与声音准备中展示统一文案；慢网（>3s）追加提示。失败时提供重试按钮。
  * 不再像之前那样黑屏一下、球突然蹦出来。pointer-events 仅按钮接管。
  */
 export default function GlLoading({ error, onRetry }: { error: boolean; onRetry: () => void }) {
@@ -27,7 +27,7 @@ export default function GlLoading({ error, onRetry }: { error: boolean; onRetry:
         </button>
       ) : (
         <>
-          <div className="animate-pulse text-sm tracking-[0.3em] text-white/55">唤醒水塘…</div>
+          <div className="animate-pulse text-sm tracking-[0.3em] text-white/55">声音正在汇入水塘</div>
           {slow && <div className="text-[11px] tracking-wide text-white/30">网络较慢，正在连接…</div>}
         </>
       )}

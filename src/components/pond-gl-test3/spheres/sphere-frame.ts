@@ -62,11 +62,13 @@ export interface FrameCtx {
   life: LifeFlags;
   waveSpeed: number;
   waterComposite: boolean;
+  scenePresence: number;
+  reducedSceneMotion: boolean;
 }
 
 /** 每帧把 sim 状态写进 InstancedMesh（矩阵 + 颜色 + params + 涟漪推球 + 平滑 lerp）。 */
 export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx): void {
-  const { nodes, wavesRef, playingId, hoverId, tuning, waterOn, motionOn, proj, drift, life, waveSpeed, waterComposite } = ctx;
+  const { nodes, wavesRef, playingId, hoverId, tuning, waterOn, motionOn, proj, drift, life, waveSpeed, waterComposite, scenePresence, reducedSceneMotion } = ctx;
   const now = performance.now();
   stepSphereMotion(nodes, now / 1000, motionOn); // 球浮动层级波动 → 写 node._waveZ
   // L2 运动无序：滚轮去同步(写 _shiftOff) / 视差去同步(写 _parGain,_parAng) / 偶发颤动(写 _shivX,_shivY)
@@ -106,7 +108,8 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
 
     // 深度经 depthOf(含 L2-1 _shiftOff)；投影带 node(L2-2 视差去同步)；applyFloat 收 node(浮动+L2-4 颤动)
     const p = applyFloat(project(n.x, n.y, depthOf(n), proj, n), n, proj.cx, proj.cy);
-    const diameter = 2 * n.radius * HALO_R * (1 + hoverLerp[i] * 0.09) * p.scale;
+    const sceneScale = reducedSceneMotion ? 1 : 0.88 + scenePresence * 0.12;
+    const diameter = 2 * n.radius * HALO_R * (1 + hoverLerp[i] * 0.09) * p.scale * sceneScale;
     // L3-3 果冻感：沿速度方向非均匀缩放（速度平滑 lerp 防抖）；关 / reduced-motion → 均匀缩放（现状）
     if (life.jelly && lt.jellyAmount > 0 && !reduce) {
       const jvx = (n._jelVx = (n._jelVx ?? 0) + ((n.vx ?? 0) + (n._gvx ?? 0) - (n._jelVx ?? 0)) * 0.2);
@@ -146,11 +149,11 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
     const lifeDim = n._lifeDim ?? 1;
     aSubmerge[i] = waterSubmerge;
     aLifeDim[i] = lifeDim;
-    n._visualDim = dimLerp[i] * (1 - submerge) * (waterComposite ? 1 : lifeDim);
+    n._visualDim = dimLerp[i] * (1 - submerge) * (waterComposite ? 1 : lifeDim) * scenePresence;
     aParams[i * 4] = Math.min(1, fill * tuning.fill);
     aParams[i * 4 + 1] = (isHover ? 0.5 : 0.3) * tuning.halo
-      * 1;
-    aParams[i * 4 + 2] = dimLerp[i] * (1 - submerge); // 其他音乐圆退场；焦点圆由日食黑盘覆盖
+      * scenePresence;
+    aParams[i * 4 + 2] = dimLerp[i] * (1 - submerge) * scenePresence; // 其他音乐圆退场；焦点圆由日食黑盘覆盖
     aParams[i * 4 + 3] = p.blurAmt * rt.dofStrength;          // /test3 景深失焦度 ×强度倍率
   }
 

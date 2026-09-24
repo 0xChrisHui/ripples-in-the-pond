@@ -23,13 +23,7 @@ import type { Track36VisitorState } from './visitor/track36-state';
 import { getEclipseMix } from './focus/playback-focus';
 import SceneCover from './presentation/SceneCover';
 
-/**
- * GL 渲染层入口 — P8-G G3。
- *
- * 仅 /test1 经 next/dynamic(ssr:false) 挂载，垫在最底层（z-0）。
- * 都关 → 渲染 null；WebGL 不可用 / 渲染崩了 / context lost → 渲染 GlFallback 夜塘兜底（不白屏，J1）。
- * 包体纪律：本组件及其依赖（three/R3F）只进 /test1 的异步 chunk，首页 bundle 零增量。
- */
+/** 生产与沙盒共用的水塘 GL 入口；故障时保留静态夜塘，不重挂 Canvas。 */
 
 // 基调层：全屏裁剪空间平面，按 artDir 输出深色水体基调或纯黑。
 function BaseTone({ artDir }: { artDir: GLFlags['artDir'] }) {
@@ -82,18 +76,20 @@ class GLErrorBoundary extends Component<{
 /** Canvas 不重挂；只把 context 生命周期同步给内外两层 UI。 */
 function GlHealthReporter({ report }: { report: (health: GlHealth) => void }) {
   const renderer = useThree((s) => s.gl);
+  const reportRef = useRef(report);
+  useEffect(() => { reportRef.current = report; }, [report]);
   useEffect(() => {
     const canvas = renderer.domElement;
-    const onLost = (event: Event) => { event.preventDefault(); report('lost'); };
-    const onRestored = () => report('healthy');
+    const onLost = (event: Event) => { event.preventDefault(); reportRef.current('lost'); };
+    const onRestored = () => reportRef.current('healthy');
     canvas.addEventListener('webglcontextlost', onLost, false);
     canvas.addEventListener('webglcontextrestored', onRestored, false);
-    report('healthy');
+    reportRef.current('healthy');
     return () => {
       canvas.removeEventListener('webglcontextlost', onLost, false);
       canvas.removeEventListener('webglcontextrestored', onRestored, false);
     };
-  }, [renderer, report]);
+  }, [renderer]);
   return null;
 }
 
@@ -104,10 +100,13 @@ export interface PondGLProps {
   onPerformanceChange?: (degraded: boolean) => void;
   onHealthChange: (health: GlHealth) => void;
   visitor?: RefObject<Track36VisitorState | null>;
+  scenePresence?: RefObject<number>;
+  reducedSceneMotion?: boolean;
   onSceneReadyChange?: (ready: boolean) => void;
 }
 
-export default function PondGL({ flags, glSim, pointerInteractive = true, onPerformanceChange, onHealthChange, visitor, onSceneReadyChange }: PondGLProps) {
+export default function PondGL({ flags, glSim, pointerInteractive = true, onPerformanceChange, onHealthChange, visitor, scenePresence, reducedSceneMotion = false, onSceneReadyChange }: PondGLProps) {
+  const [mountId] = useState(() => `pond-${crypto.randomUUID()}`);
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production' && flags.rtt && flags.waterFx) {
       console.warn('[PondGL] rtt 与 waterFx 同时开启：两个 priority-1 渲染器会互相覆盖，请关闭其中一个。');
@@ -151,7 +150,8 @@ export default function PondGL({ flags, glSim, pointerInteractive = true, onPerf
   // 避免重挂丢球：早先 forceFallback 走 early-return 卸 Canvas，关掉后重挂 GL 球不回来）
   const showCover = runtimeHealth !== 'healthy' || !sceneReady || flags.forceFallback;
   return (
-    <div className="pointer-events-none fixed inset-0 z-0" data-gl-health={runtimeHealth}>
+    <div className="pointer-events-none fixed inset-0 z-0" data-gl-health={runtimeHealth}
+      data-pond-mount-id={mountId}>
       <GLErrorBoundary fallback={<SceneCover artDir={flags.artDir} visible />} onError={() => reportHealth('error')}>
         <Canvas
           orthographic
@@ -181,8 +181,8 @@ export default function PondGL({ flags, glSim, pointerInteractive = true, onPerf
           {(flags.reefStones || flags.crystalPillars) && <WaterColumns reefStones={flags.reefStones} crystalPillars={flags.crystalPillars} />}
           {/* waterOn 只认旧「水面」(G6 没入淡到全透明=水波盖住球)。扭曲水面(waterFx)下球**不淡出**：
               红线「水下不压黑/不虚化」→ 水下球保持可见、靠合成 pass 的深度折射(K3 d^a)体现浮沉，不消失。 */}
-          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} sphereDrift={flags.sphereDrift} separatePass={flags.waterFx} colorGrade={flags.colorGrade} life={pickLifeFlags(flags)} />}
-          {flags.glSpheres && visitor && <Track36Visitor visitor={visitor} />}
+          {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} sphereDrift={flags.sphereDrift} separatePass={flags.waterFx} colorGrade={flags.colorGrade} life={pickLifeFlags(flags)} scenePresence={scenePresence} reducedSceneMotion={reducedSceneMotion} />}
+          {flags.glSpheres && visitor && <Track36Visitor visitor={visitor} scenePresence={scenePresence} reducedSceneMotion={reducedSceneMotion} />}
           {/* H1 spike：RTT 验证全屏盖在最上（renderOrder 10），隔离实验、默认关 */}
           {flags.rtt && <RttSpike />}
           {/* H2/H3：扭曲水面——渲真场景进 FBO 全屏折射扭曲 + 水位遮罩（接管渲染循环，返回 null） */}

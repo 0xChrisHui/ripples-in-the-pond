@@ -1,0 +1,723 @@
+{
+  "measuredAt": "2026-09-24T03:57:15.626Z",
+  "passed": true,
+  "initial": {
+    "path": "/",
+    "phase": "home",
+    "owner": "home",
+    "mountId": "pond-c75ecc79-6119-4c81-bc80-5c5b2d2ddeea",
+    "sameCore": true,
+    "sameCanvas": true,
+    "canvasCount": 2,
+    "glHealth": "healthy",
+    "homeInert": false,
+    "horizontalOverflow": false,
+    "ids": [
+      "7b7a6182-8cbb-44c7-809c-693263ff96cb",
+      "8527a1b5-570c-4e37-b335-9a57b9aa170f",
+      "7df38fb9-3fd8-4dd4-a109-a8d93f3cc063",
+      "80e08d48-cc78-4bef-972a-98d56c02d92b",
+      "6aab1b24-225c-4300-8b4d-ef86e74866e3",
+      "8ae0e6d5-b10d-4368-a430-90ce6a9dead7",
+      "d43a6930-74d8-4ed3-af47-f817f1e7ab07",
+      "cc5b254c-f7f7-4446-a718-c58f15dae193",
+      "eb0287ec-45f1-4ce0-90ed-a9ea4057c34d",
+      "4598fa9c-8e06-4823-b34f-89047af69864",
+      "5a52e031-ee29-4b58-a0f3-9b779ce97f40",
+      "21029773-9978-4147-b106-f5b22fcddeb9",
+      "eeef9acd-b0f5-4846-ab6c-e72e06656598",
+      "2dd7e3ef-c992-4868-b08d-0c92ce440ef4",
+      "85289b10-d222-4502-8d6a-81ba7540860e",
+      "7ac769a9-902d-4f67-98da-da0849a8bed6",
+      "410ce6d3-9541-4761-b29e-0a19d1872104",
+      "695c20e3-5f26-44ed-99b7-388c2a7121da",
+      "aad18d17-ec13-4438-ac4e-e350a50ec1fe",
+      "807a3c8a-6370-434d-8e91-5493ba19edcc",
+      "c3de4558-7a4b-4a07-a95e-58246e56157f",
+      "07b3b553-28fa-4090-b6d7-3e63e6d14f07",
+      "f7430714-7d5a-4ae3-8804-698fdecdd1eb",
+      "516b404d-b443-40a1-8d61-ed6c6e197874",
+      "78326e66-0b5d-4650-9534-f8f8740bc0e9",
+      "cc304cf9-659d-47c0-b852-dc616484b9d1",
+      "08550208-7473-4e89-92b0-8031c945d7c4",
+      "73130478-7bef-48dc-806f-e76b6676c18d",
+      "9417ff60-f1b6-4135-8f61-bd556a2220dc",
+      "325f93e5-3063-4ae0-806d-0b6d6363aba3",
+      "44220b86-a9db-4084-8f50-47f8e00a8573",
+      "beb124af-dd37-4ad3-b7c2-ceea3050fe5c",
+      "891dda4d-a243-4ca6-bd5a-b42697a3346b",
+      "19aeeb04-f07d-4d08-ae0c-4f630ff5e864",
+      "de96230b-54a7-4b29-a7d0-82cebf07ab86"
+    ],
+    "widths": [
+      22.7109375,
+      20.4664306640625,
+      21.62188720703125,
+      21.1702880859375,
+      20.6656494140625,
+      23.6273193359375,
+      22.9727783203125,
+      24.84893798828125
+    ],
+    "centers": [
+      [
+        783.456298828125,
+        526.2518920898438
+      ],
+      [
+        743.2249145507812,
+        355.2937469482422
+      ],
+      [
+        611.2612609863281,
+        385.82122802734375
+      ],
+      [
+        652.4483032226562,
+        341.76963806152344
+      ],
+      [
+        627.7391967773438,
+        295.36570739746094
+      ],
+      [
+        775.6659545898438,
+        477.2921600341797
+      ],
+      [
+        715.5269775390625,
+        379.82945251464844
+      ],
+      [
+        739.2599182128906,
+        496.4116668701172
+      ],
+      [
+        610.6712951660156,
+        334.0835418701172
+      ],
+      [
+        689.1893005371094,
+        331.84849548339844
+      ],
+      [
+        904.2811889648438,
+        480.20668029785156
+      ],
+      [
+        942.8764953613281,
+        457.496826171875
+      ],
+      [
+        671.4107360839844,
+        287.1723327636719
+      ],
+      [
+        558.5291137695312,
+        344.95933532714844
+      ],
+      [
+        427.4830780029297,
+        522.990966796875
+      ],
+      [
+        826.6641845703125,
+        291.05352783203125
+      ],
+      [
+        752.8387756347656,
+        406.9851989746094
+      ],
+      [
+        841.2776489257812,
+        241.50225830078125
+      ],
+      [
+        902.4535827636719,
+        290.8728942871094
+      ],
+      [
+        681.853759765625,
+        410.6922149658203
+      ],
+      [
+        588.0996704101562,
+        489.6974334716797
+      ],
+      [
+        866.548583984375,
+        329.81312561035156
+      ],
+      [
+        498.79908752441406,
+        585.9361267089844
+      ],
+      [
+        501.94793701171875,
+        529.904541015625
+      ],
+      [
+        900.2666015625,
+        231.87042999267578
+      ],
+      [
+        888.1120300292969,
+        450.9358215332031
+      ],
+      [
+        442.3516387939453,
+        573.2958984375
+      ],
+      [
+        919.8716735839844,
+        401.9067840576172
+      ],
+      [
+        980.7145080566406,
+        409.59893798828125
+      ],
+      [
+        551.87353515625,
+        442.26171875
+      ],
+      [
+        448.50926208496094,
+        497.7032470703125
+      ],
+      [
+        307.1586151123047,
+        366.53294372558594
+      ],
+      [
+        339.90533447265625,
+        402.4836730957031
+      ],
+      [
+        803.0972595214844,
+        180.64067840576172
+      ],
+      [
+        758.6631774902344,
+        251.3382568359375
+      ]
+    ],
+    "featuredPresent": true
+  },
+  "leaving": [
+    {
+      "label": "leaving-0",
+      "targetMs": 0,
+      "t": 9,
+      "phase": "leaving-home",
+      "presence": 1,
+      "waveCount": 1,
+      "waveSpawn": 2583.5,
+      "waveAge": 28.400000005960464,
+      "homeOpacity": 1,
+      "routeOpacity": 0,
+      "sphereOpacity": 0.270763,
+      "sphereTransform": "translate(770.216px, 512.967px) scale(0.85)",
+      "sphereWidth": 22.7109375,
+      "sameSphere": true,
+      "path": "/"
+    },
+    {
+      "label": "leaving-120",
+      "targetMs": 120,
+      "t": 125,
+      "phase": "leaving-home",
+      "presence": 0.22,
+      "waveCount": 1,
+      "waveSpawn": 2583.5,
+      "waveAge": 138,
+      "homeOpacity": 0.261837,
+      "routeOpacity": 0.738163,
+      "sphereOpacity": 0.257265,
+      "sphereTransform": "translate(770.438px, 513.109px) scale(0.770438)",
+      "sphereWidth": 20.58514404296875,
+      "sameSphere": true,
+      "path": "/me"
+    },
+    {
+      "label": "leaving-260",
+      "targetMs": 260,
+      "t": 265,
+      "phase": "leaving-home",
+      "presence": 0.0348,
+      "waveCount": 1,
+      "waveSpawn": 2583.5,
+      "waveAge": 271.40000000596046,
+      "homeOpacity": 0.0420218,
+      "routeOpacity": 0.957978,
+      "sphereOpacity": 0.215866,
+      "sphereTransform": "translate(770.719px, 513.252px) scale(0.75155)",
+      "sphereWidth": 20.0804443359375,
+      "sameSphere": true,
+      "path": "/me"
+    },
+    {
+      "label": "leaving-520",
+      "targetMs": 520,
+      "t": 527,
+      "phase": "leaving-home",
+      "presence": 0,
+      "waveCount": 1,
+      "waveSpawn": 2583.5,
+      "waveAge": 538.3000000119209,
+      "homeOpacity": 0.00000645357,
+      "routeOpacity": 0.999994,
+      "sphereOpacity": 0.143476,
+      "sphereTransform": "translate(770.742px, 513.212px) scale(0.748)",
+      "sphereWidth": 19.985595703125,
+      "sameSphere": true,
+      "path": "/me"
+    }
+  ],
+  "archive": {
+    "path": "/me",
+    "phase": "archive",
+    "owner": "archive",
+    "mountId": "pond-c75ecc79-6119-4c81-bc80-5c5b2d2ddeea",
+    "sameCore": true,
+    "sameCanvas": true,
+    "canvasCount": 2,
+    "glHealth": "healthy",
+    "homeInert": true,
+    "horizontalOverflow": false,
+    "presence": 0,
+    "waveCount": 1,
+    "waveSpawn": 2583.5,
+    "waveAge": 620.7000000178814
+  },
+  "entering": [
+    {
+      "label": "entering-0",
+      "targetMs": 0,
+      "t": 7,
+      "phase": "entering-home",
+      "presence": 0,
+      "waveCount": 1,
+      "waveSpawn": 2583.5,
+      "waveAge": 646.3000000119209,
+      "homeOpacity": 0,
+      "routeOpacity": 1,
+      "sphereOpacity": 0.0958885,
+      "sphereTransform": "translate(771.025px, 513.673px) scale(0.748)",
+      "sphereWidth": 19.98565673828125,
+      "sameSphere": true,
+      "path": "/"
+    },
+    {
+      "label": "entering-120",
+      "targetMs": 120,
+      "t": 128,
+      "phase": "entering-home",
+      "presence": 0.6694,
+      "waveCount": 1,
+      "waveSpawn": 2583.5,
+      "waveAge": 751.3000000119209,
+      "homeOpacity": 0.670541,
+      "routeOpacity": 0.329694,
+      "sphereOpacity": 0.0763859,
+      "sphereTransform": "translate(771.199px, 513.964px) scale(0.816279)",
+      "sphereWidth": 21.8099365234375,
+      "sameSphere": true,
+      "path": "/"
+    },
+    {
+      "label": "entering-260",
+      "targetMs": 260,
+      "t": 267,
+      "phase": "entering-home",
+      "presence": 0.9578,
+      "waveCount": 1,
+      "waveSpawn": 2583.5,
+      "waveAge": 900,
+      "homeOpacity": 0.957906,
+      "routeOpacity": 0.0421257,
+      "sphereOpacity": 0.118017,
+      "sphereTransform": "translate(771.266px, 514.175px) scale(0.845697)",
+      "sphereWidth": 22.595947265625,
+      "sameSphere": true,
+      "path": "/"
+    },
+    {
+      "label": "entering-520",
+      "targetMs": 520,
+      "t": 531,
+      "phase": "entering-home",
+      "presence": 1,
+      "waveCount": 1,
+      "waveSpawn": 2583.5,
+      "waveAge": 1158.300000011921,
+      "homeOpacity": 0.999993,
+      "routeOpacity": 0.0000067222,
+      "sphereOpacity": 0.187704,
+      "sphereTransform": "translate(772.207px, 515.623px) scale(0.849999)",
+      "sphereWidth": 22.7109375,
+      "sameSphere": true,
+      "path": "/"
+    }
+  ],
+  "returned": {
+    "path": "/",
+    "phase": "home",
+    "owner": "home",
+    "mountId": "pond-c75ecc79-6119-4c81-bc80-5c5b2d2ddeea",
+    "sameCore": true,
+    "sameCanvas": true,
+    "canvasCount": 2,
+    "glHealth": "healthy",
+    "homeInert": false,
+    "horizontalOverflow": false,
+    "presence": 1,
+    "sameSphere": true,
+    "ids": [
+      "7b7a6182-8cbb-44c7-809c-693263ff96cb",
+      "8527a1b5-570c-4e37-b335-9a57b9aa170f",
+      "7df38fb9-3fd8-4dd4-a109-a8d93f3cc063",
+      "80e08d48-cc78-4bef-972a-98d56c02d92b",
+      "6aab1b24-225c-4300-8b4d-ef86e74866e3",
+      "8ae0e6d5-b10d-4368-a430-90ce6a9dead7",
+      "d43a6930-74d8-4ed3-af47-f817f1e7ab07",
+      "cc5b254c-f7f7-4446-a718-c58f15dae193",
+      "eb0287ec-45f1-4ce0-90ed-a9ea4057c34d",
+      "4598fa9c-8e06-4823-b34f-89047af69864",
+      "5a52e031-ee29-4b58-a0f3-9b779ce97f40",
+      "21029773-9978-4147-b106-f5b22fcddeb9",
+      "eeef9acd-b0f5-4846-ab6c-e72e06656598",
+      "2dd7e3ef-c992-4868-b08d-0c92ce440ef4",
+      "85289b10-d222-4502-8d6a-81ba7540860e",
+      "7ac769a9-902d-4f67-98da-da0849a8bed6",
+      "410ce6d3-9541-4761-b29e-0a19d1872104",
+      "695c20e3-5f26-44ed-99b7-388c2a7121da",
+      "aad18d17-ec13-4438-ac4e-e350a50ec1fe",
+      "807a3c8a-6370-434d-8e91-5493ba19edcc",
+      "c3de4558-7a4b-4a07-a95e-58246e56157f",
+      "07b3b553-28fa-4090-b6d7-3e63e6d14f07",
+      "f7430714-7d5a-4ae3-8804-698fdecdd1eb",
+      "516b404d-b443-40a1-8d61-ed6c6e197874",
+      "78326e66-0b5d-4650-9534-f8f8740bc0e9",
+      "cc304cf9-659d-47c0-b852-dc616484b9d1",
+      "08550208-7473-4e89-92b0-8031c945d7c4",
+      "73130478-7bef-48dc-806f-e76b6676c18d",
+      "9417ff60-f1b6-4135-8f61-bd556a2220dc",
+      "325f93e5-3063-4ae0-806d-0b6d6363aba3",
+      "44220b86-a9db-4084-8f50-47f8e00a8573",
+      "beb124af-dd37-4ad3-b7c2-ceea3050fe5c",
+      "891dda4d-a243-4ca6-bd5a-b42697a3346b",
+      "19aeeb04-f07d-4d08-ae0c-4f630ff5e864",
+      "de96230b-54a7-4b29-a7d0-82cebf07ab86"
+    ],
+    "widths": [
+      22.7109375,
+      20.4664306640625,
+      21.62188720703125,
+      21.1702880859375,
+      20.6656494140625,
+      23.6273193359375,
+      22.9727783203125,
+      24.84893798828125
+    ],
+    "centers": [
+      [
+        787.1692504882812,
+        531.1386108398438
+      ],
+      [
+        758.115966796875,
+        365.75108337402344
+      ],
+      [
+        605.1764221191406,
+        378.44525146484375
+      ],
+      [
+        653.2498779296875,
+        333.4225311279297
+      ],
+      [
+        633.1276245117188,
+        292.2348175048828
+      ],
+      [
+        780.8710327148438,
+        492.2584686279297
+      ],
+      [
+        715.3389892578125,
+        382.6863555908203
+      ],
+      [
+        742.6758117675781,
+        483.63108825683594
+      ],
+      [
+        609.5552673339844,
+        337.9342803955078
+      ],
+      [
+        694.0494689941406,
+        336.5518035888672
+      ],
+      [
+        910.3507690429688,
+        485.7124786376953
+      ],
+      [
+        952.8276977539062,
+        466.064208984375
+      ],
+      [
+        685.9800109863281,
+        286.9997100830078
+      ],
+      [
+        549.1832275390625,
+        325.17662048339844
+      ],
+      [
+        420.7444610595703,
+        518.2393798828125
+      ],
+      [
+        837.5386962890625,
+        297.0728454589844
+      ],
+      [
+        760.7271423339844,
+        411.9988098144531
+      ],
+      [
+        840.704833984375,
+        245.36749267578125
+      ],
+      [
+        911.4334411621094,
+        281.90863037109375
+      ],
+      [
+        693.6268005371094,
+        423.51112365722656
+      ],
+      [
+        572.0106201171875,
+        508.3976287841797
+      ],
+      [
+        885.0189208984375,
+        328.08424377441406
+      ],
+      [
+        492.7548370361328,
+        593.3993835449219
+      ],
+      [
+        498.4694061279297,
+        537.48486328125
+      ],
+      [
+        898.0136108398438,
+        225.49441528320312
+      ],
+      [
+        884.7568054199219,
+        452.95501708984375
+      ],
+      [
+        446.29942321777344,
+        559.7960205078125
+      ],
+      [
+        925.4959411621094,
+        410.5972442626953
+      ],
+      [
+        986.6609802246094,
+        417.63299560546875
+      ],
+      [
+        560.4324340820312,
+        446.5970458984375
+      ],
+      [
+        447.76295471191406,
+        501.8445587158203
+      ],
+      [
+        303.86497497558594,
+        384.29002380371094
+      ],
+      [
+        344.260986328125,
+        404.44915771484375
+      ],
+      [
+        804.5048522949219,
+        180.8368911743164
+      ],
+      [
+        773.4941711425781,
+        262.990966796875
+      ]
+    ],
+    "featuredPresent": true
+  },
+  "reverse": {
+    "before": {
+      "label": "reverse-before",
+      "targetMs": 0,
+      "t": 198,
+      "phase": "leaving-home",
+      "presence": 0.0887,
+      "waveCount": 1,
+      "waveSpawn": 2583.5,
+      "waveAge": 1621.5999999940395,
+      "homeOpacity": 0.106221,
+      "routeOpacity": 0.893779,
+      "sphereOpacity": 0.213339,
+      "sphereTransform": "translate(775.011px, 519.724px) scale(0.757047)",
+      "sphereWidth": 20.22735595703125,
+      "sameSphere": true,
+      "path": "/me"
+    },
+    "frames": [
+      {
+        "label": "reverse-0",
+        "targetMs": 0,
+        "t": 5,
+        "phase": "entering-home",
+        "presence": 0.0887,
+        "waveCount": 1,
+        "waveSpawn": 2583.5,
+        "waveAge": 1640.9000000059605,
+        "homeOpacity": 0.0846223,
+        "routeOpacity": 0.915378,
+        "sphereOpacity": 0.208617,
+        "sphereTransform": "translate(775.094px, 519.872px) scale(0.757047)",
+        "sphereWidth": 20.22735595703125,
+        "sameSphere": true,
+        "path": "/me"
+      },
+      {
+        "label": "reverse-120",
+        "targetMs": 120,
+        "t": 120,
+        "phase": "entering-home",
+        "presence": 0.7834,
+        "waveCount": 1,
+        "waveSpawn": 2583.5,
+        "waveAge": 1755.2000000178814,
+        "homeOpacity": 0.834636,
+        "routeOpacity": 0.165364,
+        "sphereOpacity": 0.19601,
+        "sphereTransform": "translate(775.575px, 520.791px) scale(0.827909)",
+        "sphereWidth": 22.12066650390625,
+        "sameSphere": true,
+        "path": "/"
+      },
+      {
+        "label": "reverse-260",
+        "targetMs": 260,
+        "t": 275,
+        "phase": "entering-home",
+        "presence": 0.9785,
+        "waveCount": 1,
+        "waveSpawn": 2583.5,
+        "waveAge": 1906.5,
+        "homeOpacity": 0.984254,
+        "routeOpacity": 0.0157458,
+        "sphereOpacity": 0.217057,
+        "sphereTransform": "translate(775.93px, 521.748px) scale(0.847808)",
+        "sphereWidth": 22.65240478515625,
+        "sameSphere": true,
+        "path": "/"
+      },
+      {
+        "label": "reverse-520",
+        "targetMs": 520,
+        "t": 525,
+        "phase": "home",
+        "presence": 1,
+        "waveCount": 1,
+        "waveSpawn": 2583.5,
+        "waveAge": 2154.800000011921,
+        "homeOpacity": 1,
+        "routeOpacity": 0,
+        "sphereOpacity": 0.250483,
+        "sphereTransform": "translate(776.059px, 522.767px) scale(0.85)",
+        "sphereWidth": 22.7109375,
+        "sameSphere": true,
+        "path": "/"
+      }
+    ]
+  },
+  "sizeRatio": 1,
+  "meanDisplacement": 10.748533849432519,
+  "playback": {
+    "started": true,
+    "survivesArchive": true,
+    "survivesReturn": true,
+    "attempts": 1
+  },
+  "reduced": {
+    "duration": "140ms",
+    "settleMs": 217,
+    "sceneMotionReduced": true,
+    "frames": [
+      {
+        "label": "reduced-0",
+        "targetMs": 0,
+        "t": 4,
+        "phase": "leaving-home",
+        "presence": 1,
+        "waveCount": 0,
+        "waveSpawn": 0,
+        "waveAge": 0,
+        "homeOpacity": 1,
+        "routeOpacity": 0,
+        "sphereOpacity": 0.358767,
+        "sphereTransform": "translate(767.096px, 513.807px) scale(0.85)",
+        "sphereWidth": 22.7109375,
+        "sameSphere": true,
+        "path": "/me"
+      },
+      {
+        "label": "reduced-80",
+        "targetMs": 80,
+        "t": 90,
+        "phase": "leaving-home",
+        "presence": 0.0104,
+        "waveCount": 0,
+        "waveSpawn": 0,
+        "waveAge": 0,
+        "homeOpacity": 0.0338347,
+        "routeOpacity": 0.966165,
+        "sphereOpacity": 0.337461,
+        "sphereTransform": "translate(767.507px, 514.261px) scale(0.85)",
+        "sphereWidth": 22.7109375,
+        "sameSphere": true,
+        "path": "/me"
+      },
+      {
+        "label": "reduced-160",
+        "targetMs": 160,
+        "t": 168,
+        "phase": "leaving-home",
+        "presence": 0,
+        "waveCount": 0,
+        "waveSpawn": 0,
+        "waveAge": 0,
+        "homeOpacity": 0.0000121358,
+        "routeOpacity": 0.999988,
+        "sphereOpacity": 0.304438,
+        "sphereTransform": "translate(767.766px, 514.539px) scale(0.85)",
+        "sphereWidth": 22.7109375,
+        "sameSphere": true,
+        "path": "/me"
+      }
+    ]
+  },
+  "reducedWidthRatio": 1,
+  "pageErrors": []
+}

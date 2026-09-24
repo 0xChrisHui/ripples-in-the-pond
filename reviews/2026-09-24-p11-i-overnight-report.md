@@ -38,7 +38,7 @@
 | I1 独立修复 | ✅ 完成 | `a372d87`、`51969bb`、`5df5a17`、`119af5d` | 四项定向 Gate、三次无远程字体构建、本地 SSR 通过 | `reviews/evidence/p11-i/i1*.md` |
 | I2 共享外壳 | ✅ 完成 | 见 git log「建立持久水塘共享外壳」 | 三次 `/→/me→/` 的 mountId、外壳与 Canvas 引用稳定；直接/刷新 `/me`、强制 fallback 通过；完整 verify：TypeScript、P15 H1–H7、readback、Instant Start、规模/危险扫描、生产构建 38/38、Forge 56/56 通过；ESLint EPERM 按 E054 在 eslint 忽略列表修复后重跑 0 error | `reviews/evidence/p11-i/i2-gate.md`、`i2-continuity.json` |
 | I3 路由转场 | ✅ 完成 | 见 git log「编排水塘与档案可逆转场」 | 20 次快速往返、动画中反向、重复点击、前进/后退、焦点与 inert Gate 通过；mountId/Canvas 稳定，0 页面错误；完整 verify 构建 38/38、Forge 56/56 | `reviews/evidence/p11-i/i3-gate.md`、`i3-transition.json` |
-| I4 圆圈进退场 | 未开始（依赖 I3） | — | — | — |
+| I4 圆圈进退场 | ✅ 完成 | 见 git log「修复并接入圆圈连续进退场」 | 硬件 Edge 逐帧、动画中反向、同一波纹/节点、播放连续性、reduced-motion 通过；完整 verify 构建 38/38、Forge 56/56 | `reviews/evidence/p11-i/i4-gate.md`、`i4-motion.json` |
 | I5 档案前景 | 未开始（依赖 I4） | — | — | — |
 | I6 作品页接入 | 未开始（依赖 I5） | — | — | — |
 | I7 档案↔作品锚点 | 未开始（依赖 I6） | — | — | — |
@@ -49,7 +49,7 @@
 ## 早上待你处理（按优先级）
 
 1. 用真实桌面浏览器确认 Score #1–#4 的日食 B13：正式站点自动点击后永久音频 45 秒内未就绪，无法取得 0/150/450/1500ms 动态序列。
-2. 逐条确认 I0 基准表，特别是 B02–B06 的首页动态和 #36 访客；软件 WebGL 仅获得一张可见稳定首页，后续自动浏览器进入降级。
+2. 逐条确认 I0 基准表，特别是 B02–B06 的首页动态和 #36 访客；软件 WebGL 仅获得一张可见稳定首页，后续已改用硬件 Edge 取得 I4 动态证据。
 3. 登录真实账号，只读验看 B10/B11 的三块档案、有数据的唱片列表；不要点铸造、保存或注册。
 4. 后续到 I7 时，只读验看档案条目到作品唱片的转场；到 I8 时再决定 D-5 架构文档授权、推送/合并/部署和清理。
 
@@ -68,3 +68,5 @@
 - I2：路由已迁入 `app/(pond)`，首页与 `/me` 共用持久 Water Core；首页 Scene 的初始化寿命与当前交互状态分开，`/me` 正式页不再创建第二个 PondGL。Edge CDP 连续性脚本第三轮通过，三次往返 mountId/外壳/首个 Canvas 均稳定，直接访问与刷新 `/me`、强制无 WebGL 路径通过。完整 `verify.sh` 首轮：TypeScript、P15 H1–H7、生产 readback、Instant Start、文件/目录限制与危险扫描通过；ESLint 因新建 `.edge-i2-profile` 未忽略而读到被 Edge 锁定的扩展文件并报 EPERM。已加入 `.gitignore`；生产构建开始后因用户要求交接而主动中止。运行验证时使用的临时字体移除已恢复，`app/layout.tsx` 不应有 diff。I2 尚未提交，下一进程先重跑 Gate、更新 STATUS/TASKS/晨报并提交。
 - I2 收拢（接力进程）：基底断言 BASE_OK、落后 0；逐文件复核现有实现未重做。TypeScript 与 I2 定向 ESLint 通过；临时字体绕行下完整 `verify.sh` 除 ESLint 外全部通过（构建 38/38、Forge 56/56）。ESLint 仍报 EPERM：ESLint flat config 不读 `.gitignore`，上一轮只改 `.gitignore` 无效；在 `eslint.config.mjs` 加 `.edge-*-profile/**` 后单独重跑 lint 0 error（E054）。`app/layout.tsx` 已恢复、无 diff。
 - I3：`/ ↔ /me` 改为可逆前景转场，Water Core 与播放器持续存在。导航意图、地址落地和动画收场分别管理；入场层完全显现后收场，离场首页保持 inert，历史导航会清理过期意图。Edge CDP 完成 20 次快速往返、动画中反向、重复点击、前进/后退和焦点验证，mountId/Canvas 全程稳定，0 页面错误；完整 verify 通过。接力复核再次通过 TypeScript、I3 定向 ESLint 与 diff 检查。
+- I4：完成圆圈显隐管道与动态 Gate 脚本的工作区实现；TypeScript、定向 ESLint、diff 检查及两次临时绕过 Google Fonts 的生产构建 38/38 通过，字体文件随后恢复且无 diff。三轮浏览器 Gate 均确认 Water Core、Canvas、音乐圆节点、35 个 ID、涟漪和播放跨路由保持连续，但 `scenePresence` 的被动 effect 在快速路由切换时延后执行：离场 6/120/274/524ms 均停在 1，返回 270ms 又被过期 archive 更新跳到 0。第三次仍失败，已按卡住规则停止；I4 不提交，I5–I7 不启动。详见 `reviews/evidence/p11-i/i4-gate-blocker.md`。
+- I4 恢复：用户明确要求无人值守继续并允许多代理并行。三方只读审查一致确认移植范围完整，根因是参考 hook 的被动 effect 和无 generation 的 RAF；修复为 `useLayoutEffect + animationVersion`。同时发现 SwiftShader 无界面浏览器约每秒一帧会制造假阴性，证据工具改用系统 D3D11，并补强采样迟到、实质进度、动画中反向、同一涟漪、逐球连续性和 reduced-motion 无缩放断言。最终逐帧、播放、Water Core/Canvas 连续性和完整 verify 全部通过；字体配置已恢复且无 diff。详见 `reviews/evidence/p11-i/i4-gate.md`。

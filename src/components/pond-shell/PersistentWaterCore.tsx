@@ -13,6 +13,8 @@ type Props = {
   flags: GLFlags;
   glSim?: GlSim;
   visitor?: RefObject<Track36VisitorState | null>;
+  scenePresence?: RefObject<number>;
+  reducedSceneMotion?: boolean;
   pointerInteractive?: boolean;
   onHealthChange: (health: GlHealth) => void;
   onSceneReadyChange?: (ready: boolean) => void;
