@@ -12,10 +12,10 @@ export class HtmlScoreBaseStream implements ScoreBaseStream {
   private readonly audio = new Audio();
   private primed: Promise<void> | null = null;
   private revision = 0;
-  constructor(private readonly url: string, onFailure: () => void) {
+  constructor(private readonly url: string, private readonly onFailure: () => void) {
     this.audio.preload = 'auto';
     this.audio.crossOrigin = 'anonymous';
-    this.audio.addEventListener('error', onFailure);
+    this.audio.addEventListener('error', this.onFailure);
   }
   prime(): void {
     if (this.primed) return;
@@ -39,6 +39,7 @@ export class HtmlScoreBaseStream implements ScoreBaseStream {
   durationMs(): number { return Number.isFinite(this.audio.duration) ? this.audio.duration * 1000 : 0; }
   destroy(): void {
     this.pause();
+    this.audio.removeEventListener('error', this.onFailure);
     this.audio.removeAttribute('src');
     this.audio.load();
   }

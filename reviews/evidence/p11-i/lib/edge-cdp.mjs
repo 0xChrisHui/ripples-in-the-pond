@@ -7,7 +7,7 @@ const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 export const BASE = (process.env.P11_BASE_URL ?? 'http://127.0.0.1:3000').replace(/\/$/, '');
 export const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export async function openEdge({ port = 9223, profile = '.edge-i2-profile' } = {}) {
+export async function openEdge({ port = 9223, profile = '.edge-i2-profile', extraArgs = [] } = {}) {
   const browser = spawn(EDGE, [
     '--headless=new', '--no-first-run', '--disable-features=msEdgeFirstRunExperience',
     '--disable-background-timer-throttling', '--disable-renderer-backgrounding',
@@ -16,6 +16,7 @@ export async function openEdge({ port = 9223, profile = '.edge-i2-profile' } = {
     '--ignore-gpu-blocklist',
     ...(process.env.P11_EDGE_SOFTWARE === '1'
       ? ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'] : ['--use-angle=d3d11']),
+    ...extraArgs,
     '--window-size=1440,900', 'about:blank',
   ], { stdio: ['ignore', 'ignore', 'pipe'] });
   const cdp = `http://127.0.0.1:${port}`;

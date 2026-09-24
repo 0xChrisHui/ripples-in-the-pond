@@ -110,20 +110,28 @@ export function ScoreOriginProvider({ children }: { children: ReactNode }) {
     }
     active.current = transition;
     const kick = window.setTimeout(() => { void commit(); }, 100);
+    let disposed = false;
+    let cancelFrame = 0;
     const cancelled = new Promise<void>((resolve) => {
       const check = () => {
-        if (landed) return;
+        if (disposed || landed) return;
         if (originRef.current?.id !== id) resolve();
-        else requestAnimationFrame(check);
+        else cancelFrame = requestAnimationFrame(check);
       };
       check();
     });
-    await Promise.race([
-      transition.finished.catch(() => undefined),
-      cancelled,
-      new Promise<void>((resolve) => window.setTimeout(resolve, 31_000)),
-    ]);
-    window.clearTimeout(kick);
+    let deadline = 0;
+    const timedOut = new Promise<void>((resolve) => {
+      deadline = window.setTimeout(resolve, 31_000);
+    });
+    try {
+      await Promise.race([transition.finished.catch(() => undefined), cancelled, timedOut]);
+    } finally {
+      disposed = true;
+      window.clearTimeout(kick);
+      window.clearTimeout(deadline);
+      if (cancelFrame) cancelAnimationFrame(cancelFrame);
+    }
     if (active.current === transition) {
       try { transition.skipTransition(); } catch { /* 已自然结束。 */ }
       active.current = null;
@@ -134,7 +142,7 @@ export function ScoreOriginProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const onPopState = () => {
       const current = originRef.current;
-      if (!current || current.stage !== 'score' || window.location.pathname !== '/me') return;
+      if (!current || current.stage === 'returning' || window.location.pathname !== '/me') return;
       const id = beginReturn();
       if (id == null) return;
       void run(() => undefined, () => Boolean(document.querySelector(
