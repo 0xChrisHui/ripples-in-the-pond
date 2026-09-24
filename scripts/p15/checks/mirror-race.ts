@@ -136,8 +136,31 @@ async function verifyExternalAbortCancelsBoth(): Promise<void> {
   assert.equal(gatewayAborted, true);
 }
 
+async function verifyConfiguredMirror(): Promise<void> {
+  const previous = process.env.NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL;
+  process.env.NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL = MIRROR;
+  const calls: string[] = [];
+  try {
+    const result = await resolvePermanentMedia(REF, {
+      kind: 'audio', validation: { level: 'compatibility' },
+      fetcher: async (input) => {
+        calls.push(String(input));
+        if (String(input).startsWith(MIRROR)) return new Response('sound', { headers: HEADERS });
+        throw new Error('镜像可用时不应等待永久网关');
+      },
+      mirrorFallbackDelayMs: 100, rounds: 1, health: new PermanentMediaHealth(),
+    });
+    assert.equal(result.source, 'mirror');
+    assert.deepEqual(calls, [`${MIRROR}/${'R'.repeat(43)}`]);
+  } finally {
+    if (previous === undefined) delete process.env.NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL;
+    else process.env.NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL = previous;
+  }
+}
+
 /** 覆盖直接完整 GET、1.2 秒策略、完整验证决胜与竞速败方取消。 */
 export async function verifyMirrorRace(): Promise<void> {
+  await verifyConfiguredMirror();
   await verifyMirrorWinsAfterHedge();
   await verifyGatewayWinsAndAbortsMirror();
   await verifyExplicitFailureFallsBackImmediately();

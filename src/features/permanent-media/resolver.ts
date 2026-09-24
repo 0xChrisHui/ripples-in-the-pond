@@ -181,7 +181,9 @@ export async function resolvePermanentMedia(
     if (options.kind === 'audio') performance.mark('p15:first-verified-audio-ready');
     return { ...cached, source: 'cache', verification: 'sha256' };
   }
-  const mirrorBase = options.kind === 'audio' ? options.mirrorBaseUrl : '';
+  // 声音默认走已配置的高速镜像；显式空串仍可让测试或故障演练只走永久网关。
+  const mirrorBase = options.kind === 'audio'
+    ? options.mirrorBaseUrl ?? process.env.NEXT_PUBLIC_MEDIA_MIRROR_BASE_URL : '';
   const candidates = permanentMediaCandidates(ref, mirrorBase);
   const log: FailureLog = { failures: [], messages: [] };
   const result = await resolveWithMirrorRace(options, maxBytes, expected, candidates, log);

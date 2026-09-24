@@ -35,7 +35,7 @@
 |---|---|---|---|---|
 | 准备 | ✅ 完成 | `d9e4dcb` | 基底断言 BASE_OK、落后 0 | — |
 | I0 基准表 | ✅ 自动部分完成，用户确认待补 | `e204446` | 18/18 有证据或原因；动态日食未取 | `reviews/2026-09-24-p11-i-baseline.md`、`reviews/evidence/p11-i/baseline/` |
-| I1 独立修复 | 🔄 I1-a/I1-b 完成，进入 I1-c | `a372d87`、待 I1-b 提交 | 类型/定向测试/构建/本地 SSR 通过 | `reviews/evidence/p11-i/i1-verify-blocker.md`、`i1b-legacy-identity.md` |
+| I1 独立修复 | 🔄 I1-a–I1-c 完成，进入 I1-d | `a372d87`、`51969bb`、待 I1-c 提交 | 类型/定向测试/构建/本地 SSR 通过 | `reviews/evidence/p11-i/i1-verify-blocker.md`、`i1b-legacy-identity.md`、`i1c-mirror-default.md` |
 | I2 共享外壳 | 未开始（依赖 I1） | — | — | — |
 | I3 路由转场 | 未开始（依赖 I2） | — | — | — |
 | I4 圆圈进退场 | 未开始（依赖 I3） | — | — | — |
@@ -63,3 +63,4 @@
 - I1-a：仅将唱片档案的 `tracks(title)` 改为显式外键。完整 `verify.sh` 除生产构建外各项通过，包括 TypeScript、ESLint、P15 合同、生产只读回查与 Forge 56/56；生产构建因五个 Google Fonts 下载请求失败。随后两次单独构建同样失败，Google Fonts URL 独立请求也超时。按夜间卡住规则停在 I1-a，不提交这项代码，不进入 I2–I8；现象、证据与建议见 `reviews/evidence/p11-i/i1-verify-blocker.md`。
 - I1-a 恢复：用户明确批准忽略本机 Google Fonts 加载。临时移除字体初始化后，生产编译 38/38 通过；随后恢复 `app/layout.tsx`，内容 hash 与 `HEAD` 一致，产品字体无 diff。I1-a Gate 视为通过。
 - I1-b：数字 `/score/N` 的 snapshot、ownerOf、凭证与浏览器链接固定到 OP Mainnet 旧合约；测试链 success UUID 不再误跳到同编号主网作品；Production 配置不一致会在构建时失败。本地仍用 Sepolia 配置时，`/score/1` SSR 已显示 OP Mainnet、FINALIZED 与旧合约，定向 Gate 和无远程字体构建通过。
+- I1-c：音频 resolver 未显式传镜像地址时改用公开配置的高速镜像；显式空串仍能只走永久网关。镜像竞速定向测试、永久媒体 Gate、TypeScript 和 ESLint 通过。
