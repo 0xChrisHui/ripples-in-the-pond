@@ -33,9 +33,11 @@ export async function openEdge({ port = 9223, profile = '.edge-i2-profile' } = {
   const pending = new Map();
   const errors = [];
   const requests = [];
+  const listeners = new Map();
   socket.addEventListener('message', ({ data }) => {
     const message = JSON.parse(data);
     if (!message.id) {
+      for (const listener of listeners.get(message.method) ?? []) listener(message.params);
       if (message.method === 'Runtime.exceptionThrown') {
         const details = message.params.exceptionDetails;
         errors.push(`${details.text} ${details.exception?.description ?? ''}`.slice(0, 300));
@@ -80,7 +82,13 @@ export async function openEdge({ port = 9223, profile = '.edge-i2-profile' } = {
   await Promise.all([send('Page.enable'), send('Runtime.enable')]);
   await send('Page.bringToFront');
   const close = () => { socket.close(); browser.kill(); };
-  return { send, evaluate, until, load, errors, requests, close };
+  const on = (method, listener) => {
+    const entries = listeners.get(method) ?? [];
+    entries.push(listener);
+    listeners.set(method, entries);
+    return () => listeners.set(method, entries.filter((entry) => entry !== listener));
+  };
+  return { send, evaluate, until, load, errors, requests, on, close };
 }
 
 export async function writeEvidence(file, data) {

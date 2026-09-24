@@ -1,11 +1,14 @@
 'use client';
 
+import { useEffect } from 'react';
 import EditionStamp from '@/src/components/p11/EditionStamp';
 import RecordAnchor from '@/src/components/p11/RecordAnchor';
 import ScorePondHeader from '@/src/components/p11/ScorePondHeader';
 import type { ScoreFailedData, ScoreProcessingData } from '@/src/data/score-source';
 import ScoreArchive from './ScoreArchive';
 import ShareActions from './ShareActions';
+import { useScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
+import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 
 type Props = { score: ScoreProcessingData | ScoreFailedData; network: string };
 
@@ -29,6 +32,13 @@ function failureMessage(score: ScoreFailedData): string {
 }
 
 export default function ScoreLifecycle({ score, network }: Props) {
+  const scoreOrigin = useScoreOrigin();
+  const transition = usePondTransition();
+  useEffect(() => {
+    if (scoreOrigin.origin?.stage === 'forward' && scoreOrigin.beginReturn(undefined, false) != null) {
+      queueMicrotask(() => transition?.navigate('/me'));
+    } else if (scoreOrigin.origin?.stage !== 'returning') scoreOrigin.clear();
+  }, [scoreOrigin, transition]);
   const processing = score.state === 'processing';
   const snapshotUnavailable = !processing && score.publicFailure === 'snapshot_unavailable';
   const title = score.tokenId == null ? 'Ripples · 制作中' : `Ripples #${score.tokenId}`;

@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 11-I「主线重放与效果对齐」执行中，进入 I7**。I0–I6 已完成；Score 路由已接入唯一 Water Core，四枚主网唱片 ready。日食四时点、播放/P9、pause/resume/ended/replay、离页 AudioContext 清理、同一 Canvas/花瓣、四视口/reduced/fallback 与完整 verify（构建 38/38、Forge 56/56）通过；证据见 `reviews/evidence/p11-i/i6/i6-gate.md`。
+**Phase**: **Phase 11-I「主线重放与效果对齐」执行中，进入 I8 自动总验收**。I0–I7 已完成；ready 档案行与匹配 Score 唱片使用唯一锚点，按钮返回与浏览器 Back 都恢复来源分页、滚动和焦点。双击、快速换目标、目标失败、Escape、新标签、直接访问与身份切换 Gate 通过；完整 verify 构建 38/38、Forge 56/56。证据见 `reviews/evidence/p11-i/i7/i7-gate.md`。
 
 **P15-H 新发现（2026-09-21）**：2026-08-23 的本地声音变更不仅新增 `space + 3–8`，还替换了 `a–z` 全部 26 个 MP3；因此新 Permanent Core 必须是当前 33 音频的独立版本，旧 26 表继续原样服务历史真相。Score #1–#3 都钉住旧 decoder/旧 26 表；#2 明确缺 `space`，#2/#3 还必须按各自铸造时 Production deployment 证据判断已用字母是否需要兼容 override，不能只补 7 键后宣称完全对齐。
 
@@ -118,7 +118,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：执行 P11-I7，把 ready 档案条目与作品唱片锚点接入同一转场控制器；无登录时完成可自动验证部分，把真实账号路径列入晨报。
+**当前权威下一步**：执行 P11-I8 自动总验收、连续性与生命周期矩阵，完成交付文档；真实账号目验、ARCHITECTURE D-5、推送/合并/部署与清理保留给用户决定。
 
 ---
 

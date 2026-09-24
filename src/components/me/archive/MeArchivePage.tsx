@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useMeArchive, type ArchiveSlice } from '@/src/hooks/me/useMeArchive';
 import { useOwnedEchoes } from '@/src/hooks/me/useOwnedEchoes';
@@ -11,6 +12,7 @@ import MaterialArchiveRow from './MaterialArchiveRow';
 import RecordingArchiveRow from './RecordingArchiveRow';
 import ScoreArchiveRow from './ScoreArchiveRow';
 import EchoArchiveRow from '@/src/components/echo/EchoArchiveRow';
+import { useScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
 import './archive.css';
 
 type SectionId = 'records' | 'pending' | 'favorites';
@@ -34,6 +36,8 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
   variant?: 'default' | 'pond';
   onPrepared?: (ready: boolean) => void;
 }) {
+  const pathname = usePathname();
+  const scoreOrigin = useScoreOrigin();
   const auth = useAuth();
   const { ownerId, scores, recordings, materials, retry } = useMeArchive({
     authenticated: auth.authenticated,
@@ -55,6 +59,8 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
   const identityPending = !auth.ready || (auth.authenticated && !archiveReady);
   const authState = identityPending ? 'checking' as const
     : auth.authenticated ? 'authenticated' as const : 'unauthenticated' as const;
+  const ownerKey = auth.authenticated && auth.authSource && auth.userId
+    ? `${auth.authSource}:${auth.userId}:${auth.evmAddress?.toLowerCase() ?? ''}` : '';
 
   const echoSettled = !auth.evmAddress || echoes.resolved || echoes.phase === 'error';
   const recordsSettled = (scores.resolved || scores.phase === 'error') && echoSettled;
@@ -63,10 +69,10 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
     && (materials.resolved || materials.phase === 'error')));
   useEffect(() => { onPrepared?.(prepared); }, [onPrepared, prepared]);
   useEffect(() => () => { onPrepared?.(false); }, [onPrepared]);
-  const recordItems = [
+  const recordItems = useMemo(() => [
     ...scores.items.map((item) => ({ kind: 'score' as const, key: `score-${item.queueId}`, item })),
     ...echoes.items.map((item) => ({ kind: 'echo' as const, key: `echo-${item.key}`, item })),
-  ];
+  ], [echoes.items, scores.items]);
   const recordCount = recordItems.length > 0 || recordsSettled ? recordItems.length : null;
   const pendingCount = countOf(recordings);
   const favoriteCount = countOf(materials);
@@ -80,6 +86,37 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
     pending: Math.min(pages.pending, pageCounts.pending - 1),
     favorites: Math.min(pages.favorites, pageCounts.favorites - 1),
   };
+  useEffect(() => {
+    const origin = scoreOrigin.origin;
+    if (auth.ready && origin && origin.ownerKey !== ownerKey) scoreOrigin.clear(origin.id);
+  }, [auth.ready, ownerKey, scoreOrigin]);
+  useLayoutEffect(() => {
+    const origin = scoreOrigin.origin;
+    if (!origin || origin.stage !== 'returning' || pathname !== '/me'
+      || !archiveReady || !recordsSettled) return;
+    const index = recordItems.findIndex((row) => row.key === origin.key);
+    if (index < 0) {
+      document.querySelector<HTMLElement>('[data-pond-focus-entry]')?.focus({ preventScroll: true });
+      scoreOrigin.clear(origin.id);
+      return;
+    }
+    const targetPage = Math.floor(index / PAGE_SIZES.records);
+    if (safePages.records !== targetPage) {
+      const frame = requestAnimationFrame(() => {
+        setPages((current) => ({ ...current, records: targetPage }));
+      });
+      return () => cancelAnimationFrame(frame);
+    }
+    const frame = requestAnimationFrame(() => {
+      const row = document.querySelector<HTMLElement>(
+        `[data-score-origin-key="${CSS.escape(origin.key)}"]`,
+      );
+      window.scrollTo({ top: origin.scrollY, behavior: 'auto' });
+      row?.querySelector<HTMLElement>('a[href]')?.focus({ preventScroll: true });
+      scoreOrigin.clear(origin.id);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [archiveReady, pathname, recordItems, recordsSettled, safePages.records, scoreOrigin]);
   const changePage = (section: SectionId, page: number) => {
     setPages((current) => ({ ...current, [section]: page }));
   };
@@ -93,7 +130,7 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
 
   return (
     <main className="me-archive" data-p11-theme="archive" data-me-variant={variant}
-      data-archive-prepared={prepared}>
+      data-archive-prepared={prepared} data-score-origin-stage={scoreOrigin.origin?.stage}>
       <div className="me-archive__inner">
         <ArchiveHeader authState={authState} authSource={auth.authSource} evmAddress={auth.evmAddress} />
         {identityPending ? (
@@ -114,7 +151,8 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
                 onPageChange={(page) => changePage('records', page)}>
                 {recordItems.slice(recordStart, recordStart + PAGE_SIZES.records).map((row, index) => (
                   row.kind === 'score'
-                    ? <ScoreArchiveRow key={row.key} score={row.item} index={recordStart + index} />
+                    ? <ScoreArchiveRow key={row.key} score={row.item} index={recordStart + index}
+                      ownerKey={ownerKey} />
                     : <EchoArchiveRow key={row.key} echo={row.item} index={recordStart + index} />
                 ))}
                 {(recordCount ?? 0) === 0 && !recordsSettled && <div className="me-archive__skeleton" />}

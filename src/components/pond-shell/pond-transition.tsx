@@ -100,7 +100,8 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     const intended = intentRef.current;
     if (intended && pathname !== intended) {
       // 快速反向时较早的 push 可能后落地；最后一次导航意图获胜。
-      if (pathname !== originRef.current && (intended === '/' || intended.startsWith('/me'))) {
+      if (pathname !== originRef.current && (intended === '/' || intended.startsWith('/me')
+        || intended.startsWith('/score/'))) {
         router.replace(intended);
       }
       return;

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { usePathname } from 'next/navigation';
 import { preload } from 'react-dom';
 import EditionStamp from '@/src/components/p11/EditionStamp';
 import ScorePondHeader from '@/src/components/p11/ScorePondHeader';
@@ -17,6 +18,7 @@ import { usePlayer } from '@/src/components/player/PlayerProvider';
 import {
   useRegisterPondScene, type PondSceneDescriptor,
 } from '@/src/components/pond-shell/scene-slot';
+import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/score/score-origin';
 import type { Track } from '@/src/types/tracks';
 import ScoreArchive from './ScoreArchive';
 import ScoreRecordAnchor from './ScoreRecordAnchor';
@@ -72,6 +74,8 @@ export default function ScorePondScene({ score, network }: Props) {
   preloadStartupAudio(score);
   const playback = useScorePlayback(score.playbackBootstrap);
   const { stop: stopGlobalPlayer } = usePlayer();
+  const pathname = usePathname();
+  const { origin, confirmScore } = useScoreOrigin();
   const holder = useScoreHolder(score.tokenId);
   const capabilities = useCapabilities();
   const [performanceReduced, setPerformanceReduced] = useState(false);
@@ -119,6 +123,10 @@ export default function ScorePondScene({ score, network }: Props) {
   const tokenLabel = `Token #${String(score.tokenId).padStart(3, '0')}`;
   const title = `Ripples #${score.tokenId}`;
   const editionStatus = score.degraded ? 'degraded' : 'finalized';
+  const anchored = origin?.href === pathname && origin.tokenId === score.tokenId;
+  useLayoutEffect(() => {
+    confirmScore(score.tokenId, pathname);
+  }, [confirmScore, pathname, score.tokenId]);
 
   return (
     <main
@@ -130,6 +138,7 @@ export default function ScorePondScene({ score, network }: Props) {
       data-capability={capabilities.fine ? 'fine' : 'coarse'}
       data-reduced-motion={capabilities.reduced}
       data-score-state="ready"
+      data-score-anchor-transition={anchored || undefined}
       data-playback-state={playback.state}
       data-record-motion={returning ? 'returning' : isPlaying ? 'flowing' : 'resting'}
       data-resource-load-ms={playback.resourceLoadMs ?? undefined}
@@ -150,6 +159,7 @@ export default function ScorePondScene({ score, network }: Props) {
           backLabel="返回档案"
           network={network}
           tokenLabel={tokenLabel}
+          onBeforeBack={() => { void playback.pause(); }}
           shareAction={<ShareActions id={score.id} tokenId={score.tokenId} trackTitle={score.trackTitle} />}
         />
         <div className="score-pond-page__identity" data-pond-ui="true">
@@ -157,7 +167,9 @@ export default function ScorePondScene({ score, network }: Props) {
           <h1>{title}</h1>
           <p>{score.trackTitle} · {score.eventCount} 个永久事件</p>
         </div>
-        <div className="score-pond-page__anchor" data-pond-ui="true">
+        <div className="score-pond-page__anchor" data-pond-ui="true"
+          data-score-token-id={score.tokenId} data-score-anchor-ready={anchored || undefined}
+          style={anchored ? { viewTransitionName: viewTransitionName() } as CSSProperties : undefined}>
           <ScoreRecordAnchor
             title={title}
             coverUrl={score.coverUrl}

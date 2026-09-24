@@ -67,10 +67,33 @@
   transform: none;
 }
 
+@supports (view-transition-name: score-record) {
+  ::view-transition { pointer-events: none; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; opacity: 0; mix-blend-mode: normal; }
+  ::view-transition-group(score-record) {
+    z-index: 90;
+    animation-duration: var(--pond-route-duration, 520ms);
+    animation-timing-function: var(--p11-ease-out);
+  }
+  ::view-transition-old(score-record),
+  ::view-transition-new(score-record) { mix-blend-mode: normal; }
+}
+
+.score-pond-page:not([data-score-anchor-transition='true']),
+.score-fallback { animation: score-surface-in var(--pond-route-duration, 520ms) var(--p11-ease-out) both; }
+
+@keyframes score-surface-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @media (pointer: coarse) {
   .pond-route-surface { transform: translateY(4px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .pond-route-surface, .pond-prepared-archive { transform: none; }
+  ::view-transition-group(score-record) { animation-duration: 140ms; }
+  .score-pond-page, .score-fallback { animation-duration: 140ms; }
 }

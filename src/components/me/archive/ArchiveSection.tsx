@@ -36,7 +36,8 @@ export default function ArchiveSection({
   const isEmpty = !loading && !error && count === 0;
 
   return (
-    <section className="archive-section" aria-labelledby={`${id}-title`}>
+    <section className="archive-section" aria-labelledby={`${id}-title`}
+      data-archive-section={id} data-archive-page={page}>
       <header className="archive-section__header">
         <h2 id={`${id}-title`}>{title}</h2>
         <span aria-label={count == null ? `${title}正在读取` : `${title}${count}项`}>

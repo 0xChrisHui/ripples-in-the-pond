@@ -1,9 +1,19 @@
 'use client';
 
-import Link from 'next/link';
+import { useEffect } from 'react';
+import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
+import { useScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
+import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 
 /** 无法确认作品身份时的安全壳；不伪造 Token、日期或永久资源。 */
 export default function FallbackShell() {
+  const scoreOrigin = useScoreOrigin();
+  const transition = usePondTransition();
+  useEffect(() => {
+    if (scoreOrigin.origin?.stage === 'forward' && scoreOrigin.beginReturn(undefined, false) != null) {
+      queueMicrotask(() => transition?.navigate('/me'));
+    } else if (scoreOrigin.origin?.stage !== 'returning') scoreOrigin.clear();
+  }, [scoreOrigin, transition]);
   return (
     <main className="score-fallback" data-p11-theme="score" data-theme="dark" lang="zh-CN">
       <section className="score-fallback__content">
@@ -15,7 +25,7 @@ export default function FallbackShell() {
         </p>
         <div className="score-fallback__actions">
           <button type="button" onClick={() => window.location.reload()}>重新读取</button>
-          <Link href="/me">← 返回档案</Link>
+          <PondRouteLink href="/me">← 返回档案</PondRouteLink>
         </div>
       </section>
     </main>

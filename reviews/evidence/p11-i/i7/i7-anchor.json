@@ -1,0 +1,2136 @@
+{
+  "measuredAt": "2026-09-24T06:03:05.507Z",
+  "checks": {
+    "pageRestore": true,
+    "anchoredForward": true,
+    "browserBack": true,
+    "nativeSemantics": true,
+    "directFallback": true,
+    "lastIntent": true,
+    "identityInvalidation": true,
+    "failedTarget": true,
+    "failedEscape": true,
+    "readOnly": true,
+    "errors": true
+  },
+  "pageTwo": {
+    "label": "page-two",
+    "path": "/me",
+    "scrollY": 0,
+    "page": "1",
+    "stage": null,
+    "selected": null,
+    "named": 0,
+    "focused": null,
+    "busy": null,
+    "interactive": "true"
+  },
+  "nonReady": [
+    {
+      "status": "preparing_package",
+      "name": "none",
+      "href": "/score/fixture-processing"
+    },
+    {
+      "status": "failed",
+      "name": "none",
+      "href": "/score/fixture-failed"
+    }
+  ],
+  "forward": {
+    "label": "keyboard-forward",
+    "path": "/score/4",
+    "token": "4",
+    "ready": "true",
+    "name": "score-record",
+    "sourceStage": "score",
+    "named": 2,
+    "state": "ready"
+  },
+  "buttonReturn": {
+    "label": "button-return",
+    "path": "/me",
+    "scrollY": 0,
+    "page": "1",
+    "stage": null,
+    "selected": null,
+    "named": 0,
+    "focused": "score-fixture-4",
+    "busy": null,
+    "interactive": "true",
+    "scrollDelta": 0
+  },
+  "browserBack": {
+    "label": "browser-back",
+    "path": "/me",
+    "scrollY": 0,
+    "page": "1",
+    "stage": null,
+    "selected": null,
+    "named": 0,
+    "focused": "score-fixture-4",
+    "busy": null,
+    "interactive": "true"
+  },
+  "modified": {
+    "label": "ctrl-click",
+    "path": "/me",
+    "scrollY": 0,
+    "page": "1",
+    "stage": null,
+    "selected": null,
+    "named": 0,
+    "focused": "score-fixture-4",
+    "busy": null,
+    "interactive": "true"
+  },
+  "direct": {
+    "label": "direct",
+    "path": "/score/4",
+    "token": "4",
+    "ready": null,
+    "name": "none",
+    "sourceStage": null,
+    "named": 0,
+    "state": "ready"
+  },
+  "switchTarget": {
+    "label": "switch-target",
+    "path": "/score/2",
+    "token": "2",
+    "ready": "true",
+    "name": "score-record",
+    "sourceStage": "score",
+    "named": 2,
+    "state": "ready"
+  },
+  "scorePushes": [
+    "/score/2"
+  ],
+  "identityInvalidation": {
+    "label": "identity-switch",
+    "path": "/score/2",
+    "token": "2",
+    "ready": null,
+    "name": "none",
+    "sourceStage": null,
+    "named": 0,
+    "state": "ready"
+  },
+  "failedTarget": {
+    "label": "failed-target",
+    "path": "/me",
+    "scrollY": 0,
+    "page": "0",
+    "stage": null,
+    "selected": null,
+    "named": 0,
+    "focused": "score-fixture-3",
+    "busy": null,
+    "interactive": "true"
+  },
+  "failedEscape": {
+    "label": "failed-escape",
+    "path": "/me",
+    "scrollY": 0,
+    "page": "0",
+    "stage": null,
+    "selected": null,
+    "named": 0,
+    "focused": null,
+    "busy": null,
+    "interactive": "false"
+  },
+  "writes": [],
+  "intercepted": [
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_ca646afb._.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-shell_pond-shell_102fe0ee.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_me_archive_archive_09264d7c.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_956a0d3a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_1dd7fb59.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_client_17643121._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_f3530cac._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40swc_helpers_cjs_d80fb378._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_a0ff3932._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/turbopack-_23a915ee._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_be32b49c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_favicon_ico_mjs_745fddaf._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_1cf6b850.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_89a2088e._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_fd02e233._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_js-sdk-core_dist_esm_22a1aba6._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_9f05a8fe._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_utils_dc1b5c16._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_actions_51acb3d9._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_zksync_edb1ebdd._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_1a1823bf._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_add60d93._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_ccd80f65._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_619f94f3._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_react-auth_dist_esm_index-C6XL4TGs_mjs_6a674548._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_react-auth_dist_esm_22c25b00._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40coinbase_wallet-sdk_dist_51e034e5._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_utils_dist_index_cac7e0a0.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_core_dist_index_315b943b.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_sign-client_dist_index_7a86d744.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40headlessui_react_dist_fdc0ee26._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_x402_dist_esm_170a4400._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/6a5e0_zod_v3_942eb7f1._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_c0c1264e._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_6bcf0525._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_4d124025._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana-program_token_dist_src_index_mjs_2c09a0b9._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana-program_token-2022_dist_src_index_mjs_77533f1c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_c4890404._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_6779c371._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_30f0ddd3._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_layout_tsx_1cf6b850._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_1013b652._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_error_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_02409dcd._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_not-found_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_885b208b._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_16141951._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_461464c6._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_layout_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_1538b20d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_error_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_loading_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c7192189._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/v3/wallets"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-gl-test3_4ce4defb._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_core_996ef05a.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_module_0c59ee63.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_module_f7d46d9b.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40react-three_fiber_dist_8053cdee._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_aa412475._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-gl-test3_PondGL_tsx_4c82949a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_9b8769a8._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_75e057c7._.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_MePondArchive_tsx_4c82949a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "OPTIONS",
+      "path": "/api/v1/apps/cmnqwj81a007f0ckwyzxdijbs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/score-nfts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/scores"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/nfts"
+    },
+    {
+      "method": "GET",
+      "path": "/score/4"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/apps/cmnqwj81a007f0ckwyzxdijbs"
+    },
+    {
+      "method": "GET",
+      "path": "/apps/cmnqwj81a007f0ckwyzxdijbs/embedded-wallets"
+    },
+    {
+      "method": "HEAD",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_9ccb2f9c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40base-org_account_dist_index_83aaf4ea.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_layout_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_568fed4f._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_error_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_score-pond-page_fc8a77a0.css"
+    },
+    {
+      "method": "HEAD",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/__nextjs_font/geist-latin.woff2"
+    },
+    {
+      "method": "GET",
+      "path": "/pond-eclipse-black.svg"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_8030af2d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_page_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw"
+    },
+    {
+      "method": "GET",
+      "path": "/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_layout_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_8030af2d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_page_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/A74qnIoqKsnXw1fBw64Jdm0zbiecJSBm09KVXdMu3nk"
+    },
+    {
+      "method": "GET",
+      "path": "/api/scores/4/owner"
+    },
+    {
+      "method": "GET",
+      "path": "/api/scores/4/owner"
+    },
+    {
+      "method": "GET",
+      "path": "/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw"
+    },
+    {
+      "method": "GET",
+      "path": "/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM"
+    },
+    {
+      "method": "GET",
+      "path": "/A74qnIoqKsnXw1fBw64Jdm0zbiecJSBm09KVXdMu3nk"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/score/4"
+    },
+    {
+      "method": "GET",
+      "path": "/api/scores/4/owner"
+    },
+    {
+      "method": "GET",
+      "path": "/api/scores/4/owner"
+    },
+    {
+      "method": "GET",
+      "path": "/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw"
+    },
+    {
+      "method": "GET",
+      "path": "/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM"
+    },
+    {
+      "method": "GET",
+      "path": "/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw"
+    },
+    {
+      "method": "GET",
+      "path": "/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM"
+    },
+    {
+      "method": "GET",
+      "path": "/api/scores/4/owner"
+    },
+    {
+      "method": "GET",
+      "path": "/score/4"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_ca646afb._.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-shell_pond-shell_102fe0ee.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_score-pond-page_fc8a77a0.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_956a0d3a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_1dd7fb59.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_client_17643121._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_f3530cac._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40swc_helpers_cjs_d80fb378._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_a0ff3932._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/turbopack-_23a915ee._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_be32b49c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_favicon_ico_mjs_745fddaf._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_1cf6b850.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_89a2088e._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_fd02e233._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_js-sdk-core_dist_esm_22a1aba6._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_9f05a8fe._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_utils_dc1b5c16._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_actions_51acb3d9._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_zksync_edb1ebdd._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_1a1823bf._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_add60d93._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_ccd80f65._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_619f94f3._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_react-auth_dist_esm_index-C6XL4TGs_mjs_6a674548._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_react-auth_dist_esm_22c25b00._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40coinbase_wallet-sdk_dist_51e034e5._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_utils_dist_index_cac7e0a0.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_core_dist_index_315b943b.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_sign-client_dist_index_7a86d744.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40headlessui_react_dist_fdc0ee26._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_x402_dist_esm_170a4400._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/6a5e0_zod_v3_942eb7f1._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_c0c1264e._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_6bcf0525._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_4d124025._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana-program_token_dist_src_index_mjs_2c09a0b9._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana-program_token-2022_dist_src_index_mjs_77533f1c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_c4890404._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_6779c371._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_30f0ddd3._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_layout_tsx_1cf6b850._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_1013b652._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_error_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_02409dcd._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_not-found_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_885b208b._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_16141951._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_461464c6._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_layout_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_layout_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_568fed4f._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_error_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_8030af2d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_page_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c7192189._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/v3/wallets"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-gl-test3_4ce4defb._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_core_996ef05a.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_module_0c59ee63.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_module_f7d46d9b.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40react-three_fiber_dist_8053cdee._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_aa412475._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-gl-test3_PondGL_tsx_4c82949a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/apps/cmnqwj81a007f0ckwyzxdijbs"
+    },
+    {
+      "method": "GET",
+      "path": "/apps/cmnqwj81a007f0ckwyzxdijbs/embedded-wallets"
+    },
+    {
+      "method": "HEAD",
+      "path": "/score/4"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_9ccb2f9c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40base-org_account_dist_index_83aaf4ea.js"
+    },
+    {
+      "method": "GET",
+      "path": "/pond-eclipse-black.svg"
+    },
+    {
+      "method": "GET",
+      "path": "/__nextjs_font/geist-latin.woff2"
+    },
+    {
+      "method": "GET",
+      "path": "/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw"
+    },
+    {
+      "method": "GET",
+      "path": "/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM"
+    },
+    {
+      "method": "GET",
+      "path": "/api/scores/4/owner"
+    },
+    {
+      "method": "GET",
+      "path": "/A74qnIoqKsnXw1fBw64Jdm0zbiecJSBm09KVXdMu3nk"
+    },
+    {
+      "method": "GET",
+      "path": "/api/scores/4/owner"
+    },
+    {
+      "method": "GET",
+      "path": "/media/PKNYEL7GCZZ-faEhz7FhvAUbMPWTZGmHMA02-Zse2gw"
+    },
+    {
+      "method": "GET",
+      "path": "/media/JwiHEH6ygA8UK0eYh7IOLN3TB07k9m17V1OYDRf6FBM"
+    },
+    {
+      "method": "GET",
+      "path": "/A74qnIoqKsnXw1fBw64Jdm0zbiecJSBm09KVXdMu3nk"
+    },
+    {
+      "method": "HEAD",
+      "path": "/score/4"
+    },
+    {
+      "method": "GET",
+      "path": "/api/scores/4/owner"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_ca646afb._.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-shell_pond-shell_102fe0ee.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_me_archive_archive_09264d7c.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_956a0d3a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_1dd7fb59.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_client_17643121._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_f3530cac._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40swc_helpers_cjs_d80fb378._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_a0ff3932._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/turbopack-_23a915ee._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_be32b49c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_favicon_ico_mjs_745fddaf._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_1cf6b850.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_89a2088e._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_fd02e233._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_js-sdk-core_dist_esm_22a1aba6._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_9f05a8fe._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_utils_dc1b5c16._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_actions_51acb3d9._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_zksync_edb1ebdd._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_1a1823bf._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_add60d93._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_ccd80f65._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_619f94f3._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_react-auth_dist_esm_index-C6XL4TGs_mjs_6a674548._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_react-auth_dist_esm_22c25b00._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40coinbase_wallet-sdk_dist_51e034e5._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_utils_dist_index_cac7e0a0.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_core_dist_index_315b943b.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_sign-client_dist_index_7a86d744.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40headlessui_react_dist_fdc0ee26._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_x402_dist_esm_170a4400._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/6a5e0_zod_v3_942eb7f1._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_c0c1264e._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_6bcf0525._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_4d124025._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana-program_token_dist_src_index_mjs_2c09a0b9._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana-program_token-2022_dist_src_index_mjs_77533f1c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_c4890404._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_6779c371._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_30f0ddd3._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_layout_tsx_1cf6b850._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_1013b652._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_error_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_02409dcd._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_not-found_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_885b208b._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_16141951._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_461464c6._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_layout_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_1538b20d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_error_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_loading_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c7192189._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/v3/wallets"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-gl-test3_4ce4defb._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_core_996ef05a.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_module_0c59ee63.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_module_f7d46d9b.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40react-three_fiber_dist_8053cdee._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_aa412475._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-gl-test3_PondGL_tsx_4c82949a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_9b8769a8._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_75e057c7._.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_MePondArchive_tsx_4c82949a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/apps/cmnqwj81a007f0ckwyzxdijbs"
+    },
+    {
+      "method": "GET",
+      "path": "/apps/cmnqwj81a007f0ckwyzxdijbs/embedded-wallets"
+    },
+    {
+      "method": "HEAD",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_9ccb2f9c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40base-org_account_dist_index_83aaf4ea.js"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/score-nfts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/scores"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/nfts"
+    },
+    {
+      "method": "GET",
+      "path": "/score/1"
+    },
+    {
+      "method": "GET",
+      "path": "/score/2"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_layout_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_568fed4f._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_error_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_score-pond-page_fc8a77a0.css"
+    },
+    {
+      "method": "HEAD",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_8030af2d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_page_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/media/PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4"
+    },
+    {
+      "method": "GET",
+      "path": "/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw"
+    },
+    {
+      "method": "GET",
+      "path": "/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0"
+    },
+    {
+      "method": "GET",
+      "path": "/media/ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA"
+    },
+    {
+      "method": "GET",
+      "path": "/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8"
+    },
+    {
+      "method": "GET",
+      "path": "/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU"
+    },
+    {
+      "method": "GET",
+      "path": "/media/U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI"
+    },
+    {
+      "method": "GET",
+      "path": "/media/w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c"
+    },
+    {
+      "method": "GET",
+      "path": "/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w"
+    },
+    {
+      "method": "GET",
+      "path": "/media/y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_layout_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_8030af2d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_page_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/scores/2/owner"
+    },
+    {
+      "method": "GET",
+      "path": "/api/scores/2/owner"
+    },
+    {
+      "method": "GET",
+      "path": "/media/PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4"
+    },
+    {
+      "method": "GET",
+      "path": "/media/65d-vl_BXaD7NTRhfsw5Ebjrz3sqbVRM6DyiPInTtE0"
+    },
+    {
+      "method": "GET",
+      "path": "/media/WyUk00o6aPJfT_umZYbZT6mE3p1ONjCQi7QVITfZjC8"
+    },
+    {
+      "method": "GET",
+      "path": "/media/fz-JchPBlhB6AXkwJhjDi0p8HVff3NoFAsxK7-tVwFw"
+    },
+    {
+      "method": "GET",
+      "path": "/hbFBsXnLd-iSlN9ml8CBjQrbhSD_P_v0KfS1R-U6CkE"
+    },
+    {
+      "method": "GET",
+      "path": "/media/ceT42kjHfEW-GDtNi0P2SeKgxHkXhXmERr_8lhNbXCA"
+    },
+    {
+      "method": "GET",
+      "path": "/media/AsTI06Ortbfelo5xxuPJl29nC-nSD9wUdgkv763_RrU"
+    },
+    {
+      "method": "GET",
+      "path": "/media/U_XXJvnMg3fFhAeSxHVauRel_Vc87cLFI4RyXeMeVoI"
+    },
+    {
+      "method": "GET",
+      "path": "/media/w9mtc5E6kVV-awc_yZ1BG1L2z2CB6F6s-Ws1-lft9_c"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/score-nfts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/scores"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/nfts"
+    },
+    {
+      "method": "GET",
+      "path": "/media/6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w"
+    },
+    {
+      "method": "GET",
+      "path": "/media/y_nkK9XOvAIDizi_LP60BuXoRriAKvQvLuADjhFxd3s"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_ca646afb._.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-shell_pond-shell_102fe0ee.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_me_archive_archive_09264d7c.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_956a0d3a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_1dd7fb59.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_client_17643121._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_f3530cac._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40swc_helpers_cjs_d80fb378._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_a0ff3932._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/turbopack-_23a915ee._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_be32b49c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_favicon_ico_mjs_745fddaf._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_1cf6b850.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_89a2088e._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_fd02e233._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_js-sdk-core_dist_esm_22a1aba6._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_9f05a8fe._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_utils_dc1b5c16._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_actions_51acb3d9._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_zksync_edb1ebdd._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_1a1823bf._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_add60d93._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_ccd80f65._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_619f94f3._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_react-auth_dist_esm_index-C6XL4TGs_mjs_6a674548._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_react-auth_dist_esm_22c25b00._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40coinbase_wallet-sdk_dist_51e034e5._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_utils_dist_index_cac7e0a0.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_core_dist_index_315b943b.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_sign-client_dist_index_7a86d744.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40headlessui_react_dist_fdc0ee26._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_x402_dist_esm_170a4400._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/6a5e0_zod_v3_942eb7f1._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_c0c1264e._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_6bcf0525._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_4d124025._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana-program_token_dist_src_index_mjs_2c09a0b9._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana-program_token-2022_dist_src_index_mjs_77533f1c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_c4890404._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_6779c371._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_30f0ddd3._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_layout_tsx_1cf6b850._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_1013b652._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_error_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_02409dcd._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_not-found_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_885b208b._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_16141951._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_461464c6._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_layout_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_1538b20d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_error_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_loading_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c7192189._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/v3/wallets"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-gl-test3_4ce4defb._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_core_996ef05a.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_module_0c59ee63.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_module_f7d46d9b.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40react-three_fiber_dist_8053cdee._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_aa412475._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-gl-test3_PondGL_tsx_4c82949a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_9b8769a8._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_75e057c7._.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_MePondArchive_tsx_4c82949a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/apps/cmnqwj81a007f0ckwyzxdijbs"
+    },
+    {
+      "method": "GET",
+      "path": "/apps/cmnqwj81a007f0ckwyzxdijbs/embedded-wallets"
+    },
+    {
+      "method": "HEAD",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_9ccb2f9c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40base-org_account_dist_index_83aaf4ea.js"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/score-nfts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/scores"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/nfts"
+    },
+    {
+      "method": "GET",
+      "path": "/score/99999999"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_layout_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_568fed4f._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_error_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_score-pond-page_fc8a77a0.css"
+    },
+    {
+      "method": "HEAD",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_8030af2d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_page_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "POST",
+      "path": "/__nextjs_original-stack-frames"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_layout_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_8030af2d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_score_%5Bid%5D_page_tsx_0f24c99d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/pond-eclipse-black.svg"
+    },
+    {
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_ca646afb._.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-shell_pond-shell_102fe0ee.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_me_archive_archive_09264d7c.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_956a0d3a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_1dd7fb59.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_compiled_a0e4c7b4._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_client_17643121._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_f3530cac._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40swc_helpers_cjs_d80fb378._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_a0ff3932._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/turbopack-_23a915ee._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_be32b49c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_favicon_ico_mjs_745fddaf._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_1cf6b850.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_89a2088e._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_fd02e233._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_js-sdk-core_dist_esm_22a1aba6._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_9f05a8fe._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_utils_dc1b5c16._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_actions_51acb3d9._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_zksync_edb1ebdd._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_viem__esm_1a1823bf._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_add60d93._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_ccd80f65._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_619f94f3._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_react-auth_dist_esm_index-C6XL4TGs_mjs_6a674548._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40privy-io_react-auth_dist_esm_22c25b00._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40coinbase_wallet-sdk_dist_51e034e5._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_utils_dist_index_cac7e0a0.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_core_dist_index_315b943b.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_sign-client_dist_index_7a86d744.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40headlessui_react_dist_fdc0ee26._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_x402_dist_esm_170a4400._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/6a5e0_zod_v3_942eb7f1._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_c0c1264e._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_6bcf0525._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_4d124025._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana-program_token_dist_src_index_mjs_2c09a0b9._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana-program_token-2022_dist_src_index_mjs_77533f1c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40walletconnect_c4890404._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40solana_6779c371._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_30f0ddd3._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_layout_tsx_1cf6b850._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_1013b652._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_error_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_next_dist_02409dcd._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_not-found_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_885b208b._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_16141951._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_461464c6._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_layout_tsx_aa22125d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_1538b20d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_error_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_loading_tsx_30cf5e7d._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c7192189._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/v3/wallets"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-gl-test3_4ce4defb._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_core_996ef05a.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_module_0c59ee63.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_three_build_three_module_f7d46d9b.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40react-three_fiber_dist_8053cdee._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_aa412475._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/src_components_pond-gl-test3_PondGL_tsx_4c82949a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_9b8769a8._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/_75e057c7._.css"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/app_(pond)_me_MePondArchive_tsx_4c82949a._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/apps/cmnqwj81a007f0ckwyzxdijbs"
+    },
+    {
+      "method": "GET",
+      "path": "/apps/cmnqwj81a007f0ckwyzxdijbs/embedded-wallets"
+    },
+    {
+      "method": "HEAD",
+      "path": "/me"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_9ccb2f9c._.js"
+    },
+    {
+      "method": "GET",
+      "path": "/_next/static/chunks/node_modules_%40base-org_account_dist_index_83aaf4ea.js"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/pond-echoes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/score-nfts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/scores"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me/nfts"
+    },
+    {
+      "method": "GET",
+      "path": "/score/99999999"
+    }
+  ],
+  "errors": [
+    "[score-holder] 当前持有人读取失败: TypeError: Failed to fetch\n    at useScoreHolder.useEffect (http://127.0.0.1:3000/_next/static/chunks/_8030af2d._.js:2695:18)\n    at Object.react_stack_bottom_frame (http://127.0.0.1:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14876:22)\n",
+    "%c%s%c [score-source] mainnet verified snapshot missing: background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   99999999"
+  ],
+  "expectedErrors": [
+    "[score-holder] 当前持有人读取失败: TypeError: Failed to fetch\n    at useScoreHolder.useEffect (http://127.0.0.1:3000/_next/static/chunks/_8030af2d._.js:2695:18)\n    at Object.react_stack_bottom_frame (http://127.0.0.1:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14876:22)\n",
+    "%c%s%c [score-source] mainnet verified snapshot missing: background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   99999999"
+  ],
+  "passed": true
+}

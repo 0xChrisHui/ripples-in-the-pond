@@ -705,3 +705,12 @@
 - 🔧 修复：ready/health 只由 Water Core 报告，Scene 注册不再改写；单节点自身是否 ready 继续由 `glSim.ready` 独立门控。
 - ✅ 结果：硬件 Edge 中 Score Scene 正常 ready，日食 `0.1709→0.8124→0.9934→1`，同一 Canvas 和花瓣实例保持不变。
 - 💡 镜像底层生命周期状态时，消费者注册不能擅自制造假边沿；否则已经稳定的生产者没有理由重复通知。
+
+### E058 — 连续启动 View Transition 会让返回导航停在更新回调外
+
+- 📅 2026-09-24 / P11-I7
+- 😱 现象：档案锚点已经到达 Score，立刻点击“返回档案”时来源状态变成 returning，但地址仍停在 Score；测试等待 30 秒也没有执行返回导航。
+- 🧠 原因：前向 `document.startViewTransition()` 的 `finished` 尚未收敛时又启动反向转场；浏览器接受了第二个对象，却可能延后其异步 update callback，导航被绑在该 callback 内而没有及时发生。
+- 🔧 修复：路由控制器先同步登记最后意图；反向导航立即交给同一个 Pond Transition controller，View Transition 只等待目标锚点并负责视觉。控制器取消旧快照、给 update callback 100ms 兜底，并按导航代次拒绝旧结果。
+- ✅ 结果：页面按钮与浏览器 Back 都稳定回到来源页；动画中反向、双击、快速换目标、失败与 Escape Gate 全部通过。
+- 💡 路由可达性不能依赖可选动画 API 的回调时机；动画可以降级，最后导航意图必须独立执行并可收敛。

@@ -41,7 +41,7 @@
 | I4 圆圈进退场 | ✅ 完成 | 见 git log「修复并接入圆圈连续进退场」 | 硬件 Edge 逐帧、动画中反向、同一波纹/节点、播放连续性、reduced-motion 通过；完整 verify 构建 38/38、Forge 56/56 | `reviews/evidence/p11-i/i4-gate.md`、`i4-motion.json` |
 | I5 档案前景 | ✅ 完成 | 本步提交 | 唯一预备档案、未登录零私人请求、键盘/控件涟漪隔离、四视口与完整 verify 通过 | `reviews/evidence/p11-i/i5-gate.md`、`i5-archive.json` |
 | I6 作品页接入 | ✅ 完成 | 本步提交 | 四枚 ready；共享 Core/Canvas/花瓣、日食/播放/P9/离页清理、四视口/reduced/fallback 与完整 verify 通过 | `reviews/evidence/p11-i/i6/i6-gate.md`、`i6-score.json` |
-| I7 档案↔作品锚点 | 未开始（依赖 I6） | — | — | — |
+| I7 档案↔作品锚点 | ✅ 自动部分完成 | 本步提交 | ready 唯一锚点、按钮/Back 来源恢复、双击/换目标/失败/Escape/新标签/身份切换、完整 verify 通过 | `reviews/evidence/p11-i/i7/i7-gate.md`、`i7-anchor.json` |
 | I8 总验收（自动部分） | 未开始（依赖 I7） | — | — | — |
 
 ---
@@ -51,7 +51,7 @@
 1. 用真实桌面浏览器肉眼确认 Score #1–#4 的日食 B13 构图。I6 本地硬件 Edge 已取得 Score #1 的 0/150/450/1500ms 动态序列并证明播放/P9/归位，但自动测量不能代替视觉拍板。
 2. 逐条确认 I0 基准表，特别是 B02–B06 的首页动态和 #36 访客；软件 WebGL 仅获得一张可见稳定首页，后续已改用硬件 Edge 取得 I4 动态证据。
 3. 登录真实账号，只读验看 B10/B11 的三块档案、有数据的唱片列表、收藏整行播放与倒计时；不要点铸造、保存或注册。I5 自动 Gate 已证明未登录不请求私人数据。
-4. I7 后登录真实账号，只读验看档案条目到作品唱片的转场，并复核已有首页播放器到 Score 真实接管的停止时机；I8 后再决定 D-5 架构文档授权、推送/合并/部署和清理。
+4. 登录真实账号，只读验看档案 ready 条目到作品唱片再返回的体感，并查看真实 processing/failed 行；同时复核已有首页播放器到 Score 真实接管的停止时机。I8 后再决定 D-5 架构文档授权、推送/合并/部署和清理。
 
 ---
 
@@ -72,3 +72,4 @@
 - I4 恢复：用户明确要求无人值守继续并允许多代理并行。三方只读审查一致确认移植范围完整，根因是参考 hook 的被动 effect 和无 generation 的 RAF；修复为 `useLayoutEffect + animationVersion`。同时发现 SwiftShader 无界面浏览器约每秒一帧会制造假阴性，证据工具改用系统 D3D11，并补强采样迟到、实质进度、动画中反向、同一涟漪、逐球连续性和 reduced-motion 无缩放断言。最终逐帧、播放、Water Core/Canvas 连续性和完整 verify 全部通过；字体配置已恢复且无 diff。详见 `reviews/evidence/p11-i/i4-gate.md`。
 - I5：首页现在后台预备唯一档案实例，身份尚未就绪时不请求私人数据；档案只有在内容 ready 或明确失败后才允许转场收场。`/me` 禁用首页演奏键，按钮、链接、输入框和滑块不会制造水波。全新 Edge 资料证明 `/→/me→/` 使用同一档案 DOM、同一 Water Core/Canvas，未登录私人请求与同源写请求均为 0，四视口无横滚，完整 verify 构建 38/38、Forge 56/56。真实登录数据保留早上只读目验。
 - I6：当前 Score 文件树迁入 Pond route group，保留 URL/canonical/OG/poster 与 I1 主网身份修复；SceneSlot 原子接管唯一 Water Core，去掉 Score 自建 PondGL，并阻止首页/Score 两个日食 RAF 互相覆盖。Score #1 的日食四时点、loading 排队、P9、pause/resume/ended/replay、离页音频清理、凭证复制、四视口、reduced-motion 与 fallback 全过；四枚 Token 均 ready，`/score→/me→history.back()` 保持同一 Canvas/花瓣。完整 verify 构建 38/38、Forge 56/56。
+- I7：持久 Shell 新增短期 Score 来源控制器，只增强稳定 ready Token；来源绑定账号与导航代次，当前选中行和匹配唱片才拥有唯一命名锚点。只读 fixture 覆盖第 2 页键盘进入、按钮/浏览器 Back 恢复分页/滚动/焦点、同行双击、快速换目标、新标签语义、直接访问、账号切换、真实 failed 目标和 Escape；所有检查通过且产品写请求为 0。完整 verify 构建 38/38、Forge 56/56；真实账号视觉保留早上目验。
