@@ -1681,3 +1681,10 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 
 - `/me → /score` 不再使用浏览器原生 View Transition；根快照会遮住持续水面并产生黑帧，现由常驻 Pond Surface 自己完成交叉淡入淡出。
 - `/me` 只预热 verified 小型 Score Package，并发限制为 2；Score 页面详情仍在点击后读取，先显示正式外壳，不人为延长快速响应。
+
+## 2026-09-24 — P16 收束为 Sepolia 最小成熟闭环
+
+- **单一钱包写入**：外部钱包连接、SIWE、切链与广播统一使用 Privy；viem 只负责编码、模拟、估算和读链，不保留 provider + viem wallet client 的第二发送路径。
+- **链上成功真值**：txHash 只作加速提示；最终由 `tokenIdByOrderId`、目标 ScoreNFT 事件、owner 与 tokenURI 共同确认，兼容钱包路由交易和浏览器漏报 hash。
+- **迁移与基线**：正式施工从 `main@f24f5bd` 开始，旧 P16 快照只选择性迁移；主线占用 `050–052` 后，P16 使用 `053–057`。
+- **范围收窄**：本轮以 MetaMask 桌面、imToken / WalletConnect、hash 漏报恢复和 OP/邮箱/SEMI/P14 回归为阻塞 Gate；完整移动端/异常矩阵、压力循环与 Ethereum Mainnet 延后。

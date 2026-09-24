@@ -7,13 +7,15 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **当前唯一施工项：等待用户下一条任务**
-  - [x] Phase 11 最终体验修正、收口并合入 `main`
-  - [x] 保持 Phase 16 暂停，不继续合约、migration、钱包或前端施工
+- **Phase 16 M0：校准与选择性迁移清单**
+  - [x] Phase 11 最终体验修正、收口并合入 `main@f24f5bd`
+  - [x] 优化 P16 为 Sepolia 最小成熟闭环，冻结 M0–M6 唯一顺序
+  - [ ] 定向审查 P16 会触碰的 P11 接口，输出“直接迁移 / 适配迁移 / 放弃”清单
+  - [ ] 同步 P16 必需的 ARCHITECTURE / STACK / CONVENTIONS 与环境合同
 
 ## ⏳ Later / 开放项
 
-- **P11-J 深度 review（P16 共享前端施工前完成）**：20+ 压力循环、全能力组合矩阵、重复 offline/context-loss/no-WebGL、J5 全视口动态对比度、深度代码 review 与证据美化。
+- **P11-J 扩展 review（非阻塞）**：20+ 压力循环、全能力组合矩阵、重复 offline/context-loss/no-WebGL、J5 全视口动态对比度与证据美化。P16 M0 只完成会触碰接口的定向 review。
 - **P11-I/J 人工验收与交付决定**：真实账号/日食目验、真实档案行恢复；决定 ARCHITECTURE D-5、合并、部署与 Edge profile/worktree 清理。
 - **P15-I5 发布与复测封存**：P15-I0–I4 已完成；本轨结束后另行处理，当前不推送或部署。
 - **P14 live 观察与私密目验**：保持两项每分钟 cron，完成首枚 Pond Echo 上线后的 24h/7d 只读观察；原钱包本人补 `/me#pond-echoes` 私密档案目验。

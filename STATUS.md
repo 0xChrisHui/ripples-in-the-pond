@@ -6,7 +6,9 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 11 已完成并冻结；Phase 16 暂不启动**。`/me → /score`、`/score → /me`、`/score → /` 已统一为丝滑路由事务；进入 `/me` 后限并发预热已验证的小型永久曲谱包，点击唱片立即打开 Score 外壳并继续读取详情。收口见 `reviews/2026-09-24-p11-j-minimum-handoff.md`。
+**Phase**: **Phase 11 已完成并冻结；Phase 16 进入最小成熟闭环。** 正式施工基线为 `main@f24f5bd`；旧 `codex/p16-wip-snapshot@3c5fa6f` 只作选择性迁移来源，不整体合并。权威顺序见 `playbook/phase-16/05-minimal-loop.md`。
+
+**P16 Playbook 优化（2026-09-24）✅**：本轮完成线收窄为 Sepolia 最小成熟闭环；冻结 Privy 单一钱包写入、orderId 链上真值、统一恢复、`053–057` migration 与 P11 集成红线。MetaMask 桌面和 imToken / WalletConnect 各一笔真实 mint、hash 漏报恢复、OP/邮箱/SEMI/P14 回归为阻塞 Gate；完整移动端/异常矩阵、压力循环、Google Fonts 本地化和 Ethereum Mainnet 延后。
 
 **P11-J 收口（2026-09-24）✅**：三向 warm/cold、2 秒受控延迟、Back、快速反向、换目标、失败恢复、音频清理、单播放器与持久 Water Core/Canvas/WebGL Gate 已通过；TypeScript、定向 ESLint、production build、`scripts/verify.sh` 与 Forge 56/56 全绿。direct Score→Home 的 FBO `6→8` 是首页球层首次恢复时的一次性能力分配，不是逐次泄漏，未修改产品去迎合错误断言。Google Fonts 验证绕行已完全恢复，`app/layout.tsx` 与 HEAD 哈希一致。
 
@@ -122,7 +124,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：P11 已合入 `main` 后保持冻结；按用户指令暂不启动 P16，等待新的明确任务。P11 的 20+ 压力循环、全能力矩阵、重复 offline/context-loss/no-WebGL、J5 全视口动态对比度和深度 review保留为非阻塞历史待办。
+**当前权威下一步**：执行 P16 M0，只审查并冻结 P16 会触碰的 P11 接口，完成旧快照的“直接迁移 / 适配迁移 / 放弃”清单，并同步 P16 必需的架构、技术栈与规范边界；随后按 M1–M6 连续推进 Sepolia 最小成熟闭环。P11 的完整压力与视觉证据仍为非阻塞历史待办。
 
 ---
 
