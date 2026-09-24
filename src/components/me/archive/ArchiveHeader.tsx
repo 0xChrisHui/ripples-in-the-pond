@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 
 type Props = {
   authState: 'checking' | 'authenticated' | 'unauthenticated';
@@ -25,10 +25,10 @@ export default function ArchiveHeader({
   return (
     <header className="me-archive__header">
       <nav className="me-archive__nav" aria-label="档案导航">
-        <Link href="/" className="me-archive__back">
+        <PondRouteLink href="/" className="me-archive__back" data-pond-focus-entry="archive">
           <span aria-hidden="true">←</span>
           <span>返回池塘</span>
-        </Link>
+        </PondRouteLink>
         <p className="me-archive__folio">RIPPLES IN THE POND</p>
         {authSource === 'semi' && authState === 'authenticated' ? (
           <a

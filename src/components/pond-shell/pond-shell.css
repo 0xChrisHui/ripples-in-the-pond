@@ -7,20 +7,39 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity var(--p11-reveal) var(--p11-ease-out);
+  transition: opacity var(--pond-route-duration, var(--p11-reveal)) var(--p11-ease-out),
+    visibility 0s linear var(--pond-route-duration, var(--p11-reveal));
 }
 
-.pond-home-surface[data-active='true'] {
+.persistent-pond-shell:is([data-pond-transition='home'], [data-pond-transition='entering-home']) .pond-home-surface {
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
+  transition-delay: 0s;
 }
+
+.persistent-pond-shell[data-pond-transition='home'] .pond-home-surface { pointer-events: auto; }
 
 .pond-route-surface {
   position: relative;
   z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity var(--pond-route-duration, var(--p11-reveal)) var(--p11-ease-out),
+    transform var(--pond-route-duration, var(--p11-reveal)) var(--p11-ease-out);
+}
+
+/* 稳定态必须是 transform:none，否则档案里的 fixed 层会以本层为包含块。 */
+.persistent-pond-shell:is([data-pond-transition='archive'], [data-pond-transition='score'], [data-pond-transition='leaving-home']) .pond-route-surface {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+@media (pointer: coarse) {
+  .pond-route-surface { transform: translateY(4px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pond-home-surface { transition-duration: 80ms; }
+  .pond-route-surface { transform: none; }
 }

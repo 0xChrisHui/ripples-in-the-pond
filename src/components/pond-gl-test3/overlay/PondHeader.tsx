@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import LoginButton from '@/src/components/auth/LoginButton';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useOwnedEchoes } from '@/src/hooks/me/useOwnedEchoes';
+import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 
 const MENU_ID = 'pond-public-navigation';
 
@@ -20,9 +21,10 @@ function PublicLinks({ echoLabel, onNavigate }: { echoLabel: string; onNavigate?
 
   return (
     <>
-      <Link href="/me#pond-echoes" onClick={onNavigate} className={linkClass}>
+      <PondRouteLink href="/me#pond-echoes" onClick={onNavigate} className={linkClass}
+        data-pond-focus-entry="home">
         {echoLabel}
-      </Link>
+      </PondRouteLink>
       <Link href="/artist" onClick={onNavigate} className={linkClass}>
         艺术家
       </Link>
@@ -98,6 +100,7 @@ export default function PondHeader() {
           aria-expanded={menuOpen}
           aria-controls={MENU_ID}
           aria-label={menuOpen ? '关闭主菜单' : '打开主菜单'}
+          data-pond-focus-entry="home"
           onClick={() => setMenuOpen((open) => !open)}
           className="flex h-11 w-11 items-center justify-center border border-[var(--p11-line)] bg-[var(--p11-overlay)] text-[var(--p11-bone)] backdrop-blur-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--p11-focus-color)]"
         >

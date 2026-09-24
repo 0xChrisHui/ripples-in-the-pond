@@ -37,7 +37,7 @@
 | I0 基准表 | ✅ 自动部分完成，用户确认待补 | `e204446` | 18/18 有证据或原因；动态日食未取 | `reviews/2026-09-24-p11-i-baseline.md`、`reviews/evidence/p11-i/baseline/` |
 | I1 独立修复 | ✅ 完成 | `a372d87`、`51969bb`、`5df5a17`、`119af5d` | 四项定向 Gate、三次无远程字体构建、本地 SSR 通过 | `reviews/evidence/p11-i/i1*.md` |
 | I2 共享外壳 | ✅ 完成 | 见 git log「建立持久水塘共享外壳」 | 三次 `/→/me→/` 的 mountId、外壳与 Canvas 引用稳定；直接/刷新 `/me`、强制 fallback 通过；完整 verify：TypeScript、P15 H1–H7、readback、Instant Start、规模/危险扫描、生产构建 38/38、Forge 56/56 通过；ESLint EPERM 按 E054 在 eslint 忽略列表修复后重跑 0 error | `reviews/evidence/p11-i/i2-gate.md`、`i2-continuity.json` |
-| I3 路由转场 | 未开始（依赖 I2） | — | — | — |
+| I3 路由转场 | ✅ 完成 | 见 git log「编排水塘与档案可逆转场」 | 20 次快速往返、动画中反向、重复点击、前进/后退、焦点与 inert Gate 通过；mountId/Canvas 稳定，0 页面错误；完整 verify 构建 38/38、Forge 56/56 | `reviews/evidence/p11-i/i3-gate.md`、`i3-transition.json` |
 | I4 圆圈进退场 | 未开始（依赖 I3） | — | — | — |
 | I5 档案前景 | 未开始（依赖 I4） | — | — | — |
 | I6 作品页接入 | 未开始（依赖 I5） | — | — | — |
@@ -67,3 +67,4 @@
 - I1-d：Tailwind 只扫描 `app/` 与 `src/`；仓库核对没有遗漏其他页面源码。无远程字体构建 38/38 通过，生成 CSS 保留 Score/Record/Tailwind 关键类；字体配置已恢复。
 - I2：路由已迁入 `app/(pond)`，首页与 `/me` 共用持久 Water Core；首页 Scene 的初始化寿命与当前交互状态分开，`/me` 正式页不再创建第二个 PondGL。Edge CDP 连续性脚本第三轮通过，三次往返 mountId/外壳/首个 Canvas 均稳定，直接访问与刷新 `/me`、强制无 WebGL 路径通过。完整 `verify.sh` 首轮：TypeScript、P15 H1–H7、生产 readback、Instant Start、文件/目录限制与危险扫描通过；ESLint 因新建 `.edge-i2-profile` 未忽略而读到被 Edge 锁定的扩展文件并报 EPERM。已加入 `.gitignore`；生产构建开始后因用户要求交接而主动中止。运行验证时使用的临时字体移除已恢复，`app/layout.tsx` 不应有 diff。I2 尚未提交，下一进程先重跑 Gate、更新 STATUS/TASKS/晨报并提交。
 - I2 收拢（接力进程）：基底断言 BASE_OK、落后 0；逐文件复核现有实现未重做。TypeScript 与 I2 定向 ESLint 通过；临时字体绕行下完整 `verify.sh` 除 ESLint 外全部通过（构建 38/38、Forge 56/56）。ESLint 仍报 EPERM：ESLint flat config 不读 `.gitignore`，上一轮只改 `.gitignore` 无效；在 `eslint.config.mjs` 加 `.edge-*-profile/**` 后单独重跑 lint 0 error（E054）。`app/layout.tsx` 已恢复、无 diff。
+- I3：`/ ↔ /me` 改为可逆前景转场，Water Core 与播放器持续存在。导航意图、地址落地和动画收场分别管理；入场层完全显现后收场，离场首页保持 inert，历史导航会清理过期意图。Edge CDP 完成 20 次快速往返、动画中反向、重复点击、前进/后退和焦点验证，mountId/Canvas 全程稳定，0 页面错误；完整 verify 通过。接力复核再次通过 TypeScript、I3 定向 ESLint 与 diff 检查。

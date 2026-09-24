@@ -1,0 +1,1183 @@
+{
+  "measuredAt": "2026-09-24T02:03:46.816Z",
+  "passed": true,
+  "initial": {
+    "label": "initial",
+    "path": "/",
+    "phase": "home",
+    "owner": "home",
+    "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+    "sameCore": true,
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "glHealth": "unavailable",
+    "homeInert": false,
+    "horizontalOverflow": false,
+    "focus": "BODY"
+  },
+  "b07": {
+    "echo": true,
+    "artist": true,
+    "login": true
+  },
+  "warmup": [
+    {
+      "label": "warmup-me",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 1059,
+      "landedMs": 336,
+      "productSettleMs": 1037,
+      "timeline": [
+        {
+          "t": 52,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 336,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 978,
+          "event": "home-end",
+          "opacity": "0"
+        },
+        {
+          "t": 986,
+          "event": "route-end",
+          "opacity": "1"
+        },
+        {
+          "t": 1037,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 1,
+          "ms": 51
+        },
+        {
+          "t": 978,
+          "ms": 68
+        }
+      ]
+    },
+    {
+      "label": "warmup-home",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1614,
+      "landedMs": 341,
+      "productSettleMs": 1588,
+      "timeline": [
+        {
+          "t": 42,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 341,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1588,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 508,
+          "ms": 1032
+        }
+      ]
+    }
+  ],
+  "loops": [
+    {
+      "label": "me-1",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 1014,
+      "landedMs": 309,
+      "productSettleMs": 994,
+      "timeline": [
+        {
+          "t": 65,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 309,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 453,
+          "event": "home-end",
+          "opacity": "0"
+        },
+        {
+          "t": 994,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 3,
+          "ms": 62
+        }
+      ]
+    },
+    {
+      "label": "home-1",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1983,
+      "landedMs": 1262,
+      "productSettleMs": 1970,
+      "timeline": [
+        {
+          "t": 53,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 1145,
+          "event": "route-end",
+          "opacity": "0"
+        },
+        {
+          "t": 1262,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1970,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 2,
+          "ms": 52
+        },
+        {
+          "t": 86,
+          "ms": 1057
+        }
+      ]
+    },
+    {
+      "label": "me-2",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 927,
+      "landedMs": 187,
+      "productSettleMs": 912,
+      "timeline": [
+        {
+          "t": 32,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 111,
+          "event": "home-end",
+          "opacity": "1"
+        },
+        {
+          "t": 187,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 912,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 844,
+          "ms": 68
+        }
+      ]
+    },
+    {
+      "label": "home-2",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1324,
+      "landedMs": 154,
+      "productSettleMs": 1294,
+      "timeline": [
+        {
+          "t": 43,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 154,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1294,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 165,
+          "ms": 1089
+        }
+      ]
+    },
+    {
+      "label": "me-3",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 1076,
+      "landedMs": 378,
+      "productSettleMs": 1064,
+      "timeline": [
+        {
+          "t": 88,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 378,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 1064,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 3,
+          "ms": 85
+        }
+      ]
+    },
+    {
+      "label": "home-3",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1475,
+      "landedMs": 335,
+      "productSettleMs": 1447,
+      "timeline": [
+        {
+          "t": 60,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 335,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1447,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 2,
+          "ms": 58
+        },
+        {
+          "t": 477,
+          "ms": 927
+        }
+      ]
+    },
+    {
+      "label": "me-4",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 1059,
+      "landedMs": 323,
+      "productSettleMs": 1028,
+      "timeline": [
+        {
+          "t": 66,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 323,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 1028,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 1,
+          "ms": 65
+        },
+        {
+          "t": 973,
+          "ms": 55
+        }
+      ]
+    },
+    {
+      "label": "home-4",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1335,
+      "landedMs": 273,
+      "productSettleMs": 1312,
+      "timeline": [
+        {
+          "t": 115,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 273,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1312,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 2,
+          "ms": 113
+        },
+        {
+          "t": 324,
+          "ms": 954
+        }
+      ]
+    },
+    {
+      "label": "me-5",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 1024,
+      "landedMs": 311,
+      "productSettleMs": 1006,
+      "timeline": [
+        {
+          "t": 63,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 311,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 1006,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 1,
+          "ms": 62
+        }
+      ]
+    },
+    {
+      "label": "home-5",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1377,
+      "landedMs": 242,
+      "productSettleMs": 1351,
+      "timeline": [
+        {
+          "t": 76,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 242,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1351,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 2,
+          "ms": 74
+        },
+        {
+          "t": 349,
+          "ms": 969
+        }
+      ]
+    },
+    {
+      "label": "me-6",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 1015,
+      "landedMs": 306,
+      "productSettleMs": 999,
+      "timeline": [
+        {
+          "t": 66,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 306,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 999,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 1,
+          "ms": 64
+        }
+      ]
+    },
+    {
+      "label": "home-6",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1417,
+      "landedMs": 263,
+      "productSettleMs": 1389,
+      "timeline": [
+        {
+          "t": 83,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 263,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1389,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 1,
+          "ms": 81
+        },
+        {
+          "t": 350,
+          "ms": 1006
+        }
+      ]
+    },
+    {
+      "label": "me-7",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 1027,
+      "landedMs": 302,
+      "productSettleMs": 1010,
+      "timeline": [
+        {
+          "t": 56,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 302,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 1010,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 1,
+          "ms": 55
+        },
+        {
+          "t": 950,
+          "ms": 60
+        }
+      ]
+    },
+    {
+      "label": "home-7",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1984,
+      "landedMs": 1269,
+      "productSettleMs": 1972,
+      "timeline": [
+        {
+          "t": 106,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 1220,
+          "event": "home-end",
+          "opacity": "1"
+        },
+        {
+          "t": 1220,
+          "event": "route-end",
+          "opacity": "0"
+        },
+        {
+          "t": 1269,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1972,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 2,
+          "ms": 105
+        },
+        {
+          "t": 254,
+          "ms": 963
+        }
+      ]
+    },
+    {
+      "label": "me-8",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 924,
+      "landedMs": 164,
+      "productSettleMs": 888,
+      "timeline": [
+        {
+          "t": 33,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 164,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 888,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 821,
+          "ms": 66
+        }
+      ]
+    },
+    {
+      "label": "home-8",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1305,
+      "landedMs": 189,
+      "productSettleMs": 1271,
+      "timeline": [
+        {
+          "t": 72,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 189,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1271,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 1,
+          "ms": 71
+        },
+        {
+          "t": 215,
+          "ms": 1022
+        }
+      ]
+    },
+    {
+      "label": "me-9",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 1037,
+      "landedMs": 313,
+      "productSettleMs": 1021,
+      "timeline": [
+        {
+          "t": 78,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 313,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 1021,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 1,
+          "ms": 77
+        },
+        {
+          "t": 966,
+          "ms": 55
+        }
+      ]
+    },
+    {
+      "label": "home-9",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1391,
+      "landedMs": 235,
+      "productSettleMs": 1366,
+      "timeline": [
+        {
+          "t": 98,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 235,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1366,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 1,
+          "ms": 97
+        },
+        {
+          "t": 302,
+          "ms": 1028
+        }
+      ]
+    },
+    {
+      "label": "me-10",
+      "path": "/me",
+      "phase": "archive",
+      "owner": "archive",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": true,
+      "horizontalOverflow": false,
+      "focus": "archive",
+      "settleMs": 1168,
+      "landedMs": 444,
+      "productSettleMs": 1152,
+      "timeline": [
+        {
+          "t": 78,
+          "path": "/",
+          "phase": "leaving-home",
+          "back": false
+        },
+        {
+          "t": 444,
+          "path": "/me",
+          "phase": "leaving-home",
+          "back": true
+        },
+        {
+          "t": 1152,
+          "path": "/me",
+          "phase": "archive",
+          "back": true
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 1,
+          "ms": 77
+        }
+      ]
+    },
+    {
+      "label": "home-10",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home",
+      "settleMs": 1274,
+      "landedMs": 153,
+      "productSettleMs": 1245,
+      "timeline": [
+        {
+          "t": 47,
+          "path": "/me",
+          "phase": "entering-home",
+          "back": true
+        },
+        {
+          "t": 153,
+          "path": "/",
+          "phase": "entering-home",
+          "back": false
+        },
+        {
+          "t": 1245,
+          "path": "/",
+          "phase": "home",
+          "back": false
+        }
+      ],
+      "longTasks": [
+        {
+          "t": 210,
+          "ms": 1002
+        }
+      ]
+    }
+  ],
+  "archiveInput": {
+    "inert": true,
+    "pointerEvents": "none",
+    "centerHitsHome": false,
+    "tabIntoHome": false
+  },
+  "reverse": {
+    "before": {
+      "phase": "leaving-home",
+      "home": 1,
+      "route": 0
+    },
+    "after": {
+      "phase": "entering-home",
+      "home": 1,
+      "route": 0
+    },
+    "final": {
+      "label": "reverse-final",
+      "path": "/",
+      "phase": "home",
+      "owner": "home",
+      "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+      "sameCore": true,
+      "sameCanvas": true,
+      "canvasCount": 2,
+      "glHealth": "healthy",
+      "homeInert": false,
+      "horizontalOverflow": false,
+      "focus": "home"
+    },
+    "caughtMidway": true,
+    "continuous": true
+  },
+  "doubleClick": {
+    "label": "double-click",
+    "path": "/me",
+    "phase": "archive",
+    "owner": "archive",
+    "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+    "sameCore": true,
+    "sameCanvas": true,
+    "canvasCount": 2,
+    "glHealth": "healthy",
+    "homeInert": true,
+    "horizontalOverflow": false,
+    "focus": "archive"
+  },
+  "historyBack": {
+    "label": "history-back",
+    "path": "/",
+    "phase": "home",
+    "owner": "home",
+    "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+    "sameCore": true,
+    "sameCanvas": true,
+    "canvasCount": 2,
+    "glHealth": "healthy",
+    "homeInert": false,
+    "horizontalOverflow": false,
+    "focus": "home",
+    "timeline": [
+      {
+        "t": 60,
+        "path": "/",
+        "phase": "archive",
+        "back": false
+      },
+      {
+        "t": 84,
+        "path": "/",
+        "phase": "entering-home",
+        "back": false
+      },
+      {
+        "t": 1121,
+        "event": "home-end",
+        "opacity": "1"
+      },
+      {
+        "t": 1152,
+        "path": "/",
+        "phase": "home",
+        "back": false
+      },
+      {
+        "t": 1152,
+        "event": "route-end",
+        "opacity": "0"
+      }
+    ]
+  },
+  "historyForward": {
+    "label": "history-forward",
+    "path": "/me",
+    "phase": "archive",
+    "owner": "archive",
+    "mountId": "pond-1472ecd7-bb44-4864-96e9-f6bf67a31a29",
+    "sameCore": true,
+    "sameCanvas": true,
+    "canvasCount": 2,
+    "glHealth": "healthy",
+    "homeInert": true,
+    "horizontalOverflow": false,
+    "focus": "archive",
+    "timeline": [
+      {
+        "t": 62,
+        "path": "/me",
+        "phase": "home",
+        "back": true
+      },
+      {
+        "t": 113,
+        "path": "/me",
+        "phase": "leaving-home",
+        "back": true
+      },
+      {
+        "t": 821,
+        "path": "/me",
+        "phase": "archive",
+        "back": true
+      }
+    ]
+  },
+  "pageErrors": []
+}
