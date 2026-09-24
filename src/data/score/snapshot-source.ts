@@ -10,10 +10,13 @@ function environment(): 'development' | 'preview' | 'production' {
 }
 
 /** 数字 Token 热路径只读 active pointer 与它精确指向的不可变 verified revision。 */
-export async function getActiveScoreSnapshot(tokenId: number): Promise<ParsedScoreSnapshot | null> {
+export async function getActiveScoreSnapshot(tokenId: number, asset?: {
+  chainId: number;
+  contract: string;
+}): Promise<ParsedScoreSnapshot | null> {
   const identity = {
-    environment: environment(), chain_id: LEGACY_SCORE_CHAIN_ID,
-    contract: LEGACY_SCORE_CONTRACT.toLowerCase(), token_id: tokenId,
+    environment: environment(), chain_id: asset?.chainId ?? LEGACY_SCORE_CHAIN_ID,
+    contract: (asset?.contract ?? LEGACY_SCORE_CONTRACT).toLowerCase(), token_id: tokenId,
   };
   const { data: active, error: activeError } = await supabaseAdmin
     .from('score_playback_snapshot_active')

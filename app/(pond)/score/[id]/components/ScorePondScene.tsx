@@ -15,12 +15,11 @@ import { permanentMediaCandidates } from '@/src/features/permanent-media';
 import { startupSoundKeys } from '@/src/features/score-playback/resource-loader';
 import { useScorePlayback } from '@/src/features/score-playback/use-score-playback';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
-import {
-  useRegisterPondScene, type PondSceneDescriptor,
-} from '@/src/components/pond-shell/scene-slot';
+import { useRegisterPondScene, type PondSceneDescriptor } from '@/src/components/pond-shell/scene-slot';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/score/score-origin';
 import type { Track } from '@/src/types/tracks';
+import { buildScoreRoute } from '@/src/lib/chain/multichain/registry';
 import ScoreArchive from './ScoreArchive';
 import ScoreRecordAnchor from './ScoreRecordAnchor';
 import ShareActions from './ShareActions';
@@ -43,7 +42,6 @@ function useCapabilities() {
   }, []);
   return value;
 }
-
 type Props = { score: ScoreReadyData; network: string };
 
 function preloadStartupAudio(score: ScoreReadyData): void {
@@ -54,10 +52,8 @@ function preloadStartupAudio(score: ScoreReadyData): void {
     const mirror = permanentMediaCandidates(identity.ref)
       .find((candidate) => candidate.source === 'mirror');
     if (!mirror) return;
-    preload(mirror.url, {
-      as: index === 0 ? 'audio' : 'fetch', crossOrigin: 'anonymous',
-      fetchPriority: index === 0 ? 'high' : 'auto',
-    });
+    preload(mirror.url, { as: index === 0 ? 'audio' : 'fetch',
+      crossOrigin: 'anonymous', fetchPriority: index === 0 ? 'high' : 'auto' });
   });
 }
 
@@ -79,7 +75,8 @@ export default function ScorePondScene({ score, network }: Props) {
   const scoreOrigin = useScoreOrigin();
   const { origin, confirmScore } = scoreOrigin;
   const transition = usePondTransition();
-  const holder = useScoreHolder(score.tokenId);
+  const holder = useScoreHolder(score.tokenId, { chainId: score.chainId,
+    currentHolder: score.currentHolder, holderHref: score.provenance.currentHolder.href });
   const capabilities = useCapabilities();
   const [performanceReduced, setPerformanceReduced] = useState(false);
   const isPlaying = playback.state === 'playing';
@@ -125,6 +122,10 @@ export default function ScorePondScene({ score, network }: Props) {
 
   const tokenLabel = `Token #${String(score.tokenId).padStart(3, '0')}`;
   const title = `Ripples #${score.tokenId}`;
+  const multichain = Boolean(score.chainId && score.contractAddress);
+  const canonicalPath = multichain
+    ? buildScoreRoute(score.chainId!, score.contractAddress!, score.tokenId)
+    : `/score/${score.tokenId}`;
   const editionStatus = score.degraded ? 'degraded' : 'finalized';
   const anchored = origin?.href === pathname && origin.tokenId === score.tokenId;
   const transaction = transition?.transaction;
@@ -174,7 +175,8 @@ export default function ScorePondScene({ score, network }: Props) {
           network={network}
           tokenLabel={tokenLabel}
           onBeforeLeave={() => { void playback.pause(); }}
-          shareAction={<ShareActions id={score.id} tokenId={score.tokenId} trackTitle={score.trackTitle} />}
+          shareAction={<ShareActions id={score.id} tokenId={score.tokenId} trackTitle={score.trackTitle}
+            canonicalPath={canonicalPath} posterPath={multichain ? null : undefined} />}
         />
         <div className="score-pond-page__identity" data-pond-ui="true">
           <EditionStamp status={editionStatus} detail={tokenLabel} />

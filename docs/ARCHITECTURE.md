@@ -47,7 +47,7 @@
 
 ## 三、核心架构决策（"形状"）
 
-### 决策 1：用户零钱包负担 = 运营钱包代签 + 队列异步铸造
+### 决策 1：OP 默认铸造 = 运营钱包代签 + 队列异步铸造
 
 ```
 用户点击 → API 写一条 mint_queue 记录 → 立即返回成功
@@ -67,13 +67,15 @@
 
 **约束**：API Route（除 `cron/` 外）禁止 `await waitForTransactionReceipt`。这条由 hook 强制。
 
+**P16 Ethereum 例外**：只有通过 Privy 核验的外部钱包用户可以选择 Ethereum ScoreNFT，并由该钱包通过 Privy `useSendTransaction` 自付 Gas。前端只发送服务端签发的短期 voucher 对应 `redeem` 调用；viem 只负责编码、模拟、估算和读链。邮箱、SEMI 与 embedded wallet 继续只使用 OP 代付路径。
+
 ### 决策 2：合约权限用 allowlist，不用 onlyOwner
 
 热钱包私钥泄露时，攻击者最多 mint 没价值的 NFT，**不能改 allowlist 本身**。
 
-### 决策 3：合约部署在 OP（Optimism）+ 护栏简化
+### 决策 3：OP 为默认链，Ethereum 只开放 ScoreNFT 自付路径
 
-**链选择**：OP Mainnet（生产）+ OP Sepolia（测试）。**不部署到 Ethereum L1 主网**。
+**链选择**：OP Mainnet（默认生产）+ OP Sepolia（默认测试）；Ethereum Mainnet 与 Sepolia 只承载 P16 ScoreNFT 自付 Gas。P14 Pond Echo 和其他资产继续只使用 OP。Ethereum Mainnet 必须经过独立部署、授权和费用 Gate，不能因 Sepolia 验收自动开放。
 
 **为什么 OP**：
 - 单笔铸造成本约 ETH 主网的 1/8（~$0.10 vs ~$0.78）

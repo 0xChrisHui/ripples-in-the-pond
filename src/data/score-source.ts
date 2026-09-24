@@ -20,6 +20,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-
 type ScorePageBase = {
   state: 'ready' | 'processing' | 'failed'; source: ScoreSource;
   id: string; queueId: string | null; tokenId?: number; queueStatus: ScoreMintStatus | null;
+  chainId?: number; contractAddress?: string;
   trackTitle: string; creatorAddress: string; currentHolder: string | null;
   coverUrl: string; permanentEventCount: number | null;
   createdAt: string | null; confirmedAt: string | null;

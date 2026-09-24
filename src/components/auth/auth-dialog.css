@@ -198,6 +198,13 @@
 .auth-dialog__divider::before,
 .auth-dialog__divider::after { height: 1px; flex: 1; background: var(--p11-line); content: ''; }
 .auth-dialog__email { width: 100%; }
+.auth-dialog__wallets { display: grid; gap: 10px; margin-top: 12px; }
+.auth-dialog__wallet-note {
+  margin: 0;
+  color: var(--p11-muted);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
 .auth-dialog :is(button, a, input):focus-visible {
   outline: var(--p11-focus-width) var(--p11-focus-style) var(--p11-focus-color);
   outline-offset: 3px;

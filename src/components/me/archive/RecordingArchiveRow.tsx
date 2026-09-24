@@ -6,6 +6,8 @@ import { fetchMyScoreEvents } from '@/src/data/jam-source';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useEventsPlayback } from '@/src/hooks/useEventsPlayback';
 import { useMintScore } from '@/src/hooks/score/useMintScore';
+import MintChoiceDialog from '@/src/components/mint/MintChoiceDialog';
+import { useArchiveMintContext } from '@/src/components/mint/archive/ArchiveMintProvider';
 import type { ArchiveRecording } from '@/src/hooks/me/useMeArchive';
 import type { KeyEvent } from '@/src/types/jam';
 
@@ -27,12 +29,14 @@ function remainingLabel(expiresAt: string, now: number): { label: string; urgent
 /** 录音行复用全局 Player 与既有入队 hook，不创建第二条音频路径。 */
 export default function RecordingArchiveRow({ recording, index, onQueued }: Props) {
   const { getAccessToken } = useAuth();
+  const archiveMint = useArchiveMintContext();
   const { state: mintState, mint } = useMintScore();
   const { toggle, playing, currentTrack } = usePlayer();
   const [events, setEvents] = useState<KeyEvent[] | null>(recording.events ?? null);
   const [eventsLoading, setEventsLoading] = useState(false);
   const [eventsError, setEventsError] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  const [showMintChoice, setShowMintChoice] = useState(false);
   const queuedRef = useRef(false);
   const expiredRef = useRef(false);
   const callbackRef = useRef(onQueued);
@@ -110,12 +114,22 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
           ) : (
             <button className="me-archive-row__mint" type="button"
               aria-label={`将${recording.title}铸造为唱片`}
-              onClick={() => void mint(recording.pendingScoreId!)}>
+              onClick={() => {
+                if (archiveMint.chainId === 1 || archiveMint.chainId === 11155111) {
+                  setShowMintChoice(true);
+                } else void mint(recording.pendingScoreId!);
+              }}>
               {mintState === 'error' ? '重试铸造' : '铸造唱片'} <span aria-hidden="true">→</span>
             </button>
           )}
         </div>
       ) : null}
+      {showMintChoice && recording.pendingScoreId && (
+        <MintChoiceDialog pendingScoreId={recording.pendingScoreId} title={recording.title}
+          lockedChoice="eth" onClose={() => setShowMintChoice(false)}
+          onPrepared={(orderId) => { setShowMintChoice(false); archiveMint.openOrder(orderId); }}
+          onOpMint={() => { setShowMintChoice(false); void mint(recording.pendingScoreId!); }} />
+      )}
     </article>
   );
 }

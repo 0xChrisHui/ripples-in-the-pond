@@ -1,9 +1,17 @@
 'use client';
 
-import { usePrivy } from '@privy-io/react-auth';
-import { useCallback, useSyncExternalStore } from 'react';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { getAddress } from 'viem';
 import { clearNftCache } from '@/src/lib/nft-cache';
 import { openLoginModal } from '@/src/components/auth/LoginModal';
+import {
+  clearLoginSession,
+  getLoginSession,
+  getServerLoginSession,
+  setLoginSession,
+  subscribeLoginSession,
+} from '@/src/components/auth/login-session';
 import { clearArchiveCache } from '@/src/hooks/me/archive-cache';
 import {
   clearSemiJwt,
@@ -11,8 +19,15 @@ import {
   subscribeSemiJwt,
   type JwtState,
 } from '@/src/lib/auth/client-jwt';
+import type { ExternalWalletCheck, WalletCapability } from '@/src/types/auth';
 
 const EMPTY_STATE: JwtState = { jwt: null, payload: null };
+const DENIED: ExternalWalletCheck = {
+  allowed: false,
+  selfMintAllowed: false,
+  walletClientType: null,
+  connectorType: null,
+};
 
 function getServerSnapshot(): JwtState {
   return EMPTY_STATE;
@@ -30,7 +45,18 @@ function getServerSnapshot(): JwtState {
  */
 export function useAuth() {
   const { ready: privyReady, authenticated: privyAuth, user, login: privyLogin, logout: privyLogout, getAccessToken: privyToken } = usePrivy();
+  const { wallets, ready: walletsReady } = useWallets();
   const jwtState = useSyncExternalStore(subscribeSemiJwt, readSemiJwt, getServerSnapshot);
+  const loginSession = useSyncExternalStore(
+    subscribeLoginSession,
+    getLoginSession,
+    getServerLoginSession,
+  );
+  const [verifiedWallet, setVerifiedWallet] = useState<{
+    address: string;
+    userId: string;
+    check: ExternalWalletCheck;
+  } | null>(null);
 
   const semiAuth = jwtState.jwt !== null && jwtState.payload !== null;
 
@@ -54,10 +80,80 @@ export function useAuth() {
 
   const authenticated = authSource !== null;
 
+  const recoverableWalletAddress = useMemo(() => {
+    if (!privyAuth || semiAuth
+      || (loginSession.loginEntry !== null && loginSession.loginEntry !== 'external_wallet') || !user) return null;
+    const linkedAccounts = user.linkedAccounts;
+    if (linkedAccounts.length !== 1 || linkedAccounts[0].type !== 'wallet') return null;
+    const wallet = linkedAccounts[0];
+    if (wallet.walletClientType === 'privy' || wallet.walletClientType === 'privy-v2'
+      || wallet.connectorType === 'embedded') return null;
+    try { return getAddress(wallet.address); } catch { return null; }
+  }, [loginSession.loginEntry, privyAuth, semiAuth, user]);
+  const loginEntry = recoverableWalletAddress ? 'external_wallet' : loginSession.loginEntry;
+  const selectedWalletAddress = (() => {
+    try { return getAddress(recoverableWalletAddress ?? loginSession.selectedWalletAddress ?? ''); }
+    catch { return null; }
+  })();
+
+  const selectedExternalWallet = useMemo(() => {
+    if (loginEntry !== 'external_wallet' || !selectedWalletAddress) return null;
+    return wallets.find((wallet) => {
+      if (wallet.walletClientType === 'privy' || wallet.connectorType === 'embedded') return false;
+      try { return getAddress(wallet.address) === selectedWalletAddress; } catch { return false; }
+    }) ?? null;
+  }, [loginEntry, selectedWalletAddress, wallets]);
+
+  useEffect(() => {
+    if (loginSession.loginEntry !== 'external_wallet' && recoverableWalletAddress) {
+      setLoginSession('external_wallet', recoverableWalletAddress);
+    }
+  }, [loginSession.loginEntry, recoverableWalletAddress]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!privyAuth || !userId || loginEntry !== 'external_wallet' || !selectedWalletAddress) return;
+    void (async () => {
+      const token = await privyToken();
+      if (!token) return;
+      const response = await fetch('/api/auth/wallet-capability', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: selectedWalletAddress }),
+      });
+      if (!response.ok) return;
+      const result = await response.json() as ExternalWalletCheck;
+      if (!cancelled) setVerifiedWallet({ address: selectedWalletAddress, userId, check: result });
+    })().catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [loginEntry, privyAuth, privyToken, selectedWalletAddress, userId]);
+
+  const serverWallet = selectedWalletAddress && verifiedWallet
+    && userId === verifiedWallet.userId && selectedWalletAddress === verifiedWallet.address
+    ? verifiedWallet.check : DENIED;
+  const hasEmbeddedWallet = user?.linkedAccounts.some((account) => (
+    account.type === 'wallet'
+    && (account.walletClientType === 'privy' || account.connectorType === 'embedded')
+  )) ?? false;
+  const externalVerified = Boolean(
+    privyAuth && loginEntry === 'external_wallet' && selectedWalletAddress && serverWallet.allowed,
+  );
+  const walletCapability: WalletCapability = {
+    authSource,
+    loginEntry,
+    walletKind: externalVerified ? 'external' : hasEmbeddedWallet ? 'embedded' : 'none',
+    activeWalletAddress: selectedWalletAddress,
+    walletClientType: serverWallet.walletClientType ?? selectedExternalWallet?.walletClientType ?? null,
+    connectorType: serverWallet.connectorType ?? selectedExternalWallet?.connectorType ?? null,
+    canChooseMintChain: externalVerified && serverWallet.selfMintAllowed,
+    canSelfPayEthGas: externalVerified && serverWallet.selfMintAllowed && Boolean(selectedExternalWallet),
+  };
+
   const logout = useCallback(async () => {
     if (userId) clearNftCache(userId);
     if (userId && authSource) clearArchiveCache({ userId, authSource, evmAddress });
     clearSemiJwt();
+    clearLoginSession();
     if (privyAuth) {
       await privyLogout();
     }
@@ -75,6 +171,9 @@ export function useAuth() {
     authSource,
     userId,
     evmAddress,
+    walletsReady,
+    selectedExternalWallet,
+    walletCapability,
     // ⚠️ login 仅作 D-B3 兼容字段保留（直接弹 Privy 原生 modal、绕过两 tab 选择）。
     // 新代码请用 openLoginModal —— 否则 Semi 用户没机会进 Semi tab 登录。
     login: privyLogin,

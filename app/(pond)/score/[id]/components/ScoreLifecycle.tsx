@@ -8,6 +8,7 @@ import type { ScoreFailedData, ScoreProcessingData } from '@/src/data/score-sour
 import ScoreArchive from './ScoreArchive';
 import ShareActions from './ShareActions';
 import { useScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
+import { buildScoreRoute } from '@/src/lib/chain/multichain/registry';
 
 type Props = { score: ScoreProcessingData | ScoreFailedData; network: string };
 
@@ -39,6 +40,10 @@ export default function ScoreLifecycle({ score, network }: Props) {
   const processing = score.state === 'processing';
   const snapshotUnavailable = !processing && score.publicFailure === 'snapshot_unavailable';
   const title = score.tokenId == null ? 'Ripples · 制作中' : `Ripples #${score.tokenId}`;
+  const multichain = Boolean(score.tokenId && score.chainId && score.contractAddress);
+  const canonicalPath = multichain
+    ? buildScoreRoute(score.chainId!, score.contractAddress!, score.tokenId!)
+    : `/score/${score.tokenId ?? score.id}`;
   const tokenLabel = score.tokenId == null ? 'Pending edition' : `Token #${String(score.tokenId).padStart(3, '0')}`;
   const statusText = processing
     ? statusLabels[score.queueStatus ?? 'pending']
@@ -62,7 +67,9 @@ export default function ScoreLifecycle({ score, network }: Props) {
           backLabel="返回档案"
           network={network}
           tokenLabel={tokenLabel}
-          shareAction={<ShareActions id={score.id} tokenId={score.tokenId ?? null} trackTitle={score.trackTitle} />}
+          shareAction={<ShareActions id={score.id} tokenId={score.tokenId ?? null}
+            trackTitle={score.trackTitle} canonicalPath={canonicalPath}
+            posterPath={multichain ? null : undefined} />}
         />
         <div className="score-pond-page__identity" data-pond-ui="true">
           <EditionStamp status={processing ? 'processing' : snapshotUnavailable ? 'degraded' : 'failed'} detail={tokenLabel} />

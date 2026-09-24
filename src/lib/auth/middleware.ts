@@ -1,19 +1,17 @@
 import "server-only";
 
-import { PrivyClient } from "@privy-io/server-auth";
-import { getAddress } from "viem";
 import { supabaseAdmin } from "../supabase";
 import { verifyJwt } from "./jwt";
-
-const privy = new PrivyClient(
-  process.env.NEXT_PUBLIC_PRIVY_APP_ID!,
-  process.env.PRIVY_APP_SECRET!,
-);
+import { getPrivyUser, preferredEvmAddress, verifyPrivyAccessToken } from "./privy-server";
 
 export interface AuthResult {
   userId: string;
   evmAddress: string;
+  authSource: "privy" | "semi";
+  privyUserId?: string;
 }
+
+type AuthUser = Pick<AuthResult, "userId" | "evmAddress">;
 
 /**
  * 统一认证中间件 — 先试 Privy，失败再试自签 JWT
@@ -33,7 +31,7 @@ export async function authenticateRequest(
   // 路径 2：自签 JWT
   const jwtPayload = await verifyJwt(token);
   if (jwtPayload) {
-    return { userId: jwtPayload.sub, evmAddress: jwtPayload.evm };
+    return { userId: jwtPayload.sub, evmAddress: jwtPayload.evm, authSource: "semi" };
   }
 
   return null;
@@ -41,13 +39,8 @@ export async function authenticateRequest(
 
 /** Privy 验证 → 查 auth_identities → 查/建用户 */
 async function tryPrivy(token: string): Promise<AuthResult | null> {
-  let privyUserId: string;
-  try {
-    const claims = await privy.verifyAuthToken(token);
-    privyUserId = claims.userId;
-  } catch {
-    return null; // 不是有效的 Privy token
-  }
+  const privyUserId = await verifyPrivyAccessToken(token);
+  if (!privyUserId) return null;
 
   // 先查 auth_identities
   const { data: identity } = await supabaseAdmin
@@ -58,18 +51,20 @@ async function tryPrivy(token: string): Promise<AuthResult | null> {
     .maybeSingle();
 
   if (identity) {
-    return userById(identity.user_id);
+    const user = await userById(identity.user_id);
+    return user && { ...user, authSource: "privy", privyUserId };
   }
 
   // 向后兼容：旧用户可能还没迁移到 auth_identities
   // 也处理迁移脚本执行前就登录的新用户
-  return findOrCreatePrivyUser(privyUserId);
+  const user = await findOrCreatePrivyUser(privyUserId);
+  return user && { ...user, authSource: "privy", privyUserId };
 }
 
 /** 通过 privy_user_id 查/建用户，同时补 auth_identities 记录 */
 async function findOrCreatePrivyUser(
   privyUserId: string,
-): Promise<AuthResult | null> {
+): Promise<AuthUser | null> {
   // 先查 users 表（旧字段）
   const { data: existing } = await supabaseAdmin
     .from("users")
@@ -89,12 +84,8 @@ async function findOrCreatePrivyUser(
   }
 
   // 全新 Privy 用户 — 从 Privy 拿钱包地址并创建
-  const privyUser = await privy.getUser(privyUserId);
-  const wallet = privyUser.wallet;
-  if (!wallet) return null;
-
-  // F2: 标准化地址，避免大小写不一致导致合并失败
-  const evmAddress = getAddress(wallet.address);
+  const evmAddress = preferredEvmAddress(await getPrivyUser(privyUserId));
+  if (!evmAddress) return null;
 
   const { data: newUser, error } = await supabaseAdmin
     .from("users")
@@ -151,7 +142,7 @@ async function findOrCreatePrivyUser(
   return { userId: newUser.id, evmAddress };
 }
 
-async function userById(userId: string): Promise<AuthResult | null> {
+async function userById(userId: string): Promise<AuthUser | null> {
   const { data } = await supabaseAdmin
     .from("users")
     .select("id, evm_address")

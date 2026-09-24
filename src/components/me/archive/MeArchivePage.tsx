@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/src/hooks/useAuth';
-import { useMeArchive, type ArchiveSlice } from '@/src/hooks/me/useMeArchive';
+import { useMeArchive } from '@/src/hooks/me/useMeArchive';
 import { useOwnedEchoes } from '@/src/hooks/me/useOwnedEchoes';
 import { useScorePackagePreload } from '@/src/hooks/me/useScorePackagePreload';
+import { archiveCount, archiveLoading } from '@/src/hooks/me/archive-state';
+import { ARCHIVE_PAGE_SIZES, useArchivePagination } from '@/src/hooks/me/archive/useArchivePagination';
 import ArchiveEmpty from './ArchiveEmpty';
 import ArchiveHeader from './ArchiveHeader';
 import ArchiveSection from './ArchiveSection';
@@ -13,30 +15,14 @@ import MaterialArchiveRow from './MaterialArchiveRow';
 import RecordingArchiveRow from './RecordingArchiveRow';
 import ScoreArchiveRow from './ScoreArchiveRow';
 import EchoArchiveRow from '@/src/components/echo/EchoArchiveRow';
+import ArchiveMintProvider, { ArchiveMintNetworkControl } from '@/src/components/mint/archive/ArchiveMintProvider';
 import { useScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import './archive.css';
 
-type SectionId = 'records' | 'pending' | 'favorites';
-const PAGE_SIZES: Record<SectionId, number> = { records: 3, pending: 3, favorites: 7 };
-
-function countOf<T>(slice: ArchiveSlice<T>): number | null {
-  return slice.resolved || slice.phase === 'error' || slice.items.length > 0
-    ? slice.items.length : null;
-}
-
-function isLoading<T>(slice: ArchiveSlice<T>): boolean {
-  return slice.phase === 'idle' || slice.phase === 'loading';
-}
-
-function pagesFor(count: number | null, size: number): number {
-  return Math.max(1, Math.ceil((count ?? 0) / size));
-}
-
 /** 唱片、待铸造和收藏共用的数据视图；页面外壳可以替换，档案行为保持一致。 */
 export default function MeArchivePage({ variant = 'default', onPrepared }: {
-  variant?: 'default' | 'pond';
-  onPrepared?: (ready: boolean) => void;
+  variant?: 'default' | 'pond'; onPrepared?: (ready: boolean) => void;
 }) {
   const pathname = usePathname();
   const scoreOrigin = useScoreOrigin();
@@ -55,9 +41,6 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
     userId: auth.userId,
     evmAddress: auth.evmAddress,
     getAccessToken: auth.getAccessToken,
-  });
-  const [pages, setPages] = useState<Record<SectionId, number>>({
-    records: 0, pending: 0, favorites: 0,
   });
   const archiveReady = Boolean(auth.userId && ownerId === auth.userId);
   const identityPending = !auth.ready || (auth.authenticated && !archiveReady);
@@ -78,18 +61,11 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
     ...echoes.items.map((item) => ({ kind: 'echo' as const, key: `echo-${item.key}`, item })),
   ], [echoes.items, scores.items]);
   const recordCount = recordItems.length > 0 || recordsSettled ? recordItems.length : null;
-  const pendingCount = countOf(recordings);
-  const favoriteCount = countOf(materials);
-  const pageCounts = {
-    records: pagesFor(recordCount, PAGE_SIZES.records),
-    pending: pagesFor(pendingCount, PAGE_SIZES.pending),
-    favorites: pagesFor(favoriteCount, PAGE_SIZES.favorites),
-  };
-  const safePages = {
-    records: Math.min(pages.records, pageCounts.records - 1),
-    pending: Math.min(pages.pending, pageCounts.pending - 1),
-    favorites: Math.min(pages.favorites, pageCounts.favorites - 1),
-  };
+  const pendingCount = archiveCount(recordings);
+  const favoriteCount = archiveCount(materials);
+  const pagination = useArchivePagination({ records: recordCount, pending: pendingCount,
+    favorites: favoriteCount });
+  const { pageCounts, safePages, starts, changePage, showRecordsPage } = pagination;
   useEffect(() => {
     const origin = scoreOrigin.origin;
     if (auth.ready && origin && origin.ownerKey !== ownerKey) scoreOrigin.clear(origin.id);
@@ -111,10 +87,10 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
       transition?.reportVisualReady('archive', transaction.generation);
       return;
     }
-    const targetPage = Math.floor(index / PAGE_SIZES.records);
+    const targetPage = Math.floor(index / ARCHIVE_PAGE_SIZES.records);
     if (safePages.records !== targetPage) {
       const frame = requestAnimationFrame(() => {
-        setPages((current) => ({ ...current, records: targetPage }));
+        showRecordsPage(targetPage);
       });
       return () => cancelAnimationFrame(frame);
     }
@@ -127,7 +103,8 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
       transition?.reportVisualReady('archive', transaction.generation);
     });
     return () => cancelAnimationFrame(frame);
-  }, [archiveReady, recordItems, recordsSettled, safePages.records, scoreOrigin, transition]);
+  }, [archiveReady, safePages.records, showRecordsPage,
+    recordItems, recordsSettled, scoreOrigin, transition]);
   useEffect(() => {
     const transaction = transition?.transaction;
     const origin = scoreOrigin.origin;
@@ -135,22 +112,30 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
       || transaction?.stage !== 'stable' || transaction.current !== 'archive') return;
     scoreOrigin.clear(origin.id);
   }, [pathname, scoreOrigin, transition?.transaction]);
-  const changePage = (section: SectionId, page: number) => {
-    setPages((current) => ({ ...current, [section]: page }));
-  };
   const refreshRecordings = () => {
     void retry('recordings');
     void retry('scores');
   };
-  const recordStart = safePages.records * PAGE_SIZES.records;
-  const pendingStart = safePages.pending * PAGE_SIZES.pending;
-  const favoriteStart = safePages.favorites * PAGE_SIZES.favorites;
-
+  const { records: recordStart, pending: pendingStart, favorites: favoriteStart } = starts;
   return (
+    <ArchiveMintProvider userId={auth.userId} walletCapability={auth.walletCapability}
+      onOrderClosed={refreshRecordings}>
     <main className="me-archive" data-p11-theme="archive" data-me-variant={variant}
       data-archive-prepared={prepared} data-score-origin-stage={scoreOrigin.origin?.stage}>
       <div className="me-archive__inner">
-        <ArchiveHeader authState={authState} authSource={auth.authSource} evmAddress={auth.evmAddress} />
+        <ArchiveHeader authState={authState} authSource={auth.authSource} evmAddress={auth.evmAddress}
+          networkControl={auth.authenticated
+            && auth.walletCapability.loginEntry === 'external_wallet'
+            ? <ArchiveMintNetworkControl /> : null} />
+        {auth.authenticated && auth.authSource === 'privy'
+          && auth.walletCapability.loginEntry === null && (
+            <div className="me-archive__network-hint">
+              <span>当前登录状态尚未确认钱包入口。重新连接链上钱包后，可在这里切换网络。</span>
+              <button type="button" onClick={async () => {
+                await auth.logout(); auth.openLoginModal();
+              }}>重新连接链上钱包</button>
+            </div>
+          )}
         {identityPending ? (
           <ArchiveEmpty title="正在确认你的档案" description="身份确认后，你的音乐会立即出现。" />
         ) : !auth.authenticated ? (
@@ -160,14 +145,14 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
           <div className="me-archive__dashboard">
             <div className="me-archive__panel me-archive__panel--records" id="pond-echoes">
               <ArchiveSection id="records" title="我的唱片" count={recordCount}
-                loading={isLoading(scores) || (Boolean(auth.evmAddress)
+                loading={archiveLoading(scores) || (Boolean(auth.evmAddress)
                   && (echoes.phase === 'idle' || echoes.phase === 'loading'))}
                 error={[scores.error, echoes.error].filter(Boolean).join('；') || null}
                 warning={echoes.warning} onRetry={() => { void retry('scores'); void echoes.retry(); }}
                 emptyDescription="铸造完成的唱片会留在这里。"
                 page={safePages.records} pageCount={pageCounts.records}
                 onPageChange={(page) => changePage('records', page)}>
-                {recordItems.slice(recordStart, recordStart + PAGE_SIZES.records).map((row, index) => (
+                {recordItems.slice(recordStart, recordStart + ARCHIVE_PAGE_SIZES.records).map((row, index) => (
                   row.kind === 'score'
                     ? <ScoreArchiveRow key={row.key} score={row.item} index={recordStart + index}
                       ownerKey={ownerKey} />
@@ -179,36 +164,37 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
 
             <div className="me-archive__panel me-archive__panel--pending">
               <ArchiveSection id="pending" title="待铸造" count={pendingCount}
-                loading={isLoading(recordings)} refreshing={recordings.phase === 'refreshing'}
+                loading={archiveLoading(recordings)} refreshing={recordings.phase === 'refreshing'}
                 error={recordings.error} onRetry={() => { void retry('recordings'); }}
                 emptyDescription="新录音会在这里保留 24 小时。"
                 page={safePages.pending} pageCount={pageCounts.pending}
                 onPageChange={(page) => changePage('pending', page)}>
-                {recordings.items.slice(pendingStart, pendingStart + PAGE_SIZES.pending).map((recording, index) => (
+                {recordings.items.slice(pendingStart, pendingStart + ARCHIVE_PAGE_SIZES.pending).map((recording, index) => (
                   <RecordingArchiveRow key={recording.key} recording={recording}
                     index={pendingStart + index} onQueued={refreshRecordings} />
                 ))}
-                {isLoading(recordings) && (pendingCount ?? 0) === 0 && <div className="me-archive__skeleton" />}
+                {archiveLoading(recordings) && (pendingCount ?? 0) === 0 && <div className="me-archive__skeleton" />}
               </ArchiveSection>
             </div>
 
             <div className="me-archive__panel me-archive__panel--favorites">
               <ArchiveSection id="favorites" title="收藏" count={favoriteCount}
-                loading={isLoading(materials)} error={materials.error}
+                loading={archiveLoading(materials)} error={materials.error}
                 warning={materials.cached ? '正在更新…' : null}
                 onRetry={() => { void retry('materials'); }}
                 emptyDescription="收藏的声音会留在这里。"
                 page={safePages.favorites} pageCount={pageCounts.favorites}
                 onPageChange={(page) => changePage('favorites', page)}>
-                {materials.items.slice(favoriteStart, favoriteStart + PAGE_SIZES.favorites).map((nft) => (
+                {materials.items.slice(favoriteStart, favoriteStart + ARCHIVE_PAGE_SIZES.favorites).map((nft) => (
                   <MaterialArchiveRow key={nft.tx_hash || `pending-${nft.token_id}`} nft={nft} />
                 ))}
-                {isLoading(materials) && (favoriteCount ?? 0) === 0 && <div className="me-archive__skeleton" />}
+                {archiveLoading(materials) && (favoriteCount ?? 0) === 0 && <div className="me-archive__skeleton" />}
               </ArchiveSection>
             </div>
           </div>
         )}
       </div>
     </main>
+    </ArchiveMintProvider>
   );
 }

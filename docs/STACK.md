@@ -15,17 +15,18 @@
 > ⚠️ 注意：原 ARCHITECTURE.md 写的是 Next.js 14。本项目实际用 16。
 > 若遇到 16 的 breaking change（如 Server Actions 默认配置变化），按 16 文档处理。
 
-### 区块链（仅后端）
-- `viem` — 替代 ethers/wagmi，类型友好，更轻量
-- `@privy-io/react-auth` — 前端登录 SDK
+### 区块链
+- `viem` — 后端链交互；P16 前端只允许编码、模拟、估算和读链，禁止建立第二套钱包发送客户端
+- `@privy-io/react-auth` — 前端登录 SDK；外部钱包连接、切链和 P16 Ethereum 交易发送的唯一入口
 - `@privy-io/server-auth` — 后端 JWT 验证
 
 ### 链选择
-- **生产链**：Optimism Mainnet（chainId 10）— L2，EVM 等价
-- **测试链**：OP Sepolia（chainId 11155420）
-- 不部署 Ethereum L1 主网或 Sepolia（成本和环境一致性原因，见 ARCHITECTURE.md 决策 3 + JOURNAL.md 2026-04-08）
-- RPC：Alchemy 提供 OP Mainnet + OP Sepolia 端点
-- Etherscan 等价物：`optimistic.etherscan.io`（主网）/ `sepolia-optimism.etherscan.io`（测试网）
+- **默认生产链**：Optimism Mainnet（chainId 10）— 平台代付 Gas
+- **默认测试链**：OP Sepolia（chainId 11155420）
+- **P16 ScoreNFT 测试链**：Ethereum Sepolia（chainId 11155111）— 外部钱包自付 Gas
+- **P16 ScoreNFT 生产链**：Ethereum Mainnet（chainId 1）— 独立不可逆 Gate 通过后才开放
+- P14 Pond Echo 和非 ScoreNFT 资产保持 OP-only
+- RPC 与浏览器按 chain registry 配置，不在业务组件硬编码网络地址
 
 ### 安全
 - `server-only` — Next.js 编译期防护，阻止后端模块被前端 import

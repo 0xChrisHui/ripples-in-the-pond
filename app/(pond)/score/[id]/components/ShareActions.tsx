@@ -2,11 +2,17 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-type Props = { id: string; tokenId: number | null; trackTitle: string };
+type Props = {
+  id: string;
+  tokenId: number | null;
+  trackTitle: string;
+  canonicalPath?: string;
+  posterPath?: string | null;
+};
 
-function canonicalUrl(id: string, tokenId: number | null): string {
+function canonicalUrl(id: string, tokenId: number | null, canonicalPath?: string): string {
   const base = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
-  return `${base.replace(/\/$/, '')}/score/${tokenId ?? id}`;
+  return `${base.replace(/\/$/, '')}${canonicalPath ?? `/score/${tokenId ?? id}`}`;
 }
 
 function shareText(trackTitle: string, tokenId: number | null): string {
@@ -29,7 +35,9 @@ async function copyText(value: string): Promise<boolean> {
 }
 
 /** 首屏分享入口直接展开站内渠道，不触发操作系统的原生分享面板。 */
-export default function ShareActions({ id, tokenId, trackTitle }: Props) {
+export default function ShareActions({
+  id, tokenId, trackTitle, canonicalPath, posterPath,
+}: Props) {
   const [feedback, setFeedback] = useState('复制链接');
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const slug = tokenId ?? id;
@@ -47,7 +55,7 @@ export default function ShareActions({ id, tokenId, trackTitle }: Props) {
   }, []);
 
   const openIntent = (kind: 'x' | 'weibo') => {
-    const url = canonicalUrl(id, tokenId);
+    const url = canonicalUrl(id, tokenId, canonicalPath);
     const text = shareText(trackTitle, tokenId);
     const target = kind === 'x'
       ? `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
@@ -57,7 +65,7 @@ export default function ShareActions({ id, tokenId, trackTitle }: Props) {
   };
 
   const copy = async () => {
-    setFeedback(await copyText(canonicalUrl(id, tokenId)) ? '已复制' : '复制失败');
+    setFeedback(await copyText(canonicalUrl(id, tokenId, canonicalPath)) ? '已复制' : '复制失败');
   };
 
   return (
@@ -68,7 +76,9 @@ export default function ShareActions({ id, tokenId, trackTitle }: Props) {
           <button type="button" onClick={copy}>{feedback}</button>
           <button type="button" onClick={() => openIntent('x')}>分享到 X</button>
           <button type="button" onClick={() => openIntent('weibo')}>分享到微博</button>
-          <a href={`/score/${slug}/poster`} download={`ripples-${slug}.png`}>下载海报</a>
+          {posterPath !== null && (
+            <a href={posterPath ?? `/score/${slug}/poster`} download={`ripples-${slug}.png`}>下载海报</a>
+          )}
         </div>
       </details>
     </div>

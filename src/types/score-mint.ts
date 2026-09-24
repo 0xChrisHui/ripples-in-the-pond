@@ -1,4 +1,6 @@
 /** ScoreNFT 铸造队列的上传结果状态；unknown 必须人工对账，禁止盲重传。 */
+import type { SelfMintStatus } from './self-mint';
+
 export type ScoreUploadState =
   | 'none'
   | 'uploading'
@@ -113,13 +115,18 @@ export interface OwnedScoreNFT {
   id: string;
   queueId: string;
   tokenId?: number;
-  status: ScoreMintStatus;
+  status: ScoreMintStatus | SelfMintStatus;
   trackTitle: string;
   eventCount: number | null;
   txHash?: string;
   failureKind: ScoreFailureKind | null;
   submittedAt: string;
   scorePackage?: ScorePackagePreview;
+  mintMode?: 'op_sponsored' | 'eth_self_paid';
+  chainId?: number;
+  contractAddress?: string;
+  orderId?: string;
+  recipientAddress?: string;
 }
 
 export interface MyScoreNFTsResponse {

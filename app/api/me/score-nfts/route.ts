@@ -3,12 +3,20 @@ import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 import { ServerTiming } from '@/src/lib/performance/server-timing';
 import { SCORE_STATUSES, type MyScoreNFTsResponse, type OwnedScoreNFT, type ScoreMintStatus } from '@/src/types/jam';
+import { SELF_MINT_STATUSES, type SelfMintStatus } from '@/src/types/self-mint';
 
 function readStatus(value: unknown): ScoreMintStatus {
   if (typeof value === 'string' && SCORE_STATUSES.some((status) => status === value)) {
     return value as ScoreMintStatus;
   }
   throw new Error(`未知 Score 状态: ${String(value)}`);
+}
+
+function readSelfStatus(value: unknown): SelfMintStatus {
+  if (typeof value === 'string' && SELF_MINT_STATUSES.some((status) => status === value)) {
+    return value as SelfMintStatus;
+  }
+  throw new Error(`未知 Ethereum Score 状态: ${String(value)}`);
 }
 
 /**
@@ -31,7 +39,7 @@ export async function GET(req: NextRequest) {
       return timing.response(() => NextResponse.json({ error: '未登录' }, { status: 401 }));
     }
 
-    const { data: rows, error } = await timing.measure('db', () => (
+    const [opResult, ethResult] = await timing.measure('db', () => Promise.all([
       supabaseAdmin
         .from('score_nft_queue')
         .select(`
@@ -41,12 +49,24 @@ export async function GET(req: NextRequest) {
           pending_scores(event_count)
         `)
         .eq('user_id', auth.userId)
-        .order('created_at', { ascending: false })
-    ));
+        .order('created_at', { ascending: false }),
+      supabaseAdmin
+        .from('score_self_mint_orders')
+        .select(`
+          id, order_id, token_id, tx_hash, created_at, status, failure_code,
+          chain_id, score_contract, recipient_address,
+          package_ar_tx_id, package_sha256, package_bytes, package_mime, package_upload_state,
+          tracks:tracks!score_self_mint_orders_track_id_fkey(title),
+          pending_scores(event_count)
+        `)
+        .eq('user_id', auth.userId)
+        .order('created_at', { ascending: false }),
+    ]));
 
-    if (error) throw error;
+    if (opResult.error) throw opResult.error;
+    if (ethResult.error) throw ethResult.error;
 
-    const scoreNfts: OwnedScoreNFT[] = (rows ?? []).map((r) => {
+    const opScores: OwnedScoreNFT[] = (opResult.data ?? []).map((r) => {
       const trackData = r.tracks as unknown as { title: string } | null;
       const ps = r.pending_scores as unknown as { event_count: number | null } | null;
       const status = readStatus(r.status);
@@ -69,9 +89,43 @@ export async function GET(req: NextRequest) {
         txHash: r.tx_hash ?? undefined,
         failureKind,
         submittedAt: r.created_at,
+        mintMode: 'op_sponsored',
         ...(scorePackage ? { scorePackage } : {}),
       };
     });
+
+    const ethScores: OwnedScoreNFT[] = (ethResult.data ?? []).map((r) => {
+      const trackData = r.tracks as unknown as { title: string } | null;
+      const ps = r.pending_scores as unknown as { event_count: number | null } | null;
+      const status = readSelfStatus(r.status);
+      const scorePackage = status === 'success' && r.package_upload_state === 'verified'
+        && typeof r.package_ar_tx_id === 'string' && typeof r.package_sha256 === 'string'
+        && typeof r.package_bytes === 'number' && r.package_mime === 'application/json'
+        ? { ref: `ar://${r.package_ar_tx_id}` as const, sha256: r.package_sha256,
+          bytes: r.package_bytes, mime: r.package_mime }
+        : undefined;
+      return {
+        id: status === 'success' && r.token_id != null
+          ? `${r.chain_id}:${r.score_contract}:${r.token_id}` : r.id,
+        queueId: r.id,
+        tokenId: r.token_id ?? undefined,
+        status,
+        trackTitle: trackData?.title ?? '未知曲目',
+        eventCount: ps?.event_count ?? null,
+        txHash: r.tx_hash ?? undefined,
+        failureKind: status === 'manual_review' ? 'manual_review' : null,
+        submittedAt: r.created_at,
+        mintMode: 'eth_self_paid',
+        chainId: r.chain_id,
+        contractAddress: r.score_contract,
+        orderId: r.order_id,
+        recipientAddress: r.recipient_address,
+        ...(scorePackage ? { scorePackage } : {}),
+      };
+    });
+
+    const scoreNfts = [...opScores, ...ethScores]
+      .sort((left, right) => Date.parse(right.submittedAt) - Date.parse(left.submittedAt));
 
     const res: MyScoreNFTsResponse = { scoreNfts };
     return timing.response(() => NextResponse.json(res));

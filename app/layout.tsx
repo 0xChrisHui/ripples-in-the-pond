@@ -54,6 +54,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const walletLoginMode = process.env.EXTERNAL_WALLET_LOGIN_MODE;
+  const externalWalletLoginEnabled = walletLoginMode === 'live' || walletLoginMode === 'allowlist';
   return (
     // suppressHydrationWarning 仅压制 html/body 根节点 — 处理浏览器扩展（NeonLingo / Monica AI 之类）
     // 在 React hydrate 前往 html/body 注入 CSS 变量或 data 属性导致的 hydration mismatch；
@@ -63,7 +65,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} ${azeretMono.variable} ${modak.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers externalWalletLoginEnabled={externalWalletLoginEnabled}>{children}</Providers>
       </body>
     </html>
   );

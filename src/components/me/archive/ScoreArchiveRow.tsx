@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
-import type { OwnedScoreNFT, ScoreMintStatus } from '@/src/types/jam';
+import type { OwnedScoreNFT } from '@/src/types/jam';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/score/score-origin';
+import { useArchiveMintContext } from '@/src/components/mint/archive/ArchiveMintProvider';
 
-const STATUS_LABELS: Record<ScoreMintStatus, string> = {
+const STATUS_LABELS: Record<OwnedScoreNFT['status'], string> = {
   pending: '等待制作',
   uploading_events: '保存演奏中',
   preparing_package: '核验永久资源',
@@ -16,6 +17,12 @@ const STATUS_LABELS: Record<ScoreMintStatus, string> = {
   finalizing_snapshot: '生成验证快照',
   success: '永久唱片',
   failed: '制作未完成',
+  preparing_assets: '永久保存中',
+  ready_to_sign: '等待钱包确认',
+  submitted: '交易已提交',
+  confirming: '等待链上确认',
+  expired: '授权已过期',
+  manual_review: '正在核对链上结果',
 };
 
 function failureDetail(score: OwnedScoreNFT): string | null {
@@ -33,9 +40,13 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
   const [pending, setPending] = useState(false);
   const transition = usePondTransition();
   const scoreOrigin = useScoreOrigin();
+  const archiveMint = useArchiveMintContext();
   const isPermanent = score.status === 'success' && score.tokenId != null;
+  const isEthereum = score.mintMode === 'eth_self_paid';
   const key = `score-${score.queueId}`;
-  const href = `/score/${score.id}`;
+  const href = isEthereum && isPermanent && score.chainId && score.contractAddress
+    ? `/score/${score.chainId}/${score.contractAddress.toLowerCase()}/${score.tokenId}`
+    : `/score/${score.id}`;
   const selected = isPermanent && scoreOrigin.origin?.key === key;
   const transaction = transition?.transaction;
   const ownsAnchor = selected && (transaction?.target === 'score'
@@ -91,15 +102,23 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
       <div className="me-archive-row__main">
         <h3>{title}</h3>
         {isPermanent && <p>{score.trackTitle}</p>}
+        {isEthereum && <p>Ethereum · 自付 Gas</p>}
       </div>
       <div className="me-archive-row__state">
         <span>{STATUS_LABELS[score.status]}</span>
         {detail && <small>{detail}</small>}
       </div>
-      <Link className="me-archive-row__action" href={href} prefetch={false} onClick={openScore}
-        aria-disabled={pending || undefined}>
-        {action} <span aria-hidden="true">→</span>
-      </Link>
+      {isEthereum && !isPermanent ? (
+        score.orderId ? <button className="me-archive-row__action" type="button"
+          onClick={() => archiveMint.openOrder(score.orderId as `0x${string}`)}>
+          {action} <span aria-hidden="true">→</span>
+        </button> : <span className="me-archive-row__state">订单同步中</span>
+      ) : (
+        <Link className="me-archive-row__action" href={href} prefetch={false} onClick={openScore}
+          aria-disabled={pending || undefined}>
+          {action} <span aria-hidden="true">→</span>
+        </Link>
+      )}
     </article>
   );
 }

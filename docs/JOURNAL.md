@@ -1688,3 +1688,9 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **链上成功真值**：txHash 只作加速提示；最终由 `tokenIdByOrderId`、目标 ScoreNFT 事件、owner 与 tokenURI 共同确认，兼容钱包路由交易和浏览器漏报 hash。
 - **迁移与基线**：正式施工从 `main@f24f5bd` 开始，旧 P16 快照只选择性迁移；主线占用 `050–052` 后，P16 使用 `053–057`。
 - **范围收窄**：本轮以 MetaMask 桌面、imToken / WalletConnect、hash 漏报恢复和 OP/邮箱/SEMI/P14 回归为阻塞 Gate；完整移动端/异常矩阵、压力循环与 Ethereum Mainnet 延后。
+
+## 2026-09-24 — P16 M0–M5 选择性迁移完成
+
+- **保留成熟地基**：旧 P16 的 claim SQL 与 v2 作品包不迁入；`054` 从 P15 最新 `mint_score_enqueue` 增量加入共享 claim，Ethereum 也冻结并发布 `ripples.score-package.v3`。
+- **复用同一播放合同**：Ethereum 铸造确认后按完整 `environment + chainId + contract + tokenId` 发布既有 verified snapshot，P11 Score 页面只增加多链薄路由，不创建第二套播放器或永久数据读取路径。
+- **外部 Gate 边界**：本地代码与自动专项检查完成后停在 M6；隔离库重建必须先按 Sepolia 历史 Token 初始化 sequence，真实钱包 Gate 通过前不合入主线。

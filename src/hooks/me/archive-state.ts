@@ -27,3 +27,16 @@ export function loadingPhase<T>(slice: ArchiveSlice<T>): ArchivePhase {
   return slice.items.length || slice.resolved ? 'refreshing' : 'loading';
 }
 
+export function archiveCount<T>(slice: ArchiveSlice<T>): number | null {
+  return slice.resolved || slice.phase === 'error' || slice.items.length > 0
+    ? slice.items.length : null;
+}
+
+export function archiveLoading<T>(slice: ArchiveSlice<T>): boolean {
+  return slice.phase === 'idle' || slice.phase === 'loading';
+}
+
+export function archivePageCount(count: number | null, size: number): number {
+  return Math.max(1, Math.ceil((count ?? 0) / size));
+}
+

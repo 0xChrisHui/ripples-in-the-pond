@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useId, useRef, useSyncExternalStore } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react';
+import { useLogin, usePrivy } from '@privy-io/react-auth';
 import SemiLogin from './SemiLogin';
+import WalletLoginOptions from './WalletLoginOptions';
+import { setLoginSession } from './login-session';
 import './auth-dialog.css';
 
 /**
@@ -50,9 +52,27 @@ export function closeLoginModal(): void {
   notify();
 }
 
-export default function LoginModal() {
+export default function LoginModal({ externalWalletLoginEnabled }: {
+  externalWalletLoginEnabled: boolean;
+}) {
   const open = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const { login: privyLogin, ready: privyReady } = usePrivy();
+  const [emailError, setEmailError] = useState(false);
+  const { ready: privyReady } = usePrivy();
+  const emailLoginRequested = useRef(false);
+  const { login: privyLogin } = useLogin({
+    onComplete: () => {
+      if (!emailLoginRequested.current) return;
+      emailLoginRequested.current = false;
+      setLoginSession('email');
+      closeLoginModal();
+    },
+    onError: () => {
+      if (!emailLoginRequested.current) return;
+      emailLoginRequested.current = false;
+      setEmailError(true);
+      openLoginModal();
+    },
+  });
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -139,32 +159,39 @@ export default function LoginModal() {
           <button
             type="button"
             onClick={() => {
-              closeLoginModal();
-              privyLogin();
+              setEmailError(false);
+              emailLoginRequested.current = true;
+              privyLogin({ loginMethods: ['email'] });
             }}
             disabled={!privyReady}
             className="auth-dialog__email auth-dialog__email--primary"
             data-login-autofocus
           >
-            {privyReady ? '使用邮箱登录' : '邮箱登录加载中…'}
+            使用邮箱登录
           </button>
         ) : (
           <>
-            <SemiLogin onSuccess={closeLoginModal} />
+            <SemiLogin onSuccess={() => {
+              setLoginSession('semi');
+              closeLoginModal();
+            }} />
             <div className="auth-dialog__divider"><span>或</span></div>
             <button
               type="button"
               onClick={() => {
-                closeLoginModal();
-                privyLogin();
+                setEmailError(false);
+                emailLoginRequested.current = true;
+                privyLogin({ loginMethods: ['email'] });
               }}
               disabled={!privyReady}
               className="auth-dialog__email"
             >
-              {privyReady ? '使用邮箱登录' : '邮箱登录加载中…'}
+              使用邮箱登录
             </button>
           </>
         )}
+        {emailError && <p className="semi-login__error" role="alert">邮箱登录未完成，请重试。</p>}
+        <WalletLoginOptions enabled={externalWalletLoginEnabled} onSuccess={closeLoginModal} />
       </div>
     </div>
   );

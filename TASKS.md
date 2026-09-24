@@ -7,11 +7,14 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 16 M0：校准与选择性迁移清单**
+- **Phase 16 M6：隔离环境与真实钱包 Gate**
   - [x] Phase 11 最终体验修正、收口并合入 `main@f24f5bd`
   - [x] 优化 P16 为 Sepolia 最小成熟闭环，冻结 M0–M6 唯一顺序
-  - [ ] 定向审查 P16 会触碰的 P11 接口，输出“直接迁移 / 适配迁移 / 放弃”清单
-  - [ ] 同步 P16 必需的 ARCHITECTURE / STACK / CONVENTIONS 与环境合同
+  - [x] 完成 M0 定向审查、选择性迁移清单与架构边界同步
+  - [x] 完成 M1–M5 本地代码、静态 Gate、P16 专项验证与 Forge 70/70
+  - [ ] 备份并重建隔离测试库，初始化历史 Token sequence，执行 `053–057`
+  - [ ] 配置 assets / reconcile cron，完成 MetaMask 与 WalletConnect 真实 Sepolia Gate
+  - [ ] 验证 hash 漏报恢复与 OP / 邮箱 / SEMI / P14 回归后合入 `main`
 
 ## ⏳ Later / 开放项
 

@@ -14,7 +14,10 @@ import NavigationFeedback from '@/src/components/navigation/NavigationFeedback';
  *
  * Phase 7 Track B B2：挂全站登录 modal（两 tab：Privy 邮箱 / Semi 社区钱包）
  */
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({ children, externalWalletLoginEnabled }: {
+  children: React.ReactNode;
+  externalWalletLoginEnabled: boolean;
+}) {
   return (
     <PrivyProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
@@ -24,7 +27,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         {children}
         <NavigationFeedback />
         <BottomPlayer />
-        <LoginModal />
+        <LoginModal externalWalletLoginEnabled={externalWalletLoginEnabled} />
       </PlayerProvider>
     </PrivyProvider>
   );
