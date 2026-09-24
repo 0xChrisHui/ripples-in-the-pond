@@ -10,14 +10,7 @@
   position: relative;
   z-index: 30;
   min-height: calc(100svh - clamp(120px, 14svh, 168px));
-  background:
-    radial-gradient(ellipse at 52% 58%, color-mix(in srgb, var(--p11-moss) 8%, transparent), transparent 44%),
-    linear-gradient(
-      to bottom,
-      transparent 64%,
-      color-mix(in srgb, var(--p11-ink) 38%, transparent) 84%,
-      var(--score-archive-surface-top, color-mix(in srgb, var(--p11-ink) 80%, transparent))
-    );
+  background: transparent;
 }
 
 .score-pond-page--lifecycle::before,

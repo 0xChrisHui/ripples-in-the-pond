@@ -11,8 +11,6 @@ import {
 } from './transition/types';
 
 export type PondTransitionPhase = 'home' | 'leaving-home' | 'archive' | 'entering-home' | 'score';
-type ViewTransition = { finished: Promise<void>; skipTransition: () => void };
-type TransitionDocument = Document & { startViewTransition?: (update: () => void) => ViewTransition };
 
 type TransitionValue = {
   transaction: PondRouteTransaction;
@@ -27,7 +25,6 @@ type TransitionValue = {
   reveal: (generation?: number) => void;
   settle: (generation?: number) => void;
   setArchiveReady: (ready: boolean) => void;
-  runViewTransition: (update: () => void) => Promise<void>;
   waitForVisualReady: (generation?: number, ready?: () => boolean,
     failed?: () => boolean) => Promise<boolean>;
 };
@@ -59,7 +56,6 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
   const transactionRef = useRef(transaction);
   const [duration, setDuration] = useState(520);
   const [archiveReady, setArchiveReadyState] = useState(false);
-  const activeViewTransition = useRef<ViewTransition | null>(null);
   const settleTimer = useRef<number | null>(null);
   const cancelledNavigation = useRef<{ href: string; restore: string; seen: boolean } | null>(null);
 
@@ -81,24 +77,11 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     return () => { reduced.removeEventListener('change', sync); fine.removeEventListener('change', sync); };
   }, []);
 
-  const runViewTransition = useCallback(async (update: () => void) => {
-    const previous = activeViewTransition.current;
-    try { previous?.skipTransition(); } catch { /* previous already settled */ }
-    const start = (document as TransitionDocument).startViewTransition;
-    if (!start) { flushSync(update); return; }
-    try {
-      const active = start.call(document, () => flushSync(update));
-      activeViewTransition.current = active;
-      await active.finished.catch(() => undefined);
-      if (activeViewTransition.current === active) activeViewTransition.current = null;
-    } catch { flushSync(update); }
-  }, []);
-
   const reveal = useCallback((generation = transactionRef.current.generation) => {
     const current = transactionRef.current;
     if (current.generation !== generation || !current.targetVisualReady) return;
-    void runViewTransition(() => { apply({ type: 'reveal', generation, at: performance.now() }); });
-  }, [apply, runViewTransition]);
+    apply({ type: 'reveal', generation, at: performance.now() }, true);
+  }, [apply]);
 
   const reportVisualReady = useCallback((owner: PondRoute, generation = transactionRef.current.generation) => {
     const next = apply({ type: 'ready', generation, owner, at: performance.now() });
@@ -123,7 +106,10 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
       router.push(href); return transactionRef.current.generation;
     }
     const next = apply({ type: 'start', target: routeForPath(path), href: path, at: performance.now() }, true);
-    router.prefetch(path); router.push(href);
+    // Score has its own immediate loading boundary. Prefetching the dynamic RSC
+    // immediately before push can leave Next using the partial loading response.
+    if (next.target !== 'score') router.prefetch(path);
+    router.push(href);
     if (next.target === 'home') reportVisualReady('home', next.generation);
     return next.generation;
   }, [apply, reportVisualReady, router]);
@@ -131,7 +117,6 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
   const cancel = useCallback((generation = transactionRef.current.generation) => {
     const current = transactionRef.current;
     if (current.generation !== generation) return;
-    try { activeViewTransition.current?.skipTransition(); } catch { /* already settled */ }
     apply({ type: 'cancel', generation, at: performance.now() }, true);
     cancelledNavigation.current = { href: current.href, restore: current.currentHref, seen: false };
     router.replace(current.currentHref);
@@ -204,16 +189,15 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => () => {
     if (settleTimer.current != null) window.clearTimeout(settleTimer.current);
-    try { activeViewTransition.current?.skipTransition(); } catch { /* already settled */ }
   }, []);
 
   const phase = legacyPhase(transaction, archiveReady);
   const value = useMemo<TransitionValue>(() => ({
     transaction, phase, destination: transaction.stage === 'stable' ? null : transaction.href,
     duration, archiveReady, navigate, prefetch: (href) => router.prefetch(pathWithoutHash(href)),
-    cancel, reportVisualReady, reveal, settle, setArchiveReady, runViewTransition, waitForVisualReady,
+    cancel, reportVisualReady, reveal, settle, setArchiveReady, waitForVisualReady,
   }), [archiveReady, cancel, duration, navigate, phase, reportVisualReady, reveal, router,
-    runViewTransition, setArchiveReady, settle, transaction, waitForVisualReady]);
+    setArchiveReady, settle, transaction, waitForVisualReady]);
   return <PondTransitionContext.Provider value={value}>{children}</PondTransitionContext.Provider>;
 }
 

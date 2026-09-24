@@ -1,0 +1,419 @@
+{
+  "measuredAt": "2026-09-24T10:56:42.418Z",
+  "source": {
+    "scrollY": 0,
+    "path": "/me"
+  },
+  "samples": [
+    {
+      "at": 1615,
+      "path": "/me",
+      "scrollY": 0,
+      "stage": "preparing",
+      "scoreVisible": "false"
+    },
+    {
+      "at": 1699,
+      "path": "/me",
+      "scrollY": 0,
+      "stage": "preparing",
+      "scoreVisible": "false"
+    },
+    {
+      "at": 1754,
+      "path": "/me",
+      "scrollY": 0,
+      "stage": "preparing",
+      "scoreVisible": "false"
+    },
+    {
+      "at": 1808,
+      "path": "/me",
+      "scrollY": 0,
+      "stage": "preparing",
+      "scoreVisible": "false"
+    },
+    {
+      "at": 1863,
+      "path": "/me",
+      "scrollY": 0,
+      "stage": "preparing",
+      "scoreVisible": "false"
+    },
+    {
+      "at": 1961,
+      "path": "/me",
+      "scrollY": 0,
+      "stage": "preparing",
+      "scoreVisible": "false"
+    },
+    {
+      "at": 2034,
+      "path": "/me",
+      "scrollY": 0,
+      "stage": "preparing",
+      "scoreVisible": "false"
+    },
+    {
+      "at": 2091,
+      "path": "/me",
+      "scrollY": 0,
+      "stage": "preparing",
+      "scoreVisible": "false"
+    },
+    {
+      "at": 2143,
+      "path": "/me",
+      "scrollY": 0,
+      "stage": "preparing",
+      "scoreVisible": "false"
+    },
+    {
+      "at": 2199,
+      "path": "/me",
+      "scrollY": 0,
+      "stage": "preparing",
+      "scoreVisible": "false"
+    },
+    {
+      "at": 2289,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "revealing",
+      "scoreVisible": "true"
+    },
+    {
+      "at": 2345,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "settling",
+      "scoreVisible": "true"
+    },
+    {
+      "at": 2399,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "settling",
+      "scoreVisible": "true"
+    },
+    {
+      "at": 2457,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "settling",
+      "scoreVisible": "true"
+    },
+    {
+      "at": 2513,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "settling",
+      "scoreVisible": "true"
+    },
+    {
+      "at": 2565,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "settling",
+      "scoreVisible": "true"
+    },
+    {
+      "at": 2621,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "settling",
+      "scoreVisible": "true"
+    },
+    {
+      "at": 2680,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "settling",
+      "scoreVisible": "true"
+    },
+    {
+      "at": 2733,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "settling",
+      "scoreVisible": "true"
+    },
+    {
+      "at": 2792,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "settling",
+      "scoreVisible": "true"
+    },
+    {
+      "at": 2850,
+      "path": "/score/1",
+      "scrollY": 0,
+      "stage": "stable",
+      "scoreVisible": "true"
+    }
+  ],
+  "shellStableAt": 2850,
+  "ready": {
+    "at": 4675,
+    "scrollY": 0
+  },
+  "visual": {
+    "heroBackgroundImage": "none",
+    "heroBackgroundColor": "rgba(0, 0, 0, 0)",
+    "archiveBackgroundImage": "linear-gradient(color(srgb 0.027451 0.027451 0.0235294 / 0.72), color(srgb 0.027451 0.027451 0.0235294 / 0.84))"
+  },
+  "screencast": {
+    "captured": 174,
+    "inspected": [
+      {
+        "index": 0,
+        "timestamp": 1790247398.536984,
+        "mean": 9.2,
+        "deviation": 12.2,
+        "blank": false
+      },
+      {
+        "index": 1,
+        "timestamp": 1790247398.641848,
+        "mean": 9,
+        "deviation": 11,
+        "blank": false
+      },
+      {
+        "index": 2,
+        "timestamp": 1790247398.720644,
+        "mean": 9.1,
+        "deviation": 11,
+        "blank": false
+      },
+      {
+        "index": 3,
+        "timestamp": 1790247398.814058,
+        "mean": 9.4,
+        "deviation": 11.3,
+        "blank": false
+      },
+      {
+        "index": 4,
+        "timestamp": 1790247398.903013,
+        "mean": 9.4,
+        "deviation": 11.3,
+        "blank": false
+      },
+      {
+        "index": 5,
+        "timestamp": 1790247398.987871,
+        "mean": 10.4,
+        "deviation": 11.1,
+        "blank": false
+      },
+      {
+        "index": 6,
+        "timestamp": 1790247399.063061,
+        "mean": 38.2,
+        "deviation": 21.4,
+        "blank": false
+      },
+      {
+        "index": 7,
+        "timestamp": 1790247399.147803,
+        "mean": 40.7,
+        "deviation": 23,
+        "blank": false
+      },
+      {
+        "index": 8,
+        "timestamp": 1790247399.241419,
+        "mean": 40.8,
+        "deviation": 23,
+        "blank": false
+      },
+      {
+        "index": 9,
+        "timestamp": 1790247399.323296,
+        "mean": 41.7,
+        "deviation": 22.4,
+        "blank": false
+      },
+      {
+        "index": 10,
+        "timestamp": 1790247399.414843,
+        "mean": 42,
+        "deviation": 23.3,
+        "blank": false
+      },
+      {
+        "index": 11,
+        "timestamp": 1790247399.49467,
+        "mean": 42.1,
+        "deviation": 23.6,
+        "blank": false
+      },
+      {
+        "index": 12,
+        "timestamp": 1790247399.572044,
+        "mean": 42.1,
+        "deviation": 23.6,
+        "blank": false
+      },
+      {
+        "index": 13,
+        "timestamp": 1790247399.663546,
+        "mean": 42.2,
+        "deviation": 23.7,
+        "blank": false
+      },
+      {
+        "index": 14,
+        "timestamp": 1790247399.741414,
+        "mean": 42.3,
+        "deviation": 23.7,
+        "blank": false
+      },
+      {
+        "index": 15,
+        "timestamp": 1790247399.831196,
+        "mean": 42.2,
+        "deviation": 23.7,
+        "blank": false
+      },
+      {
+        "index": 16,
+        "timestamp": 1790247399.910968,
+        "mean": 42.2,
+        "deviation": 23.7,
+        "blank": false
+      },
+      {
+        "index": 17,
+        "timestamp": 1790247399.989866,
+        "mean": 42.2,
+        "deviation": 23.6,
+        "blank": false
+      },
+      {
+        "index": 18,
+        "timestamp": 1790247400.080991,
+        "mean": 42.2,
+        "deviation": 23.6,
+        "blank": false
+      },
+      {
+        "index": 19,
+        "timestamp": 1790247400.160141,
+        "mean": 42.3,
+        "deviation": 23.7,
+        "blank": false
+      },
+      {
+        "index": 20,
+        "timestamp": 1790247400.240044,
+        "mean": 42.2,
+        "deviation": 23.8,
+        "blank": false
+      },
+      {
+        "index": 21,
+        "timestamp": 1790247400.328541,
+        "mean": 42.1,
+        "deviation": 23.8,
+        "blank": false
+      },
+      {
+        "index": 22,
+        "timestamp": 1790247400.405246,
+        "mean": 42.2,
+        "deviation": 23.9,
+        "blank": false
+      },
+      {
+        "index": 23,
+        "timestamp": 1790247400.497621,
+        "mean": 42.3,
+        "deviation": 24.3,
+        "blank": false
+      },
+      {
+        "index": 24,
+        "timestamp": 1790247400.578508,
+        "mean": 42.2,
+        "deviation": 24.6,
+        "blank": false
+      },
+      {
+        "index": 25,
+        "timestamp": 1790247400.657377,
+        "mean": 42.2,
+        "deviation": 24.8,
+        "blank": false
+      },
+      {
+        "index": 26,
+        "timestamp": 1790247400.747595,
+        "mean": 42.2,
+        "deviation": 24.9,
+        "blank": false
+      },
+      {
+        "index": 27,
+        "timestamp": 1790247400.831272,
+        "mean": 42.1,
+        "deviation": 25,
+        "blank": false
+      },
+      {
+        "index": 28,
+        "timestamp": 1790247400.908781,
+        "mean": 42.1,
+        "deviation": 25.1,
+        "blank": false
+      },
+      {
+        "index": 29,
+        "timestamp": 1790247400.997786,
+        "mean": 42.1,
+        "deviation": 25.1,
+        "blank": false
+      },
+      {
+        "index": 30,
+        "timestamp": 1790247401.076365,
+        "mean": 42.1,
+        "deviation": 25.3,
+        "blank": false
+      },
+      {
+        "index": 31,
+        "timestamp": 1790247401.164165,
+        "mean": 42.1,
+        "deviation": 25.4,
+        "blank": false
+      },
+      {
+        "index": 32,
+        "timestamp": 1790247401.246396,
+        "mean": 42.2,
+        "deviation": 25.7,
+        "blank": false
+      },
+      {
+        "index": 33,
+        "timestamp": 1790247401.324171,
+        "mean": 42.2,
+        "deviation": 25.6,
+        "blank": false
+      },
+      {
+        "index": 34,
+        "timestamp": 1790247401.414947,
+        "mean": 42.2,
+        "deviation": 25.6,
+        "blank": false
+      }
+    ],
+    "blanks": 0
+  },
+  "writes": [],
+  "passed": true
+}

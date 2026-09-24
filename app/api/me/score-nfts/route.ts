@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
         .from('score_nft_queue')
         .select(`
           id, token_id, tx_hash, created_at, status, failure_kind,
+          package_ar_tx_id, package_sha256, package_bytes, package_mime, package_upload_state,
           tracks:tracks!score_nft_queue_track_id_fkey(title),
           pending_scores(event_count)
         `)
@@ -52,6 +53,12 @@ export async function GET(req: NextRequest) {
       const failureKind = r.failure_kind === 'safe_retry' || r.failure_kind === 'manual_review'
         ? r.failure_kind
         : null;
+      const scorePackage = status === 'success' && r.package_upload_state === 'verified'
+        && typeof r.package_ar_tx_id === 'string' && typeof r.package_sha256 === 'string'
+        && typeof r.package_bytes === 'number' && r.package_mime === 'application/json'
+        ? { ref: `ar://${r.package_ar_tx_id}` as const, sha256: r.package_sha256,
+          bytes: r.package_bytes, mime: r.package_mime }
+        : undefined;
       return {
         id: status === 'success' && r.token_id != null ? String(r.token_id) : r.id,
         queueId: r.id,
@@ -62,6 +69,7 @@ export async function GET(req: NextRequest) {
         txHash: r.tx_hash ?? undefined,
         failureKind,
         submittedAt: r.created_at,
+        ...(scorePackage ? { scorePackage } : {}),
       };
     });
 

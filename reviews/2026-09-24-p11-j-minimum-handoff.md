@@ -54,3 +54,12 @@ fresh direct Score 没有渲染首页球层，因此相关两个 WebGL framebuff
 - 旧 `codex/p16-wip-snapshot` 只作为选择性迁移来源，不作为正式底座，也不整体合并。
 - 可立即推进：合约、migration、钱包认证、自付 Gas、服务端管线。
 - 暂缓共享前端大改：`/me`、`/score`、Persistent Pond、路由事务、播放器生命周期。
+
+## 最终体验修正
+
+- `/me → /score` 的隐藏目标面改为脱离文档流，移除固定中部落点；Hero 不再带遮罩，遮罩仅保留在永久档案。
+- 移除会隐藏根页面的原生 View Transition 快照，改由现有 Surface 交叉淡入淡出，浏览器录屏 174 帧无黑帧。
+- `/me` 返回后从 API 获得 verified 曲谱包身份，按 SHA-256 去重、并发 2 路预热全部小型 `ripples.score-package.v3`；离页会取消未完成请求。
+- 点击唱片立即进入约 520ms 的 Score 加载外壳，真实服务端详情完成后接管；数据提前完成时不会人为等待。
+- 用户已完成实际体感验收。只读证据 `reviews/evidence/p11-j/score-entry-position.json` 记录顶部进入、Hero/档案遮罩边界、0 黑帧、0 写请求；TypeScript 与定向 ESLint 通过。
+- 用户决定 P11 合入 `main` 后冻结，暂不启动 P16。

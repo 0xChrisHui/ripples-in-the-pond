@@ -49,7 +49,8 @@
 .pond-prepared-archive :is(.me-archive__header, .me-archive__panel) { animation: none; }
 
 .pond-route-surface {
-  position: relative;
+  position: absolute;
+  inset: 0 0 auto;
   z-index: 2;
   opacity: 0;
   pointer-events: none;
@@ -62,24 +63,12 @@
 
 /* 稳定态必须是 transform:none，否则档案里的 fixed 层会以本层为包含块。 */
 .pond-route-surface[data-active='true'] {
+  position: relative;
   opacity: 1;
   transform: none;
 }
 
 .pond-route-surface[data-interactive='true'] { pointer-events: auto; }
-
-@supports (view-transition-name: score-record) {
-  ::view-transition { pointer-events: none; }
-  ::view-transition-old(root),
-  ::view-transition-new(root) { animation: none; opacity: 0; mix-blend-mode: normal; }
-  ::view-transition-group(score-record) {
-    z-index: 90;
-    animation-duration: var(--pond-route-duration, 520ms);
-    animation-timing-function: var(--p11-ease-out);
-  }
-  ::view-transition-old(score-record),
-  ::view-transition-new(score-record) { mix-blend-mode: normal; }
-}
 
 @media (pointer: coarse) {
   .pond-route-surface { transform: translateY(4px); }
@@ -87,5 +76,4 @@
 
 @media (prefers-reduced-motion: reduce) {
   .pond-route-surface, .pond-prepared-archive { transform: none; }
-  ::view-transition-group(score-record) { animation-duration: 140ms; }
 }

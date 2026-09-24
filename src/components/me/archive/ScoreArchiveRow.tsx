@@ -59,7 +59,7 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
     if (isPermanent && row && rect && score.tokenId != null) {
       const section = row.closest<HTMLElement>('[data-archive-section]');
       scoreOrigin.capture({
-        key, href, tokenId: score.tokenId, ownerKey,
+        key, href, tokenId: score.tokenId, trackTitle: score.trackTitle, ownerKey,
         section: section?.dataset.archiveSection ?? 'records',
         page: Number(section?.dataset.archivePage ?? 0), scrollY: window.scrollY,
         rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
@@ -96,9 +96,7 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
         <span>{STATUS_LABELS[score.status]}</span>
         {detail && <small>{detail}</small>}
       </div>
-      <Link className="me-archive-row__action" href={href} onClick={openScore}
-        onMouseEnter={() => transition?.prefetch(href)} onFocus={() => transition?.prefetch(href)}
-        onTouchStart={() => transition?.prefetch(href)}
+      <Link className="me-archive-row__action" href={href} prefetch={false} onClick={openScore}
         aria-disabled={pending || undefined}>
         {action} <span aria-hidden="true">→</span>
       </Link>

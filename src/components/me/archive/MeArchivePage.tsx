@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useMeArchive, type ArchiveSlice } from '@/src/hooks/me/useMeArchive';
 import { useOwnedEchoes } from '@/src/hooks/me/useOwnedEchoes';
+import { useScorePackagePreload } from '@/src/hooks/me/useScorePackagePreload';
 import ArchiveEmpty from './ArchiveEmpty';
 import ArchiveHeader from './ArchiveHeader';
 import ArchiveSection from './ArchiveSection';
@@ -47,6 +48,7 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
     userId: auth.userId,
     getAccessToken: auth.getAccessToken,
   });
+  useScorePackagePreload(pathname === '/me', scores.items);
   const echoes = useOwnedEchoes({
     authenticated: auth.authenticated,
     authSource: auth.authSource,

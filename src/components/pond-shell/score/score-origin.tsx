@@ -10,6 +10,7 @@ export type ScoreOrigin = {
   key: string;
   href: string;
   tokenId: number;
+  trackTitle: string;
   ownerKey: string;
   section: string;
   page: number;

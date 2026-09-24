@@ -22,6 +22,13 @@ export const SCORE_STATUSES = [
 export type ScoreMintStatus = (typeof SCORE_STATUSES)[number];
 export type ScoreFailureKind = 'safe_retry' | 'manual_review';
 
+export type ScorePackagePreview = {
+  ref: `ar://${string}`;
+  sha256: string;
+  bytes: number;
+  mime: 'application/json';
+};
+
 /** 非终态：用于积压、卡龄与健康检查。 */
 export const SCORE_ACTIVE_STATUSES = SCORE_STATUSES.filter(
   (status) => status !== 'success' && status !== 'failed',
@@ -112,6 +119,7 @@ export interface OwnedScoreNFT {
   txHash?: string;
   failureKind: ScoreFailureKind | null;
   submittedAt: string;
+  scorePackage?: ScorePackagePreview;
 }
 
 export interface MyScoreNFTsResponse {

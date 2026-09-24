@@ -7,11 +7,9 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **当前唯一施工项：Phase 16 正式底座与后端优先施工**
-  - [ ] 从 P11-J 收口提交创建正式 P16 工作树/分支
-  - [ ] 从旧 `codex/p16-wip-snapshot` 选择性迁移 P16 playbook 与后端资产
-  - [ ] 优先推进合约、migration、钱包认证、自付 Gas 与服务端管线
-  - [ ] P11 深度 review 完成前冻结共享 `/me`、`/score`、Persistent Pond、路由事务和播放器生命周期大改
+- **当前唯一施工项：等待用户下一条任务**
+  - [x] Phase 11 最终体验修正、收口并合入 `main`
+  - [x] 保持 Phase 16 暂停，不继续合约、migration、钱包或前端施工
 
 ## ⏳ Later / 开放项
 

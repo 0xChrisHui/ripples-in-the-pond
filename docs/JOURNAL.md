@@ -1677,3 +1677,7 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **取消晚到导航**：preparing 阶段取消时同时记录被取消 href 并恢复 currentHref；迟到的 App Router 提交会被送回来源，不能覆盖最后一次用户意图。
 - **FBO 判定**：direct Score→Home 的 `6→8` 是首页球层首次恢复时的一次性懒分配；Core/Canvas/context 不变且后续不增长，所以撤销为满足错误断言而加入的预分配。
 - **P16 边界**：P11 深度 review 前只推进 P16 合约、migration、钱包认证、自付 Gas 与服务端管线，不大改共享前端接缝。
+## 2026-09-24 — P11 最终换场与曲谱预热
+
+- `/me → /score` 不再使用浏览器原生 View Transition；根快照会遮住持续水面并产生黑帧，现由常驻 Pond Surface 自己完成交叉淡入淡出。
+- `/me` 只预热 verified 小型 Score Package，并发限制为 2；Score 页面详情仍在点击后读取，先显示正式外壳，不人为延长快速响应。

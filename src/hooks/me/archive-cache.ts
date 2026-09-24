@@ -68,13 +68,20 @@ function object(value: unknown): Record<string, unknown> | null {
 
 export function validCachedScore(value: unknown): value is OwnedScoreNFT {
   const item = object(value);
+  const scorePackage = object(item?.scorePackage);
+  const validPackage = item?.scorePackage === undefined || Boolean(scorePackage
+    && typeof scorePackage.ref === 'string' && /^ar:\/\/[A-Za-z0-9_-]{43}$/.test(scorePackage.ref)
+    && typeof scorePackage.sha256 === 'string' && /^[0-9a-f]{64}$/.test(scorePackage.sha256)
+    && Number.isSafeInteger(scorePackage.bytes) && Number(scorePackage.bytes) > 0
+    && scorePackage.mime === 'application/json');
   return Boolean(item
     && typeof item.id === 'string'
     && typeof item.queueId === 'string'
     && typeof item.trackTitle === 'string'
     && typeof item.status === 'string'
     && SCORE_STATES.has(item.status)
-    && typeof item.submittedAt === 'string');
+    && typeof item.submittedAt === 'string'
+    && validPackage);
 }
 
 export function validCachedRecording(value: unknown): value is ArchiveRecording {

@@ -782,3 +782,8 @@
 - 🔧 修复：取消时记录目标与恢复 href、发出 replace；若迟到目标仍落地，pathname effect 将其送回来源。档案行同时清理 forward origin。
 - ✅ 验证：冷请求延迟 2002ms 后正常释放，最终仍为 `/me`、`stable/archive`，busy、origin stage 与共享锚点均清空。
 - 📁 相关：`src/components/pond-shell/pond-transition.tsx`、`src/components/me/archive/ScoreArchiveRow.tsx`、`reviews/evidence/p11-j/baseline/minimal-interactions.json`。
+## 2026-09-24 — Score 浏览器 Gate 误报超时
+
+- **现象**：页面已经出现 `data-score-state="ready"`，脚本仍等待超时。
+- **原因**：CDP 的 `returnByValue` 无法把 DOM Element 作为布尔值返回，原表达式直接返回了节点。
+- **修复**：断言显式包为 `Boolean(document.querySelector(...))`；诊断确认真实页面完整、浏览器错误为 0。
