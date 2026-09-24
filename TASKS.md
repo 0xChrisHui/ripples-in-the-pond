@@ -7,17 +7,16 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **当前唯一施工项：P11-I 用户验收与交付决定**
-  - [x] I0 main 效果基准表（18 项自动记录；用户确认与动态缺口列晨报）
-  - [x] I1 独立修复（a–d）
-  - [x] I2 共享水塘外壳
-  - [x] I3–I5 路由转场、圆圈进退场与私人档案
-  - [x] I6–I7 作品页与档案唱片锚点
-  - [x] I8 自动总验收与晨报
-  - [ ] 用户真实账号/日食目验与 D-5、push、合并、部署、清理决定（当前）
+- **当前唯一施工项：Phase 16 正式底座与后端优先施工**
+  - [ ] 从 P11-J 收口提交创建正式 P16 工作树/分支
+  - [ ] 从旧 `codex/p16-wip-snapshot` 选择性迁移 P16 playbook 与后端资产
+  - [ ] 优先推进合约、migration、钱包认证、自付 Gas 与服务端管线
+  - [ ] P11 深度 review 完成前冻结共享 `/me`、`/score`、Persistent Pond、路由事务和播放器生命周期大改
 
 ## ⏳ Later / 开放项
 
+- **P11-J 深度 review（P16 共享前端施工前完成）**：20+ 压力循环、全能力组合矩阵、重复 offline/context-loss/no-WebGL、J5 全视口动态对比度、深度代码 review 与证据美化。
+- **P11-I/J 人工验收与交付决定**：真实账号/日食目验、真实档案行恢复；决定 ARCHITECTURE D-5、合并、部署与 Edge profile/worktree 清理。
 - **P15-I5 发布与复测封存**：P15-I0–I4 已完成；本轨结束后另行处理，当前不推送或部署。
 - **P14 live 观察与私密目验**：保持两项每分钟 cron，完成首枚 Pond Echo 上线后的 24h/7d 只读观察；原钱包本人补 `/me#pond-echoes` 私密档案目验。
 - **Phase 11 外部动态证据补档**（不阻塞，2026-09-05 历史条件）：代码与自动 Gate 已完成；当时因 `arweave.net` 与 `ario.permagate.io` 瞬时同时失败，未补 Mainnet Token #1 ready Score 的 cold-start reduced-motion 与日食黑盘复拍。该历史状态不代表当前三候选 resolver；Artist 正式文案以后替换，第二枚 Mainnet Token Gate 已 deferred，Sepolia #24 仅作隔离历史 fixture。

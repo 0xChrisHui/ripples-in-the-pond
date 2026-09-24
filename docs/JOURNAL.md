@@ -1670,3 +1670,10 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **D-3 / D-4**：#36 两项未合入修复继续悬置；I1-a 作为本轨普通修复提交，不拆成独立热修发布。
 - **已批准偏差**：首页后台预备唯一档案；Score 返回 `/me`；只有 Score 真正 playing 才停止全局播放器；本机 Google Fonts 不可达时只为验证临时绕过并在提交前恢复。
 - **生命周期证据口径**：listener 采用浏览器 GC 后 DOM 计数，音频直接记录 context/source/media；无界面 Edge 能真实触发 context loss，但驱动不发原生恢复事件，恢复保留实机目验。
+
+## 2026-09-24 — P11-J 最小安全收口
+
+- **统一路由事务**：Home、Archive 与 Score 的导航只由一个 generation 状态机协调；来源 Surface 保持到目标 visualReady，View Transition 只做同步 owner 交接，网络与清理不进入动画回调。
+- **取消晚到导航**：preparing 阶段取消时同时记录被取消 href 并恢复 currentHref；迟到的 App Router 提交会被送回来源，不能覆盖最后一次用户意图。
+- **FBO 判定**：direct Score→Home 的 `6→8` 是首页球层首次恢复时的一次性懒分配；Core/Canvas/context 不变且后续不增长，所以撤销为满足错误断言而加入的预分配。
+- **P16 边界**：P11 深度 review 前只推进 P16 合约、migration、钱包认证、自付 Gas 与服务端管线，不大改共享前端接缝。

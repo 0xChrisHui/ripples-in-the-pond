@@ -774,3 +774,11 @@
 - 🔧 修复：为每次 run 增加 disposed 状态并保存 deadline、kick 与 cancel RAF；race 在 `finally` 中统一释放。快速 Back 同时允许从 forward 阶段进入 returning。
 - ✅ 结果：20 次首页往返、20 次档案与 Score 往返后 RAF、GC 后 listener、DOM、heap、AudioContext 与音源均回到稳定范围。
 - 💡 `Promise.race` 不会取消落败分支；长 timeout 与递归 RAF 必须显式持有并在所有终态释放。
+
+### E066 — 冷加载取消后迟到导航覆盖最后一次意图
+
+- 😱 现象：`/me → /score/2` 在 2 秒受控 RSC 延迟期间按 Escape，界面先恢复 `/me`，请求释放后却再次落入 `/score/2`。
+- 🧠 原因：事务 `cancel` 只恢复 React 状态，没有处理已经交给 App Router 的异步 push；迟到 pathname 被当成新的外部导航。
+- 🔧 修复：取消时记录目标与恢复 href、发出 replace；若迟到目标仍落地，pathname effect 将其送回来源。档案行同时清理 forward origin。
+- ✅ 验证：冷请求延迟 2002ms 后正常释放，最终仍为 `/me`、`stable/archive`，busy、origin stage 与共享锚点均清空。
+- 📁 相关：`src/components/pond-shell/pond-transition.tsx`、`src/components/me/archive/ScoreArchiveRow.tsx`、`reviews/evidence/p11-j/baseline/minimal-interactions.json`。

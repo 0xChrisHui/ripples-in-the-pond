@@ -6,7 +6,9 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 11-I「主线重放与效果对齐」自动部分完成，等待用户验收与交付决定**。I0–I8 已完成；20 次首页往返与 20 次档案/Score 往返、四类能力路径、历史/反向/后台/断网/context loss、音频隔离和资源趋势 Gate 通过。完整 verify 构建 38/38、Forge 56/56；证据见 `reviews/2026-09-24-p11-i-completion-review.md`。
+**Phase**: **Phase 11-J 最小安全收口完成，切换到 Phase 16**。`/me → /score`、`/score → /me`、`/score → /` 已统一为 `preparing → revealing → settling` 路由事务；Score 永久档案已改为深色半透明阅读层。最小 Gate、延期范围与 P16 边界见 `reviews/2026-09-24-p11-j-minimum-handoff.md`。
+
+**P11-J 收口（2026-09-24）✅**：三向 warm/cold、2 秒受控延迟、Back、快速反向、换目标、失败恢复、音频清理、单播放器与持久 Water Core/Canvas/WebGL Gate 已通过；TypeScript、定向 ESLint、production build、`scripts/verify.sh` 与 Forge 56/56 全绿。direct Score→Home 的 FBO `6→8` 是首页球层首次恢复时的一次性能力分配，不是逐次泄漏，未修改产品去迎合错误断言。Google Fonts 验证绕行已完全恢复，`app/layout.tsx` 与 HEAD 哈希一致。
 
 **P15-H 新发现（2026-09-21）**：2026-08-23 的本地声音变更不仅新增 `space + 3–8`，还替换了 `a–z` 全部 26 个 MP3；因此新 Permanent Core 必须是当前 33 音频的独立版本，旧 26 表继续原样服务历史真相。Score #1–#3 都钉住旧 decoder/旧 26 表；#2 明确缺 `space`，#2/#3 还必须按各自铸造时 Production deployment 证据判断已用字母是否需要兼容 override，不能只补 7 键后宣称完全对齐。
 
@@ -118,7 +120,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：用户按完成审查做真实账号与日食肉眼验收，并决定 ARCHITECTURE D-5、push、合并、部署与清理；这些动作均尚未执行。
+**当前权威下一步**：从 P11-J 收口提交创建正式 P16 工作树与分支，优先推进合约、migration、钱包认证、自付 Gas 与服务端管线。旧 `codex/p16-wip-snapshot` 仅作迁移来源；P11 深度 review 完成前，不大改 `/me`、`/score`、Persistent Pond、路由事务和播放器生命周期。P11 的 20+ 压力循环、全能力矩阵、重复 offline/context-loss/no-WebGL、J5 全视口动态对比度和深度 review 明确 deferred。
 
 ---
 
