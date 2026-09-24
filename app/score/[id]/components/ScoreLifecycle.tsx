@@ -30,6 +30,7 @@ function failureMessage(score: ScoreFailedData): string {
 
 export default function ScoreLifecycle({ score, network }: Props) {
   const processing = score.state === 'processing';
+  const snapshotUnavailable = !processing && score.publicFailure === 'snapshot_unavailable';
   const title = score.tokenId == null ? 'Ripples · 制作中' : `Ripples #${score.tokenId}`;
   const tokenLabel = score.tokenId == null ? 'Pending edition' : `Token #${String(score.tokenId).padStart(3, '0')}`;
   const statusText = processing
@@ -37,7 +38,9 @@ export default function ScoreLifecycle({ score, network }: Props) {
     : failureMessage(score);
   const detail = processing
     ? '作品身份、分享链接和已经生成的凭证会留在这里；稍后刷新即可查看进度。'
-    : '已知链上身份与永久凭证仍保留在下方，可据此独立核验。';
+    : snapshotUnavailable
+      ? '这不代表铸造失败；已知的作品身份仍可在下方核验。'
+      : '已知链上身份与永久凭证仍保留在下方，可据此独立核验。';
   return (
     <main
       className="score-pond-page score-pond-page--lifecycle"
@@ -54,7 +57,7 @@ export default function ScoreLifecycle({ score, network }: Props) {
           shareAction={<ShareActions id={score.id} tokenId={score.tokenId ?? null} trackTitle={score.trackTitle} />}
         />
         <div className="score-pond-page__identity" data-pond-ui="true">
-          <EditionStamp status={processing ? 'processing' : 'failed'} detail={tokenLabel} />
+          <EditionStamp status={processing ? 'processing' : snapshotUnavailable ? 'degraded' : 'failed'} detail={tokenLabel} />
           <h1>{title}</h1>
           <p>{score.trackTitle}{score.eventCount == null ? '' : ` · ${score.eventCount} 个事件`}</p>
         </div>

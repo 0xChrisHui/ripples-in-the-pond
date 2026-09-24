@@ -9,8 +9,9 @@ import './score-page.css';
 
 type Props = { params: Promise<{ id: string }> };
 
-function networkLabel(): string {
-  return process.env.NEXT_PUBLIC_CHAIN_ID === '10' ? 'OP Mainnet' : 'OP Sepolia';
+function networkLabel(score: ScorePageData): string {
+  return score.source === 'snapshot' ? 'OP Mainnet'
+    : process.env.NEXT_PUBLIC_CHAIN_ID === '10' ? 'OP Mainnet' : 'OP Sepolia';
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -51,7 +52,7 @@ export default async function ScorePage({ params }: Props) {
   }
   if (!score) notFound();
   if (score.state === 'ready') {
-    return <ScorePondScene score={score} network={networkLabel()} />;
+    return <ScorePondScene score={score} network={networkLabel(score)} />;
   }
-  return <ScoreLifecycle score={score} network={networkLabel()} />;
+  return <ScoreLifecycle score={score} network={networkLabel(score)} />;
 }

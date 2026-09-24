@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getScoreOwner } from '@/src/data/score-fallback';
-import { explorerAddressUrl } from '@/src/lib/chain/chain-config';
+import { getLegacyScoreOwner } from '@/src/data/score-fallback';
+import { LEGACY_SCORE_EXPLORER } from '@/src/data/score/legacy-identity';
 
 type Context = { params: Promise<{ id: string }> };
 
@@ -12,9 +12,9 @@ export async function GET(_request: Request, { params }: Context) {
     return NextResponse.json({ error: '无效的 Score Token ID' }, { status: 400 });
   }
   try {
-    const owner = await getScoreOwner(tokenId);
+    const owner = await getLegacyScoreOwner(tokenId);
     const response = NextResponse.json({
-      owner, href: owner ? explorerAddressUrl(owner) : null,
+      owner, href: owner ? `${LEGACY_SCORE_EXPLORER}/address/${owner}` : null,
     });
     response.headers.set('Cache-Control', owner
       ? 'public, s-maxage=30, stale-while-revalidate=120'

@@ -17,7 +17,7 @@
     "p15:h4:verify": "tsx scripts/p15-h/edge/mirror-edge.test.ts",
     "p15:h4:dry-run": "tsx scripts/p15-h/edge/mirror-edge.ts",
     "p15:h4:execute": "tsx scripts/p15-h/edge/mirror-edge.ts --execute",
-    "p15:h5:verify": "tsx scripts/p15-h/snapshot/score-snapshot.test.ts",
+    "p15:h5:verify": "tsx scripts/p15-h/snapshot/score-snapshot.test.ts && tsx scripts/p15-h/snapshot/legacy-identity.test.ts",
     "p15:h6:verify": "tsx scripts/p15/verify-permanent-media.ts",
     "p15:h7:audit-bases": "tsx scripts/p15-h/release/audit-track-bases.ts",
     "p15:h7:build-snapshots": "tsx scripts/p15-h/release/build-snapshot-plan.ts",

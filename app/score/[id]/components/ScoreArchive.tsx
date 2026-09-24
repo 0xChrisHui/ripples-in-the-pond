@@ -49,6 +49,7 @@ function ledgerEntries(provenance: ScoreProvenance, holder?: ScoreHolderState): 
 
 function statusFor(score: ScorePageData): EditionStatus {
   if (score.state === 'processing') return 'processing';
+  if (score.state === 'failed' && score.publicFailure === 'snapshot_unavailable') return 'degraded';
   if (score.state === 'failed') return 'failed';
   return score.degraded ? 'degraded' : 'finalized';
 }

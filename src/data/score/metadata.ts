@@ -161,15 +161,20 @@ export function createScoreProvenance(input: {
   contract: string; tokenId: number | null; holder: string | null; creator: string | null;
   mintTx: string | null; setUriTx: string | null; metadataRef: string | null;
   manifest: ScorePlaybackManifest | null; tokenUriSource?: 'contract' | 'database';
+  explorerBaseUrl?: string;
 }): ScoreProvenance {
   const tokenUri = input.metadataRef;
+  const addressUrl = (value: string) => input.explorerBaseUrl
+    ? `${input.explorerBaseUrl}/address/${value}` : explorerAddressUrl(value);
+  const transactionUrl = (value: string) => input.explorerBaseUrl
+    ? `${input.explorerBaseUrl}/tx/${value}` : explorerTxUrl(value);
   return {
-    contract: entry(input.contract, 'contract', explorerAddressUrl(input.contract)),
+    contract: entry(input.contract, 'contract', addressUrl(input.contract)),
     token: entry(input.tokenId == null ? null : String(input.tokenId), 'contract'),
-    currentHolder: entry(input.holder, 'contract', input.holder ? explorerAddressUrl(input.holder) : null),
+    currentHolder: entry(input.holder, 'contract', input.holder ? addressUrl(input.holder) : null),
     creator: entry(input.creator, 'database'),
-    mintTransaction: entry(input.mintTx, 'database', input.mintTx ? explorerTxUrl(input.mintTx) : null),
-    setUriTransaction: entry(input.setUriTx, 'database', input.setUriTx ? explorerTxUrl(input.setUriTx) : null),
+    mintTransaction: entry(input.mintTx, 'database', input.mintTx ? transactionUrl(input.mintTx) : null),
+    setUriTransaction: entry(input.setUriTx, 'database', input.setUriTx ? transactionUrl(input.setUriTx) : null),
     tokenUri: entry(tokenUri, input.tokenUriSource ?? 'contract', arHref(tokenUri)),
     metadata: entry(input.metadataRef, 'metadata', arHref(input.metadataRef)),
     events: entry(input.manifest?.eventsRef ?? null, 'metadata.animation_url', arHref(input.manifest?.eventsRef ?? null)),

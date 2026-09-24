@@ -1,7 +1,6 @@
 import 'server-only';
-import { CHAIN_ID_NUM } from '@/src/lib/chain/chain-config';
-import { SCORE_NFT_ADDRESS } from '@/src/lib/chain/contracts';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { LEGACY_SCORE_CHAIN_ID, LEGACY_SCORE_CONTRACT } from './legacy-identity';
 import { parseScoreSnapshot, type ParsedScoreSnapshot, type ScoreSnapshotRow } from './snapshot-contract';
 
 function environment(): 'development' | 'preview' | 'production' {
@@ -13,8 +12,8 @@ function environment(): 'development' | 'preview' | 'production' {
 /** 数字 Token 热路径只读 active pointer 与它精确指向的不可变 verified revision。 */
 export async function getActiveScoreSnapshot(tokenId: number): Promise<ParsedScoreSnapshot | null> {
   const identity = {
-    environment: environment(), chain_id: CHAIN_ID_NUM,
-    contract: SCORE_NFT_ADDRESS.toLowerCase(), token_id: tokenId,
+    environment: environment(), chain_id: LEGACY_SCORE_CHAIN_ID,
+    contract: LEGACY_SCORE_CONTRACT.toLowerCase(), token_id: tokenId,
   };
   const { data: active, error: activeError } = await supabaseAdmin
     .from('score_playback_snapshot_active')

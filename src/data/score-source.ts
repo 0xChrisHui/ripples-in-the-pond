@@ -8,6 +8,7 @@ import { getScoreOwner } from './score-fallback';
 import { createScoreProvenance } from './score/metadata';
 import type { ScoreProvenance } from './score/metadata';
 import { getActiveScoreSnapshot } from './score/snapshot-source';
+import { LEGACY_SCORE_CONTRACT, LEGACY_SCORE_EXPLORER } from './score/legacy-identity';
 import type { ScoreMintStatus, ScorePlaybackManifest } from '@/src/types/jam';
 import type { ScorePlaybackBootstrap, ScoreSnapshotReceipt } from '@/src/features/score-playback/types';
 import type { Track } from '@/src/types/tracks';
@@ -88,7 +89,10 @@ async function getScoreByTokenId(tokenId: number): Promise<ScorePageData | null>
     console.error('[score-source] verified snapshot invalid:', tokenId, error);
     return snapshotFailure(tokenId, null);
   }
-  if (!snapshot) return snapshotFailure(tokenId, null);
+  if (!snapshot) {
+    console.error('[score-source] mainnet verified snapshot missing:', tokenId);
+    return snapshotFailure(tokenId, null);
+  }
   const eventCount = snapshot.playbackBootstrap.events.length;
   return {
     state: 'ready', source: 'snapshot', id: String(tokenId), queueId: snapshot.queueId,
@@ -98,7 +102,8 @@ async function getScoreByTokenId(tokenId: number): Promise<ScorePageData | null>
     confirmedAt: snapshot.receipt.verifiedAt, mintedAt: snapshot.mintedAt ?? snapshot.receipt.verifiedAt,
     metadataRef: snapshot.metadataRef, manifest: snapshot.manifest,
     playbackBootstrap: snapshot.playbackBootstrap, snapshot: snapshot.receipt,
-    provenance: provenance({ tokenId, holder: null, metadataRef: snapshot.metadataRef,
+    provenance: provenance({ contract: LEGACY_SCORE_CONTRACT, explorerBaseUrl: LEGACY_SCORE_EXPLORER,
+      tokenId, holder: null, metadataRef: snapshot.metadataRef,
       manifest: snapshot.manifest, tokenUriSource: 'contract' }),
   };
 }
@@ -109,7 +114,8 @@ function snapshotFailure(tokenId: number, holder: string | null): ScoreFailedDat
     queueStatus: null, trackTitle: `Ripples #${tokenId}`, creatorAddress: '', currentHolder: holder,
     coverUrl: '', eventCount: null, permanentEventCount: null, createdAt: null,
     confirmedAt: null, mintedAt: '', degraded: true, publicFailure: 'snapshot_unavailable',
-    failureKind: null, provenance: provenance({ tokenId, holder }),
+    failureKind: null, provenance: provenance({ contract: LEGACY_SCORE_CONTRACT,
+      explorerBaseUrl: LEGACY_SCORE_EXPLORER, tokenId, holder }),
   };
 }
 
@@ -124,7 +130,12 @@ async function getScoreByQueueId(queueId: string): Promise<ScorePageData | null>
   }
   if (!data) return null;
   const row = data as unknown as QueueRow;
-  if (row.status === 'success' && row.token_id != null) return getScoreByTokenId(row.token_id);
+  // 测试链队列可能有相同 tokenId，不能借旧数字链接误读成主网唱片。
+  if (row.status === 'success' && row.token_id != null
+    && process.env.NEXT_PUBLIC_CHAIN_ID === '10'
+    && SCORE_NFT_ADDRESS.toLowerCase() === LEGACY_SCORE_CONTRACT.toLowerCase()) {
+    return getScoreByTokenId(row.token_id);
+  }
   return buildQueueScore(row);
 }
 
