@@ -13,7 +13,7 @@ import { exposeTrack, type TrackRow } from '@/src/lib/track-contract';
  * B8 设计（2026-05-07）：草稿一旦入队（点击铸造）就立刻从这里消失，
  * 转去"我的唱片"显示。SQL 条件：
  *   1. status='draft' AND expires_at > now（活草稿）
- *   2. id NOT IN (user 的 score_nft_queue.pending_score_id 集合)
+ *   2. id 不在 OP queue，且没有 active / consumed / manual_review 的统一 mint claim
  *
  * 不再返回 mintingState —— 前端 useMintScore 用 5s 本地 timer 做乐观显示。
  */
@@ -26,16 +26,25 @@ export async function GET(req: NextRequest) {
       return timing.response(() => NextResponse.json({ error: '未登录' }, { status: 401 }));
     }
 
-    // 拿 user 已入队的 pending_score_id 集合（用于 SQL NOT IN 排除）
-    const { data: queueRows, error: qErr } = await timing.measure('db', () => (
+    // 兼容历史 OP queue，并以 P16 统一 claim 排除所有已选择铸造方式的草稿。
+    const [queueResult, claimResult] = await timing.measure('db', () => Promise.all([
       supabaseAdmin
         .from('score_nft_queue')
         .select('pending_score_id')
+        .eq('user_id', auth.userId),
+      supabaseAdmin
+        .from('score_mint_claims')
+        .select('pending_score_id')
         .eq('user_id', auth.userId)
-    ));
-    if (qErr) throw qErr;
+        .neq('status', 'released'),
+    ]));
+    if (queueResult.error) throw queueResult.error;
+    if (claimResult.error) throw claimResult.error;
 
-    const enqueuedIds = (queueRows ?? []).map((q) => q.pending_score_id);
+    const enqueuedIds = [...new Set([
+      ...(queueResult.data ?? []).map((row) => row.pending_score_id),
+      ...(claimResult.data ?? []).map((row) => row.pending_score_id),
+    ])];
 
     const light = req.nextUrl.searchParams.get('light') === '1';
 
