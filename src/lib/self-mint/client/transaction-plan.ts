@@ -28,6 +28,8 @@ export type MintTransactionPlan = {
   walletAddress: Address;
   chain: typeof mainnet | typeof sepolia;
   gasLimit: bigint;
+  estimatedFeeWei: bigint;
+  hasEnoughBalance: boolean;
   data: Hex;
 };
 
@@ -61,14 +63,15 @@ export async function buildMintTransactionPlan(input: {
   ]);
   const gasLimit = gas * 120n / 100n;
   const maxFee = fees.maxFeePerGas ?? fees.gasPrice;
-  if (!maxFee || balance < gasLimit * maxFee) {
-    throw new Error('ETH 余额不足以支付当前保守 Gas 估算');
-  }
+  if (!maxFee) throw new Error('暂时无法取得 Gas 价格');
+  const estimatedFeeWei = gasLimit * maxFee;
   return {
     voucher,
     walletAddress: input.walletAddress,
     chain,
     gasLimit,
+    estimatedFeeWei,
+    hasEnoughBalance: balance >= estimatedFeeWei,
     data: encodeFunctionData({ abi: ETHEREUM_SCORE_ABI, functionName: 'redeem', args }),
   };
 }

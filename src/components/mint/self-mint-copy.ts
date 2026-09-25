@@ -31,7 +31,7 @@ export const ASSET_STAGE_COPY: Record<PublicOrder['assetStage'], { title: string
 
 export const STATUS_COPY: Record<PublicOrder['status'], { title: string; detail: string }> = {
   preparing_assets: { title: '正在准备并永久保存作品', detail: '素材写入后不可删除；这里可以安全关闭，后台会继续。' },
-  ready_to_sign: { title: '等待钱包确认', detail: '还没有扣除 Gas；点击后会先模拟交易，再打开钱包。' },
+  ready_to_sign: { title: '确认铸造费用', detail: '还没有扣除费用；确认美元 Gas 预估后，再打开钱包。' },
   submitted: { title: '交易已提交', detail: '不要重复发送。即使关闭页面，后台仍会继续核验。' },
   confirming: { title: '等待链上确认', detail: '合约已看到作品，达到确认数后会开放永久页面。' },
   success: { title: '铸造完成', detail: '永久作品与链上身份已完成一致性核验。' },

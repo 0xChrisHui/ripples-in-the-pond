@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useRef } from 'react';
-import { createWalletClient, custom, getAddress, type Hex } from 'viem';
+import { createWalletClient, custom, formatEther, getAddress, type Hex } from 'viem';
 import { forgetMintHash, rememberMintHash } from '@/src/lib/self-mint/client-hash';
 import {
   buildMintTransactionPlan,
@@ -18,6 +18,8 @@ function userRejected(error: unknown): boolean {
   }
   return false;
 }
+
+export type MintGasEstimate = { usd: number; enough: boolean };
 
 export function useEthereumScoreMint() {
   const { selectedExternalWallet, walletCapability, getAccessToken } = useAuth();
@@ -48,8 +50,19 @@ export function useEthereumScoreMint() {
 
   const prepareOrder = useCallback(async (orderId: Hex) => {
     const wallet = selectedExternalWallet;
-    if (!wallet || !walletCapability.canSelfPayEthGas) return;
-    await getPlan(orderId, getAddress(wallet.address));
+    if (!wallet || !walletCapability.canSelfPayEthGas) {
+      throw new Error('当前外部钱包不可用于自付铸造');
+    }
+    const plan = await getPlan(orderId, getAddress(wallet.address));
+    const response = await fetch('/api/market/eth-usd');
+    const result = await response.json() as { usd?: number; error?: string };
+    if (!response.ok || typeof result.usd !== 'number') {
+      throw new Error(result.error ?? '暂时无法换算美元 Gas');
+    }
+    return {
+      usd: Number(formatEther(plan.estimatedFeeWei)) * result.usd,
+      enough: plan.hasEnoughBalance,
+    } satisfies MintGasEstimate;
   }, [getPlan, selectedExternalWallet, walletCapability.canSelfPayEthGas]);
 
   const sendOrder = useCallback(async (orderId: Hex, expectedChainId: 1 | 11155111) => {
@@ -68,6 +81,7 @@ export function useEthereumScoreMint() {
       planRef.current = null;
       plan = await getPlan(orderId, walletAddress);
     }
+    if (!plan.hasEnoughBalance) throw new Error('ETH 余额不足以支付当前保守 Gas 估算');
 
     const provider = await wallet.getEthereumProvider();
     const walletClient = createWalletClient({

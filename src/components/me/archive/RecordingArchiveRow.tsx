@@ -6,7 +6,6 @@ import { fetchMyScoreEvents } from '@/src/data/jam-source';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useEventsPlayback } from '@/src/hooks/useEventsPlayback';
 import { useMintScore } from '@/src/hooks/score/useMintScore';
-import MintChoiceDialog from '@/src/components/mint/MintChoiceDialog';
 import { useArchiveMintContext } from '@/src/components/mint/archive/ArchiveMintProvider';
 import type { ArchiveRecording } from '@/src/hooks/me/useMeArchive';
 import type { KeyEvent } from '@/src/types/jam';
@@ -28,7 +27,7 @@ function remainingLabel(expiresAt: string, now: number): { label: string; urgent
 
 /** 录音行复用全局 Player 与既有入队 hook，不创建第二条音频路径。 */
 export default function RecordingArchiveRow({ recording, index, onQueued }: Props) {
-  const { getAccessToken } = useAuth();
+  const auth = useAuth();
   const archiveMint = useArchiveMintContext();
   const { state: mintState, mint } = useMintScore();
   const { toggle, playing, currentTrack } = usePlayer();
@@ -36,7 +35,8 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
   const [eventsLoading, setEventsLoading] = useState(false);
   const [eventsError, setEventsError] = useState(false);
   const [now, setNow] = useState(() => Date.now());
-  const [showMintChoice, setShowMintChoice] = useState(false);
+  const [selfMintBusy, setSelfMintBusy] = useState(false);
+  const [selfMintError, setSelfMintError] = useState<string | null>(null);
   const queuedRef = useRef(false);
   const expiredRef = useRef(false);
   const callbackRef = useRef(onQueued);
@@ -68,7 +68,7 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
     setEventsLoading(true);
     setEventsError(false);
     try {
-      const token = await getAccessToken();
+      const token = await auth.getAccessToken();
       if (!token) throw new Error('登录凭证暂不可用');
       const loaded = await fetchMyScoreEvents(token, pendingScoreId);
       setEvents(loaded);
@@ -78,6 +78,33 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
       setEventsError(true);
     } finally {
       setEventsLoading(false);
+    }
+  }
+
+  async function prepareEthereumMint() {
+    const wallet = auth.selectedExternalWallet;
+    if (!wallet || !auth.walletCapability.canSelfPayEthGas || !recording.pendingScoreId) {
+      setSelfMintError('请先重新连接原钱包');
+      return;
+    }
+    setSelfMintBusy(true);
+    setSelfMintError(null);
+    try {
+      const token = await auth.getAccessToken();
+      if (!token) throw new Error('登录已失效');
+      const response = await fetch('/api/self-mint/prepare', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pendingScoreId: recording.pendingScoreId, walletAddress: wallet.address,
+        }),
+      });
+      const result = await response.json() as { orderId?: `0x${string}`; error?: string };
+      if (!response.ok || !result.orderId) throw new Error(result.error ?? '作品档案建立失败');
+      archiveMint.openOrder(result.orderId);
+    } catch (caught) {
+      setSelfMintError(caught instanceof Error ? caught.message : '作品档案建立失败');
+      setSelfMintBusy(false);
     }
   }
 
@@ -101,6 +128,7 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
         {recording.awaitingRefresh && <small>正在同步</small>}
         {!recording.pendingScoreId && <small>{localState}</small>}
         {eventsError && <small role="alert">试听加载失败，可重试</small>}
+        {selfMintError && <small role="alert">{selfMintError}</small>}
       </div>
       {recording.pendingScoreId ? (
         <div className="me-archive-row__actions">
@@ -113,23 +141,18 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
             <span>{mintState === 'queued' ? '正在铸造…' : '已提交'}</span>
           ) : (
             <button className="me-archive-row__mint" type="button"
+              disabled={selfMintBusy}
               aria-label={`将${recording.title}铸造为唱片`}
               onClick={() => {
                 if (archiveMint.chainId === 1 || archiveMint.chainId === 11155111) {
-                  setShowMintChoice(true);
+                  void prepareEthereumMint();
                 } else void mint(recording.pendingScoreId!);
               }}>
-              {mintState === 'error' ? '重试铸造' : '铸造唱片'} <span aria-hidden="true">→</span>
+              {selfMintBusy ? '正在建立铸造订单…' : mintState === 'error' ? '重试铸造' : '铸造唱片'} <span aria-hidden="true">→</span>
             </button>
           )}
         </div>
       ) : null}
-      {showMintChoice && recording.pendingScoreId && (
-        <MintChoiceDialog pendingScoreId={recording.pendingScoreId} title={recording.title}
-          lockedChoice="eth" onClose={() => setShowMintChoice(false)}
-          onPrepared={(orderId) => { setShowMintChoice(false); archiveMint.openOrder(orderId); }}
-          onOpMint={() => { setShowMintChoice(false); void mint(recording.pendingScoreId!); }} />
-      )}
     </article>
   );
 }

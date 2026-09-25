@@ -5,14 +5,19 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Hex } from 'viem';
 import { explorerAddressUrlFor, explorerTxUrlFor, getChainDefinition } from '@/src/lib/chain/multichain/registry';
 import { useAuth } from '@/src/hooks/useAuth';
-import { useEthereumScoreMint } from '@/src/hooks/useEthereumScoreMint';
+import { useEthereumScoreMint, type MintGasEstimate } from '@/src/hooks/useEthereumScoreMint';
 import { forgetMintHash, readMintHash, recoverMintHash } from '@/src/lib/self-mint/client-hash';
 import ReconnectMintWallet from './ReconnectMintWallet';
 import { useMintDialogFocus } from './hooks/useMintDialogFocus';
 import { useSerialRefresh } from './hooks/useSerialRefresh';
 import { ASSET_STAGE_COPY, STATUS_COPY, type PublicOrder } from './self-mint-copy';
 import './self-mint-status.css';
-
+function formatGasUsd(value: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: 'USD',
+    minimumFractionDigits: value < 1 ? 4 : 2, maximumFractionDigits: value < 1 ? 4 : 2,
+  }).format(value);
+}
 export default function SelfMintOrderView({ orderId, onClose }: {
   orderId: Hex; onClose: () => void;
 }) {
@@ -23,6 +28,8 @@ export default function SelfMintOrderView({ orderId, onClose }: {
   const [error, setError] = useState<string | null>(null);
   const [lastCheckedAt, setLastCheckedAt] = useState<string | null>(null);
   const [recoverableHash, setRecoverableHash] = useState<Hex | null>(null);
+  const [gasQuote, setGasQuote] = useState<{ orderId: Hex; value: MintGasEstimate } | null>(null);
+  const [gasError, setGasError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const dialogRef = useRef<HTMLElement>(null);
   const closeRef = useRef(onClose);
@@ -63,6 +70,16 @@ export default function SelfMintOrderView({ orderId, onClose }: {
   useSerialRefresh(load, busy, (caught) => {
     setError(caught instanceof Error ? caught.message : '订单读取失败');
   });
+
+  const loadGas = useCallback(async () => {
+    setGasError(null);
+    try {
+      const value = await prepareOrder(orderId);
+      setGasQuote({ orderId, value });
+    } catch (caught) {
+      setGasError(caught instanceof Error ? caught.message : 'Gas 预估失败');
+    }
+  }, [orderId, prepareOrder]);
 
   async function send() {
     setBusy(true);
@@ -119,10 +136,11 @@ export default function SelfMintOrderView({ orderId, onClose }: {
   const needsWallet = order && (order.status === 'ready_to_sign' || order.status === 'expired'
     || (order.status === 'failed' && order.retryable));
   const assetHref = order && `/score/${order.chainId}/${order.scoreContract.toLowerCase()}/${order.tokenId}`;
+  const gasEstimate = gasQuote?.orderId === orderId ? gasQuote.value : null;
 
   useEffect(() => {
-    if (canSend) void prepareOrder(orderId).catch(() => undefined);
-  }, [canSend, orderId, prepareOrder]);
+    if (canSend) void loadGas();
+  }, [canSend, loadGas]);
 
   if (!order && !error) return null;
 
@@ -149,6 +167,9 @@ export default function SelfMintOrderView({ orderId, onClose }: {
         <dl>
           <div><dt>网络</dt><dd>{getChainDefinition(order.chainId).displayName}</dd></div>
           <div><dt>接收钱包</dt><dd>{order.recipientAddress}</dd></div>
+          {canSend && <div><dt>预估 Gas</dt><dd>{gasEstimate
+            ? `约 ${formatGasUsd(gasEstimate.usd)}${order.chainId === 11155111 ? '（测试网参考）' : ''}`
+            : gasError ? '美元估算暂不可用' : '正在估算美元费用…'}</dd></div>}
           <div><dt>ScoreNFT</dt><dd><a href={explorerAddressUrlFor(order.chainId, order.scoreContract)} target="_blank" rel="noreferrer">{order.scoreContract} ↗</a></dd></div>
           <div><dt>Order ID</dt><dd>{order.orderId}</dd></div>
           {hash && <div><dt>交易</dt><dd><a href={explorerTxUrlFor(order.chainId, hash)} target="_blank" rel="noreferrer">{hash} ↗</a></dd></div>}
@@ -161,6 +182,10 @@ export default function SelfMintOrderView({ orderId, onClose }: {
               : '正在恢复原钱包连接，请稍候…'}</p>
         )}
         {error && <p className="self-mint-status__error" role="alert">{error}</p>}
+        {gasEstimate && !gasEstimate.enough && <p className="self-mint-status__error" role="alert">
+          当前钱包余额不足以支付这笔 Gas。
+        </p>}
+        {gasError && <p className="self-mint-status__error" role="alert">{gasError}</p>}
         {recoverableHash && order.sendAttempted && !order.txHash && <p className="self-mint-status__notice">
           钱包已返回交易哈希：<a href={explorerTxUrlFor(order.chainId, recoverableHash)} target="_blank" rel="noreferrer">{recoverableHash} ↗</a>
         </p>}
@@ -169,7 +194,12 @@ export default function SelfMintOrderView({ orderId, onClose }: {
             <ReconnectMintWallet expectedAddress={order.recipientAddress}
               walletClientType={auth.walletCapability.walletClientType} />
           )}
-          {canSend && <button type="button" disabled={busy} onClick={() => void send()}>{busy ? '正在打开钱包…' : '在钱包中确认铸造'}</button>}
+          {canSend && <button type="button" disabled={busy || !gasEstimate?.enough}
+            onClick={() => void send()}>{busy ? '正在打开钱包…' : gasEstimate?.enough
+              ? `确认并铸造 · ${formatGasUsd(gasEstimate.usd)}`
+              : gasEstimate ? '钱包余额不足' : '等待 Gas 预估'}</button>}
+          {canSend && gasError && <button type="button" className="self-mint-status__quiet"
+            disabled={busy} onClick={() => void loadGas()}>重新估算 Gas</button>}
           {recoverableHash && order.sendAttempted && !order.txHash && order.authorizationDigest && (
             <button type="button" disabled={busy} onClick={() => void recover()}>
               {busy ? '正在核对交易…' : '用已有交易哈希恢复'}
