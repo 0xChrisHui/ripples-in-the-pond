@@ -134,6 +134,8 @@ export default function SelfMintOrderView({ orderId, onClose }: {
   const canSend = order && !order.sendAttempted && !recoverableHash
     && order.canContinue && auth.walletCapability.canSelfPayEthGas
     && (order.status === 'ready_to_sign' || order.status === 'expired');
+  const showGas = order && !order.sendAttempted
+    && (order.status === 'ready_to_sign' || order.status === 'expired');
   const needsWallet = order && (order.status === 'ready_to_sign' || order.status === 'expired'
     || (order.status === 'failed' && order.retryable));
   const assetHref = order && `/score/${order.chainId}/${order.scoreContract.toLowerCase()}/${order.tokenId}`;
@@ -168,8 +170,8 @@ export default function SelfMintOrderView({ orderId, onClose }: {
         <p className="self-mint-status__eyebrow">Reserved edition · 未铸造编号 #{order.tokenId}</p>
         <h2 id="self-mint-title">{copy?.title}</h2>
         <p className="self-mint-status__lead" aria-live="polite">{copy?.detail}</p>
-        <MintOrderFacts order={order} hash={hash} canSend={Boolean(canSend)}
-          gasEstimate={gasEstimate} gasError={gasError} />
+        <MintOrderFacts order={order} hash={hash} showGas={Boolean(showGas)}
+          estimateActive={Boolean(canSend)} gasEstimate={gasEstimate} gasError={gasError} />
         {needsWallet && !busy && !order.canContinue && (
           <p className="self-mint-status__notice">{walletAddress
             ? '当前钱包与接收地址不同；你可以查看进度，但不能继续签名。'

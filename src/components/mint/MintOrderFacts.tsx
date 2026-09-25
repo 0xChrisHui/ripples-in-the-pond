@@ -2,6 +2,7 @@ import type { Hex } from 'viem';
 import {
   explorerAddressUrlFor, explorerTxUrlFor, getChainDefinition,
 } from '@/src/lib/chain/multichain/registry';
+import ChainLogo from './ChainLogo';
 import { formatGasUsd, type PublicOrder } from './self-mint-copy';
 
 type GasEstimate = { usd: number; enough: boolean };
@@ -14,10 +15,11 @@ function HashValue({ value }: { value: string }) {
   return <code className="self-mint-status__hash" title={value}>{shortHex(value)}</code>;
 }
 
-export default function MintOrderFacts({ order, hash, canSend, gasEstimate, gasError }: {
+export default function MintOrderFacts({ order, hash, showGas, estimateActive, gasEstimate, gasError }: {
   order: PublicOrder;
   hash: Hex | null;
-  canSend: boolean;
+  showGas: boolean;
+  estimateActive: boolean;
   gasEstimate: GasEstimate | null;
   gasError: string | null;
 }) {
@@ -25,14 +27,15 @@ export default function MintOrderFacts({ order, hash, canSend, gasEstimate, gasE
     <dl className="self-mint-status__facts">
       <div data-kind="network">
         <dt>网络</dt>
-        <dd><span className="self-mint-status__network-dot" aria-hidden="true" />
+        <dd><ChainLogo chainId={order.chainId} />
           {getChainDefinition(order.chainId).displayName}</dd>
       </div>
-      {canSend && <div data-kind="gas">
+      {showGas && <div data-kind="gas" data-pending={!gasEstimate && !gasError}>
         <dt>预估 Gas</dt>
-        <dd>{gasEstimate
+        <dd aria-live="polite">{gasEstimate
           ? `约 ${formatGasUsd(gasEstimate.usd)}${order.chainId === 11155111 ? ' · 测试网参考' : ''}`
-          : gasError ? '美元估算暂不可用' : '正在估算美元费用…'}</dd>
+          : gasError ? '美元估算暂不可用'
+            : estimateActive ? '正在估算美元费用…' : '正在准备美元费用估算…'}</dd>
       </div>}
       <div data-wide="true">
         <dt>接收钱包</dt>

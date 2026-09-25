@@ -5,7 +5,7 @@
 }
 .mint-network summary::-webkit-details-marker { display: none; }
 .mint-network__trigger {
-  display: grid; min-width: 178px; min-height: 44px; grid-template-columns: 7px minmax(0, 1fr) 8px;
+  display: grid; min-width: 196px; min-height: 48px; grid-template-columns: 24px minmax(0, 1fr) 8px;
   align-items: center; gap: 10px; padding: 6px 12px; border: 1px solid var(--p11-line);
   border-radius: 8px; background: rgba(10, 11, 9, .62); color: var(--p11-bone);
   box-shadow: inset 0 1px rgba(255, 255, 255, .025); transition: border-color var(--p11-fast), background var(--p11-fast);
@@ -21,15 +21,8 @@
   border-color: color-mix(in srgb, var(--p11-brass) 68%, transparent);
   background: color-mix(in srgb, var(--p11-surface-raised) 90%, transparent);
 }
-.mint-network__dot, .mint-network__option-dot {
-  width: 6px; height: 6px; flex: none; border-radius: 50%; background: var(--p11-brass);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--p11-brass) 35%, transparent);
-}
-.mint-network__dot[data-chain='1'], .mint-network__dot[data-chain='11155111'],
-.mint-network__menu button[data-chain='1'] .mint-network__option-dot,
-.mint-network__menu button[data-chain='11155111'] .mint-network__option-dot {
-  background: var(--p11-moss); box-shadow: 0 0 10px color-mix(in srgb, var(--p11-moss) 35%, transparent);
-}
+.mint-network .chain-logo { display: grid; width: 24px; height: 24px; flex: none; place-items: center; color: #aaa8d8; }
+.mint-network .chain-logo svg { display: block; width: 100%; height: 100%; }
 .mint-network__chevron {
   width: 6px; height: 6px; margin-top: -3px; border-right: 1px solid var(--p11-muted);
   border-bottom: 1px solid var(--p11-muted); transform: rotate(45deg);
@@ -44,11 +37,12 @@
   animation: mint-network-open 180ms var(--p11-ease-out) both;
 }
 .mint-network__menu button {
-  display: grid; width: 100%; min-height: 62px; grid-template-columns: 7px minmax(0, 1fr) 22px;
+  display: grid; width: 100%; min-height: 62px; grid-template-columns: 28px minmax(0, 1fr) 22px;
   align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid transparent;
   border-radius: 7px; background: transparent; color: var(--p11-bone); font: inherit; text-align: left; cursor: pointer;
   transition: background var(--p11-fast), border-color var(--p11-fast);
 }
+.mint-network__menu .chain-logo { width: 28px; height: 28px; }
 .mint-network__menu button + button { margin-top: 2px; }
 .mint-network__menu button[aria-pressed='true'] {
   border-color: color-mix(in srgb, var(--p11-brass) 24%, transparent);

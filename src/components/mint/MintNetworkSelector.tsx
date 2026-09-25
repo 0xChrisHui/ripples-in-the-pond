@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import ChainLogo from './ChainLogo';
 import './mint-network-selector.css';
 
 function displayName(chainId: number): string {
@@ -52,7 +53,7 @@ export default function MintNetworkSelector({
     <details ref={detailsRef} className="mint-network">
       <summary aria-label={`${displayName(value)}，切换网络`}>
         <span className="mint-network__trigger">
-          <span className="mint-network__dot" data-chain={value} aria-hidden="true" />
+          <ChainLogo chainId={value} />
           <span className="mint-network__trigger-copy">
             <small>铸造网络</small>
             <span>{displayName(value)}</span>
@@ -76,7 +77,7 @@ export default function MintNetworkSelector({
                 if (details) details.open = false;
               }}
             >
-              <span className="mint-network__option-dot" aria-hidden="true" />
+              <ChainLogo chainId={option.chainId} />
               <span className="mint-network__option-copy">
                 <span>{option.label}</span>
                 <small>{!enabled ? '当前账号暂不可用'
