@@ -54,6 +54,11 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
   const prepared = auth.ready && (!auth.authenticated || (archiveReady && recordsSettled
     && (recordings.resolved || recordings.phase === 'error')
     && (materials.resolved || materials.phase === 'error')));
+  useEffect(() => {
+    const refresh = () => { void retry('recordings'); };
+    window.addEventListener('jam:draft-saved', refresh);
+    return () => window.removeEventListener('jam:draft-saved', refresh);
+  }, [retry]);
   useEffect(() => { onPrepared?.(prepared); }, [onPrepared, prepared]);
   useEffect(() => () => { onPrepared?.(false); }, [onPrepared]);
   const recordItems = useMemo(() => [

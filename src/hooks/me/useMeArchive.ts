@@ -125,6 +125,13 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
     const generation = generationRef.current;
     const owner = userId ?? null;
     if (!owner || !authSource || !isCurrent(generation, owner, authSource)) return;
+    if (section === 'recordings') {
+      const local = recordingsFrom([], getDrafts());
+      setRecordings((current) => ({ ...current,
+        items: [...current.items.filter((item) => !item.key.startsWith('local-')), ...local],
+        phase: 'refreshing', error: null, resolved: false,
+      }));
+    }
     const token = await tokenRef.current();
     if (!isCurrent(generation, owner, authSource)) return;
     if (!token) {
@@ -135,9 +142,12 @@ export function useMeArchive({ authenticated, authSource, userId, getAccessToken
       return;
     }
     if (section === 'scores') await loadScores(token, generation, owner, authSource);
-    if (section === 'recordings') await loadRecordings(token, generation, owner, authSource);
+    if (section === 'recordings') {
+      if (getDrafts().length) await syncDrafts(token, generation, owner, authSource);
+      else await loadRecordings(token, generation, owner, authSource);
+    }
     if (section === 'materials') await loadMaterials(token, generation, owner, authSource);
-  }, [authSource, isCurrent, loadMaterials, loadRecordings, loadScores, userId]);
+  }, [authSource, isCurrent, loadMaterials, loadRecordings, loadScores, syncDrafts, userId]);
 
   useEffect(() => {
     const owner = authenticated && userId && authSource ? userId : null;
