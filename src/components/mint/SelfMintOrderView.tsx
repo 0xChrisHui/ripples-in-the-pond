@@ -124,6 +124,8 @@ export default function SelfMintOrderView({ orderId, onClose }: {
     if (canSend) void prepareOrder(orderId).catch(() => undefined);
   }, [canSend, orderId, prepareOrder]);
 
+  if (!order && !error) return null;
+
   return (
     <div className="self-mint-status" data-p11-theme="archive" data-status={order?.status}
       role="presentation" onMouseDown={(event) => {
