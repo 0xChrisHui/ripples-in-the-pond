@@ -27,15 +27,15 @@ async function knownReceipt(row: SelfMintOrderRow, hash: Hex | null) {
   }
 }
 
-async function findRedeemEvent(row: SelfMintOrderRow) {
+async function findRedeemEvent(row: SelfMintOrderRow, receiptBlock?: bigint) {
   const client = getChainPublicClient(row.chain_id);
   const logs = await client.getContractEvents({
     address: getAddress(row.score_contract),
     abi: ETHEREUM_SCORE_ABI,
     eventName: 'ScoreRedeemed',
     args: { orderId: row.order_id },
-    fromBlock: getConfiguredScoreDeploymentBlock(row.chain_id),
-    toBlock: 'latest',
+    fromBlock: receiptBlock ?? getConfiguredScoreDeploymentBlock(row.chain_id),
+    toBlock: receiptBlock ?? 'latest',
   });
   return logs.find((log) => (
     log.args.orderId?.toLowerCase() === row.order_id.toLowerCase()
@@ -77,7 +77,7 @@ export async function inspectSelfMintOrder(row: SelfMintOrderRow) {
       address: getAddress(row.score_contract), abi: ETHEREUM_SCORE_ABI,
       functionName: 'tokenURI', args: [mapped],
     }),
-    findRedeemEvent(row),
+    findRedeemEvent(row, hintedReceipt?.blockNumber),
   ]);
   if (getAddress(owner) !== getAddress(row.recipient_address) || tokenUri !== row.token_uri) {
     throw new Error('链上 owner 或 tokenURI 与冻结订单不一致');

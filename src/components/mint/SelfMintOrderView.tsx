@@ -10,14 +10,8 @@ import { forgetMintHash, readMintHash, recoverMintHash } from '@/src/lib/self-mi
 import ReconnectMintWallet from './ReconnectMintWallet';
 import { useMintDialogFocus } from './hooks/useMintDialogFocus';
 import { useSerialRefresh } from './hooks/useSerialRefresh';
-import { ASSET_STAGE_COPY, STATUS_COPY, type PublicOrder } from './self-mint-copy';
+import { ASSET_STAGE_COPY, formatGasUsd, STATUS_COPY, type PublicOrder } from './self-mint-copy';
 import './self-mint-status.css';
-function formatGasUsd(value: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency', currency: 'USD',
-    minimumFractionDigits: value < 1 ? 4 : 2, maximumFractionDigits: value < 1 ? 4 : 2,
-  }).format(value);
-}
 export default function SelfMintOrderView({ orderId, onClose }: {
   orderId: Hex; onClose: () => void;
 }) {
@@ -34,7 +28,7 @@ export default function SelfMintOrderView({ orderId, onClose }: {
   const dialogRef = useRef<HTMLElement>(null);
   const closeRef = useRef(onClose);
   const busyRef = useRef(busy);
-  const lastAssetKickRef = useRef(0);
+  const lastAdvanceKickRef = useRef(0);
   closeRef.current = onClose;
   busyRef.current = busy;
   const walletAddress = auth.selectedExternalWallet?.address ?? null;
@@ -52,8 +46,10 @@ export default function SelfMintOrderView({ orderId, onClose }: {
     const result = await response.json() as PublicOrder & { error?: string };
     if (!response.ok) throw new Error(result.error ?? '订单读取失败');
     setOrder(result);
-    if (result.status === 'preparing_assets' && Date.now() - lastAssetKickRef.current >= 5_000) {
-      lastAssetKickRef.current = Date.now();
+    const shouldAdvance = result.status === 'preparing_assets' || result.status === 'submitted'
+      || result.status === 'confirming' || (result.status === 'manual_review' && result.sendAttempted);
+    if (shouldAdvance && Date.now() - lastAdvanceKickRef.current >= 5_000) {
+      lastAdvanceKickRef.current = Date.now();
       void fetch(`/api/self-mint/order/${orderId}/advance`, {
         method: 'POST', headers: { Authorization: `Bearer ${token}` },
       }).catch(() => undefined);

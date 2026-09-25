@@ -22,6 +22,13 @@ export type PublicOrder = {
   assetStage: 'events' | 'package' | 'metadata' | 'complete';
 };
 
+export function formatGasUsd(value: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: 'USD',
+    minimumFractionDigits: value < 1 ? 4 : 2, maximumFractionDigits: value < 1 ? 4 : 2,
+  }).format(value);
+}
+
 export const ASSET_STAGE_COPY: Record<PublicOrder['assetStage'], { title: string; detail: string }> = {
   events: { title: '正在永久保存演奏事件 · 1/3', detail: '后台正在固定你的演奏数据，页面会自动更新。' },
   package: { title: '正在生成永久作品包 · 2/3', detail: '演奏事件已保存，正在组合声音与播放器资源。' },

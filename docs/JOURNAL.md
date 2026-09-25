@@ -1698,3 +1698,4 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - 2026-09-24：P16 外部钱包发交易改用 Privy `ConnectedWallet.getEthereumProvider()` 接入 viem；当前 SDK 的 `useSendTransaction` 类型文档明确限定为 embedded wallet，不能承担 MetaMask 自付 Gas 路径。
 - 2026-09-24：P16 在订单可签名时预取凭证与 Gas 估算，点击时只保留切链、登记 attempt 和唤起钱包；Privy 外部钱包归属查询使用 30 秒进程内缓存合并并发请求，退出登录即清理浏览器能力缓存。
 - 2026-09-25：Ethereum 自付铸造移除独立 `PRESSING ROUTE` 确认层；从录音直接建立订单并进入统一订单弹窗，真实交易准备完成后以 Coinbase ETH/USD 60 秒缓存价格展示保守 Gas 美元估算，再由用户一次确认唤起钱包。
+- 2026-09-25：P16 订单页在 `submitted/confirming` 阶段主动触发带租约的链上对账，Vercel Cron 退为恢复兜底；事件查询固定到已知交易回执区块以兼容免费 RPC，已在授权前通过双网关验收的永久资源在完成 snapshot 时按冻结哈希从任一可用网关读取。

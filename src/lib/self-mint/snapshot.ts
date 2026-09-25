@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { attestPermanentResource } from '@/src/lib/permanent-core/attestation';
+import { readVerifiedPermanentResource } from '@/src/lib/permanent-core/attestation';
 import { canonicalizeJson, sha256Hex, type JsonValue } from '@/src/lib/score-package';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import type { SelfMintOrderRow } from './order';
@@ -39,9 +39,9 @@ export async function publishSelfMintSnapshot(row: SelfMintOrderRow): Promise<vo
     mime: row.sounds_map_mime,
   };
   const [metadataBytes, eventsBytes, soundsBytes] = await Promise.all([
-    attestPermanentResource(metadataId),
-    attestPermanentResource(eventsId),
-    attestPermanentResource(soundSetId),
+    readVerifiedPermanentResource(metadataId),
+    readVerifiedPermanentResource(eventsId),
+    readVerifiedPermanentResource(soundSetId),
   ]);
   const metadata = json(metadataBytes, 'metadata');
   const events = json(eventsBytes, 'events');

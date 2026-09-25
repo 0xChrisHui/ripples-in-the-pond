@@ -55,3 +55,20 @@ export async function attestPermanentResource(
   }
   return valid[0];
 }
+
+/** 已通过双网关验收并冻结身份的资源，后续读取只需任一网关返回匹配字节。 */
+export async function readVerifiedPermanentResource(
+  identity: PermanentResourceIdentity,
+): Promise<Uint8Array> {
+  const settled = await Promise.allSettled(
+    ARWEAVE_GATEWAYS.map((gateway) => readGateway(gateway, identity)),
+  );
+  const valid = settled.find((item): item is PromiseFulfilledResult<Uint8Array> => (
+    item.status === 'fulfilled'
+  ));
+  if (valid) return valid.value;
+  const reasons = settled.map((item, index) => (
+    `${ARWEAVE_GATEWAYS[index]}: ${String((item as PromiseRejectedResult).reason)}`
+  ));
+  throw new Error(`永久资源当前不可读：${reasons.join('; ')}`);
+}
