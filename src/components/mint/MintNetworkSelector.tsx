@@ -53,7 +53,10 @@ export default function MintNetworkSelector({
       <summary aria-label={`${displayName(value)}，切换网络`}>
         <span className="mint-network__trigger">
           <span className="mint-network__dot" data-chain={value} aria-hidden="true" />
-          <span>{displayName(value)}</span>
+          <span className="mint-network__trigger-copy">
+            <small>铸造网络</small>
+            <span>{displayName(value)}</span>
+          </span>
           <span className="mint-network__chevron" aria-hidden="true" />
         </span>
       </summary>

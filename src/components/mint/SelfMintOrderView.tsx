@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Hex } from 'viem';
-import { explorerAddressUrlFor, explorerTxUrlFor, getChainDefinition } from '@/src/lib/chain/multichain/registry';
+import { explorerTxUrlFor, getChainDefinition } from '@/src/lib/chain/multichain/registry';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useEthereumScoreMint, type MintGasEstimate } from '@/src/hooks/useEthereumScoreMint';
 import { forgetMintHash, readMintHash, recoverMintHash } from '@/src/lib/self-mint/client-hash';
 import ReconnectMintWallet from './ReconnectMintWallet';
+import MintOrderFacts from './MintOrderFacts';
 import { useMintDialogFocus } from './hooks/useMintDialogFocus';
 import { useSerialRefresh } from './hooks/useSerialRefresh';
 import {
@@ -152,7 +153,10 @@ export default function SelfMintOrderView({ orderId, onClose }: {
       <section ref={dialogRef} tabIndex={-1} className="self-mint-status__sheet" role="dialog"
         aria-modal="true" aria-labelledby="self-mint-title">
         <header>
-          <span>SELF-PAID SCORE · {order ? getChainDefinition(order.chainId).displayName : 'Ethereum'}</span>
+          <div className="self-mint-status__brand">
+            <span>SELF-PAID SCORE</span>
+            <strong>{order ? getChainDefinition(order.chainId).displayName : 'Ethereum'}</strong>
+          </div>
           <button type="button" className="self-mint-status__close" aria-label="关闭铸造弹窗"
             disabled={busy} onClick={onClose}>×</button>
         </header>
@@ -164,16 +168,8 @@ export default function SelfMintOrderView({ orderId, onClose }: {
         <p className="self-mint-status__eyebrow">Reserved edition · 未铸造编号 #{order.tokenId}</p>
         <h2 id="self-mint-title">{copy?.title}</h2>
         <p className="self-mint-status__lead" aria-live="polite">{copy?.detail}</p>
-        <dl>
-          <div><dt>网络</dt><dd>{getChainDefinition(order.chainId).displayName}</dd></div>
-          <div><dt>接收钱包</dt><dd>{order.recipientAddress}</dd></div>
-          {canSend && <div><dt>预估 Gas</dt><dd>{gasEstimate
-            ? `约 ${formatGasUsd(gasEstimate.usd)}${order.chainId === 11155111 ? '（测试网参考）' : ''}`
-            : gasError ? '美元估算暂不可用' : '正在估算美元费用…'}</dd></div>}
-          <div><dt>ScoreNFT</dt><dd><a href={explorerAddressUrlFor(order.chainId, order.scoreContract)} target="_blank" rel="noreferrer">{order.scoreContract} ↗</a></dd></div>
-          <div><dt>Order ID</dt><dd>{order.orderId}</dd></div>
-          {hash && <div><dt>交易</dt><dd><a href={explorerTxUrlFor(order.chainId, hash)} target="_blank" rel="noreferrer">{hash} ↗</a></dd></div>}
-        </dl>
+        <MintOrderFacts order={order} hash={hash} canSend={Boolean(canSend)}
+          gasEstimate={gasEstimate} gasError={gasError} />
         {needsWallet && !busy && !order.canContinue && (
           <p className="self-mint-status__notice">{walletAddress
             ? '当前钱包与接收地址不同；你可以查看进度，但不能继续签名。'
