@@ -2,6 +2,7 @@ import 'server-only';
 
 import { randomUUID } from 'node:crypto';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { PermanentResourceUnavailableError } from '@/src/lib/permanent-core/attestation';
 import type { SelfMintOrderRow } from '../order';
 import { inspectSelfMintOrder } from '../reconcile';
 import { publishSelfMintSnapshot } from '../snapshot';
@@ -14,7 +15,20 @@ export async function settleClaimedSelfMintOrder(row: SelfMintOrderRow, owner: s
   try {
     const inspected = await inspectSelfMintOrder(row);
     if (inspected.state === 'success') {
-      await publishSelfMintSnapshot(row);
+      try {
+        await publishSelfMintSnapshot(row);
+      } catch (caught) {
+        if (!(caught instanceof PermanentResourceUnavailableError)) throw caught;
+        const { error } = await supabaseAdmin.from('score_self_mint_orders').update({
+          status: 'confirming', block_number: Number(inspected.blockNumber),
+          replacement_tx_hash: row.tx_hash && row.tx_hash !== inspected.txHash
+            ? inspected.txHash : null,
+          failure_stage: 'snapshot', failure_code: 'SNAPSHOT_PENDING', retryable: false,
+          last_error: caught.message.slice(0, 2000), ...releaseLease(),
+        }).eq('id', row.id).eq('locked_by', owner);
+        if (error) throw error;
+        return { processed: 1, status: 'confirming' as const };
+      }
       const { error } = await supabaseAdmin.rpc('complete_score_self_mint', {
         p_order_id: row.order_id,
         p_token_id: row.token_id,

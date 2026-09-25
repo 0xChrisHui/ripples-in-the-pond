@@ -10,7 +10,9 @@ import { forgetMintHash, readMintHash, recoverMintHash } from '@/src/lib/self-mi
 import ReconnectMintWallet from './ReconnectMintWallet';
 import { useMintDialogFocus } from './hooks/useMintDialogFocus';
 import { useSerialRefresh } from './hooks/useSerialRefresh';
-import { ASSET_STAGE_COPY, formatGasUsd, STATUS_COPY, type PublicOrder } from './self-mint-copy';
+import {
+  ASSET_STAGE_COPY, formatGasUsd, SNAPSHOT_PENDING_COPY, STATUS_COPY, type PublicOrder,
+} from './self-mint-copy';
 import './self-mint-status.css';
 export default function SelfMintOrderView({ orderId, onClose }: {
   orderId: Hex; onClose: () => void;
@@ -123,6 +125,8 @@ export default function SelfMintOrderView({ orderId, onClose }: {
     ? { title: '正在打开 MetaMask', detail: '请在钱包窗口中检查并确认这笔 Sepolia 铸造交易。' }
     : order.status === 'preparing_assets'
     ? ASSET_STAGE_COPY[order.assetStage]
+    : order.failureCode === 'SNAPSHOT_PENDING'
+      ? SNAPSHOT_PENDING_COPY
     : order.status === 'ready_to_sign' && order.sendAttempted
       ? STATUS_COPY.manual_review : STATUS_COPY[order.status]);
   const hash = order && (order.replacementTxHash ?? order.txHash ?? order.failedTxHash);

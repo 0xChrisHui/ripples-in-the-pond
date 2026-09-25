@@ -28,6 +28,13 @@ for (const truth of ['tokenIdByOrderId', 'ScoreRedeemed', 'ownerOf', 'tokenURI']
 forbidPattern(reconcile, /decodeFunctionData|transaction\.to/,
   '对账不得假设外层交易直接调用 ScoreNFT');
 
+const reconcileJob = read('src/lib/self-mint/server/reconcile-job.ts');
+requirePattern(reconcileJob, /PermanentResourceUnavailableError[\s\S]*SNAPSHOT_PENDING/,
+  '永久网关传播延迟必须保持自动对账，不能误入人工核对');
+const attestation = read('src/lib/permanent-core/attestation.ts');
+requirePattern(attestation, /READ_GATEWAYS[\s\S]*ARWEAVE_AUDIO_GATEWAYS/,
+  '已验真永久资源必须允许从备用网关恢复读取');
+
 const submission = read('app/api/self-mint/submission/route.ts');
 requirePattern(submission, /submit_score_self_mint_transaction/,
   'submission 必须只登记哈希并交给统一状态机');

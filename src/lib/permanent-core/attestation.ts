@@ -1,4 +1,4 @@
-import { ARWEAVE_GATEWAYS } from '@/src/lib/arweave/shared';
+import { ARWEAVE_AUDIO_GATEWAYS, ARWEAVE_GATEWAYS } from '@/src/lib/arweave/shared';
 import { sha256Hex } from '@/src/lib/score-package';
 
 export type PermanentResourceIdentity = Readonly<{
@@ -9,6 +9,16 @@ export type PermanentResourceIdentity = Readonly<{
 }>;
 
 const TIMEOUT_MS = 15_000;
+const READ_GATEWAYS = [...new Set([...ARWEAVE_GATEWAYS, ...ARWEAVE_AUDIO_GATEWAYS])];
+
+export class PermanentResourceUnavailableError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'PermanentResourceUnavailableError';
+  }
+}
+
+class PermanentResourceIntegrityError extends Error {}
 
 function normalizeMime(value: string | null): string {
   return (value ?? '').split(';', 1)[0].trim().toLowerCase();
@@ -19,20 +29,25 @@ async function readGateway(
   identity: PermanentResourceIdentity,
 ): Promise<Uint8Array> {
   const signal = AbortSignal.timeout(TIMEOUT_MS);
-  const response = await fetch(`${gateway}/${identity.arTxId}`, {
-    cache: 'no-store',
-    headers: { Accept: identity.mime },
-    signal,
-  });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  let response: Response;
+  try {
+    response = await fetch(`${gateway}/${identity.arTxId}`, {
+      cache: 'no-store', headers: { Accept: identity.mime }, signal,
+    });
+  } catch (caught) {
+    throw new PermanentResourceUnavailableError(String(caught));
+  }
+  if (!response.ok) throw new PermanentResourceUnavailableError(`HTTP ${response.status}`);
   if (normalizeMime(response.headers.get('content-type')) !== normalizeMime(identity.mime)) {
-    throw new Error(`MIME ${response.headers.get('content-type') ?? 'missing'}`);
+    throw new PermanentResourceIntegrityError(`MIME ${response.headers.get('content-type') ?? 'missing'}`);
   }
   const bytes = new Uint8Array(await response.arrayBuffer());
   if (bytes.byteLength !== identity.bytes) {
-    throw new Error(`bytes ${bytes.byteLength} != ${identity.bytes}`);
+    throw new PermanentResourceIntegrityError(`bytes ${bytes.byteLength} != ${identity.bytes}`);
   }
-  if (await sha256Hex(bytes) !== identity.sha256) throw new Error('SHA-256 mismatch');
+  if (await sha256Hex(bytes) !== identity.sha256) {
+    throw new PermanentResourceIntegrityError('SHA-256 mismatch');
+  }
   return bytes;
 }
 
@@ -61,14 +76,18 @@ export async function readVerifiedPermanentResource(
   identity: PermanentResourceIdentity,
 ): Promise<Uint8Array> {
   const settled = await Promise.allSettled(
-    ARWEAVE_GATEWAYS.map((gateway) => readGateway(gateway, identity)),
+    READ_GATEWAYS.map((gateway) => readGateway(gateway, identity)),
   );
   const valid = settled.find((item): item is PromiseFulfilledResult<Uint8Array> => (
     item.status === 'fulfilled'
   ));
   if (valid) return valid.value;
-  const reasons = settled.map((item, index) => (
-    `${ARWEAVE_GATEWAYS[index]}: ${String((item as PromiseRejectedResult).reason)}`
+  const integrityFailure = settled.find((item) => (
+    item.status === 'rejected' && item.reason instanceof PermanentResourceIntegrityError
   ));
-  throw new Error(`永久资源当前不可读：${reasons.join('; ')}`);
+  const reasons = settled.map((item, index) => (
+    `${READ_GATEWAYS[index]}: ${String((item as PromiseRejectedResult).reason)}`
+  ));
+  if (integrityFailure) throw new Error(`永久资源身份冲突：${reasons.join('; ')}`);
+  throw new PermanentResourceUnavailableError(`永久资源当前不可读：${reasons.join('; ')}`);
 }
