@@ -122,8 +122,9 @@ export default function SelfMintOrderView({ orderId, onClose }: {
     }
   }
 
+  const chainName = order ? getChainDefinition(order.chainId).displayName : 'Ethereum';
   const copy = order && (busy && order.status === 'ready_to_sign'
-    ? { title: '正在打开 MetaMask', detail: '请在钱包窗口中检查并确认这笔 Sepolia 铸造交易。' }
+    ? { title: '正在打开 MetaMask', detail: `请在钱包窗口中检查并确认这笔 ${chainName} 铸造交易。` }
     : order.status === 'preparing_assets'
     ? ASSET_STAGE_COPY[order.assetStage]
     : order.failureCode === 'SNAPSHOT_PENDING'
@@ -157,7 +158,7 @@ export default function SelfMintOrderView({ orderId, onClose }: {
         <header>
           <div className="self-mint-status__brand">
             <span>SELF-PAID SCORE</span>
-            <strong>{order ? getChainDefinition(order.chainId).displayName : 'Ethereum'}</strong>
+            <strong>{chainName}</strong>
           </div>
           <button type="button" className="self-mint-status__close" aria-label="关闭铸造弹窗"
             disabled={busy} onClick={onClose}>×</button>

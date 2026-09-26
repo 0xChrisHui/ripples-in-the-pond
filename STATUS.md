@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 11 已完成并冻结；Phase 16 已部署 Ethereum Mainnet，下一步完成首枚主网 smoke。** 正式施工基线为 `main@f24f5bd`；旧 `codex/p16-wip-snapshot@3c5fa6f` 只作选择性迁移来源，不整体合并。权威顺序见 `playbook/phase-16/05-minimal-loop.md`。
+**Phase**: **Phase 11 已完成并冻结；Phase 16 Ethereum Mainnet 前端已开放，下一步完成首枚主网 smoke。** 正式施工基线为 `main@f24f5bd`；旧 `codex/p16-wip-snapshot@3c5fa6f` 只作选择性迁移来源，不整体合并。权威顺序见 `playbook/phase-16/05-minimal-loop.md`。
 
 **P16 Playbook 优化（2026-09-24）✅**：本轮完成线收窄为 Sepolia 最小成熟闭环；冻结 Privy 单一钱包写入、orderId 链上真值、统一恢复、`053–057` migration 与 P11 集成红线。MetaMask 桌面和 imToken / WalletConnect 各一笔真实 mint、hash 漏报恢复、OP/邮箱/SEMI/P14 回归为阻塞 Gate；完整移动端/异常矩阵、压力循环、Google Fonts 本地化和 Ethereum Mainnet 延后。
 
@@ -14,7 +14,7 @@
 
 **P16-F0 多链 Token 编号隔离（2026-09-26）✅**：新增并执行远端 migration `058`，Ethereum 自付 Token ID 改为按 `chainId + contract` 原子预留；Sepolia 9 张订单与 6 个链上 mapping 的最大编号均为 `#11`，计数器从 `#12` 续接。同集合并发取号为 `#1/#2`，另一集合可独立取得 `#1`，夹具已清理；旧 sequence 默认已移除，未注册集合拒绝建单。主网新合约可独立从 `#1` 开始。
 
-**P16 Ethereum Mainnet 部署（2026-09-26）✅**：不可升级 EthereumScoreNFT 已部署至 `0xdeC99da00290d15f0742b0abd26e4Cd5d121f02A`，交易 `0x37b4cecbaabdb88b67c49a3df3b7937e3a25762efee1be1ff22e19d86cc0c753`、区块 `26060368`；Sourcify creation/runtime 均为 `exact_match`。正式库 `053–058` 已执行并登记，主网计数器从 `#1` 开始；Vercel Production 地址、RPC、角色与确认数已配置，登录和自付开关保持 `off`。完整证据见 `reviews/evidence/p16-mainnet/README.md`。
+**P16 Ethereum Mainnet 部署（2026-09-26）✅**：不可升级 EthereumScoreNFT 已部署至 `0xdeC99da00290d15f0742b0abd26e4Cd5d121f02A`，交易 `0x37b4cecbaabdb88b67c49a3df3b7937e3a25762efee1be1ff22e19d86cc0c753`、区块 `26060368`；Sourcify creation/runtime 均为 `exact_match`。正式库 `053–058` 已执行并登记，主网计数器从 `#1` 开始；Vercel Production 地址、RPC、角色与确认数已配置，外部钱包登录和 Ethereum 自付入口已切为 `live`。完整证据见 `reviews/evidence/p16-mainnet/README.md`。
 
 **P11-J 收口（2026-09-24）✅**：三向 warm/cold、2 秒受控延迟、Back、快速反向、换目标、失败恢复、音频清理、单播放器与持久 Water Core/Canvas/WebGL Gate 已通过；TypeScript、定向 ESLint、production build、`scripts/verify.sh` 与 Forge 56/56 全绿。direct Score→Home 的 FBO `6→8` 是首页球层首次恢复时的一次性能力分配，不是逐次泄漏，未修改产品去迎合错误断言。Google Fonts 验证绕行已完全恢复，`app/layout.tsx` 与 HEAD 哈希一致。
 

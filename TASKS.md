@@ -15,6 +15,7 @@
   - [x] 执行 `058`，按 chain + contract 隔离 Token ID；Sepolia 从 `#12` 续接，主网新集合可从 `#1` 开始
   - [x] 将当前 P16 分支合入 `main`
   - [x] 部署 Ethereum Mainnet ScoreNFT，注册主网计数器并配置生产环境
+  - [x] 将正式前端 Ethereum 网络切到 Mainnet 并开放钱包登录与自付铸造
   - [ ] 完成第一枚低成本主网 mint 与链、库、metadata、页面四方核验
 
 ## ⏳ Later / 开放项

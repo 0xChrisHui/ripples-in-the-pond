@@ -1702,3 +1702,4 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - 2026-09-26：链上已成功但 Arweave 主网关尚未传播时，P16 保持 `confirming/SNAPSHOT_PENDING` 并自动重试，不再误报链上冲突；已冻结哈希的永久资源可从任一登记网关恢复读取。
 - 2026-09-26：P16 链上 Token ID 改为按 `chainId + contract` 独立预留；Sepolia 测试编号不占用 Ethereum Mainnet 编号，跨链统一作品序号若需要将另设产品字段，不复用 Token ID。
 - 2026-09-26：Ethereum Mainnet 部署沿用现有独立主网 admin，P16 authorizer/pauser 保持分离；合约不可升级且 collection URI 构造时冻结。主网部署完成后只解除代码层 `allowsMintInitiation` 硬锁，Vercel 的登录和自付开关继续为 `off`，首枚四方核验通过后再灰度开放。
+- 2026-09-26：用户确认 Sepolia 真实铸造已跑通并明确要求前端切主网；Production 外部钱包登录与 Ethereum 自付开关直接切为 `live`，首枚 Mainnet Token `#1` 随后按链、库、metadata、页面四方核验。

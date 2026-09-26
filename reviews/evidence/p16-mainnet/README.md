@@ -1,7 +1,7 @@
 # P16 Ethereum Mainnet 部署证据
 
 日期：2026-09-26（Asia/Shanghai）  
-状态：合约、正式数据库和 Production 配置完成；功能开关保持 `off`，尚未发送第一枚主网 mint。
+状态：合约、正式数据库和 Production 配置完成；正式前端已切至 Ethereum Mainnet，尚未发送第一枚主网 mint。
 
 ## 永久合集资料
 
@@ -38,10 +38,9 @@
 - 主网集合计数器：`(1, 0xdec99da00290d15f0742b0abd26e4cd5d121f02a) → next_token_id=1`。
 - 链上与正式库当前均为 0 个 Ethereum Mainnet 自付订单/已兑付编号。
 - Vercel Production 已配置 chainId、合约地址、RPC、部署区块、角色、永久 URI、authorizer secret 与 `2` 个确认数。
-- `EXTERNAL_WALLET_LOGIN_MODE=off`、`ETH_SCORE_SELF_MINT_MODE=off`；部署完成不会自动向公众开放。
+- `EXTERNAL_WALLET_LOGIN_MODE=live`、`ETH_SCORE_SELF_MINT_MODE=live`；正式前端开放外部钱包登录与 Ethereum Mainnet 自付铸造。
 
 ## 下一步
 
-1. 将 P16 发布提交快进到 `main`，等待 Production Ready。
-2. 只对内部钱包切 `allowlist`，完成 Token `#1` 的低成本主网 mint。
-3. 核对链上 mapping/event/owner/tokenURI、正式库订单与 claim、永久 metadata、`/score` 页面四方一致，再决定是否切 `live`。
+1. 使用内部钱包完成 Token `#1` 的低成本主网 mint。
+2. 核对链上 mapping/event/owner/tokenURI、正式库订单与 claim、永久 metadata、`/score` 页面四方一致。
