@@ -124,6 +124,7 @@ OP 与 ETH 是两条独立执行路径。不得为“复用代码”把 ETH 状�
 | P16-C | [40-c-eth-contract.md](./40-c-eth-contract.md) | ETH 用户自付铸造合约与安全测试 |
 | P16-D | [50-d-self-pay-pipeline.md](./50-d-self-pay-pipeline.md) | 素材冻结、凭证、钱包交易和异步对账 |
 | P16-E | [60-e-surfaces-data.md](./60-e-surfaces-data.md) | 铸造 UI、资产页、恢复与运营面板 |
+| P16-F0 | [65-f0-token-numbering.md](./65-f0-token-numbering.md) | 主网上线前隔离各链、各合约的 Token 编号 |
 | P16-F | [70-f-testnet-mainnet.md](./70-f-testnet-mainnet.md) | Sepolia 验收、主网 Gate、灰度和回退 |
 
 ---

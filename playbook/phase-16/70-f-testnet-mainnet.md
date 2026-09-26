@@ -4,6 +4,8 @@
 > 前置：P16-E 完成。\
 > 外部写入：包含测试网部署；主网部署和真实交易必须单独通过不可逆 Gate。
 
+主网部署前必须先完成 [P16-F0 多链 Token 编号隔离](./65-f0-token-numbering.md)，确保 Sepolia 测试编号不会占用 Ethereum Mainnet 编号。
+
 ---
 
 ## 1. 功能开关

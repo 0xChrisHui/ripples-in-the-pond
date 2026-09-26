@@ -1700,3 +1700,4 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - 2026-09-25：Ethereum 自付铸造移除独立 `PRESSING ROUTE` 确认层；从录音直接建立订单并进入统一订单弹窗，真实交易准备完成后以 Coinbase ETH/USD 60 秒缓存价格展示保守 Gas 美元估算，再由用户一次确认唤起钱包。
 - 2026-09-25：P16 订单页在 `submitted/confirming` 阶段主动触发带租约的链上对账，Vercel Cron 退为恢复兜底；事件查询固定到已知交易回执区块以兼容免费 RPC，已在授权前通过双网关验收的永久资源在完成 snapshot 时按冻结哈希从任一可用网关读取。
 - 2026-09-26：链上已成功但 Arweave 主网关尚未传播时，P16 保持 `confirming/SNAPSHOT_PENDING` 并自动重试，不再误报链上冲突；已冻结哈希的永久资源可从任一登记网关恢复读取。
+- 2026-09-26：P16 链上 Token ID 改为按 `chainId + contract` 独立预留；Sepolia 测试编号不占用 Ethereum Mainnet 编号，跨链统一作品序号若需要将另设产品字段，不复用 Token ID。
