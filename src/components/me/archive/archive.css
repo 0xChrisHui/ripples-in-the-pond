@@ -12,8 +12,6 @@
 .me-archive__inner { width: min(100%, var(--p11-page-max)); margin-inline: auto; }
 .me-archive__header { padding-bottom: var(--p11-space-12); border-bottom: 1px solid var(--p11-line-strong); }
 .me-archive__network-control { position: relative; flex: none; }
-.me-archive__network-hint { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--p11-space-8) var(--p11-space-12); padding-top: var(--p11-space-12); color: var(--p11-muted); font-size: var(--p11-text-xs); text-align: right; }
-.me-archive__network-hint button { min-height: var(--p11-touch-target); color: var(--p11-brass-strong); text-decoration: underline; text-underline-offset: 4px; }
 .me-archive__nav { display: grid; grid-template-columns: 1fr auto; min-height: 52px; align-items: center; gap: var(--p11-space-16); }
 .me-archive__account { display: flex; min-width: 0; align-items: center; justify-self: end; gap: var(--p11-space-8); }
 .me-archive__back, .me-archive__identity--link {

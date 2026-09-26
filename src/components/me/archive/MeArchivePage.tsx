@@ -132,15 +132,6 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
           networkControl={auth.authenticated
             && auth.walletCapability.loginEntry === 'external_wallet'
             ? <ArchiveMintNetworkControl /> : null} />
-        {auth.authenticated && auth.authSource === 'privy'
-          && auth.walletCapability.loginEntry === null && (
-            <div className="me-archive__network-hint">
-              <span>当前登录状态尚未确认钱包入口。重新连接链上钱包后，可在这里切换网络。</span>
-              <button type="button" onClick={async () => {
-                await auth.logout(); auth.openLoginModal();
-              }}>重新连接链上钱包</button>
-            </div>
-          )}
         {identityPending ? (
           <ArchiveEmpty title="正在确认你的档案" description="身份确认后，你的音乐会立即出现。" />
         ) : !auth.authenticated ? (
