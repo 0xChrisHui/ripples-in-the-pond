@@ -14,7 +14,8 @@ import { isSoundKey } from '@/src/lib/sound-set';
 
 const MAX_EVENTS = 500;
 const MAX_TIME_MS = 60_000;
-const MAX_DURATION_MS = 5_000;
+// 与录音器的 60 秒上限一致；窗口失焦导致 keyup 丢失时，收尾事件也必须能保存。
+const MAX_DURATION_MS = 60_000;
 const MAX_BODY_KB = 100;
 
 /** 验证单个 KeyEvent 的字段范围 */
