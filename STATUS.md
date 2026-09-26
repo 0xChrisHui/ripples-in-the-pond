@@ -12,6 +12,8 @@
 
 **P16 M0–M5 本地实现（2026-09-24）✅**：已完成选择性迁移、EthereumScoreNFT、四链注册表、`053–057`、Privy 外部钱包登录与唯一发送路径、Score Package v3 永久资产、orderId 链上恢复、完整多链 verified snapshot、`/me` 弹窗与多链 Score 薄路由。保留 P15 permanent core、P11 Persistent Pond/路由事务/播放器和 P14 OP-only 边界；TypeScript、定向 ESLint、P16 三项专项 Gate 与 Forge 70/70 通过。未修改外部数据库、Privy 配置或链上状态。
 
+**P16-F0 多链 Token 编号隔离（2026-09-26）✅**：新增并执行远端 migration `058`，Ethereum 自付 Token ID 改为按 `chainId + contract` 原子预留；Sepolia 9 张订单与 6 个链上 mapping 的最大编号均为 `#11`，计数器从 `#12` 续接。同集合并发取号为 `#1/#2`，另一集合可独立取得 `#1`，夹具已清理；旧 sequence 默认已移除，未注册集合拒绝建单。主网新合约可独立从 `#1` 开始。
+
 **P11-J 收口（2026-09-24）✅**：三向 warm/cold、2 秒受控延迟、Back、快速反向、换目标、失败恢复、音频清理、单播放器与持久 Water Core/Canvas/WebGL Gate 已通过；TypeScript、定向 ESLint、production build、`scripts/verify.sh` 与 Forge 56/56 全绿。direct Score→Home 的 FBO `6→8` 是首页球层首次恢复时的一次性能力分配，不是逐次泄漏，未修改产品去迎合错误断言。Google Fonts 验证绕行已完全恢复，`app/layout.tsx` 与 HEAD 哈希一致。
 
 **P11 最终体验修正（2026-09-24）✅**：修复 `/me → /score` 固定落在中部、Hero 遮罩和原生 View Transition 黑帧；Score 默认从顶部出现，唱片 Hero 透明、永久档案保留半透明阅读层。`/me` 返回后会按哈希去重、并发 2 路预热 verified `ripples.score-package.v3`；点击唱片约 0.5 秒内完成外壳换场，详情随后接管，快响应不人为延迟。用户已完成体感验收；TypeScript、定向 ESLint 与只读浏览器证据通过。
@@ -126,7 +128,7 @@
 7. **deployer 收口 ✅**：剩余 `0.000098861219548476 ETH` 已转回 operator（tx `0x1b7b...ef00`），只留约 `0.000000999038 ETH` 尘埃；13 项角色/冻结状态复核全绿；一次性 `deployer-wallet.json` 已销毁，admin 备份仍在。
 8. **D4 软启动观察 ✅ 完成（2026-09-01）**：观察窗超过 7 天且无 P0；终检 health、双队列、公开页与合约字节码通过。E 性能继续作为日常优化项，不阻塞阶段关闭。
 
-**当前权威下一步**：执行 P16 M6 外部 Gate：备份并重建隔离测试库，按 Sepolia 历史 Token 初始化 sequence 后执行 `053–057`；配置两个 self-mint cron；随后用 MetaMask 桌面和 imToken / WalletConnect 各完成一笔真实 Sepolia mint，并验证 hash 漏报恢复、OP/邮箱/SEMI/P14 回归。通过前不合入 `main`，不操作 Ethereum Mainnet。
+**当前权威下一步**：将当前 P16 分支合入 `main` 后执行 P16-F Ethereum Mainnet Gate：部署主网 ScoreNFT、显式注册 `(chainId 1, contract, next_token_id 1)`、配置生产环境并完成第一枚低成本真实 mint。主网部署前不得复用 Sepolia 编号，也不得在未注册计数器时开放入口。
 
 ---
 

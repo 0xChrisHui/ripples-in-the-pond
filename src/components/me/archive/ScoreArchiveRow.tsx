@@ -53,7 +53,10 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
     && transaction.stage === 'preparing'
     || scoreOrigin.origin?.stage === 'returning' && transaction?.target === 'archive'
       && transaction.stage !== 'preparing');
-  const title = isPermanent ? `Ripples #${score.tokenId}` : score.trackTitle;
+  const networkLabel = score.chainId === 11155111 ? 'Sepolia'
+    : score.chainId === 1 ? 'Ethereum' : 'OP';
+  const title = isPermanent
+    ? `${networkLabel} · Token #${score.tokenId}` : score.trackTitle;
   const detail = failureDetail(score);
   const action = isPermanent ? '打开唱片' : score.status === 'failed' ? '查看详情' : '查看进度';
 
@@ -102,7 +105,7 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
       <div className="me-archive-row__main">
         <h3>{title}</h3>
         {isPermanent && <p>{score.trackTitle}</p>}
-        {isEthereum && <p>Ethereum · 自付 Gas</p>}
+        {isEthereum && !isPermanent && <p>Ethereum · 自付 Gas</p>}
       </div>
       <div className="me-archive-row__state">
         <span>{STATUS_LABELS[score.status]}</span>

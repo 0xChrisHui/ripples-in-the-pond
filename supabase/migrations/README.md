@@ -73,8 +73,14 @@ Migration 文件按 **Phase** 分子目录（目录文件数 ≤ 8 硬线触发�
 ### Phase 15（`phase-15/`）
 
 - `051_pending_scores_client_draft_id.sql` — C3 为本机草稿增加用户内幂等身份，并串行化同曲目并发保存；2026-09-13 已在 test 与 production 完成结构 read-back，test RPC 重放幂等通过
+- `052_permanent_core_queue_and_snapshots.sql` — Permanent Core、Score Package v3 与多链 verified snapshot
 
 > P15 文件原使用 `050`，合并 P14-G 时发现与已先执行的 source cursor migration 同号，因此仓库顺延为 `051`。test/production 的两套结构均已读回存在；补记远端 `051` history 前必须先核对 `050` 归属，不得重放 SQL 或修改远端 `050`。
+
+### Phase 16（`phase-16/`）
+
+- `053–057` — OP/ETH 共享占用、Ethereum 自付订单、永久素材状态机、链上对账与 hash 恢复
+- `058_score_token_counters.sql` — 按 `chainId + contract` 独立预留 Token ID；2026-09-26 已在当前 P16 数据库执行并登记，Sepolia 从 `#12` 安全续接
 
 ## 新人第一次建库
 
@@ -95,6 +101,8 @@ phase-12/048
 phase-14/049
 phase-14/050
 phase-15/051
+phase-15/052
+phase-16/053–058
 ```
 
 新空库可以按 Phase 分事务执行并逐批 read-back。对非空库不得重放整链：

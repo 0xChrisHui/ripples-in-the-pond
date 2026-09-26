@@ -7,17 +7,19 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 16 M6：隔离环境与真实钱包 Gate**
+- **Phase 16：Ethereum Mainnet Gate**
   - [x] Phase 11 最终体验修正、收口并合入 `main@f24f5bd`
   - [x] 优化 P16 为 Sepolia 最小成熟闭环，冻结 M0–M6 唯一顺序
   - [x] 完成 M0 定向审查、选择性迁移清单与架构边界同步
   - [x] 完成 M1–M5 本地代码、静态 Gate、P16 专项验证与 Forge 70/70
-  - [ ] 备份并重建隔离测试库，初始化历史 Token sequence，执行 `053–057`
-  - [ ] 配置 assets / reconcile cron，完成 MetaMask 与 WalletConnect 真实 Sepolia Gate
-  - [ ] 验证 hash 漏报恢复与 OP / 邮箱 / SEMI / P14 回归后合入 `main`
+  - [x] 执行 `058`，按 chain + contract 隔离 Token ID；Sepolia 从 `#12` 续接，主网新集合可从 `#1` 开始
+  - [ ] 将当前 P16 分支合入 `main`
+  - [ ] 部署 Ethereum Mainnet ScoreNFT，注册主网计数器并配置生产环境
+  - [ ] 完成第一枚低成本主网 mint 与链、库、metadata、页面四方核验
 
 ## ⏳ Later / 开放项
 
+- **P16 扩展钱包矩阵（非主网编号阻塞项）**：补 imToken / WalletConnect 真实 mint 与 Phantom/OKX 入口 smoke。
 - **P11-J 扩展 review（非阻塞）**：20+ 压力循环、全能力组合矩阵、重复 offline/context-loss/no-WebGL、J5 全视口动态对比度与证据美化。P16 M0 只完成会触碰接口的定向 review。
 - **P11-I/J 人工验收与交付决定**：真实账号/日食目验、真实档案行恢复；决定 ARCHITECTURE D-5、合并、部署与 Edge profile/worktree 清理。
 - **P15-I5 发布与复测封存**：P15-I0–I4 已完成；本轨结束后另行处理，当前不推送或部署。

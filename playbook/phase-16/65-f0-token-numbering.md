@@ -75,7 +75,7 @@ PRIMARY KEY (chain_id, score_contract)
 界面：
 
 - 铸造弹窗使用“未铸造 Token #N”；
-- 成功资产使用“Ethereum · Token #N”或“OP · Token #N”；
+- 成功资产使用“Ethereum · Token #N”“Sepolia · Token #N”或“OP · Token #N”；
 - 不再把 Token ID 表述为跨链统一的“Score 编号”；
 - 永久链接与缓存键继续使用完整 `chainId + contract + tokenId`。
 
@@ -127,3 +127,15 @@ PRIMARY KEY (chain_id, score_contract)
 - UI 清楚展示链名与 Token ID；
 - 定向数据库并发测试、类型检查、相关 lint 和 Sepolia 单笔 smoke 全部通过；
 - 迁移、回退边界与主网初始化值已记录在发布证据中。
+
+---
+
+## 8. 施工结果（2026-09-26）
+
+- ✅ 新增并执行 `058_score_token_counters.sql`，远端 migration history 已登记 `058`；
+- ✅ 当前 Sepolia 数据库有 9 张订单，最大预留 Token ID 为 `#11`；6 张链上 order mapping 已兑换，链上最大值同为 `#11`；
+- ✅ Sepolia 合约计数器初始化为 `next_token_id = 12`，已有订单、metadata、凭证与链上资产未改号；
+- ✅ 同一虚拟集合并发原子取号得到 `#1/#2`，第二个集合独立得到 `#1`；夹具已清零；
+- ✅ 订单 `token_id` 的旧 sequence 默认已移除，prepare RPC 已只使用集合计数器，未注册集合会以 `SELF_MINT_COUNTER_NOT_CONFIGURED` 拒绝；
+- ✅ 远端 public schema lint、TypeScript、定向 ESLint、P16 chain identity、链/库编号审计与 `/me` HTTP smoke 通过；
+- ⏭️ Ethereum Mainnet 合约部署后必须显式注册 `(1, contract, 1)`，再执行第一枚真实主网 smoke。

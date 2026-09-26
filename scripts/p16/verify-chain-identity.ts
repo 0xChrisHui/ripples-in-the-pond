@@ -39,6 +39,7 @@ async function main() {
     '055_self_mint_rpcs.sql',
     '056_self_mint_pipeline.sql',
     '057_self_mint_hash_recovery.sql',
+    '058_score_token_counters.sql',
   ]
     .map((name) => readFileSync(join(process.cwd(), 'supabase/migrations/phase-16', name), 'utf8'))
     .join('\n');
@@ -46,6 +47,11 @@ async function main() {
   assert.match(migrations, /score_self_mint_orders/);
   assert.match(migrations, /MINT_CLAIM_CONFLICT/);
   assert.match(migrations, /score_self_mint_token_id_seq/);
+  assert.match(migrations, /score_self_mint_token_counters/);
+  assert.match(migrations, /primary key \(chain_id, score_contract\)/);
+  assert.match(migrations, /returning next_token_id - 1 into v_token_id/);
+  assert.match(migrations, /SELF_MINT_COUNTER_NOT_CONFIGURED/);
+  assert.match(migrations, /alter column token_id drop default/);
   assert.match(migrations, /score_self_mint_upload_ledger/);
   assert.match(migrations, /write_score_self_mint_upload_state/);
   assert.match(migrations, /events_upload_state = 'verified'/);
@@ -68,7 +74,7 @@ async function main() {
   assert.match(p14Discovery, /CURRENT_CHAIN/);
   assert.doesNotMatch(p14Discovery, /ETH_SCORE/);
 
-  console.log('P16-B chain identity、053–057 migration 与 P14 OP-only 边界验证通过');
+  console.log('P16-B chain identity、053–058 migration 与 P14 OP-only 边界验证通过');
 }
 
 void main();

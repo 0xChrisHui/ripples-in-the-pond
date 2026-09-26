@@ -167,7 +167,7 @@ export default function SelfMintOrderView({ orderId, onClose }: {
           {error && <div className="self-mint-status__actions"><button type="button"
             onClick={() => void load()}>重新读取</button></div>}
         </> : <>
-        <p className="self-mint-status__eyebrow">Reserved edition · 未铸造编号 #{order.tokenId}</p>
+        <p className="self-mint-status__eyebrow">Reserved edition · 未铸造 Token #{order.tokenId}</p>
         <h2 id="self-mint-title">{copy?.title}</h2>
         <p className="self-mint-status__lead" aria-live="polite">{copy?.detail}</p>
         <MintOrderFacts order={order} hash={hash} showGas={Boolean(showGas)}
