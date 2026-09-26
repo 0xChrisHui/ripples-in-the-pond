@@ -27,7 +27,7 @@ async function main() {
   assert.equal(registry.getConfiguredScoreAddress(10), process.env.NEXT_PUBLIC_SCORE_NFT_ADDRESS);
   assert.equal(registry.getConfiguredScoreAddress(1), process.env.NEXT_PUBLIC_ETH_SCORE_NFT_ADDRESS);
   assert.throws(() => registry.getConfiguredScoreAddress(11155111), /未在当前环境启用/);
-  assert.equal(registry.getChainDefinition(1).allowsMintInitiation, false);
+  assert.equal(registry.getChainDefinition(1).allowsMintInitiation, true);
   assert.equal(registry.getChainDefinition(11155111).allowsMintInitiation, true);
   assert.equal(registry.getConfiguredScoreDeploymentBlock(1), 11_762_358n);
   process.env.NEXT_PUBLIC_ETH_SCORE_NFT_ADDRESS = '0x0000000000000000000000000000000000000000';

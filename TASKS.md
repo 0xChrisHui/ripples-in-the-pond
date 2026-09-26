@@ -13,8 +13,8 @@
   - [x] 完成 M0 定向审查、选择性迁移清单与架构边界同步
   - [x] 完成 M1–M5 本地代码、静态 Gate、P16 专项验证与 Forge 70/70
   - [x] 执行 `058`，按 chain + contract 隔离 Token ID；Sepolia 从 `#12` 续接，主网新集合可从 `#1` 开始
-  - [ ] 将当前 P16 分支合入 `main`
-  - [ ] 部署 Ethereum Mainnet ScoreNFT，注册主网计数器并配置生产环境
+  - [x] 将当前 P16 分支合入 `main`
+  - [x] 部署 Ethereum Mainnet ScoreNFT，注册主网计数器并配置生产环境
   - [ ] 完成第一枚低成本主网 mint 与链、库、metadata、页面四方核验
 
 ## ⏳ Later / 开放项

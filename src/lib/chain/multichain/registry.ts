@@ -28,7 +28,7 @@ const REGISTRY: Record<SupportedChainId, ChainDefinition> = {
     rpcEnv: 'ETHEREUM_RPC_URL', explorerBaseUrl: 'https://etherscan.io',
     deploymentBlockEnv: 'ETH_SCORE_DEPLOYMENT_BLOCK',
     scoreMintMode: 'eth_self_paid', allowsLoginConnection: true,
-    allowsMintInitiation: false,
+    allowsMintInitiation: true,
     receiptTimeoutMs: 30 * 60_000, confirmations: 'ETH_SCORE_CONFIRMATIONS',
   },
   10: {

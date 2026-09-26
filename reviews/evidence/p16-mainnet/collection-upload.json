@@ -1,0 +1,38 @@
+{
+  "state": "verified",
+  "contentSha256": "4b159888a11dbd9c93adb50515181b2905312c23fc1a18f47be7f3cf9516d857",
+  "bytes": 256,
+  "arweaveTxId": "T4FV4ZIXgmkc46Nr0tQeER2xEji2PvUla8bQZhiAEjA",
+  "uploaderAddress": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+  "costWinc": "0",
+  "gatewayEvidence": [
+    {
+      "gateway": "https://arweave.net",
+      "status": 404,
+      "bytes": 1777,
+      "contentType": "text/html",
+      "cors": "*",
+      "sha256": "a03cb7c46de1c20dd15cbaaecb261f4e346a3d73011d94f2548a4936218d1932",
+      "exact": false
+    },
+    {
+      "gateway": "https://ardrive.net",
+      "status": 200,
+      "bytes": 256,
+      "contentType": "application/json; charset=utf-8",
+      "cors": "*",
+      "sha256": "4b159888a11dbd9c93adb50515181b2905312c23fc1a18f47be7f3cf9516d857",
+      "exact": true
+    },
+    {
+      "gateway": "https://arweave.tokyo",
+      "status": 200,
+      "bytes": 256,
+      "contentType": "application/json; charset=utf-8",
+      "cors": "*",
+      "sha256": "4b159888a11dbd9c93adb50515181b2905312c23fc1a18f47be7f3cf9516d857",
+      "exact": true
+    }
+  ],
+  "updatedAt": "2026-09-26T08:10:40.017Z"
+}
