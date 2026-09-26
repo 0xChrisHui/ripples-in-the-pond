@@ -1,5 +1,8 @@
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { getAddress } from 'viem';
+import { getChainPublicClient } from '@/src/lib/chain/multichain/public-client';
 import { requireSelfMintContext, selfMintErrorResponse } from '@/src/lib/self-mint/access';
+import { ETHEREUM_SCORE_ABI } from '@/src/lib/self-mint/ethereum-score-contract';
 import type { SelfMintOrderRow } from '@/src/lib/self-mint/order';
 import { signMintAuthorization } from '@/src/lib/self-mint/voucher';
 
@@ -21,6 +24,9 @@ export async function POST(request: Request) {
     if (row.recipient_address.toLowerCase() !== context.walletAddress.toLowerCase()) {
       return Response.json({ error: '当前钱包不是订单接收人', code: 'WALLET_CHANGED' }, { status: 409 });
     }
+    if (!row.token_uri) {
+      return Response.json({ error: '订单永久资源尚未就绪', code: 'ORDER_NOT_READY' }, { status: 409 });
+    }
     const voucher = await signMintAuthorization(row);
     const { error: issueError } = await supabaseAdmin.rpc('issue_score_self_mint_authorization', {
       p_user_id: context.userId,
@@ -38,6 +44,23 @@ export async function POST(request: Request) {
       }
       throw issueError;
     }
+    const client = getChainPublicClient(row.chain_id);
+    const args = [
+      voucher.authorization, row.token_uri, voucher.account.address, voucher.signature,
+    ] as const;
+    const recipient = getAddress(context.walletAddress);
+    const [gas, fees, balance] = await Promise.all([
+      client.estimateContractGas({
+        address: getAddress(row.score_contract), abi: ETHEREUM_SCORE_ABI,
+        functionName: 'redeem', args, account: recipient,
+      }),
+      client.estimateFeesPerGas(),
+      client.getBalance({ address: recipient }),
+    ]);
+    const gasLimit = gas * 120n / 100n;
+    const maxFee = fees.maxFeePerGas ?? fees.gasPrice;
+    if (!maxFee) throw new Error('暂时无法取得 Gas 价格');
+    const estimatedFeeWei = gasLimit * maxFee;
     return Response.json({
       orderId: row.order_id,
       chainId: row.chain_id,
@@ -46,6 +69,9 @@ export async function POST(request: Request) {
       authorizer: voucher.account.address,
       digest: voucher.digest,
       signature: voucher.signature,
+      gasLimit: gasLimit.toString(),
+      estimatedFeeWei: estimatedFeeWei.toString(),
+      hasEnoughBalance: balance >= estimatedFeeWei,
       authorization: {
         ...voucher.authorization,
         tokenId: voucher.authorization.tokenId.toString(),

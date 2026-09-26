@@ -1,8 +1,6 @@
 import {
-  createPublicClient,
   encodeFunctionData,
   getAddress,
-  http,
   type Address,
   type Hex,
 } from 'viem';
@@ -17,6 +15,9 @@ export type VoucherResponse = {
   authorizer: Address;
   digest: Hex;
   signature: Hex;
+  gasLimit: string;
+  estimatedFeeWei: string;
+  hasEnoughBalance: boolean;
   authorization: Omit<MintAuthorization, 'tokenId' | 'deadline'> & {
     tokenId: string;
     deadline: number;
@@ -46,32 +47,21 @@ export async function buildMintTransactionPlan(input: {
   }
 
   const chain = voucher.chainId === 1 ? mainnet : sepolia;
-  const client = createPublicClient({ chain, transport: http() });
   const authorization: MintAuthorization = {
     ...voucher.authorization,
     tokenId: BigInt(voucher.authorization.tokenId),
     deadline: BigInt(voucher.authorization.deadline),
   };
   const args = [authorization, voucher.tokenUri, voucher.authorizer, voucher.signature] as const;
-  const [gas, fees, balance] = await Promise.all([
-    client.estimateContractGas({
-      address: voucher.scoreContract, abi: ETHEREUM_SCORE_ABI,
-      functionName: 'redeem', args, account: input.walletAddress,
-    }),
-    client.estimateFeesPerGas(),
-    client.getBalance({ address: input.walletAddress }),
-  ]);
-  const gasLimit = gas * 120n / 100n;
-  const maxFee = fees.maxFeePerGas ?? fees.gasPrice;
-  if (!maxFee) throw new Error('暂时无法取得 Gas 价格');
-  const estimatedFeeWei = gasLimit * maxFee;
+  const gasLimit = BigInt(voucher.gasLimit);
+  const estimatedFeeWei = BigInt(voucher.estimatedFeeWei);
   return {
     voucher,
     walletAddress: input.walletAddress,
     chain,
     gasLimit,
     estimatedFeeWei,
-    hasEnoughBalance: balance >= estimatedFeeWei,
+    hasEnoughBalance: voucher.hasEnoughBalance,
     data: encodeFunctionData({ abi: ETHEREUM_SCORE_ABI, functionName: 'redeem', args }),
   };
 }

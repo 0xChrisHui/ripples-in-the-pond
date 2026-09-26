@@ -1704,3 +1704,4 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - 2026-09-26：Ethereum Mainnet 部署沿用现有独立主网 admin，P16 authorizer/pauser 保持分离；合约不可升级且 collection URI 构造时冻结。主网部署完成后只解除代码层 `allowsMintInitiation` 硬锁，Vercel 的登录和自付开关继续为 `off`，首枚四方核验通过后再灰度开放。
 - 2026-09-26：用户确认 Sepolia 真实铸造已跑通并明确要求前端切主网；Production 外部钱包登录与 Ethereum 自付开关直接切为 `live`，首枚 Mainnet Token `#1` 随后按链、库、metadata、页面四方核验。
 - 2026-09-26：录音上传校验与录音器统一为单事件最长 60 秒，并对同一 `clientDraftId` 做三次短间隔幂等重试；钱包能力拒绝结果不再永久缓存，避免开关发布后 `/me` 持续灰显 Ethereum。
+- 2026-09-26：Ethereum 自付铸造的 Gas、费用与余额估算改走服务端已配置的 Mainnet RPC；浏览器只消费签名凭证与报价，不再依赖 viem 默认公共节点，仍保持确认费用后才打开钱包。
