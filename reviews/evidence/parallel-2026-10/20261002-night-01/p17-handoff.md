@@ -19,6 +19,8 @@
 
 发布审查发现并修复离开原曲页继续试听的P2：仅在当前HTMLAudio来源属于该曲永久网关时停止，保留主线PlayerProvider/互斥总线；另一首曲目和空音频不受影响。定向脚本实际RED→GREEN，补丁后tsc/组件与适配器lint通过；只读复核确认原P2解决且无新阻塞。首个云端候选`dpl_GiMGaFt9pTRZuTh9dg1E276FxHpe`已Ready，但未含此修复，不切正式域名。最终候选重新构建受影响代码，不重跑未变化的合约或数据库证据。
 
+最终发布代码`60d75f80770fcda55b80110269bd63fbaa1e4e6c`，Vercel`dpl_9MY3RoJHnJ7tdFeesE5kpqGwvEmX`云端Turbopack构建退出0/Ready；官方CLI候选匿名应用smoke通过。候选直连被Vercel保护302到vercel.com，不当作产品失败，也没有取消保护；CLI并发检查时其版本通知cache lock有一次ENOENT，HTTP响应/文件断言均完成，不修无关工具缓存。`/score`云端静态预渲染为HTTP200+NEXT_REDIRECT/meta refresh到/tracks，不套用本地307断言；应用目标已核验。随后Git快进main且远端SHA一致、promote成功。2026-10-03 02:31 +08正式域名匿名smoke：首页/曲目馆/同源原曲2/我的/原曲订单入口200且无404 fallback；目录35曲70状态与同源JSON完全相同；订单GET与ETH prepare未登录401，未触及DB；新OP状态503/OP_SBT_DEPLOYMENT_PENDING。真实登录、音频播放、SQL与铸造未因上述HTTP通过而记通过。之后仅文档收尾复用代码证据。
+
 P17代理已完成核心实现、定向类型/lint和下述安全测试；最后提交期间连续容量错误。总控在同一工作树接管收尾，保留既有提交与全部现场，没有另建环境或重跑无变化链/媒体证明。
 
 ## 已完成的本地范围

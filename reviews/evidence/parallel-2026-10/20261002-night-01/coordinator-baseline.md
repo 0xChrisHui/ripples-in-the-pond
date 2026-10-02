@@ -12,6 +12,8 @@
 
 发布范围：P17曲目馆/原曲公开页/本人订单、P13同源资料、导航/登录/我的及分享B文案；保留最新主线PondShell、GL/visitor、播放器focus与渐进预取、认证和旧OP/Score/Echo发行链路。夜间P14与视觉时序仍在本地整合分支，不伪称本次生产已切换；UI按用户指令延期。原曲签发/新OP SBT/新数据库仍关闭，catalog revision不改变。
 
+实际执行结果（2026-10-03 02:31 +08）：代码`60d75f80770fcda55b80110269bd63fbaa1e4e6c`基于1514108单个发布提交快进main，ls-remote一致；最终候选`dpl_9MY3RoJHnJ7tdFeesE5kpqGwvEmX` Ready且releaseSourceSha一致，官方CLI候选smoke通过后promote成功。正式`https://pond-ripple.xyz`解析到该Ready部署并完成匿名HTTP断言。新资源/套餐采购0，真实交易/上传/迁移0；原回退目标仍保留。Git集成因main推送自动生成同源码部署，允许其正常构建，不改自动化配置。收尾仅同步这份交接及状态文档，代码证据继续复用。
+
 - runId：`20261002-night-01`。
 - 原目录：`E:\Projects\nft-music`，分支 `codex/p16-wip-snapshot`，原 HEAD `001a21dd60c96adf0fa72cfb47f217885132a655`。
 - 共同 BASE_SHA：`e6985bec5ef6d6f191526e6f2e5b58caa5414357`，对应冻结引用 `refs/heads/codex/night-base-20261002-night-01`。四线必须从该引用的同一个提交建立，禁止随远端漂移。
