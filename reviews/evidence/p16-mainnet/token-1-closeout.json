@@ -1,0 +1,268 @@
+{
+  "reviewDate": "2026-10-02",
+  "codeCommit": "04a33bf14dcf95d2717097b97de6539a3b17b0c5",
+  "checkedAt": "2026-10-02T08:31:49.975Z",
+  "order": {
+    "orderId": "0x387d2d53d7875238d290a9e0ca6e0c5bea53834a142470aeeb660e011f6e9a77",
+    "chainId": 1,
+    "contract": "0xdec99da00290d15f0742b0abd26e4cd5d121f02a",
+    "tokenId": 1,
+    "status": "success",
+    "tokenUri": "ar://jIqs9UaIuodoKZKrExQxel3IqqNIPgWAQjuSUVQjLTw",
+    "txHash": "0x3ef7abb36c3f1b1c5942968409495820459fda168e3b44fd7476cd7172f50a23",
+    "confirmedAt": "2026-10-02T08:24:14.979127+00:00",
+    "failureCode": null
+  },
+  "claim": [
+    {
+      "status": "consumed",
+      "mode": "eth_self_paid",
+      "version": 1,
+      "orderMatches": true,
+      "versionMatches": true
+    }
+  ],
+  "pendingStatus": "draft",
+  "chain": {
+    "status": "success",
+    "hash": "0x3ef7abb36c3f1b1c5942968409495820459fda168e3b44fd7476cd7172f50a23",
+    "blockNumber": "26103423",
+    "mintedAt": "2026-10-02T08:23:47.000Z",
+    "tokenId": "1",
+    "gasUsed": "192792",
+    "effectiveGasPrice": "2220962397",
+    "feeWei": "428183782442424",
+    "event": {
+      "orderId": "0x387d2d53d7875238d290a9e0ca6e0c5bea53834a142470aeeb660e011f6e9a77",
+      "recipient": "0x991b1aDe06d49454FD7A2cAeaf31F908e00d1c63",
+      "tokenId": "1",
+      "tokenURIHash": "0xe348577a1488187b1d4d4073497ba33e1f868d0e1444c592e70131540c7844bd"
+    }
+  },
+  "priorSameSessionReads": {
+    "owner": "0x991b1ade06d49454fd7a2caeaf31f908e00d1c63",
+    "tokenUri": "ar://jIqs9UaIuodoKZKrExQxel3IqqNIPgWAQjuSUVQjLTw",
+    "source": "同一会话前一轮已执行 ownerOf(1) 与 tokenURI(1)，与订单比对一致"
+  },
+  "snapshot": {
+    "environment": "production",
+    "revision": 1,
+    "contentSha256": "e952abebbd1a55d77196f11ab421c67902d9e5785ce43a3d79a3450b41f938eb",
+    "eventCount": 38
+  },
+  "consistency": {
+    "metadata": true,
+    "events": true,
+    "sounds": true,
+    "packageIdentities": true,
+    "metadataPackage": true,
+    "snapshotDigest": true,
+    "metadataPackageHashBytesMime": true,
+    "metadataExternalUrl": true
+  },
+  "resources": {
+    "usedKeys": [
+      "b",
+      "c",
+      "x",
+      "s",
+      "a",
+      "w",
+      "i",
+      "u",
+      "y",
+      "d",
+      "n"
+    ],
+    "results": [
+      {
+        "label": "events",
+        "arTxId": "55qDYne6L5R1YnF0RJ90zKhkqBJFl1YgGkLLhQBa1eQ",
+        "bytes": 1449,
+        "sha256": "d14b800d552d6949c26874e83b4b1461c9db92af9c8a05e522868ce8fbe79768",
+        "mime": "application/json",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "package",
+        "arTxId": "8c7nD-fSeqt8KBfg4Fym2YHNbY_O9ED3G-qMj6CBp3I",
+        "bytes": 867,
+        "sha256": "df306bdf9f8f70d1fb3881a8b677ecba9fde9a200b0e9afc97c799906723742c",
+        "mime": "application/json",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "decoder",
+        "arTxId": "Yu9fOcdc8fzBnPzFWabCyeh3TRcXYTowN5cpv68dOO0",
+        "bytes": 19562,
+        "sha256": "08eb79642b8ece4e7df2cd427fdda4c65b2bb28a40a1b1a4b4b328dd7f6299ee",
+        "mime": "text/html",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "soundSet",
+        "arTxId": "-93vQHgv6u7csNm4ImhDh48NU8Ys3ZGk4KRQAB0l4mg",
+        "bytes": 8855,
+        "sha256": "97a724305e5c1e2b659935ae9d64830091c0bf3735ea0129634ebe1242c95ba3",
+        "mime": "application/json",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "metadata",
+        "arTxId": "jIqs9UaIuodoKZKrExQxel3IqqNIPgWAQjuSUVQjLTw",
+        "bytes": 894,
+        "sha256": "019e025d75d9892d540ba35425efc83f5cff0791cf19bd7718543fd6942a6749",
+        "mime": "application/json",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:a",
+        "arTxId": "PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
+        "bytes": 81546,
+        "sha256": "b247eaf947b33ad05369eea63cae662c8bdcded32651557bcd6013108d5b04e8",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "base",
+        "arTxId": "BkXfeDwndd6vXavoqym1uIIT1obTaxrnKrOfm0ln2DY",
+        "bytes": 3966016,
+        "sha256": "0afe6742126dd3cb806462eabf820a662a1a5b5a85adc425c7ef398988504caf",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:b",
+        "arTxId": "ConEYCV1Y71NqsUU-uyO52h1PRgJNHPR6nnM-eR9i28",
+        "bytes": 81546,
+        "sha256": "b55903ee6e76e02b330f0cc0e706ab5a8b41579da412e57f28dc1d001782f937",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:c",
+        "arTxId": "e_Pzv0vwUDUCUpa1S2OX7YWX6-Hg8lYwhBx4V1mOKgc",
+        "bytes": 81546,
+        "sha256": "9ac84ee89fd1ed59dcdd14121b6a39a890e16f51ace9762a1600f685539e26ae",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:d",
+        "arTxId": "qmRjePU6ybQoUm5gEsOBpfHvolGGAyJE2kKX_XK3Cxs",
+        "bytes": 81546,
+        "sha256": "0cf050aad5a7d50123f42c18cbfdfa430b059b3e09ea4ff6bb87fa0101c7961d",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:i",
+        "arTxId": "e1I933Ijfu6FzbRjGJ9wQE-pRXDyac1Mzn69QH0Yx6Q",
+        "bytes": 81546,
+        "sha256": "684345f26921b4e86dd5d2afe35bbae1c48b47611c42c3dc804809d232439906",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:s",
+        "arTxId": "r0vsS2HdOk46q2ICCSiZgZKY7fshX2IbwBaO0FBMpvk",
+        "bytes": 81546,
+        "sha256": "7fc0d1b625443b0553371c90c574d4bce1680bcdca700888a5dfe729ee550a25",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:w",
+        "arTxId": "IImeSe6x3wf8Gmqj94tdBE1xtNE0gvDw-sHLBVjuEk8",
+        "bytes": 41317,
+        "sha256": "54799ad85f1858eae1ff0f790b0e65538359d3c0fd11d1c9c98e26edd87866bc",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:n",
+        "arTxId": "S0g5sOWbGIMwBu2dUSAKJ6ZnQljdPidtWdJO8rsAsxU",
+        "bytes": 41317,
+        "sha256": "8921038adaf2cf716fed9027135fef04b5442df0be2e1b79fdedaae59506d6d7",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:u",
+        "arTxId": "4y0MSr4zw830Dvz6MODNX977D0bNaMd12kWtXMOSL78",
+        "bytes": 81546,
+        "sha256": "e0f1f74be260f215078f86ef7521f0423b4548151c93289c527963ce97fbe650",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:x",
+        "arTxId": "4KYAvxgKeKP2RmRC-K5cl9toQyxrGDgHYuCqIhYst-c",
+        "bytes": 81546,
+        "sha256": "d6ef710dfb0bd14affe672cfe8485703cc60236144eb6e203e2b451ff107c6d6",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      },
+      {
+        "label": "sound:y",
+        "arTxId": "6l3iMUO9wxJQSpmfgt9gzgl0YnmbyR4VPWOKMg4GQ4w",
+        "bytes": 81546,
+        "sha256": "a31f0e0222dd8adf759149a5388c6845f1c1704724f6888f514c0a5952c8a955",
+        "mime": "audio/mpeg",
+        "gateway": "https://ardrive.net",
+        "attempts": [],
+        "ok": true
+      }
+    ]
+  },
+  "browser": {
+    "checkedAt": "2026-10-02T08:34:11.382Z",
+    "url": "https://pond-ripple.xyz/score/1/0xdec99da00290d15f0742b0abd26e4cd5d121f02a/1",
+    "state": "playing",
+    "visual": "eclipse",
+    "caption": "正在播放\n\n永久录音、日食与按键编舞保持同一时钟。",
+    "pageErrors": [],
+    "consoleErrors": []
+  },
+  "limits": [
+    "浏览器只验证播放启动，未做整曲听音验收",
+    "私密 /me 只核对正式数据与查询逻辑，未使用登录会话目验",
+    "扩展钱包矩阵保留开放项"
+  ],
+  "findings": [
+    "P2-1：Ethereum 凭证来源误标 OP 合约",
+    "P2-2：metadata Minted At 使用建单日期"
+  ]
+}

@@ -6,7 +6,11 @@
 
 ## 当前阶段
 
-**Phase**: **Phase 11 已完成并冻结；Phase 16 Ethereum Mainnet 前端已开放，下一步完成首枚主网 smoke。** 正式施工基线为 `main@f24f5bd`；旧 `codex/p16-wip-snapshot@3c5fa6f` 只作选择性迁移来源，不整体合并。权威顺序见 `playbook/phase-16/05-minimal-loop.md`。
+**Phase**: **Phase 11 已完成并冻结；Phase 16 Ethereum Mainnet 核心主链路已完成，2026-10-02 上线收口 Review 通过。** 首枚 Token #1 的链上交易、正式订单、永久资源和公开播放一致。最终证据见 `reviews/2026-10-02-p16-mainnet-closeout-review.md`；`playbook/phase-16/05-minimal-loop.md` 保留为早期 Sepolia 施工记录，不代表当前仍未上线。
+
+**下一步**：P16 核心主线关闭，进入日常使用与按需修正；两项非阻塞标签问题、私密 `/me` 目验及扩展钱包实测列入 `TASKS.md` 开放项，不自动启动其他 Phase。
+
+**P16 上线收口（2026-10-02）✅**：Mainnet Token #1 的 order mapping、ScoreRedeemed、receipt、owner/tokenURI 与正式库 `success`、claim `consumed`、production snapshot revision 1 一致。17 项永久资源（6 项档案资源 + 实际使用的 11 个音效）逐一通过 bytes/SHA-256/MIME 核验，metadata/events/sounds 与 snapshot 一致，v3 package 和 snapshot digest 通过。正式页面进入 `playing/eclipse`，本次浏览器无 page/console error。保留两项非阻塞问题：Ethereum 凭证来源误标 OP、永久 metadata 的 Minted At 实为建单日期；私密 `/me` 仅核对数据与查询逻辑，未冒充登录目验或全钱包验收。
 
 **P16 Playbook 优化（2026-09-24）✅**：本轮完成线收窄为 Sepolia 最小成熟闭环；冻结 Privy 单一钱包写入、orderId 链上真值、统一恢复、`053–057` migration 与 P11 集成红线。MetaMask 桌面和 imToken / WalletConnect 各一笔真实 mint、hash 漏报恢复、OP/邮箱/SEMI/P14 回归为阻塞 Gate；完整移动端/异常矩阵、压力循环、Google Fonts 本地化和 Ethereum Mainnet 延后。
 

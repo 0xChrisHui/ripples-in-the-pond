@@ -1,7 +1,7 @@
 # P16 Ethereum Mainnet 部署证据
 
 日期：2026-09-26（Asia/Shanghai）  
-状态：合约、正式数据库和 Production 配置完成；正式前端已切至 Ethereum Mainnet，尚未发送第一枚主网 mint。
+状态：部署记录保留 2026-09-26 时点；2026-10-02 首枚主网 Token #1 已成功并完成收口核验，见下方最新记录。
 
 ## 永久合集资料
 
@@ -35,12 +35,15 @@
 
 - 正式 Supabase：`uupobbgnhpattyxhxvmc`。
 - migration `053–058` 已按顺序执行并登记；部署前正式库没有 P16 表，执行后结构可读。
-- 主网集合计数器：`(1, 0xdec99da00290d15f0742b0abd26e4cd5d121f02a) → next_token_id=1`。
-- 链上与正式库当前均为 0 个 Ethereum Mainnet 自付订单/已兑付编号。
+- 部署时主网集合计数器：`(1, 0xdec99da00290d15f0742b0abd26e4cd5d121f02a) → next_token_id=1`。
+- 部署时链上与正式库均为 0 个 Ethereum Mainnet 自付订单/已兑付编号；此为历史基线。
 - Vercel Production 已配置 chainId、合约地址、RPC、部署区块、角色、永久 URI、authorizer secret 与 `2` 个确认数。
 - `EXTERNAL_WALLET_LOGIN_MODE=live`、`ETH_SCORE_SELF_MINT_MODE=live`；正式前端开放外部钱包登录与 Ethereum Mainnet 自付铸造。
 
-## 下一步
+## 首枚主网收口（2026-10-02）
 
-1. 使用内部钱包完成 Token `#1` 的低成本主网 mint。
-2. 核对链上 mapping/event/owner/tokenURI、正式库订单与 claim、永久 metadata、`/score` 页面四方一致。
+- Token #1 交易：`0x3ef7abb36c3f1b1c5942968409495820459fda168e3b44fd7476cd7172f50a23`，区块 `26103423`，2026-10-02 16:23:47 北京时间。
+- 正式订单 `success`、claim `consumed`、production snapshot revision `1`；17 项永久资源完整读回与身份核验通过。
+- 公开页面播放进入 `playing/eclipse`，无 page/console error；私密 `/me` 只读数据与查询逻辑已核对，未使用登录会话目验。
+- [最终 Review](../../2026-10-02-p16-mainnet-closeout-review.md) 与 [只读核验证据](./token-1-closeout.json)。
+- P16 核心主线完成；两项非阻塞标签问题及扩展钱包实测转 `TASKS.md` 开放项。

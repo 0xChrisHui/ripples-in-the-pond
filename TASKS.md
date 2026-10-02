@@ -7,7 +7,11 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- **Phase 16：Ethereum Mainnet Gate**
+- 当前无正在施工的任务；P16 核心主线已完成，下一项由用户指定。
+
+## ✅ 最近完成：Phase 16 Ethereum Mainnet（2026-10-02）
+
+- **Phase 16：主网上线收口通过**（证据：`reviews/2026-10-02-p16-mainnet-closeout-review.md`）
   - [x] Phase 11 最终体验修正、收口并合入 `main@f24f5bd`
   - [x] 优化 P16 为 Sepolia 最小成熟闭环，冻结 M0–M6 唯一顺序
   - [x] 完成 M0 定向审查、选择性迁移清单与架构边界同步
@@ -16,10 +20,12 @@
   - [x] 将当前 P16 分支合入 `main`
   - [x] 部署 Ethereum Mainnet ScoreNFT，注册主网计数器并配置生产环境
   - [x] 将正式前端 Ethereum 网络切到 Mainnet 并开放钱包登录与自付铸造
-  - [ ] 完成第一枚低成本主网 mint 与链、库、metadata、页面四方核验
+  - [x] 完成第一枚主网 mint 与链、库、metadata、公开页面播放核验；私密 `/me` 目验边界见开放项
 
 ## ⏳ Later / 开放项
 
+- **P16 两项非阻塞标签修正**：Ethereum 作品凭证不应显示“来源：OP 合约”；未来订单 metadata 的 `Minted At` 应避免把建单时间称为链上铸造时间，已冻结 Token #1 保留原文并以链上时间为准。详见收口 Review 的 P2-1/P2-2。
+- **P16 私密档案补证（非阻塞）**：正式数据与 `/me` 查询逻辑已核对；原钱包本人确认待铸造项消失、Token #1 出现在“我的唱片”。本次未使用用户登录会话。
 - **P16 扩展钱包矩阵（非主网编号阻塞项）**：补 imToken / WalletConnect 真实 mint 与 Phantom/OKX 入口 smoke。
 - **P11-J 扩展 review（非阻塞）**：20+ 压力循环、全能力组合矩阵、重复 offline/context-loss/no-WebGL、J5 全视口动态对比度与证据美化。P16 M0 只完成会触碰接口的定向 review。
 - **P11-I/J 人工验收与交付决定**：真实账号/日食目验、真实档案行恢复；决定 ARCHITECTURE D-5、合并、部署与 Edge profile/worktree 清理。
@@ -227,7 +233,7 @@ findings 状态更新：`reviews/phase-6-findings-tracker.md`（7 项 deferred-j
 - **Phase 13** — Semi 音乐 NFT 生态合作（待你和社区商量后定）
 - **Phase 14（非阻塞观察）** — 首枚 ECHO #1、P14-G 索引恢复、首页第 36 枚访客与 G7 稳定前缀修复已交付；后续 observe/live 窗口及原钱包档案目验作为 review 保留（`playbook/phase-14/80-g-recovery-track36-eclipse.md`）
 - **Phase 15 + P15-G（已完结 ✅）** — P14-G 最终交付、全站性能/可靠性、63 个 Blob 高速副本、自动切源、Preview/Production 与线上真实播放回归全部完成（`reviews/2026-09-13-phase-15-final-review.md`、`playbook/phase-15/80-g-mirror-probe.md`）
-- **Phase 16** — 原生钱包 + 多链 / ETH Mainnet（往后排）
+- **Phase 16 核心主线已完成 ✅** — 原生钱包 + Ethereum Mainnet 自付铸造；扩展钱包与非阻塞修正见开放项。
 - **未排期** — 音效系统扩展（原 P15：26→50 与输入键/音效 id 解耦；待以后重新编号）
 
 ### Phase 14 最终交付与观察看板（2026-09-13）
