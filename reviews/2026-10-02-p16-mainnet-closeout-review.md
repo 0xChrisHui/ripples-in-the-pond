@@ -14,6 +14,8 @@ P16 核心主链路收口通过。本次核验范围内未发现阻塞铸造、�
 
 ## 发现（非阻塞）
 
+后续处理：两项已在本地修正，等待正常代码发布；下文保留发现时的原始证据。Token #1 的永久 metadata 不更改。
+
 ### P2-1：Ethereum 永久凭证来源误标为 OP
 
 - 位置：`app/(pond)/score/[id]/components/ScoreArchive.tsx:7`。

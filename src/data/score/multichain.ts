@@ -98,7 +98,7 @@ async function readEthereumScore(
     coverUrl: snapshot.coverUrl, eventCount: snapshot.playbackBootstrap.events.length,
     permanentEventCount: snapshot.playbackBootstrap.events.length,
     createdAt: record?.created_at ?? null, confirmedAt: record?.confirmed_at ?? null,
-    mintedAt: snapshot.mintedAt ?? record?.created_at ?? '',
+    mintedAt: record?.confirmed_at ?? snapshot.mintedAt ?? snapshot.receipt.verifiedAt,
     txHash: txHash ?? undefined,
     etherscanUrl: txHash ? explorerTxUrlFor(chainId, txHash) : undefined,
     degraded: !record, metadataRef: snapshot.metadataRef, manifest: snapshot.manifest,

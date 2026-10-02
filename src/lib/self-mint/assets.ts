@@ -148,7 +148,7 @@ async function buildAsset(row: SelfMintOrderRow): Promise<{ kind: UploadKind; by
       { trait_type: 'Track', value: track.title },
       { trait_type: 'Week', value: track.week },
       { trait_type: 'Events', value: events.length },
-      { trait_type: 'Minted At', value: row.created_at.slice(0, 10) },
+      { trait_type: 'Prepared At', value: row.created_at.slice(0, 10) },
       { trait_type: 'Chain ID', value: row.chain_id },
     ],
     properties: { playback: {
@@ -157,7 +157,15 @@ async function buildAsset(row: SelfMintOrderRow): Promise<{ kind: UploadKind; by
       sha256: row.package_sha256!, bytes: row.package_bytes!, mime: 'application/json',
     } },
   };
-  return { kind: 'metadata', bytes: Buffer.from(JSON.stringify(metadata), 'utf8') };
+  let bytes = Buffer.from(JSON.stringify(metadata), 'utf8');
+  // 已开始上传的订单必须复用原字节，避免发布时改变冻结的永久身份。
+  if (row.metadata_sha256 && await sha256Hex(bytes) !== row.metadata_sha256) {
+    const preparedAt = metadata.attributes?.find((item) => item.trait_type === 'Prepared At');
+    if (!preparedAt) throw new Error('metadata 缺少准备日期');
+    preparedAt.trait_type = 'Minted At';
+    bytes = Buffer.from(JSON.stringify(metadata), 'utf8');
+  }
+  return { kind: 'metadata', bytes };
 }
 
 export async function processSelfMintAsset(row: SelfMintOrderRow, owner: string) {

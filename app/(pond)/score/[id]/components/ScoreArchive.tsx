@@ -4,7 +4,7 @@ import type { ScorePageData, ScoreProvenance } from '@/src/data/score-source';
 import type { ScoreHolderState } from './use-score-holder';
 
 const sourceLabels = {
-  contract: 'OP 合约',
+  contract: '链上合约',
   database: '作品数据库',
   metadata: '永久 metadata',
   'metadata.animation_url': 'metadata.animation_url',

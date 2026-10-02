@@ -24,7 +24,7 @@
 
 ## ⏳ Later / 开放项
 
-- **P16 两项非阻塞标签修正**：Ethereum 作品凭证不应显示“来源：OP 合约”；未来订单 metadata 的 `Minted At` 应避免把建单时间称为链上铸造时间，已冻结 Token #1 保留原文并以链上时间为准。详见收口 Review 的 P2-1/P2-2。
+- **P16 两项非阻塞标签已本地修正**：作品凭证来源统一显示“链上合约”；新订单永久 metadata 将建单日标为 `Prepared At`，已冻结 Token #1 保留原文。详见收口 Review 的 P2-1/P2-2。
 - **P16 私密档案补证（非阻塞）**：正式数据与 `/me` 查询逻辑已核对；原钱包本人确认待铸造项消失、Token #1 出现在“我的唱片”。本次未使用用户登录会话。
 - **P16 扩展钱包矩阵（非主网编号阻塞项）**：补 imToken / WalletConnect 真实 mint 与 Phantom/OKX 入口 smoke。
 - **P11-J 扩展 review（非阻塞）**：20+ 压力循环、全能力组合矩阵、重复 offline/context-loss/no-WebGL、J5 全视口动态对比度与证据美化。P16 M0 只完成会触碰接口的定向 review。
