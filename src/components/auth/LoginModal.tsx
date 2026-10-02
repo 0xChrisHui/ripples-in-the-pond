@@ -8,11 +8,10 @@ import { setLoginSession } from './login-session';
 import './auth-dialog.css';
 
 /**
- * Phase 7 Track D D1 — 全站登录 modal，默认走 Semi 社区钱包。
+ * 全站登录弹层，默认使用 SEMI社区身份。
  * P12 C7 — Semi kill switch：NEXT_PUBLIC_SEMI_DISABLED=1 时隐藏 Semi、邮箱(Privy)转正，
  * 上线周 Semi API 波动可一键保住新用户登录（改 env + redeploy 即生效，零代码回滚）。
  */
-
 const SEMI_DISABLED = process.env.NEXT_PUBLIC_SEMI_DISABLED === '1';
 
 // 模块级 store + React useSyncExternalStore 标准三件套（subscribe / getSnapshot / getServerSnapshot）。
@@ -80,6 +79,7 @@ export default function LoginModal({ externalWalletLoginEnabled }: {
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement;
+    const restoreKeyboardFocus = previous instanceof HTMLElement && previous.matches(':focus-visible');
     const dialog = dialogRef.current;
     const priorOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -93,7 +93,8 @@ export default function LoginModal({ externalWalletLoginEnabled }: {
       document.body.style.overflow = priorOverflow;
       if (previous instanceof HTMLElement
         && (document.activeElement === document.body || dialog?.contains(document.activeElement))) {
-        previous.focus();
+        if (restoreKeyboardFocus) previous.focus({ preventScroll: true });
+        else previous.blur();
       }
     };
   }, [open]);

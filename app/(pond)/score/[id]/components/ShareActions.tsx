@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useAuth } from '@/src/hooks/useAuth';
+import { isScoreAuthor, scoreShareCopy, scoreShareIntent, scoreShareUrl } from './experience/share-copy';
 
 type Props = {
   id: string;
@@ -8,16 +10,8 @@ type Props = {
   trackTitle: string;
   canonicalPath?: string;
   posterPath?: string | null;
+  creatorAddress?: string | null;
 };
-
-function canonicalUrl(id: string, tokenId: number | null, canonicalPath?: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
-  return `${base.replace(/\/$/, '')}${canonicalPath ?? `/score/${tokenId ?? id}`}`;
-}
-
-function shareText(trackTitle: string, tokenId: number | null): string {
-  return `在“${trackTitle}”上的即兴演奏${tokenId == null ? '' : ` · Ripples #${tokenId}`}`;
-}
 
 async function copyText(value: string): Promise<boolean> {
   try {
@@ -36,11 +30,15 @@ async function copyText(value: string): Promise<boolean> {
 
 /** 首屏分享入口直接展开站内渠道，不触发操作系统的原生分享面板。 */
 export default function ShareActions({
-  id, tokenId, trackTitle, canonicalPath, posterPath,
+  id, tokenId, trackTitle, canonicalPath, posterPath, creatorAddress,
 }: Props) {
   const [feedback, setFeedback] = useState('复制链接');
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const slug = tokenId ?? id;
+  const auth = useAuth();
+  const author = isScoreAuthor(auth.authenticated, auth.evmAddress, creatorAddress);
+  const available = Boolean(canonicalPath);
+  const getUrl = () => scoreShareUrl(process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin, canonicalPath);
 
   useEffect(() => {
     const closeOnOutsidePointer = (event: PointerEvent) => {
@@ -55,17 +53,16 @@ export default function ShareActions({
   }, []);
 
   const openIntent = (kind: 'x' | 'weibo') => {
-    const url = canonicalUrl(id, tokenId, canonicalPath);
-    const text = shareText(trackTitle, tokenId);
-    const target = kind === 'x'
-      ? `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
-      : `https://service.weibo.com/share/share.php?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`;
+    const url = getUrl();
+    if (!url) { setFeedback('分享链接暂不可用'); return; }
+    const target = scoreShareIntent(kind, scoreShareCopy(kind, trackTitle, author), url);
     const popup = window.open(target, '_blank', 'noopener,noreferrer');
     if (!popup) window.location.href = target;
   };
 
   const copy = async () => {
-    setFeedback(await copyText(canonicalUrl(id, tokenId, canonicalPath)) ? '已复制' : '复制失败');
+    const url = getUrl();
+    setFeedback(url ? await copyText(url) ? '已复制' : '复制失败' : '分享链接暂不可用');
   };
 
   return (
@@ -73,9 +70,10 @@ export default function ShareActions({
       <details ref={detailsRef}>
         <summary aria-label="展开分享方式">分享</summary>
         <div className="score-share-actions__menu">
-          <button type="button" onClick={copy}>{feedback}</button>
-          <button type="button" onClick={() => openIntent('x')}>分享到 X</button>
-          <button type="button" onClick={() => openIntent('weibo')}>分享到微博</button>
+          {!available && <p>分享链接暂不可用</p>}
+          <button type="button" disabled={!available} onClick={copy}>{feedback}</button>
+          <button type="button" disabled={!available} onClick={() => openIntent('x')}>分享到 X</button>
+          <button type="button" disabled={!available} onClick={() => openIntent('weibo')}>分享到微博</button>
           {posterPath !== null && (
             <a href={posterPath ?? `/score/${slug}/poster`} download={`ripples-${slug}.png`}>下载海报</a>
           )}

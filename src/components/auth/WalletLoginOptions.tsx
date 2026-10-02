@@ -89,12 +89,12 @@ export default function WalletLoginOptions({
       <button type="button" className="auth-dialog__email" disabled={busy}
         data-login-autofocus
         onClick={start}>
-        用链上钱包登录
+        链上地址登录
       </button>
       <p className="auth-dialog__wallet-note" aria-live="polite">
         {flow === 'connecting' && '正在连接钱包…'}
         {flow === 'signing' && '请在钱包中签名完成登录…'}
-        {flow === 'idle' && '钱包登录需要一次免费签名，不会发起交易。'}
+        {flow === 'idle' && '链上地址登录需要一次免费签名，不会发起交易。'}
       </p>
       {error && <p className="semi-login__error" role="alert">{error}</p>}
     </div>

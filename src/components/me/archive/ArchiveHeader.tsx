@@ -41,6 +41,7 @@ export default function ArchiveHeader({
             </a>
           ) : <p className="me-archive__identity">{identity}</p>}
           {networkControl}
+          {authState === 'authenticated' && <PondRouteLink href="/me/material" className="me-archive__identity me-archive__identity--link">原曲订单</PondRouteLink>}
         </div>
       </nav>
 

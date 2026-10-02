@@ -1,0 +1,826 @@
+{
+  "runs": [
+    {
+      "stage": "home",
+      "startedAt": "2026-10-02T14:12:22.503Z",
+      "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+      "checks": {},
+      "error": "等待超时：document.querySelector(\"[data-scene-ready=true][data-gl-health=healthy]\")?.dataset",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "finishedAt": "2026-10-02T14:12:56.612Z"
+    },
+    {
+      "stage": "inspect",
+      "startedAt": "2026-10-02T14:13:23.297Z",
+      "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+      "checks": {
+        "snapshot": {
+          "url": "http://127.0.0.1:3115/",
+          "text": "Ripples in the Pond\n曲目\n艺术家\n登录\n\n按 A–Z、3–8 或空格演奏 33 个声音动画",
+          "gl": {}
+        }
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "finishedAt": "2026-10-02T14:13:23.435Z"
+    },
+    {
+      "stage": "home",
+      "startedAt": "2026-10-02T14:14:29.859Z",
+      "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+      "checks": {
+        "gl": {
+          "sceneReady": "true",
+          "glHealth": "healthy"
+        },
+        "navigation": {
+          "links": [
+            {
+              "text": "Ripples in the Pond",
+              "href": "/"
+            },
+            {
+              "text": "曲目",
+              "href": "/tracks"
+            },
+            {
+              "text": "艺术家",
+              "href": "/artist"
+            }
+          ],
+          "active": "BODY"
+        },
+        "firstKey": [
+          null
+        ],
+        "tab": {
+          "tag": "A",
+          "text": "Ripples in the Pond"
+        },
+        "login": "Identity record · 身份页找回你的音乐档案登录用于找回你的音乐档案，并继续保存属于你的声音。×01 · SEMI社区身份手机号登录手机号发送验证码使用邮箱登录",
+        "afterLogin": {
+          "active": "BODY",
+          "keys": [
+            null,
+            null
+          ]
+        },
+        "residentCycle": {
+          "hidden": true,
+          "visibleAgain": true,
+          "samples": [
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "194",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 729.078125,
+              "y": 400.78125,
+              "width": 142.421875,
+              "height": 142.421875,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "280",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 727.234375,
+              "y": 398.9375,
+              "width": 146.109375,
+              "height": 146.109375,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "407",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 725.71875,
+              "y": 397.40625,
+              "width": 149.15625,
+              "height": 149.15625,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "492",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 725.328125,
+              "y": 397.015625,
+              "width": 149.9375,
+              "height": 149.9375,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "579",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 725.859375,
+              "y": 397.546875,
+              "width": 148.875,
+              "height": 148.875,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "664",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 727.375,
+              "y": 399.078125,
+              "width": 145.828125,
+              "height": 145.828125,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "749",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 729.484375,
+              "y": 401.171875,
+              "width": 141.625,
+              "height": 141.625,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "833",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 731.4375,
+              "y": 403.140625,
+              "width": 137.703125,
+              "height": 137.703125,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "919",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 732.890625,
+              "y": 404.578125,
+              "width": 134.8125,
+              "height": 134.8125,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1004",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 733.78125,
+              "y": 405.484375,
+              "width": 133.015625,
+              "height": 133.015625,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1090",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 734.53125,
+              "y": 406.234375,
+              "width": 131.515625,
+              "height": 131.515625,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1176",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 734.546875,
+              "y": 406.59375,
+              "width": 131.21875,
+              "height": 131.21875,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1262",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 732.875,
+              "y": 406.71875,
+              "width": 133.25,
+              "height": 133.25,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1348",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 729.640625,
+              "y": 407.15625,
+              "width": 137.015625,
+              "height": 137.015625,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1434",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 725.71875,
+              "y": 408.34375,
+              "width": 141.078125,
+              "height": 141.078125,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1520",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 722.15625,
+              "y": 410.484375,
+              "width": 143.984375,
+              "height": 143.984375,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1606",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 719.734375,
+              "y": 413.234375,
+              "width": 145.03125,
+              "height": 145.03125,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1692",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 717.6875,
+              "y": 415,
+              "width": 146.296875,
+              "height": 146.296875,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1778",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 716.15625,
+              "y": 415.421875,
+              "width": 147.921875,
+              "height": 147.921875,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1864",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 716.015625,
+              "y": 415.71875,
+              "width": 147.875,
+              "height": 147.875,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "1950",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 717.0625,
+              "y": 416.40625,
+              "width": 146.03125,
+              "height": 146.03125,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2036",
+              "phase": "fading_out",
+              "presence": "0.9307271017540095",
+              "sizeClamped": "false",
+              "x": 718.828125,
+              "y": 415.859375,
+              "width": 144.140625,
+              "height": 144.140625,
+              "tabIndex": -1,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2122",
+              "phase": "fading_out",
+              "presence": "0.060820879738401445",
+              "sizeClamped": "false",
+              "x": 720.703125,
+              "y": 413.140625,
+              "width": 143.640625,
+              "height": 143.640625,
+              "tabIndex": -1,
+              "pointer": "none",
+              "visibility": "hidden"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2208",
+              "phase": "hidden",
+              "presence": "0",
+              "sizeClamped": "false",
+              "x": 721.71875,
+              "y": 408.484375,
+              "width": 145.625,
+              "height": 145.625,
+              "tabIndex": -1,
+              "pointer": "none",
+              "visibility": "hidden"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2293",
+              "phase": "hidden",
+              "presence": "0",
+              "sizeClamped": "false",
+              "x": 721.484375,
+              "y": 403.28125,
+              "width": 149.578125,
+              "height": 149.578125,
+              "tabIndex": -1,
+              "pointer": "none",
+              "visibility": "hidden"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2379",
+              "phase": "hidden",
+              "presence": "0",
+              "sizeClamped": "false",
+              "x": 722.4375,
+              "y": 401.265625,
+              "width": 149.765625,
+              "height": 149.765625,
+              "tabIndex": -1,
+              "pointer": "none",
+              "visibility": "hidden"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2465",
+              "phase": "hidden",
+              "presence": "0",
+              "sizeClamped": "false",
+              "x": 723.46875,
+              "y": 401.578125,
+              "width": 148.203125,
+              "height": 148.203125,
+              "tabIndex": -1,
+              "pointer": "none",
+              "visibility": "hidden"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2550",
+              "phase": "hidden",
+              "presence": "0",
+              "sizeClamped": "false",
+              "x": 724.078125,
+              "y": 402.234375,
+              "width": 146.84375,
+              "height": 146.84375,
+              "tabIndex": -1,
+              "pointer": "none",
+              "visibility": "hidden"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2636",
+              "phase": "hidden",
+              "presence": "0",
+              "sizeClamped": "false",
+              "x": 724.1875,
+              "y": 402.859375,
+              "width": 145.234375,
+              "height": 145.234375,
+              "tabIndex": -1,
+              "pointer": "none",
+              "visibility": "hidden"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2722",
+              "phase": "fading_in",
+              "presence": "0.006603488075478218",
+              "sizeClamped": "false",
+              "x": 723.109375,
+              "y": 403,
+              "width": 144.09375,
+              "height": 144.09375,
+              "tabIndex": -1,
+              "pointer": "none",
+              "visibility": "hidden"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2807",
+              "phase": "fading_in",
+              "presence": "0.6926472260808834",
+              "sizeClamped": "false",
+              "x": 721.234375,
+              "y": 403.078125,
+              "width": 142.515625,
+              "height": 142.515625,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            },
+            {
+              "instanceId": "resident-echo-1907944619",
+              "frameId": "2892",
+              "phase": "visible",
+              "presence": "1",
+              "sizeClamped": "false",
+              "x": 719.109375,
+              "y": 403.5,
+              "width": 139.84375,
+              "height": 139.84375,
+              "tabIndex": 0,
+              "pointer": "auto",
+              "visibility": "visible"
+            }
+          ]
+        },
+        "groupKeepsInstance": true
+      },
+      "error": "Uncaught",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "finishedAt": "2026-10-02T14:15:22.911Z"
+    },
+    {
+      "stage": "echo",
+      "startedAt": "2026-10-02T14:16:32.902Z",
+      "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+      "checks": {},
+      "error": "Object reference chain is too long",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "finishedAt": "2026-10-02T14:16:33.093Z"
+    },
+    {
+      "stage": "echo",
+      "startedAt": "2026-10-02T14:16:41.145Z",
+      "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+      "checks": {
+        "echoPlayback": "Pond Echo · 456b—7708正在播放暂停停止",
+        "echoPause": "Pond Echo · 456b—7708播放已暂停继续停止",
+        "echoNaturalEnd": true,
+        "afterStop": {
+          "instanceId": "resident-echo-1907944619",
+          "frameId": "7648",
+          "phase": "visible",
+          "presence": "1",
+          "sizeClamped": "false",
+          "x": 718.0625,
+          "y": 403.734375,
+          "width": 138.46875,
+          "height": 138.46875,
+          "tabIndex": 0,
+          "pointer": "auto",
+          "visibility": "visible"
+        },
+        "mobile": {
+          "pose": {
+            "instanceId": "resident-echo-1907944619",
+            "frameId": "7790",
+            "phase": "visible",
+            "presence": "1",
+            "sizeClamped": "false",
+            "x": 117.5625,
+            "y": 541.75,
+            "width": 138.46875,
+            "height": 138.46875,
+            "tabIndex": 0,
+            "pointer": "auto",
+            "visibility": "visible"
+          },
+          "overflow": false,
+          "menu": "曲目艺术家登录"
+        },
+        "reducedMotion": {
+          "instanceId": "resident-echo-1907944619",
+          "frameId": "7865",
+          "phase": "visible",
+          "presence": "1",
+          "sizeClamped": "false",
+          "x": 117.5625,
+          "y": 541.75,
+          "width": 138.46875,
+          "height": 138.46875,
+          "tabIndex": 0,
+          "pointer": "auto",
+          "visibility": "visible"
+        }
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "finishedAt": "2026-10-02T14:16:50.094Z"
+    },
+    {
+      "stage": "catalog",
+      "startedAt": "2026-10-02T14:17:04.515Z",
+      "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+      "checks": {
+        "catalog": {
+          "revision": "5e7241cbc7e234c1180e1d69231eba912fe39f0746727aa7891d761137f57eac",
+          "count": 35,
+          "text": "NO. 01原曲 1点击唱片，开始播放原曲试听 · 无需登录开始播放播放进度0 / 0 秒← 上一首下一首 →创作手记艺术家尚未提供创作手记。收藏原曲OptimismEthereum平台支付 Gas · 沿用既有 OP 收藏记录登录后收藏永久来源ar://qTfBmzoOJs6D4gYV5FJ0lBLKwdNzdzGEwnTEBcEiIJc沿用已有永久音频来源；历史 metadata 未承诺音频 SHA-256。OP Mainnet凭证已核验0x03504aeb95ebe3dc8c427b7b147f873f9948a299ERC-1155 · Token #1打开单曲唱片 →项目留存：尚待接收钱包与链上证明Ethereum Mainnet尚未部署项目留存：尚待接收钱包与链上证明"
+        },
+        "selection": "原曲 2",
+        "eth": "收藏原曲OptimismEthereumEthereum 将由关联的外部钱包自付 Gas。发行规则与真实部署尚待确认，当前未开放收藏。",
+        "audio": null,
+        "player": {
+          "state": "playing",
+          "seek": "57.048"
+        },
+        "sameRevision": true,
+        "writeGuard": {
+          "mint": 503,
+          "cron": 503
+        },
+        "mobileOverflow": false,
+        "realAudioProgress": {
+          "position": 36.9,
+          "duration": 57.048,
+          "caption": "正在播放原曲试听 · 无需登录"
+        }
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "finishedAt": "2026-10-02T14:17:15.712Z"
+    },
+    {
+      "stage": "score",
+      "startedAt": "2026-10-02T14:17:50.423Z",
+      "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+      "checks": {
+        "loaded": {
+          "text": "←\n返回池塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n降级可读\nDEGRADED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n正在准备永久录音…\n\n永久音频只会在你主动点击后建立播放会话。\n正在准备\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xac3f7471…6c20a4aa\n来源：链上合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：链上合约\n创作者\n永久来源未提供创作者地址\n来源：作品数据库\n当前持有者\n0x19da4b17…E2E6bA54\n来源：链上合约\n复制完整值\n查看外部记录 ↗\n铸造交易\n当前来源未记录铸造交易\n来源：作品数据库\n定稿交易\n当前来源未记录定稿交易\n来源：作品数据库\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：链上合约\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久底曲\nar://M-NM7…weToIqIQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久音效表\nar://NQsgc…X7Eu_kl8\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久播放器\nhttps://ar…X7Eu_kl8\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n\n降级可读\nDEGRADED\nToken #1 · 2026/8/23",
+          "state": {}
+        }
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "finishedAt": "2026-10-02T14:17:59.281Z"
+    },
+    {
+      "stage": "score",
+      "startedAt": "2026-10-02T14:18:19.876Z",
+      "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+      "checks": {
+        "loaded": {
+          "text": "←\n返回池塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n降级可读\nDEGRADED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n播放暂不可用\n\n永久资源暂时不可用（arweave.net: 网络错误；ario.permagate.io: 网络错误；arweave.net: 网络错误；ario.permagate.io: 网络错误）；身份与凭证仍可核验。\n重试\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xac3f7471…6c20a4aa\n来源：链上合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：链上合约\n创作者\n永久来源未提供创作者地址\n来源：作品数据库\n当前持有者\n0x19da4b17…E2E6bA54\n来源：链上合约\n复制完整值\n查看外部记录 ↗\n铸造交易\n当前来源未记录铸造交易\n来源：作品数据库\n定稿交易\n当前来源未记录定稿交易\n来源：作品数据库\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：链上合约\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久底曲\nar://M-NM7…weToIqIQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久音效表\nar://NQsgc…X7Eu_kl8\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久播放器\nhttps://ar…X7Eu_kl8\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n\n降级可读\nDEGRADED\nToken #1 · 2026/8/23",
+          "state": {}
+        },
+        "started": {
+          "p11Theme": "score",
+          "theme": "dark",
+          "capability": "fine",
+          "reducedMotion": "false",
+          "scoreState": "ready",
+          "playbackState": "error",
+          "scoreVisualPhase": "idle",
+          "glHealth": "healthy"
+        }
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "finishedAt": "2026-10-02T14:18:45.879Z"
+    },
+    {
+      "stage": "score",
+      "startedAt": "2026-10-02T14:20:50.961Z",
+      "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+      "checks": {
+        "loaded": {
+          "text": "←\n返回池塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n降级可读\nDEGRADED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n播放暂不可用\n\n永久资源暂时不可用（arweave.net: 网络错误；ario.permagate.io: 网络错误；arweave.net: 网络错误；ario.permagate.io: 网络错误）；身份与凭证仍可核验。\n重试\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xac3f7471…6c20a4aa\n来源：链上合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：链上合约\n创作者\n永久来源未提供创作者地址\n来源：作品数据库\n当前持有者\n0x19da4b17…E2E6bA54\n来源：链上合约\n复制完整值\n查看外部记录 ↗\n铸造交易\n当前来源未记录铸造交易\n来源：作品数据库\n定稿交易\n当前来源未记录定稿交易\n来源：作品数据库\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：链上合约\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久底曲\nar://M-NM7…weToIqIQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久音效表\nar://NQsgc…X7Eu_kl8\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久播放器\nhttps://ar…X7Eu_kl8\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n\n降级可读\nDEGRADED\nToken #1 · 2026/8/23",
+          "state": {}
+        },
+        "started": {
+          "p11Theme": "score",
+          "theme": "dark",
+          "capability": "fine",
+          "reducedMotion": "false",
+          "scoreState": "ready",
+          "playbackState": "error",
+          "scoreVisualPhase": "idle",
+          "glHealth": "healthy"
+        }
+      },
+      "consoleErrors": [
+        "Refused to frame 'https://auth.privy.io/' because an ancestor violates the following Content Security Policy directive: \"frame-ancestors 'self' http://localhost:300 http://localhost:3001 https://auth.privy.io\".\n",
+        "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "Access to fetch at 'https://ario.permagate.io/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800' from origin 'http://127.0.0.1:3115' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+        "Failed to load resource: net::ERR_FAILED",
+        "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "Access to fetch at 'https://ario.permagate.io/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800' from origin 'http://127.0.0.1:3115' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+        "Failed to load resource: net::ERR_FAILED",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Access to fetch at 'https://ario.permagate.io/7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ' from origin 'http://127.0.0.1:3115' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+        "Failed to load resource: net::ERR_FAILED",
+        "Refused to frame 'https://auth.privy.io/' because an ancestor violates the following Content Security Policy directive: \"frame-ancestors 'self' http://localhost:300 http://localhost:3001 https://auth.privy.io\".\n",
+        "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "Access to fetch at 'https://ario.permagate.io/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800' from origin 'http://127.0.0.1:3115' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+        "Failed to load resource: net::ERR_FAILED",
+        "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "Access to fetch at 'https://ario.permagate.io/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800' from origin 'http://127.0.0.1:3115' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+        "Failed to load resource: net::ERR_FAILED"
+      ],
+      "pageErrors": [],
+      "finishedAt": "2026-10-02T14:21:13.907Z"
+    },
+    {
+      "stage": "smoke",
+      "startedAt": "2026-10-02T14:22:52.780Z",
+      "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+      "checks": {
+        "standalone": {
+          "path": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/2",
+          "title": "原曲 2",
+          "revision": "5e7241cbc7e234c1180e1d69231eba912fe39f0746727aa7891d761137f57eac",
+          "record": true
+        },
+        "meUnauthenticated": "←\n返回池塘\n\n尚未登录\n\n登录后找回你的音乐\n\n登录用于找回你的私人音乐档案。\n\n登录",
+        "returnFocus": "BODY",
+        "realKeyAfterReturn": [
+          {
+            "key": "a",
+            "accepted": false,
+            "id": "FX01"
+          }
+        ]
+      },
+      "consoleErrors": [
+        "Refused to frame 'https://auth.privy.io/' because an ancestor violates the following Content Security Policy directive: \"frame-ancestors 'self' http://localhost:300 http://localhost:3001 https://auth.privy.io\".\n",
+        "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "Access to fetch at 'https://ario.permagate.io/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800' from origin 'http://127.0.0.1:3115' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+        "Failed to load resource: net::ERR_FAILED",
+        "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "Access to fetch at 'https://ario.permagate.io/-8QBKp_uxZdwyHF9CIgoBdFkAyipGys4krfEMLDA800' from origin 'http://127.0.0.1:3115' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+        "Failed to load resource: net::ERR_FAILED",
+        "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "Failed to load resource: net::ERR_CONNECTION_CLOSED",
+        "Refused to frame 'https://auth.privy.io/' because an ancestor violates the following Content Security Policy directive: \"frame-ancestors 'self' http://localhost:300 http://localhost:3001 https://auth.privy.io\".\n",
+        "Refused to frame 'https://auth.privy.io/' because an ancestor violates the following Content Security Policy directive: \"frame-ancestors 'self' http://localhost:300 http://localhost:3001 https://auth.privy.io\".\n"
+      ],
+      "pageErrors": [],
+      "finishedAt": "2026-10-02T14:23:01.058Z"
+    }
+  ],
+  "gatewayProbe": [
+    {
+      "gateway": "arweave.net",
+      "status": 200
+    },
+    {
+      "gateway": "ardrive.net",
+      "status": 200
+    },
+    {
+      "gateway": "ario.permagate.io",
+      "error": "Failed to fetch"
+    }
+  ],
+  "scoreInputsProbe": [
+    {
+      "id": "7wkFL72xytedtsM8JRU4duTJ9bX7zKDHhVLfUccTGZQ",
+      "status": 200
+    },
+    {
+      "id": "NQsgcCSPJjeRzvXHnXNWbUsovDCjkO5xHJBX7Eu_kl8",
+      "status": 200
+    },
+    {
+      "id": "M-NM7NGjnakWHaNE8Su3LLO5qAGckpNeVX3weToIqIQ",
+      "status": 200
+    }
+  ],
+  "failedClipProbe": [
+    {
+      "gateway": "arweave.net",
+      "error": "Failed to fetch"
+    },
+    {
+      "gateway": "ardrive.net",
+      "error": "Failed to fetch"
+    }
+  ],
+  "keyboardSupplement": {
+    "keys": [
+      {
+        "key": "a",
+        "accepted": false,
+        "id": "FX01"
+      },
+      {
+        "key": "a",
+        "accepted": false,
+        "id": "FX01"
+      },
+      {
+        "key": "3",
+        "accepted": true,
+        "id": "FX42"
+      }
+    ],
+    "audioStarts": 2,
+    "active": "BODY"
+  },
+  "verification": {
+    "applicationCodeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+    "build": {
+      "command": "npm run build -- --webpack",
+      "exitCode": 0,
+      "buildId": "HYwml_27vjAaauZr8kYQz",
+      "initialTurbopackFailure": "existing node_modules link outside project root; only failed build stage retried"
+    },
+    "targetedTypesLint": {
+      "command": "npm run check:quick -- explicit shared paths",
+      "exitCode": 0
+    },
+    "browserScope": "one Edge process/profile/target, continued after harness interruption; no auth mocks",
+    "externalTransactions": 0,
+    "archiveConfirmed": 0,
+    "archiveTotal": 70
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "status": "metadata_verified",
+  "chainId": 10,
+  "contractAddress": "0xd2e884fa06c9a9bdef2350956cc4216d3e2b476c",
+  "tokenId": "1",
+  "metadataUri": "ar://E4JVJ6EWwplEAXjoff1aDpuwbG7GDm5Whcv9kYLKU88",
+  "codePresent": true,
+  "blockNumber": "157673868",
+  "verifiedAt": "2026-10-02T13:08:35.947Z",
+  "source": "https://mainnet.optimism.io",
+  "publicDtoSource": "https://pond-ripple.xyz/api/echo/featured",
+  "metadataSha256": "a87d3d0be13309affd61f23b55bc74311a27eca6e855b83ce509355a03b47960",
+  "verifiedGateways": [
+    "https://ardrive.net",
+    "https://arweave.tokyo",
+    "https://arweave.net"
+  ],
+  "recipe": "KRH9G2JDWD55C6VX0F363L7K5K08BSN18W4P",
+  "uniqueClips": 26,
+  "durationMs": 269899.958338,
+  "mediaPlayback": "首页K2真实永久片段播放通过；非永久HTML/SEMI容器验收",
+  "k2Playback": {
+    "evidence": "k2-browser.json",
+    "codeSha": "6dfa1bef0cfb05cde5a0938fef480bc7cfcd6e18",
+    "scope": "首页真实永久片段解码/播放/暂停/seek尾段/自然结束/停止，通过；非SEMI或永久HTML容器验收",
+    "status": "passed"
+  }
+}

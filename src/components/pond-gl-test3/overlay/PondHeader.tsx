@@ -4,13 +4,11 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import LoginButton from '@/src/components/auth/LoginButton';
-import { useAuth } from '@/src/hooks/useAuth';
-import { useOwnedEchoes } from '@/src/hooks/me/useOwnedEchoes';
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 
 const MENU_ID = 'pond-public-navigation';
 
-function PublicLinks({ echoLabel, onNavigate }: { echoLabel: string; onNavigate?: () => void }) {
+function PublicLinks({ onNavigate }: { onNavigate?: () => void }) {
   const linkClass = [
     'flex min-h-11 items-center border-b border-[var(--p11-line)]',
     'text-sm text-[var(--p11-muted)] transition-colors duration-150',
@@ -21,13 +19,10 @@ function PublicLinks({ echoLabel, onNavigate }: { echoLabel: string; onNavigate?
 
   return (
     <>
-      <PondRouteLink href="/me#pond-echoes" onClick={onNavigate} className={linkClass}
-        data-pond-focus-entry="home">
-        {echoLabel}
-      </PondRouteLink>
       <Link href="/artist" onClick={onNavigate} className={linkClass}>
         艺术家
       </Link>
+      <Link href="/tracks" onClick={onNavigate} className={linkClass}>曲目</Link>
     </>
   );
 }
@@ -35,29 +30,8 @@ function PublicLinks({ echoLabel, onNavigate }: { echoLabel: string; onNavigate?
 /** 首页与 GL 沙盒共用的公开导航；只有交互岛接管指针，空白区域继续交给水塘。 */
 export default function PondHeader() {
   const pathname = usePathname();
-  const auth = useAuth();
-  const echoes = useOwnedEchoes({
-    authenticated: auth.authenticated,
-    authSource: auth.authSource,
-    userId: auth.userId,
-    evmAddress: auth.evmAddress,
-    getAccessToken: auth.getAccessToken,
-  });
   const [menuOpen, setMenuOpen] = useState(false);
   const isSandbox = pathname === '/test3' || pathname === '/test4';
-  const ownedCount = echoes.items.filter((item) => item.relation === 'current-owner').length;
-  const hasFailed = echoes.items.some((item) => item.status === 'manual_review' || item.hasError);
-  const hasProcessing = echoes.items.some((item) => [
-    'pending', 'preparing_media', 'uploading_metadata', 'minting_onchain',
-    'confirming_onchain', 'safe_retry',
-  ].includes(item.status));
-  const echoLabel = !auth.ready ? '池中回声'
-    : !auth.authenticated ? '池中回声 · 登录后查看'
-      : echoes.phase === 'loading' || echoes.phase === 'idle' ? '池中回声 · 读取中'
-        : echoes.phase === 'error' ? '池中回声 · 稍后重试'
-          : ownedCount > 0 ? `池中回声 · ${ownedCount} 枚`
-            : hasFailed ? '池中回声 · 需要恢复'
-              : hasProcessing ? '池中回声 · 生成中' : '池中回声 · 尚未持有';
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -89,7 +63,7 @@ export default function PondHeader() {
       </PondRouteLink>
 
       <nav aria-label="主导航" className="pointer-events-auto hidden min-h-11 items-center gap-7 md:flex">
-        <PublicLinks echoLabel={echoLabel} />
+        <PublicLinks />
         <span className="h-4 w-px bg-[var(--p11-line)]" aria-hidden="true" />
         <LoginButton />
       </nav>
@@ -117,7 +91,7 @@ export default function PondHeader() {
             className="absolute right-0 top-[52px] w-[min(280px,calc(100vw-40px))] border border-[var(--p11-line)] bg-[var(--p11-overlay)] px-5 py-3 shadow-[var(--p11-shadow-raised)] backdrop-blur-xl"
           >
             <div className="flex flex-col">
-              <PublicLinks echoLabel={echoLabel} onNavigate={() => setMenuOpen(false)} />
+              <PublicLinks onNavigate={() => setMenuOpen(false)} />
               <div className="flex min-h-14 items-center justify-end pt-2">
                 <LoginButton />
               </div>

@@ -16,14 +16,14 @@ function maskPhone(phone: string): string {
 function RegisterPrompt() {
   return (
     <div className="semi-login__register" id="semi-feedback" role="alert">
-      <p>该手机号尚未注册 Semi 钱包，请先注册后再登录。</p>
+      <p>该手机号尚未注册 SEMI社区身份，请先注册后再登录。</p>
       <a
         href={SEMI_REGISTER_URL}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="前往注册 Semi 钱包（新窗口打开）"
       >
-        前往注册 Semi 钱包
+        前往注册 SEMI社区身份
       </a>
     </div>
   );
@@ -32,7 +32,7 @@ function RegisterPrompt() {
 type Phase = 'phone' | 'code';
 
 /**
- * Phase 7 Track D D2 — Semi 社区钱包登录，两阶段身份纸页。
+ * Phase 7 Track D D2 — SEMI社区身份登录，两阶段身份纸页。
  */
 export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
   const [phone, setPhone] = useState('');
@@ -137,7 +137,7 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
     return (
       <form className="semi-login" onSubmit={(event) => { event.preventDefault(); void sendCode(); }}>
         <div className="semi-login__step">
-          <p>01 · Semi 社区钱包</p>
+          <p>01 · SEMI社区身份</p>
           <h3>手机号登录</h3>
         </div>
         <label className="semi-login__label" htmlFor="semi-phone">手机号</label>

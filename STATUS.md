@@ -8,7 +8,7 @@
 
 **Phase**: **Phase 11 已完成并冻结；Phase 16 Ethereum Mainnet 核心主链路已完成，2026-10-02 上线收口 Review 通过。** 首枚 Token #1 的链上交易、正式订单、永久资源和公开播放一致。最终证据见 `reviews/2026-10-02-p16-mainnet-closeout-review.md`；`playbook/phase-16/05-minimal-loop.md` 保留为早期 Sepolia 施工记录，不代表当前仍未上线。
 
-**下一步**：P16 核心主线关闭，进入日常使用与按需修正；两项非阻塞标签已在本地修正，私密 `/me` 目验及扩展钱包实测仍列入 `TASKS.md` 开放项，不自动启动其他 Phase。
+**下一步**：2026-10-03用户追加网站部署授权；发布候选以main@1514108适配夜间原曲目录、公开页、本人订单、同源清单及导航/分享入口，完成Vercel候选Ready和正式域名最小smoke后收尾。两链新原曲合约、原曲数据库与签发仍未启用；链上交易待具体费用上限和留存钱包。UI打磨延期，不要求用户验收。P16既有主网Score发行与持久水塘/播放器修复保留，原夜间全整合本地SHA8db180e和原脏工作区保留。
 
 **P16 上线收口（2026-10-02）✅**：Mainnet Token #1 的 order mapping、ScoreRedeemed、receipt、owner/tokenURI 与正式库 `success`、claim `consumed`、production snapshot revision 1 一致。17 项永久资源（6 项档案资源 + 实际使用的 11 个音效）逐一通过 bytes/SHA-256/MIME 核验，metadata/events/sounds 与 snapshot 一致，v3 package 和 snapshot digest 通过。正式页面进入 `playing/eclipse`，本次浏览器无 page/console error。保留两项非阻塞问题：Ethereum 凭证来源误标 OP、永久 metadata 的 Minted At 实为建单日期；私密 `/me` 仅核对数据与查询逻辑，未冒充登录目验或全钱包验收。
 

@@ -8,6 +8,12 @@
 >
 > 实际版本以 `package.json` 为准。当前：Next.js 16 + React 19 + TypeScript 5 + Tailwind 4。
 
+### 2026-10-03 授权扩展：原曲目录与独立收藏
+
+P17唯一`music-catalog`保存35首永久身份、ERC1155坐标及revision；曲目页、公开快照和SEMI清单从同源生成。ETH新增不可升级原曲ERC1155，外部钱包自付Gas、零额外领取价格、服务端EIP712凭证及独立订单；用户已确认每钱包每首历史领取一次、可转让、转出不恢复、总量无上限。资格用`hasClaimed`核验，不以余额为零放行。OP新增原曲SBT供未来发行，项目代付Gas，保留旧可转让合约/URI/资产，不新增OP钱包终身次数政策。
+
+网站发布沿用最新主线的Privy认证、multichain registry、持久PondShell、播放器focus bus和Score/Echo预取；不回退已有实现。订单页在`app/(pond)/me/material`，公开原曲URL仍为`/score/material/[chainId]/[contract]/[tokenId]`。真实数据库、角色、部署、永久上传与留存证据缺失时，新签发和新OP队列保持关闭；私有查询仅owner，unknown只登记旧hash并由对账确认，不能重复发送或自报success。用户已授权网站发布；链上动作仍待具体预算/接收地址登记和相关安全Gate。
+
 ---
 
 ## 一、产品定位

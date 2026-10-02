@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "revision": "5e7241cbc7e234c1180e1d69231eba912fe39f0746727aa7891d761137f57eac",
+  "environment": "production",
+  "collections": [
+    {
+      "kind": "original",
+      "chainId": 10,
+      "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+      "standard": "ERC1155",
+      "metadataMethod": "uri",
+      "playbackKind": "audio",
+      "enabled": true,
+      "verification": {
+        "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+        "verifiedAt": "10/02/2026 13:40:06",
+        "blockNumber": "157674584",
+        "bytecode": true,
+        "standard": true,
+        "uri": true,
+        "media": true,
+        "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+      },
+      "collectionKey": "eip155:10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+      "ownershipMethod": "balanceOf(address,id)",
+      "discovery": "current_holder_index",
+      "sampleAssets": [],
+      "sampleStatus": "not_provided",
+      "readyExclusionReasons": []
+    }
+  ]
+}

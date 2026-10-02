@@ -69,7 +69,7 @@ export default function ScoreLifecycle({ score, network }: Props) {
           tokenLabel={tokenLabel}
           shareAction={<ShareActions id={score.id} tokenId={score.tokenId ?? null}
             trackTitle={score.trackTitle} canonicalPath={canonicalPath}
-            posterPath={multichain ? null : undefined} />}
+            posterPath={multichain ? null : undefined} creatorAddress={score.creatorAddress} />}
         />
         <div className="score-pond-page__identity" data-pond-ui="true">
           <EditionStamp status={processing ? 'processing' : snapshotUnavailable ? 'degraded' : 'failed'} detail={tokenLabel} />

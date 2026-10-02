@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
+import { localReviewBlocks } from '@/src/lib/runtime/local-review';
 import { Redis } from "@upstash/redis";
 
 /**
@@ -62,6 +63,9 @@ try {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  if (localReviewBlocks(pathname, req.method, process.env.LOCAL_REVIEW_ONLY === '1')) {
+    return NextResponse.json({ error: '本地只读验收：此操作需要另行授权并配置真实环境' }, { status: 503 });
+  }
 
   if (!shouldRateLimit(pathname)) {
     return NextResponse.next();

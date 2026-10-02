@@ -1,0 +1,68 @@
+{
+  "chainId": 31337,
+  "scope": "有界非生产测试harness，非产品发行政策",
+  "deployment": "0x3aeee65575d04cad2914df54b33182c891614df35315903b2febdb10d2b45106",
+  "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+  "mint": "0xde943436b656e701175849526c3ede954fb2939759cad1c7630ea5845e4f8293",
+  "block": "2",
+  "result": {
+    "state": "success",
+    "proof": {
+      "orderId": "0x8f49e25bb843ad59b2c261602546786dc2888de1111c1e376034289791942034",
+      "chainId": 31337,
+      "contract": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+      "recipient": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "tokenId": "1",
+      "amount": "1",
+      "uriHash": "0xd7fdb006ca39dfbe068b28fed9c091b6a2da8810c16b5685bd616cdd876c19b2",
+      "txHash": "0xde943436b656e701175849526c3ede954fb2939759cad1c7630ea5845e4f8293",
+      "blockNumber": "2",
+      "blockHash": "0x4df51263d2bc6d4dfc669c7858e38ec6bf688350ded01daa11ad605ad0f292c5",
+      "logIndex": 1,
+      "digest": "0x62d4caed181beac1378b50442de3615cf1d74858a12b22120c8ba09daa43d165",
+      "canonicalConfirmed": true
+    },
+    "nextCursor": "1"
+  },
+  "recovered": {
+    "state": "success",
+    "proof": {
+      "orderId": "0x8f49e25bb843ad59b2c261602546786dc2888de1111c1e376034289791942034",
+      "chainId": 31337,
+      "contract": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+      "recipient": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "tokenId": "1",
+      "amount": "1",
+      "uriHash": "0xd7fdb006ca39dfbe068b28fed9c091b6a2da8810c16b5685bd616cdd876c19b2",
+      "txHash": "0xde943436b656e701175849526c3ede954fb2939759cad1c7630ea5845e4f8293",
+      "blockNumber": "2",
+      "blockHash": "0x4df51263d2bc6d4dfc669c7858e38ec6bf688350ded01daa11ad605ad0f292c5",
+      "logIndex": 1,
+      "digest": "0x62d4caed181beac1378b50442de3615cf1d74858a12b22120c8ba09daa43d165",
+      "canonicalConfirmed": true
+    },
+    "nextCursor": "3"
+  },
+  "transfer": "0xada8aba90d3393bb41cda45341a3aba5386aa9371be64edecdc882a1892cdbf1",
+  "unknown": {
+    "state": "pending",
+    "nextCursor": "1",
+    "reason": "未取得完整成功证据，禁止自动补发"
+  },
+  "reorganized": {
+    "state": "confirming",
+    "nextCursor": "1",
+    "reason": "已确认订单映射消失，回退重新核验重组"
+  },
+  "assertions": [
+    "真实回执/双事件/链与calldata/历史attempt",
+    "丢hash通过order事件恢复",
+    "拒签/未上报历史凭证以真实链结果恢复",
+    "错误recipient拒绝",
+    "转出不推翻历史mint",
+    "重复inspect不发送/nonce不变",
+    "未知不释放/不补发",
+    "重组后回退confirming"
+  ],
+  "database": "未连接，真实事务/RLS/竞争仍待外部隔离数据库"
+}

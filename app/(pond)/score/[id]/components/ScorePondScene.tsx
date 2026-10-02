@@ -170,7 +170,7 @@ export default function ScorePondScene({ score, network }: Props) {
           tokenLabel={tokenLabel}
           onBeforeLeave={() => { void playback.pause(); }}
           shareAction={<ShareActions id={score.id} tokenId={score.tokenId} trackTitle={score.trackTitle}
-            canonicalPath={canonicalPath} posterPath={multichain ? null : undefined} />}
+            canonicalPath={canonicalPath} posterPath={multichain ? null : undefined} creatorAddress={score.creatorAddress} />}
         />
         <div className="score-pond-page__identity" data-pond-ui="true">
           <EditionStamp status={editionStatus} detail={tokenLabel} />

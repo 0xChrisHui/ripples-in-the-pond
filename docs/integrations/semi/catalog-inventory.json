@@ -1,0 +1,3301 @@
+{
+  "schemaVersion": 1,
+  "revision": "5e7241cbc7e234c1180e1d69231eba912fe39f0746727aa7891d761137f57eac",
+  "environment": "production",
+  "tracks": [
+    {
+      "trackId": "21029773-9978-4147-b106-f5b22fcddeb9",
+      "displayNumber": 1,
+      "title": "1",
+      "audioArUri": "ar://qTfBmzoOJs6D4gYV5FJ0lBLKwdNzdzGEwnTEBcEiIJc",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "1",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000001.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/1",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/1",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "eb0287ec-45f1-4ce0-90ed-a9ea4057c34d",
+      "displayNumber": 2,
+      "title": "2",
+      "audioArUri": "ar://mME4LZGy_tHUDwk9w_pimlZ76_MF9McBn23YHuq5RmM",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "2",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000002.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/2",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/2",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "19aeeb04-f07d-4d08-ae0c-4f630ff5e864",
+      "displayNumber": 3,
+      "title": "3",
+      "audioArUri": "ar://fTgpp_AwoC5O4BEthX1A8wGuoIx1N0eu-d2o6sts4X8",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "3",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000003.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/3",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/3",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "7b7a6182-8cbb-44c7-809c-693263ff96cb",
+      "displayNumber": 4,
+      "title": "4",
+      "audioArUri": "ar://jZhRDHcWg-huJsYyma-Nk_ak2Fw_cgwEULQO5ApZUAI",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "4",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000004.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/4",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/4",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "7ac769a9-902d-4f67-98da-da0849a8bed6",
+      "displayNumber": 5,
+      "title": "5",
+      "audioArUri": "ar://eaeyebQmI4z5rLC-rVcVe6tje650IZEu8SDMoKLP-RI",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "5",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000005.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/5",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/5",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "8527a1b5-570c-4e37-b335-9a57b9aa170f",
+      "displayNumber": 6,
+      "title": "6",
+      "audioArUri": "ar://qxwmywQi-QHUTSCxLrSrnafyhH-VUvPu912PGE1zuhE",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "6",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000006.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/6",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/6",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "891dda4d-a243-4ca6-bd5a-b42697a3346b",
+      "displayNumber": 7,
+      "title": "7",
+      "audioArUri": "ar://Y5qNtdfvqvQtYgenLPevqRFMdS4SxjscPqWCVsumYVY",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "7",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000007.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/7",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/7",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "7df38fb9-3fd8-4dd4-a109-a8d93f3cc063",
+      "displayNumber": 8,
+      "title": "8",
+      "audioArUri": "ar://z-XL6LlP3kIZb-HYyn1gsK_gq6PaLiIpEo5WbhkDf5g",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "8",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000008.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/8",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/8",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "de96230b-54a7-4b29-a7d0-82cebf07ab86",
+      "displayNumber": 9,
+      "title": "9",
+      "audioArUri": "ar://K5X3EQBDDCbp8BFxGQXyLb7kkP1A3BSwZlYIsIt-XhY",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "9",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000009.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/9",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/9",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "9417ff60-f1b6-4135-8f61-bd556a2220dc",
+      "displayNumber": 10,
+      "title": "10",
+      "audioArUri": "ar://zG-__m1rM1DpuN6KgUzIZp7T8fUzjywz_8U4b9zVt9E",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "10",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000000a.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/10",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/10",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "f7430714-7d5a-4ae3-8804-698fdecdd1eb",
+      "displayNumber": 11,
+      "title": "11",
+      "audioArUri": "ar://9PHQLzUxxvCJ2Dz2BpDj9hf1eQSPvCsoOUO0UEsFiBQ",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "11",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000000b.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/11",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/11",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "85289b10-d222-4502-8d6a-81ba7540860e",
+      "displayNumber": 12,
+      "title": "12",
+      "audioArUri": "ar://d7RLmASL3etE7vAHGxvLtRD67v3ua3pOj81pKzpSfxk",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "12",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000000c.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/12",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/12",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "44220b86-a9db-4084-8f50-47f8e00a8573",
+      "displayNumber": 13,
+      "title": "13",
+      "audioArUri": "ar://Kx0B6fLTJP8YPiuzhsnJkLUF1QeXzjR713VYdZ-aY5o",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "13",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000000d.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/13",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/13",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "cc5b254c-f7f7-4446-a718-c58f15dae193",
+      "displayNumber": 14,
+      "title": "14",
+      "audioArUri": "ar://MmEJPrjjYjzy9GeDP-jpLn0tqPEWpDqy0xlgswO9iDU",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "14",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000000e.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/14",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/14",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "78326e66-0b5d-4650-9534-f8f8740bc0e9",
+      "displayNumber": 15,
+      "title": "15",
+      "audioArUri": "ar://kMrlz6TPom33MhWdX1D0teF0wvStw3TGxICmtJcZ_2E",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "15",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000000f.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/15",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/15",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "d43a6930-74d8-4ed3-af47-f817f1e7ab07",
+      "displayNumber": 16,
+      "title": "16",
+      "audioArUri": "ar://YX1pF9noKVe6UFEiSSD6BQQ7J2gJBg8AQHW46zDqYGs",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "16",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000010.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/16",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/16",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "807a3c8a-6370-434d-8e91-5493ba19edcc",
+      "displayNumber": 17,
+      "title": "17",
+      "audioArUri": "ar://BkXfeDwndd6vXavoqym1uIIT1obTaxrnKrOfm0ln2DY",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "17",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000011.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/17",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/17",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "695c20e3-5f26-44ed-99b7-388c2a7121da",
+      "displayNumber": 18,
+      "title": "18",
+      "audioArUri": "ar://fKkADGwhnd140FLc8BTewe__hGvCaohRbIqSy-erCEI",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "18",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000012.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/18",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/18",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "80e08d48-cc78-4bef-972a-98d56c02d92b",
+      "displayNumber": 19,
+      "title": "19",
+      "audioArUri": "ar://yt6RfHu7BGFOxlTS1W80_SpM8WLG87BwWgGLPVj4TY0",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "19",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000013.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/19",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/19",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "beb124af-dd37-4ad3-b7c2-ceea3050fe5c",
+      "displayNumber": 20,
+      "title": "20",
+      "audioArUri": "ar://by5Zw_MyjzuY13tfqYPsntkwaY2oSSjMcKOWkwnTMfY",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "20",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000014.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/20",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/20",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "5a52e031-ee29-4b58-a0f3-9b779ce97f40",
+      "displayNumber": 21,
+      "title": "21",
+      "audioArUri": "ar://5GpDkiHUdR91_DT99UFCoUhrDBuNxqg6RVYCGmKCt8w",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "21",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000015.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/21",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/21",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "07b3b553-28fa-4090-b6d7-3e63e6d14f07",
+      "displayNumber": 22,
+      "title": "22",
+      "audioArUri": "ar://CVDwW_hsF9CZD8dapihbfTt4nNL3v9_MdubPWHW6mbE",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "22",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000016.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/22",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/22",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "325f93e5-3063-4ae0-806d-0b6d6363aba3",
+      "displayNumber": 23,
+      "title": "23",
+      "audioArUri": "ar://DNu6UUW1GiwGa8Ndrb5LL3oYgDcXiuZsNWMd4HnZ31E",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "23",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000017.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/23",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/23",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "6aab1b24-225c-4300-8b4d-ef86e74866e3",
+      "displayNumber": 24,
+      "title": "24",
+      "audioArUri": "ar://CJTuz3trfBF40_WucOWFbONlH5zB-8WUATGqgTwlnt4",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "24",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000018.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/24",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/24",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "410ce6d3-9541-4761-b29e-0a19d1872104",
+      "displayNumber": 25,
+      "title": "25",
+      "audioArUri": "ar://bxPW11xFPGLTxySHVK_UyuZWvvio1jjfTsLPODufRGk",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "25",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000019.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/25",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/25",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "516b404d-b443-40a1-8d61-ed6c6e197874",
+      "displayNumber": 26,
+      "title": "26",
+      "audioArUri": "ar://PIlnRzH9lvDPQdJ92M92PGS85e3f4AS_v8hveAS7Eiw",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "26",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000001a.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/26",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/26",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "73130478-7bef-48dc-806f-e76b6676c18d",
+      "displayNumber": 27,
+      "title": "27",
+      "audioArUri": "ar://F2LinLvnw003miZT23AX6yocpo1NAgpZHnn961zKHnU",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "27",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000001b.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/27",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/27",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "aad18d17-ec13-4438-ac4e-e350a50ec1fe",
+      "displayNumber": 28,
+      "title": "28",
+      "audioArUri": "ar://NF8k00euCL7PvWHEE_muDVH_MYbWyRLrygP6J2dX5tA",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "28",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000001c.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/28",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/28",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "cc304cf9-659d-47c0-b852-dc616484b9d1",
+      "displayNumber": 29,
+      "title": "29",
+      "audioArUri": "ar://gW85tsAhsu8IPW4zxB2VyurCfcCeuU1y26lWh_wDIl4",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "29",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000001d.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/29",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/29",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "08550208-7473-4e89-92b0-8031c945d7c4",
+      "displayNumber": 30,
+      "title": "30",
+      "audioArUri": "ar://1c3brOxotH7TDT6JhhE5iO2j5H6JUWynlM0u9PMuE-c",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "30",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000001e.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/30",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/30",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "4598fa9c-8e06-4823-b34f-89047af69864",
+      "displayNumber": 31,
+      "title": "31",
+      "audioArUri": "ar://M6ZjJcBWNfl83Nf2kyRbLB93gooLwg85fbT0c5U2AXk",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "31",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/000000000000000000000000000000000000000000000000000000000000001f.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/31",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/31",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "c3de4558-7a4b-4a07-a95e-58246e56157f",
+      "displayNumber": 32,
+      "title": "32",
+      "audioArUri": "ar://jJxmfUr_q4lWIzm3-YoOyUmwEp8vkAoXg3a80zRVxSs",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "32",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000020.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/32",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/32",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "eeef9acd-b0f5-4846-ab6c-e72e06656598",
+      "displayNumber": 33,
+      "title": "33",
+      "audioArUri": "ar://M-NM7NGjnakWHaNE8Su3LLO5qAGckpNeVX3weToIqIQ",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "33",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000021.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/33",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/33",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "2dd7e3ef-c992-4868-b08d-0c92ce440ef4",
+      "displayNumber": 34,
+      "title": "34",
+      "audioArUri": "ar://viMvDlegjayDvrKQc7v60z2p2brKFs8qhMs6O3V6dqQ",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "34",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000022.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/34",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/34",
+          "readyExclusionReasons": []
+        }
+      ]
+    },
+    {
+      "trackId": "8ae0e6d5-b10d-4368-a430-90ce6a9dead7",
+      "displayNumber": 35,
+      "title": "35",
+      "audioArUri": "ar://kI9FOTW3iALMXl86Bx_ZftND4ADMDzKtISZKMPSm65M",
+      "audioSha256": null,
+      "integrityMode": "legacy_verified_source",
+      "notes": {
+        "status": "absent",
+        "text": null
+      },
+      "deployments": [
+        {
+          "chainId": 1,
+          "status": "undeployed",
+          "contractAddress": null,
+          "tokenId": null,
+          "standard": "ERC1155",
+          "metadataUri": null,
+          "publicPlaybackUrl": null,
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "P17 本地批准边界",
+            "verifiedAt": null,
+            "blockNumber": null,
+            "bytecode": false,
+            "standard": false,
+            "uri": false,
+            "media": false,
+            "reason": "ETH 未部署，发行政策和生产签发待决"
+          },
+          "assetId": null,
+          "readyExclusionReasons": [
+            "deployment_undeployed",
+            "contractAddress_missing",
+            "tokenId_missing",
+            "metadataUri_missing",
+            "publicPlaybackUrl_missing",
+            "collection_missing",
+            "verification.bytecode_missing",
+            "verification.standard_missing",
+            "verification.uri_missing",
+            "verification.media_missing",
+            "verification.blockNumber_missing",
+            "ETH 未部署，发行政策和生产签发待决"
+          ]
+        },
+        {
+          "chainId": 10,
+          "status": "ready",
+          "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+          "tokenId": "35",
+          "standard": "ERC1155",
+          "metadataUri": "ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/0000000000000000000000000000000000000000000000000000000000000023.json",
+          "publicPlaybackUrl": "/score/material/10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299/35",
+          "archiveMint": {
+            "state": "awaiting_input",
+            "recipient": null,
+            "amount": null,
+            "txHash": null,
+            "blockNumber": null,
+            "blockHash": null,
+            "logIndex": null,
+            "verifiedAt": null,
+            "proof": null
+          },
+          "verification": {
+            "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+            "verifiedAt": "10/02/2026 13:40:06",
+            "blockNumber": "157674584",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+          },
+          "assetId": "eip155:10/erc1155:0x03504aeb95ebe3dc8c427b7b147f873f9948a299/35",
+          "readyExclusionReasons": []
+        }
+      ]
+    }
+  ],
+  "collections": [
+    {
+      "kind": "original",
+      "chainId": 10,
+      "contractAddress": "0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+      "standard": "ERC1155",
+      "metadataMethod": "uri",
+      "playbackKind": "audio",
+      "enabled": true,
+      "verification": {
+        "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json",
+        "verifiedAt": "10/02/2026 13:40:06",
+        "blockNumber": "157674584",
+        "bytecode": true,
+        "standard": true,
+        "uri": true,
+        "media": true,
+        "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
+      },
+      "collectionKey": "eip155:10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+      "ownershipMethod": "balanceOf(address,id)",
+      "discovery": "current_holder_index",
+      "sampleAssets": [],
+      "sampleStatus": "not_provided",
+      "readyExclusionReasons": []
+    },
+    {
+      "kind": "score",
+      "chainId": 10,
+      "contractAddress": "0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa",
+      "standard": "ERC721",
+      "metadataMethod": "tokenURI",
+      "playbackKind": "html_decoder",
+      "enabled": false,
+      "verification": {
+        "source": "docs/MAINNET-RUNBOOK.md:26",
+        "verifiedAt": null,
+        "blockNumber": null,
+        "bytecode": false,
+        "standard": false,
+        "uri": false,
+        "media": false,
+        "reason": "历史正式部署，本次未复核"
+      },
+      "collectionKey": "eip155:10/0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa",
+      "ownershipMethod": "ownerOf(tokenId)",
+      "discovery": "current_holder_index",
+      "sampleAssets": [],
+      "sampleStatus": "not_provided",
+      "readyExclusionReasons": [
+        "collection_disabled",
+        "verification.bytecode_missing",
+        "verification.standard_missing",
+        "verification.uri_missing",
+        "verification.media_missing",
+        "verification.blockNumber_missing",
+        "历史正式部署，本次未复核"
+      ]
+    },
+    {
+      "kind": "echo",
+      "chainId": 10,
+      "contractAddress": "0xd2e884fa06c9a9bdef2350956cc4216d3e2b476c",
+      "standard": "ERC721",
+      "metadataMethod": "tokenURI",
+      "playbackKind": "html_decoder",
+      "enabled": false,
+      "verification": {
+        "source": "reviews/evidence/parallel-2026-10/20261002-night-01/featured-echo-proof.json",
+        "verifiedAt": "2026-10-02T13:08:35.947Z",
+        "blockNumber": "157673868",
+        "bytecode": true,
+        "standard": false,
+        "uri": true,
+        "media": false,
+        "reason": "总控已核验tokenURI和三网关metadata，标准/实际播放完整Gate仍待K2"
+      },
+      "samples": [
+        {
+          "tokenId": "1",
+          "metadataUri": "ar://E4JVJ6EWwplEAXjoff1aDpuwbG7GDm5Whcv9kYLKU88",
+          "publicPlaybackUrl": "/echo/1",
+          "verification": {
+            "source": "总控featured-echo-proof：三网关SHA256 a87d3d0be13309affd61f23b55bc74311a27eca6e855b83ce509355a03b47960",
+            "verifiedAt": "2026-10-02T13:08:35.947Z",
+            "blockNumber": "157673868",
+            "bytecode": true,
+            "standard": false,
+            "uri": true,
+            "media": false,
+            "reason": "真实ECHO #1样例，尚不提升系列ready"
+          }
+        }
+      ],
+      "collectionKey": "eip155:10/0xd2e884fa06c9a9bdef2350956cc4216d3e2b476c",
+      "ownershipMethod": "ownerOf(tokenId)",
+      "discovery": "current_holder_index",
+      "sampleAssets": [
+        "eip155:10/erc721:0xd2e884fa06c9a9bdef2350956cc4216d3e2b476c/1"
+      ],
+      "sampleStatus": "provided",
+      "readyExclusionReasons": [
+        "collection_disabled",
+        "verification.standard_missing",
+        "verification.media_missing",
+        "总控已核验tokenURI和三网关metadata，标准/实际播放完整Gate仍待K2"
+      ]
+    }
+  ]
+}

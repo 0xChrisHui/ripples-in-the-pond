@@ -34,6 +34,9 @@ export default function ArchiveSection({
   children,
 }: Props) {
   const isEmpty = !loading && !error && count === 0;
+  const checkingOwner = warning === '正在更新…';
+  const detail = checkingOwner ? `${error ? `${error}；` : ''}正在核对缓存中的收藏记录，当前持有情况尚未确认。` : error ?? warning;
+  const status = error ? '暂无法核实' : checkingOwner ? '持有人核对中' : warning ? '档案有提示' : refreshing ? '更新中' : '';
 
   return (
     <section className="archive-section" aria-labelledby={`${id}-title`}
@@ -43,13 +46,20 @@ export default function ArchiveSection({
         <span aria-label={count == null ? `${title}正在读取` : `${title}${count}项`}>
           {count == null ? '—' : count}
         </span>
-      </header>
-      {(refreshing || error || warning) && (
-        <div className="archive-section__notice" role={error ? 'alert' : 'status'}>
-          <span>{error ?? warning ?? '正在用最新档案刷新当前记录…'}</span>
-          {error && onRetry && <button type="button" onClick={onRetry}>重新读取</button>}
+        <div className="archive-section__status">
+          <span className="archive-section__announcement" aria-live="polite" aria-atomic="true">{status}</span>
+          {detail && (
+            <details className="archive-section__details" key={detail}>
+              <summary aria-label={`${status}，查看说明`}>{status} · 说明</summary>
+              <div className="archive-section__notice">
+                <p>{detail}</p>
+                {error && onRetry && <button type="button" onClick={onRetry}>重新读取</button>}
+              </div>
+            </details>
+          )}
+          {!detail && <span aria-hidden="true">{status}</span>}
         </div>
-      )}
+      </header>
       <div className="archive-section__body">{children}</div>
       {isEmpty && (
         <ArchiveEmpty
