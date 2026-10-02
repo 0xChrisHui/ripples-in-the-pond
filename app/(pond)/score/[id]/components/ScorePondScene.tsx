@@ -14,7 +14,6 @@ import type { ScoreReadyData } from '@/src/data/score-source';
 import { permanentMediaCandidates } from '@/src/features/permanent-media';
 import { startupSoundKeys } from '@/src/features/score-playback/resource-loader';
 import { useScorePlayback } from '@/src/features/score-playback/use-score-playback';
-import { usePlayer } from '@/src/components/player/PlayerProvider';
 import { useRegisterPondScene, type PondSceneDescriptor } from '@/src/components/pond-shell/scene-slot';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/score/score-origin';
@@ -70,7 +69,6 @@ function visualTrackOf(score: ScoreReadyData): Track {
 export default function ScorePondScene({ score, network }: Props) {
   preloadStartupAudio(score);
   const playback = useScorePlayback(score.playbackBootstrap);
-  const { stop: stopGlobalPlayer } = usePlayer();
   const pathname = usePathname();
   const scoreOrigin = useScoreOrigin();
   const { origin, confirmScore } = scoreOrigin;
@@ -108,10 +106,6 @@ export default function ScorePondScene({ score, network }: Props) {
     health === 'healthy' && sceneReady && visualActive ? visualTrack.id : null,
   );
 
-  useEffect(() => {
-    if (playback.state === 'playing') stopGlobalPlayer();
-  }, [playback.state, stopGlobalPlayer]);
-
   // Score 是纵向阅读页：保留鼠标视差，但滚轮必须始终交还给页面滚动。
   usePointerFx(Boolean(glSim) && health === 'healthy' && interactive, false);
   useEffect(() => {
@@ -140,7 +134,7 @@ export default function ScorePondScene({ score, network }: Props) {
     if (transaction?.current !== 'score' || transaction.target === 'score'
       || transaction.stage === 'stable') return;
     if (transaction.target === 'home') scoreOrigin.clear();
-    if (playback.state === 'playing') void playback.pause();
+    if (playback.state === 'playing' || playback.playRequested) playback.pause();
   }, [playback, scoreOrigin, transaction]);
 
   return (

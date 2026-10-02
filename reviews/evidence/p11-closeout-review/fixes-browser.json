@@ -1,0 +1,16 @@
+{
+  "revision": "P11 review 修复工作区",
+  "measuredAt": "2026-10-02T08:52:54.772Z",
+  "checks": {
+    "archiveTest": {
+      "controlsVisible": true,
+      "archiveInstances": 1
+    },
+    "veilToggle": "0.75"
+  },
+  "fatal": "等待超时：Score ready",
+  "writes": [],
+  "errors": [
+    "%c%s%c [score-source] mainnet verified snapshot missing: background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   1"
+  ]
+}

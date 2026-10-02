@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useMeArchive } from '@/src/hooks/me/useMeArchive';
 import { useOwnedEchoes } from '@/src/hooks/me/useOwnedEchoes';
-import { useScorePackagePreload } from '@/src/hooks/me/useScorePackagePreload';
+import { useScoreRoutePreload } from '@/src/hooks/me/useScoreRoutePreload';
 import { archiveCount, archiveLoading } from '@/src/hooks/me/archive-state';
 import { ARCHIVE_PAGE_SIZES, useArchivePagination } from '@/src/hooks/me/archive/useArchivePagination';
 import ArchiveEmpty from './ArchiveEmpty';
@@ -34,7 +34,7 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
     userId: auth.userId,
     getAccessToken: auth.getAccessToken,
   });
-  useScorePackagePreload(pathname === '/me', scores.items);
+  useScoreRoutePreload(pathname === '/me', scores.items);
   const echoes = useOwnedEchoes({
     authenticated: auth.authenticated,
     authSource: auth.authSource,

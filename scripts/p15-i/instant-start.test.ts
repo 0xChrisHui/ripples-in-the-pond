@@ -91,7 +91,7 @@ class FakeBaseStream {
   destroy() {}
 }
 
-async function verifyQueuedIntent(): Promise<void> {
+async function verifyQueuedIntent(cancel = false): Promise<void> {
   const { bootstrap, bodies } = await fixture();
   let releaseStartup!: () => void;
   const startupGate = new Promise<void>((resolve) => { releaseStartup = resolve; });
@@ -125,11 +125,12 @@ async function verifyQueuedIntent(): Promise<void> {
     assert.equal(engine.getSnapshot().playRequested, true);
     assert.equal(contexts, 1, 'AudioContext 应在首次用户手势中创建一次');
     assert.equal(stream.primeCalls, 1, '用户手势应立即预热流式底曲');
+    if (cancel) await engine.toggle();
     releaseStartup();
     await loading;
-    assert.equal(engine.getSnapshot().state, 'playing');
+    assert.equal(engine.getSnapshot().state, cancel ? 'ready' : 'playing');
     assert.equal(engine.getSnapshot().playRequested, false);
-    assert.equal(stream.startCalls, 1);
+    assert.equal(stream.startCalls, cancel ? 0 : 1, '取消意图后资源到齐不能偷偷起播');
   } finally {
     await engine.destroy();
     globalThis.requestAnimationFrame = previousRaf;
@@ -144,6 +145,7 @@ async function verifyQueuedIntent(): Promise<void> {
 async function main(): Promise<void> {
   await verifyStartupClosure();
   await verifyQueuedIntent();
+  await verifyQueuedIntent(true);
   console.log('P15-I 启动闭包与排队播放测试通过');
 }
 

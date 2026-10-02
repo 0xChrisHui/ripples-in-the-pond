@@ -787,3 +787,9 @@
 - **现象**：页面已经出现 `data-score-state="ready"`，脚本仍等待超时。
 - **原因**：CDP 的 `returnByValue` 无法把 DOM Element 作为布尔值返回，原表达式直接返回了节点。
 - **修复**：断言显式包为 `Boolean(document.querySelector(...))`；诊断确认真实页面完整、浏览器错误为 0。
+
+## 2026-10-02 — 类型检查与构建生成目录竞争
+
+- **报错**：`TS6053: File .../.next/types/... not found`。
+- **原因**：同时启动类型检查与 production build，后者重建 `.next/types`，前者读到了已消失的生成文件。
+- **处理**：构建结束后单独重跑类型检查；共享 `.next` 的构建和类型检查须串行，不能把此工具时序误判为产品类型错误。

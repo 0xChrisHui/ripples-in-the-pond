@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
 import type { OwnedScoreNFT } from '@/src/types/jam';
+import { ownedScoreHref } from '@/src/hooks/me/archive/score-route';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/score/score-origin';
 import { useArchiveMintContext } from '@/src/components/mint/archive/ArchiveMintProvider';
@@ -44,9 +45,7 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
   const isPermanent = score.status === 'success' && score.tokenId != null;
   const isEthereum = score.mintMode === 'eth_self_paid';
   const key = `score-${score.queueId}`;
-  const href = isEthereum && isPermanent && score.chainId && score.contractAddress
-    ? `/score/${score.chainId}/${score.contractAddress.toLowerCase()}/${score.tokenId}`
-    : `/score/${score.id}`;
+  const href = ownedScoreHref(score);
   const selected = isPermanent && scoreOrigin.origin?.key === key;
   const transaction = transition?.transaction;
   const ownsAnchor = selected && (transaction?.target === 'score'

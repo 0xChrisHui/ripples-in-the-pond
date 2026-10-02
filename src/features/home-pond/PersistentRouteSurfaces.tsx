@@ -92,7 +92,7 @@ export default function PersistentRouteSurfaces({
       {prepareArchive && <div className="pond-prepared-archive" data-active={archiveVisible}
         data-interactive={interactive === 'archive'} data-prepared={transition?.archiveReady}
         aria-hidden={!archiveVisible} inert={interactive !== 'archive'} onTransitionEnd={settleOnReveal}>
-        <PreparedArchive onPrepared={archivePrepared} />
+        <PreparedArchive onPrepared={archivePrepared} showControls={pathname === '/me/test'} />
       </div>}
       {persistent && <div ref={routeRef} className="pond-route-surface" data-active={scoreVisible}
         data-interactive={interactive === 'score'}

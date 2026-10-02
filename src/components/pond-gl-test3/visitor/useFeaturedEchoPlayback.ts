@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { usePlayer } from '@/src/components/player/PlayerProvider';
+import { requestPlaybackFocus, subscribePlaybackFocus } from '@/src/components/player/playback-focus';
 import { WalletRecipePlayerEngine } from '@/src/features/wallet-recipe/player/engine';
 import type { FeaturedEcho } from '@/src/types/featured-echo';
 
@@ -21,11 +21,10 @@ export type FeaturedEchoPlayback = {
   stop: () => void;
 };
 
-/** ECHO 首次点击才下载永久片段；与普通 Track 播放严格互斥。 */
+/** ECHO 首次点击才下载永久片段；与 Track、Score 播放严格互斥。 */
 export function useFeaturedEchoPlayback(echo: FeaturedEcho | null): FeaturedEchoPlayback {
   const [engine] = useState(() => new WalletRecipePlayerEngine());
   const snapshot = useSyncExternalStore(engine.subscribe, engine.getSnapshot, engine.getServerSnapshot);
-  const { stop: stopRegular, subscribe } = usePlayer();
   const operationRef = useRef(0);
   const active = !['idle', 'ended', 'error'].includes(snapshot.state);
 
@@ -36,19 +35,19 @@ export function useFeaturedEchoPlayback(echo: FeaturedEcho | null): FeaturedEcho
 
   const pause = useCallback(() => engine.pause(), [engine]);
   const resume = useCallback(async () => {
-    stopRegular();
+    requestPlaybackFocus(engine);
     await engine.resume();
-  }, [engine, stopRegular]);
+  }, [engine]);
 
   const start = useCallback(async () => {
     if (!echo) return;
     const operation = ++operationRef.current;
-    stopRegular();
+    requestPlaybackFocus(engine);
     await engine.load({ recipe: echo.recipe, clips: echo.clips });
     if (operation === operationRef.current && engine.getSnapshot().state === 'ready') {
       await engine.play();
     }
-  }, [echo, engine, stopRegular]);
+  }, [echo, engine]);
 
   const toggle = useCallback(async () => {
     if (!echo) return;
@@ -64,23 +63,16 @@ export function useFeaturedEchoPlayback(echo: FeaturedEcho | null): FeaturedEcho
       stop();
       return;
     }
-    stopRegular();
+    requestPlaybackFocus(engine);
     if (snapshot.state === 'ended') {
       await engine.replay();
       return;
     }
     if (snapshot.state === 'ready') await engine.play();
     else await start();
-  }, [echo, engine, pause, resume, snapshot.state, start, stop, stopRegular]);
+  }, [echo, engine, pause, resume, snapshot.state, start, stop]);
 
-  useEffect(() => {
-    return subscribe({
-      onBeforePlay: () => {
-        const state = engine.getSnapshot().state;
-        if (!['idle', 'ended', 'error'].includes(state)) stop();
-      },
-    });
-  }, [engine, stop, subscribe]);
+  useEffect(() => subscribePlaybackFocus(engine, stop), [engine, stop]);
   useEffect(() => {
     if (!echo) stop();
   }, [echo, stop]);

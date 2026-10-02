@@ -6,10 +6,12 @@ import {
   useRef,
   useState,
   useCallback,
+  useEffect,
   type ReactNode,
 } from 'react';
 import type { Track } from '@/src/types/tracks';
 import { getTrackAudioSources, playTrackSources } from './track-audio';
+import { requestPlaybackFocus, subscribePlaybackFocus } from './playback-focus';
 
 /** 播放生命周期回调（B2 录制用） */
 export interface PlayerLifecycle {
@@ -36,14 +38,7 @@ interface PlayerState {
 
 const PlayerContext = createContext<PlayerState | null>(null);
 
-/**
- * PlayerProvider — 全局播放器（Phase 6 B2.1 v6 改用 HTMLAudio 实现首次秒开）
- *
- * vs 旧版（Web Audio + decode）的区别：
- * - HTMLAudio.play() 几乎瞬时（streaming 边加载边播）→ 解决"首次 0.8s 延迟"
- * - getCurrentTime / startedAt / duration 接口保持兼容（BottomPlayer + useRecorder 在用）
- * - HomeJam 的 useJam 仍用 Web Audio（精确合奏不受影响）
- */
+/** 全局 Track 播放器：HTMLAudio 流式首播，与合奏录制接口保持兼容。 */
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadingRef = useRef<string | null>(null);
@@ -76,8 +71,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (!audioRef.current) {
       const audio = new Audio();
       audio.preload = 'auto';
-      // Lane D — 赋 src 前设 crossOrigin，让 createMediaElementSource 不污染 analyser
-      // （现 public/tracks 同源无影响；为未来迁 Arweave 网关预留）
+      // 赋 src 前设置跨域属性，保持音频能量分析可用。
       audio.crossOrigin = 'anonymous';
       audio.addEventListener('loadedmetadata', () => {
         if (audioRef.current === audio) setDuration(audio.duration || 0);
@@ -101,6 +95,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const play = useCallback(async (track: Track) => {
     if (loadingRef.current === track.id) return;
+    requestPlaybackFocus(audioRef);
     const request = ++requestRef.current;
     loadingRef.current = track.id;
     notifyBeforePlay(track);
@@ -146,7 +141,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    // 加载期间用户切到别的（loadingRef 被覆盖）→ 当前 audio 已被新 src 覆盖，无需手动停
     if (loadingRef.current !== track.id) return;
     if (loadingRef.current === track.id) loadingRef.current = null;
   }, [getAudio, notifyBeforePlay, notifyEnd, notifyStart]);
@@ -169,6 +163,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
   }, [notifyEnd]);
 
+  useEffect(() => subscribePlaybackFocus(audioRef, stop), [stop]);
+
   const toggle = useCallback(async (track: Track) => {
     if (playing && currentTrack?.id === track.id) {
       stop();
@@ -176,7 +172,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       await play(track);
     }
   }, [playing, currentTrack, play, stop]);
-
   const getCurrentTime = useCallback(() => {
     return audioRef.current?.currentTime ?? 0;
   }, []);
@@ -187,9 +182,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     const limit = Number.isFinite(audio.duration) ? audio.duration : duration;
     audio.currentTime = Math.min(Math.max(0, limit), Math.max(0, positionSeconds));
   }, [duration]);
-
   const getAudioElement = useCallback(() => audioRef.current, []);
-
   return (
     <PlayerContext value={{
       playing, currentTrack, duration, startedAt,
