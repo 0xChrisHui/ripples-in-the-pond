@@ -3,11 +3,11 @@
 此文件由唯一注册表生成，手改会被 --check 检出。
 
 - schemaVersion: 1
-- revision: 928e698244bdd88ec77eca8644944bbf832474968e90e5ffb12a49bc06a5f5b7
+- revision: 70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8
 - environment: production
 - 当前范围：35 首真实原曲、70 个 trackId × chainId 记录。
-- 状态：ready 35 / unverified 0 / undeployed 35。
-- 可导入的生产系列：1；ready 原曲：35；已确认归档：0/70。
+- 状态：ready 70 / unverified 0 / undeployed 0。
+- 可导入的生产系列：4；ready 原曲：70；已确认归档：0/70。
 - 最终创作手记：35/35；同样从唯一注册表生成。
 
 这是资料包。SEMI 当前版本、账号、网络支持和钱包内播放尚未核验；生产资料完整性与 wallet_verified 分别验收。pending 原曲不进入 ready 表。两链留存未完成；归档历史状态不是当前授权、接收钱包或素材缺失的判定依据。
@@ -18,15 +18,18 @@
 2. [contracts.ready.json](contracts.ready.json)：已验证生产系列白名单，键为 chainId + contractAddress。
 3. [assets.ready.json](assets.ready.json)：单 Token 原曲映射与动态系列发现规则，键另含 tokenId + standard。
 
-只导入 ready 表；空列表表示当前没有证据充分的生产范围，不得把 inventory 当成已上线白名单。动态 Score/Echo 按 current_holder_index 发现后续 Token，sampleAssets 仅作样例，不限制 Token 范围；本版有1个同源样例，不猜扫描起始区块。停用/历史测试系列不进入生产 ready。
+只导入 ready 表；空列表表示当前没有证据充分的生产范围，不得把 inventory 当成已上线白名单。动态 Score/Echo 按 current_holder_index 发现后续 Token，sampleAssets 仅作样例，不限制 Token 范围；本版有2个同源样例，不猜扫描起始区块。停用/历史测试系列不进入生产 ready。
 
 | chainId | kind | registry 合约 | 标准 | 资料状态 | 同源排除原因 |
 |---|---|---|---|---|---|
+| 1 | original | 0x6c731e5faa26e648cad6f86b1c1e741f0aae136b | ERC1155 | 资料 ready | 无 |
+| 1 | score | 0xdec99da00290d15f0742b0abd26e4cd5d121f02a | ERC721 | 资料 ready | 无 |
 | 10 | original | 0x03504aeb95ebe3dc8c427b7b147f873f9948a299 | ERC1155 | 资料 ready | 无 |
+| 10 | original | 0xa65c9308635c8dd068a314c189e8d77941a7e99c | ERC1155 | 资料 ready | 无 |
 | 10 | score | 0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa | ERC721 | pending | collection_disabled；verification.bytecode_missing；verification.standard_missing；verification.uri_missing；verification.media_missing；verification.blockNumber_missing；历史正式部署，本次未复核 |
 | 10 | echo | 0xd2e884fa06c9a9bdef2350956cc4216d3e2b476c | ERC721 | pending | collection_disabled；verification.standard_missing；verification.media_missing；总控已核验tokenURI和三网关metadata，标准/实际播放完整Gate仍待K2 |
 
-本版注册表未列出的系列（含 ETH Score 或新发行）没有可消费坐标，应由注册表所有者随真实证据交付；禁止从历史文件另抄地址补入。
+本版注册表未列出的系列没有可消费坐标，应由注册表所有者随真实证据交付；禁止从历史文件另抄地址补入。已列系列的具体范围与状态以上表及同源机器表为准。
 
 disabled 表示当前注册表未完成或未同步本包所需证明，不表示资产未上线，也不表示 SEMI 不支持它。已有真实链、永久资源和官网播放证据交给注册表所有者复用；只有其进入同 revision 后才影响 ready 输出。
 

@@ -8,15 +8,15 @@
 - dependsOn.C2: 624216cb8b35c6b7883ae87693bf7cfb38487c32（总控接管容量故障后，正常merge指定完成提交）
 - C1.mergeSha: 1828a15dd49c2743407d9d0f48485bb42816d266
 - schemaVersion: 1
-- revision: 928e698244bdd88ec77eca8644944bbf832474968e90e5ffb12a49bc06a5f5b7（旧C1/C2 revision仅为下文历史记录）
+- revision: 70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8（之前revision仅为下文历史记录）
 - status: external_pending
 - localCodeReady: true（导出、窄类型、定向 lint、测试通过）
-- packageReady: true（限定35首OP已验证资料；ETH/Score/Echo仍不进入ready，不代表SEMI已接入）
+- packageReady: true（35首双链70项原曲资料、旧OP系列及已核验ETH Score；OP Score/Echo仍不进入ready，不代表SEMI已接入）
 - walletVerified: false（未在 SEMI 验收）
 - completedSteps: R0、R1本地盘点、R2、R3本地映射/证据边界核对、R4开发包、W0、W1证据盘点、W3
-- nextStep: 消费总控补齐的动态系列同源证明；SEMI真实测试条件齐备后恢复W2。当前待项以末尾2026-10-03续跑小节为准，下文C1/C2为历史记录。
+- nextStep: SEMI真实测试条件齐备后恢复W2；留存与OP Score/Echo证明变化时仅消费总控新的同源交付。当前待项以末尾双链真实部署C2小节为准，下文C1/C2为历史记录。
 
-> 当前已解除的输入：35首手记已final并发布；发行政策、必要部署费用授权及本地加密留存钱包已明确。下文预算0、手记absent、钱包/政策待用户等描述仅保留当时记录，不再作为续跑阻塞。
+> 当前已解除的输入：35首手记已final并发布；发行政策、必要部署费用授权及本地加密留存钱包已明确；两链新原曲已由总控真实部署并核验。下文预算0、手记absent、钱包/政策待用户、两链尚未部署等描述仅保留当时记录，不再作为续跑阻塞。当前以末尾双链C2小节为准。
 
 ## R0 / 所有权
 
@@ -137,3 +137,15 @@ K2曲目馆和独立原曲页实际呈现revision与C2导出一致，sameRevisio
 ### 本次定向验证
 
 README由唯一源重新生成，35/35手记状态和每系列排除原因不手写；三份机器表内容未变，保持同revision。实际执行 `npx --no-install tsx scripts/integrations/semi/export.ts` 与 `--check` 退出0；现有 `export.test.ts` 7/7通过；`eslint --no-ignore scripts/integrations/semi/readme.ts` 退出0；新增两条P16证据链接存在，diff格式检查通过。首次lint因scripts忽略规则未检查文件，已用--no-ignore修正验证命令；不是源码失败。readme.ts为96行，无新目录/服务/依赖。保持 `status=external_pending`、`walletVerified=false`；未声明SEMI接入、70留存或新原曲主网上线完成。
+
+## 双链真实部署 C2 消费（2026-10-03）
+
+总控交付revision `70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8`，唯一注册表已登记新ETH ERC1155和OP原曲SBT的部署回执、runtime、角色、35 URI及发行/不可转让证明；复用既有永久音频与metadata。P13只消费完整同源数据，不发新交易、不重新下载媒体、不手抄地址。
+
+- 三份机器表与README均重新生成并比对页面公开快照，schema=1、revision相同。
+- 35首 × 两链共70项原曲资料ready，undeployed=0；4个生产系列资料ready：新ETH原曲、新OP SBT、旧OP可转让原曲、ETH Score。动态ready系列=1（ETH Score），样例只从registry取得。旧OP系列保留为发现白名单，当前70项原曲映射对应两条新发行合约，不冒称旧发行已重新铸造。
+- ETH Score复用P16主网Token #1既有17资源及官网启动证明后进入同源ready；OP Score/Echo仍disabled，排除原因原样导出，不猜能力或发行高度。
+- 35/35手记final；archiveMint仍awaiting_input、confirmed=0/70。这是留存尚无回执的事实，不再表示接收钱包/政策/费用授权缺失。真实领取、生产签发开关和留存对账由P17负责，本包资料ready不代替这些运行时完成线。
+- W2继续external_pending、walletVerified=false：当前可测SEMI build/version、账号或导入入口、真实持有资产、当前数量与audio/HTML容器策略仍缺；必须在实际钱包验收。需要联系人时由总控核准该具体外部动作，本线没有发送资料或探测私有API。
+
+定向验证仅限本次受影响导出/同源断言；父代理已将export.test预期适配到70原曲与4系列，并新增ETH Score同源断言。本线承接该文件检查与提交：export/--check退出0、export.test 8/8通过、readme.ts与export.test.ts的ESLint --no-ignore退出0，P13指定路径diff检查通过。未重跑全仓build、Forge、浏览器、音频或链上矩阵。

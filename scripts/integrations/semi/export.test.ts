@@ -6,18 +6,17 @@ import { buildMaterialPlaybackRoute } from '../../../src/lib/music-catalog/ident
 import { buildSemiPackage, serializeSemiPackage } from './package';
 import { matchesGeneratedContent, validateSemiPackage } from './validate';
 
-test('真实 C2 导出35首OP已验证资料，保留35项ETH未部署与70项归档待定', () => {
+test('真实 C2 导出35首双链已验证资料与70项归档待定', () => {
   const catalog = getMusicCatalog();
   const output = buildSemiPackage(catalog);
   assert.equal(output.inventory.tracks.length, 35);
   const deployments = output.inventory.tracks.flatMap((track) => track.deployments);
   assert.equal(deployments.length, 70);
-  assert.equal(deployments.filter((item) => item.status === 'ready').length, 35);
-  assert.equal(deployments.filter((item) => item.status === 'undeployed').length, 35);
-  assert.ok(deployments.filter((item) => item.status === 'undeployed').every((item) => item.readyExclusionReasons.length > 0));
+  assert.equal(deployments.filter((item) => item.status === 'ready').length, 70);
+  assert.equal(deployments.filter((item) => item.status === 'undeployed').length, 0);
   assert.ok(deployments.every((item) => item.archiveMint.state === 'awaiting_input'));
-  assert.equal(output.contracts.collections.length, 2);
-  assert.equal(output.assets.originals.length, 35);
+  assert.equal(output.contracts.collections.length, 4);
+  assert.equal(output.assets.originals.length, 70);
   assert.ok(deployments.filter((item) => item.assetId).every((item) => item.assetId?.includes('/erc1155:')));
   assert.deepEqual(validateSemiPackage(output, catalog, catalog), []);
 });
@@ -52,7 +51,7 @@ test('Git检出CRLF不构成资料漂移，实际字段变化仍失败', () => {
 test('生产包拒绝测试网、伪ready、旧schema和不匹配revision的损坏副本', () => {
   for (const mutate of [
     (copy: ReturnType<typeof getMusicCatalog>) => { copy.tracks[0].deployments[0].chainId = 11155420; },
-    (copy: ReturnType<typeof getMusicCatalog>) => { copy.tracks[0].deployments[1].status = 'ready'; },
+    (copy: ReturnType<typeof getMusicCatalog>) => { copy.tracks[0].deployments[1].status = 'undeployed'; },
     (copy: ReturnType<typeof getMusicCatalog>) => { Object.assign(copy, { schemaVersion: 0 }); },
   ]) {
     const copy = getMusicCatalog();

@@ -1,8 +1,77 @@
 {
   "schemaVersion": 1,
-  "revision": "928e698244bdd88ec77eca8644944bbf832474968e90e5ffb12a49bc06a5f5b7",
+  "revision": "70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8",
   "environment": "production",
   "collections": [
+    {
+      "kind": "original",
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "standard": "ERC1155",
+      "metadataMethod": "uri",
+      "playbackKind": "audio",
+      "enabled": true,
+      "verification": {
+        "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
+        "verifiedAt": "2026-10-03T06:54:10.056Z",
+        "blockNumber": "26110130",
+        "bytecode": true,
+        "standard": true,
+        "uri": true,
+        "media": true,
+        "reason": "部署回执、runtime、角色、35 URI及终身领取规则已核验；复用既有永久音频"
+      },
+      "collectionKey": "eip155:1/0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "ownershipMethod": "balanceOf(address,id)",
+      "discovery": "current_holder_index",
+      "sampleAssets": [],
+      "sampleStatus": "not_provided",
+      "readyExclusionReasons": []
+    },
+    {
+      "kind": "score",
+      "chainId": 1,
+      "contractAddress": "0xdec99da00290d15f0742b0abd26e4cd5d121f02a",
+      "standard": "ERC721",
+      "metadataMethod": "tokenURI",
+      "playbackKind": "html_decoder",
+      "enabled": true,
+      "verification": {
+        "source": "reviews/evidence/p16-mainnet/README.md + reviews/evidence/p16-mainnet/token-1-closeout.json",
+        "verifiedAt": "2026-10-02T08:31:49.975Z",
+        "blockNumber": "26060368",
+        "bytecode": true,
+        "standard": true,
+        "uri": true,
+        "media": true,
+        "reason": "浏览器证据覆盖真实播放启动，不代表整曲听音验收；钱包扩展矩阵仍是独立开放项"
+      },
+      "samples": [
+        {
+          "tokenId": "1",
+          "metadataUri": "ar://jIqs9UaIuodoKZKrExQxel3IqqNIPgWAQjuSUVQjLTw",
+          "publicPlaybackUrl": "/score/1/0xdec99da00290d15f0742b0abd26e4cd5d121f02a/1",
+          "verification": {
+            "source": "reviews/evidence/p16-mainnet/README.md + reviews/evidence/p16-mainnet/token-1-closeout.json",
+            "verifiedAt": "2026-10-02T08:31:49.975Z",
+            "blockNumber": "26103423",
+            "bytecode": true,
+            "standard": true,
+            "uri": true,
+            "media": true,
+            "reason": "浏览器证据覆盖真实播放启动，不代表整曲听音验收；钱包扩展矩阵仍是独立开放项"
+          }
+        }
+      ],
+      "collectionKey": "eip155:1/0xdec99da00290d15f0742b0abd26e4cd5d121f02a",
+      "ownershipMethod": "ownerOf(tokenId)",
+      "discovery": "current_holder_index",
+      "sampleAssets": [
+        "eip155:1/erc721:0xdec99da00290d15f0742b0abd26e4cd5d121f02a/1"
+      ],
+      "sampleStatus": "provided",
+      "readyExclusionReasons": []
+    },
     {
       "kind": "original",
       "chainId": 10,
@@ -22,6 +91,31 @@
         "reason": "永久metadata与原上传账本hash一致；音频HEAD/长度及既有永久来源对应，未承诺canonical音频hash"
       },
       "collectionKey": "eip155:10/0x03504aeb95ebe3dc8c427b7b147f873f9948a299",
+      "ownershipMethod": "balanceOf(address,id)",
+      "discovery": "current_holder_index",
+      "sampleAssets": [],
+      "sampleStatus": "not_provided",
+      "readyExclusionReasons": []
+    },
+    {
+      "kind": "original",
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "standard": "ERC1155",
+      "metadataMethod": "uri",
+      "playbackKind": "audio",
+      "enabled": true,
+      "verification": {
+        "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
+        "verifiedAt": "2026-10-03T06:54:10.056Z",
+        "blockNumber": "157705814",
+        "bytecode": true,
+        "standard": true,
+        "uri": true,
+        "media": true,
+        "reason": "部署回执、runtime、角色、35 URI及不可转让读回已核验；复用既有永久音频"
+      },
+      "collectionKey": "eip155:10/0xa65c9308635c8dd068a314c189e8d77941a7e99c",
       "ownershipMethod": "balanceOf(address,id)",
       "discovery": "current_holder_index",
       "sampleAssets": [],
