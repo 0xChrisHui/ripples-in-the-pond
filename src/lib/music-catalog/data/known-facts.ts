@@ -13,7 +13,7 @@ export const awaitingArchive = (): ArchiveMint => ({
   state: 'awaiting_input', recipient: null, amount: null, txHash: null, blockNumber: null,
   blockHash: null, logIndex: null, verifiedAt: null, proof: null,
 });
-// 新SBT尚未部署；只能在真实证明与同源目录接线完成后登记地址，禁止用旧OP合约代替。
+// 新原曲地址由实际部署证明登记，旧OP合约继续保留独立身份。
 const deploymentSource = 'reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json';
 export function deployedOriginalVerification(chainId: 1 | 10): Verification {
   const proof=chainId===1?deployedProof.ethereum:deployedProof.optimism;

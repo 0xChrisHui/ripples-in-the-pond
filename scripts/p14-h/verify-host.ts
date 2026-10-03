@@ -6,7 +6,8 @@ import { createResidentEchoRuntime } from '../../src/components/pond-gl-test3/ec
 
 export async function verifyHost() {
   assert.ok(existsSync('src/components/pond-gl-test3/echo-resident/host/frame-input.ts'), '尚未适配最新主线场景输入');
-  const { resolveResidentHostFrame } = await import('../../src/components/pond-gl-test3/echo-resident/host/frame-input');
+  const { resolveResidentHostFrame, isResidentPlaybackFocus } = await import('../../src/components/pond-gl-test3/echo-resident/host/frame-input');
+  const { advanceEclipseMix, resetEclipseMix } = await import('../../src/components/pond-gl-test3/focus/playback-focus');
   const { writeResidentWaterMask } = await import('../../src/components/pond-gl-test3/echo-resident/render/water-mask');
   const source = { layout, echoAvailable: true, healthy: true, sceneReady: true,
     homeActive: true, routePresence: 0.5, eclipseMix: 0.5,
@@ -31,6 +32,18 @@ export async function verifyHost() {
   uniforms.uSphereCount.value = 1;
   assert.equal(writeResidentWaterMask(uniforms, { ...pose, effectivePresence: 0 }), false);
   assert.equal(uniforms.uSphereCount.value, 1, '隐藏时不能留下水面孔洞');
+  resetEclipseMix();
+  let eclipseMix = 0;
+  for (let step = 0; step < 90; step++) {
+    const next = resolveResidentHostFrame({ ...source, routePresence: 1, playback: 'playing', eclipseMix,
+      reducedMotion: true });
+    const playingPose = runtime.step(next, step * 16).pose;
+    eclipseMix = advanceEclipseMix(isResidentPlaybackFocus('echo:1', 'echo:1', playingPose) ? 1 : 0, 16, false);
+    if (step > 40) assert.equal(eclipseMix, 1, '日食淡出圆圈后仍须保持播放焦点，不能反复退出');
+  }
+  assert.equal(isResidentPlaybackFocus(null, 'echo:1', pose), false, '停播后释放焦点');
+  assert.equal(isResidentPlaybackFocus('track:1', 'echo:1', pose), false, '另一曲目不借用驻留坐标');
+  resetEclipseMix();
   runtime.destroy();
   console.log('主线适配：路由/日食完成信号、暂停保留、失效输入、水面同帧与容量边界通过');
 }

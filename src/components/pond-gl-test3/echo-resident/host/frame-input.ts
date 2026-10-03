@@ -1,4 +1,10 @@
-import type { ResidentEchoFrameInput, ResidentHostFrameState } from '@/src/types/echo-resident';
+import type { ResidentEchoFrameInput, ResidentEchoPose, ResidentHostFrameState } from '@/src/types/echo-resident';
+
+export function isResidentPlaybackFocus(trackId: string | null, playbackId: string | undefined,
+  pose: ResidentEchoPose | null): boolean {
+  // 日食会使场景透明度归零；播放焦点仍由播放身份与冻结坐标维持。
+  return !!trackId && trackId === playbackId && !!pose && pose.bodyRadiusPx > 0;
+}
 
 const unit = (value: number) => Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
 /** 消费主线已有路由/日食连续值；暂停保持播放锁，不依音频进度推测退场完成。 */
