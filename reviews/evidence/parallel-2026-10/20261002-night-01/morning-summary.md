@@ -21,7 +21,7 @@
 | P17 | 16c18dc6c3060b470e0729673d1e728228220b84 | 6aaf985、f37598a；代码/部署/迁移完成，领取及留存待办 |
 | P13 | 70dbc0dee536552e63612e626f580ccb65398aca | 43111a0；资料通过，SEMI实际接入待办 |
 
-C1原移交0e1195f04222c0e441989cb9ca74304a37801b7f；C2原移交624216cb8b35c6b7883ae87693bf7cfb38487c32。当前唯一注册表revision：70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8。网站快照、曲目地址、SEMI机器表同源。70项ready只表示部署资料齐全；留存confirmed=0。旧archive-ledger保留，新计划为p17/archive/archive-ledger-c2.json。
+C1原移交0e1195f04222c0e441989cb9ca74304a37801b7f；C2原移交624216cb8b35c6b7883ae87693bf7cfb38487c32。当前唯一注册表revision：e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c。网站快照、曲目地址、SEMI机器表同源。70项ready只表示部署资料齐全；留存OP confirmed=35，ETH=0。旧archive-ledger保留，新计划为p17/archive/archive-ledger-c2.json。
 
 ## 十项需求完成表
 
@@ -34,7 +34,7 @@ C1原移交0e1195f04222c0e441989cb9ca74304a37801b7f；C2原移交624216cb8b35c6b
 | 5 | 第36圆动态 | runtime与GL/水面/花瓣已接通，五组专项通过；真实运动效果未验 |
 | 6 | 唱片结束自然 | 生命周期与场景presence整合、定向测试通过；真实结束绘制未验 |
 | 7 | 登录称谓 | SEMI社区身份/链上地址登录已统一；未冒称真实登录通过 |
-| 8 | 双链原曲永久留存 | 两链合约及媒体/metadata资料就绪；留存0/70，未完成 |
+| 8 | 双链原曲永久留存 | 两链合约及媒体/metadata资料就绪；OP留存35/35完成，ETH0/35 |
 | 9 | SEMI接入 | 同源导出8/8与--check通过；实际SEMI数量/播放未验，未完成 |
 | 10 | 曲目馆 | 35首手记/选曲/公开页/订单恢复代码完成；手机首屏按钮已见，新领取仍关闭 |
 
@@ -45,7 +45,7 @@ C1原移交0e1195f04222c0e441989cb9ca74304a37801b7f；C2原移交624216cb8b35c6b
 - OP SBT：0xa65c9308635c8dd068a314c189e8d77941a7e99c；部署tx 0x5b379690cd000879b73fb65570be665c2dd19b35d5df61d63088dfba0579909b。不可转让；未擅加OP终身次数政策。
 - 部署实际费用合计0.00052265292627745 ETH；回执、runtime、角色、35 URI均核对。证明 src/lib/music-catalog/data/original-deployment-proof.json。
 - 合集永久JSON费用0：ETH ar://LjA2sgPArVOFL_gpPZmOaFBqXzb5VKTCINGAy7cKGQw、OP ar://JWV5HPaY5-Vjq0iVhadIzT8YrpNP9H-qhfczm6bKrmA；双网关bytes/hash/MIME通过，未重传音乐。
-- 留存钱包0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA，本机仓库外DPAPI加密保存；未充值/留存铸造。恢复依赖当前Windows用户，迁移机器前须安全导出。
+- 留存钱包0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA，本机仓库外DPAPI加密保存；未充值；OP35份留存已铸造，ETH尚未铸造。恢复依赖当前Windows用户，迁移机器前须安全导出。
 
 ## 验证与边界
 
@@ -75,3 +75,11 @@ C1原移交0e1195f04222c0e441989cb9ca74304a37801b7f；C2原移交624216cb8b35c6b
 - 3115当前服务运行同一业务源码；本次收尾文档/证据提交不改变代码。集成最终SHA在交付消息中记录，避免自引用SHA循环。
 - 匿名HTTP证据保存在同目录k2-browser.json的releaseIntegration20261003.release；不是登录、真实铸造、SEMI或GL运动验收。
 - 原工作区未改；回退可使用先前正式部署dpl_AXpgWT4vdxQkXwtkbPrjPYatgkxb。合约/永久资源/迁移保留真实账本，不能用网站回退撤销。
+
+
+## OP执行追加结果（当前，2026-10-03）
+
+- 用户选择先做OP；新OP SBT的35份项目留存已全部完成，每曲1份，unknown0。费用合计0.000002327730193134 ETH（含L1），预算上限0.0000105 ETH。公开回执与余额在p17/archive/op-execution-proof.json；原签名交易只留私有恢复账本。
+- 留存接收钱包仍为0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA。ETH没有发送/转账，35份ETH仍未完成；签发材料实际已在既有本地配置找到并验证，不再作为缺失项，ETH按用户指令暂缓。
+- 目录及SEMI证明更新为OP35项confirmed，ETH35项awaiting_input；旧OP证明隔离。新revision=e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c。
+- OP领取配置正在发布；前文新领取off为该次部署历史状态，最终开关/网站结果在本节后记录。不要求新的UI验收；未冒称真实登录浏览器点击已测试。

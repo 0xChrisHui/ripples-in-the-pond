@@ -1,0 +1,47 @@
+{
+  "allowedExecutionChains": [
+    10
+  ],
+  "checkedAt": "2026-10-03T11:22:21.389Z",
+  "balanceWei": "10091311941223321",
+  "all35BalancesZero": true,
+  "role": true,
+  "paused": false,
+  "soulbound": true,
+  "planHash": "0x7243e6afeb92574aba02ab26f37f50cdbe97ff834f78243cdf26695156a6db1b",
+  "config": {
+    "runId": "20261003-op-archive",
+    "sourceSha": "550cd3ea8d35ea69ef44ce87e7256516cfb8da56",
+    "recipient": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+    "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+    "opSenderKeyEnv": "P17_OP_SENDER_KEY",
+    "authorizerKeyEnv": "P17_UNUSED_ETH_KEY",
+    "recipientKeyEnv": "P17_UNUSED_RECIPIENT_KEY",
+    "chains": [
+      {
+        "chainId": 1,
+        "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+        "nonce": 0,
+        "gasLimit": "150000",
+        "maxFeePerGas": "100000000",
+        "maxPriorityFeePerGas": "0",
+        "l1FeeCapWei": "0",
+        "budgetWei": "525000000000000",
+        "confirmations": 2,
+        "rpcEnv": "P17_ETH_DISABLED_RPC"
+      },
+      {
+        "chainId": 10,
+        "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+        "nonce": 19,
+        "gasLimit": "100000",
+        "maxFeePerGas": "2000000",
+        "maxPriorityFeePerGas": "1000000",
+        "l1FeeCapWei": "100000000000",
+        "budgetWei": "10500000000000",
+        "confirmations": 1,
+        "rpcEnv": "P17_OP_RPC"
+      }
+    ]
+  }
+}

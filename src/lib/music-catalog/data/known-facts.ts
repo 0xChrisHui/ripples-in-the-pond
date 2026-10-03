@@ -3,6 +3,7 @@ import opProof from './op-source-proof.json';
 import echoProof from './echo-source-proof.json';
 import scoreProof from './score-source-proof.json';
 import deployedProof from './original-deployment-proof.json';
+import opRetention from './retention/optimism.json';
 
 export const OP_MATERIAL = '0x03504aeb95ebe3dc8c427b7b147f873f9948a299';
 export const OP_MATERIAL_URI = 'ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/{id}.json';
@@ -13,6 +14,14 @@ export const awaitingArchive = (): ArchiveMint => ({
   state: 'awaiting_input', recipient: null, amount: null, txHash: null, blockNumber: null,
   blockHash: null, logIndex: null, verifiedAt: null, proof: null,
 });
+/** 只有相同曲目、链、合约和Token的真实留存证明可以进入公开目录。 */
+export function originalArchive(trackId: string, chainId: number, contract: string, tokenId: string): ArchiveMint {
+  if (chainId !== opRetention.chainId) return awaitingArchive();
+  const row = opRetention.rows.find(item => item.trackId === trackId && item.tokenId === tokenId
+    && item.contractAddress.toLowerCase() === contract.toLowerCase());
+  if (!row || row.archiveMint.state !== 'confirmed') return awaitingArchive();
+  return { ...row.archiveMint, state: 'confirmed' };
+}
 // 新原曲地址由实际部署证明登记，旧OP合约继续保留独立身份。
 const deploymentSource = 'reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json';
 export function deployedOriginalVerification(chainId: 1 | 10): Verification {

@@ -149,3 +149,7 @@ README由唯一源重新生成，35/35手记状态和每系列排除原因不手
 - W2继续external_pending、walletVerified=false：当前可测SEMI build/version、账号或导入入口、真实持有资产、当前数量与audio/HTML容器策略仍缺；必须在实际钱包验收。需要联系人时由总控核准该具体外部动作，本线没有发送资料或探测私有API。
 
 定向验证仅限本次受影响导出/同源断言；父代理已将export.test预期适配到70原曲与4系列，并新增ETH Score同源断言。本线承接该文件检查与提交：export/--check退出0、export.test 8/8通过、readme.ts与export.test.ts的ESLint --no-ignore退出0，P13指定路径diff检查通过。未重跑全仓build、Forge、浏览器、音频或链上矩阵。
+
+## OP真实留存证明更新（2026-10-03）
+
+复用P17的35笔真实OP SBT回执/余额证明，未另发交易或重下媒体。当前revision=e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c；原曲资料仍70项ready，OP35项archiveMint=confirmed，ETH35项待定。生成和--check、8/8导出专项通过，网站与SEMI仍同源。SEMI实际接入仍external_pending。

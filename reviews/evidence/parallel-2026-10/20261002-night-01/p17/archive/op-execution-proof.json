@@ -1,0 +1,2084 @@
+{
+  "schemaVersion": 1,
+  "kind": "op-original-retention",
+  "checkedAt": "2026-10-03T11:44:29.414Z",
+  "chainId": 10,
+  "recipient": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+  "sourceSha": "550cd3ea8d35ea69ef44ce87e7256516cfb8da56",
+  "catalogRevisionAtExecution": "70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8",
+  "planHash": "0x7243e6afeb92574aba02ab26f37f50cdbe97ff834f78243cdf26695156a6db1b",
+  "confirmed": 35,
+  "unknown": 0,
+  "totalFeeWei": "2327730193134",
+  "totalFeeEth": "0.000002327730193134",
+  "budgetWei": "10500000000000",
+  "items": [
+    {
+      "trackId": "21029773-9978-4147-b106-f5b22fcddeb9",
+      "displayNumber": 1,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "1",
+      "metadataUri": "ar://HlF8e2bp52VL4aYirjtqkr6P_FmwHng9aP7PKEdBjEY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xf6bea1c09dcd80d98bdb209a0fbc6e514474d38bf61580c8636cd417a53fb981",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x4d36c7080acdf872813a7a193e39ebdbda49fa1696087fd6fa124e6edfe8d6e6",
+        "blockNumber": "157714025",
+        "blockHash": "0x53b980dfd95230cfe6bb664cfb94dfffc0c41ba18a5c3d0a1e5a547511456ff8",
+        "logIndex": 224,
+        "verifiedAt": "2026-10-03T11:42:59.067Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"1\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x4d36c7080acdf872813a7a193e39ebdbda49fa1696087fd6fa124e6edfe8d6e6\",\"blockNumber\":\"157714025\",\"blockHash\":\"0x53b980dfd95230cfe6bb664cfb94dfffc0c41ba18a5c3d0a1e5a547511456ff8\",\"logIndex\":224,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714501\",\"observedBlockHash\":\"0x4cfeca7010052af34dbc2d07da7a050c2c757acc492e6e195241768655978b17\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:42:59.067Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "1",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x4d36c7080acdf872813a7a193e39ebdbda49fa1696087fd6fa124e6edfe8d6e6",
+          "blockNumber": "157714025",
+          "blockHash": "0x53b980dfd95230cfe6bb664cfb94dfffc0c41ba18a5c3d0a1e5a547511456ff8",
+          "logIndex": 224,
+          "observedBalance": "1",
+          "observedAtBlock": "157714501"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "19",
+      "calldataHash": "0xd12d934be3af766972fc1e7d5a095b3a31671959b2e241a4d3ace44d84b1c70e",
+      "attemptedAt": "2026-10-03T11:24:06.857Z",
+      "txHashes": [
+        "0x4d36c7080acdf872813a7a193e39ebdbda49fa1696087fd6fa124e6edfe8d6e6"
+      ]
+    },
+    {
+      "trackId": "eb0287ec-45f1-4ce0-90ed-a9ea4057c34d",
+      "displayNumber": 2,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "2",
+      "metadataUri": "ar://DyO1OY-o79WIryke5z_XdRpFur5pf6CT0GNZJVwUVF8",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xb5f5903b985f1dcdf622b033eb06b35d0645a150c46b36357f48a2825b486692",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xe7da04a2ed1825de109a6b41278123a8f015ee01a6761d1907f67a8ae631e12c",
+        "blockNumber": "157714037",
+        "blockHash": "0x88f51be44f8b6c48045dadbf380471a4cccfd7c4b0d98f52633ad94e23a14ffa",
+        "logIndex": 141,
+        "verifiedAt": "2026-10-03T11:43:01.747Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"2\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xe7da04a2ed1825de109a6b41278123a8f015ee01a6761d1907f67a8ae631e12c\",\"blockNumber\":\"157714037\",\"blockHash\":\"0x88f51be44f8b6c48045dadbf380471a4cccfd7c4b0d98f52633ad94e23a14ffa\",\"logIndex\":141,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714502\",\"observedBlockHash\":\"0xb77a95cc4cd763dd6d90080fe5643f7e222e5841b166838143a52d9bfd32c2dd\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:01.747Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "2",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xe7da04a2ed1825de109a6b41278123a8f015ee01a6761d1907f67a8ae631e12c",
+          "blockNumber": "157714037",
+          "blockHash": "0x88f51be44f8b6c48045dadbf380471a4cccfd7c4b0d98f52633ad94e23a14ffa",
+          "logIndex": 141,
+          "observedBalance": "1",
+          "observedAtBlock": "157714502"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "20",
+      "calldataHash": "0x7627f166e366899149869c5362ff83327ef59e058c930fb3692a2638bb89b844",
+      "attemptedAt": "2026-10-03T11:27:28.240Z",
+      "txHashes": [
+        "0xe7da04a2ed1825de109a6b41278123a8f015ee01a6761d1907f67a8ae631e12c"
+      ]
+    },
+    {
+      "trackId": "19aeeb04-f07d-4d08-ae0c-4f630ff5e864",
+      "displayNumber": 3,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "3",
+      "metadataUri": "ar://APmtsSktms2b1dBy1rImf2ccG7trfXc97OfyEPdJvT0",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x92f1f16245e76de81f945f09ecae5c0a6d33117c6a99b79cb01d9cb59885f6a1",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x8feb30bd253c4039627131fb1d79a6d78c68785f858edfc0c410b3648a619e08",
+        "blockNumber": "157714043",
+        "blockHash": "0xf33c31502c730fc57939229b8a210830dd4d3a41afe4b596182b7c0bfdf17548",
+        "logIndex": 135,
+        "verifiedAt": "2026-10-03T11:43:03.728Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"3\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x8feb30bd253c4039627131fb1d79a6d78c68785f858edfc0c410b3648a619e08\",\"blockNumber\":\"157714043\",\"blockHash\":\"0xf33c31502c730fc57939229b8a210830dd4d3a41afe4b596182b7c0bfdf17548\",\"logIndex\":135,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714503\",\"observedBlockHash\":\"0x19d3f895ae496d6e29255ff7dce7bcd2298ffa1695974916dd4288ccb72f56f1\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:03.728Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "3",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x8feb30bd253c4039627131fb1d79a6d78c68785f858edfc0c410b3648a619e08",
+          "blockNumber": "157714043",
+          "blockHash": "0xf33c31502c730fc57939229b8a210830dd4d3a41afe4b596182b7c0bfdf17548",
+          "logIndex": 135,
+          "observedBalance": "1",
+          "observedAtBlock": "157714503"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "21",
+      "calldataHash": "0xe67fd2599f8b4c4edb874b05b68406d3490f9a2ccd807f4563d24baf6638e91e",
+      "attemptedAt": "2026-10-03T11:27:39.263Z",
+      "txHashes": [
+        "0x8feb30bd253c4039627131fb1d79a6d78c68785f858edfc0c410b3648a619e08"
+      ]
+    },
+    {
+      "trackId": "7b7a6182-8cbb-44c7-809c-693263ff96cb",
+      "displayNumber": 4,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "4",
+      "metadataUri": "ar://xjJBLJGVbgQrV7kee8O8TJu2mDecy9pbz0cv6j-XZaE",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x09751b6f996797c89b6aad17174d0ff274e9e5f31e654efe5e075bbc0d224674",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x9104f9e2d7fe882ce40e8966738bafe695b54c4defec0c12e86e695cdb583822",
+        "blockNumber": "157714048",
+        "blockHash": "0x266f5690345b3070569e71d077fd4c30c39d95e85072a69c89435d688562291a",
+        "logIndex": 295,
+        "verifiedAt": "2026-10-03T11:43:05.583Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"4\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x9104f9e2d7fe882ce40e8966738bafe695b54c4defec0c12e86e695cdb583822\",\"blockNumber\":\"157714048\",\"blockHash\":\"0x266f5690345b3070569e71d077fd4c30c39d95e85072a69c89435d688562291a\",\"logIndex\":295,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714504\",\"observedBlockHash\":\"0xa91145181f19759f9204ba326e388e1579508989eb19970ce704c8ae2a481e18\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:05.583Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "4",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x9104f9e2d7fe882ce40e8966738bafe695b54c4defec0c12e86e695cdb583822",
+          "blockNumber": "157714048",
+          "blockHash": "0x266f5690345b3070569e71d077fd4c30c39d95e85072a69c89435d688562291a",
+          "logIndex": 295,
+          "observedBalance": "1",
+          "observedAtBlock": "157714504"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "22",
+      "calldataHash": "0xe9f05796578f553786d2831bb5beddc2bd4e990b5188f430cc507ef446064342",
+      "attemptedAt": "2026-10-03T11:27:51.006Z",
+      "txHashes": [
+        "0x9104f9e2d7fe882ce40e8966738bafe695b54c4defec0c12e86e695cdb583822"
+      ]
+    },
+    {
+      "trackId": "7ac769a9-902d-4f67-98da-da0849a8bed6",
+      "displayNumber": 5,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "5",
+      "metadataUri": "ar://Hv9eZPw0Lhd6lHvIMBDx3OdGXK-j_g-xAzjJ5-1j3Og",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x35c221ffee5810ce6d867841f49ddc151f555bfe1dadedd712b13fca62037894",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x8bd759194f2551988e1d5eb734abce9d4bd231603ffa442808e6b253765754e3",
+        "blockNumber": "157714055",
+        "blockHash": "0x5efefbd876cfeec510ee70f761c41b57f10fb0ab5b300b1a8505bd858050cca0",
+        "logIndex": 78,
+        "verifiedAt": "2026-10-03T11:43:07.421Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"5\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x8bd759194f2551988e1d5eb734abce9d4bd231603ffa442808e6b253765754e3\",\"blockNumber\":\"157714055\",\"blockHash\":\"0x5efefbd876cfeec510ee70f761c41b57f10fb0ab5b300b1a8505bd858050cca0\",\"logIndex\":78,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714505\",\"observedBlockHash\":\"0x62df86927f4807ce63d239fd5166bf3587ac7ddbd501c808010ff5c975419ae3\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:07.421Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "5",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x8bd759194f2551988e1d5eb734abce9d4bd231603ffa442808e6b253765754e3",
+          "blockNumber": "157714055",
+          "blockHash": "0x5efefbd876cfeec510ee70f761c41b57f10fb0ab5b300b1a8505bd858050cca0",
+          "logIndex": 78,
+          "observedBalance": "1",
+          "observedAtBlock": "157714505"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "23",
+      "calldataHash": "0x728741c5bdfd30de01fdaf794083026fe79f19239d1d08346fbb0ea894d29a49",
+      "attemptedAt": "2026-10-03T11:28:03.870Z",
+      "txHashes": [
+        "0x8bd759194f2551988e1d5eb734abce9d4bd231603ffa442808e6b253765754e3"
+      ]
+    },
+    {
+      "trackId": "8527a1b5-570c-4e37-b335-9a57b9aa170f",
+      "displayNumber": 6,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "6",
+      "metadataUri": "ar://U6jm3jtho2C1HAMh8FT5ovUoQuaOyS3AjwT7WUM9dFk",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xfffb635b1c0ffdc36669b8c0eb0b7680f11b17b5230e0b513e5f09e9d910aad4",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xc9c1092a0519dfab38f63808ff85dbc9e9453467f8779f417c107a2a0ee69fdf",
+        "blockNumber": "157714062",
+        "blockHash": "0xbf14d73d15ee275464750638fafabcdb3568aecf1d737a67d8842fa737ddc889",
+        "logIndex": 94,
+        "verifiedAt": "2026-10-03T11:43:09.254Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"6\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xc9c1092a0519dfab38f63808ff85dbc9e9453467f8779f417c107a2a0ee69fdf\",\"blockNumber\":\"157714062\",\"blockHash\":\"0xbf14d73d15ee275464750638fafabcdb3568aecf1d737a67d8842fa737ddc889\",\"logIndex\":94,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714506\",\"observedBlockHash\":\"0x60912f4c0e0efc5d382fbe63053d01d41ee40b8e0d29b601aec00fb82d0b48b1\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:09.254Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "6",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xc9c1092a0519dfab38f63808ff85dbc9e9453467f8779f417c107a2a0ee69fdf",
+          "blockNumber": "157714062",
+          "blockHash": "0xbf14d73d15ee275464750638fafabcdb3568aecf1d737a67d8842fa737ddc889",
+          "logIndex": 94,
+          "observedBalance": "1",
+          "observedAtBlock": "157714506"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "24",
+      "calldataHash": "0xa686dcbc21f2b2d688154adb7411e8cb94d0873c08255f5acfcb66cfda7a5bf9",
+      "attemptedAt": "2026-10-03T11:28:17.722Z",
+      "txHashes": [
+        "0xc9c1092a0519dfab38f63808ff85dbc9e9453467f8779f417c107a2a0ee69fdf"
+      ]
+    },
+    {
+      "trackId": "891dda4d-a243-4ca6-bd5a-b42697a3346b",
+      "displayNumber": 7,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "7",
+      "metadataUri": "ar://sdGNw2QO3mmMxyEl7CYiZsitMdXhL_JwJkzvWMJxUuM",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x59241392eff9c4c457392fbc7d03ade4c468aa33852780e370504557c9b56e71",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xb82418f08b59dc876d20e10828c3d4a017aaf74fd8e9ea8b7e310449454436d0",
+        "blockNumber": "157714069",
+        "blockHash": "0x1f890e0f7c472e8274b2107a3a9ca014f83349bc21bb15c0a1fee0fe779028e7",
+        "logIndex": 129,
+        "verifiedAt": "2026-10-03T11:43:11.050Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"7\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xb82418f08b59dc876d20e10828c3d4a017aaf74fd8e9ea8b7e310449454436d0\",\"blockNumber\":\"157714069\",\"blockHash\":\"0x1f890e0f7c472e8274b2107a3a9ca014f83349bc21bb15c0a1fee0fe779028e7\",\"logIndex\":129,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714507\",\"observedBlockHash\":\"0x59d1b0ad00d6d942cead2ee45877dad9ae2e9c362d6112cd8a5deab811c8032e\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:11.050Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "7",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xb82418f08b59dc876d20e10828c3d4a017aaf74fd8e9ea8b7e310449454436d0",
+          "blockNumber": "157714069",
+          "blockHash": "0x1f890e0f7c472e8274b2107a3a9ca014f83349bc21bb15c0a1fee0fe779028e7",
+          "logIndex": 129,
+          "observedBalance": "1",
+          "observedAtBlock": "157714507"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "25",
+      "calldataHash": "0x84a668007870618e487108092404bbd6ea1016fb49e9d4e6afa92f05abf8ce1a",
+      "attemptedAt": "2026-10-03T11:28:31.681Z",
+      "txHashes": [
+        "0xb82418f08b59dc876d20e10828c3d4a017aaf74fd8e9ea8b7e310449454436d0"
+      ]
+    },
+    {
+      "trackId": "7df38fb9-3fd8-4dd4-a109-a8d93f3cc063",
+      "displayNumber": 8,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "8",
+      "metadataUri": "ar://b8bOIjZRbqYwDjsnPar5hYLxdYXwJKn3EizRgIk_BB8",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x97d185124741f5cd7448c2a215d07fbee73a6187dc9774ef8fda6bb4fb2f5542",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x71b3f0e36ce7f493f4a95a65ba9aa1fbbfe3856aa6c5bd1e2cfd9a3a59ea2a9d",
+        "blockNumber": "157714075",
+        "blockHash": "0x756b6db3890a558acbe4d49970f7fcdc233747301a4cf5c35796b5d2aa446cd8",
+        "logIndex": 142,
+        "verifiedAt": "2026-10-03T11:43:13.334Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"8\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x71b3f0e36ce7f493f4a95a65ba9aa1fbbfe3856aa6c5bd1e2cfd9a3a59ea2a9d\",\"blockNumber\":\"157714075\",\"blockHash\":\"0x756b6db3890a558acbe4d49970f7fcdc233747301a4cf5c35796b5d2aa446cd8\",\"logIndex\":142,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714508\",\"observedBlockHash\":\"0x343bfd7e5cb6fead3f8cc027ee913e25694cb3f7af2634b92047c527fca188a6\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:13.334Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "8",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x71b3f0e36ce7f493f4a95a65ba9aa1fbbfe3856aa6c5bd1e2cfd9a3a59ea2a9d",
+          "blockNumber": "157714075",
+          "blockHash": "0x756b6db3890a558acbe4d49970f7fcdc233747301a4cf5c35796b5d2aa446cd8",
+          "logIndex": 142,
+          "observedBalance": "1",
+          "observedAtBlock": "157714508"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "26",
+      "calldataHash": "0x09801a75b4cd1b82c24f4de873e0add5a4d46fa9335d6ce54a9f44dcdab4972d",
+      "attemptedAt": "2026-10-03T11:28:43.958Z",
+      "txHashes": [
+        "0x71b3f0e36ce7f493f4a95a65ba9aa1fbbfe3856aa6c5bd1e2cfd9a3a59ea2a9d"
+      ]
+    },
+    {
+      "trackId": "de96230b-54a7-4b29-a7d0-82cebf07ab86",
+      "displayNumber": 9,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "9",
+      "metadataUri": "ar://mrf60F8e8uLQznVLdLpbCg9sqQyzl9CIITh5dRi_uOw",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xdcda5fd6ec1230f220064f35c51fa8057d6df6ea99b20477f9933a87545aa5e4",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xccd7d77487bd3781533b982550b0f113cc62996dcd4e0d1662ba265514bb7031",
+        "blockNumber": "157714081",
+        "blockHash": "0x56ceeb0bd6be7736be89ac1e7ac40f90e119a4e2740c68e80669a5f769f8a6c9",
+        "logIndex": 239,
+        "verifiedAt": "2026-10-03T11:43:15.422Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"9\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xccd7d77487bd3781533b982550b0f113cc62996dcd4e0d1662ba265514bb7031\",\"blockNumber\":\"157714081\",\"blockHash\":\"0x56ceeb0bd6be7736be89ac1e7ac40f90e119a4e2740c68e80669a5f769f8a6c9\",\"logIndex\":239,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714509\",\"observedBlockHash\":\"0x56ffbc59a417a1af0a0515cbf0b6df6cd1a8f25085fe9873a5e2cad0318b1407\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:15.422Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "9",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xccd7d77487bd3781533b982550b0f113cc62996dcd4e0d1662ba265514bb7031",
+          "blockNumber": "157714081",
+          "blockHash": "0x56ceeb0bd6be7736be89ac1e7ac40f90e119a4e2740c68e80669a5f769f8a6c9",
+          "logIndex": 239,
+          "observedBalance": "1",
+          "observedAtBlock": "157714509"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "27",
+      "calldataHash": "0xe328027cf0ae55f90684b27102ac1d0adff4ff3f3aed56d3318866184633c016",
+      "attemptedAt": "2026-10-03T11:28:55.617Z",
+      "txHashes": [
+        "0xccd7d77487bd3781533b982550b0f113cc62996dcd4e0d1662ba265514bb7031"
+      ]
+    },
+    {
+      "trackId": "9417ff60-f1b6-4135-8f61-bd556a2220dc",
+      "displayNumber": 10,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "10",
+      "metadataUri": "ar://MEnilq_Lhx9oynBqoqWFVjMoKsBZIa3PW-VHMgy01mA",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xad4bdedb0abd04c0a180f186b800bed85a6a6fd2ad7760809c5de7ea2847534e",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x5854971c74799bb42be48ae7154a0dbbf6438ebb15c7e3db77676d94d0760499",
+        "blockNumber": "157714087",
+        "blockHash": "0xcb54d312ce46d78b89283da42ac2931a97e7314ef92115445c4ded08faa1000c",
+        "logIndex": 159,
+        "verifiedAt": "2026-10-03T11:43:17.377Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"10\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x5854971c74799bb42be48ae7154a0dbbf6438ebb15c7e3db77676d94d0760499\",\"blockNumber\":\"157714087\",\"blockHash\":\"0xcb54d312ce46d78b89283da42ac2931a97e7314ef92115445c4ded08faa1000c\",\"logIndex\":159,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714510\",\"observedBlockHash\":\"0xfebbe31f27bd5185a0ed47b8aab78c4bf328979d729d160b917a66bd61eb5f47\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:17.377Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "10",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x5854971c74799bb42be48ae7154a0dbbf6438ebb15c7e3db77676d94d0760499",
+          "blockNumber": "157714087",
+          "blockHash": "0xcb54d312ce46d78b89283da42ac2931a97e7314ef92115445c4ded08faa1000c",
+          "logIndex": 159,
+          "observedBalance": "1",
+          "observedAtBlock": "157714510"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "28",
+      "calldataHash": "0xdb95aaf667951f126d95fe37050ccc223f0692405b9fa8e8f4b78ba3869ab7f0",
+      "attemptedAt": "2026-10-03T11:29:08.908Z",
+      "txHashes": [
+        "0x5854971c74799bb42be48ae7154a0dbbf6438ebb15c7e3db77676d94d0760499"
+      ]
+    },
+    {
+      "trackId": "f7430714-7d5a-4ae3-8804-698fdecdd1eb",
+      "displayNumber": 11,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "11",
+      "metadataUri": "ar://jBspQSvh89b7nY_GbX0ClF93k0_J5weretkb9WncsvQ",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xe461963ccca4d3b4181374c881853167dc47d76553c59a981f05cebc7f3df0cb",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xd415d7192bf39fc0389f6e788ebceafe7a94e92b2e432a005508187e9a9b7e05",
+        "blockNumber": "157714093",
+        "blockHash": "0x5f15cebd5165080c8567411a6c1523f25725467c65beb492ae4c7cf2f46b626f",
+        "logIndex": 187,
+        "verifiedAt": "2026-10-03T11:43:19.385Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"11\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xd415d7192bf39fc0389f6e788ebceafe7a94e92b2e432a005508187e9a9b7e05\",\"blockNumber\":\"157714093\",\"blockHash\":\"0x5f15cebd5165080c8567411a6c1523f25725467c65beb492ae4c7cf2f46b626f\",\"logIndex\":187,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714511\",\"observedBlockHash\":\"0x6beed5b7100575c3b7f7c8e12ffaf16e961a9ee954013d2a0c532a12f4a95695\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:19.385Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "11",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xd415d7192bf39fc0389f6e788ebceafe7a94e92b2e432a005508187e9a9b7e05",
+          "blockNumber": "157714093",
+          "blockHash": "0x5f15cebd5165080c8567411a6c1523f25725467c65beb492ae4c7cf2f46b626f",
+          "logIndex": 187,
+          "observedBalance": "1",
+          "observedAtBlock": "157714511"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "29",
+      "calldataHash": "0x19c54e0734069f0d23a84a60bfb93f84a1378508f311a2aa3c15003d5cb71343",
+      "attemptedAt": "2026-10-03T11:29:21.070Z",
+      "txHashes": [
+        "0xd415d7192bf39fc0389f6e788ebceafe7a94e92b2e432a005508187e9a9b7e05"
+      ]
+    },
+    {
+      "trackId": "85289b10-d222-4502-8d6a-81ba7540860e",
+      "displayNumber": 12,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "12",
+      "metadataUri": "ar://Z4K1jeB1pnHNchxytLk13eD460X6svhUCDnIT0NQv6M",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x146b867cb8f18e3b17981205d92b55d0a73d6f56df48d9e493c7791df6be641a",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x51b4ca1e55fce8486777d3009f5a3d08e2e1250a3484b1e69bab32b17a06a2ed",
+        "blockNumber": "157714158",
+        "blockHash": "0x5f90f53ed3668b079b89cce6fe87d93415c292e9027bc1d67ed9bf1451695a14",
+        "logIndex": 115,
+        "verifiedAt": "2026-10-03T11:43:21.300Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"12\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x51b4ca1e55fce8486777d3009f5a3d08e2e1250a3484b1e69bab32b17a06a2ed\",\"blockNumber\":\"157714158\",\"blockHash\":\"0x5f90f53ed3668b079b89cce6fe87d93415c292e9027bc1d67ed9bf1451695a14\",\"logIndex\":115,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714512\",\"observedBlockHash\":\"0x3f3f7d8be4fbd0d18772fc43e2041f388569d69e251923aa45015e0b122f733b\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:21.300Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "12",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x51b4ca1e55fce8486777d3009f5a3d08e2e1250a3484b1e69bab32b17a06a2ed",
+          "blockNumber": "157714158",
+          "blockHash": "0x5f90f53ed3668b079b89cce6fe87d93415c292e9027bc1d67ed9bf1451695a14",
+          "logIndex": 115,
+          "observedBalance": "1",
+          "observedAtBlock": "157714512"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "30",
+      "calldataHash": "0xfb5db759dbb36db2487ec3bcca18c4c321ec630bba0906c51c723f45398d13ee",
+      "attemptedAt": "2026-10-03T11:29:36.961Z",
+      "txHashes": [
+        "0x51b4ca1e55fce8486777d3009f5a3d08e2e1250a3484b1e69bab32b17a06a2ed"
+      ]
+    },
+    {
+      "trackId": "44220b86-a9db-4084-8f50-47f8e00a8573",
+      "displayNumber": 13,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "13",
+      "metadataUri": "ar://pAOckDZpVkvnWBFABG2vqgiyeox90LBSYVeAlC2PcVI",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x06d3f25c045574f36ec9e03538e395d4080fff602715b9c14da09b8be35058f1",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x229e17276471ad230cba56c70842611b7f7e567cc06bd2c23030e03dcb4c5be3",
+        "blockNumber": "157714190",
+        "blockHash": "0x6ee4d3117e939865a43c69c8951bbacffe35021eef66b04eae95bee8603ce8ea",
+        "logIndex": 198,
+        "verifiedAt": "2026-10-03T11:43:23.383Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"13\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x229e17276471ad230cba56c70842611b7f7e567cc06bd2c23030e03dcb4c5be3\",\"blockNumber\":\"157714190\",\"blockHash\":\"0x6ee4d3117e939865a43c69c8951bbacffe35021eef66b04eae95bee8603ce8ea\",\"logIndex\":198,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714513\",\"observedBlockHash\":\"0x60e69cc034a1f75cefc7aee4d1378595f31d9bfa165bb28f90029349102a1304\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:23.383Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "13",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x229e17276471ad230cba56c70842611b7f7e567cc06bd2c23030e03dcb4c5be3",
+          "blockNumber": "157714190",
+          "blockHash": "0x6ee4d3117e939865a43c69c8951bbacffe35021eef66b04eae95bee8603ce8ea",
+          "logIndex": 198,
+          "observedBalance": "1",
+          "observedAtBlock": "157714513"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "31",
+      "calldataHash": "0xca3195616be1efbe1f9423847137ee4f40d054da76d5e02010808f63966aad1b",
+      "attemptedAt": "2026-10-03T11:32:33.775Z",
+      "txHashes": [
+        "0x229e17276471ad230cba56c70842611b7f7e567cc06bd2c23030e03dcb4c5be3"
+      ]
+    },
+    {
+      "trackId": "cc5b254c-f7f7-4446-a718-c58f15dae193",
+      "displayNumber": 14,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "14",
+      "metadataUri": "ar://WTi3Lx5aa9oaeIaeHr6DAheKlg9VxPnmxI_Ms9xhHY8",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x18e1c0e998ac58f6614e92f35d1d2c14f0ecb6993c71292ed20fa2bdf9f1f170",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xa47a5ee3196e26eb1807bf6b83513a3ac5c85c163dbf8b022b79b1da187793f1",
+        "blockNumber": "157714198",
+        "blockHash": "0x1f7300c52001d104c6c51231263a014e358f482e7214310ddf6c0fd3c443e55d",
+        "logIndex": 8,
+        "verifiedAt": "2026-10-03T11:43:25.224Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"14\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xa47a5ee3196e26eb1807bf6b83513a3ac5c85c163dbf8b022b79b1da187793f1\",\"blockNumber\":\"157714198\",\"blockHash\":\"0x1f7300c52001d104c6c51231263a014e358f482e7214310ddf6c0fd3c443e55d\",\"logIndex\":8,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714514\",\"observedBlockHash\":\"0xd5b9f5b8f85b1f7a2f6b30481bc5ffe33effe184fdd049f65c400b4ff34db3f6\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:25.224Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "14",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xa47a5ee3196e26eb1807bf6b83513a3ac5c85c163dbf8b022b79b1da187793f1",
+          "blockNumber": "157714198",
+          "blockHash": "0x1f7300c52001d104c6c51231263a014e358f482e7214310ddf6c0fd3c443e55d",
+          "logIndex": 8,
+          "observedBalance": "1",
+          "observedAtBlock": "157714514"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "32",
+      "calldataHash": "0xae6b5e5d46b9a72d2069e49c538ff8113192e88d28472b1f237f27ee0fbfb831",
+      "attemptedAt": "2026-10-03T11:32:49.444Z",
+      "txHashes": [
+        "0xa47a5ee3196e26eb1807bf6b83513a3ac5c85c163dbf8b022b79b1da187793f1"
+      ]
+    },
+    {
+      "trackId": "78326e66-0b5d-4650-9534-f8f8740bc0e9",
+      "displayNumber": 15,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "15",
+      "metadataUri": "ar://3D5XJ9wJyMX4l4o0VdnfERTAzr-0K7y5DJjEFnHTfAQ",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x234fea025d6e0cb282b11609d7c44cef253036d7506a09c11be154c3ad684c5d",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x775c6d4092023894a2968a99faeb94667f6549d7f9296f30e73c4d27bca64bdf",
+        "blockNumber": "157714206",
+        "blockHash": "0xeb70c3d7059acabcc7dadea3eb1ef9773feed0f9c2c7df31503b2d315006446b",
+        "logIndex": 183,
+        "verifiedAt": "2026-10-03T11:43:27.143Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"15\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x775c6d4092023894a2968a99faeb94667f6549d7f9296f30e73c4d27bca64bdf\",\"blockNumber\":\"157714206\",\"blockHash\":\"0xeb70c3d7059acabcc7dadea3eb1ef9773feed0f9c2c7df31503b2d315006446b\",\"logIndex\":183,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714515\",\"observedBlockHash\":\"0x9361eeeafd5f7373f12e0a67c1564d0bec884c7e899d35dde2280e931b701492\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:27.143Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "15",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x775c6d4092023894a2968a99faeb94667f6549d7f9296f30e73c4d27bca64bdf",
+          "blockNumber": "157714206",
+          "blockHash": "0xeb70c3d7059acabcc7dadea3eb1ef9773feed0f9c2c7df31503b2d315006446b",
+          "logIndex": 183,
+          "observedBalance": "1",
+          "observedAtBlock": "157714515"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "33",
+      "calldataHash": "0xef1eacff9d980a2201a3540f3f25556fb47ab581be6bc7c812e6acfbdcfc80a4",
+      "attemptedAt": "2026-10-03T11:33:06.511Z",
+      "txHashes": [
+        "0x775c6d4092023894a2968a99faeb94667f6549d7f9296f30e73c4d27bca64bdf"
+      ]
+    },
+    {
+      "trackId": "d43a6930-74d8-4ed3-af47-f817f1e7ab07",
+      "displayNumber": 16,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "16",
+      "metadataUri": "ar://25IVHmCzCMtwzqzulZSYNeDIwrDf5m_NXXrNadAqTJI",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x02949c7a67bddee84f96c44300691ce96ad0ac8131c1bdacc4e41811bab2076d",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x01ca30662c5d67c3a9f4468634459112ab883ac2441ffc1acc6b4abca708ccc1",
+        "blockNumber": "157714224",
+        "blockHash": "0x4619f73cf5b04c028a1a4554aa0d0b86caa033e6a04180ed3ce43c6b22b07216",
+        "logIndex": 176,
+        "verifiedAt": "2026-10-03T11:43:29.179Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"16\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x01ca30662c5d67c3a9f4468634459112ab883ac2441ffc1acc6b4abca708ccc1\",\"blockNumber\":\"157714224\",\"blockHash\":\"0x4619f73cf5b04c028a1a4554aa0d0b86caa033e6a04180ed3ce43c6b22b07216\",\"logIndex\":176,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714516\",\"observedBlockHash\":\"0x71aeaf545a611878791900741232a11fdf76bee21632d43e12635f468c4ab957\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:29.179Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "16",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x01ca30662c5d67c3a9f4468634459112ab883ac2441ffc1acc6b4abca708ccc1",
+          "blockNumber": "157714224",
+          "blockHash": "0x4619f73cf5b04c028a1a4554aa0d0b86caa033e6a04180ed3ce43c6b22b07216",
+          "logIndex": 176,
+          "observedBalance": "1",
+          "observedAtBlock": "157714516"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "34",
+      "calldataHash": "0x717a40176318be48858c2e842e220cd82bdd4d2c4bfb8c288135ac465faa9f24",
+      "attemptedAt": "2026-10-03T11:33:23.425Z",
+      "txHashes": [
+        "0x01ca30662c5d67c3a9f4468634459112ab883ac2441ffc1acc6b4abca708ccc1"
+      ]
+    },
+    {
+      "trackId": "807a3c8a-6370-434d-8e91-5493ba19edcc",
+      "displayNumber": 17,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "17",
+      "metadataUri": "ar://OAOtXIcr2L0mZ9nXZX-i_4hZtvrTscZFRKjNHfRnym8",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x6a2013b118d4e17256d7a54d947680163889da9708c5fb44b051f6452c4529ca",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x5b4bc95cfce67cd4600ca3210ee803fd4e66d6e8db50c7cfcc605e4f4ef82cde",
+        "blockNumber": "157714234",
+        "blockHash": "0x1f7ae403a3c5fe58081d581ab7049c9f466572855a1870a7eaa8a0ff05d38648",
+        "logIndex": 150,
+        "verifiedAt": "2026-10-03T11:43:31.219Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"17\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x5b4bc95cfce67cd4600ca3210ee803fd4e66d6e8db50c7cfcc605e4f4ef82cde\",\"blockNumber\":\"157714234\",\"blockHash\":\"0x1f7ae403a3c5fe58081d581ab7049c9f466572855a1870a7eaa8a0ff05d38648\",\"logIndex\":150,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714517\",\"observedBlockHash\":\"0x10c67d0e5ab8642ec4a64b32ed4a2402d7947996a6c9780a70a838786f1af947\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:31.219Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "17",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x5b4bc95cfce67cd4600ca3210ee803fd4e66d6e8db50c7cfcc605e4f4ef82cde",
+          "blockNumber": "157714234",
+          "blockHash": "0x1f7ae403a3c5fe58081d581ab7049c9f466572855a1870a7eaa8a0ff05d38648",
+          "logIndex": 150,
+          "observedBalance": "1",
+          "observedAtBlock": "157714517"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "35",
+      "calldataHash": "0x562a6217daac1dd5a6f8a830886dc05914924e493cf652a8997559121356754d",
+      "attemptedAt": "2026-10-03T11:33:58.608Z",
+      "txHashes": [
+        "0x5b4bc95cfce67cd4600ca3210ee803fd4e66d6e8db50c7cfcc605e4f4ef82cde"
+      ]
+    },
+    {
+      "trackId": "695c20e3-5f26-44ed-99b7-388c2a7121da",
+      "displayNumber": 18,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "18",
+      "metadataUri": "ar://aULDqmZcggMBtOW1zLQ8mfHwsotFN6MjqZ4bHYnJbeI",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x12d7e81c078e40ce11a111716141a4e4de99ebfd338bed59c54bb2ad592e14b7",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xf31b0453cfe19f550731852082c451a0977e2a57e93c8e3a8e5aa37887ad3695",
+        "blockNumber": "157714242",
+        "blockHash": "0x4d993b43fc77a92e0aede4c6f5c4796f46aa4d25dab879ce8d412ab3afcd539d",
+        "logIndex": 115,
+        "verifiedAt": "2026-10-03T11:43:33.186Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"18\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xf31b0453cfe19f550731852082c451a0977e2a57e93c8e3a8e5aa37887ad3695\",\"blockNumber\":\"157714242\",\"blockHash\":\"0x4d993b43fc77a92e0aede4c6f5c4796f46aa4d25dab879ce8d412ab3afcd539d\",\"logIndex\":115,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714518\",\"observedBlockHash\":\"0xadbcc5ebdb81be8567eed6417a77be55084912eb353d46bbe0fb79b7a8fa3d08\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:33.186Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "18",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xf31b0453cfe19f550731852082c451a0977e2a57e93c8e3a8e5aa37887ad3695",
+          "blockNumber": "157714242",
+          "blockHash": "0x4d993b43fc77a92e0aede4c6f5c4796f46aa4d25dab879ce8d412ab3afcd539d",
+          "logIndex": 115,
+          "observedBalance": "1",
+          "observedAtBlock": "157714518"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "36",
+      "calldataHash": "0x413e15b5dcf65b190ca620b3ae8c80f189eeaeb52cfe87ed0304dbfd001c8cda",
+      "attemptedAt": "2026-10-03T11:34:18.404Z",
+      "txHashes": [
+        "0xf31b0453cfe19f550731852082c451a0977e2a57e93c8e3a8e5aa37887ad3695"
+      ]
+    },
+    {
+      "trackId": "80e08d48-cc78-4bef-972a-98d56c02d92b",
+      "displayNumber": 19,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "19",
+      "metadataUri": "ar://GjGHMiLlsKw3QT2PybWZQr8hrIdCli-kQI_w1BIDIjY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x4ff07197d59fd32bfcdd191040970a8a36692e3a0e5021a4b154747028a0cdd1",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x32ef132b977f136a5391f8ef278ab76eab6c9c98d2f7fe944d229ad010a3d682",
+        "blockNumber": "157714251",
+        "blockHash": "0xe87f633f57afc10cba045ba2f1a09c3da7ff4446ce387271e9c69a22876e15fd",
+        "logIndex": 76,
+        "verifiedAt": "2026-10-03T11:43:35.098Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"19\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x32ef132b977f136a5391f8ef278ab76eab6c9c98d2f7fe944d229ad010a3d682\",\"blockNumber\":\"157714251\",\"blockHash\":\"0xe87f633f57afc10cba045ba2f1a09c3da7ff4446ce387271e9c69a22876e15fd\",\"logIndex\":76,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714519\",\"observedBlockHash\":\"0x9acba25a36a7588ef137d3d31cd2c6e76e41584345cc350282de642fd1c94b1e\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:35.098Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "19",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x32ef132b977f136a5391f8ef278ab76eab6c9c98d2f7fe944d229ad010a3d682",
+          "blockNumber": "157714251",
+          "blockHash": "0xe87f633f57afc10cba045ba2f1a09c3da7ff4446ce387271e9c69a22876e15fd",
+          "logIndex": 76,
+          "observedBalance": "1",
+          "observedAtBlock": "157714519"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "37",
+      "calldataHash": "0x787b6e7e4bb8c4812e672a75413ec2afa509af8b3d66b75f79dc4acb9cd1e850",
+      "attemptedAt": "2026-10-03T11:34:35.124Z",
+      "txHashes": [
+        "0x32ef132b977f136a5391f8ef278ab76eab6c9c98d2f7fe944d229ad010a3d682"
+      ]
+    },
+    {
+      "trackId": "beb124af-dd37-4ad3-b7c2-ceea3050fe5c",
+      "displayNumber": 20,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "20",
+      "metadataUri": "ar://BzeAacTjSeoqubdKC_mmnsCWgg1gsh105JyXghAFEh4",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xb76f941f5b5879f6fe8a4a4820d968041d1089b472886f64c1a2a799bc3104af",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x9ef06998fbcf4edba2b9b457deeb096670e2cf17ef3f950661e75c080bf562fa",
+        "blockNumber": "157714260",
+        "blockHash": "0xd716f5b4d2e5cdd8e73865a62ba7d56b447d9b1de6afa7b65abf363c31bdf499",
+        "logIndex": 160,
+        "verifiedAt": "2026-10-03T11:43:37.598Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"20\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x9ef06998fbcf4edba2b9b457deeb096670e2cf17ef3f950661e75c080bf562fa\",\"blockNumber\":\"157714260\",\"blockHash\":\"0xd716f5b4d2e5cdd8e73865a62ba7d56b447d9b1de6afa7b65abf363c31bdf499\",\"logIndex\":160,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714520\",\"observedBlockHash\":\"0xf085a57b0854e6aa0302f33e77409f1d80482b8eb67ab05d0b4126265828954e\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:37.598Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "20",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x9ef06998fbcf4edba2b9b457deeb096670e2cf17ef3f950661e75c080bf562fa",
+          "blockNumber": "157714260",
+          "blockHash": "0xd716f5b4d2e5cdd8e73865a62ba7d56b447d9b1de6afa7b65abf363c31bdf499",
+          "logIndex": 160,
+          "observedBalance": "1",
+          "observedAtBlock": "157714520"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "38",
+      "calldataHash": "0x328fdf6819f3a51c5af8a00f5f96a5afc0da8b215282a702e9b03fa93dbb27ba",
+      "attemptedAt": "2026-10-03T11:34:54.492Z",
+      "txHashes": [
+        "0x9ef06998fbcf4edba2b9b457deeb096670e2cf17ef3f950661e75c080bf562fa"
+      ]
+    },
+    {
+      "trackId": "5a52e031-ee29-4b58-a0f3-9b779ce97f40",
+      "displayNumber": 21,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "21",
+      "metadataUri": "ar://RySB3KKL0eWhGyI0WpXoZQz91GUzznhjgEIYdBE3dDE",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xf3791860da5413de5b786e730524d7402d3c01308459fb13fbb482963addcd68",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x08bf7a753fafcf31901b9298e184c3a4d4328d48a94401b9f405131fef8d9f70",
+        "blockNumber": "157714309",
+        "blockHash": "0xf611e4695f94810628d4b5530c00c64c9a2fd1df8344e840b6573f34ee282c71",
+        "logIndex": 303,
+        "verifiedAt": "2026-10-03T11:43:39.610Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"21\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x08bf7a753fafcf31901b9298e184c3a4d4328d48a94401b9f405131fef8d9f70\",\"blockNumber\":\"157714309\",\"blockHash\":\"0xf611e4695f94810628d4b5530c00c64c9a2fd1df8344e840b6573f34ee282c71\",\"logIndex\":303,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714521\",\"observedBlockHash\":\"0x8c9bc56f668a800abad4920d131c9893c3fc59523cc7afe07ec0cb25b96351d2\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:39.610Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "21",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x08bf7a753fafcf31901b9298e184c3a4d4328d48a94401b9f405131fef8d9f70",
+          "blockNumber": "157714309",
+          "blockHash": "0xf611e4695f94810628d4b5530c00c64c9a2fd1df8344e840b6573f34ee282c71",
+          "logIndex": 303,
+          "observedBalance": "1",
+          "observedAtBlock": "157714521"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "39",
+      "calldataHash": "0xa80ee9e637f7ac72836926ac884b860e36d628781efde16e9fb3d4fdfe251656",
+      "attemptedAt": "2026-10-03T11:36:32.557Z",
+      "txHashes": [
+        "0x08bf7a753fafcf31901b9298e184c3a4d4328d48a94401b9f405131fef8d9f70"
+      ]
+    },
+    {
+      "trackId": "07b3b553-28fa-4090-b6d7-3e63e6d14f07",
+      "displayNumber": 22,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "22",
+      "metadataUri": "ar://zGvE-cjKANA61mvrpnx0AqT-3YofAGDdMiD3UtfzHFw",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x022f469390f003fbca3828515fd8e434d71bb82f4afbb0c702f33a56e3eea888",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xcfd25c14066c234871ca3579287aa8f56637bd46519da5d590107479f9bca7f5",
+        "blockNumber": "157714317",
+        "blockHash": "0xc778aaad59301e8c1ccd7f46c97f1b86a4af6d96622084e4aca2adffdd79c1c6",
+        "logIndex": 186,
+        "verifiedAt": "2026-10-03T11:43:41.995Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"22\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xcfd25c14066c234871ca3579287aa8f56637bd46519da5d590107479f9bca7f5\",\"blockNumber\":\"157714317\",\"blockHash\":\"0xc778aaad59301e8c1ccd7f46c97f1b86a4af6d96622084e4aca2adffdd79c1c6\",\"logIndex\":186,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714522\",\"observedBlockHash\":\"0x6b75efd88f6d9f457a020332166f120e8e85a2f65f895460fbf4efd76b14e275\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:41.995Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "22",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xcfd25c14066c234871ca3579287aa8f56637bd46519da5d590107479f9bca7f5",
+          "blockNumber": "157714317",
+          "blockHash": "0xc778aaad59301e8c1ccd7f46c97f1b86a4af6d96622084e4aca2adffdd79c1c6",
+          "logIndex": 186,
+          "observedBalance": "1",
+          "observedAtBlock": "157714522"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "40",
+      "calldataHash": "0x0885ee80e8a0d2a2da24f894680d81e88fa97ef46e07db98df4e700ca591a0eb",
+      "attemptedAt": "2026-10-03T11:36:49.774Z",
+      "txHashes": [
+        "0xcfd25c14066c234871ca3579287aa8f56637bd46519da5d590107479f9bca7f5"
+      ]
+    },
+    {
+      "trackId": "325f93e5-3063-4ae0-806d-0b6d6363aba3",
+      "displayNumber": 23,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "23",
+      "metadataUri": "ar://fTNEblIA8qLbPHS9RTE59YgzFernrTRb8TSrAT0vqac",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x4fb0ac8174d2ba563b179283abddd73195f6e5357788ee2feaeca9f1f494b9e9",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xfdc881b60bb97ce9f8068c723b55774c11071e57242a49a0718640f966721197",
+        "blockNumber": "157714328",
+        "blockHash": "0xfbf8457eab151f29ae81117c8a8721c970eb416c444785ac731345503fb36fe6",
+        "logIndex": 135,
+        "verifiedAt": "2026-10-03T11:43:43.952Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"23\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xfdc881b60bb97ce9f8068c723b55774c11071e57242a49a0718640f966721197\",\"blockNumber\":\"157714328\",\"blockHash\":\"0xfbf8457eab151f29ae81117c8a8721c970eb416c444785ac731345503fb36fe6\",\"logIndex\":135,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714523\",\"observedBlockHash\":\"0x7dc21540bcee5b8c6188ec4dab9df0ae1e671cf41299ca10b0c7750fbaf7d3d8\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:43.952Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "23",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xfdc881b60bb97ce9f8068c723b55774c11071e57242a49a0718640f966721197",
+          "blockNumber": "157714328",
+          "blockHash": "0xfbf8457eab151f29ae81117c8a8721c970eb416c444785ac731345503fb36fe6",
+          "logIndex": 135,
+          "observedBalance": "1",
+          "observedAtBlock": "157714523"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "41",
+      "calldataHash": "0x04663f40a03642ba4f4983de207b570d81ac668ad40935a77710e9c76e6edf05",
+      "attemptedAt": "2026-10-03T11:37:03.791Z",
+      "txHashes": [
+        "0xfdc881b60bb97ce9f8068c723b55774c11071e57242a49a0718640f966721197"
+      ]
+    },
+    {
+      "trackId": "6aab1b24-225c-4300-8b4d-ef86e74866e3",
+      "displayNumber": 24,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "24",
+      "metadataUri": "ar://79h-WXQxlQVbg-qfgBwMTuiRcyt76bfQfQld6SJ-JYQ",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x511f9b8b1cddfd4d9bed7cfb8ca9b5d5f9ab38226461df27722cd7e624695127",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x94c22d77ab26a178792420c56f485cc59679fd8503794ddecfdeea7a843ffe9b",
+        "blockNumber": "157714336",
+        "blockHash": "0xd46c6d36d9b7a30102c35186f39fe7c72a0929155d106277f7e4945803ffb12f",
+        "logIndex": 87,
+        "verifiedAt": "2026-10-03T11:43:46.361Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"24\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x94c22d77ab26a178792420c56f485cc59679fd8503794ddecfdeea7a843ffe9b\",\"blockNumber\":\"157714336\",\"blockHash\":\"0xd46c6d36d9b7a30102c35186f39fe7c72a0929155d106277f7e4945803ffb12f\",\"logIndex\":87,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714524\",\"observedBlockHash\":\"0x0a7bb38e717e521d0de8962016e4ad644ea8c8527ef6d3a871bf69203f28cd60\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:46.361Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "24",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x94c22d77ab26a178792420c56f485cc59679fd8503794ddecfdeea7a843ffe9b",
+          "blockNumber": "157714336",
+          "blockHash": "0xd46c6d36d9b7a30102c35186f39fe7c72a0929155d106277f7e4945803ffb12f",
+          "logIndex": 87,
+          "observedBalance": "1",
+          "observedAtBlock": "157714524"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "42",
+      "calldataHash": "0x5ae4b1a1facad04841a64eb08b0b0ca54a5908ab11c9e5a59988cac6e1695dc6",
+      "attemptedAt": "2026-10-03T11:37:25.996Z",
+      "txHashes": [
+        "0x94c22d77ab26a178792420c56f485cc59679fd8503794ddecfdeea7a843ffe9b"
+      ]
+    },
+    {
+      "trackId": "410ce6d3-9541-4761-b29e-0a19d1872104",
+      "displayNumber": 25,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "25",
+      "metadataUri": "ar://xShXZex33NfE8UYH6S1u-rPTYbDIfoq2UXFKDRZ_tmY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x5392d8e2e3d30d69e5d0e0469f33fed1608fdc552f9273c8a9095e913fc15452",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xa0628a1f0e7794c34a871c9f0f1847d6f57310c486bfe74d4487c824666600f7",
+        "blockNumber": "157714345",
+        "blockHash": "0x76274671d3c95926b4e372d66ceb63ccf37fbf6460c1dd2cb7129ff650ec5747",
+        "logIndex": 172,
+        "verifiedAt": "2026-10-03T11:43:48.296Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"25\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xa0628a1f0e7794c34a871c9f0f1847d6f57310c486bfe74d4487c824666600f7\",\"blockNumber\":\"157714345\",\"blockHash\":\"0x76274671d3c95926b4e372d66ceb63ccf37fbf6460c1dd2cb7129ff650ec5747\",\"logIndex\":172,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714525\",\"observedBlockHash\":\"0xcbcebe77cc24205dcd046d9977d2ec0dc4951a52ce8627a00fe240cf5edc08ac\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:48.296Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "25",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xa0628a1f0e7794c34a871c9f0f1847d6f57310c486bfe74d4487c824666600f7",
+          "blockNumber": "157714345",
+          "blockHash": "0x76274671d3c95926b4e372d66ceb63ccf37fbf6460c1dd2cb7129ff650ec5747",
+          "logIndex": 172,
+          "observedBalance": "1",
+          "observedAtBlock": "157714525"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "43",
+      "calldataHash": "0x1c53893b57c0c2813aa23e98b0d4d4bbf82efd5b15c7724a7807de0fe410d973",
+      "attemptedAt": "2026-10-03T11:37:44.528Z",
+      "txHashes": [
+        "0xa0628a1f0e7794c34a871c9f0f1847d6f57310c486bfe74d4487c824666600f7"
+      ]
+    },
+    {
+      "trackId": "516b404d-b443-40a1-8d61-ed6c6e197874",
+      "displayNumber": 26,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "26",
+      "metadataUri": "ar://IS7mN4FHi15H-ZROKqalwhVLAktEC07MQECy2ew1VYY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xb334e2bf8a3aa3e6ac106092cf8ac751856260c46ec0366a5deb257e633203c0",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x69295e2daca5721d9f87128fef2d453174dd4ba2eaef72fbcccca781d3e04dd5",
+        "blockNumber": "157714352",
+        "blockHash": "0xd1fe99d073b6fdf5b4777af17e69ec1c3617e5d2a250a672834b0da7026a894e",
+        "logIndex": 143,
+        "verifiedAt": "2026-10-03T11:43:50.356Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"26\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x69295e2daca5721d9f87128fef2d453174dd4ba2eaef72fbcccca781d3e04dd5\",\"blockNumber\":\"157714352\",\"blockHash\":\"0xd1fe99d073b6fdf5b4777af17e69ec1c3617e5d2a250a672834b0da7026a894e\",\"logIndex\":143,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714526\",\"observedBlockHash\":\"0x50800761d181357629276d04134c2b9fecf4d43f2c4b6cc867e2864eab6ccbf9\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:50.356Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "26",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x69295e2daca5721d9f87128fef2d453174dd4ba2eaef72fbcccca781d3e04dd5",
+          "blockNumber": "157714352",
+          "blockHash": "0xd1fe99d073b6fdf5b4777af17e69ec1c3617e5d2a250a672834b0da7026a894e",
+          "logIndex": 143,
+          "observedBalance": "1",
+          "observedAtBlock": "157714526"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "44",
+      "calldataHash": "0xe5718dde561e240afe9720520c844ea3ff99a703b4885dd93f20efc4b4d46815",
+      "attemptedAt": "2026-10-03T11:37:58.435Z",
+      "txHashes": [
+        "0x69295e2daca5721d9f87128fef2d453174dd4ba2eaef72fbcccca781d3e04dd5"
+      ]
+    },
+    {
+      "trackId": "73130478-7bef-48dc-806f-e76b6676c18d",
+      "displayNumber": 27,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "27",
+      "metadataUri": "ar://vss-t5DFkWOvDohhfZPUjMbNLNLYmpgjevBTujG7Szs",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x8e141eb652863f000f04641d40298d329fa06150043a385a6b8e459acea68544",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x24c37f7968fb8be5c83840cc5d0b28d1187d872805565e41e9b5fbc84782d438",
+        "blockNumber": "157714359",
+        "blockHash": "0x0c100fc97214b5ae1a695b8c14ba400c7f61bd5efb7cfc26605ba39e6463af78",
+        "logIndex": 193,
+        "verifiedAt": "2026-10-03T11:43:53.484Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"27\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x24c37f7968fb8be5c83840cc5d0b28d1187d872805565e41e9b5fbc84782d438\",\"blockNumber\":\"157714359\",\"blockHash\":\"0x0c100fc97214b5ae1a695b8c14ba400c7f61bd5efb7cfc26605ba39e6463af78\",\"logIndex\":193,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714528\",\"observedBlockHash\":\"0xbda242d258a543905f4b6789e0e67d3c18f21520df2e6ee279cad44dfd073d04\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:53.484Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "27",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x24c37f7968fb8be5c83840cc5d0b28d1187d872805565e41e9b5fbc84782d438",
+          "blockNumber": "157714359",
+          "blockHash": "0x0c100fc97214b5ae1a695b8c14ba400c7f61bd5efb7cfc26605ba39e6463af78",
+          "logIndex": 193,
+          "observedBalance": "1",
+          "observedAtBlock": "157714528"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "45",
+      "calldataHash": "0x3a46faea4babe87b21fe027dd9503a253e7e3c975c0b56192d8e914b9c9db220",
+      "attemptedAt": "2026-10-03T11:38:13.276Z",
+      "txHashes": [
+        "0x24c37f7968fb8be5c83840cc5d0b28d1187d872805565e41e9b5fbc84782d438"
+      ]
+    },
+    {
+      "trackId": "aad18d17-ec13-4438-ac4e-e350a50ec1fe",
+      "displayNumber": 28,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "28",
+      "metadataUri": "ar://VEFztDhR9qSuWl3cEHSNuAy0Sn3kglpYr-0P9o3QsdI",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xdc2095ef3e44e1d49de9b66f5bca4252588f36ca0f93625388b26a7e2a7fd23c",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x0e325d660a78e38d1178a30c7751c97e7ef57e723c559800f9521cac1b7de448",
+        "blockNumber": "157714370",
+        "blockHash": "0x10a3271b23772faced1ffb8b791c8b749c41b944b82102194aad3661ecbaf508",
+        "logIndex": 241,
+        "verifiedAt": "2026-10-03T11:43:57.075Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"28\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x0e325d660a78e38d1178a30c7751c97e7ef57e723c559800f9521cac1b7de448\",\"blockNumber\":\"157714370\",\"blockHash\":\"0x10a3271b23772faced1ffb8b791c8b749c41b944b82102194aad3661ecbaf508\",\"logIndex\":241,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714530\",\"observedBlockHash\":\"0x91bb56664101ea796086511519c6f12c3abb9ed39497209b72924c8a3e27a7cb\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:57.075Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "28",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x0e325d660a78e38d1178a30c7751c97e7ef57e723c559800f9521cac1b7de448",
+          "blockNumber": "157714370",
+          "blockHash": "0x10a3271b23772faced1ffb8b791c8b749c41b944b82102194aad3661ecbaf508",
+          "logIndex": 241,
+          "observedBalance": "1",
+          "observedAtBlock": "157714530"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "46",
+      "calldataHash": "0x91823305da435c5949bedce57fedce4fd809f32e8cdf36e56f89847fcf5c6887",
+      "attemptedAt": "2026-10-03T11:38:31.845Z",
+      "txHashes": [
+        "0x0e325d660a78e38d1178a30c7751c97e7ef57e723c559800f9521cac1b7de448"
+      ]
+    },
+    {
+      "trackId": "cc304cf9-659d-47c0-b852-dc616484b9d1",
+      "displayNumber": 29,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "29",
+      "metadataUri": "ar://tvfZ_szOatZTO7pI1ABQC6P-zwdua9kVPTChoMVQRfY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x109b69ba247c6468c19775be1018dc3f0baf4cf24fbb7d64e6afa941b4de8db4",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x2a0da74e9a2a5054c3b8fd7605c67806f12452570e4cd4cc6c57e53e33a97613",
+        "blockNumber": "157714378",
+        "blockHash": "0x5aaa326862f261a7d214101ad94bd3113e801741deebcc35438eef36c152be7f",
+        "logIndex": 141,
+        "verifiedAt": "2026-10-03T11:43:59.130Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"29\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x2a0da74e9a2a5054c3b8fd7605c67806f12452570e4cd4cc6c57e53e33a97613\",\"blockNumber\":\"157714378\",\"blockHash\":\"0x5aaa326862f261a7d214101ad94bd3113e801741deebcc35438eef36c152be7f\",\"logIndex\":141,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714531\",\"observedBlockHash\":\"0xb5f90d3e8c34ff4260e83b3cb3a7acf5e8cf60f87cf46a1f0a29785fdd2446a9\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:43:59.130Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "29",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x2a0da74e9a2a5054c3b8fd7605c67806f12452570e4cd4cc6c57e53e33a97613",
+          "blockNumber": "157714378",
+          "blockHash": "0x5aaa326862f261a7d214101ad94bd3113e801741deebcc35438eef36c152be7f",
+          "logIndex": 141,
+          "observedBalance": "1",
+          "observedAtBlock": "157714531"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "47",
+      "calldataHash": "0xd280420b9b09fd32f2adadd2a4a0527aa84b5201f94c49344c2c0bfd6722da67",
+      "attemptedAt": "2026-10-03T11:38:50.069Z",
+      "txHashes": [
+        "0x2a0da74e9a2a5054c3b8fd7605c67806f12452570e4cd4cc6c57e53e33a97613"
+      ]
+    },
+    {
+      "trackId": "08550208-7473-4e89-92b0-8031c945d7c4",
+      "displayNumber": 30,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "30",
+      "metadataUri": "ar://F0kS90sBWO8wSXSDNYl3BMlkRpzPbBEt3EeCMhbashI",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x51c0fdc14e91c5d3b4ca91d88c4484b551af0fd21ea9bcfd2aede1119f5b2be6",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xfe4dcb8399e26e0208414ba239b4bebe155b5fc026ceb88e00c0007a84bc1d92",
+        "blockNumber": "157714387",
+        "blockHash": "0xf7a3302a5f16e5aca5f050e3cae1a2cda4434bfef8052f27d163274defe24101",
+        "logIndex": 165,
+        "verifiedAt": "2026-10-03T11:44:01.489Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"30\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xfe4dcb8399e26e0208414ba239b4bebe155b5fc026ceb88e00c0007a84bc1d92\",\"blockNumber\":\"157714387\",\"blockHash\":\"0xf7a3302a5f16e5aca5f050e3cae1a2cda4434bfef8052f27d163274defe24101\",\"logIndex\":165,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714532\",\"observedBlockHash\":\"0xb351b9a804bd52f1dfe3da86543ae728719cc2de0b4d8468b747f2090f4c4d1a\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:44:01.489Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "30",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xfe4dcb8399e26e0208414ba239b4bebe155b5fc026ceb88e00c0007a84bc1d92",
+          "blockNumber": "157714387",
+          "blockHash": "0xf7a3302a5f16e5aca5f050e3cae1a2cda4434bfef8052f27d163274defe24101",
+          "logIndex": 165,
+          "observedBalance": "1",
+          "observedAtBlock": "157714532"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "48",
+      "calldataHash": "0x40e90a7d6eec36db4eb364207211d00dd0258073d538bb9fb0e4b0e2cc604ad8",
+      "attemptedAt": "2026-10-03T11:39:04.820Z",
+      "txHashes": [
+        "0xfe4dcb8399e26e0208414ba239b4bebe155b5fc026ceb88e00c0007a84bc1d92"
+      ]
+    },
+    {
+      "trackId": "4598fa9c-8e06-4823-b34f-89047af69864",
+      "displayNumber": 31,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "31",
+      "metadataUri": "ar://AqADdPVcfFZ4Bqx9X04z7VHy1M9nVGUo9leJ-YCzYVM",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x076d2494dee6faaa98964252d66b400030b54c100c4aac5a4e2ab76554b56490",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xbe50d2e90cfd79986838d62f930fd15db6d91d7c09a16b5445cbad3bbf10762e",
+        "blockNumber": "157714394",
+        "blockHash": "0x79182d9a6ddea28e4178e8ae329bfd7271b9f66503b2a6c65b40a98e543b33b5",
+        "logIndex": 171,
+        "verifiedAt": "2026-10-03T11:44:03.379Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"31\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xbe50d2e90cfd79986838d62f930fd15db6d91d7c09a16b5445cbad3bbf10762e\",\"blockNumber\":\"157714394\",\"blockHash\":\"0x79182d9a6ddea28e4178e8ae329bfd7271b9f66503b2a6c65b40a98e543b33b5\",\"logIndex\":171,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714533\",\"observedBlockHash\":\"0xb5b3f5dd8540492ee806b3befa92d707890ab6341640208579eed954d805142c\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:44:03.379Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "31",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xbe50d2e90cfd79986838d62f930fd15db6d91d7c09a16b5445cbad3bbf10762e",
+          "blockNumber": "157714394",
+          "blockHash": "0x79182d9a6ddea28e4178e8ae329bfd7271b9f66503b2a6c65b40a98e543b33b5",
+          "logIndex": 171,
+          "observedBalance": "1",
+          "observedAtBlock": "157714533"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "49",
+      "calldataHash": "0xe606d46bca4f7688fd0743709e6ac6a03fca19884ff26aafea2472637b793c37",
+      "attemptedAt": "2026-10-03T11:39:23.461Z",
+      "txHashes": [
+        "0xbe50d2e90cfd79986838d62f930fd15db6d91d7c09a16b5445cbad3bbf10762e"
+      ]
+    },
+    {
+      "trackId": "c3de4558-7a4b-4a07-a95e-58246e56157f",
+      "displayNumber": 32,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "32",
+      "metadataUri": "ar://GlVmZIMpREtM6II_xf7AoO0b_u-ja245nhy0nq6FS5s",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xa8b2c3d6d469b54e8eb31765edacf16dbed0f39973cc484ffcd88241d5a91021",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x2bc4c705d56af4c88936bb04cd981bc141725f1039fce6d8615a4a5f17795be6",
+        "blockNumber": "157714441",
+        "blockHash": "0xf3cd212360386a7bfea643b7b8c337229e2635ede701bb34f9f1b085a165b96c",
+        "logIndex": 223,
+        "verifiedAt": "2026-10-03T11:44:05.278Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"32\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x2bc4c705d56af4c88936bb04cd981bc141725f1039fce6d8615a4a5f17795be6\",\"blockNumber\":\"157714441\",\"blockHash\":\"0xf3cd212360386a7bfea643b7b8c337229e2635ede701bb34f9f1b085a165b96c\",\"logIndex\":223,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714534\",\"observedBlockHash\":\"0x449dbaea54c1a591ec09fc6185c98b8b94d8dd09425f4c09a1416c6880742458\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:44:05.278Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "32",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x2bc4c705d56af4c88936bb04cd981bc141725f1039fce6d8615a4a5f17795be6",
+          "blockNumber": "157714441",
+          "blockHash": "0xf3cd212360386a7bfea643b7b8c337229e2635ede701bb34f9f1b085a165b96c",
+          "logIndex": 223,
+          "observedBalance": "1",
+          "observedAtBlock": "157714534"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "50",
+      "calldataHash": "0x8268e59a2396ea3dda9d5bdeb8da329e597248bf09ceb1f38f02f10d14ae5d49",
+      "attemptedAt": "2026-10-03T11:40:53.614Z",
+      "txHashes": [
+        "0x2bc4c705d56af4c88936bb04cd981bc141725f1039fce6d8615a4a5f17795be6"
+      ]
+    },
+    {
+      "trackId": "eeef9acd-b0f5-4846-ab6c-e72e06656598",
+      "displayNumber": 33,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "33",
+      "metadataUri": "ar://GCXJ6vlMTLXUSHRUedxoytyNP-zJj1DCsN9-RWVPoaY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x4f910135085f3c7e86df960cd8c5d1904bbbfd7129412ac0e07910173a96891c",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x9265108dce6c768c9bf4d023183fcaa6cdeeba266cff8fa4192902b697d190b9",
+        "blockNumber": "157714458",
+        "blockHash": "0x17e650e374162a7a27f7fd0821e7981ff2fbfac4f72a484babbdd59e0d81e3b0",
+        "logIndex": 118,
+        "verifiedAt": "2026-10-03T11:44:07.278Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"33\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x9265108dce6c768c9bf4d023183fcaa6cdeeba266cff8fa4192902b697d190b9\",\"blockNumber\":\"157714458\",\"blockHash\":\"0x17e650e374162a7a27f7fd0821e7981ff2fbfac4f72a484babbdd59e0d81e3b0\",\"logIndex\":118,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714535\",\"observedBlockHash\":\"0x47806c9c70b88e6354ce75f69490d21f037edf66da1bbdf591115e5e5370910c\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:44:07.278Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "33",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x9265108dce6c768c9bf4d023183fcaa6cdeeba266cff8fa4192902b697d190b9",
+          "blockNumber": "157714458",
+          "blockHash": "0x17e650e374162a7a27f7fd0821e7981ff2fbfac4f72a484babbdd59e0d81e3b0",
+          "logIndex": 118,
+          "observedBalance": "1",
+          "observedAtBlock": "157714535"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "51",
+      "calldataHash": "0x38207bfa4c2fb24e962279035e007eed6f9b6966d1d422223144fee2dc5f3c95",
+      "attemptedAt": "2026-10-03T11:41:30.025Z",
+      "txHashes": [
+        "0x9265108dce6c768c9bf4d023183fcaa6cdeeba266cff8fa4192902b697d190b9"
+      ]
+    },
+    {
+      "trackId": "2dd7e3ef-c992-4868-b08d-0c92ce440ef4",
+      "displayNumber": 34,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "34",
+      "metadataUri": "ar://8k9UEIx2g6HBiTewCZTKbaLpPACUhQk_fVP3ByAY4OM",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0x5b16f6cd29451e93e5b672625e937723e2cb667c0da43755339d6f76a7a159da",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x25d0c790917824561f96bbd78b6c39daa084d45d97921fbf6e3b6ea90310c964",
+        "blockNumber": "157714475",
+        "blockHash": "0x1532027e298d3e7065cc60a1ae0c7b31b8ef90321631e5636a817e2cee41fb80",
+        "logIndex": 123,
+        "verifiedAt": "2026-10-03T11:44:09.153Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"34\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x25d0c790917824561f96bbd78b6c39daa084d45d97921fbf6e3b6ea90310c964\",\"blockNumber\":\"157714475\",\"blockHash\":\"0x1532027e298d3e7065cc60a1ae0c7b31b8ef90321631e5636a817e2cee41fb80\",\"logIndex\":123,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714536\",\"observedBlockHash\":\"0xa10d8721b1558248cfe718ec11d2a50ed8bb9583acf4792be6c2459679e62a81\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:44:09.153Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "34",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x25d0c790917824561f96bbd78b6c39daa084d45d97921fbf6e3b6ea90310c964",
+          "blockNumber": "157714475",
+          "blockHash": "0x1532027e298d3e7065cc60a1ae0c7b31b8ef90321631e5636a817e2cee41fb80",
+          "logIndex": 123,
+          "observedBalance": "1",
+          "observedAtBlock": "157714536"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "52",
+      "calldataHash": "0x0848975e1f72d4e270183cce268cc35e24b7e31b467d26c931a9c35ea2571615",
+      "attemptedAt": "2026-10-03T11:42:04.406Z",
+      "txHashes": [
+        "0x25d0c790917824561f96bbd78b6c39daa084d45d97921fbf6e3b6ea90310c964"
+      ]
+    },
+    {
+      "trackId": "8ae0e6d5-b10d-4368-a430-90ce6a9dead7",
+      "displayNumber": 35,
+      "chainId": 10,
+      "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+      "tokenId": "35",
+      "metadataUri": "ar://8TY1lV2MI76pF-0MYuVx_lvb0nTFOJKqP2LPMGY_OU4",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03明确1开干2开干，后指令先搞OP吧；仅执行OP35项，不发ETH",
+      "operationId": "0xca26d2beb94d3594a51f769242e1a750dcb991644f70f2379126c85140e0afb9",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xc838cfc470967478c67a388b0bb4d18a36a6d20976ab24811331652a83aed835",
+        "blockNumber": "157714490",
+        "blockHash": "0x7eddfb5c200d5d71f7abcd01f2852d7b5399980e492d991d2938f37bab668a23",
+        "logIndex": 149,
+        "verifiedAt": "2026-10-03T11:44:11.070Z",
+        "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"35\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xc838cfc470967478c67a388b0bb4d18a36a6d20976ab24811331652a83aed835\",\"blockNumber\":\"157714490\",\"blockHash\":\"0x7eddfb5c200d5d71f7abcd01f2852d7b5399980e492d991d2938f37bab668a23\",\"logIndex\":149,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714537\",\"observedBlockHash\":\"0x8a75fb73d58b197fb2be76ae47bfd58a3af7b9a73f1aa08413a9ee333703584d\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T11:44:11.070Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 10,
+          "contract": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+          "tokenId": "35",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xc838cfc470967478c67a388b0bb4d18a36a6d20976ab24811331652a83aed835",
+          "blockNumber": "157714490",
+          "blockHash": "0x7eddfb5c200d5d71f7abcd01f2852d7b5399980e492d991d2938f37bab668a23",
+          "logIndex": 149,
+          "observedBalance": "1",
+          "observedAtBlock": "157714537"
+        }
+      },
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "nonce": "53",
+      "calldataHash": "0x3c7838340bd60dd9785d052e7dc40f75bc121c4adfb51f1cbdd12c653fcd8c48",
+      "attemptedAt": "2026-10-03T11:42:34.318Z",
+      "txHashes": [
+        "0xc838cfc470967478c67a388b0bb4d18a36a6d20976ab24811331652a83aed835"
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "tokenId": "1",
+      "txHash": "0x4d36c7080acdf872813a7a193e39ebdbda49fa1696087fd6fa124e6edfe8d6e6",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008135",
+      "l1FeeWei": "900570933",
+      "totalFeeWei": "66450516768"
+    },
+    {
+      "tokenId": "2",
+      "txHash": "0xe7da04a2ed1825de109a6b41278123a8f015ee01a6761d1907f67a8ae631e12c",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008142",
+      "l1FeeWei": "889376587",
+      "totalFeeWei": "66439777569"
+    },
+    {
+      "tokenId": "3",
+      "txHash": "0x8feb30bd253c4039627131fb1d79a6d78c68785f858edfc0c410b3648a619e08",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008145",
+      "l1FeeWei": "893261288",
+      "totalFeeWei": "66443857333"
+    },
+    {
+      "tokenId": "4",
+      "txHash": "0x9104f9e2d7fe882ce40e8966738bafe695b54c4defec0c12e86e695cdb583822",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008152",
+      "l1FeeWei": "893261288",
+      "totalFeeWei": "66444312480"
+    },
+    {
+      "tokenId": "5",
+      "txHash": "0x8bd759194f2551988e1d5eb734abce9d4bd231603ffa442808e6b253765754e3",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008154",
+      "l1FeeWei": "913155870",
+      "totalFeeWei": "66464337104"
+    },
+    {
+      "tokenId": "6",
+      "txHash": "0xc9c1092a0519dfab38f63808ff85dbc9e9453467f8779f417c107a2a0ee69fdf",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008169",
+      "l1FeeWei": "947572466",
+      "totalFeeWei": "66499729015"
+    },
+    {
+      "tokenId": "7",
+      "txHash": "0xb82418f08b59dc876d20e10828c3d4a017aaf74fd8e9ea8b7e310449454436d0",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008182",
+      "l1FeeWei": "966712842",
+      "totalFeeWei": "66519714664"
+    },
+    {
+      "tokenId": "8",
+      "txHash": "0x71b3f0e36ce7f493f4a95a65ba9aa1fbbfe3856aa6c5bd1e2cfd9a3a59ea2a9d",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008183",
+      "l1FeeWei": "966712842",
+      "totalFeeWei": "66519779685"
+    },
+    {
+      "tokenId": "9",
+      "txHash": "0xccd7d77487bd3781533b982550b0f113cc62996dcd4e0d1662ba265514bb7031",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008198",
+      "l1FeeWei": "879872465",
+      "totalFeeWei": "66433914623"
+    },
+    {
+      "tokenId": "10",
+      "txHash": "0x5854971c74799bb42be48ae7154a0dbbf6438ebb15c7e3db77676d94d0760499",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008208",
+      "l1FeeWei": "869047361",
+      "totalFeeWei": "66423739729"
+    },
+    {
+      "tokenId": "11",
+      "txHash": "0xd415d7192bf39fc0389f6e788ebceafe7a94e92b2e432a005508187e9a9b7e05",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008185",
+      "l1FeeWei": "869047361",
+      "totalFeeWei": "66422244246"
+    },
+    {
+      "tokenId": "12",
+      "txHash": "0x51b4ca1e55fce8486777d3009f5a3d08e2e1250a3484b1e69bab32b17a06a2ed",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008289",
+      "l1FeeWei": "874841234",
+      "totalFeeWei": "66434800303"
+    },
+    {
+      "tokenId": "13",
+      "txHash": "0x229e17276471ad230cba56c70842611b7f7e567cc06bd2c23030e03dcb4c5be3",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008321",
+      "l1FeeWei": "884767676",
+      "totalFeeWei": "66446807417"
+    },
+    {
+      "tokenId": "14",
+      "txHash": "0xa47a5ee3196e26eb1807bf6b83513a3ac5c85c163dbf8b022b79b1da187793f1",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008418",
+      "l1FeeWei": "854317167",
+      "totalFeeWei": "66422663945"
+    },
+    {
+      "tokenId": "15",
+      "txHash": "0x775c6d4092023894a2968a99faeb94667f6549d7f9296f30e73c4d27bca64bdf",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008426",
+      "l1FeeWei": "854317167",
+      "totalFeeWei": "66423184113"
+    },
+    {
+      "tokenId": "16",
+      "txHash": "0x01ca30662c5d67c3a9f4468634459112ab883ac2441ffc1acc6b4abca708ccc1",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008473",
+      "l1FeeWei": "967666056",
+      "totalFeeWei": "66539588989"
+    },
+    {
+      "tokenId": "17",
+      "txHash": "0x5b4bc95cfce67cd4600ca3210ee803fd4e66d6e8db50c7cfcc605e4f4ef82cde",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008521",
+      "l1FeeWei": "926116079",
+      "totalFeeWei": "66501160020"
+    },
+    {
+      "tokenId": "18",
+      "txHash": "0xf31b0453cfe19f550731852082c451a0977e2a57e93c8e3a8e5aa37887ad3695",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008528",
+      "l1FeeWei": "931951388",
+      "totalFeeWei": "66507450476"
+    },
+    {
+      "tokenId": "19",
+      "txHash": "0x32ef132b977f136a5391f8ef278ab76eab6c9c98d2f7fe944d229ad010a3d682",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008527",
+      "l1FeeWei": "955702372",
+      "totalFeeWei": "66531136439"
+    },
+    {
+      "tokenId": "20",
+      "txHash": "0x9ef06998fbcf4edba2b9b457deeb096670e2cf17ef3f950661e75c080bf562fa",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008563",
+      "l1FeeWei": "928718204",
+      "totalFeeWei": "66506493027"
+    },
+    {
+      "tokenId": "21",
+      "txHash": "0x08bf7a753fafcf31901b9298e184c3a4d4328d48a94401b9f405131fef8d9f70",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1008976",
+      "l1FeeWei": "937309014",
+      "totalFeeWei": "66541937510"
+    },
+    {
+      "tokenId": "22",
+      "txHash": "0xcfd25c14066c234871ca3579287aa8f56637bd46519da5d590107479f9bca7f5",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009010",
+      "l1FeeWei": "928811495",
+      "totalFeeWei": "66535650705"
+    },
+    {
+      "tokenId": "23",
+      "txHash": "0xfdc881b60bb97ce9f8068c723b55774c11071e57242a49a0718640f966721197",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009032",
+      "l1FeeWei": "925187960",
+      "totalFeeWei": "66533457632"
+    },
+    {
+      "tokenId": "24",
+      "txHash": "0x94c22d77ab26a178792420c56f485cc59679fd8503794ddecfdeea7a843ffe9b",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009038",
+      "l1FeeWei": "955810218",
+      "totalFeeWei": "66564470016"
+    },
+    {
+      "tokenId": "25",
+      "txHash": "0xa0628a1f0e7794c34a871c9f0f1847d6f57310c486bfe74d4487c824666600f7",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009050",
+      "l1FeeWei": "943530564",
+      "totalFeeWei": "66552970614"
+    },
+    {
+      "tokenId": "26",
+      "txHash": "0x69295e2daca5721d9f87128fef2d453174dd4ba2eaef72fbcccca781d3e04dd5",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009056",
+      "l1FeeWei": "907254251",
+      "totalFeeWei": "66517084427"
+    },
+    {
+      "tokenId": "27",
+      "txHash": "0x24c37f7968fb8be5c83840cc5d0b28d1187d872805565e41e9b5fbc84782d438",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009083",
+      "l1FeeWei": "986604642",
+      "totalFeeWei": "66598190385"
+    },
+    {
+      "tokenId": "28",
+      "txHash": "0x0e325d660a78e38d1178a30c7751c97e7ef57e723c559800f9521cac1b7de448",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009150",
+      "l1FeeWei": "977980678",
+      "totalFeeWei": "66593922828"
+    },
+    {
+      "tokenId": "29",
+      "txHash": "0x2a0da74e9a2a5054c3b8fd7605c67806f12452570e4cd4cc6c57e53e33a97613",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009197",
+      "l1FeeWei": "970337065",
+      "totalFeeWei": "66589335202"
+    },
+    {
+      "tokenId": "30",
+      "txHash": "0xfe4dcb8399e26e0208414ba239b4bebe155b5fc026ceb88e00c0007a84bc1d92",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009233",
+      "l1FeeWei": "922553411",
+      "totalFeeWei": "66543892304"
+    },
+    {
+      "tokenId": "31",
+      "txHash": "0xbe50d2e90cfd79986838d62f930fd15db6d91d7c09a16b5445cbad3bbf10762e",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009254",
+      "l1FeeWei": "910484725",
+      "totalFeeWei": "66533189059"
+    },
+    {
+      "tokenId": "32",
+      "txHash": "0x2bc4c705d56af4c88936bb04cd981bc141725f1039fce6d8615a4a5f17795be6",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009423",
+      "l1FeeWei": "936862737",
+      "totalFeeWei": "66570555620"
+    },
+    {
+      "tokenId": "33",
+      "txHash": "0x9265108dce6c768c9bf4d023183fcaa6cdeeba266cff8fa4192902b697d190b9",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009459",
+      "l1FeeWei": "927244018",
+      "totalFeeWei": "66563277657"
+    },
+    {
+      "tokenId": "34",
+      "txHash": "0x25d0c790917824561f96bbd78b6c39daa084d45d97921fbf6e3b6ea90310c964",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009497",
+      "l1FeeWei": "955252465",
+      "totalFeeWei": "66593756902"
+    },
+    {
+      "tokenId": "35",
+      "txHash": "0xc838cfc470967478c67a388b0bb4d18a36a6d20976ab24811331652a83aed835",
+      "gasUsed": "65021",
+      "effectiveGasPriceWei": "1009463",
+      "l1FeeWei": "887000605",
+      "totalFeeWei": "66523294328"
+    }
+  ]
+}

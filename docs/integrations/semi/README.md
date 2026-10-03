@@ -3,11 +3,11 @@
 此文件由唯一注册表生成，手改会被 --check 检出。
 
 - schemaVersion: 1
-- revision: 70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8
+- revision: e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c
 - environment: production
 - 当前范围：35 首真实原曲、70 个 trackId × chainId 记录。
 - 状态：ready 70 / unverified 0 / undeployed 0。
-- 可导入的生产系列：4；ready 原曲：70；已确认归档：0/70。
+- 可导入的生产系列：4；ready 原曲：70；已确认归档：35/70。
 - 最终创作手记：35/35；同样从唯一注册表生成。
 
 这是资料包。SEMI 当前版本、账号、网络支持和钱包内播放尚未核验；生产资料完整性与 wallet_verified 分别验收。pending 原曲不进入 ready 表。两链留存未完成；归档历史状态不是当前授权、接收钱包或素材缺失的判定依据。

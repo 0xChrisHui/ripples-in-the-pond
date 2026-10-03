@@ -10,7 +10,15 @@ import { verifyArchiveReceipt } from '../proof';
 async function main() {
   const loaded = await import('./engine').catch(() => null);
   assert.equal(typeof loaded?.runArchiveExecution, 'function', '需要真实留存执行状态机');
-  const { createExecutionPlan } = await import('./plan');
+  const { createExecutionPlan, readExecutionNonce } = await import('./plan');
+  const senderAddress = '0x0000000000000000000000000000000000000001' as const;
+  let samples = [18, 19, 19, 19];
+  const nonceClient = { getTransactionCount: async () => samples.shift()! };
+  assert.equal(await readExecutionNonce(nonceClient, senderAddress), 19, '落后的pending有界重读');
+  samples = [20, 19];
+  await assert.rejects(readExecutionNonce(nonceClient, senderAddress), /在途/, '真实在途不能放行');
+  samples = [18, 19, 18, 19, 18, 19];
+  await assert.rejects(readExecutionNonce(nonceClient, senderAddress), /不一致/, '持续滞后不能放行');
   const { withExecutionLedger } = await import('./ledger');
   const { requireExecutionTarget, verifyExecutionTransaction } = await import('./adapter');
   const catalog = getMusicCatalog();

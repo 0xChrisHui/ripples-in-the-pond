@@ -49,7 +49,7 @@ export default function MaterialMintPanel({ track }: { track: OriginalTrack }) {
       <button type="button" aria-pressed={network === 1} onClick={() => setNetwork(1)}>Ethereum</button>
     </div>
     {network === 1 ? <EthereumMaterialMint track={track} />
-      : <><p className="material-muted">新 OP 原曲为不可转让的 SBT，平台支付 Gas；尚未部署，当前未开放收藏。旧版藏品与收藏记录保留。</p>
+      : <><p className="material-muted">新 OP 原曲为不可转让的 SBT，平台支付 Gas。旧版藏品与收藏记录保留。</p>
         {status?.recipientAddress && <p className="material-uri">接收地址：{status.recipientAddress}</p>}
         {!opAvailable ? <button type="button" className="material-collect" disabled>OP 原曲 SBT 尚未开放</button>
           : !auth.authenticated ? <button type="button" className="material-collect" onClick={auth.openLoginModal}>登录后收藏</button>

@@ -2,7 +2,7 @@ import rows from './data/tracks-source.json';
 import artistNotesSource from './data/artist-notes.json';
 import metadataSource from './data/metadata-source.json';
 import { knownCollections, ETH_ORIGINALS, OP_MATERIAL, OP_MATERIAL_URI, OP_ORIGINAL_SBT,
-  awaitingArchive, deployedOriginalVerification, originalVerification } from './data/known-facts';
+  awaitingArchive, originalArchive, deployedOriginalVerification, originalVerification } from './data/known-facts';
 import { buildMaterialPlaybackRoute, resolveErc1155Uri } from './identity';
 import { catalogRevision } from './canonical';
 import type { MusicCatalog, OriginalTrack, OriginalDeployment } from './types';
@@ -21,7 +21,7 @@ const tracks: OriginalTrack[] = rows.map((row) => {
   deployments: [
     { chainId: 10, status: 'ready', contractAddress: OP_ORIGINAL_SBT.contractAddress, tokenId: String(row.week),
       standard: 'ERC1155', metadataUri, publicPlaybackUrl: buildMaterialPlaybackRoute(10, OP_ORIGINAL_SBT.contractAddress, String(row.week)),
-      archiveMint: awaitingArchive(), verification: deployedOriginalVerification(10) },
+      archiveMint: originalArchive(row.id, 10, OP_ORIGINAL_SBT.contractAddress, String(row.week)), verification: deployedOriginalVerification(10) },
     { chainId: 1, status: 'ready', contractAddress: ETH_ORIGINALS, tokenId: String(row.week), standard: 'ERC1155',
       metadataUri, publicPlaybackUrl: buildMaterialPlaybackRoute(1, ETH_ORIGINALS, String(row.week)), archiveMint: awaitingArchive(),
       verification: deployedOriginalVerification(1) },

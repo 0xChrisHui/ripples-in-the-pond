@@ -5,17 +5,25 @@ import { findOriginalTrackByAsset, getLegacyOriginalDeployment, getMusicCatalog,
   validateMusicCatalog, listReadyOriginals } from '../../../src/lib/music-catalog/asset-registry';
 import { buildCatalogAssetId, parseCatalogAssetId, resolveErc1155Uri } from '../../../src/lib/music-catalog/identity';
 import { canonicalCatalogContent, catalogRevision } from '../../../src/lib/music-catalog/canonical';
+import { originalArchive } from '../../../src/lib/music-catalog/data/known-facts';
 const catalog = getMusicCatalog();
 assert.deepEqual(validateMusicCatalog(catalog), { valid: true, errors: [] });
 assert.deepEqual(JSON.parse(readFileSync('public/music-catalog/catalog.v1.json', 'utf8')), catalog);
 assert.equal(catalog.revision, createHash('sha256').update(canonicalCatalogContent(catalog)).digest('hex'));
 assert.equal(listReadyOriginals().length, catalog.tracks.flatMap((track)=>track.deployments).filter((deployment)=>deployment.status==='ready').length);
 assert.equal(listReadyOriginals().length, 70);
+assert.equal(catalog.tracks.filter(track => track.deployments.find(item => item.chainId === 10)
+  ?.archiveMint.state === 'confirmed').length, 35, 'OP留存必须来自35项真实证明');
+assert.ok(catalog.tracks.every(track => track.deployments.find(item => item.chainId === 1)
+  ?.archiveMint.state === 'awaiting_input'), 'OP留存不能提升ETH状态');
 assert.ok(catalog.tracks.every((track)=>track.deployments.find((item)=>item.chainId===1)?.contractAddress
   === '0x6c731e5faa26e648cad6f86b1c1e741f0aae136b'));
 assert.ok(catalog.tracks.every((track)=>track.deployments.find((item)=>item.chainId===10)?.contractAddress
   === '0xa65c9308635c8dd068a314c189e8d77941a7e99c'));
 const first=catalog.tracks[0],legacy=getLegacyOriginalDeployment(first.trackId)!;
+assert.equal(legacy.archiveMint.state, 'awaiting_input', '新SBT证明不能归给旧OP资产');
+assert.equal(originalArchive(first.trackId, 1, first.deployments[0].contractAddress!, '1').state, 'awaiting_input');
+assert.equal(originalArchive(first.trackId, 10, legacy.contractAddress!, '1').state, 'awaiting_input');
 assert.equal(findOriginalTrackByAsset(10,legacy.contractAddress!,legacy.tokenId!)?.trackId,first.trackId);
 assert.equal(findOriginalTrackByAsset(10,first.deployments[0].contractAddress!,first.deployments[0].tokenId!)?.trackId,first.trackId);
 assert.equal(catalog.tracks.filter(track => track.notes.status === 'final' && track.notes.text?.trim()).length, 35);

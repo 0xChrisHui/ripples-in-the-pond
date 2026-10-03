@@ -1,5 +1,13 @@
 # P17 夜间交接
 
+## 当前：OP留存35/35完成，准备开放OP领取（2026-10-03）
+
+用户明确“先搞OP吧”。OP主网新SBT已按冻结清单真实铸造35笔、每曲1份，nonce19–53连续，接收钱包0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA。每笔calldata、mint事件、规范区块、URI及当前余额均核对，confirmed35/unknown0；费用0.000002327730193134 ETH（含L1），小于冻结总预算0.0000105 ETH。证据p17/archive/op-execution-plan.json及op-execution-proof.json；签名原raw仅留忽略目录，不公开。
+
+RPC曾返回pending低于latest，门禁在广播前停止。只对这种滞后有界重读，真实在途仍拒绝；两次已明确发生在send前的失败（nonce19/30），经独立审查、hash不存在/nonce/角色/预算/L1费/锁复核后只恢复原raw一次，先持久恢复广播标记。未重新签名/换nonce，未把未知广播当作未发。一次只读HTTP失败在第21份签名前停止，账本原样恢复；只读RPC允许一次重试，广播重试仍0。
+
+当前唯一目录revision=e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c；OP35项confirmed，ETH35项awaiting_input，旧OP资产不套用新SBT证明。C1及SEMI8/8与--check通过。拟开启现有Production三个OP门禁；不变更ETH、不转账/跨链。后续部署结果见晨间包。本节优先于下方先前状态。
+
 ## 当前整合结论（2026-10-03，优先于下方历史）
 
 真实数据库059–062及两份合集JSON永久上传已完成，两链新合约confirmed并核对runtime/角色/35URI；详见 coordinator-baseline 和 p17/pipeline/database-proof.json、src/lib/music-catalog/data/original-deployment-proof.json。当前C2 revision 70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8。生产签发仍关闭，尚无有限真实领取或项目留存回执；archive-ledger-c2.json 冻结70项，confirmed=0。原部署恢复缺陷已修复，未重复发送。
@@ -212,3 +220,9 @@ OP差异：现有MaterialNFT源码允许转让，不能原地改为SBT。已向�
 - 唯一registry现发布35首、双链70个ready坐标，revision为`70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8`；P13 SEMI导出只消费该registry，旧OP资料路由继续可解析。生产领取开关未开启，70项项目留存仍为0/70，SEMI团队未联系。
 - Ethereum发送后的首次恢复检查暴露余额已扣除后无法重建发送前计划的问题；恢复/inspect现使用账本冻结预算重建，sign阶段仍检查实时余额。回归、目录、客户端、OP worker、归档工具、SEMI 8项、项目type和定向lint均通过；没有重复发送。
 - 新C2留存账本绑定源码`6aaf9852228d17d962d534dd67484c01cbd06f4e`与上述revision，70项统一冻结到项目留存地址，operation全部`disabled`、状态全部`awaiting_input`、费用上限0。ETH仍缺实际费用/签名/生产发送授权，OP仍缺发送前余额读回/生产发送授权；本轮未广播这70笔交易。
+
+## 2026-10-03 — 用户授权执行OP项目留存
+
+用户先授权“1开干2开干”，随后明确“先搞OP吧”。本次仅执行OP主网新SBT的35项留存，接收地址0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA，每曲1份；不发送ETH、不转账或跨链。公开冻结配置见p17/archive/op-execution-plan.json，planHash=0x7243e6afeb92574aba02ab26f37f50cdbe97ff834f78243cdf26695156a6db1b；OP总费用上限0.0000105 ETH（每笔gas<=100000，maxFeePerGas<=2000000 wei，L1费用<=100000000000 wei）。发送账户0x306D3A445b1fc7a789639fa9115e308a34231633，起始nonce19；最新权限/未暂停/SBT/35项余额零与资金充足已读回。复用原合约/数据库证明及已通过的执行门禁、落盘失败不广播、unknown不重发、nonce/预算测试。
+
+签名原始交易与恢复账本仅保留忽略目录.tmp/p17-op-execution-ledger.json；公开只导出hash/事件/余额/费用。全批共用生产op_wallet_lock；一个在途交易，确认后才发下一项。已确认的不可转让资产在同一执行会话复用证据，结束时再统一只读核验，不每轮重读前面全部资产。

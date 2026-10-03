@@ -14,7 +14,7 @@ export async function opSbtRequest(request: Request, readOnly = false) {
     let target;
     try { target = requireOpSbtTarget(trackId, process.env.OP_ORIGINAL_SBT_MINT_MODE,
       process.env.MATERIAL_OP_SBT_QUEUE_READY === '1' && process.env.MATERIAL_OP_RECIPIENT_SNAPSHOT_READY === '1'); }
-    catch (error) { throw new MaterialError('OP原曲SBT尚待真实部署、核验与队列启用，旧藏品保留',
+    catch (error) { throw new MaterialError('OP原曲收藏暂不可用，旧藏品保留',
       error instanceof Error ? error.message : 'OP_SBT_DISABLED', 503); }
     const auth = await materialOwner(request);
     await materialRate(auth.userId, readOnly ? 'read' : 'prepare');

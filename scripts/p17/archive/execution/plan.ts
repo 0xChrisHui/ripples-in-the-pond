@@ -1,11 +1,25 @@
 import { createHash } from 'node:crypto';
-import { getAddress, zeroAddress, type Hex } from 'viem';
+import { getAddress, zeroAddress, type Address, type Hex } from 'viem';
 import type { MusicCatalog } from '../../../../src/lib/music-catalog/types';
 import { createArchivePlan } from '../plan';
 import type { ExecutionConfig, ExecutionPlan, ExecutionChain } from './types';
 
 export function transactionCost(chain: ExecutionChain): bigint {
   return BigInt(chain.gasLimit) * BigInt(chain.maxFeePerGas) + BigInt(chain.l1FeeCapWei);
+}
+// RPC负载均衡可能返回落后的pending；只重读这种不可能的组合，真实在途仍拒绝。
+export async function readExecutionNonce(client: {
+  getTransactionCount: (args: { address: Address; blockTag: 'pending' | 'latest' }) => Promise<number>;
+}, sender: Address): Promise<number> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const pending = await client.getTransactionCount({ address: sender, blockTag: 'pending' });
+    const latest = await client.getTransactionCount({ address: sender, blockTag: 'latest' });
+    if (pending === latest) return pending;
+    if (pending > latest) throw Error('钱包已有在途交易，禁止分配新nonce');
+    // OP两秒出块；给RPC缓存跨过一次出块窗口，而非在同一旧缓存内连读。
+    if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 3000));
+  }
+  throw Error('RPC的pending与latest持续不一致，禁止发送');
 }
 export function createExecutionPlan(catalog: MusicCatalog, input: ExecutionConfig): ExecutionPlan {
   const fields = ['runId','sourceSha','recipient','approvalRef','chains','recipientKeyEnv','opSenderKeyEnv','authorizerKeyEnv'];

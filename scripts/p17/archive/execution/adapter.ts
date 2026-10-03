@@ -10,6 +10,7 @@ import type { MaterialOrder } from '../../../../src/lib/material-mint/types';
 import { inspectArchiveItem } from '../inspect';
 import type { ArchiveItem } from '../types';
 import type { ExecutionAdapter, ExecutionAttempt, ExecutionChain, ExecutionConfig } from './types';
+import { readExecutionNonce } from './plan';
 const OP_ABI = parseAbi(['function mint(address to,uint256 id,uint256 amount,bytes data)',
   'function isSoulbound() view returns(bool)', 'function paused() view returns(bool)']);
 const ORACLE = parseAbi(['function getL1Fee(bytes) view returns(uint256)']);
@@ -36,7 +37,7 @@ export function createExecutionAdapter(config: ExecutionConfig, chain: Execution
   assertLease: () => Promise<void>): ExecutionAdapter {
   const rpc = process.env[chain.rpcEnv];
   if (!rpc || !['http:', 'https:'].includes(new URL(rpc).protocol)) throw Error('明确RPC变量未配置');
-  const client = createPublicClient({ transport: http(rpc, { retryCount: 0, timeout: 20000 }) });
+  const client = createPublicClient({ transport: http(rpc, { retryCount: 1, timeout: 20000 }) });
   return {
     chainId: () => client.getChainId(),
     async validate(item) {
@@ -48,11 +49,7 @@ export function createExecutionAdapter(config: ExecutionConfig, chain: Execution
       if (chain.chainId === 10 && await client.readContract({ address, abi: OP_ABI, functionName: 'isSoulbound' }) !== true) throw Error('OP目标未证实为新SBT');
     },
     balance: sender => client.getBalance({ address: sender }),
-    async nonce(sender) {
-      const pending = await client.getTransactionCount({ address: sender, blockTag: 'pending' });
-      if (pending !== await client.getTransactionCount({ address: sender, blockTag: 'latest' })) throw Error('钱包已有在途交易，禁止分配新nonce');
-      return pending;
-    },
+    nonce: sender => readExecutionNonce(client, sender),
     async inspect(item, attempt) {
       if (!attempt) return inspectArchiveItem(client, item, chain.confirmations);
       let tx, receipt;

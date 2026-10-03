@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8",
+  "revision": "e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c",
   "environment": "production",
   "tracks": [
     {
@@ -56,15 +56,15 @@
           "metadataUri": "ar://HlF8e2bp52VL4aYirjtqkr6P_FmwHng9aP7PKEdBjEY",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/1",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x4d36c7080acdf872813a7a193e39ebdbda49fa1696087fd6fa124e6edfe8d6e6",
+            "blockNumber": "157714025",
+            "blockHash": "0x53b980dfd95230cfe6bb664cfb94dfffc0c41ba18a5c3d0a1e5a547511456ff8",
+            "logIndex": 224,
+            "verifiedAt": "2026-10-03T11:42:59.067Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"1\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x4d36c7080acdf872813a7a193e39ebdbda49fa1696087fd6fa124e6edfe8d6e6\",\"blockNumber\":\"157714025\",\"blockHash\":\"0x53b980dfd95230cfe6bb664cfb94dfffc0c41ba18a5c3d0a1e5a547511456ff8\",\"logIndex\":224,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714501\",\"observedBlockHash\":\"0x4cfeca7010052af34dbc2d07da7a050c2c757acc492e6e195241768655978b17\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -134,15 +134,15 @@
           "metadataUri": "ar://DyO1OY-o79WIryke5z_XdRpFur5pf6CT0GNZJVwUVF8",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/2",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xe7da04a2ed1825de109a6b41278123a8f015ee01a6761d1907f67a8ae631e12c",
+            "blockNumber": "157714037",
+            "blockHash": "0x88f51be44f8b6c48045dadbf380471a4cccfd7c4b0d98f52633ad94e23a14ffa",
+            "logIndex": 141,
+            "verifiedAt": "2026-10-03T11:43:01.747Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"2\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xe7da04a2ed1825de109a6b41278123a8f015ee01a6761d1907f67a8ae631e12c\",\"blockNumber\":\"157714037\",\"blockHash\":\"0x88f51be44f8b6c48045dadbf380471a4cccfd7c4b0d98f52633ad94e23a14ffa\",\"logIndex\":141,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714502\",\"observedBlockHash\":\"0xb77a95cc4cd763dd6d90080fe5643f7e222e5841b166838143a52d9bfd32c2dd\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -212,15 +212,15 @@
           "metadataUri": "ar://APmtsSktms2b1dBy1rImf2ccG7trfXc97OfyEPdJvT0",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/3",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x8feb30bd253c4039627131fb1d79a6d78c68785f858edfc0c410b3648a619e08",
+            "blockNumber": "157714043",
+            "blockHash": "0xf33c31502c730fc57939229b8a210830dd4d3a41afe4b596182b7c0bfdf17548",
+            "logIndex": 135,
+            "verifiedAt": "2026-10-03T11:43:03.728Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"3\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x8feb30bd253c4039627131fb1d79a6d78c68785f858edfc0c410b3648a619e08\",\"blockNumber\":\"157714043\",\"blockHash\":\"0xf33c31502c730fc57939229b8a210830dd4d3a41afe4b596182b7c0bfdf17548\",\"logIndex\":135,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714503\",\"observedBlockHash\":\"0x19d3f895ae496d6e29255ff7dce7bcd2298ffa1695974916dd4288ccb72f56f1\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -290,15 +290,15 @@
           "metadataUri": "ar://xjJBLJGVbgQrV7kee8O8TJu2mDecy9pbz0cv6j-XZaE",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/4",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x9104f9e2d7fe882ce40e8966738bafe695b54c4defec0c12e86e695cdb583822",
+            "blockNumber": "157714048",
+            "blockHash": "0x266f5690345b3070569e71d077fd4c30c39d95e85072a69c89435d688562291a",
+            "logIndex": 295,
+            "verifiedAt": "2026-10-03T11:43:05.583Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"4\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x9104f9e2d7fe882ce40e8966738bafe695b54c4defec0c12e86e695cdb583822\",\"blockNumber\":\"157714048\",\"blockHash\":\"0x266f5690345b3070569e71d077fd4c30c39d95e85072a69c89435d688562291a\",\"logIndex\":295,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714504\",\"observedBlockHash\":\"0xa91145181f19759f9204ba326e388e1579508989eb19970ce704c8ae2a481e18\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -368,15 +368,15 @@
           "metadataUri": "ar://Hv9eZPw0Lhd6lHvIMBDx3OdGXK-j_g-xAzjJ5-1j3Og",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/5",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x8bd759194f2551988e1d5eb734abce9d4bd231603ffa442808e6b253765754e3",
+            "blockNumber": "157714055",
+            "blockHash": "0x5efefbd876cfeec510ee70f761c41b57f10fb0ab5b300b1a8505bd858050cca0",
+            "logIndex": 78,
+            "verifiedAt": "2026-10-03T11:43:07.421Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"5\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x8bd759194f2551988e1d5eb734abce9d4bd231603ffa442808e6b253765754e3\",\"blockNumber\":\"157714055\",\"blockHash\":\"0x5efefbd876cfeec510ee70f761c41b57f10fb0ab5b300b1a8505bd858050cca0\",\"logIndex\":78,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714505\",\"observedBlockHash\":\"0x62df86927f4807ce63d239fd5166bf3587ac7ddbd501c808010ff5c975419ae3\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -446,15 +446,15 @@
           "metadataUri": "ar://U6jm3jtho2C1HAMh8FT5ovUoQuaOyS3AjwT7WUM9dFk",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/6",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xc9c1092a0519dfab38f63808ff85dbc9e9453467f8779f417c107a2a0ee69fdf",
+            "blockNumber": "157714062",
+            "blockHash": "0xbf14d73d15ee275464750638fafabcdb3568aecf1d737a67d8842fa737ddc889",
+            "logIndex": 94,
+            "verifiedAt": "2026-10-03T11:43:09.254Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"6\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xc9c1092a0519dfab38f63808ff85dbc9e9453467f8779f417c107a2a0ee69fdf\",\"blockNumber\":\"157714062\",\"blockHash\":\"0xbf14d73d15ee275464750638fafabcdb3568aecf1d737a67d8842fa737ddc889\",\"logIndex\":94,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714506\",\"observedBlockHash\":\"0x60912f4c0e0efc5d382fbe63053d01d41ee40b8e0d29b601aec00fb82d0b48b1\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -524,15 +524,15 @@
           "metadataUri": "ar://sdGNw2QO3mmMxyEl7CYiZsitMdXhL_JwJkzvWMJxUuM",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/7",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xb82418f08b59dc876d20e10828c3d4a017aaf74fd8e9ea8b7e310449454436d0",
+            "blockNumber": "157714069",
+            "blockHash": "0x1f890e0f7c472e8274b2107a3a9ca014f83349bc21bb15c0a1fee0fe779028e7",
+            "logIndex": 129,
+            "verifiedAt": "2026-10-03T11:43:11.050Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"7\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xb82418f08b59dc876d20e10828c3d4a017aaf74fd8e9ea8b7e310449454436d0\",\"blockNumber\":\"157714069\",\"blockHash\":\"0x1f890e0f7c472e8274b2107a3a9ca014f83349bc21bb15c0a1fee0fe779028e7\",\"logIndex\":129,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714507\",\"observedBlockHash\":\"0x59d1b0ad00d6d942cead2ee45877dad9ae2e9c362d6112cd8a5deab811c8032e\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -602,15 +602,15 @@
           "metadataUri": "ar://b8bOIjZRbqYwDjsnPar5hYLxdYXwJKn3EizRgIk_BB8",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/8",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x71b3f0e36ce7f493f4a95a65ba9aa1fbbfe3856aa6c5bd1e2cfd9a3a59ea2a9d",
+            "blockNumber": "157714075",
+            "blockHash": "0x756b6db3890a558acbe4d49970f7fcdc233747301a4cf5c35796b5d2aa446cd8",
+            "logIndex": 142,
+            "verifiedAt": "2026-10-03T11:43:13.334Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"8\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x71b3f0e36ce7f493f4a95a65ba9aa1fbbfe3856aa6c5bd1e2cfd9a3a59ea2a9d\",\"blockNumber\":\"157714075\",\"blockHash\":\"0x756b6db3890a558acbe4d49970f7fcdc233747301a4cf5c35796b5d2aa446cd8\",\"logIndex\":142,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714508\",\"observedBlockHash\":\"0x343bfd7e5cb6fead3f8cc027ee913e25694cb3f7af2634b92047c527fca188a6\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -680,15 +680,15 @@
           "metadataUri": "ar://mrf60F8e8uLQznVLdLpbCg9sqQyzl9CIITh5dRi_uOw",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/9",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xccd7d77487bd3781533b982550b0f113cc62996dcd4e0d1662ba265514bb7031",
+            "blockNumber": "157714081",
+            "blockHash": "0x56ceeb0bd6be7736be89ac1e7ac40f90e119a4e2740c68e80669a5f769f8a6c9",
+            "logIndex": 239,
+            "verifiedAt": "2026-10-03T11:43:15.422Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"9\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xccd7d77487bd3781533b982550b0f113cc62996dcd4e0d1662ba265514bb7031\",\"blockNumber\":\"157714081\",\"blockHash\":\"0x56ceeb0bd6be7736be89ac1e7ac40f90e119a4e2740c68e80669a5f769f8a6c9\",\"logIndex\":239,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714509\",\"observedBlockHash\":\"0x56ffbc59a417a1af0a0515cbf0b6df6cd1a8f25085fe9873a5e2cad0318b1407\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -758,15 +758,15 @@
           "metadataUri": "ar://MEnilq_Lhx9oynBqoqWFVjMoKsBZIa3PW-VHMgy01mA",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/10",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x5854971c74799bb42be48ae7154a0dbbf6438ebb15c7e3db77676d94d0760499",
+            "blockNumber": "157714087",
+            "blockHash": "0xcb54d312ce46d78b89283da42ac2931a97e7314ef92115445c4ded08faa1000c",
+            "logIndex": 159,
+            "verifiedAt": "2026-10-03T11:43:17.377Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"10\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x5854971c74799bb42be48ae7154a0dbbf6438ebb15c7e3db77676d94d0760499\",\"blockNumber\":\"157714087\",\"blockHash\":\"0xcb54d312ce46d78b89283da42ac2931a97e7314ef92115445c4ded08faa1000c\",\"logIndex\":159,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714510\",\"observedBlockHash\":\"0xfebbe31f27bd5185a0ed47b8aab78c4bf328979d729d160b917a66bd61eb5f47\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -836,15 +836,15 @@
           "metadataUri": "ar://jBspQSvh89b7nY_GbX0ClF93k0_J5weretkb9WncsvQ",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/11",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xd415d7192bf39fc0389f6e788ebceafe7a94e92b2e432a005508187e9a9b7e05",
+            "blockNumber": "157714093",
+            "blockHash": "0x5f15cebd5165080c8567411a6c1523f25725467c65beb492ae4c7cf2f46b626f",
+            "logIndex": 187,
+            "verifiedAt": "2026-10-03T11:43:19.385Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"11\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xd415d7192bf39fc0389f6e788ebceafe7a94e92b2e432a005508187e9a9b7e05\",\"blockNumber\":\"157714093\",\"blockHash\":\"0x5f15cebd5165080c8567411a6c1523f25725467c65beb492ae4c7cf2f46b626f\",\"logIndex\":187,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714511\",\"observedBlockHash\":\"0x6beed5b7100575c3b7f7c8e12ffaf16e961a9ee954013d2a0c532a12f4a95695\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -914,15 +914,15 @@
           "metadataUri": "ar://Z4K1jeB1pnHNchxytLk13eD460X6svhUCDnIT0NQv6M",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/12",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x51b4ca1e55fce8486777d3009f5a3d08e2e1250a3484b1e69bab32b17a06a2ed",
+            "blockNumber": "157714158",
+            "blockHash": "0x5f90f53ed3668b079b89cce6fe87d93415c292e9027bc1d67ed9bf1451695a14",
+            "logIndex": 115,
+            "verifiedAt": "2026-10-03T11:43:21.300Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"12\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x51b4ca1e55fce8486777d3009f5a3d08e2e1250a3484b1e69bab32b17a06a2ed\",\"blockNumber\":\"157714158\",\"blockHash\":\"0x5f90f53ed3668b079b89cce6fe87d93415c292e9027bc1d67ed9bf1451695a14\",\"logIndex\":115,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714512\",\"observedBlockHash\":\"0x3f3f7d8be4fbd0d18772fc43e2041f388569d69e251923aa45015e0b122f733b\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -992,15 +992,15 @@
           "metadataUri": "ar://pAOckDZpVkvnWBFABG2vqgiyeox90LBSYVeAlC2PcVI",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/13",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x229e17276471ad230cba56c70842611b7f7e567cc06bd2c23030e03dcb4c5be3",
+            "blockNumber": "157714190",
+            "blockHash": "0x6ee4d3117e939865a43c69c8951bbacffe35021eef66b04eae95bee8603ce8ea",
+            "logIndex": 198,
+            "verifiedAt": "2026-10-03T11:43:23.383Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"13\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x229e17276471ad230cba56c70842611b7f7e567cc06bd2c23030e03dcb4c5be3\",\"blockNumber\":\"157714190\",\"blockHash\":\"0x6ee4d3117e939865a43c69c8951bbacffe35021eef66b04eae95bee8603ce8ea\",\"logIndex\":198,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714513\",\"observedBlockHash\":\"0x60e69cc034a1f75cefc7aee4d1378595f31d9bfa165bb28f90029349102a1304\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1070,15 +1070,15 @@
           "metadataUri": "ar://WTi3Lx5aa9oaeIaeHr6DAheKlg9VxPnmxI_Ms9xhHY8",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/14",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xa47a5ee3196e26eb1807bf6b83513a3ac5c85c163dbf8b022b79b1da187793f1",
+            "blockNumber": "157714198",
+            "blockHash": "0x1f7300c52001d104c6c51231263a014e358f482e7214310ddf6c0fd3c443e55d",
+            "logIndex": 8,
+            "verifiedAt": "2026-10-03T11:43:25.224Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"14\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xa47a5ee3196e26eb1807bf6b83513a3ac5c85c163dbf8b022b79b1da187793f1\",\"blockNumber\":\"157714198\",\"blockHash\":\"0x1f7300c52001d104c6c51231263a014e358f482e7214310ddf6c0fd3c443e55d\",\"logIndex\":8,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714514\",\"observedBlockHash\":\"0xd5b9f5b8f85b1f7a2f6b30481bc5ffe33effe184fdd049f65c400b4ff34db3f6\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1148,15 +1148,15 @@
           "metadataUri": "ar://3D5XJ9wJyMX4l4o0VdnfERTAzr-0K7y5DJjEFnHTfAQ",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/15",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x775c6d4092023894a2968a99faeb94667f6549d7f9296f30e73c4d27bca64bdf",
+            "blockNumber": "157714206",
+            "blockHash": "0xeb70c3d7059acabcc7dadea3eb1ef9773feed0f9c2c7df31503b2d315006446b",
+            "logIndex": 183,
+            "verifiedAt": "2026-10-03T11:43:27.143Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"15\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x775c6d4092023894a2968a99faeb94667f6549d7f9296f30e73c4d27bca64bdf\",\"blockNumber\":\"157714206\",\"blockHash\":\"0xeb70c3d7059acabcc7dadea3eb1ef9773feed0f9c2c7df31503b2d315006446b\",\"logIndex\":183,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714515\",\"observedBlockHash\":\"0x9361eeeafd5f7373f12e0a67c1564d0bec884c7e899d35dde2280e931b701492\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1226,15 +1226,15 @@
           "metadataUri": "ar://25IVHmCzCMtwzqzulZSYNeDIwrDf5m_NXXrNadAqTJI",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/16",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x01ca30662c5d67c3a9f4468634459112ab883ac2441ffc1acc6b4abca708ccc1",
+            "blockNumber": "157714224",
+            "blockHash": "0x4619f73cf5b04c028a1a4554aa0d0b86caa033e6a04180ed3ce43c6b22b07216",
+            "logIndex": 176,
+            "verifiedAt": "2026-10-03T11:43:29.179Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"16\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x01ca30662c5d67c3a9f4468634459112ab883ac2441ffc1acc6b4abca708ccc1\",\"blockNumber\":\"157714224\",\"blockHash\":\"0x4619f73cf5b04c028a1a4554aa0d0b86caa033e6a04180ed3ce43c6b22b07216\",\"logIndex\":176,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714516\",\"observedBlockHash\":\"0x71aeaf545a611878791900741232a11fdf76bee21632d43e12635f468c4ab957\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1304,15 +1304,15 @@
           "metadataUri": "ar://OAOtXIcr2L0mZ9nXZX-i_4hZtvrTscZFRKjNHfRnym8",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/17",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x5b4bc95cfce67cd4600ca3210ee803fd4e66d6e8db50c7cfcc605e4f4ef82cde",
+            "blockNumber": "157714234",
+            "blockHash": "0x1f7ae403a3c5fe58081d581ab7049c9f466572855a1870a7eaa8a0ff05d38648",
+            "logIndex": 150,
+            "verifiedAt": "2026-10-03T11:43:31.219Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"17\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x5b4bc95cfce67cd4600ca3210ee803fd4e66d6e8db50c7cfcc605e4f4ef82cde\",\"blockNumber\":\"157714234\",\"blockHash\":\"0x1f7ae403a3c5fe58081d581ab7049c9f466572855a1870a7eaa8a0ff05d38648\",\"logIndex\":150,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714517\",\"observedBlockHash\":\"0x10c67d0e5ab8642ec4a64b32ed4a2402d7947996a6c9780a70a838786f1af947\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1382,15 +1382,15 @@
           "metadataUri": "ar://aULDqmZcggMBtOW1zLQ8mfHwsotFN6MjqZ4bHYnJbeI",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/18",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xf31b0453cfe19f550731852082c451a0977e2a57e93c8e3a8e5aa37887ad3695",
+            "blockNumber": "157714242",
+            "blockHash": "0x4d993b43fc77a92e0aede4c6f5c4796f46aa4d25dab879ce8d412ab3afcd539d",
+            "logIndex": 115,
+            "verifiedAt": "2026-10-03T11:43:33.186Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"18\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xf31b0453cfe19f550731852082c451a0977e2a57e93c8e3a8e5aa37887ad3695\",\"blockNumber\":\"157714242\",\"blockHash\":\"0x4d993b43fc77a92e0aede4c6f5c4796f46aa4d25dab879ce8d412ab3afcd539d\",\"logIndex\":115,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714518\",\"observedBlockHash\":\"0xadbcc5ebdb81be8567eed6417a77be55084912eb353d46bbe0fb79b7a8fa3d08\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1460,15 +1460,15 @@
           "metadataUri": "ar://GjGHMiLlsKw3QT2PybWZQr8hrIdCli-kQI_w1BIDIjY",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/19",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x32ef132b977f136a5391f8ef278ab76eab6c9c98d2f7fe944d229ad010a3d682",
+            "blockNumber": "157714251",
+            "blockHash": "0xe87f633f57afc10cba045ba2f1a09c3da7ff4446ce387271e9c69a22876e15fd",
+            "logIndex": 76,
+            "verifiedAt": "2026-10-03T11:43:35.098Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"19\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x32ef132b977f136a5391f8ef278ab76eab6c9c98d2f7fe944d229ad010a3d682\",\"blockNumber\":\"157714251\",\"blockHash\":\"0xe87f633f57afc10cba045ba2f1a09c3da7ff4446ce387271e9c69a22876e15fd\",\"logIndex\":76,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714519\",\"observedBlockHash\":\"0x9acba25a36a7588ef137d3d31cd2c6e76e41584345cc350282de642fd1c94b1e\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1538,15 +1538,15 @@
           "metadataUri": "ar://BzeAacTjSeoqubdKC_mmnsCWgg1gsh105JyXghAFEh4",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/20",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x9ef06998fbcf4edba2b9b457deeb096670e2cf17ef3f950661e75c080bf562fa",
+            "blockNumber": "157714260",
+            "blockHash": "0xd716f5b4d2e5cdd8e73865a62ba7d56b447d9b1de6afa7b65abf363c31bdf499",
+            "logIndex": 160,
+            "verifiedAt": "2026-10-03T11:43:37.598Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"20\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x9ef06998fbcf4edba2b9b457deeb096670e2cf17ef3f950661e75c080bf562fa\",\"blockNumber\":\"157714260\",\"blockHash\":\"0xd716f5b4d2e5cdd8e73865a62ba7d56b447d9b1de6afa7b65abf363c31bdf499\",\"logIndex\":160,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714520\",\"observedBlockHash\":\"0xf085a57b0854e6aa0302f33e77409f1d80482b8eb67ab05d0b4126265828954e\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1616,15 +1616,15 @@
           "metadataUri": "ar://RySB3KKL0eWhGyI0WpXoZQz91GUzznhjgEIYdBE3dDE",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/21",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x08bf7a753fafcf31901b9298e184c3a4d4328d48a94401b9f405131fef8d9f70",
+            "blockNumber": "157714309",
+            "blockHash": "0xf611e4695f94810628d4b5530c00c64c9a2fd1df8344e840b6573f34ee282c71",
+            "logIndex": 303,
+            "verifiedAt": "2026-10-03T11:43:39.610Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"21\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x08bf7a753fafcf31901b9298e184c3a4d4328d48a94401b9f405131fef8d9f70\",\"blockNumber\":\"157714309\",\"blockHash\":\"0xf611e4695f94810628d4b5530c00c64c9a2fd1df8344e840b6573f34ee282c71\",\"logIndex\":303,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714521\",\"observedBlockHash\":\"0x8c9bc56f668a800abad4920d131c9893c3fc59523cc7afe07ec0cb25b96351d2\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1694,15 +1694,15 @@
           "metadataUri": "ar://zGvE-cjKANA61mvrpnx0AqT-3YofAGDdMiD3UtfzHFw",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/22",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xcfd25c14066c234871ca3579287aa8f56637bd46519da5d590107479f9bca7f5",
+            "blockNumber": "157714317",
+            "blockHash": "0xc778aaad59301e8c1ccd7f46c97f1b86a4af6d96622084e4aca2adffdd79c1c6",
+            "logIndex": 186,
+            "verifiedAt": "2026-10-03T11:43:41.995Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"22\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xcfd25c14066c234871ca3579287aa8f56637bd46519da5d590107479f9bca7f5\",\"blockNumber\":\"157714317\",\"blockHash\":\"0xc778aaad59301e8c1ccd7f46c97f1b86a4af6d96622084e4aca2adffdd79c1c6\",\"logIndex\":186,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714522\",\"observedBlockHash\":\"0x6b75efd88f6d9f457a020332166f120e8e85a2f65f895460fbf4efd76b14e275\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1772,15 +1772,15 @@
           "metadataUri": "ar://fTNEblIA8qLbPHS9RTE59YgzFernrTRb8TSrAT0vqac",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/23",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xfdc881b60bb97ce9f8068c723b55774c11071e57242a49a0718640f966721197",
+            "blockNumber": "157714328",
+            "blockHash": "0xfbf8457eab151f29ae81117c8a8721c970eb416c444785ac731345503fb36fe6",
+            "logIndex": 135,
+            "verifiedAt": "2026-10-03T11:43:43.952Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"23\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xfdc881b60bb97ce9f8068c723b55774c11071e57242a49a0718640f966721197\",\"blockNumber\":\"157714328\",\"blockHash\":\"0xfbf8457eab151f29ae81117c8a8721c970eb416c444785ac731345503fb36fe6\",\"logIndex\":135,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714523\",\"observedBlockHash\":\"0x7dc21540bcee5b8c6188ec4dab9df0ae1e671cf41299ca10b0c7750fbaf7d3d8\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1850,15 +1850,15 @@
           "metadataUri": "ar://79h-WXQxlQVbg-qfgBwMTuiRcyt76bfQfQld6SJ-JYQ",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/24",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x94c22d77ab26a178792420c56f485cc59679fd8503794ddecfdeea7a843ffe9b",
+            "blockNumber": "157714336",
+            "blockHash": "0xd46c6d36d9b7a30102c35186f39fe7c72a0929155d106277f7e4945803ffb12f",
+            "logIndex": 87,
+            "verifiedAt": "2026-10-03T11:43:46.361Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"24\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x94c22d77ab26a178792420c56f485cc59679fd8503794ddecfdeea7a843ffe9b\",\"blockNumber\":\"157714336\",\"blockHash\":\"0xd46c6d36d9b7a30102c35186f39fe7c72a0929155d106277f7e4945803ffb12f\",\"logIndex\":87,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714524\",\"observedBlockHash\":\"0x0a7bb38e717e521d0de8962016e4ad644ea8c8527ef6d3a871bf69203f28cd60\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -1928,15 +1928,15 @@
           "metadataUri": "ar://xShXZex33NfE8UYH6S1u-rPTYbDIfoq2UXFKDRZ_tmY",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/25",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xa0628a1f0e7794c34a871c9f0f1847d6f57310c486bfe74d4487c824666600f7",
+            "blockNumber": "157714345",
+            "blockHash": "0x76274671d3c95926b4e372d66ceb63ccf37fbf6460c1dd2cb7129ff650ec5747",
+            "logIndex": 172,
+            "verifiedAt": "2026-10-03T11:43:48.296Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"25\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xa0628a1f0e7794c34a871c9f0f1847d6f57310c486bfe74d4487c824666600f7\",\"blockNumber\":\"157714345\",\"blockHash\":\"0x76274671d3c95926b4e372d66ceb63ccf37fbf6460c1dd2cb7129ff650ec5747\",\"logIndex\":172,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714525\",\"observedBlockHash\":\"0xcbcebe77cc24205dcd046d9977d2ec0dc4951a52ce8627a00fe240cf5edc08ac\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -2006,15 +2006,15 @@
           "metadataUri": "ar://IS7mN4FHi15H-ZROKqalwhVLAktEC07MQECy2ew1VYY",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/26",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x69295e2daca5721d9f87128fef2d453174dd4ba2eaef72fbcccca781d3e04dd5",
+            "blockNumber": "157714352",
+            "blockHash": "0xd1fe99d073b6fdf5b4777af17e69ec1c3617e5d2a250a672834b0da7026a894e",
+            "logIndex": 143,
+            "verifiedAt": "2026-10-03T11:43:50.356Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"26\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x69295e2daca5721d9f87128fef2d453174dd4ba2eaef72fbcccca781d3e04dd5\",\"blockNumber\":\"157714352\",\"blockHash\":\"0xd1fe99d073b6fdf5b4777af17e69ec1c3617e5d2a250a672834b0da7026a894e\",\"logIndex\":143,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714526\",\"observedBlockHash\":\"0x50800761d181357629276d04134c2b9fecf4d43f2c4b6cc867e2864eab6ccbf9\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -2084,15 +2084,15 @@
           "metadataUri": "ar://vss-t5DFkWOvDohhfZPUjMbNLNLYmpgjevBTujG7Szs",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/27",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x24c37f7968fb8be5c83840cc5d0b28d1187d872805565e41e9b5fbc84782d438",
+            "blockNumber": "157714359",
+            "blockHash": "0x0c100fc97214b5ae1a695b8c14ba400c7f61bd5efb7cfc26605ba39e6463af78",
+            "logIndex": 193,
+            "verifiedAt": "2026-10-03T11:43:53.484Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"27\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x24c37f7968fb8be5c83840cc5d0b28d1187d872805565e41e9b5fbc84782d438\",\"blockNumber\":\"157714359\",\"blockHash\":\"0x0c100fc97214b5ae1a695b8c14ba400c7f61bd5efb7cfc26605ba39e6463af78\",\"logIndex\":193,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714528\",\"observedBlockHash\":\"0xbda242d258a543905f4b6789e0e67d3c18f21520df2e6ee279cad44dfd073d04\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -2162,15 +2162,15 @@
           "metadataUri": "ar://VEFztDhR9qSuWl3cEHSNuAy0Sn3kglpYr-0P9o3QsdI",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/28",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x0e325d660a78e38d1178a30c7751c97e7ef57e723c559800f9521cac1b7de448",
+            "blockNumber": "157714370",
+            "blockHash": "0x10a3271b23772faced1ffb8b791c8b749c41b944b82102194aad3661ecbaf508",
+            "logIndex": 241,
+            "verifiedAt": "2026-10-03T11:43:57.075Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"28\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x0e325d660a78e38d1178a30c7751c97e7ef57e723c559800f9521cac1b7de448\",\"blockNumber\":\"157714370\",\"blockHash\":\"0x10a3271b23772faced1ffb8b791c8b749c41b944b82102194aad3661ecbaf508\",\"logIndex\":241,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714530\",\"observedBlockHash\":\"0x91bb56664101ea796086511519c6f12c3abb9ed39497209b72924c8a3e27a7cb\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -2240,15 +2240,15 @@
           "metadataUri": "ar://tvfZ_szOatZTO7pI1ABQC6P-zwdua9kVPTChoMVQRfY",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/29",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x2a0da74e9a2a5054c3b8fd7605c67806f12452570e4cd4cc6c57e53e33a97613",
+            "blockNumber": "157714378",
+            "blockHash": "0x5aaa326862f261a7d214101ad94bd3113e801741deebcc35438eef36c152be7f",
+            "logIndex": 141,
+            "verifiedAt": "2026-10-03T11:43:59.130Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"29\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x2a0da74e9a2a5054c3b8fd7605c67806f12452570e4cd4cc6c57e53e33a97613\",\"blockNumber\":\"157714378\",\"blockHash\":\"0x5aaa326862f261a7d214101ad94bd3113e801741deebcc35438eef36c152be7f\",\"logIndex\":141,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714531\",\"observedBlockHash\":\"0xb5f90d3e8c34ff4260e83b3cb3a7acf5e8cf60f87cf46a1f0a29785fdd2446a9\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -2318,15 +2318,15 @@
           "metadataUri": "ar://F0kS90sBWO8wSXSDNYl3BMlkRpzPbBEt3EeCMhbashI",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/30",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xfe4dcb8399e26e0208414ba239b4bebe155b5fc026ceb88e00c0007a84bc1d92",
+            "blockNumber": "157714387",
+            "blockHash": "0xf7a3302a5f16e5aca5f050e3cae1a2cda4434bfef8052f27d163274defe24101",
+            "logIndex": 165,
+            "verifiedAt": "2026-10-03T11:44:01.489Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"30\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xfe4dcb8399e26e0208414ba239b4bebe155b5fc026ceb88e00c0007a84bc1d92\",\"blockNumber\":\"157714387\",\"blockHash\":\"0xf7a3302a5f16e5aca5f050e3cae1a2cda4434bfef8052f27d163274defe24101\",\"logIndex\":165,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714532\",\"observedBlockHash\":\"0xb351b9a804bd52f1dfe3da86543ae728719cc2de0b4d8468b747f2090f4c4d1a\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -2396,15 +2396,15 @@
           "metadataUri": "ar://AqADdPVcfFZ4Bqx9X04z7VHy1M9nVGUo9leJ-YCzYVM",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/31",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xbe50d2e90cfd79986838d62f930fd15db6d91d7c09a16b5445cbad3bbf10762e",
+            "blockNumber": "157714394",
+            "blockHash": "0x79182d9a6ddea28e4178e8ae329bfd7271b9f66503b2a6c65b40a98e543b33b5",
+            "logIndex": 171,
+            "verifiedAt": "2026-10-03T11:44:03.379Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"31\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xbe50d2e90cfd79986838d62f930fd15db6d91d7c09a16b5445cbad3bbf10762e\",\"blockNumber\":\"157714394\",\"blockHash\":\"0x79182d9a6ddea28e4178e8ae329bfd7271b9f66503b2a6c65b40a98e543b33b5\",\"logIndex\":171,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714533\",\"observedBlockHash\":\"0xb5b3f5dd8540492ee806b3befa92d707890ab6341640208579eed954d805142c\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -2474,15 +2474,15 @@
           "metadataUri": "ar://GlVmZIMpREtM6II_xf7AoO0b_u-ja245nhy0nq6FS5s",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/32",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x2bc4c705d56af4c88936bb04cd981bc141725f1039fce6d8615a4a5f17795be6",
+            "blockNumber": "157714441",
+            "blockHash": "0xf3cd212360386a7bfea643b7b8c337229e2635ede701bb34f9f1b085a165b96c",
+            "logIndex": 223,
+            "verifiedAt": "2026-10-03T11:44:05.278Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"32\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x2bc4c705d56af4c88936bb04cd981bc141725f1039fce6d8615a4a5f17795be6\",\"blockNumber\":\"157714441\",\"blockHash\":\"0xf3cd212360386a7bfea643b7b8c337229e2635ede701bb34f9f1b085a165b96c\",\"logIndex\":223,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714534\",\"observedBlockHash\":\"0x449dbaea54c1a591ec09fc6185c98b8b94d8dd09425f4c09a1416c6880742458\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -2552,15 +2552,15 @@
           "metadataUri": "ar://GCXJ6vlMTLXUSHRUedxoytyNP-zJj1DCsN9-RWVPoaY",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/33",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x9265108dce6c768c9bf4d023183fcaa6cdeeba266cff8fa4192902b697d190b9",
+            "blockNumber": "157714458",
+            "blockHash": "0x17e650e374162a7a27f7fd0821e7981ff2fbfac4f72a484babbdd59e0d81e3b0",
+            "logIndex": 118,
+            "verifiedAt": "2026-10-03T11:44:07.278Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"33\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x9265108dce6c768c9bf4d023183fcaa6cdeeba266cff8fa4192902b697d190b9\",\"blockNumber\":\"157714458\",\"blockHash\":\"0x17e650e374162a7a27f7fd0821e7981ff2fbfac4f72a484babbdd59e0d81e3b0\",\"logIndex\":118,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714535\",\"observedBlockHash\":\"0x47806c9c70b88e6354ce75f69490d21f037edf66da1bbdf591115e5e5370910c\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -2630,15 +2630,15 @@
           "metadataUri": "ar://8k9UEIx2g6HBiTewCZTKbaLpPACUhQk_fVP3ByAY4OM",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/34",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0x25d0c790917824561f96bbd78b6c39daa084d45d97921fbf6e3b6ea90310c964",
+            "blockNumber": "157714475",
+            "blockHash": "0x1532027e298d3e7065cc60a1ae0c7b31b8ef90321631e5636a817e2cee41fb80",
+            "logIndex": 123,
+            "verifiedAt": "2026-10-03T11:44:09.153Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"34\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x25d0c790917824561f96bbd78b6c39daa084d45d97921fbf6e3b6ea90310c964\",\"blockNumber\":\"157714475\",\"blockHash\":\"0x1532027e298d3e7065cc60a1ae0c7b31b8ef90321631e5636a817e2cee41fb80\",\"logIndex\":123,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714536\",\"observedBlockHash\":\"0xa10d8721b1558248cfe718ec11d2a50ed8bb9583acf4792be6c2459679e62a81\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
@@ -2708,15 +2708,15 @@
           "metadataUri": "ar://8TY1lV2MI76pF-0MYuVx_lvb0nTFOJKqP2LPMGY_OU4",
           "publicPlaybackUrl": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/35",
           "archiveMint": {
-            "state": "awaiting_input",
-            "recipient": null,
-            "amount": null,
-            "txHash": null,
-            "blockNumber": null,
-            "blockHash": null,
-            "logIndex": null,
-            "verifiedAt": null,
-            "proof": null
+            "state": "confirmed",
+            "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+            "amount": "1",
+            "txHash": "0xc838cfc470967478c67a388b0bb4d18a36a6d20976ab24811331652a83aed835",
+            "blockNumber": "157714490",
+            "blockHash": "0x7eddfb5c200d5d71f7abcd01f2852d7b5399980e492d991d2938f37bab668a23",
+            "logIndex": 149,
+            "verifiedAt": "2026-10-03T11:44:11.070Z",
+            "proof": "{\"chainId\":10,\"contract\":\"0xa65c9308635c8dd068a314c189e8d77941a7e99c\",\"tokenId\":\"35\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xc838cfc470967478c67a388b0bb4d18a36a6d20976ab24811331652a83aed835\",\"blockNumber\":\"157714490\",\"blockHash\":\"0x7eddfb5c200d5d71f7abcd01f2852d7b5399980e492d991d2938f37bab668a23\",\"logIndex\":149,\"observedBalance\":\"1\",\"observedAtBlock\":\"157714537\",\"observedBlockHash\":\"0x8a75fb73d58b197fb2be76ae47bfd58a3af7b9a73f1aa08413a9ee333703584d\"}"
           },
           "verification": {
             "source": "reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json",
