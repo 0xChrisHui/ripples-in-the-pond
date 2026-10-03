@@ -6,8 +6,9 @@ export function renderReadme(output: SemiPackage): string {
   const count = (status: string) => deployments.filter((item) => item.status === status).length;
   const sampleCount = inventory.collections.reduce((count, item) => count + item.sampleAssets.length, 0);
   const archived = deployments.filter((item) => item.archiveMint.state === 'confirmed').length;
+  const finalNotes = inventory.tracks.filter((track) => track.notes.status === 'final').length;
   const collectionRows = inventory.collections.map((item) =>
-    `| ${item.chainId} | ${item.kind} | ${item.contractAddress} | ${item.standard} | ${item.readyExclusionReasons.length ? 'pending' : '资料 ready'} |`).join('\n');
+    `| ${item.chainId} | ${item.kind} | ${item.contractAddress} | ${item.standard} | ${item.readyExclusionReasons.length ? 'pending' : '资料 ready'} | ${item.readyExclusionReasons.join('；') || '无'} |`).join('\n');
   return `# Ripples in the Pond · SEMI 对接包
 
 此文件由唯一注册表生成，手改会被 --check 检出。
@@ -18,8 +19,9 @@ export function renderReadme(output: SemiPackage): string {
 - 当前范围：${inventory.tracks.length} 首真实原曲、${deployments.length} 个 trackId × chainId 记录。
 - 状态：ready ${count('ready')} / unverified ${count('unverified')} / undeployed ${count('undeployed')}。
 - 可导入的生产系列：${contracts.collections.length}；ready 原曲：${assets.originals.length}；已确认归档：${archived}/${deployments.length}。
+- 最终创作手记：${finalNotes}/${inventory.tracks.length}；同样从唯一注册表生成。
 
-这是资料包。SEMI 当前版本、账号、网络支持和钱包内播放尚未核验；生产资料完整性与 wallet_verified 分别验收。pending 原曲不进入 ready 表。两链留存未完成，缺失手记保留 absent。
+这是资料包。SEMI 当前版本、账号、网络支持和钱包内播放尚未核验；生产资料完整性与 wallet_verified 分别验收。pending 原曲不进入 ready 表。两链留存未完成；归档历史状态不是当前授权、接收钱包或素材缺失的判定依据。
 
 ## 文件与导入
 
@@ -29,11 +31,13 @@ export function renderReadme(output: SemiPackage): string {
 
 只导入 ready 表；空列表表示当前没有证据充分的生产范围，不得把 inventory 当成已上线白名单。动态 Score/Echo 按 current_holder_index 发现后续 Token，sampleAssets 仅作样例，不限制 Token 范围；本版有${sampleCount}个同源样例，不猜扫描起始区块。停用/历史测试系列不进入生产 ready。
 
-| chainId | kind | registry 合约 | 标准 | 资料状态 |
-|---|---|---|---|---|
+| chainId | kind | registry 合约 | 标准 | 资料状态 | 同源排除原因 |
+|---|---|---|---|---|---|
 ${collectionRows}
 
 本版注册表未列出的系列（含 ETH Score 或新发行）没有可消费坐标，应由注册表所有者随真实证据交付；禁止从历史文件另抄地址补入。
+
+disabled 表示当前注册表未完成或未同步本包所需证明，不表示资产未上线，也不表示 SEMI 不支持它。已有真实链、永久资源和官网播放证据交给注册表所有者复用；只有其进入同 revision 后才影响 ready 输出。
 
 ## 身份、metadata 与当前持有
 
@@ -54,6 +58,8 @@ ${collectionRows}
 保留原始 ar:// URI，由合作方现有公共网关解析器转换 HTTP 并保留路径/查询参数；不把某个单网关固定为唯一来源。失败有界重试和明确错误，200 HTML 错误页不当音频；不自动重传永久资源。audioSha256=null + legacy_verified_source 保留历史真实级别；observed hash 不冒充 canonical 承诺。官网登录/API 不应成为永久播放前提。
 
 本地源码证明候选协议，无法证明每枚 NFT 实际永久版本。本包不声称音频已实听或永久 HTML 已在 SEMI 验证。只显示封面、外跳官网或按钮无响应不能算钱包内播放通过。
+
+已有项目生产播放证据可按相同资源与永久版本复用，不需要为 P13 再建服务或重听35首；具体引用与缺项见本轮唯一 handoff。现有 SEMI reference 只是历史实现，不能代替当前 build/version：其 NFT 查询具有 ETH/OP、ERC721/ERC1155 和分页路径，但未传递 ERC1155 持有数量，holders 路径将 quantity 固定为1。W2必须确认当前版本已读回真实数量，不能把该默认值作为余额；历史代码也未提供足够的 audio/HTML 消息容器证据。
 
 ## Score v1 与安全边界
 

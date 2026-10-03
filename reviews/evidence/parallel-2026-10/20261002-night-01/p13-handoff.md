@@ -8,13 +8,15 @@
 - dependsOn.C2: 624216cb8b35c6b7883ae87693bf7cfb38487c32（总控接管容量故障后，正常merge指定完成提交）
 - C1.mergeSha: 1828a15dd49c2743407d9d0f48485bb42816d266
 - schemaVersion: 1
-- revision: 5e7241cbc7e234c1180e1d69231eba912fe39f0746727aa7891d761137f57eac
+- revision: 928e698244bdd88ec77eca8644944bbf832474968e90e5ffb12a49bc06a5f5b7（旧C1/C2 revision仅为下文历史记录）
 - status: external_pending
 - localCodeReady: true（导出、窄类型、定向 lint、测试通过）
 - packageReady: true（限定35首OP已验证资料；ETH/Score/Echo仍不进入ready，不代表SEMI已接入）
 - walletVerified: false（未在 SEMI 验收）
 - completedSteps: R0、R1本地盘点、R2、R3本地映射/证据边界核对、R4开发包、W0、W1证据盘点、W3
-- nextStep: 总控K2；SEMI条件齐备后恢复W2。下文C1段为原交接历史证据，当前状态以本节及末尾C2更新为准。
+- nextStep: 消费总控补齐的动态系列同源证明；SEMI真实测试条件齐备后恢复W2。当前待项以末尾2026-10-03续跑小节为准，下文C1/C2为历史记录。
+
+> 当前已解除的输入：35首手记已final并发布；发行政策、必要部署费用授权及本地加密留存钱包已明确。下文预算0、手记absent、钱包/政策待用户等描述仅保留当时记录，不再作为续跑阻塞。
 
 ## R0 / 所有权
 
@@ -80,7 +82,7 @@
 候选 Material 样例为 inventory 中 displayNumber 7/24/34 的真实 OP发行，仅作后续从唯一源选择的线索；未拿旧编号直接断言实际持有。OP Score #1缺本revision真实 metadata/永久版本样例；Echo/ETH Score未在C1列明。ready为空时不制造可消费样例。
 W1完成了已有证据与缺项盘点，没有冒称本地实际播放通过；站内必要播放断言交总控 K2 唯一会话。W2因外部输入缺失暂停，W3照常交接。
 
-## pendingItems / 接线请求 / 精确恢复
+## 历史 pendingItems / 原接线请求（已被末尾续跑小节替代）
 
 1. P17/总控：提供指定完整 C2 SHA、revision、生产 bytecode/标准/冻结URI/媒体证据及70项留存事实；仅正常合入指定已完成提交，再跑 R3匹配受影响证据、R4导出/--check。不重新建账本或读回无变化资产。
 2. P17/总控：为实际启用 Echo、ETH Score及动态Score提供唯一catalog collection坐标、真实Token/metadata/永久Decoder版本样例。C1未提供，不抄历史地址。样例字段若需新增应由总控冻结等价公开接口再适配本线；资料ready与样例钱包验收分别记录。
@@ -111,3 +113,27 @@ W2继续external_pending：当前SEMI build、账号、网络/标准、容器策
 ## K2 总控结果（替代未接线状态）
 
 K2曲目馆和独立原曲页实际呈现revision与C2导出一致，sameRevision=true。复用一次P17媒体/链证明及总控一次实际试听，不另建服务或重复35下载。C2本地OP35资料包通过，SEMI真实识别/持有/播放未验；上文C1空ready与无Echo样例仅为历史段，当前以C2更新和本段为准。
+
+## 2026-10-03 连续续跑 / 当前待项
+
+本次指定工作树 `E:\Projects\nft-music-progress-release`，父代理唯一负责catalog接线。本线只调整README生成说明与本交接；地址、URI、revision及排除原因继续来自唯一注册表。没有另建地址表或测试服务，没有改SEMI reference，没有发短信、联系团队、上传、交易或生产迁移。
+
+### W0/W1 可复用证据与资料差异
+
+- 35首手记已final，revision已由页面与SEMI资料同步；不再等待用户提供。必要部署费用授权、ETH一次领取/转出不恢复/无总量上限、未来OP SBT政策与留存钱包均已明确。本线不读取私钥，未发生留存，真实链回执仍为0/70。catalog的archiveMint=awaiting_input是旧机器账本状态，不表示接收钱包仍缺失。
+- OP35资料ready复用既有P17证明；音频身份仍为legacy_verified_source、canonical audioSha256=null，不提升为完整音频hash承诺。
+- OP Score disabled的直接原因是known-facts中的historical unknownProof，缺本包有效bytecode/standard/URI/media与核验区块；这不是Score停服或SEMI不支持的证明。
+- Echo #1已有code、tokenURI、三网关metadata与实际样例；注册表仍将standard/media置false。K2播放证明可交总控核对相同永久版本并同步，不能由本线绕开registry提升ready。
+- Ethereum Score主网Token #1已有 [P16收口](../../../2026-10-02-p16-mainnet-closeout-review.md) 与 [17项永久资源证明](../../../evidence/p16-mainnet/token-1-closeout.json)：链回执/映射、正式订单、tokenURI、17/17 bytes/hash/MIME、v3 package与snapshot一致、正式页面playing/eclipse且无页面错误。它不代表完整听音、SEMI容器或全消息桥已验。当前catalog未登记ETH Score，已向总控请求复用证据接线，不在本线抄坐标。
+- 原脏树现在可只读取得 `references/community wallte/semi-app/server/utils/nft.ts`、`server/api/nft/owned.get.ts`、`server/api/nft/[contractAddress]/[tokenId]/holders.get.ts` 与 `semi-backend/app/models/token_class.rb`。历史代码允许chain 1/10/11155111、ERC721/ERC1155并循环pageKey；NFT DTO未传余额，holders将quantity写死1。M3需在当前版本读回真实ERC1155数量。限定检索没有找到可证明audio/HTML/postMessage播放容器的实现；未修改或运行reference。
+- 官方候选公开入口 `https://semi.im/`、`https://semi.mobit.app/` 在本次浏览工具中未获得可用页面；限定域名检索无可用协议资料。此为本次取证工具结果，不能推断服务失效、当前网络/标准不支持，或猜测生产build/version。历史API域名不是W2可用播放入口，不探测私有API或触发登录。
+
+### 精确恢复输入与责任方
+
+1. 总控/P17：把可复用的Score/Echo真实证明补入唯一catalog、同步公开快照后交完整SHA/revision。本线只恢复R3/R4受影响的同源导出与检查；不重新下载音频或读回无变化媒体。新ETH原曲/OP SBT实际部署、真实领取和70项留存由P17完成，资料ready与发行完成分别记录。
+2. SEMI实际验收：需要可访问的当前build/version、可用测试账号或公开导入入口、真实持有样例、当前ETH/OP及ERC721/1155导入格式、真实数量与audio/HTML容器策略。若须联系团队/写入合作方系统，应先由总控取得该具体动作授权；泛化部署授权不自动允许发送消息。输入齐备后恢复W2同一次会话所选M3–M13/M16/M17，不再先建本地服务。
+3. UI由总控最后集中处理，非P13等待用户逐步验收项。站内/生产播放的旧证据按实际资源与实现继续复用，SEMI内实际声音与容器控制不能用官网证据替代。
+
+### 本次定向验证
+
+README由唯一源重新生成，35/35手记状态和每系列排除原因不手写；三份机器表内容未变，保持同revision。实际执行 `npx --no-install tsx scripts/integrations/semi/export.ts` 与 `--check` 退出0；现有 `export.test.ts` 7/7通过；`eslint --no-ignore scripts/integrations/semi/readme.ts` 退出0；新增两条P16证据链接存在，diff格式检查通过。首次lint因scripts忽略规则未检查文件，已用--no-ignore修正验证命令；不是源码失败。readme.ts为96行，无新目录/服务/依赖。保持 `status=external_pending`、`walletVerified=false`；未声明SEMI接入、70留存或新原曲主网上线完成。
