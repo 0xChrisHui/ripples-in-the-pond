@@ -32,6 +32,8 @@
 
 定向核验：35段原文逐字一致、35个UUID/70个发行与媒体坐标保持；C1 verify、SEMI --check及7项专项通过；第10首5.12补记、第11首行内编号、第22首日期、第31首含“66问我”的长文、第35首末尾均覆盖。页面仅增加段落保留规则与更新手记页脚，不做新UI验收。
 
+实际发布完成：源码`6d32daeb6aa60ccf9de380b29163128d7b4d2116`已快进main并核对远端；Vercel `dpl_AXpgWT4vdxQkXwtkbPrjPYatgkxb` Ready，正式域名解析至该部署。2026-10-03 11:15 +08匿名HTTP核验：目录API与生成快照全字段一致、35首notes final；/tracks实际呈现第1首，registry生成的第31/35首独立页正文逐字匹配，均200；生产CSS段落pre-wrap规则已送达。类型/定向lint退出0，不要求用户UI验收。之后仅写本地交接收尾，复用上述代码证据；未发链交易或改生产数据库。
+
 - runId：`20261002-night-01`。
 - 原目录：`E:\Projects\nft-music`，分支 `codex/p16-wip-snapshot`，原 HEAD `001a21dd60c96adf0fa72cfb47f217885132a655`。
 - 共同 BASE_SHA：`e6985bec5ef6d6f191526e6f2e5b58caa5414357`，对应冻结引用 `refs/heads/codex/night-base-20261002-night-01`。四线必须从该引用的同一个提交建立，禁止随远端漂移。
