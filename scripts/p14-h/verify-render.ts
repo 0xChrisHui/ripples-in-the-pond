@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import { InstancedBufferAttribute, InstancedMesh, PlaneGeometry, ShaderMaterial } from 'three';
+import { createResidentEchoRuntime } from '../../src/components/pond-gl-test3/echo-resident/runtime';
+import { resolveResidentScenePose } from '../../src/components/pond-gl-test3/echo-resident/render/pose';
+import { residentUniforms, writeResidentSphere } from '../../src/components/pond-gl-test3/echo-resident/render/sphere-material';
+import { input, layout } from './fixture';
+import { project } from '../../src/components/pond-gl-test3/sphere-projection';
+
+const frame = { ...input, reducedMotion: true, scenePresence: 0.5,
+  layout: { ...layout, baseRadiusPx: 34, projection: { ...layout.projection, perspective: true, parallax: true, mx: 0.2, my: -0.3 } } };
+const runtime = createResidentEchoRuntime({ layout: frame.layout, seed: 4 });
+const pose = runtime.step(frame, 0).pose;
+assert.ok(Math.abs(pose.bodyRadiusPx - 68 * 1.025) < 1e-8, '旧主体半径34按同深度翻倍');
+const adapted = resolveResidentScenePose(pose, frame);
+assert.equal(adapted.shaderAlpha, 0.5, '场景透明度只乘一次');
+assert.equal(adapted.waterMaskPresence, 0.5);
+const geometry = new PlaneGeometry(1, 1);
+geometry.setAttribute('aParams', new InstancedBufferAttribute(new Float32Array(4), 4));
+geometry.setAttribute('aSubmerge', new InstancedBufferAttribute(new Float32Array(1), 1));
+const material = new ShaderMaterial({ uniforms: residentUniforms() });
+const mesh = new InstancedMesh(geometry, material, 1);
+writeResidentSphere(mesh, material, pose, frame, false);
+assert.equal(geometry.getAttribute('aParams').getZ(0), 0.5, '完整主体与光晕必须消费最终alpha');
+assert.equal(material.uniforms.uHaloBreathAmp.value, 0, '独立运动不叠普通球呼吸');
+writeResidentSphere(mesh, material, pose, { ...frame, reducedMotion: false }, false, 5);
+assert.equal(material.uniforms.uTime.value, 5, '表面动态必须使用可冻结的驻留时钟');
+assert.ok(material.uniforms.uEdgeAmp.value > 0 && material.uniforms.uHaloBreathAmp.value > 0, '不能呈现无表面变化的实色贴片');
+writeResidentSphere(mesh, material, { ...pose, effectivePresence: 0 }, frame, false);
+assert.equal(mesh.visible, false);
+assert.equal(geometry.getAttribute('aParams').getZ(0), 0);
+const projected = project(adapted.simX, adapted.simY, pose.depth, frame.layout.projection);
+assert.ok(Math.abs(projected.sx - pose.sx) < 1e-8 && Math.abs(projected.sy - pose.sy) < 1e-8);
+geometry.dispose(); material.dispose(); runtime.destroy();
+console.log('呈现适配：真实参考半径34、共享投影互逆、单次alpha、水面同源与零透明mesh通过');
