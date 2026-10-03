@@ -16,7 +16,10 @@ const relative = 'reviews/evidence/parallel-2026-10/20261002-night-01/p17/archiv
 const destination = join(scratch, relative);
 async function main() { try {
   mkdirSync(resolve(destination, '..'), { recursive: true });
-  const original = createArchivePlan(getMusicCatalog(), { runId: '20261002-night-01', sourceSha: 'a'.repeat(40) });
+  const frozenRecipient = { address: '0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA' as const,
+    approvalRef: '2026-10-03用户授权新建项目留存接收钱包；当前仅冻结计划，不授权广播' };
+  const original = createArchivePlan(getMusicCatalog(), { runId: '20261002-night-01', sourceSha: 'a'.repeat(40),
+    recipients: { 1: frozenRecipient, 10: frozenRecipient } });
   original.items[0].archiveMint.state = 'unknown';
   original.items[0].archiveMint.txHash = `0x${'12'.repeat(32)}`;
   writeFileSync(destination, JSON.stringify(original));
@@ -36,6 +39,8 @@ async function main() { try {
   unlinkSync(`${destination}.lock`);
   const sourceSha = 'a'.repeat(40), recipients = { 10: { address: `0x${'11'.repeat(20)}` as const, approvalRef: '仅本地测试夹具' } };
   const plan = createArchivePlan(getMusicCatalog(), { runId: 'local-test', sourceSha, recipients });
+  assert.ok(plan.items.filter(item=>item.chainId===1).every(item=>!item.pending.includes('deployment')),
+    '已部署ETH原曲不得继续报告deployment缺失');
   const repeated = createArchivePlan(getMusicCatalog(), { runId: 'local-test', sourceSha: 'b'.repeat(40), recipients });
   assert.equal(plan.planHash, repeated.planHash);
   assert.deepEqual(plan.items.map(item => item.operationId), repeated.items.map(item => item.operationId));

@@ -26,8 +26,8 @@ export function createArchivePlan(catalog: MusicCatalog, options: {
       metadataUri: deployment.metadataUri, recipient, amount: '1' as const, approvalRef: input?.approvalRef ?? null,
       operationId, operation: 'disabled' as const, feeLimitWei: '0' as const,
       state: 'awaiting_input' as const, archiveMint: structuredClone(deployment.archiveMint),
-      pending: deployment.chainId === 1 ? ['deployment','recipient','budget','signature','production_authorization']
-        : ['recipient','current_balance_proof','production_authorization'] };
+      pending: deployment.chainId === 1 ? ['budget','signature','production_authorization']
+        : ['current_balance_proof','production_authorization'] };
   })).sort((a, b) => a.displayNumber - b.displayNumber || a.chainId - b.chainId);
   if (items.length !== 70 || new Set(items.map(item => `${item.trackId}:${item.chainId}`)).size !== 70) {
     throw new Error('留存目录必须恰为35首×2链且不能重复');

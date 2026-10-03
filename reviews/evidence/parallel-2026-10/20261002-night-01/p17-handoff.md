@@ -205,3 +205,4 @@ OP差异：现有MaterialNFT源码允许转让，不能原地改为SBT。已向�
 - Ethereum ERC1155部署为`0x6c731e5faa26e648cad6f86b1c1e741f0aae136b`，交易`0x1722ef09fb5fb6f1222780e88949232d5eef15a7d91936817638bf185333fff5`，实际费用`0.000516923651523136 ETH`。Optimism原曲SBT部署为`0xa65c9308635c8dd068a314c189e8d77941a7e99c`，交易`0x5b379690cd000879b73fb65570be665c2dd19b35d5df61d63088dfba0579909b`，含L1费合计`0.000005729274754314 ETH`。两份账本均`confirmed`，runtime、角色、35个URI及各自转让规则已读回。
 - 唯一registry现发布35首、双链70个ready坐标，revision为`70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8`；P13 SEMI导出只消费该registry，旧OP资料路由继续可解析。生产领取开关未开启，70项项目留存仍为0/70，SEMI团队未联系。
 - Ethereum发送后的首次恢复检查暴露余额已扣除后无法重建发送前计划的问题；恢复/inspect现使用账本冻结预算重建，sign阶段仍检查实时余额。回归、目录、客户端、OP worker、归档工具、SEMI 8项、项目type和定向lint均通过；没有重复发送。
+- 新C2留存账本绑定源码`6aaf9852228d17d962d534dd67484c01cbd06f4e`与上述revision，70项统一冻结到项目留存地址，operation全部`disabled`、状态全部`awaiting_input`、费用上限0。ETH仍缺实际费用/签名/生产发送授权，OP仍缺发送前余额读回/生产发送授权；本轮未广播这70笔交易。
