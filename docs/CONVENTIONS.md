@@ -65,7 +65,7 @@
 
 ### 3.2 前端
 
-- ✅ P17授权原曲受控例外：沿用Privy外部provider与viem，固定已核验chain/contract/redeem/recipient/amount=1/value=0；凭证来自独立服务端订单。生产原曲签发默认off，未部署/数据库未验不得启用；2026-10-03两项Gate已真实通过，但仍须签发材料、受限领取与恢复验收，不能仅凭部署成功开放。ETH每钱包每首历史领取一次，转出不恢复；恢复先登记旧hash，unknown不得续签/重发。目录与SEMI地址只消费同一注册表，禁止第二份手抄地址。旧OP/Score/Echo发行行为保留。
+- ✅ P17授权原曲受控例外：沿用Privy外部provider与viem，固定已核验chain/contract/redeem/recipient/amount=1/value=0；凭证来自独立服务端订单。生产原曲签发默认off，未部署/数据库未验不得启用；2026-10-03部署/数据库Gate及OP冻结目标worker验证已通过，OP35笔留存回执/余额全部核对后开放OP入口；真实登录点击全链路未验不冒充通过。ETH保持off，仍须签发材料配置、受限领取与恢复验收，不能仅凭部署成功开放。ETH每钱包每首历史领取一次，转出不恢复；恢复先登记旧hash，unknown不得续签/重发。目录与SEMI地址只消费同一注册表，禁止第二份手抄地址。旧OP/Score/Echo发行行为保留。
 - ❌ 前端文件 import `operator-wallet.ts` 或 `OPERATOR_PRIVATE_KEY`（hook 强制）
 - ❌ 前端直接调用平台代付合约（所有 OP 写入走 API Route）
 - ✅ P16 受控例外：已认证外部钱包可用 Privy `ConnectedWallet.getEthereumProvider()` 接入 viem 调用 allowlisted Ethereum ScoreNFT `redeem`；只保留这一套外部钱包发送客户端

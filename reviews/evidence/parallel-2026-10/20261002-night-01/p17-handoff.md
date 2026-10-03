@@ -1,12 +1,12 @@
 # P17 夜间交接
 
-## 当前：OP留存35/35完成，准备开放OP领取（2026-10-03）
+## 当前：OP留存35/35完成，OP领取入口已发布（2026-10-03）
 
 用户明确“先搞OP吧”。OP主网新SBT已按冻结清单真实铸造35笔、每曲1份，nonce19–53连续，接收钱包0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA。每笔calldata、mint事件、规范区块、URI及当前余额均核对，confirmed35/unknown0；费用0.000002327730193134 ETH（含L1），小于冻结总预算0.0000105 ETH。证据p17/archive/op-execution-plan.json及op-execution-proof.json；签名原raw仅留忽略目录，不公开。
 
 RPC曾返回pending低于latest，门禁在广播前停止。只对这种滞后有界重读，真实在途仍拒绝；两次已明确发生在send前的失败（nonce19/30），经独立审查、hash不存在/nonce/角色/预算/L1费/锁复核后只恢复原raw一次，先持久恢复广播标记。未重新签名/换nonce，未把未知广播当作未发。一次只读HTTP失败在第21份签名前停止，账本原样恢复；只读RPC允许一次重试，广播重试仍0。
 
-当前唯一目录revision=e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c；OP35项confirmed，ETH35项awaiting_input，旧OP资产不套用新SBT证明。C1及SEMI8/8与--check通过。拟开启现有Production三个OP门禁；不变更ETH、不转账/跨链。后续部署结果见晨间包。本节优先于下方先前状态。
+当前唯一目录revision=e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c；OP35项confirmed，ETH35项awaiting_input，旧OP资产不套用新SBT证明。C1及SEMI8/8与--check通过。现有Production三个OP门禁已开启并读回（live/1/1）；不变更ETH、不转账/跨链。新部署dpl_D7pykqHUUrL8qqUGyoEXn64pCJMV（源码8414a4e）Ready并已promote，正式域名目录与OP401登录边界通过；证据见晨间包和k2-browser.json的opRelease20261003。真实登录钱包点击全链路未验。本节优先于下方先前状态。
 
 ## 当前整合结论（2026-10-03，优先于下方历史）
 

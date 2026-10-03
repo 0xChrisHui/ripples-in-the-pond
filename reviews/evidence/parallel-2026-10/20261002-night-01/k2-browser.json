@@ -958,5 +958,115 @@
       },
       "aliasVerified": "pond-ripple.xyz -> dpl_6kV74B4k2XSJtF8A6bN83AWVjaxj READY"
     }
+  },
+  "opRelease20261003": {
+    "kind": "http_and_deployment_not_browser",
+    "deployment": {
+      "id": "dpl_D7pykqHUUrL8qqUGyoEXn64pCJMV",
+      "readyState": "READY",
+      "sourceSha": "8414a4e86b348bc7718d95d84140b045fd68c4ef",
+      "projectId": "prj_haw2cownQHfmKmrUaP9etU82xwT4",
+      "url": "ripples-in-the-pond-ktvabl27s-0x991-thomas-projects.vercel.app"
+    },
+    "alias": {
+      "alias": "pond-ripple.xyz",
+      "deploymentId": "dpl_D7pykqHUUrL8qqUGyoEXn64pCJMV"
+    },
+    "flags": {
+      "checkedAt": "2026-10-03T11:50:15.443Z",
+      "flags": [
+        {
+          "key": "MATERIAL_OP_RECIPIENT_SNAPSHOT_READY",
+          "value": "1",
+          "target": [
+            "production"
+          ],
+          "id": "UbwgYkmlrWvvkvsS"
+        },
+        {
+          "key": "MATERIAL_OP_SBT_QUEUE_READY",
+          "value": "1",
+          "target": [
+            "production"
+          ],
+          "id": "DOU432A6um3XCV48"
+        },
+        {
+          "key": "OP_ORIGINAL_SBT_MINT_MODE",
+          "value": "live",
+          "target": [
+            "production"
+          ],
+          "id": "LUXCMm1mjMrAuV0J"
+        }
+      ]
+    },
+    "candidate": {
+      "checkedAt": "2026-10-03T11:54:18.782Z",
+      "mode": "candidate",
+      "sourceSha": "8414a4e86b348bc7718d95d84140b045fd68c4ef",
+      "revision": "e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c",
+      "results": [
+        {
+          "path": "/api/music-catalog",
+          "status": 200,
+          "assertion": "exact_snapshot_35_final_notes"
+        },
+        {
+          "path": "/",
+          "status": 200,
+          "assertion": "page_present_not_notfound"
+        },
+        {
+          "path": "/tracks",
+          "status": 200,
+          "assertion": "page_present_not_notfound"
+        },
+        {
+          "path": "/score/material/1/0x6c731e5faa26e648cad6f86b1c1e741f0aae136b/1",
+          "status": 200,
+          "assertion": "page_present_not_notfound"
+        },
+        {
+          "path": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/35",
+          "status": 200,
+          "assertion": "page_present_not_notfound"
+        },
+        {
+          "path": "/api/material-mint/orders",
+          "status": 401
+        },
+        {
+          "path": "/api/material-mint/op/status",
+          "status": 401,
+          "code": "UNAUTHENTICATED",
+          "assertion": "OP_gate_live_auth_required"
+        }
+      ]
+    },
+    "production": {
+      "checkedAt": "2026-10-03T11:55:21.413Z",
+      "sourceSha": "8414a4e86b348bc7718d95d84140b045fd68c4ef",
+      "mode": "production",
+      "revision": "e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c",
+      "results": [
+        {
+          "path": "/api/music-catalog",
+          "status": 200,
+          "assertion": "exact_snapshot_OP35confirmed_ETH0_35finalnotes"
+        },
+        {
+          "path": "/tracks",
+          "status": 200
+        },
+        {
+          "path": "/api/material-mint/op/status",
+          "status": 401,
+          "code": "UNAUTHENTICATED",
+          "assertion": "OP_gate_live_auth_required"
+        }
+      ]
+    },
+    "limitation": "没有真实登录钱包点击全链路或UI运动验收；ETH保持关闭；首轮正式站fetch网络失败，最小正式站检查随后通过。"
   }
 }
