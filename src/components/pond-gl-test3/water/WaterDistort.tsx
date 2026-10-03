@@ -1,5 +1,4 @@
 'use client';
-
 import { useFBO } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef, type RefObject } from 'react';
@@ -24,13 +23,8 @@ import { getP9QuietWaves, getP9WaterUniform } from '../p9/consumers/p9-water';
 import { getPondRenderNodes, type Track36VisitorState } from '../visitor/track36-state';
 import { getEclipseMix } from '../focus/playback-focus';
 import { drainTrack36Drops } from '../visitor/track36-ripples';
-/**
- * H2/H3/H4 — 全屏动态扭曲水面（真场景 + 水位深度遮罩 + 涟漪交互全集）。
- *
- * 渲真实 GL 场景（基调/背景/球）进内容 FBO → ping-pong 高度场 → 合成折射 pass 全屏扭（接管渲染循环、返回 null）。
- * 球体按没入值拆成水上/水下 FBO；同帧把交互、对象与按键滴水汇入高度场。
- */
-
+import type { ResidentEchoRuntime } from '@/src/types/echo-resident';
+import { writeResidentWaterMask } from '../echo-resident/render/water-mask';
 const SIM_OPTS = {
   type: HalfFloatType,
   format: RGBAFormat,
@@ -53,17 +47,14 @@ const SPHERE_OPTS = {
   stencilBuffer: false,
   generateMipmaps: false,
 };
-
 interface PingPong {
   read: ReturnType<typeof useFBO>;
   write: ReturnType<typeof useFBO>;
 }
-
 const EMPTY_NODES: GlPhysNode[] = []; // glSim 未就绪时占位（无球 → 全屏扭）
-
 export default function WaterDistort(
-  { debug = false, glSim, visitor, sphereDrift = false, depthModel = false, sphereShadow = false, shadowOcclude = false, shadowGlow = false, shadowContact = false, caustics = false, waterZoom = false, pondFloor = false, moonReflect = false, glSpheres = false, pointerInteractive = true, presentationReady = false, onCompositeReady }:
-  { debug?: boolean; glSim?: GlSim; visitor?: RefObject<Track36VisitorState | null>; sphereDrift?: boolean; depthModel?: boolean; sphereShadow?: boolean; shadowOcclude?: boolean; shadowGlow?: boolean; shadowContact?: boolean; caustics?: boolean; waterZoom?: boolean; pondFloor?: boolean; moonReflect?: boolean; glSpheres?: boolean; pointerInteractive?: boolean; presentationReady?: boolean; onCompositeReady?: () => void },
+  { debug = false, glSim, visitor, resident, sphereDrift = false, depthModel = false, sphereShadow = false, shadowOcclude = false, shadowGlow = false, shadowContact = false, caustics = false, waterZoom = false, pondFloor = false, moonReflect = false, glSpheres = false, pointerInteractive = true, presentationReady = false, onCompositeReady }:
+  { debug?: boolean; glSim?: GlSim; visitor?: RefObject<Track36VisitorState | null>; resident?: ResidentEchoRuntime; sphereDrift?: boolean; depthModel?: boolean; sphereShadow?: boolean; shadowOcclude?: boolean; shadowGlow?: boolean; shadowContact?: boolean; caustics?: boolean; waterZoom?: boolean; pondFloor?: boolean; moonReflect?: boolean; glSpheres?: boolean; pointerInteractive?: boolean; presentationReady?: boolean; onCompositeReady?: () => void },
 ) {
   const renderer = useThree((s) => s.gl);
   const canvasSize = useThree((s) => s.size);
@@ -85,7 +76,6 @@ export default function WaterDistort(
   const driftRef = useRef(false);
   const glSimRef = useRef<GlSim | undefined>(glSim);
   useEffect(() => { driftRef.current = sphereDrift; glSimRef.current = glSim; });
-
   const dropSlots = useMemo(() => Array.from({ length: MAX_DROPS }, () => new Vector4()), []);
   const sim: QuadScene = useMemo(() => makeSimScene(heightSize.width, heightSize.height, dropSlots), [dropSlots, heightSize.width, heightSize.height]);
   const spheresInit = useMemo(() => Array.from({ length: MAX_SPHERES }, () => new Vector4()), []);
@@ -98,7 +88,6 @@ export default function WaterDistort(
     disposeQuadScene(sim);
     disposeQuadScene(composite);
   }, [sim, composite]);
-
   useLayoutEffect(() => {
     bufs.current = { read: heightA, write: heightB };
     resetHeightRef.current = true;
@@ -111,7 +100,6 @@ export default function WaterDistort(
     canvas.addEventListener('webglcontextrestored', onRestore);
     return () => canvas.removeEventListener('webglcontextrestored', onRestore);
   }, [renderer, heightA, heightB, heightSize.width, heightSize.height]);
-
   // 指针 + bg-ripple:wave → push 一滴到 pending（坐标 → uv，y 翻转匹配 quad；一次性，不留持续鼠标位）
   useEffect(() => {
     const push = (x: number, y: number, str: number) => {
@@ -156,10 +144,8 @@ export default function WaterDistort(
       window.removeEventListener('bg-ripple:wave', onWave);
     };
   }, [pointerInteractive]);
-
   // 切组 / 重建节点 → 清穿越/尾迹记忆，避免旧球的没入状态触发假溅起
   useEffect(() => { resetRippleFeed(); }, [nodes]);
-
   // 正优先级 = 接管渲染循环（在 SphereInstances priority-0 写完矩阵之后跑）
   useFrame((state) => {
     const t = getRippleTuning();
@@ -168,13 +154,6 @@ export default function WaterDistort(
     const p9 = sampleP9(now);
     const p9Water = getP9WaterUniform(p9);
     const p9Quiet = getP9QuietWaves(p9); const quiet = p9Quiet.length > 0 ? p9Quiet : [{ x: showcasePose.x, y: showcasePose.y, ...sampleShowcase('quiet', now) }];
-    // K1：画布宽高比 → 滴水距离度量校正成正圆（仅度量，不动 sim 数学）
-    // K3：depthModel prop 传进 helper → composite 的深度调制 uniform 每帧刷新
-    // K4：sphereShadow prop 传进 helper → composite 的空中球投影 uniform 每帧刷新
-    // K5：caustics prop + state.clock 传进 helper → 焦散开关 + 游走流光的时间每帧刷新
-    // K6：waterZoom prop 传进 helper → composite 的 uZoomAmount（开=t.zoomAmount/关=0）每帧刷新
-    // K10：pondFloor prop 传进 helper → composite 的 uPondFloor（开=1 混合静止亮底花纹/关=0 现状）每帧刷新
-    // K11：moonReflect prop 传进 helper → composite 的 uMoonReflect（开=1 叠大柔月华倒影/关=0 现状）每帧刷新
     const waterMod = { water: p9.channels.water, moon: p9.channels.moon };
     applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, { dark: sphereShadow, occlude: shadowOcclude, glow: shadowGlow, contact: shadowContact }, caustics, state.clock.getElapsedTime(), waterZoom, pondFloor, moonReflect, waterMod, quiet, p9Water, getEclipseMix());
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
@@ -185,6 +164,7 @@ export default function WaterDistort(
     // 有效水位喂没入判定（全 z 域两端可达 0/1）、原始水位喂 K6 缩放（与 motes/plants/滴水缩放同步）
     const renderNodes = getPondRenderNodes(nodes ?? EMPTY_NODES, visitor?.current ?? null);
     applySpheres(composite, renderNodes, size.w, size.h, getEffectiveWaterLevel(), getWaterLevel(), proj);
+    const residentVisible = resident ? writeResidentWaterMask(composite.mat.uniforms, resident.getSnapshot().pose) : false;
     // 汇集本帧所有滴水：指针/wave（pending）+ 对象涟漪（拖球尾迹/穿越溅起/>6 合并）+ 常驻微波
     const drops = pending.current;
     pending.current = [];
@@ -193,7 +173,6 @@ export default function WaterDistort(
     if (nodes) drops.push(...collectObjectDrops(nodes, size.w, size.h, t, proj));
     const amb = collectAmbientDrop(t);
     if (amb) drops.push(amb);
-    // K6：缩放开时把滴水位置做同款 inverse-zoom 变换（在 writeDrops 内施加，避免改 drop 对象）→ 涟漪显示位置 = 实际鼠标/球位置
     // 与 shader 同款 ZOOM_MIN 下限 → 大幅度/低水位时滴水不被极小/负 zoom 甩飞（与水面缩放一致）
     const iz = waterZoom && t.zoomAmount > 0 ? 1 / Math.max(ZOOM_MIN, 1 + (getWaterLevel() - 0.5) * t.zoomAmount) : 1;
     writeDrops(sim.mat, drops, dropSlots, iz);
@@ -209,12 +188,11 @@ export default function WaterDistort(
       resetHeightRef.current = false;
     }
     renderFrame(state.gl, state.scene, state.camera, targets, { sim, composite, quadCamera: quadCam }, {
-      hasSpheres: glSpheres && renderNodes.length > 0,
+      hasSpheres: glSpheres && (renderNodes.length > 0 || residentVisible),
     });
     compositeFramesRef.current += 1;
     if (compositeFramesRef.current >= 2 && !presentationReady) onCompositeReady?.();
     bufs.current = { read: targets.heightWrite, write: targets.heightRead };
   }, 1);
-
   return null;
 }

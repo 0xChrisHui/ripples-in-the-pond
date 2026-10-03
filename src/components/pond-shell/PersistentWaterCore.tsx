@@ -6,6 +6,7 @@ import type { GLFlags } from '@/src/components/pond-gl-test3/gl-flags';
 import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
 import type { GlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
 import type { Track36VisitorState } from '@/src/components/pond-gl-test3/visitor/track36-state';
+import type { ResidentEchoFrameInput, ResidentEchoRuntime } from '@/src/types/echo-resident';
 
 const PondGL = dynamic(() => import('@/src/components/pond-gl-test3/PondGL'), { ssr: false });
 
@@ -13,6 +14,7 @@ type Props = {
   flags: GLFlags;
   glSim?: GlSim;
   visitor?: RefObject<Track36VisitorState | null>;
+  resident?: { runtime: ResidentEchoRuntime; getFrameInput: () => ResidentEchoFrameInput };
   scenePresence?: RefObject<number>;
   reducedSceneMotion?: boolean;
   pointerInteractive?: boolean;

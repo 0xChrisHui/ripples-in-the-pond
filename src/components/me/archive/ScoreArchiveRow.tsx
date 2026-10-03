@@ -78,7 +78,7 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
         rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
       });
     } else scoreOrigin.clear();
-    transition.navigate(href);
+    transition.navigate(href, event.detail === 0);
   };
 
   useEffect(() => {

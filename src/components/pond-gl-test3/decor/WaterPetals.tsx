@@ -14,6 +14,7 @@ import type { GlSim } from '../spheres/use-gl-sim';
 import { getShowcasePose } from '../showcase/showcase-state';
 import { sampleP9 } from '../p9/runtime/p9-sampler';
 import { applyP9PetalMotion, getP9PetalCount, getP9PetalVisual } from '../p9/consumers/p9-petals';
+import type { ResidentEchoRuntime } from '@/src/types/echo-resident';
 
 /**
  * 水面花瓣层（/test1 WaterPetals 的 fork，复刻 references/flower-water-ripples）：GL 水面之上的 2D overlay canvas。
@@ -23,10 +24,12 @@ import { applyP9PetalMotion, getP9PetalCount, getP9PetalVisual } from '../p9/con
  *   水下球不抠（花瓣仍盖其上）。出水程度 = 1−getSubmerge(renderDepth)，与扭曲水面遮罩同口径。
  * 只在挂载时（flowerPetals 开）跑；卸载即停。pointer-events-none 不挡交互。
  */
-export default function WaterPetals({ glSim }: { glSim?: GlSim }) {
+export default function WaterPetals({ glSim, resident }: { glSim?: GlSim; resident?: ResidentEchoRuntime }) {
   const cvRef = useRef<HTMLCanvasElement>(null);
   const glSimRef = useRef<GlSim | undefined>(glSim);
+  const residentRef = useRef(resident);
   useEffect(() => { glSimRef.current = glSim; }); // 每次 render 同步最新 glSim（切组后 nodes 换新数组）
+  useEffect(() => { residentRef.current = resident; }, [resident]);
 
   useEffect(() => {
     const cv = cvRef.current;
@@ -106,6 +109,12 @@ export default function WaterPetals({ glSim }: { glSim?: GlSim }) {
           ctx.fill();
         }
         ctx.restore();
+      }
+      const pose = residentRef.current?.getSnapshot().pose;
+      if (pose && pose.effectivePresence > 0 && pose.bodyRadiusPx > 0) {
+        ctx.save(); ctx.globalCompositeOperation = 'destination-out';
+        ctx.globalAlpha = pose.effectivePresence * (1 - getSubmerge(pose.depth));
+        ctx.beginPath(); ctx.arc(pose.sx, pose.sy, pose.bodyRadiusPx, 0, Math.PI * 2); ctx.fill(); ctx.restore();
       }
       raf = requestAnimationFrame(loop);
     };

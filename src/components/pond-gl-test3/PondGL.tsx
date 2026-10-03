@@ -1,5 +1,4 @@
 'use client';
-
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
 import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
@@ -20,12 +19,11 @@ import type { GlSim } from './spheres/use-gl-sim';
 import AutoDpr from './auto-dpr';
 import Track36Visitor from './visitor/Track36Visitor';
 import type { Track36VisitorState } from './visitor/track36-state';
+import { EchoResidentSphere } from './echo-resident/render/EchoResidentSphere';
+import type { ResidentEchoFrameInput, ResidentEchoRuntime } from '@/src/types/echo-resident';
 import { getEclipseMix } from './focus/playback-focus';
 import SceneCover from './presentation/SceneCover';
-
 /** 生产与沙盒共用的水塘 GL 入口；故障时保留静态夜塘，不重挂 Canvas。 */
-
-// 基调层：全屏裁剪空间平面，按 artDir 输出深色水体基调或纯黑。
 function BaseTone({ artDir }: { artDir: GLFlags['artDir'] }) {
   const matRef = useRef<ShaderMaterial>(null);
   const eclipseTex = useTexture('/pond-eclipse-black.svg');
@@ -48,11 +46,8 @@ function BaseTone({ artDir }: { artDir: GLFlags['artDir'] }) {
     </mesh>
   );
 }
-
-// React 错误边界：WebGL 创建失败 / 渲染抛错时渲染 fallback（J1 起 = GlFallback 夜塘，不再 null/白屏）。
 // class 是 React 唯一支持错误边界的形式（CONVENTIONS §4.2 的合理例外）。
 export type GlHealth = 'unavailable' | 'healthy' | 'lost' | 'error' | 'forced';
-
 class GLErrorBoundary extends Component<{
   children: ReactNode;
   fallback: ReactNode;
@@ -72,7 +67,6 @@ class GLErrorBoundary extends Component<{
     return this.props.children;
   }
 }
-
 /** Canvas 不重挂；只把 context 生命周期同步给内外两层 UI。 */
 function GlHealthReporter({ report }: { report: (health: GlHealth) => void }) {
   const renderer = useThree((s) => s.gl);
@@ -92,7 +86,6 @@ function GlHealthReporter({ report }: { report: (health: GlHealth) => void }) {
   }, [renderer]);
   return null;
 }
-
 export interface PondGLProps {
   flags: GLFlags;
   glSim?: GlSim;
@@ -100,12 +93,13 @@ export interface PondGLProps {
   onPerformanceChange?: (degraded: boolean) => void;
   onHealthChange: (health: GlHealth) => void;
   visitor?: RefObject<Track36VisitorState | null>;
+  resident?: { runtime: ResidentEchoRuntime; getFrameInput: () => ResidentEchoFrameInput };
   scenePresence?: RefObject<number>;
   reducedSceneMotion?: boolean;
   onSceneReadyChange?: (ready: boolean) => void;
 }
-
-export default function PondGL({ flags, glSim, pointerInteractive = true, onPerformanceChange, onHealthChange, visitor, scenePresence, reducedSceneMotion = false, onSceneReadyChange }: PondGLProps) {
+export default function PondGL({ flags, glSim, pointerInteractive = true, onPerformanceChange, onHealthChange, visitor,
+  resident, scenePresence, reducedSceneMotion = false, onSceneReadyChange }: PondGLProps) {
   const [mountId] = useState(() => `pond-${crypto.randomUUID()}`);
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production' && flags.rtt && flags.waterFx) {
@@ -183,16 +177,22 @@ export default function PondGL({ flags, glSim, pointerInteractive = true, onPerf
               红线「水下不压黑/不虚化」→ 水下球保持可见、靠合成 pass 的深度折射(K3 d^a)体现浮沉，不消失。 */}
           {flags.glSpheres && glSim && <SphereInstances glSim={glSim} waterOn={flags.water} motionOn={flags.sphereMotion} sphereDrift={flags.sphereDrift} separatePass={flags.waterFx} colorGrade={flags.colorGrade} life={pickLifeFlags(flags)} scenePresence={scenePresence} reducedSceneMotion={reducedSceneMotion} />}
           {flags.glSpheres && visitor && <Track36Visitor visitor={visitor} scenePresence={scenePresence} reducedSceneMotion={reducedSceneMotion} />}
+          {flags.glSpheres && resident && <EchoResidentSphere {...resident} separatePass={flags.waterFx}
+            colorGrade={flags.colorGrade} />}
           {/* H1 spike：RTT 验证全屏盖在最上（renderOrder 10），隔离实验、默认关 */}
           {flags.rtt && <RttSpike />}
           {/* H2/H3：扭曲水面——渲真场景进 FBO 全屏折射扭曲 + 水位遮罩（接管渲染循环，返回 null） */}
-          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} visitor={visitor} glSpheres={flags.glSpheres} sphereDrift={flags.sphereDrift} depthModel={flags.depthModel} sphereShadow={flags.sphereShadow} shadowOcclude={flags.shadowOcclude} shadowGlow={flags.shadowGlow} shadowContact={flags.shadowContact} caustics={flags.caustics} waterZoom={flags.waterZoom} pondFloor={flags.pondFloor} moonReflect={flags.moonReflect} pointerInteractive={pointerInteractive && sceneReady} presentationReady={sceneReady} onCompositeReady={reportCompositeReady} />}
+          {flags.waterFx && <WaterDistort debug={flags.waterDbg} glSim={glSim} visitor={visitor} resident={resident?.runtime}
+            glSpheres={flags.glSpheres} sphereDrift={flags.sphereDrift} depthModel={flags.depthModel} sphereShadow={flags.sphereShadow}
+            shadowOcclude={flags.shadowOcclude} shadowGlow={flags.shadowGlow} shadowContact={flags.shadowContact} caustics={flags.caustics}
+            waterZoom={flags.waterZoom} pondFloor={flags.pondFloor} moonReflect={flags.moonReflect}
+            pointerInteractive={pointerInteractive && sceneReady} presentationReady={sceneReady} onCompositeReady={reportCompositeReady} />}
           {/* J3：低 FPS 自动降 DPR 保流畅（仅测时长 + setDpr，不渲染） */}
           {flags.autoDegrade && <AutoDpr onPerformanceChange={onPerformanceChange} />}
         </Canvas>
       </GLErrorBoundary>
       {/* 水面花瓣层（2D overlay，z-10 在 GL 之上）：出水球用 project() 抠洞 → 球盖花瓣。headless 跟随同源涟漪 */}
-      {sceneReady && !flags.forceFallback && flags.flowerPetals && <WaterPetals glSim={glSim} />}
+      {sceneReady && !flags.forceFallback && flags.flowerPetals && <WaterPetals glSim={glSim} resident={resident?.runtime} />}
       {/* J1：context lost / forceFallback → 盖兜底夜塘（Canvas 仍在底下跑，撤掉即恢复） */}
       <SceneCover artDir={flags.artDir} visible={showCover} />
     </div>

@@ -14,6 +14,7 @@ export type PondSceneDescriptor = {
   flags: GLFlags;
   glSim?: GlSim;
   visitor?: RefObject<Track36VisitorState | null>;
+  scenePresence?: RefObject<number>;
   pointerInteractive?: boolean;
   onPerformanceChange?: (degraded: boolean) => void;
 };

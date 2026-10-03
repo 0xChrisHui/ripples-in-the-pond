@@ -1,5 +1,4 @@
 'use client';
-
 import {
   createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode,
 } from 'react';
@@ -9,16 +8,14 @@ import { initialRouteTransaction, routeTransactionReducer } from './transition/r
 import {
   pathWithoutHash, routeForPath, type PondRoute, type PondRouteEvent, type PondRouteTransaction,
 } from './transition/types';
-
 export type PondTransitionPhase = 'home' | 'leaving-home' | 'archive' | 'entering-home' | 'score';
-
 type TransitionValue = {
   transaction: PondRouteTransaction;
   phase: PondTransitionPhase;
   destination: string | null;
   duration: number;
   archiveReady: boolean;
-  navigate: (href: string) => number;
+  navigate: (href: string, restoreFocus?: boolean) => number;
   prefetch: (href: string) => void;
   cancel: (generation?: number) => void;
   reportVisualReady: (owner: PondRoute, generation?: number) => void;
@@ -28,9 +25,7 @@ type TransitionValue = {
   waitForVisualReady: (generation?: number, ready?: () => boolean,
     failed?: () => boolean) => Promise<boolean>;
 };
-
 const PondTransitionContext = createContext<TransitionValue | null>(null);
-
 function legacyPhase(tx: PondRouteTransaction, archiveReady: boolean): PondTransitionPhase {
   if (tx.stage === 'stable') return tx.current;
   if (tx.stage === 'preparing') return tx.current;
@@ -39,7 +34,6 @@ function legacyPhase(tx: PondRouteTransaction, archiveReady: boolean): PondTrans
   if (tx.current === 'home' && tx.target === 'archive') return 'leaving-home';
   return tx.target;
 }
-
 function focusEntry() {
   const active = document.activeElement;
   if (active && active !== document.body && !active.closest('[inert]')) return;
@@ -47,7 +41,6 @@ function focusEntry() {
     .find((node) => !node.closest('[inert]') && node.getClientRects().length > 0)
     ?.focus({ preventScroll: true });
 }
-
 /** 导航、视觉就绪、揭幕和收场由同一 generation 事务协调。 */
 export function PondTransitionProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -57,8 +50,8 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
   const [duration, setDuration] = useState(520);
   const [archiveReady, setArchiveReadyState] = useState(false);
   const settleTimer = useRef<number | null>(null);
+  const focusGeneration = useRef<number | null>(null);
   const cancelledNavigation = useRef<{ href: string; restore: string; seen: boolean } | null>(null);
-
   const apply = useCallback((event: PondRouteEvent, sync = false) => {
     const next = routeTransactionReducer(transactionRef.current, event);
     if (next === transactionRef.current) return next;
@@ -67,7 +60,6 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     else setTransaction(next);
     return next;
   }, []);
-
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
@@ -76,36 +68,34 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     reduced.addEventListener('change', sync); fine.addEventListener('change', sync);
     return () => { reduced.removeEventListener('change', sync); fine.removeEventListener('change', sync); };
   }, []);
-
   const reveal = useCallback((generation = transactionRef.current.generation) => {
     const current = transactionRef.current;
     if (current.generation !== generation || !current.targetVisualReady) return;
     apply({ type: 'reveal', generation, at: performance.now() }, true);
   }, [apply]);
-
   const reportVisualReady = useCallback((owner: PondRoute, generation = transactionRef.current.generation) => {
     const next = apply({ type: 'ready', generation, owner, at: performance.now() });
     if (next.generation === generation && next.targetVisualReady && next.stage === 'preparing') {
       queueMicrotask(() => reveal(generation));
     }
   }, [apply, reveal]);
-
   const settle = useCallback((generation = transactionRef.current.generation) => {
     const current = transactionRef.current;
     if (current.generation !== generation || pathWithoutHash(current.href) !== pathname) return;
     if (current.stage === 'preparing' && !current.targetVisualReady) return;
     if (settleTimer.current != null) window.clearTimeout(settleTimer.current);
     apply({ type: 'settle', generation, pathname, at: performance.now() }, true);
-    focusEntry();
+    if (focusGeneration.current === generation) focusEntry();
+    focusGeneration.current = null;
   }, [apply, pathname]);
-
-  const navigate = useCallback((href: string) => {
+  const navigate = useCallback((href: string, restoreFocus = false) => {
     cancelledNavigation.current = null;
     const path = pathWithoutHash(href);
     if (path === window.location.pathname && transactionRef.current.stage === 'stable') {
       router.push(href); return transactionRef.current.generation;
     }
     const next = apply({ type: 'start', target: routeForPath(path), href: path, at: performance.now() }, true);
+    focusGeneration.current = restoreFocus ? next.generation : null;
     // Score has its own immediate loading boundary. Prefetching the dynamic RSC
     // immediately before push can leave Next using the partial loading response.
     if (next.target !== 'score') router.prefetch(path);
@@ -113,7 +103,6 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     if (next.target === 'home') reportVisualReady('home', next.generation);
     return next.generation;
   }, [apply, reportVisualReady, router]);
-
   const cancel = useCallback((generation = transactionRef.current.generation) => {
     const current = transactionRef.current;
     if (current.generation !== generation) return;
@@ -121,7 +110,6 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     cancelledNavigation.current = { href: current.href, restore: current.currentHref, seen: false };
     router.replace(current.currentHref);
   }, [apply, router]);
-
   const waitForVisualReady = useCallback(async (generation: number | undefined,
     ready: () => boolean = () => false, failed: () => boolean = () => false) => {
     const expected = generation ?? transactionRef.current.generation;
@@ -134,11 +122,9 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     }
     return false;
   }, []);
-
   const setArchiveReady = useCallback((ready: boolean) => {
     setArchiveReadyState(ready);
   }, []);
-
   useEffect(() => {
     const tx = transactionRef.current;
     const landed = routeForPath(pathname);
@@ -160,7 +146,6 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     if (settleTimer.current != null) window.clearTimeout(settleTimer.current);
     settleTimer.current = window.setTimeout(() => settle(tx.generation), duration + 120);
   }, [apply, duration, pathname, reportVisualReady, router, settle, transaction.stage]);
-
   useEffect(() => {
     const onPopState = () => {
       cancelledNavigation.current = null;
@@ -181,16 +166,13 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('keydown', onKeyDown);
     };
   }, [apply, cancel, reportVisualReady]);
-
   useEffect(() => {
     if (transaction.stage !== 'revealing') return;
     apply({ type: 'settling', generation: transaction.generation });
   }, [apply, transaction.generation, transaction.stage]);
-
   useEffect(() => () => {
     if (settleTimer.current != null) window.clearTimeout(settleTimer.current);
   }, []);
-
   const phase = legacyPhase(transaction, archiveReady);
   const value = useMemo<TransitionValue>(() => ({
     transaction, phase, destination: transaction.stage === 'stable' ? null : transaction.href,
@@ -200,5 +182,4 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     setArchiveReady, settle, transaction, waitForVisualReady]);
   return <PondTransitionContext.Provider value={value}>{children}</PondTransitionContext.Provider>;
 }
-
 export function usePondTransition() { return useContext(PondTransitionContext); }

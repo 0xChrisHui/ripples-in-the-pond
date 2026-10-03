@@ -17,7 +17,7 @@ export default function PondRouteLink({ href, children, onClick, onMouseEnter, .
     if (event.defaultPrevented || !transition || event.button !== 0 || event.metaKey
       || event.ctrlKey || event.shiftKey || event.altKey || props.target === '_blank') return;
     event.preventDefault();
-    transition.navigate(href);
+    transition.navigate(href, event.detail === 0);
   };
   return (
     <Link href={href} {...props} onClick={handleClick}

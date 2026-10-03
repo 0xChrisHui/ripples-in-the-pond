@@ -10,6 +10,7 @@ import { prefersReducedMotion } from '../reduced-motion';
 import {
   advanceEclipseMix, clearPlaybackFocus, resetEclipseMix, setPlaybackFocus,
 } from './playback-focus';
+import type { ResidentEchoRuntime } from '@/src/types/echo-resident';
 
 function syncCss(value: number, active: boolean): void {
   document.body.style.setProperty('--pond-eclipse-mix', value.toFixed(4));
@@ -21,6 +22,7 @@ export function useEclipseTransition(
   glSim: GlSim,
   visitor: RefObject<Track36VisitorState | null>,
   playingId: string | null,
+  resident?: { runtime: ResidentEchoRuntime; playbackId: string },
 ): void {
   const playerRef = useRef(playingId);
   useEffect(() => { playerRef.current = playingId; }, [playingId]);
@@ -29,12 +31,17 @@ export function useEclipseTransition(
     let raf = 0, last = performance.now();
     const loop = (now: number) => {
       const trackId = playerRef.current;
-      const node = trackId
+      const residentPose = trackId && trackId === resident?.playbackId
+        ? resident.runtime.getSnapshot().pose : null;
+      const node = trackId && !residentPose
         ? getPondRenderNodes(glSim.nodes, visitor.current).find(
           (candidate) => candidate.id === trackId,
         )
         : null;
-      if (trackId && node && node.x != null && node.y != null) {
+      if (trackId && residentPose && residentPose.effectivePresence > 0) {
+        setPlaybackFocus({ active: true, trackId, x: residentPose.sx / innerWidth,
+          y: residentPose.sy / innerHeight, scale: residentPose.bodyRadiusPx / 50 });
+      } else if (trackId && node && node.x != null && node.y != null) {
         const { mx, my } = getPointerFx(); const camera = getCameraFx();
         const ctx: ProjCtx = {
           cx: innerWidth / 2, cy: innerHeight / 2, mx, my,
@@ -48,7 +55,7 @@ export function useEclipseTransition(
           scale: node.radius * pose.scale / 50,
         });
       } else clearPlaybackFocus();
-      const isFocused = !!trackId && !!node;
+      const isFocused = !!trackId && (!!node || !!residentPose?.effectivePresence);
       const mix = advanceEclipseMix(isFocused ? 1 : 0, now - last, prefersReducedMotion());
       syncCss(mix, isFocused);
       last = now;
@@ -59,5 +66,5 @@ export function useEclipseTransition(
       cancelAnimationFrame(raf); clearPlaybackFocus(); resetEclipseMix(); syncCss(0, false);
       document.body.style.removeProperty('--pond-eclipse-mix');
     };
-  }, [glSim.nodes, visitor]);
+  }, [glSim.nodes, resident?.playbackId, resident?.runtime, visitor]);
 }
