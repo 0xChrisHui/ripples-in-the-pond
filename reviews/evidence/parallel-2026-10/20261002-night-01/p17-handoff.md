@@ -198,3 +198,10 @@ OP差异：现有MaterialNFT源码允许转让，不能原地改为SBT。已向�
 最终交付代码SHA `44664144777039be5a4088210243b674b32b8793`：一次`npm run build -- --webpack`退出0，57静态页，buildId `7qjULHmcekOojLZTdFcSn`；复用原依赖，既有Privy可选模块/middleware警告不影响构建。3115新产物PID25536、LOCAL_REVIEW_ONLY=1。首页/曲目馆/我的/原曲订单列表与合法ID的未登录详情/同源原曲2均HTTP200；/score为307到/tracks。非法和零orderId返回notFound/noindex，旧P16保留/me?mintOrder目标；这两类因流式响应HTTP200，不记录成HTTP404/307。第一次HTTP探针误要求未登录曲目馆有仅认证状态显示的订单入口、后续误要求流式notFound的HTTP状态，核对实际响应后修正探针，未为“救绿”改产品代码。目录API/页面快照仍35曲同revision；原曲私有GET、prepare/submission、旧OP收藏、cron、短信均503。以上不是登录/钱包/数据库实际验收。
 
 原目录只读复核：HEAD仍001a21d，index空，77项status和tracked binary patch与K0备份逐行一致；没有修改原工作区或运行外部写入。UI按用户指令延期；现有SQL/角色/两链部署/70项留存/SEMI相关外部缺项未被本地通过代替。
+
+## 2026-10-03 — 生产依赖与两链部署闭环
+
+- 用户逐项授权后，生产迁移059–062已执行；原10个用户、35首曲目、7条队列保留，新原曲表为空，生产发行策略仍为关闭。两份合集JSON以0费用永久上传，ETH为`ar://LjA2sgPArVOFL_gpPZmOaFBqXzb5VKTCINGAy7cKGQw`，OP为`ar://JWV5HPaY5-Vjq0iVhadIzT8YrpNP9H-qhfczm6bKrmA`，双网关字节/hash/MIME一致。
+- Ethereum ERC1155部署为`0x6c731e5faa26e648cad6f86b1c1e741f0aae136b`，交易`0x1722ef09fb5fb6f1222780e88949232d5eef15a7d91936817638bf185333fff5`，实际费用`0.000516923651523136 ETH`。Optimism原曲SBT部署为`0xa65c9308635c8dd068a314c189e8d77941a7e99c`，交易`0x5b379690cd000879b73fb65570be665c2dd19b35d5df61d63088dfba0579909b`，含L1费合计`0.000005729274754314 ETH`。两份账本均`confirmed`，runtime、角色、35个URI及各自转让规则已读回。
+- 唯一registry现发布35首、双链70个ready坐标，revision为`70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8`；P13 SEMI导出只消费该registry，旧OP资料路由继续可解析。生产领取开关未开启，70项项目留存仍为0/70，SEMI团队未联系。
+- Ethereum发送后的首次恢复检查暴露余额已扣除后无法重建发送前计划的问题；恢复/inspect现使用账本冻结预算重建，sign阶段仍检查实时余额。回归、目录、客户端、OP worker、归档工具、SEMI 8项、项目type和定向lint均通过；没有重复发送。

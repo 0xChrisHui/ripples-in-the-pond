@@ -12,11 +12,11 @@ import { encodeAbiParameters, encodeEventTopics, parseAbi, zeroAddress, type Hex
 const scratch = mkdtempSync(join(tmpdir(), 'ripples-archive-'));
 const cli = resolve('scripts/p17/archive/dry-run.ts');
 const tsx = resolve('node_modules/tsx/dist/cli.mjs');
-const relative = 'reviews/evidence/parallel-2026-10/20261002-night-01/p17/archive/archive-ledger.json';
+const relative = 'reviews/evidence/parallel-2026-10/20261002-night-01/p17/archive/archive-ledger-c2.json';
 const destination = join(scratch, relative);
 async function main() { try {
   mkdirSync(resolve(destination, '..'), { recursive: true });
-  const original = JSON.parse(readFileSync(relative, 'utf8'));
+  const original = createArchivePlan(getMusicCatalog(), { runId: '20261002-night-01', sourceSha: 'a'.repeat(40) });
   original.items[0].archiveMint.state = 'unknown';
   original.items[0].archiveMint.txHash = `0x${'12'.repeat(32)}`;
   writeFileSync(destination, JSON.stringify(original));
@@ -27,6 +27,8 @@ async function main() { try {
   assert.equal(unknown.archiveMint.txHash, original.items[0].archiveMint.txHash);
   assert.equal(recovered.items.length, 70);
   console.log('留存CLI：unknown/hash保留，70项未扩张，通过');
+  const historical=JSON.parse(readFileSync('reviews/evidence/parallel-2026-10/20261002-night-01/p17/archive/archive-ledger.json','utf8'));
+  assert.throws(()=>mergeArchiveLedger(original,historical), '旧revision账本必须保留且拒绝被C2覆盖');
   const before = readFileSync(destination, 'utf8');
   writeFileSync(`${destination}.lock`, '另一写入者');
   assert.throws(() => execFileSync(process.execPath, [tsx, cli], { cwd: scratch, stdio: 'pipe' }));

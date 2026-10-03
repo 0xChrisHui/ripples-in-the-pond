@@ -1,12 +1,12 @@
 import '../../_env';
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { createPublicClient, createWalletClient, getAddress, http, keccak256, parseAbi, stringToHex, type Abi, type Hex } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { Redis } from '@upstash/redis';
 import { getMusicCatalog } from '../../../src/lib/music-catalog/asset-registry';
 import metadata from '../../../src/lib/music-catalog/data/metadata-source.json';
-import { makeDeploymentPlan, type DeploymentInput, type DeploymentPlan } from './deployment-plan';
+import { balanceForPlan, makeDeploymentPlan, type DeploymentInput, type DeploymentPlan } from './deployment-plan';
 import { withDeploymentLedger } from './deployment-ledger';
 import { runDeployment, type DeploymentAdapter } from './deployment-inspect';
 type Artifact={abi:Abi;bytecode:{object:Hex};deployedBytecode:{object:Hex;immutableReferences?:Record<string,{start:number;length:number}[]>};rawMetadata?:string};
@@ -53,8 +53,11 @@ async function main() {
     .update(artifact.rawMetadata??'').digest('hex');
   const {rpcEnv:_rpc,privateKeyEnv:_key,expectedPlanHash:_expected,executionLeaseRef:_lease,...publicConfig}=config;
   void _rpc; void _key; void _expected; void _lease;
+  const ledgerState=existsSync(ledgerFile)?(JSON.parse(readFileSync(ledgerFile,'utf8')) as {state?:string}).state:undefined;
+  const actualBalance=String(await client.getBalance({address:account.address}));
   const input={...publicConfig,sender:account.address,sourceHash:`0x${source}`,abi:artifact.abi,bytecode:artifact.bytecode.object,
-    tokenIds:tracks.map(track=>String(track.displayNumber)),uris,balanceWei:String(await client.getBalance({address:account.address}))};
+    tokenIds:tracks.map(track=>String(track.displayNumber)),uris,
+    balanceWei:balanceForPlan(mode,ledgerState,actualBalance,publicConfig.maxCostWei)};
   const plan=makeDeploymentPlan(input);
   if(mode==='--execute'&&config.expectedPlanHash!==plan.planHash)throw new Error('execute必须与登记计划hash完全一致');
   if(mode==='--execute'&&!config.executionLeaseRef?.trim())throw new Error('execute缺少总控独占写入租约记录');

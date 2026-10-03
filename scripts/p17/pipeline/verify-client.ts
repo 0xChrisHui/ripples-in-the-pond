@@ -3,7 +3,7 @@ import { createMaterialMintClient } from '../../../src/features/material-catalog
 import { rememberMaterialHash, readMaterialHash, forgetMaterialHash } from '../../../src/features/material-catalog/mint/attempt-cache';
 import { getMusicCatalog } from '../../../src/lib/music-catalog/asset-registry';
 import type { MaterialVoucher } from '../../../src/features/material-catalog/mint/wallet-send';
-import type { Hex } from 'viem';
+import { getAddress, type Hex } from 'viem';
 import { parseMaterialOrder } from '../../../src/features/material-catalog/mint/order-model';
 import { sendMaterialVoucher } from '../../../src/features/material-catalog/mint/wallet-send';
 
@@ -16,10 +16,11 @@ async function main() {
   } });
   try {
     const id = `0x${'ab'.repeat(32)}` as Hex, hash = `0x${'cd'.repeat(32)}` as Hex;
-    const address = `0x${'12'.repeat(20)}` as const, contract = `0x${'34'.repeat(20)}` as const;
-    const row = { orderId: id, trackId: getMusicCatalog().tracks[0].trackId, chainId: 1 as const,
+    const catalog=getMusicCatalog(), deployment=catalog.tracks[0].deployments.find((item)=>item.chainId===1)!;
+    const address = `0x${'12'.repeat(20)}` as const, contract = getAddress(deployment.contractAddress!);
+    const row = { orderId: id, trackId: catalog.tracks[0].trackId, chainId: 1 as const,
       contractAddress: contract, tokenId: '1', recipientAddress: address, amount: 1,
-      metadataUri: `ar://${'a'.repeat(43)}`, catalogRevision: 'a'.repeat(64),
+      metadataUri: deployment.metadataUri!, catalogRevision: catalog.revision,
       status: 'unknown', version: 3, digest: id, txHash: null };
     const wallet = { address, switchChain: async () => { throw Error('夹具不能切真实链'); },
       getEthereumProvider: async () => { throw Error('夹具不能访问钱包'); } };
@@ -83,13 +84,14 @@ async function main() {
     await assert.rejects(() => client.sendOrder(id), /冻结订单/);
     assert.equal(sends, sentBeforeRecovery, '响应换订单不得触发钱包');
     const beforePrepare = requests.length;
-    await assert.rejects(() => client.prepareOrder(row.trackId), /尚未部署/);
-    assert.equal(requests.length, beforePrepare, '未部署不能调用真实prepare');
+    assert.equal((await client.prepareOrder(row.trackId)).orderId, id);
+    assert.deepEqual(requests.slice(beforePrepare), [`GET:orders?trackId=${encodeURIComponent(row.trackId)}`]);
     const orders = await client.listOrders(row.trackId); assert.equal(orders[0].orderId, id);
     for (const mutation of [{ chainId: 10 }, { amount: 2 }, { status: 'invented' }, { version: -1 }, { recipientAddress: '0x0' }]) {
       assert.throws(() => parseMaterialOrder({ ...row, ...mutation }), '非法链/数量/状态/接收地址不得进入订单视图');
     }
-    await assert.rejects(() => sendMaterialVoucher({ ...row, status: undefined, digest: id, signature: `0x${'11'.repeat(65)}`,
+    await assert.rejects(() => sendMaterialVoucher({ ...row, contractAddress:`0x${'34'.repeat(20)}`, status: undefined,
+      digest: id, signature: `0x${'11'.repeat(65)}`,
       authorizer: address, authorization: { orderId: id, tokenId: '1', amount: '1', recipient: address, tokenURIHash: id,
         deadline: '12345678900' } } as MaterialVoucher, wallet, {
       attempt: async () => { throw Error('未部署不能占用attempt'); }, outcome: async () => { throw Error('不能发交易'); },
@@ -103,7 +105,7 @@ async function main() {
     assert.equal(requests.length, beforeInvalid, '非法手工hash不能发HTTP或钱包请求');
     Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => { throw Error('缓存不可读'); } } });
     assert.equal(readMaterialHash(identity), null, '缓存不可用不应阻断真实订单查询与手工恢复');
-    console.log('原曲客户端：unknown旧hash优先/不重发、丢回报恢复、CAS、换用户/钱包隔离、冻结凭证和未部署拒绝，通过（I/O夹具）');
+    console.log('原曲客户端：unknown旧hash优先/不重发、丢回报恢复、CAS、换用户/钱包隔离、同源坐标与坏凭证拒绝，通过（I/O夹具）');
   } finally {
     if (previous) Object.defineProperty(globalThis, 'localStorage', previous); else Reflect.deleteProperty(globalThis, 'localStorage');
   }

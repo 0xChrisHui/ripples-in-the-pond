@@ -2,6 +2,7 @@ import type { ArchiveMint, Verification, MusicCollection } from '../types';
 import opProof from './op-source-proof.json';
 import echoProof from './echo-source-proof.json';
 import scoreProof from './score-source-proof.json';
+import deployedProof from './original-deployment-proof.json';
 
 export const OP_MATERIAL = '0x03504aeb95ebe3dc8c427b7b147f873f9948a299';
 export const OP_MATERIAL_URI = 'ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/{id}.json';
@@ -13,10 +14,18 @@ export const awaitingArchive = (): ArchiveMint => ({
   blockHash: null, logIndex: null, verifiedAt: null, proof: null,
 });
 // 新SBT尚未部署；只能在真实证明与同源目录接线完成后登记地址，禁止用旧OP合约代替。
-export const OP_ORIGINAL_SBT: { contractAddress: string | null; soulboundVerified: boolean; verification: Verification } = {
-  contractAddress: null, soulboundVerified: false,
-  verification: unknownProof('2026-10-03用户批准新增OP原曲SBT', '本地实现，不代表实际部署/不可转让链读回'),
-};
+const deploymentSource = 'reviews/evidence/parallel-2026-10/20261002-night-01/p17/contracts/ethereum-deployment-ledger.json + optimism-deployment-ledger.json + permanent-proof.json';
+export function deployedOriginalVerification(chainId: 1 | 10): Verification {
+  const proof=chainId===1?deployedProof.ethereum:deployedProof.optimism;
+  return { source: deploymentSource, verifiedAt: deployedProof.checkedAt, blockNumber: proof.blockNumber,
+    bytecode: proof.runtimeVerified, standard: proof.rolesVerified, uri: proof.urisVerified,
+    media: opProof.results.length===35&&opProof.results.every((item)=>item.media&&item.metadata),
+    reason: chainId===1?'部署回执、runtime、角色、35 URI及终身领取规则已核验；复用既有永久音频'
+      :'部署回执、runtime、角色、35 URI及不可转让读回已核验；复用既有永久音频' };
+}
+export const ETH_ORIGINALS = deployedProof.ethereum.contractAddress;
+export const OP_ORIGINAL_SBT = { contractAddress: deployedProof.optimism.contractAddress,
+  soulboundVerified: deployedProof.optimism.soulbound, verification: deployedOriginalVerification(10) };
 export function originalVerification(trackId: string): Verification {
   const row=opProof.results.find((item)=>item.trackId===trackId);
   return {source:'reviews/evidence/parallel-2026-10/20261002-night-01/p17/inventory/op-chain-proof.json + permanent-proof.json',
@@ -39,6 +48,12 @@ const scoreVerification: Verification = {
 };
 // 历史部署记录提供真实坐标；缺少本次有效读回时不进入 ready 清单。
 export const knownCollections: MusicCollection[] = [
+  { kind: 'original', chainId: 10, contractAddress: OP_ORIGINAL_SBT.contractAddress, standard: 'ERC1155',
+    metadataMethod: 'uri', playbackKind: 'audio', enabled: originalReady(OP_ORIGINAL_SBT.verification),
+    verification: OP_ORIGINAL_SBT.verification },
+  { kind: 'original', chainId: 1, contractAddress: ETH_ORIGINALS, standard: 'ERC1155',
+    metadataMethod: 'uri', playbackKind: 'audio', enabled: originalReady(deployedOriginalVerification(1)),
+    verification: deployedOriginalVerification(1) },
   { kind: 'original', chainId: 10, contractAddress: OP_MATERIAL, standard: 'ERC1155',
     metadataMethod: 'uri', playbackKind: 'audio', enabled: opProof.results.length===35 && opProof.results.every((item)=>originalReady(originalVerification(item.trackId))),
     verification: originalVerification(opProof.results[0].trackId) },

@@ -48,6 +48,6 @@ async function main() { try {
   if (originalUrl === undefined) delete process.env.SERVER_SUPABASE_URL; else process.env.SERVER_SUPABASE_URL = originalUrl;
   if (originalKey === undefined) delete process.env.SERVER_SUPABASE_SERVICE_ROLE_KEY; else process.env.SERVER_SUPABASE_SERVICE_ROLE_KEY = originalKey;
 }
-console.log('ETH原曲：默认off/独立allowlist、假live不能绕过未部署、链上历史资格/数量/网络检查，通过');
+console.log('ETH原曲：默认off/独立allowlist、错误部署坐标拒绝、链上历史资格/数量/网络检查，通过');
 }
 void main().catch(error => { console.error(error); process.exitCode = 1; });

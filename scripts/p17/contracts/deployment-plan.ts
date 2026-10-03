@@ -10,6 +10,9 @@ export type DeploymentInput = {
 export type DeploymentPlan = Omit<DeploymentInput,'bytecode'|'abi'|'balanceWei'> & {
   bytecodeHash:Hex; constructorHash:Hex; data:Hex; planHash:Hex;
 };
+export function balanceForPlan(mode:string,state:string|undefined,actual:string,maxCost:string):string {
+  return mode==='--inspect'||(state!==undefined&&state!=='planned')?maxCost:actual;
+}
 function digest(value:unknown): Hex { return `0x${createHash('sha256').update(JSON.stringify(value)).digest('hex')}`; }
 export function makeDeploymentPlan(input:DeploymentInput): DeploymentPlan {
   if(!['ethereum','optimism'].includes(input.kind))throw new Error('未知部署类型');

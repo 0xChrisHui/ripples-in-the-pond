@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-03T06:54:10.056Z",
+  "tracksVerified": 35,
+  "ethereum": {
+    "chainId": 1,
+    "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+    "txHash": "0x1722ef09fb5fb6f1222780e88949232d5eef15a7d91936817638bf185333fff5",
+    "blockNumber": "26110130",
+    "blockHash": "0x40c0126b90d0f9f38be77a6e3d71a1da7ddc472ad359904ef3e53bb5b9242ed0",
+    "gasUsed": "6135844",
+    "effectiveGasPriceWei": "84246544",
+    "totalFeeWei": "516923651523136",
+    "collectionUri": "ar://LjA2sgPArVOFL_gpPZmOaFBqXzb5VKTCINGAy7cKGQw",
+    "runtimeVerified": true,
+    "rolesVerified": true,
+    "urisVerified": true,
+    "transferable": true,
+    "lifetimeWalletClaim": true,
+    "unlimitedSupply": true
+  },
+  "optimism": {
+    "chainId": 10,
+    "contractAddress": "0xa65c9308635c8dd068a314c189e8d77941a7e99c",
+    "txHash": "0x5b379690cd000879b73fb65570be665c2dd19b35d5df61d63088dfba0579909b",
+    "blockNumber": "157705814",
+    "blockHash": "0x563416d26ff96ddf9e822856e4bc253c824e24946cb1aae0cbf13ad395c34956",
+    "gasUsed": "5603455",
+    "effectiveGasPriceWei": "1002304",
+    "l1FeeWei": "112909393994",
+    "totalFeeWei": "5729274754314",
+    "collectionUri": "ar://JWV5HPaY5-Vjq0iVhadIzT8YrpNP9H-qhfczm6bKrmA",
+    "runtimeVerified": true,
+    "rolesVerified": true,
+    "urisVerified": true,
+    "soulbound": true
+  }
+}

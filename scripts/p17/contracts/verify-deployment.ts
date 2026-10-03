@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { makeDeploymentPlan, type DeploymentInput } from './deployment-plan';
+import { balanceForPlan, makeDeploymentPlan, type DeploymentInput } from './deployment-plan';
 import { withDeploymentLedger } from './deployment-ledger';
 import { runDeployment, type DeploymentAdapter } from './deployment-inspect';
 const address = (id: number) => `0x${id.toString(16).padStart(40, '0')}` as `0x${string}`;
@@ -14,6 +14,9 @@ const input: DeploymentInput = { kind:'ethereum', chainId:31337, sender:address(
     inputs:['uint256[35]','string[35]','string','address','address','address'].map(type=>({type}))}], nonce:0, gasLimit:'100',
   maxFeePerGas:'2', maxPriorityFeePerGas:'1', maxCostWei:'200', balanceWei:'200', confirmations:1 };
 const plan = makeDeploymentPlan(input);
+assert.equal(balanceForPlan('--inspect','submitted','1','200'),'200');
+assert.equal(balanceForPlan('--execute','unknown','1','200'),'200');
+assert.equal(balanceForPlan('--execute','planned','1','200'),'1');
 assert.equal(plan.planHash, makeDeploymentPlan({...input}).planHash);
 for (const bad of [{issuer:input.admin},{collectionUri:''},{uris:input.uris.slice(1)},
   {chainId:10},{maxCostWei:'199'},{balanceWei:'199'},{gasLimit:'0'},{authorizationRef:''}]) {
