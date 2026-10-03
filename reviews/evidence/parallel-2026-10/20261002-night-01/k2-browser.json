@@ -822,5 +822,141 @@
     "externalTransactions": 0,
     "archiveConfirmed": 0,
     "archiveTotal": 70
+  },
+  "releaseIntegration20261003": {
+    "sourceSha": "1f4c2bf",
+    "focusFixSha": "3c823873a5d760368afad4b4026fb641eb6167e7",
+    "catalogChecks": {
+      "sourceSha": "1f4c2bf",
+      "checkedAt": "2026-10-03T09:24:47.720Z",
+      "checks": [
+        {
+          "width": 1440,
+          "height": 900,
+          "text": "开始播放",
+          "top": 0,
+          "bottom": 0,
+          "overflow": false,
+          "count": 35,
+          "status": "invalid_zero_size"
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "text": "开始播放",
+          "top": 317,
+          "bottom": 361,
+          "overflow": false,
+          "count": 35,
+          "revision": "70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8",
+          "status": "passed"
+        }
+      ]
+    },
+    "mobileScreenshot": "visuals/release-tracks-mobile.png",
+    "motionStatus": "not_verified",
+    "motionReason": "低帧会话未完成真实GL/结束时序断言；停止重复浏览器尝试，不据此断言产品死锁",
+    "focusRegression": "真实runtime + advanceEclipseMix联合回归先失败后通过；完整P14五组通过",
+    "uiAcceptance": "用户要求延期，不索要用户验收",
+    "release": {
+      "deployment": {
+        "id": "dpl_6kV74B4k2XSJtF8A6bN83AWVjaxj",
+        "url": "ripples-in-the-pond-b034mbsgd-0x991-thomas-projects.vercel.app",
+        "state": "READY",
+        "sourceSha": "ee50f5dddcc8457460ea42966748b513a1460e77",
+        "projectId": "prj_haw2cownQHfmKmrUaP9etU82xwT4"
+      },
+      "candidate": {
+        "checkedAt": "2026-10-03T09:37:40.584Z",
+        "mode": "candidate",
+        "sourceSha": "ee50f5dddcc8457460ea42966748b513a1460e77",
+        "revision": "70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8",
+        "results": [
+          {
+            "path": "/api/music-catalog",
+            "status": 200,
+            "assertion": "exact_snapshot_35_final_notes"
+          },
+          {
+            "path": "/",
+            "status": 200,
+            "assertion": "page_present_not_notfound"
+          },
+          {
+            "path": "/tracks",
+            "status": 200,
+            "assertion": "page_present_not_notfound"
+          },
+          {
+            "path": "/score/material/1/0x6c731e5faa26e648cad6f86b1c1e741f0aae136b/1",
+            "status": 200,
+            "assertion": "page_present_not_notfound"
+          },
+          {
+            "path": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/35",
+            "status": 200,
+            "assertion": "page_present_not_notfound"
+          },
+          {
+            "path": "/api/material-mint/orders",
+            "status": 401
+          },
+          {
+            "path": "/api/material-mint/op/status",
+            "status": 503,
+            "code": "OP_SBT_DISABLED"
+          }
+        ]
+      },
+      "production": {
+        "checkedAt": "2026-10-03T09:38:29.255Z",
+        "mode": "production",
+        "sourceSha": "ee50f5dddcc8457460ea42966748b513a1460e77",
+        "revision": "70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8",
+        "results": [
+          {
+            "path": "/api/music-catalog",
+            "status": 200,
+            "assertion": "exact_snapshot_35_final_notes"
+          },
+          {
+            "path": "/",
+            "status": 200,
+            "assertion": "page_present_not_notfound"
+          },
+          {
+            "path": "/tracks",
+            "status": 200,
+            "assertion": "page_present_not_notfound"
+          },
+          {
+            "path": "/score/material/1/0x6c731e5faa26e648cad6f86b1c1e741f0aae136b/1",
+            "status": 200,
+            "assertion": "page_present_not_notfound"
+          },
+          {
+            "path": "/score/material/10/0xa65c9308635c8dd068a314c189e8d77941a7e99c/35",
+            "status": 200,
+            "assertion": "page_present_not_notfound"
+          },
+          {
+            "path": "/api/material-mint/orders",
+            "status": 401
+          },
+          {
+            "path": "/api/material-mint/op/status",
+            "status": 503,
+            "code": "OP_SBT_DISABLED"
+          }
+        ]
+      },
+      "localBuild": {
+        "sourceSha": "3c823873a5d760368afad4b4026fb641eb6167e7",
+        "buildId": "IrsJTgldiMzXLWSRYrpfA",
+        "exitCode": 0,
+        "staticPages": 59
+      },
+      "aliasVerified": "pond-ripple.xyz -> dpl_6kV74B4k2XSJtF8A6bN83AWVjaxj READY"
+    }
   }
 }

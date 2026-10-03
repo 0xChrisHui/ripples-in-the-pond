@@ -7,8 +7,8 @@
 - 工作树 E:/Projects/nft-music-progress-release；分支 codex/night-production-20261003。
 - 最后业务代码SHA：3c823873a5d760368afad4b4026fb641eb6167e7。
 - BASE_SHA：e6985bec5ef6d6f191526e6f2e5b58caa5414357。
-- 本地只读：http://127.0.0.1:3115/ 、http://127.0.0.1:3115/tracks 。启动/发布最终结果见下方收口记录。
-- 正式站：https://pond-ripple.xyz/ 。当前整合批次正在发布，不以旧部署冒称新代码已生效。
+- 本地只读：http://127.0.0.1:3115/ 、http://127.0.0.1:3115/tracks 。已启动最新整合产物；首页、曲目馆和两链原曲页HTTP检查通过。
+- 正式站：https://pond-ripple.xyz/ 。本次整合已发布，Ready与正式域名smoke通过。
 - 手动启动：本工作树PowerShell先设置 LOCAL_REVIEW_ONLY=1 环境变量，然后 npm run start -- --hostname 127.0.0.1 --port 3115；Ctrl+C停止。预览不用于真实签名/交易验收。
 - 原目录HEAD 001a21dd60c96adf0fa72cfb47f217885132a655 保留；收尾只读核对77条status与K0备份完全一致、暂存区为空。必要用户进度已纳入BASE，其余仍在原处。备份 E:/Projects/nft-music-night-backup-20261002。
 
@@ -57,10 +57,21 @@ C1原移交0e1195f04222c0e441989cb9ca74304a37801b7f；C2原移交624216cb8b35c6b
 
 ## 剩余工作线与真实外部项
 
-1. 总控完成网站发布与域名最小smoke，保持新领取off。
+1. 网站发布与域名最小smoke已完成；新领取仍off。
 2. 新领取：需要可用authorizer签名材料及匹配角色的运行时来源，再做受限真实钱包领取/恢复核验，最后开放；公钥读回不等于可签名。
 3. 70项留存：使用既定接收钱包/C2计划；ETH接收钱包需要明确安全资金来源、有限Gas和签发凭证，广播前核准具体范围，逐笔对账，unknown不重发。泛化部署授权未扩成转账/70笔铸造。
 4. SEMI需要当前build/version、账号/导入入口和持有样例，完成实际数量/播放容器验收。未联系团队，资料就绪不算接入。
 5. UI统一留后，不要求用户现在验收；十项不能统称全部完成。
 
 关键代码：echo-resident/host/frame-input.ts 的 isResidentPlaybackFocus 按播放身份维持日食；useEclipseTransition.ts 消费该结果以避免透明度自我反馈；music-catalog保持页面与SEMI地址唯一来源。
+
+
+## 最终发布收口
+
+- Vercel部署 dpl_6kV74B4k2XSJtF8A6bN83AWVjaxj，READY；API读回releaseSourceSha=ee50f5dddcc8457460ea42966748b513a1460e77、项目prj_haw2cownQHfmKmrUaP9etU82xwT4一致。
+- 2026-10-03 17:38 +08，候选smoke通过后promote；正式pond-ripple.xyz读回同部署ID，首页/曲目馆/新ETH第1首/新OP第35首均200且非not-found；目录全字段等于冻结快照、35份手记final；匿名订单401、OP新领取503/OP_SBT_DISABLED。
+- 首次promote默认团队上下文报不同团队，未重新部署；显式使用已登记team_8S51udZUIyBNsdvoxyAAtHMU后成功。
+- 本地构建next build --webpack退出0、59静态页、buildId IrsJTgldiMzXLWSRYrpfA；Vercel生产Turbopack构建亦通过。沿用既有依赖，保留Privy可选模块/peer与middleware约定警告，不扩大任务修依赖。
+- 3115当前服务运行同一业务源码；本次收尾文档/证据提交不改变代码。集成最终SHA在交付消息中记录，避免自引用SHA循环。
+- 匿名HTTP证据保存在同目录k2-browser.json的releaseIntegration20261003.release；不是登录、真实铸造、SEMI或GL运动验收。
+- 原工作区未改；回退可使用先前正式部署dpl_AXpgWT4vdxQkXwtkbPrjPYatgkxb。合约/永久资源/迁移保留真实账本，不能用网站回退撤销。
