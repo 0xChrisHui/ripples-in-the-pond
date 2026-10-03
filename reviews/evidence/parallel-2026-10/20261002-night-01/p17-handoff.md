@@ -28,6 +28,12 @@
 
 部署计划角色规则纠偏：ETH生产sender仍与admin/authorizer/pauser分离；OP平台Gas已授权复用operator=minter，因此允许sender=issuer，但admin/issuer/pauser始终三者互异，sender不得等于admin/pauser。原工具把ETH的四账户限制套到OP，新增公开本地计划断言先复现误拒绝，再最小修复并通过；真实网络发送0，未重开Anvil，既有35URI/runtime读回证明复用。
 
+2026-10-03 14:46部署前置更新：真实authorizer签名来源已在既有P16-fast受控env找到并派生为已部署P16的`0xAb14...e73a`，不再列用户缺项。生产059–062已只读确认登记，三表RLS与7RPC的服务端权限正确；policy仍pending，订单/attempt/新OP目标队列均0。两份合集已在同目录`collection-upload-ledger.json`达到双网关hash/字节/MIME核验，ETH/OP永久URI分别`ar://LjA2sgPArVOFL_gpPZmOaFBqXzb5VKTCINGAy7cKGQw`、`ar://JWV5HPaY5-Vjq0iVhadIzT8YrpNP9H-qhfczm6bKrmA`，费用0winc。
+
+本次真实公开角色计划复现`roles.map(getAddress)`误将index作为chainId导致checksum错误；新增实际P16公开角色编码断言RED→GREEN，改为单参数lambda，相关类型/显式lint/恢复测试通过，未重跑Anvil或旧合约。两链`--plan`/`--inspect`均成功：同目录`ethereum/optimism-deployment-config.json`与`ethereum/optimism-deployment-ledger.json`冻结revision`2f58aeba857b70506ed10db378d7dec014da04a0ddf3aacf98641949c49090c0`、35URI、角色、源码/bytecode/constructor/plan hash；state=planned，txHash=null。ETH估算Gas6,185,708、上限7,113,565、nonce1，最大费用713,067,924,149,090wei低于余额792,844,646,079,183wei；OP估算Gas5,649,094、上限6,496,459、nonce18，含L1预留最大费用13,828,731,498,133wei低于余额10,097,041,215,977,635wei。费用上限含Gas/费率余量，真实发送由根端独占，CLI会刷新nonce/余额/Gas、OP实际签名L1费再决定发送。
+
+执行入口是ignored`.tmp/p17-production-deploy-runner.cjs`，只在进程内合并已有部署密钥、P16 ETH主网RPC和生产OP RPC，未复制密钥到新文件、未覆盖生产Score配置。根端可用`node <runner> --execute <对应公开config> <对应部署ledger>`；先取得配置所指独占租约并确保同sender没有其他并发写入，结果未知必须inspect。当前仅完成部署费用前置，未证明ETH35项留存全部Gas已够；部署后须以实际剩余余额与真实兑换估算继续核算，不能把保守预留当作实际花费或新的固定预算问题。本子线外部广播0。
+
 ## 2026-10-03 — 网站发布适配
 
 用户追加部署授权；生产候选基于main@1514108，保留现有P16主网Score、认证/钱包、PondShell/GL/visitor、focus bus和渐进预取。只将P17独立原曲目录、公开页、订单、P13同源包及导航/分享必要入口移植，原路径按当前`app/(pond)`和`chain/multichain`定位；不覆盖既有worker/API、不开启尚未验DB的新队列。原曲播放器补生产Track的永久身份与网关列表，35曲全部来源/轮转回归通过。生产架构/栈/规范同步P17授权边界，未引入依赖或迁移SDK。旧P17/P14和视觉测试继续证明原夜间本地候选，不冒称新生产GL采用了它们。

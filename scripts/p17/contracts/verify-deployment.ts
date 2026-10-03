@@ -25,6 +25,11 @@ const opInput:DeploymentInput={...input,kind:'optimism',chainId:10,sender:input.
 assert.doesNotThrow(()=>makeDeploymentPlan(opInput));
 for(const sender of [input.admin,input.pauser])assert.throws(()=>makeDeploymentPlan({...opInput,sender}));
 assert.throws(()=>makeDeploymentPlan({...input,chainId:1,sender:input.issuer}));
+assert.doesNotThrow(()=>makeDeploymentPlan({...input,chainId:1,
+  sender:'0x306D3A445b1fc7a789639fa9115e308a34231633',
+  admin:'0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722',
+  issuer:'0xAb14FeFDFBedC67176E1ea6D6461Ad9F07bDe73a',
+  pauser:'0x910380D1C8ad89f9ABf953460044d7b979883194'}));
 const dir = mkdtempSync(join(tmpdir(),'ripples-p17-deploy-'));
 const file = join(dir,'ledger.json');
 let sends=0, inspected=0;

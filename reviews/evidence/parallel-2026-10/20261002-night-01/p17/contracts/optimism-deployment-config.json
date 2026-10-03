@@ -1,0 +1,22 @@
+{
+  "kind": "optimism",
+  "chainId": 10,
+  "admin": "0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722",
+  "issuer": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+  "pauser": "0x910380D1C8ad89f9ABf953460044d7b979883194",
+  "collectionUri": "ar://JWV5HPaY5-Vjq0iVhadIzT8YrpNP9H-qhfczm6bKrmA",
+  "catalogRevision": "2f58aeba857b70506ed10db378d7dec014da04a0ddf3aacf98641949c49090c0",
+  "policyRef": "2026-10-03用户确认ETH每地址每曲终身一次/转出不恢复/总量无上限；OP平台Gas原曲SBT",
+  "authorizationRef": "2026-10-03用户授权必要部署以现有部署钱包实际余额为界；仅根端执行",
+  "nonce": 18,
+  "gasLimit": "6496459",
+  "maxFeePerGas": "2103083",
+  "maxPriorityFeePerGas": "1000000",
+  "maxCostWei": "13828731498133",
+  "l1FeeCapWei": "166139015036",
+  "confirmations": 1,
+  "rpcEnv": "P17_OP_RPC",
+  "privateKeyEnv": "P17_DEPLOYER_KEY",
+  "expectedPlanHash": "0xcdeb2b3b8713c9e9342fe6521cce835d5665b0365ea9e5f104fa801eab21e8be",
+  "executionLeaseRef": "root/20261002-night-01：实际execute前独占部署sender并暂停同sender并发写入"
+}

@@ -1,0 +1,22 @@
+{
+  "kind": "ethereum",
+  "chainId": 1,
+  "admin": "0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722",
+  "issuer": "0xAb14FeFDFBedC67176E1ea6D6461Ad9F07bDe73a",
+  "pauser": "0x910380D1C8ad89f9ABf953460044d7b979883194",
+  "collectionUri": "ar://LjA2sgPArVOFL_gpPZmOaFBqXzb5VKTCINGAy7cKGQw",
+  "catalogRevision": "2f58aeba857b70506ed10db378d7dec014da04a0ddf3aacf98641949c49090c0",
+  "policyRef": "2026-10-03用户确认ETH每地址每曲终身一次/转出不恢复/总量无上限；OP平台Gas原曲SBT",
+  "authorizationRef": "2026-10-03用户授权必要部署以现有部署钱包实际余额为界；仅根端执行",
+  "nonce": 1,
+  "gasLimit": "7113565",
+  "maxFeePerGas": "100240586",
+  "maxPriorityFeePerGas": "1000000",
+  "maxCostWei": "713067924149090",
+  "l1FeeCapWei": "0",
+  "confirmations": 2,
+  "rpcEnv": "P17_ETH_RPC",
+  "privateKeyEnv": "P17_DEPLOYER_KEY",
+  "expectedPlanHash": "0x96b883d145dcb673efc071b0215041047db14cc5e4e395fc7e3221a54569bc41",
+  "executionLeaseRef": "root/20261002-night-01：实际execute前独占部署sender并暂停同sender并发写入"
+}

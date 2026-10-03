@@ -36,7 +36,7 @@ export function makeDeploymentPlan(input:DeploymentInput): DeploymentPlan {
     || BigInt(input.maxPriorityFeePerGas)>BigInt(input.maxFeePerGas)
     || cost>BigInt(input.maxCostWei)||cost>BigInt(input.balanceWei)) throw new Error('费用超过批准边界或余额');
   const data=encodeDeployData({abi:input.abi,bytecode:input.bytecode,args:[input.tokenIds.map(BigInt),input.uris,
-    input.collectionUri,...roles.map(getAddress)]});
+    input.collectionUri,...roles.map(value=>getAddress(value))]});
   const {bytecode,abi: _abi,balanceWei: _balance,...fields}=input;
   void _abi; void _balance;
   const payload={...fields,sender:getAddress(input.sender),admin:getAddress(input.admin),issuer:getAddress(input.issuer),
