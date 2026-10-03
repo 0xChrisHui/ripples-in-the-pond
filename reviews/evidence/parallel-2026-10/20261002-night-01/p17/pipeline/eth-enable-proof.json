@@ -1,0 +1,99 @@
+{
+  "checkedAt": "2026-10-03T15:37:17.530Z",
+  "approvalRef": "用户2026-10-03恢复ETH部署/发行，已确认发行政策；生产迁移此前已授权",
+  "policyBefore": {
+    "singleton": true,
+    "status": "pending",
+    "approval_reference": null,
+    "policy": null
+  },
+  "policyAfter": {
+    "singleton": true,
+    "status": "approved",
+    "approval_reference": "user-2026-10-03-eth-originals",
+    "policy": {
+      "id": "eth-original-wallet-once-v1",
+      "transferable": true,
+      "totalSupplyCap": null,
+      "perWalletPerToken": 1,
+      "reclaimAfterTransfer": false
+    }
+  },
+  "envs": [
+    {
+      "key": "ETH_MATERIAL_AUTHORIZER_PRIVATE_KEY",
+      "type": "sensitive"
+    },
+    {
+      "key": "ETH_MATERIAL_AUTHORIZER_ADDRESS",
+      "type": "plain"
+    },
+    {
+      "key": "ETH_MATERIAL_DEPLOYMENT_BLOCK",
+      "type": "plain"
+    },
+    {
+      "key": "ETH_MATERIAL_SELF_MINT_MODE",
+      "type": "plain"
+    }
+  ],
+  "authorizer": "0xAb14FeFDFBedC67176E1ea6D6461Ad9F07bDe73a",
+  "firstRetentionHash": "0xccf8f4f77c41404a9ab30f4746bc0b7efc46dec16647325681bc995956b295b3",
+  "envReadback": [
+    {
+      "key": "ETH_MATERIAL_SELF_MINT_MODE",
+      "type": "encrypted",
+      "verified": true
+    },
+    {
+      "key": "ETH_MATERIAL_DEPLOYMENT_BLOCK",
+      "type": "encrypted",
+      "verified": true
+    },
+    {
+      "key": "ETH_MATERIAL_AUTHORIZER_ADDRESS",
+      "type": "encrypted",
+      "verified": true
+    },
+    {
+      "key": "ETH_MATERIAL_AUTHORIZER_PRIVATE_KEY",
+      "type": "sensitive",
+      "verified": true
+    }
+  ],
+  "userTopUpObservation": {
+    "date": "2026-10-04",
+    "userConfirmed": true,
+    "chainId": 1,
+    "recipient": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+    "previousBalanceWei": "10671900288369",
+    "observedBalanceWei": "160671900288369",
+    "increaseWei": "150000000000000",
+    "nonce": 28,
+    "pendingNonce": 28,
+    "transactionHash": null,
+    "note": "用户确认补款后实际读回余额增加；未凭空补交易hash，不计入本工具手续费"
+  },
+  "existingSchedule": [
+    {
+      "timestamp": 1791042421741,
+      "path": "/api/cron/process-mint-queue"
+    },
+    {
+      "timestamp": 1791042362588,
+      "path": "/api/cron/process-mint-queue"
+    },
+    {
+      "timestamp": 1791042308777,
+      "path": "/api/cron/process-mint-queue"
+    },
+    {
+      "timestamp": 1791042242526,
+      "path": "/api/cron/process-mint-queue"
+    },
+    {
+      "timestamp": 1791042181704,
+      "path": "/api/cron/process-mint-queue"
+    }
+  ]
+}

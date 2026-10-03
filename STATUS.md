@@ -8,7 +8,7 @@
 
 **Phase**: **Phase 11 已完成并冻结；Phase 16 Ethereum Mainnet 核心主链路已完成，2026-10-02 上线收口 Review 通过。** 首枚 Token #1 的链上交易、正式订单、永久资源和公开播放一致。最终证据见 `reviews/2026-10-02-p16-mainnet-closeout-review.md`；`playbook/phase-16/05-minimal-loop.md` 保留为早期 Sepolia 施工记录，不代表当前仍未上线。
 
-**下一步**：按用户“先搞OP”收口：OP项目留存35/35已真实到账并逐笔核验，费用0.000002327730193134 ETH；OP领取入口与同源目录证明已发布至正式域名，部署dpl_D7pykqHUUrL8qqUGyoEXn64pCJMV（源码8414a4e）Ready，最小HTTP检查通过。当前无新增可独立推进的OP步骤；真实登录钱包点击全链路尚未验证。ETH留存0/35、ETH新领取暂缓，未转账；authorizer材料已找到并验证，不再列为缺失项。真实迁移059–062、两份合集永久JSON及两链新合约已完成。SEMI仍需实际接入环境，UI按用户指令延期，不要求现在验收。完整十项表与发布证据：`reviews/evidence/parallel-2026-10/20261002-night-01/morning-summary.md`；下方旧阶段仅为历史。
+**下一步**：2026-10-04用户补款后，ETH与OP各35/35项目留存全部确认，unknown=0；ETH生产签发材料/政策与对账接线已完成，当前发布ETH领取入口及70项同源证明。真实登录钱包完整点击路径未验；SEMI仍需实际环境，UI按用户指令延期，不要求现在验收。权威结果与十项表见 `reviews/evidence/parallel-2026-10/20261002-night-01/morning-summary.md`；下方旧阶段仅为历史。
 
 **P16 上线收口（2026-10-02）✅**：Mainnet Token #1 的 order mapping、ScoreRedeemed、receipt、owner/tokenURI 与正式库 `success`、claim `consumed`、production snapshot revision 1 一致。17 项永久资源（6 项档案资源 + 实际使用的 11 个音效）逐一通过 bytes/SHA-256/MIME 核验，metadata/events/sounds 与 snapshot 一致，v3 package 和 snapshot digest 通过。正式页面进入 `playing/eclipse`，本次浏览器无 page/console error。保留两项非阻塞问题：Ethereum 凭证来源误标 OP、永久 metadata 的 Minted At 实为建单日期；私密 `/me` 仅核对数据与查询逻辑，未冒充登录目验或全钱包验收。
 

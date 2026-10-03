@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { verifyCronSecret } from '@/src/lib/auth/cron-auth';
 import { acquireOpLock, releaseOpLock } from '@/src/lib/chain/operator-lock';
 import { tryConfirmMinting, trySendNew } from './steps';
+import { reconcileMaterialMints } from '@/src/lib/material-mint/server/reconcile/worker';
 
 /**
  * GET /api/cron/process-mint-queue
@@ -34,6 +35,16 @@ export async function GET(req: NextRequest) {
     const sent = await trySendNew();
     if (sent) return NextResponse.json(sent);
 
+    // 复用既有分钟调度，仅在OP空闲时对账一单、一页；关闭新发行仍允许恢复旧单。
+    if (process.env.ETH_MATERIAL_DEPLOYMENT_BLOCK) {
+      try {
+        const material = await reconcileMaterialMints(1, 1);
+        if (material.failed) return NextResponse.json({ result: 'material_reconcile_unavailable', processed: 0, material }, { status: 503 });
+        return NextResponse.json({ result: 'idle', processed: 0, material });
+      } catch {
+        return NextResponse.json({ result: 'material_reconcile_unavailable', processed: 0 }, { status: 503 });
+      }
+    }
     return NextResponse.json({ result: 'idle', processed: 0 });
   } catch (err) {
     console.error('[mint-queue] error:', err);

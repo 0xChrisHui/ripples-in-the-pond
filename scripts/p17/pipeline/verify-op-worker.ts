@@ -5,6 +5,48 @@ import ts from 'typescript';
 import { resolveMaterialRecipient } from '../../../src/lib/runtime/material-recipient';
 import { selectMaterialJobContract } from '../../../src/lib/material-mint/op/target';
 
+async function verifyCronIntegration() {
+  const workerCode = ts.transpileModule(readFileSync('src/lib/material-mint/server/reconcile/worker.ts', 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  const workerExports: { reconcileMaterialMints?: (limit: number, pages: number) => Promise<{ failed: number }> } = {};
+  const workerModules: Record<string, unknown> = {
+    'server-only': {}, 'node:crypto': { randomUUID: () => '隔离worker' },
+    '../../../supabase': { supabaseAdmin: { rpc: async () => ({ data: [{ order_id: '隔离订单', chain_id: 1 }], error: null }) } },
+    '../../../chain/multichain/public-client': { getChainPublicClient() { throw Error('真实worker的RPC故障分支'); } },
+    '../../inspect': {}, '../order': {},
+  };
+  vm.runInNewContext(workerCode, { exports: workerExports, require(name: string) {
+    assert(name in workerModules, name); return workerModules[name];
+  }, process: { env: { ETH_MATERIAL_DEPLOYMENT_BLOCK: '1' } }, console: { error() {} } });
+  assert.equal((await workerExports.reconcileMaterialMints!(1, 1)).failed, 1, '真实worker的单笔异常必须显式计数');
+  const route = ts.transpileModule(readFileSync('app/api/cron/process-mint-queue/route.ts', 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  for (const mode of ['unauthorized','busy','confirmed','sent','unconfigured','idle','material-error','material-partial-error']) {
+    const calls: string[] = [];
+    const modules: Record<string, unknown> = {
+      'next/server': { NextResponse: Response }, crypto: { randomUUID: () => '隔离测试租约' },
+      '@/src/lib/auth/cron-auth': { verifyCronSecret: () => mode !== 'unauthorized' },
+      '@/src/lib/chain/operator-lock': { acquireOpLock: async () => mode !== 'busy', releaseOpLock: async () => { calls.push('release'); } },
+      './steps': { tryConfirmMinting: async () => mode === 'confirmed' ? { result: 'confirmed' } : null,
+        trySendNew: async () => mode === 'sent' ? { result: 'sent' } : null },
+      '@/src/lib/material-mint/server/reconcile/worker': { reconcileMaterialMints: async (limit: number, pages: number) => {
+        assert.equal(limit, 1); assert.equal(pages, 1); calls.push('material');
+        if (mode === 'material-error') throw Error('隔离RPC故障');
+        return { processed: 0, failed: mode === 'material-partial-error' ? 1 : 0, results: [] };
+      } },
+    };
+    const exports: { GET?: (request: Request) => Promise<Response> } = {};
+    vm.runInNewContext(route, { exports, require(name: string) { assert(name in modules, name); return modules[name]; },
+      process: { env: mode === 'unconfigured' ? {} : { ETH_MATERIAL_DEPLOYMENT_BLOCK: '1' } }, console: { error() {} } });
+    const response = await exports.GET!(new Request('http://localhost/api/cron/process-mint-queue'));
+    assert.equal(calls.includes('material'), ['idle','material-error','material-partial-error'].includes(mode), mode);
+    assert.equal(calls.includes('release'), !['unauthorized','busy'].includes(mode), mode);
+    assert.equal(response.status, mode === 'unauthorized' ? 401 : mode.startsWith('material-') ? 503 : 200, mode);
+  }
+}
+
 // 运行真实worker，只替换数据库/RPC边界；不读取环境密钥、不广播交易。
 const legacy = `0x${'aa'.repeat(20)}`;
 const sbt = `0x${'bb'.repeat(20)}`;
@@ -60,6 +102,7 @@ async function execute(options: Scenario) {
   const result = await exported.trySendNew!(); return { result, writes, reads, failures };
 }
 async function main() {
+  await verifyCronIntegration();
   const snapshot = await execute({ snapshot: true });
   assert.equal(snapshot.result.result, 'sent');
   assert.equal(snapshot.writes[0].address.toLowerCase(), sbt);

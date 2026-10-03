@@ -23,7 +23,9 @@ export async function runArchiveExecution(plan: ExecutionPlan, ledger: Execution
     const nonce = chain.nonce + prior.length;
     if (await adapter.nonce(chain.sender) !== nonce) throw Error('串行nonce变化或存在其他在途交易，禁止发送');
     const remaining = items.filter(value => value.state !== 'confirmed').length;
-    if (await adapter.balance(chain.sender) < transactionCost(chain) * BigInt(remaining)) throw Error('最新余额不足剩余冻结最大费用');
+    // 用户明确接受资金不足时分批暂停；仍需完整覆盖下一笔的冻结最大费用。
+    const requiredBalance = transactionCost(chain) * BigInt(plan.config.fundingMode === 'per_transaction' ? 1 : remaining);
+    if (await adapter.balance(chain.sender) < requiredBalance) throw Error('最新余额不足冻结发送费用');
     await adapter.assertLease();
     const signed = await adapter.sign(item, chain, nonce);
     if (keccak256(signed.raw) !== signed.hash) throw Error('预计算交易hash不符');
@@ -35,7 +37,7 @@ export async function runArchiveExecution(plan: ExecutionPlan, ledger: Execution
     await persist(ledger);
     await adapter.assertLease();
     if (await adapter.nonce(chain.sender) !== nonce) throw Error('广播前nonce发生变化，已持久尝试只读保留');
-    if (await adapter.balance(chain.sender) < transactionCost(chain) * BigInt(remaining)) throw Error('广播前余额不足，已持久尝试只读保留');
+    if (await adapter.balance(chain.sender) < requiredBalance) throw Error('广播前余额不足，已持久尝试只读保留');
     try {
       const hash = await adapter.send(signed.raw);
       if (hash !== signed.hash) throw Error('RPC返回交易hash与预计算不符');

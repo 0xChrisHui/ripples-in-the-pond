@@ -1,5 +1,7 @@
 # P13 夜间交接
 
+2026-10-04最新C2：OP35/35、ETH35/35真实留存证明由P17统一提供；同源导出8/8与--check通过，不重复资产/媒体验证。SEMI实际版本与钱包播放尚未验，不将70/70留存称为SEMI已接入。
+
 - lane: p13
 - runId: 20261002-night-01
 - BASE_SHA: e6985bec5ef6d6f191526e6f2e5b58caa5414357
@@ -8,7 +10,7 @@
 - dependsOn.C2: 624216cb8b35c6b7883ae87693bf7cfb38487c32（总控接管容量故障后，正常merge指定完成提交）
 - C1.mergeSha: 1828a15dd49c2743407d9d0f48485bb42816d266
 - schemaVersion: 1
-- revision: 70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8（之前revision仅为下文历史记录）
+- revision: 2dd5d46ee34da85715756baf4a4016a4b304e5a14119914acf0e72dd373006b2（2026-10-04 P17真实70/70留存；以下旧revision为历史）
 - status: external_pending
 - localCodeReady: true（导出、窄类型、定向 lint、测试通过）
 - packageReady: true（35首双链70项原曲资料、旧OP系列及已核验ETH Score；OP Score/Echo仍不进入ready，不代表SEMI已接入）

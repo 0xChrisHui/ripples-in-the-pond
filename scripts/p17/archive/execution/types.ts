@@ -8,6 +8,7 @@ export type ExecutionChain = {
 export type ExecutionConfig = {
   runId: string; sourceSha: string; recipient: Address; approvalRef: string; chains: ExecutionChain[];
   recipientKeyEnv?: string; opSenderKeyEnv?: string; authorizerKeyEnv?: string;
+  fundingMode?: 'per_transaction';
 };
 export type ExecutionPlan = { schemaVersion: 1; planHash: Hex; archive: ArchivePlan; config: ExecutionConfig };
 export type ExecutionAttempt = {

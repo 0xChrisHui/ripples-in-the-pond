@@ -5,17 +5,18 @@ import { getChainPublicClient, getRequiredConfirmations } from '../../../chain/m
 import { inspectMaterialOrder } from '../../inspect';
 import { materialAttempts } from '../order';
 import type { MaterialOrder } from '../../types';
-export async function reconcileMaterialMints() {
+export async function reconcileMaterialMints(limit = 10, maxPages = 10) {
   const deployment = process.env.ETH_MATERIAL_DEPLOYMENT_BLOCK;
   if (!deployment || !/^\d+$/.test(deployment)) throw new Error('原曲部署区块尚未配置');
   const worker = randomUUID();
-  const { data, error } = await supabaseAdmin.rpc('lease_material_orders', { p_worker: worker, p_limit: 10 });
+  const { data, error } = await supabaseAdmin.rpc('lease_material_orders', { p_worker: worker, p_limit: limit });
   if (error) throw error;
   const results = [];
+  let failed = 0;
   for (const row of data as MaterialOrder[]) {
     try {
       const result = await inspectMaterialOrder(getChainPublicClient(row.chain_id), row, await materialAttempts(row.order_id),
-        { fromBlock: BigInt(row.scan_cursor ?? deployment), requiredConfirmations: getRequiredConfirmations(row.chain_id) });
+        { fromBlock: BigInt(row.scan_cursor ?? deployment), requiredConfirmations: getRequiredConfirmations(row.chain_id), maxPages });
       if (result.state === 'success') {
         const finalized = await supabaseAdmin.rpc('finalize_material_order', { p_order_id: row.order_id,
           p_version: row.version, p_worker: worker, p_proof: result.proof });
@@ -27,9 +28,10 @@ export async function reconcileMaterialMints() {
       }
       results.push({ orderId: row.order_id, state: result.state });
     } catch (error) {
+      failed++;
       console.error('[material-reconcile] 本订单保留等待核对', error instanceof Error ? error.name : '未知错误');
       results.push({ orderId: row.order_id, state: 'unknown' });
     }
   }
-  return { processed: results.length, results };
+  return { processed: results.length, failed, results };
 }

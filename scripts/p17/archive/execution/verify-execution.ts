@@ -109,6 +109,18 @@ async function main() {
     await withExecutionLedger(join(directory, 'inspect.json'), plan, (ledger, persist) =>
       loaded!.runArchiveExecution(plan, ledger, { ...adapter, inspect: async item => { inspected++; return item; } }, 1, false, persist));
     assert.equal(inspected, 35, '只读模式应检查完整单链35项');
+    balance = 200000n;
+    await assert.rejects(withExecutionLedger(join(directory, 'full-funding.json'), plan, (ledger, persist) =>
+      loaded!.runArchiveExecution(plan, ledger, adapter, 1, true, persist)), /余额/, '默认仍须全批次资金');
+    const partialPlan = createExecutionPlan(catalog, { ...config, fundingMode: 'per_transaction' } as typeof config);
+    const beforePartial = sends;
+    await withExecutionLedger(join(directory, 'partial-funding.json'), partialPlan, (ledger, persist) =>
+      loaded!.runArchiveExecution(partialPlan, ledger, adapter, 1, true, persist));
+    assert.equal(sends, beforePartial + 1, '已明确允许分批资金时，单笔足额即可发送');
+    balance = 199999n;
+    await assert.rejects(withExecutionLedger(join(directory, 'partial-insufficient.json'), partialPlan, (ledger, persist) =>
+      loaded!.runArchiveExecution(partialPlan, ledger, adapter, 1, true, persist)), /余额/, '不足单笔上限必须在签名前停止');
+    assert.equal(sends, beforePartial + 1);
     const blockHash = `0x${'11'.repeat(32)}` as Hex;
     const mintAbi = parseAbi(['event TransferSingle(address indexed operator,address indexed from,address indexed to,uint256 id,uint256 value)']);
     const encodedTopics = encodeEventTopics({ abi: mintAbi, eventName: 'TransferSingle', args: { operator: recipient, from: zeroAddress, to: recipient } });

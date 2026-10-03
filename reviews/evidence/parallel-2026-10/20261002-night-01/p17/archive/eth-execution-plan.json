@@ -1,0 +1,61 @@
+{
+  "allowedExecutionChains": [
+    1
+  ],
+  "checkedAt": "2026-10-03T15:33:52.247Z",
+  "balanceWei": "0",
+  "all35BalancesZero": true,
+  "authorizer": "0xAb14FeFDFBedC67176E1ea6D6461Ad9F07bDe73a",
+  "role": true,
+  "paused": false,
+  "planHash": "0x8e167c2e8a68edd3224884e2dc298a1fc04cdbef7d42d1f8c1496a9d960e8f3d",
+  "config": {
+    "runId": "20261003-eth-archive",
+    "sourceSha": "7188ab3a17e5643be106e40ceb6fe0ae1dafb84e",
+    "recipient": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+    "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+    "fundingMode": "per_transaction",
+    "opSenderKeyEnv": "P17_UNUSED_OP_KEY",
+    "authorizerKeyEnv": "P17_ETH_AUTHORIZER_KEY",
+    "recipientKeyEnv": "P17_ETH_RECIPIENT_KEY",
+    "chains": [
+      {
+        "chainId": 1,
+        "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+        "nonce": 0,
+        "gasLimit": "150000",
+        "maxFeePerGas": "130000000",
+        "maxPriorityFeePerGas": "1000000",
+        "l1FeeCapWei": "0",
+        "budgetWei": "682500000000000",
+        "confirmations": 2,
+        "rpcEnv": "P17_ETH_RPC"
+      },
+      {
+        "chainId": 10,
+        "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+        "nonce": 0,
+        "gasLimit": "100000",
+        "maxFeePerGas": "2000000",
+        "maxPriorityFeePerGas": "1000000",
+        "l1FeeCapWei": "100000000000",
+        "budgetWei": "10500000000000",
+        "confirmations": 1,
+        "rpcEnv": "P17_OP_DISABLED_RPC"
+      }
+    ]
+  },
+  "transfer": {
+    "chainId": 1,
+    "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+    "recipient": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+    "nonce": 2,
+    "valueWei": "268190994556047",
+    "gasLimit": "21000",
+    "maxFeePerGas": "130000000",
+    "maxPriorityFeePerGas": "1000000",
+    "maxFeeWei": "2730000000000",
+    "sourceBalanceWei": "275920994556047",
+    "sourceReserveWei": "5000000000000"
+  }
+}

@@ -23,7 +23,8 @@ const tracks: OriginalTrack[] = rows.map((row) => {
       standard: 'ERC1155', metadataUri, publicPlaybackUrl: buildMaterialPlaybackRoute(10, OP_ORIGINAL_SBT.contractAddress, String(row.week)),
       archiveMint: originalArchive(row.id, 10, OP_ORIGINAL_SBT.contractAddress, String(row.week)), verification: deployedOriginalVerification(10) },
     { chainId: 1, status: 'ready', contractAddress: ETH_ORIGINALS, tokenId: String(row.week), standard: 'ERC1155',
-      metadataUri, publicPlaybackUrl: buildMaterialPlaybackRoute(1, ETH_ORIGINALS, String(row.week)), archiveMint: awaitingArchive(),
+      metadataUri, publicPlaybackUrl: buildMaterialPlaybackRoute(1, ETH_ORIGINALS, String(row.week)),
+      archiveMint: originalArchive(row.id, 1, ETH_ORIGINALS, String(row.week)),
       verification: deployedOriginalVerification(1) },
   ],
   });

@@ -1,5 +1,17 @@
 # P17 夜间交接
 
+## 最新收口：70/70留存确认（2026-10-04）
+
+ETH35项全部确认、unknown0，费用0.000333302301593307 ETH，留存钱包余0.00008488869296274 ETH；用户补0.00015 ETH后从nonce28恢复，没有重发前28笔。公开eth-execution-proof.json与OP证明共同构成70/70事实。当前revision=2dd5d46ee34da85715756baf4a4016a4b304e5a14119914acf0e72dd373006b2；C2同步P13并生成网站与SEMI资料。生产发布结果统一见morning-summary.md。以下过程保留历史语境。
+
+## 当前：ETH已恢复执行（2026-10-03）
+
+用户明确“ETH你也部署吧，要是部署到一半Gas耗尽了我再给你补”。复用已部署ETH合约，不重复部署；`p17/archive/eth-execution-plan.json`冻结35首每曲1份，由既定留存钱包自行签名redeem。单笔Gas150000、maxFee0.13gwei、priority0.001gwei，35笔最大0.0006825ETH；只使用已有余额，不购买/跨链/借款。显式per_transaction允许不足下一笔上限时签名前暂停，不放宽unknown或总预算。
+
+资金转入0.000268190994556047ETH已确认，原部署钱包保留至少0.000005ETH；tx `0xc081d5b691b293045e7bf45764637d5ccf1d0e2847d4ba165b09114e298b9b29`，费用0.000001805652219ETH。第一笔正常voucher/redeem已确认，生产政策approved及四项ETH环境配置已完成并读回，秘密为sensitive（不读回私钥）。现有部署尚未使用新配置，待最终发布。CLI真实兑换不是登录浏览器E2E证据。
+
+复用未变合约/数据库安全证明。资金模式回归先红后绿；D4必要接线复用既有分钟OP cron空闲分支，一单一页。真实route测试先复现idle未接线与部分异常误200后修复；真实worker单笔RPC异常显式failed计数，两个cron入口据此503，普通unknown不冒充错误或成功，旧OP优先与锁释放保留。
+
 ## 当前：OP留存35/35完成，OP领取入口已发布（2026-10-03）
 
 用户明确“先搞OP吧”。OP主网新SBT已按冻结清单真实铸造35笔、每曲1份，nonce19–53连续，接收钱包0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA。每笔calldata、mint事件、规范区块、URI及当前余额均核对，confirmed35/unknown0；费用0.000002327730193134 ETH（含L1），小于冻结总预算0.0000105 ETH。证据p17/archive/op-execution-plan.json及op-execution-proof.json；签名原raw仅留忽略目录，不公开。

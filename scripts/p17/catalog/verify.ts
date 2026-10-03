@@ -14,8 +14,8 @@ assert.equal(listReadyOriginals().length, catalog.tracks.flatMap((track)=>track.
 assert.equal(listReadyOriginals().length, 70);
 assert.equal(catalog.tracks.filter(track => track.deployments.find(item => item.chainId === 10)
   ?.archiveMint.state === 'confirmed').length, 35, 'OP留存必须来自35项真实证明');
-assert.ok(catalog.tracks.every(track => track.deployments.find(item => item.chainId === 1)
-  ?.archiveMint.state === 'awaiting_input'), 'OP留存不能提升ETH状态');
+assert.equal(catalog.tracks.filter(track => track.deployments.find(item => item.chainId === 1)
+  ?.archiveMint.state === 'confirmed').length, 35, 'ETH必须来自独立的35项真实留存证明');
 assert.ok(catalog.tracks.every((track)=>track.deployments.find((item)=>item.chainId===1)?.contractAddress
   === '0x6c731e5faa26e648cad6f86b1c1e741f0aae136b'));
 assert.ok(catalog.tracks.every((track)=>track.deployments.find((item)=>item.chainId===10)?.contractAddress

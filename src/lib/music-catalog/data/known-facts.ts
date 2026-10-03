@@ -4,6 +4,7 @@ import echoProof from './echo-source-proof.json';
 import scoreProof from './score-source-proof.json';
 import deployedProof from './original-deployment-proof.json';
 import opRetention from './retention/optimism.json';
+import ethRetention from './retention/ethereum.json';
 
 export const OP_MATERIAL = '0x03504aeb95ebe3dc8c427b7b147f873f9948a299';
 export const OP_MATERIAL_URI = 'ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/{id}.json';
@@ -16,8 +17,9 @@ export const awaitingArchive = (): ArchiveMint => ({
 });
 /** 只有相同曲目、链、合约和Token的真实留存证明可以进入公开目录。 */
 export function originalArchive(trackId: string, chainId: number, contract: string, tokenId: string): ArchiveMint {
-  if (chainId !== opRetention.chainId) return awaitingArchive();
-  const row = opRetention.rows.find(item => item.trackId === trackId && item.tokenId === tokenId
+  const retention = chainId === opRetention.chainId ? opRetention : chainId === ethRetention.chainId ? ethRetention : null;
+  if (!retention) return awaitingArchive();
+  const row = retention.rows.find(item => item.trackId === trackId && item.tokenId === tokenId
     && item.contractAddress.toLowerCase() === contract.toLowerCase());
   if (!row || row.archiveMint.state !== 'confirmed') return awaitingArchive();
   return { ...row.archiveMint, state: 'confirmed' };

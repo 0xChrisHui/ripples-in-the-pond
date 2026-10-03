@@ -22,9 +22,10 @@ export async function readExecutionNonce(client: {
   throw Error('RPC的pending与latest持续不一致，禁止发送');
 }
 export function createExecutionPlan(catalog: MusicCatalog, input: ExecutionConfig): ExecutionPlan {
-  const fields = ['runId','sourceSha','recipient','approvalRef','chains','recipientKeyEnv','opSenderKeyEnv','authorizerKeyEnv'];
+  const fields = ['runId','sourceSha','recipient','approvalRef','chains','recipientKeyEnv','opSenderKeyEnv','authorizerKeyEnv','fundingMode'];
   if (Object.keys(input).some(field => !fields.includes(field))) throw Error('公开配置不能携带额外字段或签名秘密');
   const config = structuredClone(input);
+  if (config.fundingMode !== undefined && config.fundingMode !== 'per_transaction') throw Error('资金执行模式无效');
   for (const name of [config.recipientKeyEnv, config.opSenderKeyEnv, config.authorizerKeyEnv]) {
     if (name !== undefined && !/^[A-Z][A-Z0-9_]*$/.test(name)) throw Error('只允许登记密钥环境变量名');
   }

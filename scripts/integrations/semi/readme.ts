@@ -21,7 +21,7 @@ export function renderReadme(output: SemiPackage): string {
 - 可导入的生产系列：${contracts.collections.length}；ready 原曲：${assets.originals.length}；已确认归档：${archived}/${deployments.length}。
 - 最终创作手记：${finalNotes}/${inventory.tracks.length}；同样从唯一注册表生成。
 
-这是资料包。SEMI 当前版本、账号、网络支持和钱包内播放尚未核验；生产资料完整性与 wallet_verified 分别验收。pending 原曲不进入 ready 表。两链留存未完成；归档历史状态不是当前授权、接收钱包或素材缺失的判定依据。
+这是资料包。SEMI 当前版本、账号、网络支持和钱包内播放尚未核验；生产资料完整性与 wallet_verified 分别验收。pending 原曲不进入 ready 表。${archived === deployments.length && archived > 0 ? '两链留存已完成' : '两链留存未完成'}；归档历史状态不是当前授权、接收钱包或素材缺失的判定依据。
 
 ## 文件与导入
 

@@ -1,0 +1,2115 @@
+{
+  "schemaVersion": 1,
+  "kind": "ethereum-original-retention",
+  "checkedAt": "2026-10-03T16:44:02.770Z",
+  "chainId": 1,
+  "recipient": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+  "sourceSha": "7188ab3a17e5643be106e40ceb6fe0ae1dafb84e",
+  "catalogRevisionAtExecution": "e8b9c170496ebd1d36bec718e456bb0eccd79ed1ef4fa5678f5488d11ae8497c",
+  "planHash": "0x8e167c2e8a68edd3224884e2dc298a1fc04cdbef7d42d1f8c1496a9d960e8f3d",
+  "confirmed": 35,
+  "unknown": 0,
+  "totalFeeWei": "333302301593307",
+  "totalFeeEth": "0.000333302301593307",
+  "budgetWei": "682500000000000",
+  "balanceWei": "84888692962740",
+  "funding": {
+    "planHash": "0x8e167c2e8a68edd3224884e2dc298a1fc04cdbef7d42d1f8c1496a9d960e8f3d",
+    "state": "confirmed",
+    "hash": "0xc081d5b691b293045e7bf45764637d5ccf1d0e2847d4ba165b09114e298b9b29",
+    "transfer": {
+      "chainId": 1,
+      "sender": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+      "recipient": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": 2,
+      "valueWei": "268190994556047",
+      "gasLimit": "21000",
+      "maxFeePerGas": "130000000",
+      "maxPriorityFeePerGas": "1000000",
+      "maxFeeWei": "2730000000000",
+      "sourceBalanceWei": "275920994556047",
+      "sourceReserveWei": "5000000000000"
+    },
+    "attemptedAt": "2026-10-03T15:35:11.475Z",
+    "blockNumber": "26112743",
+    "blockHash": "0xf042f6ec0df763c27db1e414f604addab2d43af0cdd34e08e48ce40c861ffeb1",
+    "feeWei": "1805652219000",
+    "recipientBalanceWei": "268190994556047"
+  },
+  "items": [
+    {
+      "trackId": "21029773-9978-4147-b106-f5b22fcddeb9",
+      "displayNumber": 1,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "1",
+      "metadataUri": "ar://HlF8e2bp52VL4aYirjtqkr6P_FmwHng9aP7PKEdBjEY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0xed3fae8407430bba5299b692042053354c5535caec2106bd391a817d6c077c29",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xccf8f4f77c41404a9ab30f4746bc0b7efc46dec16647325681bc995956b295b3",
+        "blockNumber": "26112748",
+        "blockHash": "0x3d5b5661458cd49ded841dce1e1e7820e88da184bf70ce2ea0314c98a81e9266",
+        "logIndex": 625,
+        "verifiedAt": "2026-10-03T15:50:49.557Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"1\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xccf8f4f77c41404a9ab30f4746bc0b7efc46dec16647325681bc995956b295b3\",\"blockNumber\":\"26112748\",\"blockHash\":\"0x3d5b5661458cd49ded841dce1e1e7820e88da184bf70ce2ea0314c98a81e9266\",\"logIndex\":625,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112820\",\"observedBlockHash\":\"0x753443db522858bb8456fc1e20425e6e1d6b4903b0c950b926a7f65fb1961ea8\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:50:49.557Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "1",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xccf8f4f77c41404a9ab30f4746bc0b7efc46dec16647325681bc995956b295b3",
+          "blockNumber": "26112748",
+          "blockHash": "0x3d5b5661458cd49ded841dce1e1e7820e88da184bf70ce2ea0314c98a81e9266",
+          "logIndex": 625,
+          "observedBalance": "1",
+          "observedAtBlock": "26112820"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "0",
+      "calldataHash": "0x195c1c9c6a3fa15bfd49b65d2b9daf78fe059b76bcad7231cb69fa05f2156f1f",
+      "attemptedAt": "2026-10-03T15:36:05.755Z",
+      "txHashes": [
+        "0xccf8f4f77c41404a9ab30f4746bc0b7efc46dec16647325681bc995956b295b3"
+      ]
+    },
+    {
+      "trackId": "eb0287ec-45f1-4ce0-90ed-a9ea4057c34d",
+      "displayNumber": 2,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "2",
+      "metadataUri": "ar://DyO1OY-o79WIryke5z_XdRpFur5pf6CT0GNZJVwUVF8",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x8a9c3f79c461a82abc2b67fe13fd4355d89c8af15de381b0a3ba490a050fb55a",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xdb61c1e4834570830355a166ff7a3f6419560439d3a6ed597016cdfb3cb2836c",
+        "blockNumber": "26112752",
+        "blockHash": "0xc12459e8a680f5c0366b9f6755cbecd5681f1d9cbb38e2a4cb8c7b2bfe0ed2c9",
+        "logIndex": 1240,
+        "verifiedAt": "2026-10-03T15:50:53.767Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"2\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xdb61c1e4834570830355a166ff7a3f6419560439d3a6ed597016cdfb3cb2836c\",\"blockNumber\":\"26112752\",\"blockHash\":\"0xc12459e8a680f5c0366b9f6755cbecd5681f1d9cbb38e2a4cb8c7b2bfe0ed2c9\",\"logIndex\":1240,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112821\",\"observedBlockHash\":\"0x6da46f37150ab06f31a193921f06b9dfb5097e8d0881123a89880c0f6b4c899d\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:50:53.767Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "2",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xdb61c1e4834570830355a166ff7a3f6419560439d3a6ed597016cdfb3cb2836c",
+          "blockNumber": "26112752",
+          "blockHash": "0xc12459e8a680f5c0366b9f6755cbecd5681f1d9cbb38e2a4cb8c7b2bfe0ed2c9",
+          "logIndex": 1240,
+          "observedBalance": "1",
+          "observedAtBlock": "26112821"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "1",
+      "calldataHash": "0x803d85051cd12a23cb72277ff7329e32fd5c3a066b7ad9c7d3ad04a5e3462d56",
+      "attemptedAt": "2026-10-03T15:36:39.268Z",
+      "txHashes": [
+        "0xdb61c1e4834570830355a166ff7a3f6419560439d3a6ed597016cdfb3cb2836c"
+      ]
+    },
+    {
+      "trackId": "19aeeb04-f07d-4d08-ae0c-4f630ff5e864",
+      "displayNumber": 3,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "3",
+      "metadataUri": "ar://APmtsSktms2b1dBy1rImf2ccG7trfXc97OfyEPdJvT0",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x4d64bb28fefa7a7c90582975d80f27a1c85eaf0a317719eb59abea1eff54dfa7",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xc9a126066971e6d55c80251d54e0b7602f52f06cf587ef3c9d1f5db7576bc037",
+        "blockNumber": "26112754",
+        "blockHash": "0x001dbfc9abc605a074e4d3b5648441ac4849425e4df16e4842c3feaf4062b30e",
+        "logIndex": 523,
+        "verifiedAt": "2026-10-03T15:50:59.223Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"3\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xc9a126066971e6d55c80251d54e0b7602f52f06cf587ef3c9d1f5db7576bc037\",\"blockNumber\":\"26112754\",\"blockHash\":\"0x001dbfc9abc605a074e4d3b5648441ac4849425e4df16e4842c3feaf4062b30e\",\"logIndex\":523,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112821\",\"observedBlockHash\":\"0x6da46f37150ab06f31a193921f06b9dfb5097e8d0881123a89880c0f6b4c899d\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:50:59.223Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "3",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xc9a126066971e6d55c80251d54e0b7602f52f06cf587ef3c9d1f5db7576bc037",
+          "blockNumber": "26112754",
+          "blockHash": "0x001dbfc9abc605a074e4d3b5648441ac4849425e4df16e4842c3feaf4062b30e",
+          "logIndex": 523,
+          "observedBalance": "1",
+          "observedAtBlock": "26112821"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "2",
+      "calldataHash": "0x721b822098e355fb9977fd562721c6625bfd2cff970171d2f340608aee7d5c68",
+      "attemptedAt": "2026-10-03T15:37:20.742Z",
+      "txHashes": [
+        "0xc9a126066971e6d55c80251d54e0b7602f52f06cf587ef3c9d1f5db7576bc037"
+      ]
+    },
+    {
+      "trackId": "7b7a6182-8cbb-44c7-809c-693263ff96cb",
+      "displayNumber": 4,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "4",
+      "metadataUri": "ar://xjJBLJGVbgQrV7kee8O8TJu2mDecy9pbz0cv6j-XZaE",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x341036afc8189cd5d44574f72f30c0812f0a5f222e604d34570ee31d5ffc9412",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x7c7286eb7643be2df15fe3e48f277bef8b81a68214ab7c29abb55d9207761de9",
+        "blockNumber": "26112756",
+        "blockHash": "0x66f792d76d8cef78580bc33371e3ab01268d507b826d1766a7079b6936495f44",
+        "logIndex": 613,
+        "verifiedAt": "2026-10-03T15:51:02.477Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"4\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x7c7286eb7643be2df15fe3e48f277bef8b81a68214ab7c29abb55d9207761de9\",\"blockNumber\":\"26112756\",\"blockHash\":\"0x66f792d76d8cef78580bc33371e3ab01268d507b826d1766a7079b6936495f44\",\"logIndex\":613,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112822\",\"observedBlockHash\":\"0x9a43012d71f59ade74c58a438ae4cf7eba960288f5357ddd8203d3a0ac51042a\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:02.477Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "4",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x7c7286eb7643be2df15fe3e48f277bef8b81a68214ab7c29abb55d9207761de9",
+          "blockNumber": "26112756",
+          "blockHash": "0x66f792d76d8cef78580bc33371e3ab01268d507b826d1766a7079b6936495f44",
+          "logIndex": 613,
+          "observedBalance": "1",
+          "observedAtBlock": "26112822"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "3",
+      "calldataHash": "0x9107222a263653afbdbdccb899fe621134f3007f5748448a86cc5b8abc471bfc",
+      "attemptedAt": "2026-10-03T15:37:45.141Z",
+      "txHashes": [
+        "0x7c7286eb7643be2df15fe3e48f277bef8b81a68214ab7c29abb55d9207761de9"
+      ]
+    },
+    {
+      "trackId": "7ac769a9-902d-4f67-98da-da0849a8bed6",
+      "displayNumber": 5,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "5",
+      "metadataUri": "ar://Hv9eZPw0Lhd6lHvIMBDx3OdGXK-j_g-xAzjJ5-1j3Og",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x986d55fbd3d4df7bcca8f4b95963009032f8a52121176c3ea0eedd07c4b0ff23",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x9a60ec337b8ca11009a511a38f69d87cd3d18a722df2fb5f66689a78a2a2659b",
+        "blockNumber": "26112759",
+        "blockHash": "0x2e0d2ab246586299f70d20dcbf95d3e8df3cb37806609fe9876112fa546934e4",
+        "logIndex": 862,
+        "verifiedAt": "2026-10-03T15:51:06.141Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"5\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x9a60ec337b8ca11009a511a38f69d87cd3d18a722df2fb5f66689a78a2a2659b\",\"blockNumber\":\"26112759\",\"blockHash\":\"0x2e0d2ab246586299f70d20dcbf95d3e8df3cb37806609fe9876112fa546934e4\",\"logIndex\":862,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112822\",\"observedBlockHash\":\"0x9a43012d71f59ade74c58a438ae4cf7eba960288f5357ddd8203d3a0ac51042a\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:06.141Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "5",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x9a60ec337b8ca11009a511a38f69d87cd3d18a722df2fb5f66689a78a2a2659b",
+          "blockNumber": "26112759",
+          "blockHash": "0x2e0d2ab246586299f70d20dcbf95d3e8df3cb37806609fe9876112fa546934e4",
+          "logIndex": 862,
+          "observedBalance": "1",
+          "observedAtBlock": "26112822"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "4",
+      "calldataHash": "0x8f338fff896babc33168e7714c45a010dd3c226d1d5f5320439b1d0a8d15fe3c",
+      "attemptedAt": "2026-10-03T15:38:19.467Z",
+      "txHashes": [
+        "0x9a60ec337b8ca11009a511a38f69d87cd3d18a722df2fb5f66689a78a2a2659b"
+      ]
+    },
+    {
+      "trackId": "8527a1b5-570c-4e37-b335-9a57b9aa170f",
+      "displayNumber": 6,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "6",
+      "metadataUri": "ar://U6jm3jtho2C1HAMh8FT5ovUoQuaOyS3AjwT7WUM9dFk",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x2244ba3833ae3087cd9e423052c82859bfdcf9d59e4103749f85691471e3aedf",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x01345c2aaa7540a351428bc4215bd2c902aa02664defacb665ad97371767ff3e",
+        "blockNumber": "26112762",
+        "blockHash": "0x10548b8758b4d2d3191dac756b218eeef434a238605c6c161c9dc50932fd7e8e",
+        "logIndex": 702,
+        "verifiedAt": "2026-10-03T15:51:09.754Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"6\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x01345c2aaa7540a351428bc4215bd2c902aa02664defacb665ad97371767ff3e\",\"blockNumber\":\"26112762\",\"blockHash\":\"0x10548b8758b4d2d3191dac756b218eeef434a238605c6c161c9dc50932fd7e8e\",\"logIndex\":702,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112822\",\"observedBlockHash\":\"0x9a43012d71f59ade74c58a438ae4cf7eba960288f5357ddd8203d3a0ac51042a\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:09.754Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "6",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x01345c2aaa7540a351428bc4215bd2c902aa02664defacb665ad97371767ff3e",
+          "blockNumber": "26112762",
+          "blockHash": "0x10548b8758b4d2d3191dac756b218eeef434a238605c6c161c9dc50932fd7e8e",
+          "logIndex": 702,
+          "observedBalance": "1",
+          "observedAtBlock": "26112822"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "5",
+      "calldataHash": "0x58b394ef82a7881286eaace790f3204ef610e69d18d4727ed814b41bdbcfeb73",
+      "attemptedAt": "2026-10-03T15:38:47.532Z",
+      "txHashes": [
+        "0x01345c2aaa7540a351428bc4215bd2c902aa02664defacb665ad97371767ff3e"
+      ]
+    },
+    {
+      "trackId": "891dda4d-a243-4ca6-bd5a-b42697a3346b",
+      "displayNumber": 7,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "7",
+      "metadataUri": "ar://sdGNw2QO3mmMxyEl7CYiZsitMdXhL_JwJkzvWMJxUuM",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0xb49a1bd163317ebaae1ff7be07a8f6197c5f9fc9e7f1c4faa1bfe0a9792e6bf7",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xea7bafe49bfb877faed841936be1fd482b9be390a77c50fd27adba534dc3be9a",
+        "blockNumber": "26112764",
+        "blockHash": "0x8c56e3978e0493af46392145e4fed42678b22ad3e761565391a3333ca5d3ae76",
+        "logIndex": 668,
+        "verifiedAt": "2026-10-03T15:51:14.621Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"7\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xea7bafe49bfb877faed841936be1fd482b9be390a77c50fd27adba534dc3be9a\",\"blockNumber\":\"26112764\",\"blockHash\":\"0x8c56e3978e0493af46392145e4fed42678b22ad3e761565391a3333ca5d3ae76\",\"logIndex\":668,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112823\",\"observedBlockHash\":\"0xa1588ec019b30113aceb57db801e3883188cf893fdcccb50bf31b05ad0121128\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:14.621Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "7",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xea7bafe49bfb877faed841936be1fd482b9be390a77c50fd27adba534dc3be9a",
+          "blockNumber": "26112764",
+          "blockHash": "0x8c56e3978e0493af46392145e4fed42678b22ad3e761565391a3333ca5d3ae76",
+          "logIndex": 668,
+          "observedBalance": "1",
+          "observedAtBlock": "26112823"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "6",
+      "calldataHash": "0xed9c56ff41f78bbc62c2d4bd550c8902f478a56d30229b7fe81f143c3364d9e9",
+      "attemptedAt": "2026-10-03T15:39:19.041Z",
+      "txHashes": [
+        "0xea7bafe49bfb877faed841936be1fd482b9be390a77c50fd27adba534dc3be9a"
+      ]
+    },
+    {
+      "trackId": "7df38fb9-3fd8-4dd4-a109-a8d93f3cc063",
+      "displayNumber": 8,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "8",
+      "metadataUri": "ar://b8bOIjZRbqYwDjsnPar5hYLxdYXwJKn3EizRgIk_BB8",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x1fb65b3d34c1fdcfefed926f5e84d5e3268e4bcc5623da755ac79832dad816bf",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xfd8b0629858882bed1ab1e26c45baad77c209a0a4cd9fa7b81b5549ee9ffbb2b",
+        "blockNumber": "26112766",
+        "blockHash": "0x48621289f57bd36089573cf2c447030f84e19bd44790ad0ec8bd6e19440cc8a5",
+        "logIndex": 817,
+        "verifiedAt": "2026-10-03T15:51:19.142Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"8\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xfd8b0629858882bed1ab1e26c45baad77c209a0a4cd9fa7b81b5549ee9ffbb2b\",\"blockNumber\":\"26112766\",\"blockHash\":\"0x48621289f57bd36089573cf2c447030f84e19bd44790ad0ec8bd6e19440cc8a5\",\"logIndex\":817,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112823\",\"observedBlockHash\":\"0xa1588ec019b30113aceb57db801e3883188cf893fdcccb50bf31b05ad0121128\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:19.142Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "8",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xfd8b0629858882bed1ab1e26c45baad77c209a0a4cd9fa7b81b5549ee9ffbb2b",
+          "blockNumber": "26112766",
+          "blockHash": "0x48621289f57bd36089573cf2c447030f84e19bd44790ad0ec8bd6e19440cc8a5",
+          "logIndex": 817,
+          "observedBalance": "1",
+          "observedAtBlock": "26112823"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "7",
+      "calldataHash": "0xb296e2f39f8cdcc41e504f4abee9b5528e0091439b6a85284511ffde2a257eef",
+      "attemptedAt": "2026-10-03T15:39:43.890Z",
+      "txHashes": [
+        "0xfd8b0629858882bed1ab1e26c45baad77c209a0a4cd9fa7b81b5549ee9ffbb2b"
+      ]
+    },
+    {
+      "trackId": "de96230b-54a7-4b29-a7d0-82cebf07ab86",
+      "displayNumber": 9,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "9",
+      "metadataUri": "ar://mrf60F8e8uLQznVLdLpbCg9sqQyzl9CIITh5dRi_uOw",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0xc192db0d405aaf41f0fc7eec8ad758883ddf7d2a63227de2e8ffcec39cf19d35",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x04ac498952f4b847a0c1ef16e620aee699e907f0dfb340a2db2308812761e379",
+        "blockNumber": "26112768",
+        "blockHash": "0x7e68b1191909a4f4c41f2503996afb15021bcc618409dadcf67c88c91a0c5e94",
+        "logIndex": 811,
+        "verifiedAt": "2026-10-03T15:51:23.840Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"9\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x04ac498952f4b847a0c1ef16e620aee699e907f0dfb340a2db2308812761e379\",\"blockNumber\":\"26112768\",\"blockHash\":\"0x7e68b1191909a4f4c41f2503996afb15021bcc618409dadcf67c88c91a0c5e94\",\"logIndex\":811,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112823\",\"observedBlockHash\":\"0xa1588ec019b30113aceb57db801e3883188cf893fdcccb50bf31b05ad0121128\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:23.840Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "9",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x04ac498952f4b847a0c1ef16e620aee699e907f0dfb340a2db2308812761e379",
+          "blockNumber": "26112768",
+          "blockHash": "0x7e68b1191909a4f4c41f2503996afb15021bcc618409dadcf67c88c91a0c5e94",
+          "logIndex": 811,
+          "observedBalance": "1",
+          "observedAtBlock": "26112823"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "8",
+      "calldataHash": "0xf3d69016f3e74e34f3dc073876888cf88baeeb0dde9411f4cad3c2666ddfc733",
+      "attemptedAt": "2026-10-03T15:40:09.249Z",
+      "txHashes": [
+        "0x04ac498952f4b847a0c1ef16e620aee699e907f0dfb340a2db2308812761e379"
+      ]
+    },
+    {
+      "trackId": "9417ff60-f1b6-4135-8f61-bd556a2220dc",
+      "displayNumber": 10,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "10",
+      "metadataUri": "ar://MEnilq_Lhx9oynBqoqWFVjMoKsBZIa3PW-VHMgy01mA",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x7914bc736ce27461d5270755806705b52da82f8a74121bcc7f6fa915f214d0c0",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x08efeab3fdaf69354f4d679d3cac9123c4ada03c000eccee6f2f04d120a7b73c",
+        "blockNumber": "26112770",
+        "blockHash": "0x1ec5cc41e9a03e8c38a8c5a7e435eb10973723b9e2067a8923081f7cce1ef188",
+        "logIndex": 592,
+        "verifiedAt": "2026-10-03T15:51:29.125Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"10\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x08efeab3fdaf69354f4d679d3cac9123c4ada03c000eccee6f2f04d120a7b73c\",\"blockNumber\":\"26112770\",\"blockHash\":\"0x1ec5cc41e9a03e8c38a8c5a7e435eb10973723b9e2067a8923081f7cce1ef188\",\"logIndex\":592,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112824\",\"observedBlockHash\":\"0x1bfccd52677771615ad70e0997a62a5bec6f4b30f82c093be51585c5d8e296c8\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:29.125Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "10",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x08efeab3fdaf69354f4d679d3cac9123c4ada03c000eccee6f2f04d120a7b73c",
+          "blockNumber": "26112770",
+          "blockHash": "0x1ec5cc41e9a03e8c38a8c5a7e435eb10973723b9e2067a8923081f7cce1ef188",
+          "logIndex": 592,
+          "observedBalance": "1",
+          "observedAtBlock": "26112824"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "9",
+      "calldataHash": "0xc210faf00f7d036cb843bda380d293ecef84fdb8df5b177e384163c40647904f",
+      "attemptedAt": "2026-10-03T15:40:34.838Z",
+      "txHashes": [
+        "0x08efeab3fdaf69354f4d679d3cac9123c4ada03c000eccee6f2f04d120a7b73c"
+      ]
+    },
+    {
+      "trackId": "f7430714-7d5a-4ae3-8804-698fdecdd1eb",
+      "displayNumber": 11,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "11",
+      "metadataUri": "ar://jBspQSvh89b7nY_GbX0ClF93k0_J5weretkb9WncsvQ",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0xf7b7d6df24b01984b70cd20519070cf8dfe1180b4254e7b66c527eff82e97a38",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xe466ea675ba231e0205bb1ee51585743136c6282dccec338670acf386b19ac39",
+        "blockNumber": "26112772",
+        "blockHash": "0x9b485d04213e22b38feafdc6cfa435b667a84dffd845901d714ada1c2eadc927",
+        "logIndex": 1073,
+        "verifiedAt": "2026-10-03T15:51:35.004Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"11\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xe466ea675ba231e0205bb1ee51585743136c6282dccec338670acf386b19ac39\",\"blockNumber\":\"26112772\",\"blockHash\":\"0x9b485d04213e22b38feafdc6cfa435b667a84dffd845901d714ada1c2eadc927\",\"logIndex\":1073,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112824\",\"observedBlockHash\":\"0x1bfccd52677771615ad70e0997a62a5bec6f4b30f82c093be51585c5d8e296c8\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:35.004Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "11",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xe466ea675ba231e0205bb1ee51585743136c6282dccec338670acf386b19ac39",
+          "blockNumber": "26112772",
+          "blockHash": "0x9b485d04213e22b38feafdc6cfa435b667a84dffd845901d714ada1c2eadc927",
+          "logIndex": 1073,
+          "observedBalance": "1",
+          "observedAtBlock": "26112824"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "10",
+      "calldataHash": "0x210d19b140d9589117eba823b653664a9ea5dbb2de612afdd2d6e57023b28d85",
+      "attemptedAt": "2026-10-03T15:41:00.438Z",
+      "txHashes": [
+        "0xe466ea675ba231e0205bb1ee51585743136c6282dccec338670acf386b19ac39"
+      ]
+    },
+    {
+      "trackId": "85289b10-d222-4502-8d6a-81ba7540860e",
+      "displayNumber": 12,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "12",
+      "metadataUri": "ar://Z4K1jeB1pnHNchxytLk13eD460X6svhUCDnIT0NQv6M",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x0c36be088299bf57a4b82e415c01ed2706cf7d4c3f922ff128030b2f335577ff",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xd1572a38d65344e71814c1013fbd97092452f2d47ff294e3b205ffdf5acb9054",
+        "blockNumber": "26112775",
+        "blockHash": "0xc13979ee108e56a5a91425de0fd33a02a7e644cad6eb12debdb1d112b7a5cf0a",
+        "logIndex": 497,
+        "verifiedAt": "2026-10-03T15:51:39.813Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"12\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xd1572a38d65344e71814c1013fbd97092452f2d47ff294e3b205ffdf5acb9054\",\"blockNumber\":\"26112775\",\"blockHash\":\"0xc13979ee108e56a5a91425de0fd33a02a7e644cad6eb12debdb1d112b7a5cf0a\",\"logIndex\":497,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112825\",\"observedBlockHash\":\"0x1ede2b06d68166a3723fa1eeb47115becdeb05ba22a0c8b4557f949b0960e4ce\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:39.813Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "12",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xd1572a38d65344e71814c1013fbd97092452f2d47ff294e3b205ffdf5acb9054",
+          "blockNumber": "26112775",
+          "blockHash": "0xc13979ee108e56a5a91425de0fd33a02a7e644cad6eb12debdb1d112b7a5cf0a",
+          "logIndex": 497,
+          "observedBalance": "1",
+          "observedAtBlock": "26112825"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "11",
+      "calldataHash": "0x89e707cc7e621252a14895ecb24457f0df6b9a40fcfe2a62d4712278a7b90355",
+      "attemptedAt": "2026-10-03T15:41:28.174Z",
+      "txHashes": [
+        "0xd1572a38d65344e71814c1013fbd97092452f2d47ff294e3b205ffdf5acb9054"
+      ]
+    },
+    {
+      "trackId": "44220b86-a9db-4084-8f50-47f8e00a8573",
+      "displayNumber": 13,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "13",
+      "metadataUri": "ar://pAOckDZpVkvnWBFABG2vqgiyeox90LBSYVeAlC2PcVI",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x24eb99ce67245683ea3b125546384cf63844f6dcfc8c07d65b6ce6009876a7b3",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xe322e33d6edd747b0152fa3f7ccc40fb9d85572f3950ee7da81553b9731e016d",
+        "blockNumber": "26112779",
+        "blockHash": "0x6911b0aaa1e62a694deee97c9cf3ff064236f2690e7d804470fd780e029d0de9",
+        "logIndex": 564,
+        "verifiedAt": "2026-10-03T15:51:44.978Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"13\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xe322e33d6edd747b0152fa3f7ccc40fb9d85572f3950ee7da81553b9731e016d\",\"blockNumber\":\"26112779\",\"blockHash\":\"0x6911b0aaa1e62a694deee97c9cf3ff064236f2690e7d804470fd780e029d0de9\",\"logIndex\":564,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112825\",\"observedBlockHash\":\"0x1ede2b06d68166a3723fa1eeb47115becdeb05ba22a0c8b4557f949b0960e4ce\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:44.978Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "13",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xe322e33d6edd747b0152fa3f7ccc40fb9d85572f3950ee7da81553b9731e016d",
+          "blockNumber": "26112779",
+          "blockHash": "0x6911b0aaa1e62a694deee97c9cf3ff064236f2690e7d804470fd780e029d0de9",
+          "logIndex": 564,
+          "observedBalance": "1",
+          "observedAtBlock": "26112825"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "12",
+      "calldataHash": "0x4e4e0cb8582bf22ed096570311366e14fef10894c59cf1d1ef4d2076d63dbe1a",
+      "attemptedAt": "2026-10-03T15:42:12.021Z",
+      "txHashes": [
+        "0xe322e33d6edd747b0152fa3f7ccc40fb9d85572f3950ee7da81553b9731e016d"
+      ]
+    },
+    {
+      "trackId": "cc5b254c-f7f7-4446-a718-c58f15dae193",
+      "displayNumber": 14,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "14",
+      "metadataUri": "ar://WTi3Lx5aa9oaeIaeHr6DAheKlg9VxPnmxI_Ms9xhHY8",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0xa5b99e30ae856ec5632088f90f0aeb94da214b1262efd47250abdabc25c8db33",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x071acb93d61a4708e8cb86dfb24bcbf1d7e1f67f01ec4b78e2476e7fb80c72cf",
+        "blockNumber": "26112781",
+        "blockHash": "0xd333e3ec9921348ff5620573c189322c0a1a581ee03e0254e683e37a635f3465",
+        "logIndex": 675,
+        "verifiedAt": "2026-10-03T15:51:50.295Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"14\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x071acb93d61a4708e8cb86dfb24bcbf1d7e1f67f01ec4b78e2476e7fb80c72cf\",\"blockNumber\":\"26112781\",\"blockHash\":\"0xd333e3ec9921348ff5620573c189322c0a1a581ee03e0254e683e37a635f3465\",\"logIndex\":675,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112826\",\"observedBlockHash\":\"0x5be63a42d0efb9a940363ca7882aba2be5d737939a6b9e4964bf6e02ff47ce47\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:50.295Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "14",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x071acb93d61a4708e8cb86dfb24bcbf1d7e1f67f01ec4b78e2476e7fb80c72cf",
+          "blockNumber": "26112781",
+          "blockHash": "0xd333e3ec9921348ff5620573c189322c0a1a581ee03e0254e683e37a635f3465",
+          "logIndex": 675,
+          "observedBalance": "1",
+          "observedAtBlock": "26112826"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "13",
+      "calldataHash": "0x7fb374f8ebf2d00435d6cac54a2b24e8870fd21211d8e5eac7bb431a44f1ce65",
+      "attemptedAt": "2026-10-03T15:42:45.542Z",
+      "txHashes": [
+        "0x071acb93d61a4708e8cb86dfb24bcbf1d7e1f67f01ec4b78e2476e7fb80c72cf"
+      ]
+    },
+    {
+      "trackId": "78326e66-0b5d-4650-9534-f8f8740bc0e9",
+      "displayNumber": 15,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "15",
+      "metadataUri": "ar://3D5XJ9wJyMX4l4o0VdnfERTAzr-0K7y5DJjEFnHTfAQ",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x37efc567cddb8ba2b2413cf65c809a7ac2cba88df0d8bd9629e02b0166ab8c14",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xb54c91643da3d598f23aadf70ab427ba116224873dd4a3d4cc11af7b06157fe6",
+        "blockNumber": "26112783",
+        "blockHash": "0x698072b1d47295cabae1e59e65e25f517efa56f5957dfca3a73f0f719eab65ae",
+        "logIndex": 2143,
+        "verifiedAt": "2026-10-03T15:51:54.186Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"15\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xb54c91643da3d598f23aadf70ab427ba116224873dd4a3d4cc11af7b06157fe6\",\"blockNumber\":\"26112783\",\"blockHash\":\"0x698072b1d47295cabae1e59e65e25f517efa56f5957dfca3a73f0f719eab65ae\",\"logIndex\":2143,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112826\",\"observedBlockHash\":\"0x5be63a42d0efb9a940363ca7882aba2be5d737939a6b9e4964bf6e02ff47ce47\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:54.186Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "15",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xb54c91643da3d598f23aadf70ab427ba116224873dd4a3d4cc11af7b06157fe6",
+          "blockNumber": "26112783",
+          "blockHash": "0x698072b1d47295cabae1e59e65e25f517efa56f5957dfca3a73f0f719eab65ae",
+          "logIndex": 2143,
+          "observedBalance": "1",
+          "observedAtBlock": "26112826"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "14",
+      "calldataHash": "0xa32097f00a27d3149fd5cba02e8cdd624577c127f4d4c2a6b46b98767cc9a732",
+      "attemptedAt": "2026-10-03T15:43:11.051Z",
+      "txHashes": [
+        "0xb54c91643da3d598f23aadf70ab427ba116224873dd4a3d4cc11af7b06157fe6"
+      ]
+    },
+    {
+      "trackId": "d43a6930-74d8-4ed3-af47-f817f1e7ab07",
+      "displayNumber": 16,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "16",
+      "metadataUri": "ar://25IVHmCzCMtwzqzulZSYNeDIwrDf5m_NXXrNadAqTJI",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x5d1b0ec8d3842408142aea182f2636643e02bec1124c1b990f6ac3ccb484614b",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x05291c837cca5a75775ada13f482e76269e296008acbd0f75e54d10e008585f8",
+        "blockNumber": "26112785",
+        "blockHash": "0xaaa5d923b797c714c24a75ba30ebd18de625a0f295f7d35eebf1feae0b53ada3",
+        "logIndex": 600,
+        "verifiedAt": "2026-10-03T15:51:58.005Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"16\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x05291c837cca5a75775ada13f482e76269e296008acbd0f75e54d10e008585f8\",\"blockNumber\":\"26112785\",\"blockHash\":\"0xaaa5d923b797c714c24a75ba30ebd18de625a0f295f7d35eebf1feae0b53ada3\",\"logIndex\":600,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112826\",\"observedBlockHash\":\"0x5be63a42d0efb9a940363ca7882aba2be5d737939a6b9e4964bf6e02ff47ce47\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:51:58.005Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "16",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x05291c837cca5a75775ada13f482e76269e296008acbd0f75e54d10e008585f8",
+          "blockNumber": "26112785",
+          "blockHash": "0xaaa5d923b797c714c24a75ba30ebd18de625a0f295f7d35eebf1feae0b53ada3",
+          "logIndex": 600,
+          "observedBalance": "1",
+          "observedAtBlock": "26112826"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "15",
+      "calldataHash": "0xab10a5d3269d82df40582ed477e42f2714910ce19ee3aeef8bc2dc69d2dd1563",
+      "attemptedAt": "2026-10-03T15:43:36.209Z",
+      "txHashes": [
+        "0x05291c837cca5a75775ada13f482e76269e296008acbd0f75e54d10e008585f8"
+      ]
+    },
+    {
+      "trackId": "807a3c8a-6370-434d-8e91-5493ba19edcc",
+      "displayNumber": 17,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "17",
+      "metadataUri": "ar://OAOtXIcr2L0mZ9nXZX-i_4hZtvrTscZFRKjNHfRnym8",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x7656a9c50e935e256b8a51a2aa0078760da11279afa6001abd297ab2a4ed4f81",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x3546a9e2ae3af87ce517922d8608406749b6180e5d8347db5604236c5856a72e",
+        "blockNumber": "26112788",
+        "blockHash": "0x487fe16c13139baaf77f61414135104b51021738e5c2573fd84ddf246bc5cfe9",
+        "logIndex": 712,
+        "verifiedAt": "2026-10-03T15:52:04.896Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"17\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x3546a9e2ae3af87ce517922d8608406749b6180e5d8347db5604236c5856a72e\",\"blockNumber\":\"26112788\",\"blockHash\":\"0x487fe16c13139baaf77f61414135104b51021738e5c2573fd84ddf246bc5cfe9\",\"logIndex\":712,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112827\",\"observedBlockHash\":\"0x215d6edebc4f30c8c2a6c03e3bbece5baa5e51769d06af8b850fb7ef798e7796\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:04.896Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "17",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x3546a9e2ae3af87ce517922d8608406749b6180e5d8347db5604236c5856a72e",
+          "blockNumber": "26112788",
+          "blockHash": "0x487fe16c13139baaf77f61414135104b51021738e5c2573fd84ddf246bc5cfe9",
+          "logIndex": 712,
+          "observedBalance": "1",
+          "observedAtBlock": "26112827"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "16",
+      "calldataHash": "0xb352c949d250a1d21974a5904e5cc75d1aad14517b1691d7dbcf7c2614081c2d",
+      "attemptedAt": "2026-10-03T15:44:01.620Z",
+      "txHashes": [
+        "0x3546a9e2ae3af87ce517922d8608406749b6180e5d8347db5604236c5856a72e"
+      ]
+    },
+    {
+      "trackId": "695c20e3-5f26-44ed-99b7-388c2a7121da",
+      "displayNumber": 18,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "18",
+      "metadataUri": "ar://aULDqmZcggMBtOW1zLQ8mfHwsotFN6MjqZ4bHYnJbeI",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0xd9cefefd55ff45bb3b19ba425bf12c501f8c9d9645fcfb04a73bb395cf8231ac",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xa3e8b4324f9352d65f0891c6cb8e19d96f502a62f0ce08717844c984a04f5cd3",
+        "blockNumber": "26112791",
+        "blockHash": "0x4eed4514550dceba6a38af24a9cad8057313b2c239be537d3af1143934f0daa3",
+        "logIndex": 588,
+        "verifiedAt": "2026-10-03T15:52:08.872Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"18\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xa3e8b4324f9352d65f0891c6cb8e19d96f502a62f0ce08717844c984a04f5cd3\",\"blockNumber\":\"26112791\",\"blockHash\":\"0x4eed4514550dceba6a38af24a9cad8057313b2c239be537d3af1143934f0daa3\",\"logIndex\":588,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112827\",\"observedBlockHash\":\"0x215d6edebc4f30c8c2a6c03e3bbece5baa5e51769d06af8b850fb7ef798e7796\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:08.872Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "18",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xa3e8b4324f9352d65f0891c6cb8e19d96f502a62f0ce08717844c984a04f5cd3",
+          "blockNumber": "26112791",
+          "blockHash": "0x4eed4514550dceba6a38af24a9cad8057313b2c239be537d3af1143934f0daa3",
+          "logIndex": 588,
+          "observedBalance": "1",
+          "observedAtBlock": "26112827"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "17",
+      "calldataHash": "0xc3da4201539639c3b02812398223d5f8f11fd52481409affbc09e04ab4ddfd0f",
+      "attemptedAt": "2026-10-03T15:44:36.489Z",
+      "txHashes": [
+        "0xa3e8b4324f9352d65f0891c6cb8e19d96f502a62f0ce08717844c984a04f5cd3"
+      ]
+    },
+    {
+      "trackId": "80e08d48-cc78-4bef-972a-98d56c02d92b",
+      "displayNumber": 19,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "19",
+      "metadataUri": "ar://GjGHMiLlsKw3QT2PybWZQr8hrIdCli-kQI_w1BIDIjY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0xe235014054c6fddd0b64fdc876814be6e31527d267fd918066e83c483b03789c",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x476a08a11ee32ecf194a89639593dce163979ee8717786531c989c88ed03affc",
+        "blockNumber": "26112794",
+        "blockHash": "0x88f8b0e55bb664a979deaff7ef261c9f6a1e4b7e4c51daf83ee92dc184b5656c",
+        "logIndex": 1011,
+        "verifiedAt": "2026-10-03T15:52:14.052Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"19\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x476a08a11ee32ecf194a89639593dce163979ee8717786531c989c88ed03affc\",\"blockNumber\":\"26112794\",\"blockHash\":\"0x88f8b0e55bb664a979deaff7ef261c9f6a1e4b7e4c51daf83ee92dc184b5656c\",\"logIndex\":1011,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112828\",\"observedBlockHash\":\"0x27b6137c12d2f760871b969086195de833e584eb524c3eafb17378914b9a0af5\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:14.052Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "19",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x476a08a11ee32ecf194a89639593dce163979ee8717786531c989c88ed03affc",
+          "blockNumber": "26112794",
+          "blockHash": "0x88f8b0e55bb664a979deaff7ef261c9f6a1e4b7e4c51daf83ee92dc184b5656c",
+          "logIndex": 1011,
+          "observedBalance": "1",
+          "observedAtBlock": "26112828"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "18",
+      "calldataHash": "0x12c9e8479d78768795768f4dad25d22628edf0601b05d30f9a9650d326664543",
+      "attemptedAt": "2026-10-03T15:45:16.647Z",
+      "txHashes": [
+        "0x476a08a11ee32ecf194a89639593dce163979ee8717786531c989c88ed03affc"
+      ]
+    },
+    {
+      "trackId": "beb124af-dd37-4ad3-b7c2-ceea3050fe5c",
+      "displayNumber": 20,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "20",
+      "metadataUri": "ar://BzeAacTjSeoqubdKC_mmnsCWgg1gsh105JyXghAFEh4",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x898200fa633abe204a8bcb723d0080a1aec4a8a827293313c6589d0720af5bd8",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xba391a11a8735aceed9c2de692d6d9b3cbd98ef9c9d7a54f931fb62b16eaada9",
+        "blockNumber": "26112796",
+        "blockHash": "0x0f32e152b9826f06d99198bb269ae08cdb1f2df00a8a4db688f39b4c928f4759",
+        "logIndex": 552,
+        "verifiedAt": "2026-10-03T15:52:17.820Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"20\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xba391a11a8735aceed9c2de692d6d9b3cbd98ef9c9d7a54f931fb62b16eaada9\",\"blockNumber\":\"26112796\",\"blockHash\":\"0x0f32e152b9826f06d99198bb269ae08cdb1f2df00a8a4db688f39b4c928f4759\",\"logIndex\":552,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112828\",\"observedBlockHash\":\"0x27b6137c12d2f760871b969086195de833e584eb524c3eafb17378914b9a0af5\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:17.820Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "20",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xba391a11a8735aceed9c2de692d6d9b3cbd98ef9c9d7a54f931fb62b16eaada9",
+          "blockNumber": "26112796",
+          "blockHash": "0x0f32e152b9826f06d99198bb269ae08cdb1f2df00a8a4db688f39b4c928f4759",
+          "logIndex": 552,
+          "observedBalance": "1",
+          "observedAtBlock": "26112828"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "19",
+      "calldataHash": "0xca002e356bdfb863e1fcddd974d7d200ea750cd704492ad04bb3658653806e0b",
+      "attemptedAt": "2026-10-03T15:45:45.297Z",
+      "txHashes": [
+        "0xba391a11a8735aceed9c2de692d6d9b3cbd98ef9c9d7a54f931fb62b16eaada9"
+      ]
+    },
+    {
+      "trackId": "5a52e031-ee29-4b58-a0f3-9b779ce97f40",
+      "displayNumber": 21,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "21",
+      "metadataUri": "ar://RySB3KKL0eWhGyI0WpXoZQz91GUzznhjgEIYdBE3dDE",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x3ff91ccc3f35e7117f958fbc23164fab7f8a5ff46ab698e7298627f4c42dfe24",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xb530c7404e6586319437ee7759a06b3dc79090757e9c63e06122a785edcc6a80",
+        "blockNumber": "26112798",
+        "blockHash": "0x7aa8ec981c3d14c1604bc9c4e259fd5858aa7d663ad1cc2208ac6715752fdb18",
+        "logIndex": 477,
+        "verifiedAt": "2026-10-03T15:52:22.156Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"21\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xb530c7404e6586319437ee7759a06b3dc79090757e9c63e06122a785edcc6a80\",\"blockNumber\":\"26112798\",\"blockHash\":\"0x7aa8ec981c3d14c1604bc9c4e259fd5858aa7d663ad1cc2208ac6715752fdb18\",\"logIndex\":477,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112828\",\"observedBlockHash\":\"0x27b6137c12d2f760871b969086195de833e584eb524c3eafb17378914b9a0af5\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:22.156Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "21",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xb530c7404e6586319437ee7759a06b3dc79090757e9c63e06122a785edcc6a80",
+          "blockNumber": "26112798",
+          "blockHash": "0x7aa8ec981c3d14c1604bc9c4e259fd5858aa7d663ad1cc2208ac6715752fdb18",
+          "logIndex": 477,
+          "observedBalance": "1",
+          "observedAtBlock": "26112828"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "20",
+      "calldataHash": "0xcbe66a3c35dff5e48a25d8ff444bcbfc2d1bdd5217f3b34505997ada067dcda0",
+      "attemptedAt": "2026-10-03T15:46:10.806Z",
+      "txHashes": [
+        "0xb530c7404e6586319437ee7759a06b3dc79090757e9c63e06122a785edcc6a80"
+      ]
+    },
+    {
+      "trackId": "07b3b553-28fa-4090-b6d7-3e63e6d14f07",
+      "displayNumber": 22,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "22",
+      "metadataUri": "ar://zGvE-cjKANA61mvrpnx0AqT-3YofAGDdMiD3UtfzHFw",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x48862758aa08056f50aeb69bda276fcb7657f359de9b455462fe192bc2a5a875",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x7677e4de767db615abb2128a533dc4e85d3f742e2b10595b459d90aa77ab4703",
+        "blockNumber": "26112801",
+        "blockHash": "0x65f8d8c100d2db946e13f08ab7415f58c0bb9c111d998cdb018993ceeb858c60",
+        "logIndex": 525,
+        "verifiedAt": "2026-10-03T15:52:26.506Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"22\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x7677e4de767db615abb2128a533dc4e85d3f742e2b10595b459d90aa77ab4703\",\"blockNumber\":\"26112801\",\"blockHash\":\"0x65f8d8c100d2db946e13f08ab7415f58c0bb9c111d998cdb018993ceeb858c60\",\"logIndex\":525,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112828\",\"observedBlockHash\":\"0x27b6137c12d2f760871b969086195de833e584eb524c3eafb17378914b9a0af5\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:26.506Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "22",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x7677e4de767db615abb2128a533dc4e85d3f742e2b10595b459d90aa77ab4703",
+          "blockNumber": "26112801",
+          "blockHash": "0x65f8d8c100d2db946e13f08ab7415f58c0bb9c111d998cdb018993ceeb858c60",
+          "logIndex": 525,
+          "observedBalance": "1",
+          "observedAtBlock": "26112828"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "21",
+      "calldataHash": "0x02ae8f50aa2bdc1658db01dcee65d6a65d832d21d1bd09c518b0e7d465c03df9",
+      "attemptedAt": "2026-10-03T15:46:35.824Z",
+      "txHashes": [
+        "0x7677e4de767db615abb2128a533dc4e85d3f742e2b10595b459d90aa77ab4703"
+      ]
+    },
+    {
+      "trackId": "325f93e5-3063-4ae0-806d-0b6d6363aba3",
+      "displayNumber": 23,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "23",
+      "metadataUri": "ar://fTNEblIA8qLbPHS9RTE59YgzFernrTRb8TSrAT0vqac",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0xdcfb36ee2b7e5ea2064dbde0511acf4150f3e0cfdba9567f032a72d20e398e13",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xb53384b437e60e26a8f8fadb97f6b1fd6260d24aebb8348a16e5b4c8f8971c6d",
+        "blockNumber": "26112803",
+        "blockHash": "0xf4fa3bc3c1a5c94050b047bf8080459f1e31f4a6bc16aa8f7d106aea2809a8fc",
+        "logIndex": 418,
+        "verifiedAt": "2026-10-03T15:52:30.830Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"23\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xb53384b437e60e26a8f8fadb97f6b1fd6260d24aebb8348a16e5b4c8f8971c6d\",\"blockNumber\":\"26112803\",\"blockHash\":\"0xf4fa3bc3c1a5c94050b047bf8080459f1e31f4a6bc16aa8f7d106aea2809a8fc\",\"logIndex\":418,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112829\",\"observedBlockHash\":\"0xfa263e288762f7f397c2eaa7f7fbef9efe0e07cf29c397bb34fa2a50decbbace\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:30.830Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "23",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xb53384b437e60e26a8f8fadb97f6b1fd6260d24aebb8348a16e5b4c8f8971c6d",
+          "blockNumber": "26112803",
+          "blockHash": "0xf4fa3bc3c1a5c94050b047bf8080459f1e31f4a6bc16aa8f7d106aea2809a8fc",
+          "logIndex": 418,
+          "observedBalance": "1",
+          "observedAtBlock": "26112829"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "22",
+      "calldataHash": "0xd0b0fc04fa0ef7eefe95d3cce04eb4528b23ea08c24c92b74eccc201d0a10c0d",
+      "attemptedAt": "2026-10-03T15:47:10.704Z",
+      "txHashes": [
+        "0xb53384b437e60e26a8f8fadb97f6b1fd6260d24aebb8348a16e5b4c8f8971c6d"
+      ]
+    },
+    {
+      "trackId": "6aab1b24-225c-4300-8b4d-ef86e74866e3",
+      "displayNumber": 24,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "24",
+      "metadataUri": "ar://79h-WXQxlQVbg-qfgBwMTuiRcyt76bfQfQld6SJ-JYQ",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x3c7f367ee4788608f6d247881f7dbd34d85b29949ce77c8de133b6a92bb630b6",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x70069d4e4464bf30f12360b51b2e35a9eddacc5556bcba1cc762e5d09385b661",
+        "blockNumber": "26112806",
+        "blockHash": "0xcd6810024052c412352e1b2e7578fcda5bfa174a5d26ddc9c19c921c483ce077",
+        "logIndex": 495,
+        "verifiedAt": "2026-10-03T15:52:35.152Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"24\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x70069d4e4464bf30f12360b51b2e35a9eddacc5556bcba1cc762e5d09385b661\",\"blockNumber\":\"26112806\",\"blockHash\":\"0xcd6810024052c412352e1b2e7578fcda5bfa174a5d26ddc9c19c921c483ce077\",\"logIndex\":495,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112829\",\"observedBlockHash\":\"0xfa263e288762f7f397c2eaa7f7fbef9efe0e07cf29c397bb34fa2a50decbbace\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:35.152Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "24",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x70069d4e4464bf30f12360b51b2e35a9eddacc5556bcba1cc762e5d09385b661",
+          "blockNumber": "26112806",
+          "blockHash": "0xcd6810024052c412352e1b2e7578fcda5bfa174a5d26ddc9c19c921c483ce077",
+          "logIndex": 495,
+          "observedBalance": "1",
+          "observedAtBlock": "26112829"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "23",
+      "calldataHash": "0x98a45cc4bb10d6402103f21b5f786b778d58cea2332689032594d7038f43d2c1",
+      "attemptedAt": "2026-10-03T15:47:35.928Z",
+      "txHashes": [
+        "0x70069d4e4464bf30f12360b51b2e35a9eddacc5556bcba1cc762e5d09385b661"
+      ]
+    },
+    {
+      "trackId": "410ce6d3-9541-4761-b29e-0a19d1872104",
+      "displayNumber": 25,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "25",
+      "metadataUri": "ar://xShXZex33NfE8UYH6S1u-rPTYbDIfoq2UXFKDRZ_tmY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x5f4e276d345d694fd6519c2a782a0dc29c6cb0ad46893c2eb0bbf71da0b36622",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xdbe1c39d47571696a7084ff7b09fafd48a791946a8cbc11849e50f41347b9d8e",
+        "blockNumber": "26112809",
+        "blockHash": "0x0f45cfe2e5af3ed4fa5946a0c8fb3ff7e3da597888fad2aebf1c53346450ffc3",
+        "logIndex": 462,
+        "verifiedAt": "2026-10-03T15:52:40.882Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"25\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xdbe1c39d47571696a7084ff7b09fafd48a791946a8cbc11849e50f41347b9d8e\",\"blockNumber\":\"26112809\",\"blockHash\":\"0x0f45cfe2e5af3ed4fa5946a0c8fb3ff7e3da597888fad2aebf1c53346450ffc3\",\"logIndex\":462,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112830\",\"observedBlockHash\":\"0x5c0ef145bc5591cd2070e73680c9dac4cb9b749867bf28f14c977853f1fe769e\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:40.882Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "25",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xdbe1c39d47571696a7084ff7b09fafd48a791946a8cbc11849e50f41347b9d8e",
+          "blockNumber": "26112809",
+          "blockHash": "0x0f45cfe2e5af3ed4fa5946a0c8fb3ff7e3da597888fad2aebf1c53346450ffc3",
+          "logIndex": 462,
+          "observedBalance": "1",
+          "observedAtBlock": "26112830"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "24",
+      "calldataHash": "0xe392927838730e42c6e7a74a38850165cb01d4d15cb268e567b9710c75ea95d4",
+      "attemptedAt": "2026-10-03T15:48:12.192Z",
+      "txHashes": [
+        "0xdbe1c39d47571696a7084ff7b09fafd48a791946a8cbc11849e50f41347b9d8e"
+      ]
+    },
+    {
+      "trackId": "516b404d-b443-40a1-8d61-ed6c6e197874",
+      "displayNumber": 26,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "26",
+      "metadataUri": "ar://IS7mN4FHi15H-ZROKqalwhVLAktEC07MQECy2ew1VYY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x161307eeac77a510be210877db2d10b5a1649d85bfc811f8d5132a82cc670108",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x3324451da1d710ce972f8712a4af9228887db29f7c831f0e4a4b3feee9fbd88f",
+        "blockNumber": "26112811",
+        "blockHash": "0x661cd0fc6c645d70224b89d2f835c3d3c12ac8d4fd5794fba2c1c16932731994",
+        "logIndex": 573,
+        "verifiedAt": "2026-10-03T15:52:45.718Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"26\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x3324451da1d710ce972f8712a4af9228887db29f7c831f0e4a4b3feee9fbd88f\",\"blockNumber\":\"26112811\",\"blockHash\":\"0x661cd0fc6c645d70224b89d2f835c3d3c12ac8d4fd5794fba2c1c16932731994\",\"logIndex\":573,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112830\",\"observedBlockHash\":\"0x5c0ef145bc5591cd2070e73680c9dac4cb9b749867bf28f14c977853f1fe769e\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:45.718Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "26",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x3324451da1d710ce972f8712a4af9228887db29f7c831f0e4a4b3feee9fbd88f",
+          "blockNumber": "26112811",
+          "blockHash": "0x661cd0fc6c645d70224b89d2f835c3d3c12ac8d4fd5794fba2c1c16932731994",
+          "logIndex": 573,
+          "observedBalance": "1",
+          "observedAtBlock": "26112830"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "25",
+      "calldataHash": "0xf0185364d4faf38f2f3de0b6385c84d7b44ad350c71bed4a4de83baf0c7967b0",
+      "attemptedAt": "2026-10-03T15:48:46.471Z",
+      "txHashes": [
+        "0x3324451da1d710ce972f8712a4af9228887db29f7c831f0e4a4b3feee9fbd88f"
+      ]
+    },
+    {
+      "trackId": "73130478-7bef-48dc-806f-e76b6676c18d",
+      "displayNumber": 27,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "27",
+      "metadataUri": "ar://vss-t5DFkWOvDohhfZPUjMbNLNLYmpgjevBTujG7Szs",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x84c30a650ef1013f03c1430693ccd088120f05bd83d08a0cd449c4399da31c16",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xfb640e797d0be172959a89b8a94b1cc41ea02bf6f80a39ae740a805e370a9171",
+        "blockNumber": "26112814",
+        "blockHash": "0x339b7386992b07d6c51be2934a96060465eeb875f761bd0b573cf8b69d434aca",
+        "logIndex": 752,
+        "verifiedAt": "2026-10-03T15:52:49.596Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"27\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xfb640e797d0be172959a89b8a94b1cc41ea02bf6f80a39ae740a805e370a9171\",\"blockNumber\":\"26112814\",\"blockHash\":\"0x339b7386992b07d6c51be2934a96060465eeb875f761bd0b573cf8b69d434aca\",\"logIndex\":752,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112830\",\"observedBlockHash\":\"0x5c0ef145bc5591cd2070e73680c9dac4cb9b749867bf28f14c977853f1fe769e\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:49.596Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "27",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xfb640e797d0be172959a89b8a94b1cc41ea02bf6f80a39ae740a805e370a9171",
+          "blockNumber": "26112814",
+          "blockHash": "0x339b7386992b07d6c51be2934a96060465eeb875f761bd0b573cf8b69d434aca",
+          "logIndex": 752,
+          "observedBalance": "1",
+          "observedAtBlock": "26112830"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "26",
+      "calldataHash": "0x668110f0a76e99cbffc0335998ef0b010c76959a2845497595129bfdb449ad30",
+      "attemptedAt": "2026-10-03T15:49:15.228Z",
+      "txHashes": [
+        "0xfb640e797d0be172959a89b8a94b1cc41ea02bf6f80a39ae740a805e370a9171"
+      ]
+    },
+    {
+      "trackId": "aad18d17-ec13-4438-ac4e-e350a50ec1fe",
+      "displayNumber": 28,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "28",
+      "metadataUri": "ar://VEFztDhR9qSuWl3cEHSNuAy0Sn3kglpYr-0P9o3QsdI",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x67bc9962bc9b5c9ebdf1233532703abc9f27f05f2831aa12b9e65b4ce5cd3b7d",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x53b6c8e7546686951c79831820a29a4125fc114b3de3188850f76ed255e04903",
+        "blockNumber": "26112817",
+        "blockHash": "0x4522177d51f5d4b4dfdd1a079632df2cc63bd9a2b5c19c4841aa8db14f675301",
+        "logIndex": 620,
+        "verifiedAt": "2026-10-03T15:52:54.603Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"28\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x53b6c8e7546686951c79831820a29a4125fc114b3de3188850f76ed255e04903\",\"blockNumber\":\"26112817\",\"blockHash\":\"0x4522177d51f5d4b4dfdd1a079632df2cc63bd9a2b5c19c4841aa8db14f675301\",\"logIndex\":620,\"observedBalance\":\"1\",\"observedAtBlock\":\"26112831\",\"observedBlockHash\":\"0x0af6cc78fcf9716bbc936d3ff11a8ab81ee4e7173991c782b37405cf3691a699\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T15:52:54.603Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "28",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x53b6c8e7546686951c79831820a29a4125fc114b3de3188850f76ed255e04903",
+          "blockNumber": "26112817",
+          "blockHash": "0x4522177d51f5d4b4dfdd1a079632df2cc63bd9a2b5c19c4841aa8db14f675301",
+          "logIndex": 620,
+          "observedBalance": "1",
+          "observedAtBlock": "26112831"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "27",
+      "calldataHash": "0x6f0781af2f206828abce1d168f41fc88debaef3d4db1b17bea716eeb3a7e8510",
+      "attemptedAt": "2026-10-03T15:49:50.403Z",
+      "txHashes": [
+        "0x53b6c8e7546686951c79831820a29a4125fc114b3de3188850f76ed255e04903"
+      ]
+    },
+    {
+      "trackId": "cc304cf9-659d-47c0-b852-dc616484b9d1",
+      "displayNumber": 29,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "29",
+      "metadataUri": "ar://tvfZ_szOatZTO7pI1ABQC6P-zwdua9kVPTChoMVQRfY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x36ed06ca48b0452d2c1bd82d68f5f1a7f2523362ddec73a8cef4c85a05fa107b",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xf982057f6cef1648eea78c914f53b09bb467f9a391279901cf5c428f5063c50b",
+        "blockNumber": "26113064",
+        "blockHash": "0x6f773e1862845b2fdd5af84d45ffdf6b387e085d505b12e35af5a8bbb17e9396",
+        "logIndex": 1656,
+        "verifiedAt": "2026-10-03T16:43:40.836Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"29\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xf982057f6cef1648eea78c914f53b09bb467f9a391279901cf5c428f5063c50b\",\"blockNumber\":\"26113064\",\"blockHash\":\"0x6f773e1862845b2fdd5af84d45ffdf6b387e085d505b12e35af5a8bbb17e9396\",\"logIndex\":1656,\"observedBalance\":\"1\",\"observedAtBlock\":\"26113084\",\"observedBlockHash\":\"0xc8a26e45f5891c56f64c9eaa28693b740a17bfaec9e1e35e408d318a7d1d7c4c\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T16:43:40.836Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "29",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xf982057f6cef1648eea78c914f53b09bb467f9a391279901cf5c428f5063c50b",
+          "blockNumber": "26113064",
+          "blockHash": "0x6f773e1862845b2fdd5af84d45ffdf6b387e085d505b12e35af5a8bbb17e9396",
+          "logIndex": 1656,
+          "observedBalance": "1",
+          "observedAtBlock": "26113084"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "28",
+      "calldataHash": "0xf64e20e73b2f40529d08610cbd698757133e8f7992357c2441d55abd7ef36f99",
+      "attemptedAt": "2026-10-03T16:39:33.210Z",
+      "txHashes": [
+        "0xf982057f6cef1648eea78c914f53b09bb467f9a391279901cf5c428f5063c50b"
+      ]
+    },
+    {
+      "trackId": "08550208-7473-4e89-92b0-8031c945d7c4",
+      "displayNumber": 30,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "30",
+      "metadataUri": "ar://F0kS90sBWO8wSXSDNYl3BMlkRpzPbBEt3EeCMhbashI",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x4db3f9dcbc3d672bdf025be1b2e55e90c102e74a1f0a69c71ddaf678e211517f",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xfb6900884cd9a610aba251929dcc56f94cb8ef22f56e2ac18443549cc9b376a5",
+        "blockNumber": "26113066",
+        "blockHash": "0xd8168a0837bccb7370db7e96904b2241afbf87de56ef21de8254e125d2cc7b44",
+        "logIndex": 1106,
+        "verifiedAt": "2026-10-03T16:43:43.797Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"30\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xfb6900884cd9a610aba251929dcc56f94cb8ef22f56e2ac18443549cc9b376a5\",\"blockNumber\":\"26113066\",\"blockHash\":\"0xd8168a0837bccb7370db7e96904b2241afbf87de56ef21de8254e125d2cc7b44\",\"logIndex\":1106,\"observedBalance\":\"1\",\"observedAtBlock\":\"26113084\",\"observedBlockHash\":\"0xc8a26e45f5891c56f64c9eaa28693b740a17bfaec9e1e35e408d318a7d1d7c4c\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T16:43:43.797Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "30",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xfb6900884cd9a610aba251929dcc56f94cb8ef22f56e2ac18443549cc9b376a5",
+          "blockNumber": "26113066",
+          "blockHash": "0xd8168a0837bccb7370db7e96904b2241afbf87de56ef21de8254e125d2cc7b44",
+          "logIndex": 1106,
+          "observedBalance": "1",
+          "observedAtBlock": "26113084"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "29",
+      "calldataHash": "0x812e4eebe7b9b093d857b66bc9cf0e98dae6e3541f7d596ce7964dcf25b6311c",
+      "attemptedAt": "2026-10-03T16:39:57.721Z",
+      "txHashes": [
+        "0xfb6900884cd9a610aba251929dcc56f94cb8ef22f56e2ac18443549cc9b376a5"
+      ]
+    },
+    {
+      "trackId": "4598fa9c-8e06-4823-b34f-89047af69864",
+      "displayNumber": 31,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "31",
+      "metadataUri": "ar://AqADdPVcfFZ4Bqx9X04z7VHy1M9nVGUo9leJ-YCzYVM",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x6763d2d4a5ab0fae7560040c1769af8c80d1cd9f7ddd962e8f3604639f5045ab",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xe6ce39010260d6e4b9b64b82729f44281e25dbd5a2cb57b1cd4b0cd1b1ef4456",
+        "blockNumber": "26113069",
+        "blockHash": "0xe918f984fa524660f65cc94c576ab573e63ab0916a9ce2228e19eaa0e93472f1",
+        "logIndex": 591,
+        "verifiedAt": "2026-10-03T16:43:47.117Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"31\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xe6ce39010260d6e4b9b64b82729f44281e25dbd5a2cb57b1cd4b0cd1b1ef4456\",\"blockNumber\":\"26113069\",\"blockHash\":\"0xe918f984fa524660f65cc94c576ab573e63ab0916a9ce2228e19eaa0e93472f1\",\"logIndex\":591,\"observedBalance\":\"1\",\"observedAtBlock\":\"26113084\",\"observedBlockHash\":\"0xc8a26e45f5891c56f64c9eaa28693b740a17bfaec9e1e35e408d318a7d1d7c4c\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T16:43:47.117Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "31",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xe6ce39010260d6e4b9b64b82729f44281e25dbd5a2cb57b1cd4b0cd1b1ef4456",
+          "blockNumber": "26113069",
+          "blockHash": "0xe918f984fa524660f65cc94c576ab573e63ab0916a9ce2228e19eaa0e93472f1",
+          "logIndex": 591,
+          "observedBalance": "1",
+          "observedAtBlock": "26113084"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "30",
+      "calldataHash": "0x5a70bf913beea0dd8b9c7500ad3d992545ecf4cefd7beb24a8ffb29e78947481",
+      "attemptedAt": "2026-10-03T16:40:24.965Z",
+      "txHashes": [
+        "0xe6ce39010260d6e4b9b64b82729f44281e25dbd5a2cb57b1cd4b0cd1b1ef4456"
+      ]
+    },
+    {
+      "trackId": "c3de4558-7a4b-4a07-a95e-58246e56157f",
+      "displayNumber": 32,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "32",
+      "metadataUri": "ar://GlVmZIMpREtM6II_xf7AoO0b_u-ja245nhy0nq6FS5s",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0xcb1475d6ab54b6c9f374eeb0afb95c103b0e423007d7d053a73db00766e90ae9",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0xf77dee1f50589224071c6de47c36a18fa2a089721bc5ef3f0f73249284de1bcd",
+        "blockNumber": "26113071",
+        "blockHash": "0x431b3bb05d7464a4da4b8f50bb7c677a6f20af868a0d5ff7c95e838283671d17",
+        "logIndex": 763,
+        "verifiedAt": "2026-10-03T16:43:50.962Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"32\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0xf77dee1f50589224071c6de47c36a18fa2a089721bc5ef3f0f73249284de1bcd\",\"blockNumber\":\"26113071\",\"blockHash\":\"0x431b3bb05d7464a4da4b8f50bb7c677a6f20af868a0d5ff7c95e838283671d17\",\"logIndex\":763,\"observedBalance\":\"1\",\"observedAtBlock\":\"26113085\",\"observedBlockHash\":\"0x121699979224f22c438152f8f5233f4b7b337d712fda379d99e30043400d5407\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T16:43:50.962Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "32",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0xf77dee1f50589224071c6de47c36a18fa2a089721bc5ef3f0f73249284de1bcd",
+          "blockNumber": "26113071",
+          "blockHash": "0x431b3bb05d7464a4da4b8f50bb7c677a6f20af868a0d5ff7c95e838283671d17",
+          "logIndex": 763,
+          "observedBalance": "1",
+          "observedAtBlock": "26113085"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "31",
+      "calldataHash": "0xb4a1eb3a56a790c04a17c1ae66af3db850fb5b90530fb7bd3d630bbebff29696",
+      "attemptedAt": "2026-10-03T16:40:55.816Z",
+      "txHashes": [
+        "0xf77dee1f50589224071c6de47c36a18fa2a089721bc5ef3f0f73249284de1bcd"
+      ]
+    },
+    {
+      "trackId": "eeef9acd-b0f5-4846-ab6c-e72e06656598",
+      "displayNumber": 33,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "33",
+      "metadataUri": "ar://GCXJ6vlMTLXUSHRUedxoytyNP-zJj1DCsN9-RWVPoaY",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x5395991785f453cc0b41fd4a8b1dcabca838e0499a388bd79f62a68c7fca8864",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x02262d6a0fbd9e739344e44c7eaa2980c7c4e4a8b8e5c352e1440cda70253339",
+        "blockNumber": "26113073",
+        "blockHash": "0x8ef9fa7f73135c3e8abbdd3edf5a784e7b5a2299f0183d8d285bbf9c3cbb56d4",
+        "logIndex": 248,
+        "verifiedAt": "2026-10-03T16:43:54.396Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"33\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x02262d6a0fbd9e739344e44c7eaa2980c7c4e4a8b8e5c352e1440cda70253339\",\"blockNumber\":\"26113073\",\"blockHash\":\"0x8ef9fa7f73135c3e8abbdd3edf5a784e7b5a2299f0183d8d285bbf9c3cbb56d4\",\"logIndex\":248,\"observedBalance\":\"1\",\"observedAtBlock\":\"26113085\",\"observedBlockHash\":\"0x121699979224f22c438152f8f5233f4b7b337d712fda379d99e30043400d5407\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T16:43:54.396Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "33",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x02262d6a0fbd9e739344e44c7eaa2980c7c4e4a8b8e5c352e1440cda70253339",
+          "blockNumber": "26113073",
+          "blockHash": "0x8ef9fa7f73135c3e8abbdd3edf5a784e7b5a2299f0183d8d285bbf9c3cbb56d4",
+          "logIndex": 248,
+          "observedBalance": "1",
+          "observedAtBlock": "26113085"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "32",
+      "calldataHash": "0x30ecf9303c6f405e6dad5beba948f9564595956616a0c7de942bd08d4f72df61",
+      "attemptedAt": "2026-10-03T16:41:18.868Z",
+      "txHashes": [
+        "0x02262d6a0fbd9e739344e44c7eaa2980c7c4e4a8b8e5c352e1440cda70253339"
+      ]
+    },
+    {
+      "trackId": "2dd7e3ef-c992-4868-b08d-0c92ce440ef4",
+      "displayNumber": 34,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "34",
+      "metadataUri": "ar://8k9UEIx2g6HBiTewCZTKbaLpPACUhQk_fVP3ByAY4OM",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0x8bf752c81fbc7caa53eb872c09c6995528e2db877570affee4b3f828d7dae563",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x8984478404bb93aaf4c5ebc41c019f1c16bab66452ab360650d6c87c68ae0d01",
+        "blockNumber": "26113077",
+        "blockHash": "0xa2807eae5bcd3895e1e89205d1b94cf36048b6e2aae15d9a681a36874d675121",
+        "logIndex": 555,
+        "verifiedAt": "2026-10-03T16:43:57.988Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"34\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x8984478404bb93aaf4c5ebc41c019f1c16bab66452ab360650d6c87c68ae0d01\",\"blockNumber\":\"26113077\",\"blockHash\":\"0xa2807eae5bcd3895e1e89205d1b94cf36048b6e2aae15d9a681a36874d675121\",\"logIndex\":555,\"observedBalance\":\"1\",\"observedAtBlock\":\"26113085\",\"observedBlockHash\":\"0x121699979224f22c438152f8f5233f4b7b337d712fda379d99e30043400d5407\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T16:43:57.988Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "34",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x8984478404bb93aaf4c5ebc41c019f1c16bab66452ab360650d6c87c68ae0d01",
+          "blockNumber": "26113077",
+          "blockHash": "0xa2807eae5bcd3895e1e89205d1b94cf36048b6e2aae15d9a681a36874d675121",
+          "logIndex": 555,
+          "observedBalance": "1",
+          "observedAtBlock": "26113085"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "33",
+      "calldataHash": "0x815b851673b4910fb9341a9cdeaa3286e1881f5179d6d50d24f2132f8a9d30b0",
+      "attemptedAt": "2026-10-03T16:41:50.438Z",
+      "txHashes": [
+        "0x8984478404bb93aaf4c5ebc41c019f1c16bab66452ab360650d6c87c68ae0d01"
+      ]
+    },
+    {
+      "trackId": "8ae0e6d5-b10d-4368-a430-90ce6a9dead7",
+      "displayNumber": 35,
+      "chainId": 1,
+      "contractAddress": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+      "tokenId": "35",
+      "metadataUri": "ar://8TY1lV2MI76pF-0MYuVx_lvb0nTFOJKqP2LPMGY_OU4",
+      "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+      "amount": "1",
+      "approvalRef": "用户2026-10-03授权ETH也继续，Gas不足再补；项目留存接收钱包自付兑换，使用现有部署钱包资金，余额不足在新签名前暂停",
+      "operationId": "0xdcf7db65230ceb53e2bedcd715605c0508b4906e0d6f4b0069232bb7be29c1b4",
+      "state": "confirmed",
+      "archiveMint": {
+        "state": "confirmed",
+        "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+        "amount": "1",
+        "txHash": "0x15ee2a01858139429f498b1d45c130f4912ce39bc8ea18c5f0e58766592ec9e0",
+        "blockNumber": "26113080",
+        "blockHash": "0xa5fb235a74ab0753fb16508512d233def3c90ee5fd280be3c7445038bc0e22a2",
+        "logIndex": 505,
+        "verifiedAt": "2026-10-03T16:44:01.120Z",
+        "proof": "{\"chainId\":1,\"contract\":\"0x6c731e5faa26e648cad6f86b1c1e741f0aae136b\",\"tokenId\":\"35\",\"recipient\":\"0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba\",\"amount\":\"1\",\"mintedAmount\":\"1\",\"txHash\":\"0x15ee2a01858139429f498b1d45c130f4912ce39bc8ea18c5f0e58766592ec9e0\",\"blockNumber\":\"26113080\",\"blockHash\":\"0xa5fb235a74ab0753fb16508512d233def3c90ee5fd280be3c7445038bc0e22a2\",\"logIndex\":505,\"observedBalance\":\"1\",\"observedAtBlock\":\"26113086\",\"observedBlockHash\":\"0x81652b1368d478cf2949bb0a1997c7b9994b1414d9b7bc4da091dbaad4382d73\"}"
+      },
+      "inspection": {
+        "status": "confirmed",
+        "reason": "原mint事件、规范区块、URI与当前余额一致",
+        "checkedAt": "2026-10-03T16:44:01.120Z",
+        "balance": "1",
+        "mintProof": {
+          "chainId": 1,
+          "contract": "0x6c731e5faa26e648cad6f86b1c1e741f0aae136b",
+          "tokenId": "35",
+          "recipient": "0x7742951cbcf469a3fe59f6f9adedb72cc4ba2dba",
+          "amount": "1",
+          "mintedAmount": "1",
+          "txHash": "0x15ee2a01858139429f498b1d45c130f4912ce39bc8ea18c5f0e58766592ec9e0",
+          "blockNumber": "26113080",
+          "blockHash": "0xa5fb235a74ab0753fb16508512d233def3c90ee5fd280be3c7445038bc0e22a2",
+          "logIndex": 505,
+          "observedBalance": "1",
+          "observedAtBlock": "26113086"
+        }
+      },
+      "sender": "0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA",
+      "nonce": "34",
+      "calldataHash": "0xf2327f3568f2c1aa5fde7a1696954d66c0fd96c8dfebcf781390f7f7c09b0531",
+      "attemptedAt": "2026-10-03T16:42:43.030Z",
+      "txHashes": [
+        "0x15ee2a01858139429f498b1d45c130f4912ce39bc8ea18c5f0e58766592ec9e0"
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "tokenId": "1",
+      "txHash": "0xccf8f4f77c41404a9ab30f4746bc0b7efc46dec16647325681bc995956b295b3",
+      "gasUsed": "118725",
+      "effectiveGasPriceWei": "84649935",
+      "totalFeeWei": "10050063532875"
+    },
+    {
+      "tokenId": "2",
+      "txHash": "0xdb61c1e4834570830355a166ff7a3f6419560439d3a6ed597016cdfb3cb2836c",
+      "gasUsed": "118725",
+      "effectiveGasPriceWei": "75959534",
+      "totalFeeWei": "9018295674150"
+    },
+    {
+      "tokenId": "3",
+      "txHash": "0xc9a126066971e6d55c80251d54e0b7602f52f06cf587ef3c9d1f5db7576bc037",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "80633080",
+      "totalFeeWei": "9574130019960"
+    },
+    {
+      "tokenId": "4",
+      "txHash": "0x7c7286eb7643be2df15fe3e48f277bef8b81a68214ab7c29abb55d9207761de9",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "76772453",
+      "totalFeeWei": "9115730751861"
+    },
+    {
+      "tokenId": "5",
+      "txHash": "0x9a60ec337b8ca11009a511a38f69d87cd3d18a722df2fb5f66689a78a2a2659b",
+      "gasUsed": "118725",
+      "effectiveGasPriceWei": "74601190",
+      "totalFeeWei": "8857026282750"
+    },
+    {
+      "tokenId": "6",
+      "txHash": "0x01345c2aaa7540a351428bc4215bd2c902aa02664defacb665ad97371767ff3e",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "77707882",
+      "totalFeeWei": "9226800785034"
+    },
+    {
+      "tokenId": "7",
+      "txHash": "0xea7bafe49bfb877faed841936be1fd482b9be390a77c50fd27adba534dc3be9a",
+      "gasUsed": "118725",
+      "effectiveGasPriceWei": "70676719",
+      "totalFeeWei": "8391093463275"
+    },
+    {
+      "tokenId": "8",
+      "txHash": "0xfd8b0629858882bed1ab1e26c45baad77c209a0a4cd9fa7b81b5549ee9ffbb2b",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "72194469",
+      "totalFeeWei": "8572154665653"
+    },
+    {
+      "tokenId": "9",
+      "txHash": "0x04ac498952f4b847a0c1ef16e620aee699e907f0dfb340a2db2308812761e379",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "74448262",
+      "totalFeeWei": "8839763285094"
+    },
+    {
+      "tokenId": "10",
+      "txHash": "0x08efeab3fdaf69354f4d679d3cac9123c4ada03c000eccee6f2f04d120a7b73c",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "80452120",
+      "totalFeeWei": "9552643372440"
+    },
+    {
+      "tokenId": "11",
+      "txHash": "0xe466ea675ba231e0205bb1ee51585743136c6282dccec338670acf386b19ac39",
+      "gasUsed": "118725",
+      "effectiveGasPriceWei": "78834517",
+      "totalFeeWei": "9359628030825"
+    },
+    {
+      "tokenId": "12",
+      "txHash": "0xd1572a38d65344e71814c1013fbd97092452f2d47ff294e3b205ffdf5acb9054",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "78791595",
+      "totalFeeWei": "9355477615515"
+    },
+    {
+      "tokenId": "13",
+      "txHash": "0xe322e33d6edd747b0152fa3f7ccc40fb9d85572f3950ee7da81553b9731e016d",
+      "gasUsed": "118713",
+      "effectiveGasPriceWei": "74808023",
+      "totalFeeWei": "8880684834399"
+    },
+    {
+      "tokenId": "14",
+      "txHash": "0x071acb93d61a4708e8cb86dfb24bcbf1d7e1f67f01ec4b78e2476e7fb80c72cf",
+      "gasUsed": "118725",
+      "effectiveGasPriceWei": "67522707",
+      "totalFeeWei": "8016633388575"
+    },
+    {
+      "tokenId": "15",
+      "txHash": "0xb54c91643da3d598f23aadf70ab427ba116224873dd4a3d4cc11af7b06157fe6",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "64026772",
+      "totalFeeWei": "7602346826964"
+    },
+    {
+      "tokenId": "16",
+      "txHash": "0x05291c837cca5a75775ada13f482e76269e296008acbd0f75e54d10e008585f8",
+      "gasUsed": "118725",
+      "effectiveGasPriceWei": "76566763",
+      "totalFeeWei": "9090388937175"
+    },
+    {
+      "tokenId": "17",
+      "txHash": "0x3546a9e2ae3af87ce517922d8608406749b6180e5d8347db5604236c5856a72e",
+      "gasUsed": "118713",
+      "effectiveGasPriceWei": "80041823",
+      "totalFeeWei": "9502004933799"
+    },
+    {
+      "tokenId": "18",
+      "txHash": "0xa3e8b4324f9352d65f0891c6cb8e19d96f502a62f0ce08717844c984a04f5cd3",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "84651084",
+      "totalFeeWei": "10051215760908"
+    },
+    {
+      "tokenId": "19",
+      "txHash": "0x476a08a11ee32ecf194a89639593dce163979ee8717786531c989c88ed03affc",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "85465069",
+      "totalFeeWei": "10147865897853"
+    },
+    {
+      "tokenId": "20",
+      "txHash": "0xba391a11a8735aceed9c2de692d6d9b3cbd98ef9c9d7a54f931fb62b16eaada9",
+      "gasUsed": "118713",
+      "effectiveGasPriceWei": "85820672",
+      "totalFeeWei": "10188029435136"
+    },
+    {
+      "tokenId": "21",
+      "txHash": "0xb530c7404e6586319437ee7759a06b3dc79090757e9c63e06122a785edcc6a80",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "86545553",
+      "totalFeeWei": "10276159326561"
+    },
+    {
+      "tokenId": "22",
+      "txHash": "0x7677e4de767db615abb2128a533dc4e85d3f742e2b10595b459d90aa77ab4703",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "82756658",
+      "totalFeeWei": "9826277300946"
+    },
+    {
+      "tokenId": "23",
+      "txHash": "0xb53384b437e60e26a8f8fadb97f6b1fd6260d24aebb8348a16e5b4c8f8971c6d",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "81624987",
+      "totalFeeWei": "9691906081419"
+    },
+    {
+      "tokenId": "24",
+      "txHash": "0x70069d4e4464bf30f12360b51b2e35a9eddacc5556bcba1cc762e5d09385b661",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "77508471",
+      "totalFeeWei": "9203123321127"
+    },
+    {
+      "tokenId": "25",
+      "txHash": "0xdbe1c39d47571696a7084ff7b09fafd48a791946a8cbc11849e50f41347b9d8e",
+      "gasUsed": "118713",
+      "effectiveGasPriceWei": "75463124",
+      "totalFeeWei": "8958453839412"
+    },
+    {
+      "tokenId": "26",
+      "txHash": "0x3324451da1d710ce972f8712a4af9228887db29f7c831f0e4a4b3feee9fbd88f",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "73016850",
+      "totalFeeWei": "8669801718450"
+    },
+    {
+      "tokenId": "27",
+      "txHash": "0xfb640e797d0be172959a89b8a94b1cc41ea02bf6f80a39ae740a805e370a9171",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "72157451",
+      "totalFeeWei": "8567759259387"
+    },
+    {
+      "tokenId": "28",
+      "txHash": "0x53b6c8e7546686951c79831820a29a4125fc114b3de3188850f76ed255e04903",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "75238855",
+      "totalFeeWei": "8933635926135"
+    },
+    {
+      "tokenId": "29",
+      "txHash": "0xf982057f6cef1648eea78c914f53b09bb467f9a391279901cf5c428f5063c50b",
+      "gasUsed": "118725",
+      "effectiveGasPriceWei": "93642906",
+      "totalFeeWei": "11117754014850"
+    },
+    {
+      "tokenId": "30",
+      "txHash": "0xfb6900884cd9a610aba251929dcc56f94cb8ef22f56e2ac18443549cc9b376a5",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "101129234",
+      "totalFeeWei": "12007781857458"
+    },
+    {
+      "tokenId": "31",
+      "txHash": "0xe6ce39010260d6e4b9b64b82729f44281e25dbd5a2cb57b1cd4b0cd1b1ef4456",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "93806093",
+      "totalFeeWei": "11138254064541"
+    },
+    {
+      "tokenId": "32",
+      "txHash": "0xf77dee1f50589224071c6de47c36a18fa2a089721bc5ef3f0f73249284de1bcd",
+      "gasUsed": "118725",
+      "effectiveGasPriceWei": "92640370",
+      "totalFeeWei": "10998727928250"
+    },
+    {
+      "tokenId": "33",
+      "txHash": "0x02262d6a0fbd9e739344e44c7eaa2980c7c4e4a8b8e5c352e1440cda70253339",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "91230959",
+      "totalFeeWei": "10832490378783"
+    },
+    {
+      "tokenId": "34",
+      "txHash": "0x8984478404bb93aaf4c5ebc41c019f1c16bab66452ab360650d6c87c68ae0d01",
+      "gasUsed": "118737",
+      "effectiveGasPriceWei": "80706531",
+      "totalFeeWei": "9582851371347"
+    },
+    {
+      "tokenId": "35",
+      "txHash": "0x15ee2a01858139429f498b1d45c130f4912ce39bc8ea18c5f0e58766592ec9e0",
+      "gasUsed": "118725",
+      "effectiveGasPriceWei": "85115584",
+      "totalFeeWei": "10105347710400"
+    }
+  ],
+  "currentHoldings": {
+    "blockNumber": "26113086",
+    "blockHash": "0x81652b1368d478cf2949bb0a1997c7b9994b1414d9b7bc4da091dbaad4382d73",
+    "count": 35,
+    "balances": [
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1",
+      "1"
+    ]
+  }
+}

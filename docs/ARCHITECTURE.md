@@ -12,7 +12,7 @@
 
 P17唯一`music-catalog`保存35首永久身份、ERC1155坐标及revision；曲目页、公开快照和SEMI清单从同源生成。ETH新增不可升级原曲ERC1155，外部钱包自付Gas、零额外领取价格、服务端EIP712凭证及独立订单；用户已确认每钱包每首历史领取一次、可转让、转出不恢复、总量无上限。资格用`hasClaimed`核验，不以余额为零放行。OP新增已部署原曲SBT，供新发行，项目代付Gas，保留旧可转让合约/URI/资产，不新增OP钱包终身次数政策。
 
-网站发布沿用最新主线的Privy认证、multichain registry、持久PondShell、播放器focus bus和Score/Echo预取；不回退已有实现。订单页在`app/(pond)/me/material`，公开原曲URL仍为`/score/material/[chainId]/[contract]/[tokenId]`。真实数据库、角色、部署、永久上传与留存证据缺失时，新签发和新OP队列保持关闭；私有查询仅owner，unknown只登记旧hash并由对账确认，不能重复发送或自报success。用户已授权网站发布、必要两链部署、059–062生产迁移及两份合集JSON永久上传，均按执行清单完成；2026-10-03用户进一步授权领取及留存并选择先做OP：35份OP留存逐笔确认，OP队列与冻结接收人数据库/worker验证通过，本轮开启OP入口；登录钱包点击到队列/收据的完整路径尚无真实登录证据。ETH原曲入口及35份留存仍暂缓，恢复前刷新Gas与余额并冻结费用。
+网站发布沿用最新主线的Privy认证、multichain registry、持久PondShell、播放器focus bus和Score/Echo预取；不回退已有实现。订单页在`app/(pond)/me/material`，公开原曲URL仍为`/score/material/[chainId]/[contract]/[tokenId]`。真实数据库、角色、部署、永久上传与留存证据缺失时，新签发和新OP队列保持关闭；私有查询仅owner，unknown只登记旧hash并由对账确认，不能重复发送或自报success。用户已授权网站发布、必要两链部署、059–062生产迁移及两份合集JSON永久上传，均按执行清单完成；2026-10-03用户进一步授权领取及留存并选择先做OP：35份OP留存逐笔确认，OP队列与冻结接收人数据库/worker验证通过，本轮开启OP入口；登录钱包点击到队列/收据的完整路径尚无真实登录证据。2026-10-04用户补款后ETH35份留存也全部确认；真实签发材料/角色与生产发行政策已配置，ETH入口随本轮发布开启。新原曲对账复用既有分钟OP cron空闲分支，每轮最多一单一页；不增加服务。CLI真实兑换与登录浏览器验收分别记录。
 
 ---
 

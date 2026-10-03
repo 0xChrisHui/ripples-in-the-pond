@@ -6,7 +6,7 @@ import { buildMaterialPlaybackRoute } from '../../../src/lib/music-catalog/ident
 import { buildSemiPackage, serializeSemiPackage } from './package';
 import { matchesGeneratedContent, validateSemiPackage } from './validate';
 
-test('真实目录导出35首双链资料并区分OP已留存和ETH待定', () => {
+test('真实目录导出35首双链资料与70项已确认留存', () => {
   const catalog = getMusicCatalog();
   const output = buildSemiPackage(catalog);
   assert.equal(output.inventory.tracks.length, 35);
@@ -14,9 +14,8 @@ test('真实目录导出35首双链资料并区分OP已留存和ETH待定', () =
   assert.equal(deployments.length, 70);
   assert.equal(deployments.filter((item) => item.status === 'ready').length, 70);
   assert.equal(deployments.filter((item) => item.status === 'undeployed').length, 0);
-  assert.equal(deployments.filter((item) => item.archiveMint.state === 'confirmed').length, 35);
-  assert.ok(deployments.every((item) => item.archiveMint.state
-    === (item.chainId === 10 ? 'confirmed' : 'awaiting_input')));
+  assert.equal(deployments.filter((item) => item.archiveMint.state === 'confirmed').length, 70);
+  assert.ok(deployments.every((item) => item.archiveMint.state === 'confirmed'));
   assert.equal(output.contracts.collections.length, 4);
   assert.equal(output.assets.originals.length, 70);
   assert.ok(deployments.filter((item) => item.assetId).every((item) => item.assetId?.includes('/erc1155:')));
