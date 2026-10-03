@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { resolveMaterialRecipient } from '@/src/lib/runtime/material-recipient';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 
 /**
@@ -39,6 +40,8 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = auth.userId;
+    const snapshotReady = process.env.MATERIAL_OP_RECIPIENT_SNAPSHOT_READY === '1';
+    const recipient = resolveMaterialRecipient(null, auth.evmAddress);
 
     // 3. 同一用户 + 同一素材不重复铸造（success 已存在 → 明确 409）
     const { data: alreadyMinted } = await supabaseAdmin
@@ -65,6 +68,7 @@ export async function POST(req: NextRequest) {
         mint_type: 'material',
         token_id: tokenId,
         status: 'pending',
+        ...(snapshotReady ? { recipient_address: recipient } : {}),
       })
       .select('id')
       .single();
@@ -131,7 +135,8 @@ export async function POST(req: NextRequest) {
       throw mintError;
     }
 
-    return NextResponse.json({ result: 'ok', mintId: mint.id, status: 'pending' });
+    return NextResponse.json({ result: 'ok', mintId: mint.id, status: 'pending',
+      ...(snapshotReady ? { recipientAddress: recipient } : {}) });
   } catch (err) {
     console.error('POST /api/mint/material error:', err);
     return NextResponse.json(

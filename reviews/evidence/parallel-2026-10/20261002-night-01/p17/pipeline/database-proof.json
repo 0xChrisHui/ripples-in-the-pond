@@ -5,6 +5,29 @@
   "database": "p17_gate_1790999396008",
   "productionWrite": false,
   "migrationSha256": "bd6e7c7334b1fe79ed42e171cefab5ccd5ddc4fc2a935db2e5891669b4067e37",
+  "production": {
+    "projectRef": "uupobbgnhpattyxhxvmc",
+    "verifiedAt": "2026-10-03T06:24:43.008Z",
+    "highestMigration": "062",
+    "migrations": ["059", "060", "061", "062"],
+    "sourceSha256": {
+      "059": "191ae5ebebd0ccb96b2681d3ac9fefe874d328f2512dae67b0c7ee5e9e10ccf1",
+      "060": "0c96d2a1a7a766a832877b3067717260e7d0537942bb31c8dad89686b9f64649",
+      "061": "dd6c36dad5c10165b7f1312e0cedc66bc1f30f9091e7f4ddf39b82e8ff8788c1",
+      "062": "3cf579b4bb5b2c868c11e5f5219cbb672945bf06ca329e0a60f784d111a06e74"
+    },
+    "beforeAndAfterCounts": { "users": 10, "tracks": 35, "mintQueue": 7 },
+    "oldQueueNewColumnsNull": true,
+    "policyStatus": "pending",
+    "materialOrders": 0,
+    "materialAttempts": 0,
+    "opNewTargets": 0,
+    "rlsEnabledTables": ["material_issuance_policy", "material_mint_attempts", "material_mint_orders"],
+    "clientTableRead": false,
+    "clientRpcExecute": false,
+    "serviceRoleRpcExecute": true,
+    "productionWrite": true
+  },
   "assertions": [
     "真实PostgreSQL执行五份迁移并可安全重跑",
     "政策未启用拒绝新订单",

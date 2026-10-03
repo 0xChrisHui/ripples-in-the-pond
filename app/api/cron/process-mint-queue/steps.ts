@@ -1,3 +1,7 @@
+import { resolveMaterialRecipient } from '@/src/lib/runtime/material-recipient';
+import { getMusicCatalog, getOriginalMintDeployment } from '@/src/lib/music-catalog/asset-registry';
+import { selectMaterialJobContract } from '@/src/lib/material-mint/op/target';
+import { verifyOpSbtReceipt } from '@/src/lib/material-mint/op/proof';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import {
   operatorWalletClient,
@@ -28,7 +32,7 @@ const PENDING_TX_TIMEOUT_MS = 15 * 60 * 1000;
 export async function tryConfirmMinting() {
   const { data: job } = await supabaseAdmin
     .from('mint_queue')
-    .select('id, user_id, token_id, tx_hash, retry_count, updated_at, mint_attempted_at')
+    .select('*')
     .eq('status', 'minting_onchain')
     .order('updated_at', { ascending: true })
     .limit(1)
@@ -63,6 +67,14 @@ export async function tryConfirmMinting() {
     });
 
     if (receipt.status === 'success') {
+      if (job.material_contract_address) {
+        selectMaterialJobContract(job.material_contract_address, MATERIAL_NFT_ADDRESS,
+          getOriginalMintDeployment(getMusicCatalog().tracks[0].trackId, 10));
+        if (await publicClient.getChainId() !== 10) throw new Error('SBT_RPC_CHAIN_MISMATCH');
+        const block = await publicClient.getBlock({ blockNumber: receipt.blockNumber });
+        if (block.hash !== receipt.blockHash) throw new Error('SBT_REORG_PENDING');
+        verifyOpSbtReceipt(job, receipt, await publicClient.getTransaction({ hash: receipt.transactionHash }));
+      }
       await markSuccess(job.id, job.user_id, job.token_id, job.tx_hash);
       return { result: 'confirmed', jobId: job.id, txHash: job.tx_hash };
     }
@@ -89,10 +101,15 @@ export async function tryConfirmMinting() {
 
 /** 抢一条 pending → 发交易 → 立刻存 tx_hash → 返回 */
 export async function trySendNew() {
-  const { data: jobs, error } = await supabaseAdmin.rpc('claim_pending_job');
+  const { data: jobs, error } = await supabaseAdmin.rpc(process.env.MATERIAL_OP_RECIPIENT_SNAPSHOT_READY === '1' || process.env.MATERIAL_OP_SBT_QUEUE_READY === '1'
+    ? 'claim_pending_material_job' : 'claim_pending_job');
   if (error || !jobs || jobs.length === 0) return null;
 
-  const job = jobs[0];
+  // 旧RPC投影不含快照；开关改变也必须保留已有任务的真实目标和接收人。
+  const claimed = jobs[0];
+  const { data: job, error: snapshotError } = await supabaseAdmin.from('mint_queue')
+    .select('*').eq('id', claimed.id).eq('status', 'minting_onchain').maybeSingle();
+  if (snapshotError || !job) return { result: 'snapshot_read_failed', jobId: claimed.id };
 
   // 历史或人工写入的任务也必须在发交易前确认对应真实 Track 存在。
   const { data: track, error: trackError } = await supabaseAdmin
@@ -117,20 +134,32 @@ export async function trySendNew() {
     return { result: 'no_user', jobId: job.id };
   }
 
+  let recipient: `0x${string}`, mintContract: `0x${string}`;
+  try {
+    recipient = resolveMaterialRecipient(job.recipient_address, user.evm_address);
+    mintContract = selectMaterialJobContract(job.material_contract_address, MATERIAL_NFT_ADDRESS,
+      getOriginalMintDeployment(getMusicCatalog().tracks[0].trackId, 10));
+    if (job.material_contract_address && (process.env.OP_ORIGINAL_SBT_MINT_MODE !== 'live'
+      || await publicClient.getChainId() !== 10)) throw new Error('SBT_MINT_DISABLED');
+  } catch {
+    await markFailed(job.id, 'manual_review', '原曲接收地址或合约快照无效/新SBT未启用');
+    return { result: 'invalid_recipient', jobId: job.id };
+  }
   // P1-3 双发防御：发 tx 前盖 mint_attempted_at 戳（见下方 catch）
   const stampIso = new Date().toISOString();
-  await supabaseAdmin
+  const { error: stampError } = await supabaseAdmin
     .from('mint_queue')
     .update({ mint_attempted_at: stampIso, updated_at: stampIso })
     .eq('id', job.id);
+  if (stampError) return { result: 'stamp_failed', jobId: job.id };
 
   let txHash: `0x${string}`;
   try {
     txHash = await operatorWalletClient.writeContract({
-      address: MATERIAL_NFT_ADDRESS,
+      address: mintContract,
       abi: MATERIAL_NFT_ABI,
       functionName: 'mint',
-      args: [user.evm_address as `0x${string}`, BigInt(job.token_id), 1n, '0x'],
+      args: [recipient, BigInt(job.token_id), 1n, '0x'],
     });
   } catch (err) {
     // ⚠ P1-3：不 resetToPending（RPC 超时 tx 可能已广播 → 会双铸），留 minting_onchain 交时间窗
