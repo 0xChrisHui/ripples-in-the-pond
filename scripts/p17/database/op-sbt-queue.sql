@@ -3,8 +3,13 @@ alter table public.mint_queue add column if not exists material_contract_address
   check (material_contract_address is null or (material_contract_address ~ '^0x[0-9a-f]{40}$'
     and material_contract_address<>'0x0000000000000000000000000000000000000000'));
 -- 必须先执行op-recipient.sql；已有行保持NULL，不回填或迁移旧藏品。
-alter table public.mint_queue add constraint material_target_requires_recipient
-  check (material_contract_address is null or recipient_address is not null);
+do $$ begin
+  if not exists(select 1 from pg_constraint where conrelid='public.mint_queue'::regclass
+    and conname='material_target_requires_recipient') then
+    alter table public.mint_queue add constraint material_target_requires_recipient
+      check (material_contract_address is null or recipient_address is not null);
+  end if;
+end $$;
 
 create or replace function public.prepare_op_sbt_job(p_user_id uuid,p_key text,p_token_id integer,p_contract text,p_recipient text)
 returns jsonb language plpgsql security definer set search_path=public,pg_temp as $$

@@ -1,0 +1,23 @@
+{
+  "verifiedAt": "2026-10-03T03:50:16.023Z",
+  "environment": "isolated-local-postgresql",
+  "serverVersion": "17.11",
+  "database": "p17_gate_1790999396008",
+  "productionWrite": false,
+  "migrationSha256": "bd6e7c7334b1fe79ed42e171cefab5ccd5ddc4fc2a935db2e5891669b4067e37",
+  "assertions": [
+    "真实PostgreSQL执行五份迁移并可安全重跑",
+    "政策未启用拒绝新订单",
+    "并发同请求只生成一张冻结订单",
+    "并发不同账号不能重复占用同一钱包同曲",
+    "匿名及客户端无法读写私有表或调用状态RPC",
+    "错误owner与过期凭证被拒绝且事务回滚",
+    "并发CAS只接受一次授权",
+    "unknown保留互斥及历史凭证，不允许续签或重复发送",
+    "并发worker只租用一次且错误worker不能确认",
+    "不匹配链证明拒绝并保持原订单和lease",
+    "确认原子成功且重复回执不改变版本",
+    "关闭新签发仍可恢复；成功历史与换账号不释放钱包资格",
+    "OP旧行NULL目标兼容；SBT请求幂等并冻结接收人"
+  ]
+}
