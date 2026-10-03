@@ -18,8 +18,9 @@ export function makeDeploymentPlan(input:DeploymentInput): DeploymentPlan {
   const roles=[input.admin,input.issuer,input.pauser];
   if ([input.sender,...roles].some(value=>!isAddress(value)||/^0x0{40}$/i.test(value))
     || new Set(roles.map(value=>value.toLowerCase())).size!==3) throw new Error('三角色必须非零且独立');
-  if ([1,10].includes(input.chainId)&&roles.some(value=>value.toLowerCase()===input.sender.toLowerCase())) {
-    throw new Error('生产部署钱包必须与长期三角色分离');
+  const separated=input.kind==='ethereum'?roles:[input.admin,input.pauser];
+  if ([1,10].includes(input.chainId)&&separated.some(value=>value.toLowerCase()===input.sender.toLowerCase())) {
+    throw new Error('部署钱包与受保护长期角色冲突');
   }
   if (!/^ar:\/\/[A-Za-z0-9_-]{43}$/.test(input.collectionUri)
     || input.uris.length!==35 || input.uris.some(uri=>!/^ar:\/\/[A-Za-z0-9_-]{43}$/.test(uri))) throw new Error('缺少35永久URI或系列URI');

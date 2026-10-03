@@ -20,6 +20,11 @@ for (const bad of [{issuer:input.admin},{collectionUri:''},{uris:input.uris.slic
   assert.throws(()=>makeDeploymentPlan({...input,...bad}));
 }
 assert.notEqual(plan.planHash, makeDeploymentPlan({...input,nonce:1}).planHash);
+const opInput:DeploymentInput={...input,kind:'optimism',chainId:10,sender:input.issuer};
+// 仅编码公开夹具，真实网络不会发送；OP运营钱包同时部署与MINTER是已授权路径。
+assert.doesNotThrow(()=>makeDeploymentPlan(opInput));
+for(const sender of [input.admin,input.pauser])assert.throws(()=>makeDeploymentPlan({...opInput,sender}));
+assert.throws(()=>makeDeploymentPlan({...input,chainId:1,sender:input.issuer}));
 const dir = mkdtempSync(join(tmpdir(),'ripples-p17-deploy-'));
 const file = join(dir,'ledger.json');
 let sends=0, inspected=0;

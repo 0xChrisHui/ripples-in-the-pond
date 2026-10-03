@@ -26,6 +26,8 @@
 
 最短续作：总控接完旧OP worker安全差异与正式库migration Gate；复用既有角色来源寻找真实authorizer签名方式，准备真实original系列collection；明确每链RPC/费用/部署计划，实际发送由总控独占执行。随后有限领取/恢复、70项留存与同revision的C2。已有授权不再重复询问固定预算/手记/接收钱包；本闭环外部广播、永久上传、生产迁移均0。
 
+部署计划角色规则纠偏：ETH生产sender仍与admin/authorizer/pauser分离；OP平台Gas已授权复用operator=minter，因此允许sender=issuer，但admin/issuer/pauser始终三者互异，sender不得等于admin/pauser。原工具把ETH的四账户限制套到OP，新增公开本地计划断言先复现误拒绝，再最小修复并通过；真实网络发送0，未重开Anvil，既有35URI/runtime读回证明复用。
+
 ## 2026-10-03 — 网站发布适配
 
 用户追加部署授权；生产候选基于main@1514108，保留现有P16主网Score、认证/钱包、PondShell/GL/visitor、focus bus和渐进预取。只将P17独立原曲目录、公开页、订单、P13同源包及导航/分享必要入口移植，原路径按当前`app/(pond)`和`chain/multichain`定位；不覆盖既有worker/API、不开启尚未验DB的新队列。原曲播放器补生产Track的永久身份与网关列表，35曲全部来源/轮转回归通过。生产架构/栈/规范同步P17授权边界，未引入依赖或迁移SDK。旧P17/P14和视觉测试继续证明原夜间本地候选，不冒称新生产GL采用了它们。
