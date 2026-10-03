@@ -36,6 +36,7 @@
 .material-notes,.material-mint,.material-provenance { padding:28px 0;border-top:1px solid #52615b55; }
 .material-detail h3 { font-size:12px;font-weight:400;letter-spacing:.09em;margin:0 0 14px; }
 .material-notes p,.material-muted,.material-provenance p { font-size:11px;color:#94a79a;line-height:1.9; }
+.material-notes p { white-space:pre-wrap;overflow-wrap:anywhere; }
 .material-uri { font-family:var(--font-azeret),monospace;overflow-wrap:anywhere;font-size:10px;line-height:1.9; }
 .material-network-choice { display:flex;gap:12px;margin-bottom:20px; }
 .material-network-choice button { border:0;border-bottom:1px solid transparent;padding:8px 0;background:transparent;color:#80968a;font-size:11px;cursor:pointer; }

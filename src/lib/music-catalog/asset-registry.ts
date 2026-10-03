@@ -1,4 +1,5 @@
 import rows from './data/tracks-source.json';
+import artistNotesSource from './data/artist-notes.json';
 import { knownCollections, OP_MATERIAL, OP_MATERIAL_URI, OP_ORIGINAL_SBT, unknownProof, awaitingArchive, originalVerification, originalReady } from './data/known-facts';
 import { buildMaterialPlaybackRoute, resolveErc1155Uri } from './identity';
 import { catalogRevision } from './canonical';
@@ -6,10 +7,11 @@ import type { MusicCatalog, OriginalTrack, OriginalDeployment } from './types';
 export { validateMusicCatalog } from './validate';
 export type { MusicCatalog, OriginalTrack, OriginalDeployment, MusicCollection } from './types';
 
+const artistNotes: Partial<Record<number, string>> = artistNotesSource;
 const tracks: OriginalTrack[] = rows.map((row) => ({
   trackId: row.id, displayNumber: row.week, title: row.title,
   audioArUri: `ar://${row.arweave_url.split('/').pop()}`, audioSha256: null,
-  integrityMode: 'legacy_verified_source', notes: { status: 'absent', text: null },
+  integrityMode: 'legacy_verified_source', notes: { status: artistNotes[row.week] ? 'final' : 'absent', text: artistNotes[row.week] ?? null },
   deployments: [
     { chainId: 10, status: originalReady(originalVerification(row.id)) ? 'ready' : 'unverified', contractAddress: OP_MATERIAL, tokenId: String(row.week),
       standard: 'ERC1155', metadataUri: resolveErc1155Uri(OP_MATERIAL_URI, String(row.week)),

@@ -3,7 +3,7 @@
 此文件由唯一注册表生成，手改会被 --check 检出。
 
 - schemaVersion: 1
-- revision: 5e7241cbc7e234c1180e1d69231eba912fe39f0746727aa7891d761137f57eac
+- revision: 928e698244bdd88ec77eca8644944bbf832474968e90e5ffb12a49bc06a5f5b7
 - environment: production
 - 当前范围：35 首真实原曲、70 个 trackId × chainId 记录。
 - 状态：ready 35 / unverified 0 / undeployed 35。

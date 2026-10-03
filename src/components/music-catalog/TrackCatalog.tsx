@@ -39,6 +39,6 @@ export default function TrackCatalog({ initialTrackId, single = false }: { initi
         <section className="material-notes"><h3>创作手记</h3><p>{selected.notes.text ?? '艺术家尚未提供创作手记。'}</p></section>
         <MaterialMintPanel track={selected} /><MaterialProvenance track={selected} />
       </article>
-    </div><footer className="material-footer">35 首原曲 · 永久音频来源 · 手记等待补入</footer>
+    </div><footer className="material-footer">35 首原曲 · 永久音频来源 · 创作手记</footer>
   </main>;
 }

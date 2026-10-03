@@ -9,6 +9,13 @@ assert.deepEqual(validateMusicCatalog(catalog), { valid: true, errors: [] });
 assert.deepEqual(JSON.parse(readFileSync('public/music-catalog/catalog.v1.json', 'utf8')), catalog);
 assert.equal(catalog.revision, createHash('sha256').update(canonicalCatalogContent(catalog)).digest('hex'));
 assert.equal(listReadyOriginals().length, catalog.tracks.flatMap((track)=>track.deployments).filter((deployment)=>deployment.status==='ready').length);
+assert.equal(catalog.tracks.filter(track => track.notes.status === 'final' && track.notes.text?.trim()).length, 35);
+const note = (number: number) => catalog.tracks.find(track => track.displayNumber === number)?.notes.text ?? '';
+assert.ok(note(10).includes('\n5.12\n'), '第10首的日期补记不能变成第5首');
+assert.ok(note(11).startsWith('第一个和第十一个'), '行内编号之后的第11首正文必须保留');
+assert.equal(note(22), '2022年9月2日');
+assert.ok(note(31).includes('66问我') && note(31).includes('\n\n'), '第31首的长文与段落不能被拆成其他曲目');
+assert.equal(note(35), '完全新的尝试。内在的冲动。是什么让我来到了此刻和这里？');
 const address = catalog.collections[0].contractAddress;
 for (const standard of ['ERC721', 'ERC1155'] as const) {
   const id = buildCatalogAssetId(10, address, 2n ** 255n, standard);
@@ -20,7 +27,7 @@ for (const mutate of [
   (value: typeof catalog) => { value.tracks[0].deployments[1].status = 'ready'; },
   (value: typeof catalog) => { value.tracks[0].deployments[0].standard = 'ERC721' as 'ERC1155'; },
   (value: typeof catalog) => { value.tracks[0].trackId = value.tracks[1].trackId; },
-  (value: typeof catalog) => { value.tracks[0].notes.text = '伪造'; },
+  (value: typeof catalog) => { value.tracks[0].notes = { status: 'absent', text: '伪造' }; },
   (value: typeof catalog) => { value.tracks[0].deployments[0].contractAddress = '0x' + '0'.repeat(40); },
 ]) {
   const invalid = structuredClone(catalog); mutate(invalid); invalid.revision = catalogRevision(invalid);

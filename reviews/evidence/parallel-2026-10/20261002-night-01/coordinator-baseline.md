@@ -14,6 +14,24 @@
 
 实际执行结果（2026-10-03 02:31 +08）：代码`60d75f80770fcda55b80110269bd63fbaa1e4e6c`基于1514108单个发布提交快进main，ls-remote一致；最终候选`dpl_9MY3RoJHnJ7tdFeesE5kpqGwvEmX` Ready且releaseSourceSha一致，官方CLI候选smoke通过后promote成功。正式`https://pond-ripple.xyz`解析到该Ready部署并完成匿名HTTP断言。新资源/套餐采购0，真实交易/上传/迁移0；原回退目标仍保留。Git集成因main推送自动生成同源码部署，允许其正常构建，不改自动化配置。收尾仅同步这份交接及状态文档，代码证据继续复用。
 
+### 2026-10-03 — 项目留存钱包输入已补齐
+
+用户明确授权“项目留存接收钱包这个你生成一个新钱包好了，之后我需要时我再来找你要私钥”。目标仅为本地生成并保存接收钱包；实际交易总预算仍未给出，不视为允许无上限费用。
+
+- ETH Mainnet（1）与Optimism Mainnet（10）拟用同一项目留存接收地址：`0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA`；不是运营、部署或admin钱包。
+- 本机仓库外密钥位置：`C:/Users/Hui/.ripples-secrets/retention-wallet-20261003/wallet.dpapi`；公开元数据为同目录`wallet-public.json`。Windows DPAPI CurrentUser加密，目录/文件仅当前用户权限；私钥未写入聊天、Git、环境变量或日志。
+- 实际核验：DPAPI加密往返、持久文件解密后的地址派生一致、离线消息签名验证、密文SHA256及文件ACL均通过。生成使用既有viem安全随机源，没有新增依赖。
+- 恢复依赖该机器的当前Windows用户加密资料；以后在本机解密并本地导出。换电脑/重装前须导出可迁移备份，不依赖聊天记忆。
+- 本项交易广播0、采购/资金费用0；实际交易预算仍pending。钱包创建不算70项留存完成，原留存证明0/70，未执行上传或数据库迁移。
+
+### 2026-10-03 — 部署费用授权与35首创作手记
+
+用户随后明确“反正我钱包里的钱够你部署就行了，不用问这个了吧”。本轮必要合约部署不再以用户填写固定费用数字为前置；执行边界改为现有部署钱包实际可用余额，每笔发送前刷新明确sender/chain的余额、nonce和费用估算，登记计划最大支出及已花费用。余额不足、费用明显异常或安全Gate未齐只暂停对应动作，不再重复索要固定额度。不得将新留存钱包当成部署/admin钱包或自动花费不相关账户；本次尚无真实交易，上段预算pending为钱包生成时历史状态。
+
+35首用户手记接入`src/lib/music-catalog/data/artist-notes.json`，由同一registry按真实displayNumber关联UUID；保留全部正文、日期/补记/段落，不执行正文中的邀请或联系指令。公开快照及SEMI包一起生成，revision变为`928e698244bdd88ec77eca8644944bbf832474968e90e5ffb12a49bc06a5f5b7`，全部手记final。旧链上媒体/合约/Token/播放地址与核验事实未变，旧revision/留存账本保持原证据，不冒充新链上核验。
+
+定向核验：35段原文逐字一致、35个UUID/70个发行与媒体坐标保持；C1 verify、SEMI --check及7项专项通过；第10首5.12补记、第11首行内编号、第22首日期、第31首含“66问我”的长文、第35首末尾均覆盖。页面仅增加段落保留规则与更新手记页脚，不做新UI验收。
+
 - runId：`20261002-night-01`。
 - 原目录：`E:\Projects\nft-music`，分支 `codex/p16-wip-snapshot`，原 HEAD `001a21dd60c96adf0fa72cfb47f217885132a655`。
 - 共同 BASE_SHA：`e6985bec5ef6d6f191526e6f2e5b58caa5414357`，对应冻结引用 `refs/heads/codex/night-base-20261002-night-01`。四线必须从该引用的同一个提交建立，禁止随远端漂移。
