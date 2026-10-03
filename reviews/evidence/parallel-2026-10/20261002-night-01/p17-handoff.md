@@ -1,5 +1,11 @@
 # P17 夜间交接
 
+## 当前整合结论（2026-10-03，优先于下方历史）
+
+真实数据库059–062及两份合集JSON永久上传已完成，两链新合约confirmed并核对runtime/角色/35URI；详见 coordinator-baseline 和 p17/pipeline/database-proof.json、src/lib/music-catalog/data/original-deployment-proof.json。当前C2 revision 70437f5e71f2684018b2565a815b78dffd8d1b0d692063ee43f2b447148b85b8。生产签发仍关闭，尚无有限真实领取或项目留存回执；archive-ledger-c2.json 冻结70项，confirmed=0。原部署恢复缺陷已修复，未重复发送。
+
+下方按时间保留各阶段交接，历史待办不覆盖本节；网站最终发布结果统一见晨间包。
+
 - lane: p17；runId: 20261002-night-01。
 - BASE_SHA: e6985bec5ef6d6f191526e6f2e5b58caa5414357。
 - 工作树: E:/Projects/nft-music-p16-fast；分支: codex/night-p17-20261002-night-01。

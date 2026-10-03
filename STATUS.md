@@ -8,7 +8,7 @@
 
 **Phase**: **Phase 11 已完成并冻结；Phase 16 Ethereum Mainnet 核心主链路已完成，2026-10-02 上线收口 Review 通过。** 首枚 Token #1 的链上交易、正式订单、永久资源和公开播放一致。最终证据见 `reviews/2026-10-02-p16-mainnet-closeout-review.md`；`playbook/phase-16/05-minimal-loop.md` 保留为早期 Sepolia 施工记录，不代表当前仍未上线。
 
-**下一步**：夜间本地开发与网站发布已完成；本轮补齐并发布35首用户创作手记，目录/公开页/SEMI包保持同源。两链新原曲合约、原曲数据库与签发仍未启用；留存钱包已按用户授权在本机生成并加密保存。用户已允许必要部署按现有部署钱包实际可用余额执行，不再要求填写固定费用额度；后续核验实际sender余额/费用/角色，并完成隔离数据库安全Gate，缺项只暂停对应路径。UI打磨延期，不要求用户验收。P16既有主网Score与持久水塘/播放器保留；夜间P14/视觉时序仍仅在完整本地SHA`8db180e`，原脏工作区保留。目标及证据见`reviews/evidence/parallel-2026-10/20261002-night-01/coordinator-baseline.md`和同目录晨间包。
+**下一步**：完成当前整合网站发布及正式域名最小 smoke。四线代码已汇入 `codex/night-production-20261003`，最终逻辑修复 `3c82387`；真实数据库059–062、两份合集永久JSON及ETH原曲ERC1155/OP原曲SBT部署已完成并核对。新签发仍关闭、留存0/70、SEMI实际接入未完成；仅这些外部路径待处理，不要求用户UI验收。当前唯一交付入口为 `reviews/evidence/parallel-2026-10/20261002-night-01/morning-summary.md`；下面旧阶段条目保留历史，不覆盖本字段。
 
 **P16 上线收口（2026-10-02）✅**：Mainnet Token #1 的 order mapping、ScoreRedeemed、receipt、owner/tokenURI 与正式库 `success`、claim `consumed`、production snapshot revision 1 一致。17 项永久资源（6 项档案资源 + 实际使用的 11 个音效）逐一通过 bytes/SHA-256/MIME 核验，metadata/events/sounds 与 snapshot 一致，v3 package 和 snapshot digest 通过。正式页面进入 `playing/eclipse`，本次浏览器无 page/console error。保留两项非阻塞问题：Ethereum 凭证来源误标 OP、永久 metadata 的 Minted At 实为建单日期；私密 `/me` 仅核对数据与查询逻辑，未冒充登录目验或全钱包验收。
 

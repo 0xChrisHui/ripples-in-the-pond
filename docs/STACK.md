@@ -22,7 +22,7 @@
 
 ### 链选择
 
-- **P17原曲扩展**：复用viem、当前Privy provider/认证、OpenZeppelin与Supabase，新增ETH原曲ERC1155自付路径及未来OP SBT；不引入钱包、桥接或新服务依赖。2026-10-03已批准发行规则与网站发布，原曲生产签发仍off，真实部署/数据库/留存分别验收。发布适配保留当前`@privy-io/server-auth`实际依赖与主线认证实现，不在发布中迁移SDK；曲目馆消费既有播放器永久身份/网关候选，不新建AudioContext。
+- **P17原曲扩展**：复用viem、当前Privy provider/认证、OpenZeppelin与Supabase，新增ETH原曲ERC1155自付路径及已部署OP SBT；不引入钱包、桥接或新服务依赖。2026-10-03已批准发行规则与网站发布，原曲生产签发仍off，真实部署与数据库安全Gate已通过，有限领取与70项留存尚未验收。发布适配保留当前`@privy-io/server-auth`实际依赖与主线认证实现，不在发布中迁移SDK；曲目馆消费既有播放器永久身份/网关候选，不新建AudioContext。
 - **默认生产链**：Optimism Mainnet（chainId 10）— 平台代付 Gas
 - **默认测试链**：OP Sepolia（chainId 11155420）
 - **P16 ScoreNFT 测试链**：Ethereum Sepolia（chainId 11155111）— 外部钱包自付 Gas
