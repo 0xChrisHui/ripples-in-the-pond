@@ -8,7 +8,23 @@
 - C2: 624216cb8b35c6b7883ae87693bf7cfb38487c32。
 - C2 revision: 5e7241cbc7e234c1180e1d69231eba912fe39f0746727aa7891d761137f57eac；schemaVersion 1。
 - 最终移交HEAD由晨间验收包记录；本交接与最后实现同一提交，不将自身SHA写成循环依赖。
-- status: code_ready；2026-10-03 ETH政策已批准并实现；生产资产/数据库/真实钱包相关项 external_pending。
+- status: code_ready；2026-10-03 ETH政策已批准并实现；真实隔离数据库Gate已通过，具体两合约部署工具与Anvil完整构造/读回已通过；生产迁移/新资产部署/真实钱包/留存仍未执行。
+
+## 2026-10-03 — 继续执行：真实数据库与幂等部署工具
+
+旧段落中“隔离数据库缺环境”“发行政策/预算/留存接收钱包待输入”已被新证据及用户授权解除，不作为现在的停点。真实PostgreSQL 17.11安全Gate通过13组，证据`p17/pipeline/database-proof.json`，实现提交`b0df4b1`；正式库已只读核对到migration058，P17表尚未迁移，不能把隔离测试写成生产生效。
+
+本闭环补齐`scripts/p17/contracts/deployment-{plan,ledger,inspect,cli}.ts`与`verify-deployment.ts`（分别44/30/30/140/51行，contracts目录共8文件）。CLI默认要求显式`--plan`，不会发送；`--execute`须同planHash、授权/政策依据、总控独占租约、明确链与RPC、独立角色和费用边界。真实发送沿用`op_wallet_lock`同一锁名与120秒/30秒心跳，缺Upstash拒绝，OP额外核验L1费预留。签名交易hash/nonce/构造data在发送前原子持久化；attempted/submitted/unknown/confirmed重跑只读回，不自动重发或创建新地址。未知nonce期间总控须暂停同钱包后续写入。
+
+新合约固定35直接metadata URI来自唯一曲目registry的编号与既有`music-catalog/data/metadata-source.json`上传证明，不建立第二份地址表；新constructor不接受旧manifest的`/{id}.json`形式，35份旧永久metadata可复用无需重上传。series collectionURI单独要求有效永久来源，禁止拿Score/Echo系列URI凑数。编译artifact逐个来源核对编译器输入hash（兼容Forge的Windows换行归一化），读回runtime/immutable、35URI、三角色、2天admin delay、暂停、接口，OP还读回`isSoulbound`。
+
+定向证据：先运行新测试确认缺工具失败，再完成实现；`verify-deployment.ts`通过错误链/重复角色/缺35URI/缺系列URI/预算超限/余额不足拒绝、持久化先于发送、磁盘失败不发送、unknown不补发、确认后幂等。显式`eslint --no-ignore`与`tsc --noEmit --incremental false`退出0；`check:quick`在当前主线无script，未冒称其通过。只编译两新合约，未重跑旧合约安全套件。
+
+`p17/contracts/deployment-local-proof.json`记录实际完整EthereumMaterialNFT与OptimismOriginalSBT构造、35URI/角色/runtime读回、重复execute；本地Anvil31337端口8547，公开开发sender最终nonce=2，两合约各只部署一次。估算Gas分别6,133,199/5,599,834；collectionURI仅标明的本地夹具，不能冒称永久上传或生产部署。自建临时Anvil验证后关闭。
+
+生产只读事实：2026-10-03 11:53:50 +08，现有P16部署sender`0x306D3A445b1fc7a789639fa9115e308a34231633`在ETH1余额`0.000792844646079183 ETH`、nonce1/pending1；OP10在11:44核验余额`0.010097041215977635 ETH`、nonce18/pending18。真实发送前须刷新，不能用本机Sepolia环境替代。P16证明可复用独立角色公钥：admin`0x305Ef22382A850f6FC5Fd1a15A76d75db3a42722`、authorizer`0xAb14FeFDFBedC67176E1ea6D6461Ad9F07bDe73a`、pauser`0x910380D1C8ad89f9ABf953460044d7b979883194`；目前可读配置未找到authorizer签名材料，公钥存在不代表可签。新original系列collection永久URI仍待准备。未新生成角色钱包，留存钱包未作admin/pauser/deployer。
+
+最短续作：总控接完旧OP worker安全差异与正式库migration Gate；复用既有角色来源寻找真实authorizer签名方式，准备真实original系列collection；明确每链RPC/费用/部署计划，实际发送由总控独占执行。随后有限领取/恢复、70项留存与同revision的C2。已有授权不再重复询问固定预算/手记/接收钱包；本闭环外部广播、永久上传、生产迁移均0。
 
 ## 2026-10-03 — 网站发布适配
 
