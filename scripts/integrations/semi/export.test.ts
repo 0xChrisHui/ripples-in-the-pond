@@ -16,7 +16,7 @@ test('真实 C2 导出35首OP已验证资料，保留35项ETH未部署与70项�
   assert.equal(deployments.filter((item) => item.status === 'undeployed').length, 35);
   assert.ok(deployments.filter((item) => item.status === 'undeployed').every((item) => item.readyExclusionReasons.length > 0));
   assert.ok(deployments.every((item) => item.archiveMint.state === 'awaiting_input'));
-  assert.equal(output.contracts.collections.length, 1);
+  assert.equal(output.contracts.collections.length, 2);
   assert.equal(output.assets.originals.length, 35);
   assert.ok(deployments.filter((item) => item.assetId).every((item) => item.assetId?.includes('/erc1155:')));
   assert.deepEqual(validateSemiPackage(output, catalog, catalog), []);
@@ -100,4 +100,15 @@ test('Echo样例仅由同源注册表派生，未完整核验的系列不进入r
   assert.equal(echo.sampleAssets[0], `eip155:${source.chainId}/erc721:${source.contractAddress}/${source.samples![0].tokenId}`);
   assert.deepEqual(echo.samples, source.samples);
   assert.equal(output.contracts.collections.some((item) => item.kind === 'echo'), false);
+});
+
+test('P16已核验的ETH Score系列和样例由唯一注册表进入ready导出', () => {
+  const catalog = getMusicCatalog(), output = buildSemiPackage(catalog);
+  const source = catalog.collections.find((item) => item.kind === 'score' && item.chainId === 1)!;
+  assert.equal(source.enabled, true);
+  assert.equal(source.contractAddress, '0xdec99da00290d15f0742b0abd26e4cd5d121f02a');
+  assert.equal(source.samples?.[0].tokenId, '1');
+  assert.equal(source.samples?.[0].metadataUri, 'ar://jIqs9UaIuodoKZKrExQxel3IqqNIPgWAQjuSUVQjLTw');
+  assert.ok(output.contracts.collections.some((item) => item.collectionKey
+    === 'eip155:1/0xdec99da00290d15f0742b0abd26e4cd5d121f02a'));
 });

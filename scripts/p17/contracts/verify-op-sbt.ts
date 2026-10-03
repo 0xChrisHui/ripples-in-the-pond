@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { getMusicCatalog, getOriginalDeployment, getOriginalMintDeployment } from '../../../src/lib/music-catalog/asset-registry';
 import { requireOpSbtTarget, selectMaterialJobContract, opSbtRequestKey } from '../../../src/lib/material-mint/op/target';
 import { verifyOpSbtReceipt } from '../../../src/lib/material-mint/op/proof';
@@ -18,7 +19,7 @@ const fixture = { ...legacy, contractAddress: '0xabcdefabcdefabcdefabcdefabcdefa
 assert.equal(selectMaterialJobContract(fixture.contractAddress, legacy.contractAddress!, fixture).toLowerCase(), fixture.contractAddress);
 assert.throws(() => selectMaterialJobContract(legacy.contractAddress, legacy.contractAddress!, fixture));
 assert.notEqual(opSbtRequestKey('user', fixture.contractAddress, '1'), opSbtRequestKey('user', legacy.contractAddress!, '1'));
-assert.equal(getMusicCatalog().revision, '5e7241cbc7e234c1180e1d69231eba912fe39f0746727aa7891d761137f57eac');
+assert.equal(getMusicCatalog().revision, JSON.parse(readFileSync('public/music-catalog/catalog.v1.json', 'utf8')).revision);
 const abi = parseAbi(['function mint(address to,uint256 id,uint256 amount,bytes data)',
   'event TransferSingle(address indexed operator,address indexed from,address indexed to,uint256 id,uint256 value)']);
 const recipient = `0x${'22'.repeat(20)}` as const, operator = `0x${'33'.repeat(20)}` as const, hash = `0x${'ab'.repeat(32)}` as Hex;

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "authorization": "用户明确批准两份合集永久上传，禁止充值",
+  "rows": [
+    {
+      "kind": "ethereum",
+      "name": "ethereum-originals-collection.json",
+      "sha256": "250ef982a92ab82200cf3faad8e46c80533efab95eb338d64f3c43ea6361732a",
+      "bytes": 350,
+      "state": "verified",
+      "txId": "LjA2sgPArVOFL_gpPZmOaFBqXzb5VKTCINGAy7cKGQw",
+      "uploader": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "checkedAt": "2026-10-03T06:41:29.697Z",
+      "failureCode": null,
+      "recoveryEvidence": "实际调用的Turbo SDK 1.41.0固定使用/x402/data-item/unsigned；Turbo SDK 2.1.0源码明确该旧unsigned地址无兼容别名且请求全部404。上传服务OpenAPI仅列/x402/upload/unsigned，两个公开GraphQL索引按授权SHA标签均无结果。该次请求未写入，可恢复prepared。",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "sha256": "250ef982a92ab82200cf3faad8e46c80533efab95eb338d64f3c43ea6361732a",
+          "exact": true
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "sha256": "250ef982a92ab82200cf3faad8e46c80533efab95eb338d64f3c43ea6361732a",
+          "exact": true
+        },
+        {
+          "gateway": "https://arweave.net",
+          "status": 404,
+          "sha256": "a03cb7c46de1c20dd15cbaaecb261f4e346a3d73011d94f2548a4936218d1932",
+          "exact": false
+        }
+      ]
+    },
+    {
+      "kind": "optimism",
+      "name": "optimism-originals-collection.json",
+      "sha256": "9750f3be433d617e401e871487cf90ed0eb15dc0097ba4b33befc9606928ee29",
+      "bytes": 338,
+      "state": "verified",
+      "txId": "JWV5HPaY5-Vjq0iVhadIzT8YrpNP9H-qhfczm6bKrmA",
+      "uploader": "qjnw4_c2MMegC4NQb-KdUo2vux0MhMEuGHlnXDDme74",
+      "costWinc": "0",
+      "checkedAt": "2026-10-03T06:41:39.118Z",
+      "gateways": [
+        {
+          "gateway": "https://ardrive.net",
+          "status": 200,
+          "sha256": "9750f3be433d617e401e871487cf90ed0eb15dc0097ba4b33befc9606928ee29",
+          "exact": true
+        },
+        {
+          "gateway": "https://arweave.tokyo",
+          "status": 200,
+          "sha256": "9750f3be433d617e401e871487cf90ed0eb15dc0097ba4b33befc9606928ee29",
+          "exact": true
+        },
+        {
+          "gateway": "https://arweave.net",
+          "status": 404,
+          "sha256": "a03cb7c46de1c20dd15cbaaecb261f4e346a3d73011d94f2548a4936218d1932",
+          "exact": false
+        }
+      ],
+      "failureCode": null
+    }
+  ]
+}

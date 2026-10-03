@@ -1,6 +1,7 @@
 import type { ArchiveMint, Verification, MusicCollection } from '../types';
 import opProof from './op-source-proof.json';
 import echoProof from './echo-source-proof.json';
+import scoreProof from './score-source-proof.json';
 
 export const OP_MATERIAL = '0x03504aeb95ebe3dc8c427b7b147f873f9948a299';
 export const OP_MATERIAL_URI = 'ar://2LvJ7-D9xneN0McL5-zycmO_su0c3nUFfktmxZgbf28/{id}.json';
@@ -26,6 +27,16 @@ export function originalVerification(trackId: string): Verification {
 export function originalReady(verification: Verification) {
   return verification.bytecode && verification.standard && verification.uri && verification.media;
 }
+const scoreVerification: Verification = {
+  source: scoreProof.source.join(' + '), verifiedAt: scoreProof.checkedAt,
+  blockNumber: scoreProof.deploymentBlock, bytecode: scoreProof.contract.runtimeMatch === 'exact_match',
+  standard: scoreProof.contract.standard === 'ERC721' && scoreProof.contract.erc7572 && scoreProof.contract.eip712,
+  uri: Boolean(scoreProof.sample.metadataUri),
+  media: scoreProof.sample.resourcesVerified && scoreProof.sample.resourceCount === 17
+    && scoreProof.sample.playbackState === 'playing' && scoreProof.sample.pageErrors === 0
+    && scoreProof.sample.consoleErrors === 0,
+  reason: scoreProof.limits.join('；'),
+};
 // 历史部署记录提供真实坐标；缺少本次有效读回时不进入 ready 清单。
 export const knownCollections: MusicCollection[] = [
   { kind: 'original', chainId: 10, contractAddress: OP_MATERIAL, standard: 'ERC1155',
@@ -34,6 +45,12 @@ export const knownCollections: MusicCollection[] = [
   { kind: 'score', chainId: 10, contractAddress: '0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa', standard: 'ERC721',
     metadataMethod: 'tokenURI', playbackKind: 'html_decoder', enabled: false,
     verification: unknownProof('docs/MAINNET-RUNBOOK.md:26', '历史正式部署，本次未复核') },
+  { kind: 'score', chainId: scoreProof.chainId, contractAddress: scoreProof.contractAddress, standard: 'ERC721',
+    metadataMethod: 'tokenURI', playbackKind: 'html_decoder', enabled: originalReady(scoreVerification),
+    verification: scoreVerification,
+    samples: [{ tokenId: scoreProof.sample.tokenId, metadataUri: scoreProof.sample.metadataUri,
+      publicPlaybackUrl: scoreProof.sample.publicPlaybackUrl,
+      verification: { ...scoreVerification, blockNumber: scoreProof.sample.blockNumber } }] },
   {kind:'echo',chainId:echoProof.chainId,contractAddress:echoProof.contractAddress,standard:'ERC721',
     metadataMethod:'tokenURI',playbackKind:'html_decoder',enabled:false,
     verification:{source:'reviews/evidence/parallel-2026-10/20261002-night-01/featured-echo-proof.json',

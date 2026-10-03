@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "source": [
+    "reviews/evidence/p16-mainnet/README.md",
+    "reviews/evidence/p16-mainnet/token-1-closeout.json"
+  ],
+  "checkedAt": "2026-10-02T08:31:49.975Z",
+  "chainId": 1,
+  "contractAddress": "0xdec99da00290d15f0742b0abd26e4cd5d121f02a",
+  "deploymentBlock": "26060368",
+  "contract": {
+    "kind": "EthereumScoreNFT",
+    "standard": "ERC721",
+    "erc7572": true,
+    "eip712": true,
+    "creationMatch": "exact_match",
+    "runtimeMatch": "exact_match"
+  },
+  "sample": {
+    "tokenId": "1",
+    "metadataUri": "ar://jIqs9UaIuodoKZKrExQxel3IqqNIPgWAQjuSUVQjLTw",
+    "transactionHash": "0x3ef7abb36c3f1b1c5942968409495820459fda168e3b44fd7476cd7172f50a23",
+    "blockNumber": "26103423",
+    "resourceCount": 17,
+    "resourcesVerified": true,
+    "publicPlaybackUrl": "/score/1/0xdec99da00290d15f0742b0abd26e4cd5d121f02a/1",
+    "playbackState": "playing",
+    "visualState": "eclipse",
+    "pageErrors": 0,
+    "consoleErrors": 0
+  },
+  "limits": [
+    "浏览器证据覆盖真实播放启动，不代表整曲听音验收",
+    "钱包扩展矩阵仍是独立开放项"
+  ]
+}
