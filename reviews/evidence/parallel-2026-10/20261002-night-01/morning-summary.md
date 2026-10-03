@@ -3,7 +3,7 @@
 ## 当前结果与入口
 
 - OP与ETH各35首、每首1份，合计70/70真实项目留存，unknown=0。ETH沿用既有主网合约，没有重复部署。
-- 正式站：https://pond-ripple.xyz/tracks 。本轮ETH领取配置与70项证明发布中，最终结果见本页发布记录。
+- 正式站：https://pond-ripple.xyz/tracks 。ETH领取配置与70项证明已正式发布，结果见本页发布记录。
 - 本地：http://127.0.0.1:3115/tracks ，仍为此前ee50f5d业务版本；不要据此验收本轮ETH开关或最新证明。
 - 工作树：E:/Projects/nft-music-progress-release；分支codex/night-production-20261003。原E:/Projects/nft-music用户进度保留；K0备份E:/Projects/nft-music-night-backup-20261002。
 - BASE_SHA：e6985bec5ef6d6f191526e6f2e5b58caa5414357。发布源码SHA和集成SHA由发布记录/最终消息登记，不作自引用。
@@ -22,7 +22,7 @@
 | 7 | 登录称谓 | 社区身份与链上地址称谓统一；不冒称真实登录通过 |
 | 8 | 双链原曲永久留存 | 完成：OP35/35、ETH35/35真实mint与余额证明，unknown=0 |
 | 9 | SEMI接入 | 70项同源资料与8/8导出验证完成；SEMI实际数量/播放未验，未完成 |
-| 10 | 曲目馆 | 35份手记、公开页、订单恢复完成；OP入口已发布，ETH本轮发布中；登录点击全链路未验 |
+| 10 | 曲目馆 | 35份手记、公开页、订单恢复完成；OP/ETH入口均已发布；登录点击全链路未验 |
 
 P15-X/P14-H代码整合和日食焦点反馈修复已完成，UI统一延期，不再要求现在验收。P17生产合约、迁移、永久资料和留存均有真实证据；P13复用同一资产证明，没有另建测试服务。
 
@@ -58,3 +58,10 @@ P15-X/P14-H代码整合和日食焦点反馈修复已完成，UI统一延期，�
 - execution/engine.ts：只有冻结per_transaction模式允许分批资金；余额不足下一笔上限就停，已有attempt继续只读恢复。
 - data/known-facts.ts：按chain/contract/token/track精确消费两链真实证明，旧OP不会混入新SBT结果。
 - process-mint-queue/route.ts：OP空闲时才接ETH对账，实际worker异常返回503，始终释放运营锁。
+
+## 最终发布记录（2026-10-04 00:51 +08）
+
+- 发布源码SHA：5dd2003fd347768222f29296e3be158929658e94。Vercel部署dpl_EjJNTBsSq2XBz1doAzxyb8RPEc3Y为READY，正式pond-ripple.xyz别名读回同部署；生产构建一次通过，59静态页面。
+- 候选与正式目录API全字段匹配冻结快照，ETH原曲页面200且非not-found，私有订单/匿名cron均401。正式受控reconcile-material-mints调用200、processed0、failed0；此项证明生产配置/数据库/鉴权接通，不冒称浏览器登录领取完成。
+- 完整机器证据并入既有k2-browser.json.ethRelease20261004（明确HTTP证据、非浏览器）。之前安全专项继续复用；最终文档与证据更新不重跑构建/合约/媒体。
+- 可回退至先前OP版dpl_D7pykqHUUrL8qqUGyoEXn64pCJMV以停新ETH入口；链上70份留存与已批准政策不随网站回退撤销，原账本保留。

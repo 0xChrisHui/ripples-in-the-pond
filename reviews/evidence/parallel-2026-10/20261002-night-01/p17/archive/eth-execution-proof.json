@@ -2111,5 +2111,16 @@
       "1",
       "1"
     ]
+  },
+  "executionSource": {
+    "baseSha": "7188ab3a17e5643be106e40ceb6fe0ae1dafb84e",
+    "committedAs": "5dd2003fd347768222f29296e3be158929658e94",
+    "note": "冻结计划sourceSha是执行时HEAD基线；本轮per_transaction实现当时为已测试未提交差异，后随5dd2003提交；冻结计划不改写。",
+    "files": {
+      "scripts/p17/archive/execution/engine.ts": "d5bd4da310d81dbcabbea551312de6e1b6235d601a5d40bbb32e3b7ec66cf00f",
+      "scripts/p17/archive/execution/plan.ts": "86e90bf66534533f6549a5bea51f8476534cd18c01fdf55799feabc8589a3278",
+      "scripts/p17/archive/execution/types.ts": "21945aede3cd74dc30e2bfa77fc2c81378475b7b558bba22ce5b151bd3f87268",
+      "scripts/p17/archive/execution/adapter.ts": "ef038622aa6e3d90f750b95c6d7f50211fb9cd714d66f3e633b60b89028063e1"
+    }
   }
 }

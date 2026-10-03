@@ -1068,5 +1068,77 @@
       ]
     },
     "limitation": "没有真实登录钱包点击全链路或UI运动验收；ETH保持关闭；首轮正式站fetch网络失败，最小正式站检查随后通过。"
+  },
+  "ethRelease20261004": {
+    "kind": "http_and_deployment_not_browser",
+    "deployment": {
+      "id": "dpl_EjJNTBsSq2XBz1doAzxyb8RPEc3Y",
+      "readyState": "READY",
+      "sourceSha": "5dd2003fd347768222f29296e3be158929658e94",
+      "projectId": "prj_haw2cownQHfmKmrUaP9etU82xwT4",
+      "url": "ripples-in-the-pond-n8c1cynon-0x991-thomas-projects.vercel.app"
+    },
+    "alias": {
+      "alias": "pond-ripple.xyz",
+      "deploymentId": "dpl_EjJNTBsSq2XBz1doAzxyb8RPEc3Y"
+    },
+    "candidate": {
+      "checkedAt": "2026-10-03T16:50:07.913Z",
+      "mode": "candidate",
+      "sourceSha": "5dd2003fd347768222f29296e3be158929658e94",
+      "revision": "2dd5d46ee34da85715756baf4a4016a4b304e5a14119914acf0e72dd373006b2",
+      "results": [
+        {
+          "path": "/api/music-catalog",
+          "status": 200,
+          "assertion": "完整匹配冻结目录、手记与双链留存证明"
+        },
+        {
+          "path": "/score/material/1/0x6c731e5faa26e648cad6f86b1c1e741f0aae136b/1",
+          "status": 200
+        },
+        {
+          "path": "/api/material-mint/orders",
+          "status": 401
+        },
+        {
+          "path": "/api/cron/reconcile-material-mints",
+          "status": 401
+        }
+      ]
+    },
+    "production": {
+      "checkedAt": "2026-10-03T16:51:00.836Z",
+      "mode": "production",
+      "sourceSha": "5dd2003fd347768222f29296e3be158929658e94",
+      "revision": "2dd5d46ee34da85715756baf4a4016a4b304e5a14119914acf0e72dd373006b2",
+      "results": [
+        {
+          "path": "/api/music-catalog",
+          "status": 200,
+          "assertion": "完整匹配冻结目录、手记与双链留存证明"
+        },
+        {
+          "path": "/score/material/1/0x6c731e5faa26e648cad6f86b1c1e741f0aae136b/1",
+          "status": 200
+        },
+        {
+          "path": "/api/material-mint/orders",
+          "status": 401
+        },
+        {
+          "path": "/api/cron/reconcile-material-mints",
+          "status": 401
+        },
+        {
+          "path": "/api/cron/reconcile-material-mints",
+          "authenticated": true,
+          "status": 200,
+          "processed": 0,
+          "failed": 0
+        }
+      ]
+    },
+    "limitation": "真实35笔ETH兑换由项目钱包CLI完成；没有冒充真实登录浏览器端到端或SEMI钱包验收"
   }
 }

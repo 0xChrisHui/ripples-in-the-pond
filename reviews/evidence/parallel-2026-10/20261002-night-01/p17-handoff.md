@@ -238,3 +238,7 @@ OP差异：现有MaterialNFT源码允许转让，不能原地改为SBT。已向�
 用户先授权“1开干2开干”，随后明确“先搞OP吧”。本次仅执行OP主网新SBT的35项留存，接收地址0x7742951CBCF469A3Fe59f6F9AdEdB72cC4Ba2DbA，每曲1份；不发送ETH、不转账或跨链。公开冻结配置见p17/archive/op-execution-plan.json，planHash=0x7243e6afeb92574aba02ab26f37f50cdbe97ff834f78243cdf26695156a6db1b；OP总费用上限0.0000105 ETH（每笔gas<=100000，maxFeePerGas<=2000000 wei，L1费用<=100000000000 wei）。发送账户0x306D3A445b1fc7a789639fa9115e308a34231633，起始nonce19；最新权限/未暂停/SBT/35项余额零与资金充足已读回。复用原合约/数据库证明及已通过的执行门禁、落盘失败不广播、unknown不重发、nonce/预算测试。
 
 签名原始交易与恢复账本仅保留忽略目录.tmp/p17-op-execution-ledger.json；公开只导出hash/事件/余额/费用。全批共用生产op_wallet_lock；一个在途交易，确认后才发下一项。已确认的不可转让资产在同一执行会话复用证据，结束时再统一只读核验，不每轮重读前面全部资产。
+
+- ETH执行源码追溯：冻结sourceSha为当时HEAD基线7188ab3；per_transaction实现当时为已测试未提交差异，现归档在5dd2003，具体文件SHA256见eth-execution-proof.json.executionSource。未为补源码说明改写冻结计划或交易身份。
+
+- 2026-10-04 00:51 +08正式发布：源码5dd2003，dpl_EjJNTBsSq2XBz1doAzxyb8RPEc3Y Ready并已promote。正式目录70项证明匹配、ETH页200、私有401、受控原曲对账200/failed0；完整结果见晨间包及k2-browser.json.ethRelease20261004。本轮ETH执行收口，不新增UI验收要求。
