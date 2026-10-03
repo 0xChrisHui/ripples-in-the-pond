@@ -56,7 +56,10 @@ export default function MintNetworkSelector({
           <ChainLogo chainId={value} />
           <span className="mint-network__trigger-copy">
             <small>铸造网络</small>
-            <span>{displayName(value)}</span>
+            <span className="mint-network__label">
+              {options.map((option) => <span key={option.chainId} className="mint-network__measure" aria-hidden="true">{option.label}</span>)}
+              <span>{displayName(value)}</span>
+            </span>
           </span>
           <span className="mint-network__chevron" aria-hidden="true" />
         </span>

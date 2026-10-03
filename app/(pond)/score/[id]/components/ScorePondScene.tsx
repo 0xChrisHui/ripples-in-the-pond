@@ -24,23 +24,10 @@ import ScoreRecordAnchor from './ScoreRecordAnchor';
 import ShareActions from './ShareActions';
 import { useScorePondSim } from './use-score-pond-sim';
 import { useScoreHolder } from './use-score-holder';
+import { useScoreCapabilities } from './experience/use-score-capabilities';
+import { useScoreVisualTransition } from './experience/use-score-visual-transition';
+import './experience/score-visual-transition.css';
 
-function useCapabilities() {
-  const [value, setValue] = useState({ fine: false, reduced: false });
-  useEffect(() => {
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => setValue({ fine: fine.matches, reduced: reduced.matches });
-    sync();
-    fine.addEventListener('change', sync);
-    reduced.addEventListener('change', sync);
-    return () => {
-      fine.removeEventListener('change', sync);
-      reduced.removeEventListener('change', sync);
-    };
-  }, []);
-  return value;
-}
 type Props = { score: ScoreReadyData; network: string };
 
 function preloadStartupAudio(score: ScoreReadyData): void {
@@ -75,9 +62,10 @@ export default function ScorePondScene({ score, network }: Props) {
   const transition = usePondTransition();
   const holder = useScoreHolder(score.tokenId, { chainId: score.chainId,
     currentHolder: score.currentHolder, holderHref: score.provenance.currentHolder.href });
-  const capabilities = useCapabilities();
+  const capabilities = useScoreCapabilities();
   const [performanceReduced, setPerformanceReduced] = useState(false);
   const isPlaying = playback.state === 'playing';
+  const visual = useScoreVisualTransition(isPlaying, capabilities.reduced);
   const visualTrack = useMemo(() => visualTrackOf(score), [score]);
   const { glSim, visualActive, returning } = useScorePondSim(visualTrack, isPlaying);
   const emptyVisitor = useRef<Track36VisitorState | null>(null);
@@ -98,12 +86,12 @@ export default function ScorePondScene({ score, network }: Props) {
   }), [capabilities.reduced, interactive, isPlaying, performanceReduced, visualActive]);
   const scene = useMemo<PondSceneDescriptor>(() => ({
     owner: 'score', flags, glSim: glSim ?? undefined,
-    pointerInteractive: interactive, onPerformanceChange: setPerformanceReduced,
-  }), [flags, glSim, interactive]);
+    pointerInteractive: interactive, onPerformanceChange: setPerformanceReduced, scenePresence: visual.presence,
+  }), [flags, glSim, interactive, visual.presence]);
   const { health, sceneReady } = useRegisterPondScene(scene);
   useEclipseTransition(
     glSim!, emptyVisitor,
-    health === 'healthy' && sceneReady && visualActive ? visualTrack.id : null,
+    health === 'healthy' && sceneReady && isPlaying ? visualTrack.id : null,
   );
 
   // Score 是纵向阅读页：保留鼠标视差，但滚轮必须始终交还给页面滚动。
@@ -149,6 +137,8 @@ export default function ScorePondScene({ score, network }: Props) {
       data-score-state="ready"
       data-score-anchor-transition={ownsAnchor || undefined}
       data-playback-state={playback.state}
+      data-score-visual-phase={visual.phase}
+      style={{ '--score-transition-ms': `${visual.durationMs}ms` } as CSSProperties}
       data-record-motion={returning ? 'returning' : isPlaying ? 'flowing' : 'resting'}
       data-resource-load-ms={playback.resourceLoadMs ?? undefined}
       data-decode-ms={playback.decodeMs ?? undefined}
@@ -157,8 +147,8 @@ export default function ScorePondScene({ score, network }: Props) {
       data-scene-ready={sceneReady}
       lang="zh-CN"
     >
-      {visualActive && glSim?.ready && health === 'healthy' && sceneReady && (
-        <div className="pointer-events-none fixed inset-0 z-[35]">
+      {glSim?.ready && health === 'healthy' && sceneReady && (
+        <div className="score-eclipse-layer" onTransitionEnd={visual.onTransitionEnd}>
           <GlEclipse glSim={glSim} />
         </div>
       )}
