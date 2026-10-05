@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useMaterialMint } from '../../features/material-catalog/mint/useMaterialMint';
 import { getOriginalDeployment } from '../../lib/music-catalog/asset-registry';
@@ -10,6 +10,11 @@ import type { OriginalTrack } from '../../lib/music-catalog/types';
 export default function EthereumMaterialMint({ track }: { track: OriginalTrack }) {
   const auth = useAuth(), { prepareOrder } = useMaterialMint(), router = useRouter();
   const [busy, setBusy] = useState(false), [error, setError] = useState<string | null>(null);
+  const active = useRef(true);
+  useEffect(() => {
+    active.current = true;
+    return () => { active.current = false; };
+  }, []);
   const deployment = getOriginalDeployment(track.trackId, 1);
   const deployed = deployment?.status === 'ready' && Boolean(deployment.contractAddress && deployment.metadataUri);
   const external = auth.walletCapability.walletKind === 'external' && Boolean(auth.selectedExternalWallet);
@@ -18,9 +23,10 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
     setBusy(true); setError(null);
     try {
       const order = await prepareOrder(track.trackId);
-      router.push(`/me/material/${order.orderId}`);
-    } catch (caught) { setError(caught instanceof Error ? caught.message : '原曲订单暂不可用，请查询已有订单。'); }
-    finally { setBusy(false); }
+      if (active.current) router.push(`/me/material/${order.orderId}`);
+    } catch (caught) {
+      if (active.current) setError(caught instanceof Error ? caught.message : '原曲订单暂不可用，请查询已有订单。');
+    } finally { if (active.current) setBusy(false); }
   }
   return <div>
     <p className="material-muted">Ethereum 原曲可转让，由关联的外部钱包自付 Gas；每钱包每首累计领取一次，转出不恢复资格，每首总量无上限。</p>

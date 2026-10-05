@@ -1,4 +1,4 @@
-export type PondRoute = 'home' | 'archive' | 'score';
+export type PondRoute = 'home' | 'archive' | 'score' | 'tracks' | 'artist';
 export type PondRouteStage = 'stable' | 'preparing' | 'revealing' | 'settling';
 
 export type PondRouteTransaction = {
@@ -27,6 +27,8 @@ export type PondRouteEvent =
 
 export function routeForPath(pathname: string): PondRoute {
   if (pathname === '/') return 'home';
+  if (pathname === '/tracks' || pathname === '/tracks/pond') return 'tracks';
+  if (pathname === '/artist') return 'artist';
   return pathname.startsWith('/score/') ? 'score' : 'archive';
 }
 

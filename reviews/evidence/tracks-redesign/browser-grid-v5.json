@@ -1,0 +1,42 @@
+{
+  "desktop": {
+    "width": 1440,
+    "height": 900,
+    "scrollWidth": 1440,
+    "playTop": 615,
+    "playBottom": 675,
+    "items": 35,
+    "titleSize": "172.8px",
+    "duration": "0:001:11",
+    "phase": "idle"
+  },
+  "grid": {
+    "columns": 5,
+    "rows": 7,
+    "width": 44,
+    "square": true,
+    "visible": true
+  },
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "playTop": 367.75,
+    "playBottom": 419.75,
+    "items": 35,
+    "titleSize": "96px",
+    "duration": "0:001:11",
+    "phase": "idle"
+  },
+  "smallMobile": {
+    "width": 375,
+    "height": 667,
+    "scrollWidth": 375,
+    "playTop": 323.5,
+    "playBottom": 375.5,
+    "items": 35,
+    "titleSize": "80px",
+    "duration": "0:001:11",
+    "phase": "idle"
+  }
+}

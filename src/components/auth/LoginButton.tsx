@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import { useAuth } from '@/src/hooks/useAuth';
 
 /**
@@ -10,7 +10,7 @@ import { useAuth } from '@/src/hooks/useAuth';
 export default function LoginButton() {
   const { ready, authenticated, openLoginModal, logout } = useAuth();
 
-  if (!ready) return null;
+  if (!ready) return <span className="pond-account-slot" aria-busy="true" />;
 
   if (!authenticated) {
     return (
@@ -26,12 +26,12 @@ export default function LoginButton() {
 
   return (
     <div className="flex items-center gap-3">
-      <Link
+      <PondRouteLink
         href="/me"
         className="rounded-full border border-white/20 px-4 py-1.5 text-sm text-white transition-colors hover:bg-white/10"
       >
         我的音乐
-      </Link>
+      </PondRouteLink>
       <button
         type="button"
         onClick={logout}

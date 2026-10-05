@@ -3,6 +3,7 @@
 import type { MouseEvent, ReactNode } from 'react';
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import { useOptionalScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
+import PageNavigation from '@/src/components/pond-shell/navigation/PageNavigation';
 
 type Props = {
   backHref: string;
@@ -34,15 +35,15 @@ export default function ScorePondHeader({
     scoreOrigin?.clear();
   };
   return (
+    <>
+    <PageNavigation />
     <header className="score-pond-header" data-pond-ui="true">
       <nav className="score-pond-header__routes" aria-label="离开作品">
         <PondRouteLink className="score-pond-header__back" href={backHref} onClick={back}>
           <span aria-hidden="true">←</span>
           <span>{backLabel}</span>
         </PondRouteLink>
-        <PondRouteLink className="score-pond-header__home" href="/" onClick={home}>
-          回到水塘
-        </PondRouteLink>
+        {backHref !== '/' && <PondRouteLink className="score-pond-header__home" href="/" onClick={home}>回到水塘</PondRouteLink>}
       </nav>
 
       <p className="score-pond-header__edition" aria-label={`${network}，${tokenLabel}`}>
@@ -55,5 +56,6 @@ export default function ScorePondHeader({
         {shareAction}
       </div>
     </header>
+    </>
   );
 }

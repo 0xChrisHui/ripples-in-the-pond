@@ -1,11 +1,9 @@
 'use client';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useTexture } from '@react-three/drei';
+import { Canvas, useThree } from '@react-three/fiber';
 import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
-import type { ShaderMaterial } from 'three';
 import { isWebGLAvailable, pickLifeFlags, type GLFlags } from './gl-flags';
 import { useWakeField } from './life/wake-field';
-import { baseToneVertexShader, baseToneFragmentShader } from './base-tone-shader';
+import BaseTone from './presentation/BaseTone';
 import SphereInstances from './spheres/SphereInstances';
 import WaterSurface from './water/WaterSurface';
 import WaterDistort from './water/WaterDistort';
@@ -21,31 +19,8 @@ import Track36Visitor from './visitor/Track36Visitor';
 import type { Track36VisitorState } from './visitor/track36-state';
 import { EchoResidentSphere } from './echo-resident/render/EchoResidentSphere';
 import type { ResidentEchoFrameInput, ResidentEchoRuntime } from '@/src/types/echo-resident';
-import { getEclipseMix } from './focus/playback-focus';
 import SceneCover from './presentation/SceneCover';
 /** 生产与沙盒共用的水塘 GL 入口；故障时保留静态夜塘，不重挂 Canvas。 */
-function BaseTone({ artDir }: { artDir: GLFlags['artDir'] }) {
-  const matRef = useRef<ShaderMaterial>(null);
-  const eclipseTex = useTexture('/pond-eclipse-black.svg');
-  const uniforms = useMemo(
-    () => ({ uMode: { value: artDir === 'black' ? 1 : 0 }, uEclipseMix: { value: 0 }, uEclipseTex: { value: eclipseTex } }),
-    [artDir, eclipseTex],
-  );
-  useFrame(() => { if (matRef.current) matRef.current.uniforms.uEclipseMix.value = getEclipseMix(); });
-  return (
-    <mesh frustumCulled={false} renderOrder={-1}>
-      <planeGeometry args={[2, 2]} />
-      <shaderMaterial
-        ref={matRef}
-        key={artDir}
-        vertexShader={baseToneVertexShader}
-        fragmentShader={baseToneFragmentShader}
-        uniforms={uniforms}
-        depthWrite={false}
-      />
-    </mesh>
-  );
-}
 // class 是 React 唯一支持错误边界的形式（CONVENTIONS §4.2 的合理例外）。
 export type GlHealth = 'unavailable' | 'healthy' | 'lost' | 'error' | 'forced';
 class GLErrorBoundary extends Component<{
@@ -87,6 +62,7 @@ function GlHealthReporter({ report }: { report: (health: GlHealth) => void }) {
   return null;
 }
 export interface PondGLProps {
+  sceneContent?: ReactNode;
   flags: GLFlags;
   glSim?: GlSim;
   pointerInteractive?: boolean;
@@ -99,7 +75,7 @@ export interface PondGLProps {
   onSceneReadyChange?: (ready: boolean) => void;
 }
 export default function PondGL({ flags, glSim, pointerInteractive = true, onPerformanceChange, onHealthChange, visitor,
-  resident, scenePresence, reducedSceneMotion = false, onSceneReadyChange }: PondGLProps) {
+  resident, scenePresence, reducedSceneMotion = false, onSceneReadyChange, sceneContent }: PondGLProps) {
   const [mountId] = useState(() => `pond-${crypto.randomUUID()}`);
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production' && flags.rtt && flags.waterFx) {
@@ -164,7 +140,8 @@ export default function PondGL({ flags, glSim, pointerInteractive = true, onPerf
               <BgImage url="/test1-bg.png" />
             </Suspense>
           )}
-          {flags.glBase && !flags.bgImage && <Suspense fallback={null}><BaseTone artDir={flags.artDir} /></Suspense>}
+          {flags.glBase && !flags.bgImage && <BaseTone artDir={flags.artDir} />}
+          <Suspense fallback={null}>{sceneContent}</Suspense>
           {/* 旧程序化水面（renderOrder -0.5）；waterFx 开时退役、由 WaterDistort 全屏扭曲取代 */}
           {flags.water && !flags.waterFx && <WaterSurface artDir={flags.artDir} />}
           {/* K8 + P9：常驻零绘制以接按键临时编舞；开关只决定静息态是否可见，不改用户保存参数。 */}

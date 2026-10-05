@@ -1,0 +1,21 @@
+/* 矮屏优先保证开听入口；声音刻印保留在同一个舞台，不遮挡控制。 */
+@media (max-width: 699px) and (max-height: 740px) {
+  .track-header { padding-top: 15px; padding-bottom: 15px; }
+  .track-stage__title { padding-top: 18px; }
+  .track-stage__title h1 strong { font-size: 80px; }
+  .track-stage__title blockquote { font-size: 14px; line-height: 1.75; height: 5.25em; }
+  .material-player__controls { margin-top: 14px; }
+  .sound-imprint { width: 244px; margin-top: 0; }
+}
+@media (min-width: 700px) and (max-height: 740px) {
+  .track-stage__focus { min-height: 510px; }
+  .track-stage__title { padding-top: 24px; padding-bottom: 24px; }
+  .track-stage__title h1 { margin-top: 12px; margin-bottom: 20px; }
+  .track-stage__title h1 strong { font-size: 140px; }
+  .track-stage { padding-bottom: 48px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .track-stage__title, .sound-imprint { animation: track-enter .55s ease-out both; }
+  .sound-imprint { animation-delay: .08s; }
+}
+@keyframes track-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }

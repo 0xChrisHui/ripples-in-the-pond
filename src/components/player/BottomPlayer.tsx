@@ -40,7 +40,7 @@ export default function BottomPlayer() {
     return () => clearInterval(id);
   }, [playing, duration, startedAt, getCurrentTime]);
 
-  if (!currentTrack || pathname.startsWith('/score/')) return null;
+  if (!currentTrack || (pathname.startsWith('/score/') && !pathname.startsWith('/score/material/'))) return null;
 
   const elapsed = duration > 0 ? progress * duration : 0;
   const handleSeek = (positionMs: number) => {

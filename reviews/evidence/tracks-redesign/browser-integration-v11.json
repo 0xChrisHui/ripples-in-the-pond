@@ -1,0 +1,170 @@
+{
+  "at": "2026-10-05T16:46:19.998Z",
+  "origin": "http://127.0.0.1:3121",
+  "reused": "browser-integration-v10.json：音频身份、35首完整性、凭证链接及摘要高度未改变",
+  "tracksHeader": {
+    "left": 0,
+    "top": 0,
+    "links": [
+      {
+        "label": "艺术家",
+        "x": 1168.890625,
+        "y": 20
+      },
+      {
+        "label": "曲目",
+        "x": 1241.359375,
+        "y": 20
+      },
+      {
+        "label": "登录",
+        "x": 1328,
+        "y": 20
+      }
+    ],
+    "back": "← 返回水塘"
+  },
+  "homeHeader": {
+    "left": 0,
+    "top": 0,
+    "links": [
+      {
+        "label": "艺术家",
+        "x": 1168.890625,
+        "y": 20
+      },
+      {
+        "label": "曲目",
+        "x": 1241.359375,
+        "y": 20
+      },
+      {
+        "label": "登录",
+        "x": 1328,
+        "y": 20
+      }
+    ],
+    "back": "Ripples in the Pond"
+  },
+  "reentry": {
+    "before": {
+      "session": "3365211236",
+      "dx": -25.472,
+      "dy": -24.581,
+      "time": 2.167,
+      "color": "0.72157,0.65882,0.78431",
+      "track": "7"
+    },
+    "after": {
+      "session": "3365211236",
+      "dx": -25.473,
+      "dy": -24.581,
+      "time": 2.167,
+      "color": "0.72157,0.65882,0.78431",
+      "track": "7"
+    }
+  },
+  "autoplay": [
+    {
+      "src": "http://127.0.0.1:3121/tracks/No.8.mp3?v=c2f2a58990c2b3ceea7c3e3c9190dc3cfbb010280ce70e3696c9d46980e5a876",
+      "time": 0.039942
+    }
+  ],
+  "artistHeader": {
+    "left": 0,
+    "top": 0,
+    "links": [
+      {
+        "label": "艺术家",
+        "x": 1168.890625,
+        "y": 20
+      },
+      {
+        "label": "曲目",
+        "x": 1241.359375,
+        "y": 20
+      },
+      {
+        "label": "登录",
+        "x": 1328,
+        "y": 20
+      }
+    ],
+    "back": "← 返回水塘"
+  },
+  "seam": {
+    "storyBackground": "rgba(0, 0, 0, 0)",
+    "ledgerBackground": "rgba(0, 0, 0, 0)",
+    "readingBackground": "rgba(4, 14, 10, 0.76)",
+    "ledgerBorder": "0px"
+  },
+  "/meHeader": {
+    "left": 0,
+    "top": 0,
+    "links": [
+      {
+        "label": "艺术家",
+        "x": 1168.890625,
+        "y": 20
+      },
+      {
+        "label": "曲目",
+        "x": 1241.359375,
+        "y": 20
+      },
+      {
+        "label": "登录",
+        "x": 1328,
+        "y": 20
+      }
+    ],
+    "back": "← 返回水塘"
+  },
+  "/score/1Header": {
+    "left": 0,
+    "top": 0,
+    "links": [
+      {
+        "label": "艺术家",
+        "x": 1168.890625,
+        "y": 20
+      },
+      {
+        "label": "曲目",
+        "x": 1241.359375,
+        "y": 20
+      },
+      {
+        "label": "登录",
+        "x": 1328,
+        "y": 20
+      }
+    ],
+    "back": "← 返回水塘"
+  },
+  "/echo/1Header": {
+    "left": 0,
+    "top": 0,
+    "links": [
+      {
+        "label": "艺术家",
+        "x": 1168.890625,
+        "y": 20
+      },
+      {
+        "label": "曲目",
+        "x": 1241.359375,
+        "y": 20
+      },
+      {
+        "label": "登录",
+        "x": 1328,
+        "y": 20
+      }
+    ],
+    "back": "← 返回水塘"
+  },
+  "scoreToTracks": "等待真实挂载后，共享Canvas保留，曲目重新取得WebGL场景",
+  "pageErrors": [],
+  "consoleErrors": []
+}

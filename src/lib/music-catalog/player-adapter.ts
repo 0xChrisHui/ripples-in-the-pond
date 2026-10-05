@@ -1,13 +1,16 @@
 import rows from './data/tracks-source.json';
 import { getOriginalTrack } from './asset-registry';
-import { WALLET_RECIPE_GATEWAYS } from '../wallet-recipe/gateways';
+import { permanentMediaCandidates } from '../../features/permanent-media/candidates';
+import { originalStreamSource } from './experience/audio-streams';
 import type { Track } from '../../types/tracks';
 
 export function originalAudioSources(trackId: string): string[] {
   const track = getOriginalTrack(trackId);
   if (!track?.audioArUri || !/^ar:\/\/[a-zA-Z0-9_-]{43}$/.test(track.audioArUri)) throw new Error('真实永久音频来源不可用');
-  const txid = track.audioArUri.slice(5);
-  return WALLET_RECIPE_GATEWAYS.map((gateway) => `${gateway}/${txid}`);
+  const stream = originalStreamSource(trackId, track.audioArUri);
+  const permanent = permanentMediaCandidates(track.audioArUri).filter(candidate => candidate.source !== 'mirror')
+    .map(candidate => candidate.url);
+  return stream ? [stream, ...permanent] : permanent;
 }
 export function releaseOriginalPlayback(trackId: string, host: {
   getAudioElement: () => { src: string } | null; stop: () => void;

@@ -13,6 +13,15 @@
   padding: 0 var(--p11-page-inset);
 }
 
+.artist-page--pond { background: transparent; }
+.artist-page--pond .artist-page__shell {
+  background: rgba(5, 17, 13, .72);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .35);
+}
+.artist-page--pond :is(.artist-portrait__text p:not(.artist-portrait__lead), .artist-statement__text p) { color: #d0d7cc; }
+.artist-page--pond .artist-page__nav { flex-wrap: wrap; padding: 12px 0; }
+.artist-page--pond .artist-page__nav .pond-page-navigation { letter-spacing: normal; }
+
 .artist-page__nav,
 .artist-page__footer {
   display: flex;

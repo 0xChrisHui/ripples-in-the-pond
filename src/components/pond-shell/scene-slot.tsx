@@ -10,7 +10,8 @@ import type { GlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
 import type { Track36VisitorState } from '@/src/components/pond-gl-test3/visitor/track36-state';
 
 export type PondSceneDescriptor = {
-  owner: 'score';
+  owner: 'score' | 'tracks';
+  sceneContent?: ReactNode;
   flags: GLFlags;
   glSim?: GlSim;
   visitor?: RefObject<Track36VisitorState | null>;
@@ -64,13 +65,14 @@ export function useOptionalPondSceneSlot() {
 }
 
 /** descriptor 更新原子替换；只有真正卸载时才注销当前实例。 */
-export function useRegisterPondScene(scene: PondSceneDescriptor) {
+export function useRegisterPondScene(scene: PondSceneDescriptor, enabled = true) {
   const { register, unregister, health, sceneReady } = usePondSceneSlot();
   const latest = useRef(scene);
   useLayoutEffect(() => {
     latest.current = scene;
-    register(scene);
-  }, [register, scene]);
+    if (enabled) register(scene);
+    else unregister(scene);
+  }, [enabled, register, scene, unregister]);
   useLayoutEffect(() => () => unregister(latest.current), [unregister]);
   return { health, sceneReady };
 }

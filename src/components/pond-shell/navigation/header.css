@@ -1,0 +1,16 @@
+.pond-global-header { color: var(--p11-bone); font-family: var(--p11-font-body); text-shadow: 0 1px 10px rgb(0 0 0 / 55%); }
+.pond-global-header a { text-decoration: none; }
+.pond-global-header__home { display: flex; min-height: 44px; align-items: center; }
+.pond-global-header__back { font-size: 13px; line-height: 28px; white-space: nowrap; }
+.pond-global-header nav > a { min-height: 44px; font-size: 13px; }
+.pond-global-header nav > :last-child { min-width: 80px; }
+.pond-global-header button, .pond-global-header a { cursor: pointer; }
+.pond-global-header nav :is(button, a[href='/me']) { min-height: 44px; }
+.pond-global-header-spacer { height: 84px; }
+.pond-global-header ~ .score-pond-header, .persistent-pond-shell .score-pond-header { top: max(84px, calc(env(safe-area-inset-top) + 72px)); }
+.persistent-pond-shell .me-archive { padding-top: max(84px, calc(env(safe-area-inset-top) + 72px)); }
+.me-archive__context { display: flex; justify-content: flex-end; min-height: 44px; }
+.material-catalog:not(.track-archive) { padding-top: max(96px, calc(env(safe-area-inset-top) + 84px)); }
+.artist-page--pond { padding-top: max(84px, calc(env(safe-area-inset-top) + 72px)); }
+.echo-page, .echo-unavailable { padding-top: max(96px, calc(env(safe-area-inset-top) + 84px)); }
+@media (max-width: 767px) { .pond-global-header-spacer { height: 72px; } }

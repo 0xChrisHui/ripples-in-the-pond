@@ -1,5 +1,7 @@
 'use client';
 import Link from 'next/link';
+import PondRouteLink from '../pond-shell/PondRouteLink';
+import PageNavigation from '../pond-shell/navigation/PageNavigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useMaterialMint } from '../../features/material-catalog/mint/useMaterialMint';
@@ -20,7 +22,8 @@ export default function MaterialOrderList() {
   }, [listOrders, owner]);
   useEffect(() => { if (auth.authenticated) void load(); }, [auth.authenticated, load]);
   return <main className="material-catalog">
-    <header className="material-header"><Link href="/me">← 我的</Link><Link href="/tracks">曲目馆 →</Link></header>
+    <PageNavigation />
+    <nav className="material-header" aria-label="返回私人档案"><PondRouteLink href="/me">← 我的音乐</PondRouteLink></nav>
     <div className="material-intro"><h1>原曲领取订单</h1><p>最近 50 条本人订单；原曲与 Score 订单分开保存。</p></div>
     {!auth.ready ? <p role="status">正在确认登录状态…</p> : !auth.authenticated
       ? <button className="material-collect" type="button" onClick={auth.openLoginModal}>登录后查看本人订单</button>

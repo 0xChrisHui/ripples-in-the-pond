@@ -21,7 +21,7 @@
 
 .pond-home-surface[data-interactive='true'] { pointer-events: auto; }
 
-.pond-prepared-archive {
+.pond-prepared-archive, .pond-prepared-artist, .pond-prepared-tracks {
   position: absolute;
   z-index: 2;
   inset: 0 0 auto;
@@ -35,7 +35,7 @@
     visibility 0s linear var(--pond-route-duration, var(--p11-reveal));
 }
 
-.pond-prepared-archive[data-active='true'] {
+.pond-prepared-archive[data-active='true'], .pond-prepared-artist[data-active='true'], .pond-prepared-tracks[data-active='true'] {
   position: relative;
   opacity: 1;
   visibility: visible;
@@ -43,7 +43,9 @@
   transition-delay: 0s;
 }
 
-.pond-prepared-archive[data-interactive='true'] { pointer-events: auto; }
+.pond-prepared-archive[data-interactive='true'], .pond-prepared-artist[data-interactive='true'], .pond-prepared-tracks[data-interactive='true'] { pointer-events: auto; }
+.pond-prepared-tracks[data-active='false'] { height: 0; min-height: 0; overflow: clip; }
+.pond-prepared-tracks { transform: none; }
 
 /* 预备期间先计算真实数据，切换时只播放整层入场。 */
 .pond-prepared-archive :is(.me-archive__header, .me-archive__panel) { animation: none; }
@@ -75,5 +77,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pond-route-surface, .pond-prepared-archive { transform: none; }
+  .pond-route-surface, .pond-prepared-archive, .pond-prepared-artist, .pond-prepared-tracks { transform: none; }
 }

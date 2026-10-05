@@ -1,5 +1,6 @@
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import type { ReactNode } from 'react';
+import PageNavigation from '@/src/components/pond-shell/navigation/PageNavigation';
 
 type Props = {
   authState: 'checking' | 'authenticated' | 'unauthenticated';
@@ -27,12 +28,8 @@ export default function ArchiveHeader({
 
   return (
     <header className="me-archive__header">
-      <nav className="me-archive__nav" aria-label="档案导航">
-        <PondRouteLink href="/" className="me-archive__back" data-pond-focus-entry="archive">
-          <span aria-hidden="true">←</span>
-          <span>返回池塘</span>
-        </PondRouteLink>
-        <p className="me-archive__folio">RIPPLES IN THE POND</p>
+      <PageNavigation />
+      <nav className="me-archive__context" aria-label="档案账户与网络">
         <div className="me-archive__account">
           {authSource === 'semi' && authState === 'authenticated' ? (
             <a className="me-archive__identity me-archive__identity--link"

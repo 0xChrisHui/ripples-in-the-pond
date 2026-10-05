@@ -1,0 +1,97 @@
+{
+  "at": "2026-10-05T16:03:30.039Z",
+  "origin": "http://127.0.0.1:3121",
+  "desktop01": {
+    "top": 620,
+    "height": 112,
+    "switchTop": 760,
+    "circle": "2398144739"
+  },
+  "desktop07": {
+    "top": 620,
+    "height": 112,
+    "switchTop": 760,
+    "circle": "2398144739"
+  },
+  "audio35": {
+    "source": "http://127.0.0.1:3121/tracks/No.35.mp3?v=6cd95c4fb5d36d2766ab11e27dff2b13f1ede95b36f2bd1d6d38bacc0e10d1b5",
+    "clickToPlayingMs": 127.89999997615814,
+    "loadsAtClick": 3,
+    "loadsAfterClick": 3,
+    "position": 0.118605
+  },
+  "pageErrors": [],
+  "resumedAt": "2026-10-05T16:10:55.852Z",
+  "artist": {
+    "sameCanvas": true,
+    "mount": "pond-3ad65bec-6892-4a8d-b773-f6d025c969c0",
+    "owner": "artist",
+    "canvases": 1,
+    "firstVisualMs": 102,
+    "settledMs": 4505
+  },
+  "backToTracks": {
+    "sameCanvas": true,
+    "mount": "pond-3ad65bec-6892-4a8d-b773-f6d025c969c0",
+    "owner": "tracks",
+    "canvases": 1,
+    "firstVisualMs": 413,
+    "settledMs": 2142
+  },
+  "loginKeepsWater": true,
+  "proof": {
+    "links": [
+      {
+        "text": "铸造合约 ↗",
+        "href": "https://optimistic.etherscan.io/address/0xA65C9308635C8dd068A314c189e8d77941A7e99c"
+      },
+      {
+        "text": "本曲项目留存铸造 ↗",
+        "href": "https://optimistic.etherscan.io/tx/0x4d36c7080acdf872813a7a193e39ebdbda49fa1696087fd6fa124e6edfe8d6e6"
+      },
+      {
+        "text": "铸造合约 ↗",
+        "href": "https://etherscan.io/address/0x6C731E5FAa26E648Cad6F86b1c1E741f0aaE136b"
+      },
+      {
+        "text": "本曲项目留存铸造 ↗",
+        "href": "https://etherscan.io/tx/0xccf8f4f77c41404a9ab30f4746bc0b7efc46dec16647325681bc995956b295b3"
+      }
+    ],
+    "old": false,
+    "font": "15px",
+    "bodyFont": "15px",
+    "layer": "rgba(6, 18, 14, 0.82)"
+  },
+  "home": {
+    "sameCanvas": true,
+    "mount": "pond-922e130f-1447-4daf-bd44-033cdbce9b0e",
+    "owner": "home",
+    "canvases": 1,
+    "firstVisualMs": 147,
+    "settledMs": 4460
+  },
+  "fromHome": {
+    "sameCanvas": true,
+    "mount": "pond-922e130f-1447-4daf-bd44-033cdbce9b0e",
+    "owner": "tracks",
+    "canvases": 1,
+    "firstVisualMs": 278,
+    "settledMs": 1482
+  },
+  "me": "未使用真实登录账号；我的音乐沿用现有PondRouteLink和身份隔离的预备档案",
+  "mobile01": {
+    "top": 466.75,
+    "height": 98,
+    "switchTop": 876.75,
+    "circle": "2350958082"
+  },
+  "mobile07": {
+    "top": 466.75,
+    "height": 98,
+    "switchTop": 876.75,
+    "circle": "2350958082"
+  },
+  "archive": true,
+  "consoleErrors": []
+}

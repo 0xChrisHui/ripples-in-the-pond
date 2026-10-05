@@ -59,7 +59,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const phase = transition?.phase ?? (pathname === '/' ? 'home' : 'archive');
   const homeVisible = !persistent || phase === 'home' || phase === 'entering-home';
   const homeInteractive = !persistent || phase === 'home';
-  const renderHomeScene = !persistent || (phase !== 'archive' && phase !== 'score');
+  const renderHomeScene = !persistent || (phase !== 'archive' && phase !== 'score' && phase !== 'tracks' && phase !== 'artist');
   const prepareArchive = usePreparedArchive(pathname, persistent);
   const sceneMotion = useScenePresence(phase, transition?.duration ?? 0);
   const [homeInitialized, setHomeInitialized] = useState(homeVisible);
@@ -86,7 +86,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
     echoPlayback.active,
     homeInteractive,
   );
-  const registeredScene = persistent && phase === 'score' ? sceneSlot?.scene ?? null : null;
+  const registeredScene = persistent && sceneSlot?.scene && sceneSlot.scene.owner === transition?.transaction.interactiveOwner ? sceneSlot.scene : null;
   const sceneFlags = useMemo(
     () => persistent && !renderHomeScene ? ARCHIVE_FLAGS : glFlags,
     [glFlags, persistent, renderHomeScene],
@@ -104,9 +104,9 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const resident = useResidentHost({ glSim, echo: featuredEcho, playback: echoPlayback,
     health: glHealth, ready: sceneReady, homeActive: glFlags.glSpheres && renderHomeScene,
     otherPlaybackActive: playing, scenePresence: sceneMotion.presence });
-  const coreSim = phase === 'score' ? registeredScene?.glSim : glSim;
-  const coreVisitor = phase === 'score' ? registeredScene?.visitor : undefined;
-  const coreResident = phase === 'score' || !resident.runtime ? undefined : {
+  const coreSim = registeredScene ? registeredScene.glSim : glSim;
+  const coreVisitor = registeredScene?.visitor;
+  const coreResident = registeredScene || phase === 'tracks' || phase === 'score' || !resident.runtime ? undefined : {
     runtime: resident.runtime, getFrameInput: resident.getFrameInput,
   };
   const mountGl = coreFlags.glBase || coreFlags.glSpheres || coreFlags.water || coreFlags.bgImage
@@ -140,8 +140,8 @@ export default function PondExperience({ mode, persistent = false, children }: {
   return (
     <div className={persistent ? 'persistent-pond-shell' : undefined}
       data-pond-shell={persistent || undefined} data-pond-mount-id={persistent ? mountId ?? undefined : undefined}
-      data-pond-scene-owner={registeredScene?.owner ?? (homeVisible ? 'home' : 'archive')}
-      data-pond-scene={registeredScene?.owner ?? (homeVisible ? 'home' : 'archive')}
+      data-pond-scene-owner={registeredScene?.owner ?? (homeVisible ? 'home' : phase === 'tracks' ? 'tracks' : 'archive')}
+      data-pond-scene={registeredScene?.owner ?? (homeVisible ? 'home' : phase === 'tracks' ? 'tracks' : 'archive')}
       data-pond-scene-ready={sceneReady} data-pond-transition={persistent ? phase : undefined}
       data-pond-current={persistent ? transition?.transaction.current : undefined}
       data-pond-target={persistent ? transition?.transaction.target : undefined}
@@ -151,6 +151,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
       data-pond-reduced-scene-motion={persistent ? sceneMotion.reduced : undefined}
       style={persistent ? { '--pond-route-duration': `${transition?.duration ?? 0}ms` } as CSSProperties : undefined}>
       {mountGl && <PersistentWaterCore flags={coreFlags} glSim={coreSim} visitor={coreVisitor} resident={coreResident}
+        sceneContent={registeredScene?.sceneContent}
         scenePresence={registeredScene ? registeredScene.scenePresence : sceneMotion.presence}
         reducedSceneMotion={registeredScene ? undefined : sceneMotion.reduced}
         pointerInteractive={registeredScene?.pointerInteractive}
@@ -165,7 +166,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
       <div className={`fixed inset-0 z-[25] ${mountGl && !sceneReady ? 'pointer-events-auto' : 'pointer-events-none'}`}>
         <SceneCover artDir={glFlags.artDir} visible={mountGl && !sceneReady} />
       </div>
-      <PondHeader />
+      {!persistent && <PondHeader />}
       {glSim.ready && glOk && <GlNav glSim={glSim} playbackActive={echoPlayback.active}
         featured={featuredEcho !== null} />}
       {glFlags.glSpheres && (glSim.loading || glSim.error) && (
@@ -187,7 +188,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
           <EchoResidentHit runtime={resident.runtime} getPlayback={resident.getPlayback} execute={resident.execute} />
         </div>
       )}
-      {glFlags.glSpheres && glFlags.glEclipse && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
+      {renderHomeScene && glFlags.glSpheres && glFlags.glEclipse && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
       {renderHomeScene && <HomeEclipseDriver glSim={glSim} playingId={glOk && homeInteractive ? playingId : null}
         resident={resident.runtime && featuredEcho ? {runtime:resident.runtime,playbackId:featuredEcho.playbackId}:undefined} />}
       {sandbox && <SandboxControls flags={glFlags} p9={mode === 'test3'} onChange={onGl} />}

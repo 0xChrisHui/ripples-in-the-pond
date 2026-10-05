@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import type { RefObject } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import type { GLFlags } from '@/src/components/pond-gl-test3/gl-flags';
 import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
 import type { GlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
@@ -11,6 +11,7 @@ import type { ResidentEchoFrameInput, ResidentEchoRuntime } from '@/src/types/ec
 const PondGL = dynamic(() => import('@/src/components/pond-gl-test3/PondGL'), { ssr: false });
 
 type Props = {
+  sceneContent?: ReactNode;
   flags: GLFlags;
   glSim?: GlSim;
   visitor?: RefObject<Track36VisitorState | null>;

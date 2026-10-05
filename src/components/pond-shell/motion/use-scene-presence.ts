@@ -36,7 +36,7 @@ export function useScenePresence(
     animationVersion.current = version;
     const target = targetOf(phase);
     // 稳定页不允许上一段动画的尾帧继续把圆圈留在水面上。
-    if (phase === 'home' || phase === 'archive' || phase === 'score') {
+    if (phase === 'home' || phase === 'archive' || phase === 'score' || phase === 'tracks' || phase === 'artist') {
       presence.current = target;
       return;
     }

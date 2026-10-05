@@ -8,7 +8,7 @@ import { initialRouteTransaction, routeTransactionReducer } from './transition/r
 import {
   pathWithoutHash, routeForPath, type PondRoute, type PondRouteEvent, type PondRouteTransaction,
 } from './transition/types';
-export type PondTransitionPhase = 'home' | 'leaving-home' | 'archive' | 'entering-home' | 'score';
+export type PondTransitionPhase = 'home' | 'leaving-home' | 'archive' | 'entering-home' | 'score' | 'tracks' | 'artist';
 type TransitionValue = {
   transaction: PondRouteTransaction;
   phase: PondTransitionPhase;
@@ -31,7 +31,7 @@ function legacyPhase(tx: PondRouteTransaction, archiveReady: boolean): PondTrans
   if (tx.stage === 'preparing') return tx.current;
   if (tx.target === 'home') return 'entering-home';
   if (tx.current === 'home' && tx.target === 'archive' && !archiveReady) return 'home';
-  if (tx.current === 'home' && tx.target === 'archive') return 'leaving-home';
+  if (tx.current === 'home' && (tx.target === 'archive' || tx.target === 'tracks' || tx.target === 'artist')) return 'leaving-home';
   return tx.target;
 }
 function focusEntry() {

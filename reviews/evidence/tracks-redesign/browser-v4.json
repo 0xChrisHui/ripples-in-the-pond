@@ -1,0 +1,57 @@
+{
+  "desktop": {
+    "width": 1440,
+    "height": 900,
+    "scrollWidth": 1440,
+    "playTop": 615,
+    "playBottom": 675,
+    "items": 35,
+    "titleSize": "172.8px",
+    "duration": "0:001:11",
+    "phase": "idle"
+  },
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "playTop": 367.75,
+    "playBottom": 419.75,
+    "items": 35,
+    "titleSize": "96px",
+    "duration": "0:001:11",
+    "phase": "idle"
+  },
+  "longNote": {
+    "selected": "31",
+    "length": 530,
+    "paragraphs": 6,
+    "overflow": false
+  },
+  "smallMobile": {
+    "width": 375,
+    "height": 667,
+    "scrollWidth": 375,
+    "playTop": 323.5,
+    "playBottom": 375.5,
+    "items": 35,
+    "titleSize": "80px",
+    "duration": "0:001:11",
+    "phase": "idle"
+  },
+  "single": {
+    "width": 1024,
+    "height": 768,
+    "scrollWidth": 1024,
+    "playTop": 600,
+    "playBottom": 660,
+    "items": 0,
+    "titleSize": "140px",
+    "duration": "0:001:11",
+    "phase": "idle"
+  },
+  "singlePlayback": {
+    "started": 0,
+    "advanced": 387
+  },
+  "singleFloatingStop": true
+}

@@ -88,7 +88,7 @@ export default function ScorePondScene({ score, network }: Props) {
     owner: 'score', flags, glSim: glSim ?? undefined,
     pointerInteractive: interactive, onPerformanceChange: setPerformanceReduced, scenePresence: visual.presence,
   }), [flags, glSim, interactive, visual.presence]);
-  const { health, sceneReady } = useRegisterPondScene(scene);
+  const { health, sceneReady } = useRegisterPondScene(scene, !transition || transition.transaction.interactiveOwner === 'score');
   useEclipseTransition(
     glSim!, emptyVisitor,
     health === 'healthy' && sceneReady && isPlaying ? visualTrack.id : null,

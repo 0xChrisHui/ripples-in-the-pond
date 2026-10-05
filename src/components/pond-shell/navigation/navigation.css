@@ -1,0 +1,4 @@
+.pond-page-navigation { display: flex; align-items: center; gap: clamp(14px, 2vw, 28px); min-height: 44px; }
+.pond-page-navigation > a { display: inline-flex; min-height: 44px; align-items: center; color: var(--p11-bone, #eee7d8); font: 13px var(--p11-font-body); text-decoration: none; white-space: nowrap; }
+.pond-page-navigation :is(a, button):focus-visible { outline: 2px solid var(--p11-focus-color, #cfb18a); outline-offset: 4px; }
+.pond-account-slot { display: inline-flex; min-width: 64px; min-height: 44px; align-items: center; justify-content: flex-end; }

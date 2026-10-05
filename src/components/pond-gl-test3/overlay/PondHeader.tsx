@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import LoginButton from '@/src/components/auth/LoginButton';
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
+import { usePondNavigationWarmup } from '@/src/components/pond-shell/navigation/PondNavigation';
+import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
+import '@/src/components/pond-shell/navigation/header.css';
 
 const MENU_ID = 'pond-public-navigation';
 
@@ -19,10 +21,10 @@ function PublicLinks({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <>
-      <Link href="/artist" onClick={onNavigate} className={linkClass}>
+      <PondRouteLink href="/artist" onClick={onNavigate} className={linkClass}>
         艺术家
-      </Link>
-      <Link href="/tracks" onClick={onNavigate} className={linkClass}>曲目</Link>
+      </PondRouteLink>
+      <PondRouteLink href="/tracks" onClick={onNavigate} className={linkClass}>曲目</PondRouteLink>
     </>
   );
 }
@@ -30,8 +32,13 @@ function PublicLinks({ onNavigate }: { onNavigate?: () => void }) {
 /** 首页与 GL 沙盒共用的公开导航；只有交互岛接管指针，空白区域继续交给水塘。 */
 export default function PondHeader() {
   const pathname = usePathname();
+  const transition = usePondTransition();
+  const home = transition ? transition.transaction.interactiveOwner === 'home' : pathname === '/';
   const [menuOpen, setMenuOpen] = useState(false);
+  usePondNavigationWarmup();
   const isSandbox = pathname === '/test3' || pathname === '/test4';
+
+  useEffect(() => { queueMicrotask(() => setMenuOpen(false)); }, [pathname]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -46,15 +53,15 @@ export default function PondHeader() {
     <header
       data-pond-ui="true"
       data-p11-theme="pond"
-      className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex items-start justify-between gap-4 px-5 pt-[max(12px,env(safe-area-inset-top))] md:px-8 md:pt-5"
+      className="pond-global-header pointer-events-none fixed inset-x-0 top-0 z-[60] flex items-start justify-between gap-4 px-5 pt-[max(12px,env(safe-area-inset-top))] md:px-8 md:pt-5"
     >
       <PondRouteLink
         href="/"
-        className="pointer-events-auto min-w-0 py-2 text-[var(--p11-bone)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--p11-focus-color)]"
+        className="pond-global-header__home pointer-events-auto min-w-0 py-2 text-[var(--p11-bone)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--p11-focus-color)]"
       >
-        <span className="block truncate font-[family-name:var(--p11-font-display)] text-xl font-light leading-none tracking-[0.04em] md:text-2xl">
+        {home || isSandbox ? <span className="block truncate font-[family-name:var(--p11-font-display)] text-xl font-light leading-none tracking-[0.04em] md:text-2xl">
           Ripples in the Pond
-        </span>
+        </span> : <span className="pond-global-header__back">← 返回水塘</span>}
         {isSandbox && (
           <span className="mt-1.5 block font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--p11-faint)]">
             {pathname} · GL sandbox
@@ -76,7 +83,7 @@ export default function PondHeader() {
           aria-label={menuOpen ? '关闭主菜单' : '打开主菜单'}
           data-pond-focus-entry="home"
           onClick={() => setMenuOpen((open) => !open)}
-          className="flex h-11 w-11 items-center justify-center border border-[var(--p11-line)] bg-[var(--p11-overlay)] text-[var(--p11-bone)] backdrop-blur-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--p11-focus-color)]"
+          className="pond-global-header__menu-button flex h-11 w-11 items-center justify-center border border-[var(--p11-line)] bg-[var(--p11-overlay)] text-[var(--p11-bone)] backdrop-blur-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--p11-focus-color)]"
         >
           <span className="relative block h-3.5 w-4" aria-hidden="true">
             <span className={`absolute left-0 top-0 h-px w-4 bg-current transition-transform ${menuOpen ? 'translate-y-[6px] rotate-45' : ''}`} />

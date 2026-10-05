@@ -1,5 +1,7 @@
 'use client';
 import Link from 'next/link';
+import PondRouteLink from '../pond-shell/PondRouteLink';
+import PageNavigation from '../pond-shell/navigation/PageNavigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAddress, type Hex } from 'viem';
 import { useAuth } from '../../hooks/useAuth';
@@ -50,7 +52,8 @@ export default function MaterialOrderView({ orderId }: { orderId: Hex }) {
   const validHash = /^0x[0-9a-f]{64}$/i.test(enteredHash.trim()) && !/^0x0+$/i.test(enteredHash.trim());
   const asset = ready && deployment?.tokenId === order?.tokenId ? deployment.publicPlaybackUrl : null;
   return <main className="material-catalog">
-    <header className="material-header"><Link href="/me/material">← 原曲订单</Link><Link href="/tracks">曲目馆 →</Link></header>
+    <PageNavigation />
+    <nav className="material-header" aria-label="返回原曲订单"><PondRouteLink href="/me/material">← 原曲订单</PondRouteLink></nav>
     <div className="material-intro"><h1>原曲领取订单</h1><p>已有交易只查询或恢复，不重复发送。</p></div>
     {!auth.ready ? <p role="status">正在确认登录状态…</p> : !auth.authenticated
       ? <button className="material-collect" type="button" onClick={auth.openLoginModal}>登录后查看本人订单</button>

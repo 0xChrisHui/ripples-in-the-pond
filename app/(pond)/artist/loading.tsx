@@ -1,14 +1,9 @@
-import Link from 'next/link';
-import './artist.css';
+import '@/app/artist/artist.css';
 
 export default function ArtistLoading() {
   return (
-    <main className="artist-page artist-loading" data-p11-theme="archive" aria-busy="true">
+    <main className="artist-page artist-page--pond artist-loading" data-p11-theme="pond" aria-busy="true">
       <div className="artist-page__shell">
-        <nav className="artist-page__nav" aria-label="页面导航">
-          <Link href="/">Ripples in the Pond</Link>
-          <span><span className="artist-page__nav-prefix">ARTIST / </span>叶禹含</span>
-        </nav>
         <section className="artist-portrait">
           <span className="artist-loading__line artist-loading__image" />
           <div className="artist-portrait__copy">

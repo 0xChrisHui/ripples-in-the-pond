@@ -1,0 +1,114 @@
+{
+  "measuredAt": "2026-10-04T13:29:55.614Z",
+  "origin": "http://127.0.0.1:3121",
+  "baseline": {
+    "mountId": "pond-11ddc6cd-fbd1-4c7a-9c5d-e2901a618ab3",
+    "canvasCount": 2
+  },
+  "desktop": {
+    "width": 1440,
+    "height": 900,
+    "scrollWidth": 1440,
+    "playTop": 628,
+    "playBottom": 688,
+    "items": 35,
+    "selected": "1",
+    "phase": "idle"
+  },
+  "enter": {
+    "sameShell": true,
+    "sameCanvas": true,
+    "sameContext": true,
+    "mountId": "pond-11ddc6cd-fbd1-4c7a-9c5d-e2901a618ab3",
+    "baselineMountId": "pond-11ddc6cd-fbd1-4c7a-9c5d-e2901a618ab3",
+    "scene": "tracks",
+    "canvasCount": 2,
+    "baselineCount": 2,
+    "glCanvases": 1,
+    "contextLost": false,
+    "draws": 20,
+    "bufferWidth": 1440,
+    "presence": 0,
+    "activeOwners": 1
+  },
+  "returnHome": {
+    "sameShell": true,
+    "sameCanvas": true,
+    "sameContext": true,
+    "mountId": "pond-11ddc6cd-fbd1-4c7a-9c5d-e2901a618ab3",
+    "baselineMountId": "pond-11ddc6cd-fbd1-4c7a-9c5d-e2901a618ab3",
+    "scene": "home",
+    "canvasCount": 2,
+    "baselineCount": 2,
+    "glCanvases": 1,
+    "contextLost": false,
+    "draws": 64,
+    "bufferWidth": 1440,
+    "presence": 0.996,
+    "activeOwners": 1
+  },
+  "archive": {
+    "width": 1440,
+    "height": 900,
+    "scrollWidth": 1440,
+    "playTop": 620,
+    "playBottom": 680,
+    "items": 35,
+    "selected": "31",
+    "phase": "idle"
+  },
+  "sameTrackComparison": true,
+  "reducedBaseline": {
+    "mountId": "pond-b3c6cfbc-bad9-4682-9112-d611d038a3f8",
+    "canvasCount": 2
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "resumedAt": "2026-10-04T13:35:10.190Z",
+  "reducedMotion": {
+    "sameShell": true,
+    "sameCanvas": true,
+    "sameContext": true,
+    "mountId": "pond-b3c6cfbc-bad9-4682-9112-d611d038a3f8",
+    "baselineMountId": "pond-b3c6cfbc-bad9-4682-9112-d611d038a3f8",
+    "scene": "tracks",
+    "canvasCount": 2,
+    "baselineCount": 2,
+    "glCanvases": 1,
+    "contextLost": false,
+    "draws": 20,
+    "bufferWidth": 1440,
+    "presence": 0,
+    "activeOwners": 1
+  },
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "playTop": 411.25,
+    "playBottom": 463.25,
+    "items": 35,
+    "selected": "1",
+    "phase": "idle"
+  },
+  "mobileGrid": true,
+  "consoleLimitations": [
+    {
+      "message": "[GLSim] tracks 加载失败: TypeError: Failed to fetch\n    at useGlSim.useCallback[loadTracks] (http://127.0.0.1:3121/_next/static/chunks/src_d4c7e4ca._.js:6206:33)\n    at useGlSim.useEffect (http://127.0.0.1:3121/_next/static/chunks/src_d4c7e4ca._.js:6231:18)\n    at Object.react_stack_bottom_frame (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14876:22)\n    at runWithFiberInDEV (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:965:74)\n    at commitHookEffectListMount (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7266:167)\n    at commitHookPassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7301:60)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8696:33)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8757:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8695:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8757:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8695:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8757:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8695:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8695:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8757:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8695:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8757:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8757:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8695:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8700:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8695:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8700:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8695:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8745:783)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8737:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8695:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8700:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)\n    at commitPassiveMountOnFiber (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8695:17)\n    at recursivelyTraversePassiveMountEffects (http://127.0.0.1:3121/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8683:316)",
+      "occurredAt": { "after": "2026-10-04T13:31:32.000Z", "capturedAt": "2026-10-04T13:31:43.7885195Z" },
+      "rootCause": "未复现，根因未确定；未将整段浏览器运行标为无错误"
+    }
+  ],
+  "mobileNote": {
+    "top": 53.25,
+    "bottom": 87.640625,
+    "width": 342,
+    "viewport": 390,
+    "height": 844,
+    "overflow": false
+  },
+  "apiTracksReadback": {
+    "status": 200,
+    "degraded": null
+  }
+}

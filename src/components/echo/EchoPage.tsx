@@ -13,9 +13,7 @@ export default function EchoPage({ echo }: { echo: EchoViewData }) {
   return (
     <main className="echo-page" data-p11-theme="echo">
       <header className="echo-page__nav">
-        <Link href="/">← 返回池塘</Link>
         <p>{echo.network} · ECHO #{echo.tokenId}</p>
-        <Link href="/me">我的音乐档案</Link>
       </header>
 
       <section className="echo-hero" aria-labelledby="echo-title">
