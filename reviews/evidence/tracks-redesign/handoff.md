@@ -119,3 +119,14 @@
 - 用户明确要求push to main；fetch确认origin/main=53555188f1655350e801b5f7b89034c120e93db8，无新增分叉。沿用当前工作树，保留codex/tracks-award-redesign及25b1eee原开发记录；最终文件状态压成一个发布提交，合约、数据库、依赖及next.config.ts不变。
 - 发布文件树与25b1eee一致，仅追加本段交接。复用定向类型/lint、音频5/5和v9–v11页面证据；因曲目/艺术家路由搬移，集中补生产Webpack构建：编译、TypeScript及61/61静态页面生成通过，完整构建退出0。
 - 默认构建清理遭旧.next/single-shot-profile文件权限拒绝，未删除受保护文件或改源码配置；最终在同一进程加载原项目配置，仅将本地cleanDistDir设false后运行原next-build流程。遗留middleware弃用及Privy可选Farcaster模块警告不阻断构建，未安装新依赖。完成线为推送后远端main SHA核对，不等待部署，不新增交易/上传/迁移或SEMI接入声明。
+
+## 2026-10-06 顶栏、领取入口与首次圆圈修正（v12）
+
+- 本轮只处理用户截图/视频的四项反馈。Me删除独立账户/网络/订单工具栏及其loading引用，只保留公共PondHeader；账户地址作为“我的音乐”的title，外部钱包网络选择归入待铸造区域且仍在原Provider内。登录/我的音乐共用44px最小高度、flex居中与无换行样式。
+- 撤回未经明确要求的原曲订单页面入口，ETH领取与已有交易恢复内嵌当前曲目；建单、接收钱包核验、发送与哈希恢复保持原服务端链路，历史直达路由仅兼容保留。没有删除订单记录、迁移数据库或执行钱包交易。
+- 曲目公开前景空闲预热，圆圈Mesh改为随前景一起加载，消除第二层串行chunk；首帧备用圆与GL共用颜色/pose，第一次GL绘制后返场不再使用备用圆。已挂载前景的就绪上报改到绘制前，并按targetVisualReady防止同步重复上报；随机漂移与换曲逻辑不改。
+- 本轮TypeScript与受影响ESLint通过，最后就绪钩子补定向ESLint和源码交叉审查；diff格式通过。旧音频5/5、运动范围及播放证据继续复用，不跑生产build或全量verify。
+- 集中浏览器证据为browser-ui-fixes-v12.json：首次圆圈与曲目前景接管在同一观测帧可见；返回会话1472710209保持且备用圆未出现；同样式“我的音乐”文字布局偏差0px；匿名Me公共顶栏1、旧顶栏0、订单入口0。最终page/console错误为空，ui-fixes-tracks-v12.png与ui-fixes-me-v12.png已目视。
+- 首次样本本地chunk编译与软件WebGL很慢，点击到前景约8.15秒、GL约10.12秒，不能称为生产无加载或真实用户性能；该证据只证明前景接管后圆圈无额外空白。Me截图捕获初始化阶段，不证明水面加载速度。实际登录账户/领取未验，“我的音乐”仅复用匿名按钮同样式替换文字测量，不冒充认证通过。
+- 首轮观察包含隐藏预备DOM，后改按前景实际接管判断；就绪钩子同步重复风险已加guard；返回断言误用冻结时未回写的circleVisible属性，仅续跑余下断言改查surface交互所有权。始终复用同一浏览器，旧profile不可用才使用一个替代profile；不新增测试服务。保留主工作区77条WIP，本轮仅本地提交，不push或部署。
+- 关键行：MeArchivePage的PageNavigation让共享池塘持有唯一顶栏；EthereumMaterialMint的setOrderId把领取留在当前曲目；PersistentRouteSurfaces的!tx?.targetVisualReady保证首帧就绪每事务只上报一次。

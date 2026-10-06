@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import {
-  Suspense, useCallback, useEffect, useRef, useState, type ReactNode, type TransitionEvent,
+  Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type TransitionEvent,
 } from 'react';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useOptionalScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
@@ -67,12 +67,12 @@ export default function PersistentRouteSurfaces({
     }
   }, [scoreOrigin?.origin?.stage, transition]);
 
-  useEffect(() => {
-    if (transition && stage === 'preparing' && (target === 'artist' || target === 'tracks')) {
+  useLayoutEffect(() => {
+    if (transition && stage === 'preparing' && !tx?.targetVisualReady && (target === 'artist' || target === 'tracks')) {
       const ready = target === 'artist' || !!tracksRef.current?.querySelector('[data-track-surface="pond"]');
       if (ready) transition.reportVisualReady(target, tx?.generation);
     }
-  }, [stage, target, tracksPrepared, transition, tx?.generation]);
+  }, [stage, target, tracksPrepared, transition, tx?.generation, tx?.targetVisualReady]);
 
   useEffect(() => {
     if (!transition?.archiveReady || target !== 'archive' || stage !== 'preparing'

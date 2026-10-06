@@ -1,15 +1,16 @@
 'use client';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import type { Hex } from 'viem';
 import { useAuth } from '../../hooks/useAuth';
 import { useMaterialMint } from '../../features/material-catalog/mint/useMaterialMint';
 import { getOriginalDeployment } from '../../lib/music-catalog/asset-registry';
 import type { OriginalTrack } from '../../lib/music-catalog/types';
+import MaterialOrderView from './MaterialOrderView';
 
 export default function EthereumMaterialMint({ track }: { track: OriginalTrack }) {
-  const auth = useAuth(), { prepareOrder } = useMaterialMint(), router = useRouter();
+  const auth = useAuth(), { prepareOrder } = useMaterialMint();
   const [busy, setBusy] = useState(false), [error, setError] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<Hex | null>(null);
   const active = useRef(true);
   useEffect(() => {
     active.current = true;
@@ -23,7 +24,7 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
     setBusy(true); setError(null);
     try {
       const order = await prepareOrder(track.trackId);
-      if (active.current) router.push(`/me/material/${order.orderId}`);
+      if (active.current) setOrderId(order.orderId);
     } catch (caught) {
       if (active.current) setError(caught instanceof Error ? caught.message : '原曲订单暂不可用，请查询已有订单。');
     } finally { if (active.current) setBusy(false); }
@@ -33,10 +34,10 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
     {!deployed ? <><p className="material-muted">合约尚未部署，当前未开放收藏。</p>
       <button className="material-collect" type="button" disabled>Ethereum 原曲尚未开放</button></>
       : !auth.authenticated ? <button className="material-collect" type="button" onClick={auth.openLoginModal}>登录后收藏</button>
-        : <><p className="material-uri">接收地址：{auth.selectedExternalWallet?.address ?? '请使用已关联的链上地址登录'}</p>
+        : !orderId && <><p className="material-uri">接收地址：{auth.selectedExternalWallet?.address ?? '请使用已关联的链上地址登录'}</p>
           <button className="material-collect" type="button" disabled={!external || busy} onClick={() => { void collect(); }}>
             {busy ? '正在查询并创建订单…' : '收藏这首原曲'}</button></>}
     {error && <p className="material-error" role="alert">{error}</p>}
-    <p><Link href="/me/material">查看本人原曲订单 →</Link></p>
+    {orderId && <MaterialOrderView orderId={orderId} embedded />}
   </div>;
 }

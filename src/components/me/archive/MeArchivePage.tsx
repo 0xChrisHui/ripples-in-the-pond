@@ -9,7 +9,7 @@ import { useScoreRoutePreload } from '@/src/hooks/me/useScoreRoutePreload';
 import { archiveCount, archiveLoading } from '@/src/hooks/me/archive-state';
 import { ARCHIVE_PAGE_SIZES, useArchivePagination } from '@/src/hooks/me/archive/useArchivePagination';
 import ArchiveEmpty from './ArchiveEmpty';
-import ArchiveHeader from './ArchiveHeader';
+import PageNavigation from '@/src/components/pond-shell/navigation/PageNavigation';
 import ArchiveSection from './ArchiveSection';
 import MaterialArchiveRow from './MaterialArchiveRow';
 import RecordingArchiveRow from './RecordingArchiveRow';
@@ -44,8 +44,6 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
   });
   const archiveReady = Boolean(auth.userId && ownerId === auth.userId);
   const identityPending = !auth.ready || (auth.authenticated && !archiveReady);
-  const authState = identityPending ? 'checking' as const
-    : auth.authenticated ? 'authenticated' as const : 'unauthenticated' as const;
   const ownerKey = auth.authenticated && auth.authSource && auth.userId
     ? `${auth.authSource}:${auth.userId}:${auth.evmAddress?.toLowerCase() ?? ''}` : '';
 
@@ -128,10 +126,7 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
     <main className="me-archive" data-p11-theme="archive" data-me-variant={variant}
       data-archive-prepared={prepared} data-score-origin-stage={scoreOrigin.origin?.stage}>
       <div className="me-archive__inner">
-        <ArchiveHeader authState={authState} authSource={auth.authSource} evmAddress={auth.evmAddress}
-          networkControl={auth.authenticated
-            && auth.walletCapability.loginEntry === 'external_wallet'
-            ? <ArchiveMintNetworkControl /> : null} />
+        <PageNavigation />
         {identityPending ? (
           <ArchiveEmpty title="正在确认你的档案" description="身份确认后，你的音乐会立即出现。" />
         ) : !auth.authenticated ? (
@@ -159,6 +154,7 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
             </div>
 
             <div className="me-archive__panel me-archive__panel--pending">
+              {auth.walletCapability.loginEntry === 'external_wallet' && <ArchiveMintNetworkControl />}
               <ArchiveSection id="pending" title="待铸造" count={pendingCount}
                 loading={archiveLoading(recordings)} refreshing={recordings.phase === 'refreshing'}
                 error={recordings.error} onRetry={() => { void retry('recordings'); }}

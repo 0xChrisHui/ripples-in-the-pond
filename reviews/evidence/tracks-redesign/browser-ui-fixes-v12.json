@@ -1,0 +1,31 @@
+{
+  "firstEntry": {
+    "domMs": 8151.100000023842,
+    "activeMs": 8151.200000047684,
+    "visibleMs": 8151.200000047684,
+    "webglMs": 10119.600000023842
+  },
+  "returnEntry": {
+    "session": "1472710209",
+    "track": "21029773-9978-4147-b106-f5b22fcddeb9",
+    "fallbackShown": false
+  },
+  "pillLayout": {
+    "height": 44,
+    "offsetY": 0,
+    "display": "flex"
+  },
+  "me": {
+    "headers": 1,
+    "oldHeaders": 0,
+    "orderLinks": 0
+  },
+  "errors": {
+    "page": [],
+    "console": []
+  },
+  "limitations": [
+    "匿名页面验收；我的音乐仅同样式文字布局测试，不代表真实登录/领取。",
+    "开发服务器单次样本，首次chunk编译耗时不能代表生产性能。"
+  ]
+}

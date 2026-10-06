@@ -1,4 +1,4 @@
-import ArchiveHeader from '@/src/components/me/archive/ArchiveHeader';
+import PageNavigation from '@/src/components/pond-shell/navigation/PageNavigation';
 import ArchiveSection from '@/src/components/me/archive/ArchiveSection';
 import '@/src/components/me/archive/archive.css';
 
@@ -12,7 +12,7 @@ export default function MeLoading() {
   return (
     <main className="me-archive" data-p11-theme="archive">
       <div className="me-archive__inner">
-        <ArchiveHeader authState="checking" />
+        <PageNavigation />
         <div className="me-archive__dashboard" aria-busy="true" aria-label="正在读取音乐档案">
           {sections.map((section) => (
             <div key={section.id} className={`me-archive__panel ${section.className}`}>

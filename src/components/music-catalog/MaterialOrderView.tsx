@@ -11,7 +11,7 @@ import { readMaterialHash } from '../../features/material-catalog/mint/attempt-c
 import { getMusicCatalog, getOriginalDeployment } from '../../lib/music-catalog/asset-registry';
 import { explorerAddressUrlFor, explorerTxUrlFor, getChainDefinition } from '../../lib/chain/multichain/registry';
 
-export default function MaterialOrderView({ orderId }: { orderId: Hex }) {
+export default function MaterialOrderView({ orderId, embedded = false }: { orderId: Hex; embedded?: boolean }) {
   const auth = useAuth(), { getOrder, sendOrder, recoverOrder } = useMaterialMint();
   const owner = auth.userId, scope = `${owner}:${orderId}`, activeScope = useRef(scope); activeScope.current = scope;
   const [loaded, setLoaded] = useState<{ owner: string; order: PublicMaterialOrder } | null>(null);
@@ -51,10 +51,11 @@ export default function MaterialOrderView({ orderId }: { orderId: Hex }) {
   const recoverable = order && order.digest && ['sending', 'unknown', 'submitted', 'confirming'].includes(order.status);
   const validHash = /^0x[0-9a-f]{64}$/i.test(enteredHash.trim()) && !/^0x0+$/i.test(enteredHash.trim());
   const asset = ready && deployment?.tokenId === order?.tokenId ? deployment.publicPlaybackUrl : null;
-  return <main className="material-catalog">
-    <PageNavigation />
-    <nav className="material-header" aria-label="返回原曲订单"><PondRouteLink href="/me/material">← 原曲订单</PondRouteLink></nav>
-    <div className="material-intro"><h1>原曲领取订单</h1><p>已有交易只查询或恢复，不重复发送。</p></div>
+  const Container = embedded ? 'section' : 'main';
+  return <Container className={embedded ? 'material-inline-claim' : 'material-catalog'} data-material-claim-inline={embedded || undefined}>
+    {!embedded && <><PageNavigation />
+      <nav className="material-header" aria-label="返回我的音乐"><PondRouteLink href="/me">← 我的音乐</PondRouteLink></nav>
+      <div className="material-intro"><h1>原曲领取状态</h1><p>已有交易只查询或恢复，不重复发送。</p></div></>}
     {!auth.ready ? <p role="status">正在确认登录状态…</p> : !auth.authenticated
       ? <button className="material-collect" type="button" onClick={auth.openLoginModal}>登录后查看本人订单</button>
       : <section className="material-mint" aria-live="polite">
@@ -79,5 +80,5 @@ export default function MaterialOrderView({ orderId }: { orderId: Hex }) {
           {busy ? '正在处理…' : '刷新状态'}</button></p>
       </section>}
     {auth.authenticated && notice?.scope === scope && <p className="material-error" role="alert">{notice.text}</p>}
-  </main>;
+  </Container>;
 }

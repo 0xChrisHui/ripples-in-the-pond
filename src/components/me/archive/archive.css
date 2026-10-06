@@ -12,6 +12,7 @@
 .me-archive__inner { width: min(100%, var(--p11-page-max)); margin-inline: auto; }
 .me-archive__header { padding-bottom: var(--p11-space-12); border-bottom: 1px solid var(--p11-line-strong); }
 .me-archive__network-control { position: relative; flex: none; }
+.me-archive__panel--pending > .me-archive__network-control { width: max-content; margin: 0 0 var(--p11-space-8) auto; }
 .me-archive__nav { display: grid; grid-template-columns: 1fr auto; min-height: 52px; align-items: center; gap: var(--p11-space-16); }
 .me-archive__account { display: flex; min-width: 0; align-items: center; justify-self: end; gap: var(--p11-space-8); }
 .me-archive__back, .me-archive__identity--link {
