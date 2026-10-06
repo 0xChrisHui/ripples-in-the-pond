@@ -1,5 +1,10 @@
 import type { ResidentEchoFrameInput, ResidentEchoPose, ResidentHostFrameState } from '@/src/types/echo-resident';
 
+/** Echo已由服务端核验；宿主只确认它属于当前配置的链与首枚Token。 */
+export function isResidentEchoAvailable(echo: { chainId: number; tokenId: string } | null, configuredChainId: number): boolean {
+  return echo !== null && echo.chainId === configuredChainId && echo.tokenId === '1';
+}
+
 export function isResidentPlaybackFocus(trackId: string | null, playbackId: string | undefined,
   pose: ResidentEchoPose | null): boolean {
   // 日食会使场景透明度归零；播放焦点仍由播放身份与冻结坐标维持。

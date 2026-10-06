@@ -143,3 +143,10 @@
 - 完整生产构建未通过：编译及类型阶段通过，Collecting page data阶段旧app-paths-manifest仍含搬迁前Echo/material路由，产生undefined.replace错误。未修改项目构建配置或清除受保护的浏览器缓存。后续常规tsc读取到Next开发临时类型写入不完整；源码检查采用上述临时配置通过。两项限制均不冒称通过，发布时需要干净构建结果。
 - 原工作区77项用户进度保留；当前release工作树保存本轮实现，本地提交，不push/部署，不改变合约、发行政策、生产数据库或永久对象。
 - 核心走读：`getScenePresence(owner)`同时控制DOM和GL，修改其曲线会改变所有页面转场；`DRAG_THRESHOLD = 8`区分拖动和点击；MaterialMintPanel同时挂载`OpMaterialMint`与`EthereumMaterialMint`，删除任一项会撤掉对应链的直接入口。
+
+## 2026-10-06 首页第36圆可见性修复（v14）
+
+- 实际`/api/echo/featured`返回已核验的OP Sepolia Echo #1（chainId=11155420），宿主却硬编码只接受OP主网10，导致phase=waiting、presence=0并隐藏圆圈。改为与既有`NEXT_PUBLIC_CHAIN_ID`一致且tokenId=1才显示；服务端核验、合约地址来源、材质和运动逻辑不变。
+- 驻留host专项新增测试链、主网、链不匹配和空资产断言，通过；两个受影响源码的ESLint和diff格式检查通过。不运行全量verify或生产构建。
+- 复用3121服务及同一检查浏览器：phase=visible、presence=1、命中区对应第36圆；短样本确认位移，悬停直径从154.47增至167.30px，拖动35px/15px后位置跟随且未误播放。记录`resident-visible-v14.json`，截图`resident-visible-v14.png`已目视确认正圆可见。未验证真实播放或发行；本次证据只覆盖第36圆，不替代v13尚未完成的全页面转场/生产构建Gate。
+- 核心行：`isResidentEchoAvailable(current.echo, Number(process.env.NEXT_PUBLIC_CHAIN_ID))`使首页沿用当前配置的已核验Echo；没有新建合约地址清单。保留原工作区用户WIP，仅本地提交，不push或部署。

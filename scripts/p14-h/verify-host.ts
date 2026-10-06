@@ -6,7 +6,13 @@ import { createResidentEchoRuntime } from '../../src/components/pond-gl-test3/ec
 
 export async function verifyHost() {
   assert.ok(existsSync('src/components/pond-gl-test3/echo-resident/host/frame-input.ts'), '尚未适配最新主线场景输入');
-  const { resolveResidentHostFrame, isResidentPlaybackFocus } = await import('../../src/components/pond-gl-test3/echo-resident/host/frame-input');
+  const { resolveResidentHostFrame, isResidentPlaybackFocus, isResidentEchoAvailable } = await import('../../src/components/pond-gl-test3/echo-resident/host/frame-input');
+  assert.equal(isResidentEchoAvailable({ chainId: 11155420, tokenId: '1' }, 11155420), true,
+    '本地OP Sepolia的已核验Echo #1不得被主网常量隐藏');
+  assert.equal(isResidentEchoAvailable({ chainId: 10, tokenId: '1' }, 10), true);
+  assert.equal(isResidentEchoAvailable({ chainId: 11155420, tokenId: '1' }, 10), false,
+    '不接受与当前配置不一致的链');
+  assert.equal(isResidentEchoAvailable(null, 10), false);
   const { advanceEclipseMix, resetEclipseMix } = await import('../../src/components/pond-gl-test3/focus/playback-focus');
   const { writeResidentWaterMask } = await import('../../src/components/pond-gl-test3/echo-resident/render/water-mask');
   const source = { layout, echoAvailable: true, healthy: true, sceneReady: true,
