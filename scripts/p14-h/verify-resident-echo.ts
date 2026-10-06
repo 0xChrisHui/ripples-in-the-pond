@@ -7,6 +7,7 @@ async function main() {
   await import('./verify-math');
   await import('./verify-runtime');
   await import('./verify-render');
+  await import('./verify-interaction');
   const { verifyCommands } = await import('./verify-commands');
   await verifyCommands();
   const { verifyHost } = await import('./verify-host');

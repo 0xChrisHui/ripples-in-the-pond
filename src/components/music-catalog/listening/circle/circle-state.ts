@@ -4,6 +4,7 @@ export type CirclePlayback = { trackId: string; eclipse: boolean };
 export type CircleFrame = {
   x: number; y: number; radius: number; diameter: number; dx: number; dy: number;
   mix: number; time: number; visible: boolean; width: number; height: number; reduced: boolean;
+  hover: number; hovered: boolean; presence: number; importance: number; seed: number;
   color: [number, number, number];
 };
 

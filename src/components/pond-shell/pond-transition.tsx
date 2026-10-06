@@ -5,10 +5,11 @@ import {
 import { usePathname, useRouter } from 'next/navigation';
 import { flushSync } from 'react-dom';
 import { initialRouteTransaction, routeTransactionReducer } from './transition/route-reducer';
+import { freezeOutgoingSurface, preserveOutgoingRoute, rememberPondScroll, savedPondScroll } from './motion/route-scroll';
 import {
   pathWithoutHash, routeForPath, type PondRoute, type PondRouteEvent, type PondRouteTransaction,
 } from './transition/types';
-export type PondTransitionPhase = 'home' | 'leaving-home' | 'archive' | 'entering-home' | 'score' | 'tracks' | 'artist';
+export type PondTransitionPhase = PondRoute | 'leaving-home' | 'entering-home';
 type TransitionValue = {
   transaction: PondRouteTransaction;
   phase: PondTransitionPhase;
@@ -51,6 +52,7 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
   const [archiveReady, setArchiveReadyState] = useState(false);
   const settleTimer = useRef<number | null>(null);
   const focusGeneration = useRef<number | null>(null);
+  const historyEntry = useRef(false);
   const cancelledNavigation = useRef<{ href: string; restore: string; seen: boolean } | null>(null);
   const apply = useCallback((event: PondRouteEvent, sync = false) => {
     const next = routeTransactionReducer(transactionRef.current, event);
@@ -70,8 +72,12 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
   }, []);
   const reveal = useCallback((generation = transactionRef.current.generation) => {
     const current = transactionRef.current;
-    if (current.generation !== generation || !current.targetVisualReady) return;
+    if (current.generation !== generation || !current.targetVisualReady || current.stage !== 'preparing') return;
+    freezeOutgoingSurface(current.interactiveOwner);
     apply({ type: 'reveal', generation, at: performance.now() }, true);
+    const top = historyEntry.current || current.target === 'archive' ? savedPondScroll(current.href) : 0;
+    window.scrollTo({ top, behavior: 'instant' });
+    historyEntry.current = false;
   }, [apply]);
   const reportVisualReady = useCallback((owner: PondRoute, generation = transactionRef.current.generation) => {
     const next = apply({ type: 'ready', generation, owner, at: performance.now() });
@@ -90,16 +96,18 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
   }, [apply, pathname]);
   const navigate = useCallback((href: string, restoreFocus = false) => {
     cancelledNavigation.current = null;
+    rememberPondScroll(window.location.pathname);
+    historyEntry.current = false;
     const path = pathWithoutHash(href);
     if (path === window.location.pathname && transactionRef.current.stage === 'stable') {
-      router.push(href); return transactionRef.current.generation;
+      router.push(href, { scroll: false }); return transactionRef.current.generation;
     }
+    preserveOutgoingRoute(transactionRef.current.interactiveOwner, routeForPath(path));
     const next = apply({ type: 'start', target: routeForPath(path), href: path, at: performance.now() }, true);
     focusGeneration.current = restoreFocus ? next.generation : null;
-    // Score has its own immediate loading boundary. Prefetching the dynamic RSC
-    // immediately before push can leave Next using the partial loading response.
+    // Score 有独立加载边界；紧邻 push 的预取可能复用不完整的 RSC。
     if (next.target !== 'score') router.prefetch(path);
-    router.push(href);
+    router.push(href, { scroll: false });
     if (next.target === 'home') reportVisualReady('home', next.generation);
     return next.generation;
   }, [apply, reportVisualReady, router]);
@@ -149,7 +157,9 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const onPopState = () => {
       cancelledNavigation.current = null;
+      historyEntry.current = true;
       const path = window.location.pathname;
+      preserveOutgoingRoute(transactionRef.current.interactiveOwner, routeForPath(path));
       const next = apply({ type: 'start', target: routeForPath(path), href: path, at: performance.now() }, true);
       if (next.target === 'home') reportVisualReady('home', next.generation);
     };
@@ -161,9 +171,12 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     };
     window.addEventListener('popstate', onPopState);
     window.addEventListener('keydown', onKeyDown);
+    const onScroll = () => { const tx = transactionRef.current; if (tx.stage === 'stable') rememberPondScroll(tx.currentHref); };
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
       window.removeEventListener('popstate', onPopState);
       window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('scroll', onScroll);
     };
   }, [apply, cancel, reportVisualReady]);
   useEffect(() => {

@@ -53,6 +53,7 @@ export type ResidentEchoPose = {
 };
 export type ResidentEchoSnapshot = {
   pose: ResidentEchoPose; phase: ResidentEchoPhase;
+  interaction: Readonly<ResidentEchoInteraction>;
   motionSeconds: number; presenceSeconds: number; playbackHeld: boolean;
   commandPending: boolean; commandError: string | null; destroyed: boolean;
   randomCalls: { drift: number; depth: number; scale: number; presence: number };
@@ -63,6 +64,8 @@ export type ResidentEchoRuntime = {
   getSnapshot: () => ResidentEchoSnapshot;
   subscribe: (listener: () => void) => () => void;
   setInteraction: (interaction: Partial<ResidentEchoInteraction>) => void;
+  moveDrag: (point: ResidentPoint) => void;
+  endDrag: () => void;
   setVisibility: (hidden: boolean) => void;
   setReducedMotion: (reduced: boolean) => void;
   request: (command: ResidentEchoCommand, execute: (command: ResidentEchoCommand) => void | Promise<void>) => Promise<void>;

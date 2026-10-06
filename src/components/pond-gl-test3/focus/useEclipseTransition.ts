@@ -12,6 +12,7 @@ import {
 } from './playback-focus';
 import type { ResidentEchoRuntime } from '@/src/types/echo-resident';
 import { isResidentPlaybackFocus } from '../echo-resident/host/frame-input';
+import { advanceCircleHover } from '../eclipse-base/eclipse-motion';
 
 function syncCss(value: number, active: boolean): void {
   document.body.style.setProperty('--pond-eclipse-mix', value.toFixed(4));
@@ -24,12 +25,14 @@ export function useEclipseTransition(
   visitor: RefObject<Track36VisitorState | null>,
   playingId: string | null,
   resident?: { runtime: ResidentEchoRuntime; playbackId: string },
+  enabled = true,
 ): void {
   const playerRef = useRef(playingId);
   useEffect(() => { playerRef.current = playingId; }, [playingId]);
 
   useEffect(() => {
-    let raf = 0, last = performance.now();
+    if (!enabled) return;
+    let raf = 0, last = performance.now(), hover = 0;
     const loop = (now: number) => {
       const trackId = playerRef.current;
       const residentPose = trackId && trackId === resident?.playbackId
@@ -41,9 +44,13 @@ export function useEclipseTransition(
         )
         : null;
       if (trackId && residentPose && residentFocused) {
+        const interaction = resident?.runtime.getSnapshot().interaction;
         setPlaybackFocus({ active: true, trackId, x: residentPose.sx / innerWidth,
-          y: residentPose.sy / innerHeight, scale: residentPose.bodyRadiusPx / 50 });
+          y: residentPose.sy / innerHeight, scale: residentPose.bodyRadiusPx / 50,
+          hovered: Boolean(interaction?.hovered || interaction?.focused) });
       } else if (trackId && node && node.x != null && node.y != null) {
+        const hovered = glSim.hoverIdRef.current === trackId;
+        hover = advanceCircleHover(hover, hovered, now - last, prefersReducedMotion());
         const { mx, my } = getPointerFx(); const camera = getCameraFx();
         const ctx: ProjCtx = {
           cx: innerWidth / 2, cy: innerHeight / 2, mx, my,
@@ -54,7 +61,7 @@ export function useEclipseTransition(
         setPlaybackFocus({
           active: true, trackId,
           x: pose.sx / innerWidth, y: pose.sy / innerHeight,
-          scale: node.radius * pose.scale / 50,
+          scale: node.radius * pose.scale * (1 + hover * .09) / 50, hovered,
         });
       } else clearPlaybackFocus();
       const isFocused = !!trackId && (!!node || residentFocused);
@@ -68,5 +75,5 @@ export function useEclipseTransition(
       cancelAnimationFrame(raf); clearPlaybackFocus(); resetEclipseMix(); syncCss(0, false);
       document.body.style.removeProperty('--pond-eclipse-mix');
     };
-  }, [glSim.nodes, resident?.playbackId, resident?.runtime, visitor]);
+  }, [enabled, glSim.nodes, glSim.hoverIdRef, resident?.playbackId, resident?.runtime, visitor]);
 }

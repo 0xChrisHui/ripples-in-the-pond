@@ -10,9 +10,11 @@ export const circleVertexShader = `
   uniform vec2 uCircleScale;
   uniform vec3 uCircleColor;
   uniform float uCircleVisible;
+  uniform vec2 uCircleParams;
+  uniform float uCircleSeed;
   void main() {
-    vUv = uv; vColor = uCircleColor; vParams = vec4(1.0, 0.36, uCircleVisible, 0.0);
-    vSeed = vec2(1.23, 0.0); vSubmerge = 0.0; vLifeDim = 1.0;
+    vUv = uv; vColor = uCircleColor; vParams = vec4(uCircleParams, uCircleVisible, 0.0);
+    vSeed = vec2(uCircleSeed, 0.0); vSubmerge = 0.0; vLifeDim = 1.0;
     gl_Position = vec4(uCircleCenter + position.xy * uCircleScale, 0.0, 1.0);
   }
 `;

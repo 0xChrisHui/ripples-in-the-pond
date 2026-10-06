@@ -28,6 +28,24 @@ assert.ok(Number.isFinite(invalid.getSnapshot().pose.depth), '非法几何不得
 assert.ok(Number.isFinite(invalid.getSnapshot().pose.bodyRadiusPx), '非法几何不得生成无限半径');
 invalid.destroy();
 const make = () => createResidentEchoRuntime({ seed: 12, layout, clock: () => 0 });
+const normalRate = make(), lowRate = make();
+normalRate.step(input, 0); lowRate.step(input, 0);
+for (let ms = 50; ms <= 5000; ms += 50) normalRate.step(input, ms);
+for (let ms = 200; ms <= 5000; ms += 200) lowRate.step(input, ms);
+assert.ok(Math.abs(normalRate.getSnapshot().motionSeconds - lowRate.getSnapshot().motionSeconds) < 1e-8,
+  '低帧率必须保留真实可见经过时间，不能逐帧丢弃超过50ms的部分');
+assert.ok(Math.abs(normalRate.getSnapshot().pose.sx - lowRate.getSnapshot().pose.sx) < 1e-8);
+normalRate.destroy(); lowRate.destroy();
+const phoneLayout = { ...layout, width: 375, height: 844, baseRadiusPx: 34,
+  controls: [{ x: 0, y: 0, width: 375, height: 80 }] };
+for (const seed of [1, 9, 12]) {
+  const phone = createResidentEchoRuntime({ seed, layout: phoneLayout });
+  const frame = { ...input, layout: phoneLayout }, start = phone.step(frame, 0).pose;
+  for (let ms = 50; ms <= 5000; ms += 50) phone.step(frame, ms);
+  const end = phone.getSnapshot().pose;
+  assert.ok(Math.hypot(end.sx - start.sx, end.sy - start.sy) >= 5, '窄屏5秒内必须形成可辨位移');
+  phone.destroy();
+}
 const r1 = make(), r2 = make();
 let previous = r1.step(input, 0).pose;
 let maxSpeed = 0;

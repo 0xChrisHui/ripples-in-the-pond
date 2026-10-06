@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from 'react';
 import { getPlaybackFocus } from '../focus/playback-focus';
+import EclipseBody from '../eclipse-base/EclipseBody';
+import { advanceCircleHover, sampleEclipseBase } from '../eclipse-base/eclipse-motion';
+import { prefersReducedMotion } from '../reduced-motion';
 import type { GlSim } from '../spheres/use-gl-sim';
 import ShowcaseOverlay from '../showcase/ShowcaseOverlay';
 import { sampleShowcase, setShowcasePose } from '../showcase/showcase-state';
@@ -25,11 +28,16 @@ export default function GlEclipse({ glSim: _glSim }: { glSim: GlSim }) {
   const haloRef = useRef<SVGCircleElement>(null);
   const haloGradientRef = useRef<SVGRadialGradientElement>(null);
   useEffect(() => {
-    let raf = 0;
+    let raf = 0, hover = 0, last = performance.now();
     const loop = () => {
+      const timestamp = performance.now();
+      const focus = getPlaybackFocus();
+      const reduced = prefersReducedMotion();
+      const hovered = focus.active && (focus.hovered ?? _glSim.hoverIdRef.current === focus.trackId);
+      hover = advanceCircleHover(hover, hovered, timestamp - last, reduced); last = timestamp;
+      const base = sampleEclipseBase(timestamp / 1000, hover, reduced);
       const g = gRef.current;
       if (g) {
-        const focus = getPlaybackFocus();
         if (focus.active) {
           const sx = focus.x * window.innerWidth, sy = focus.y * window.innerHeight;
           g.setAttribute('transform', `translate(${sx},${sy}) scale(${focus.scale})`);
@@ -54,7 +62,7 @@ export default function GlEclipse({ glSim: _glSim }: { glSim: GlSim }) {
       }
       const ring = ringRef.current;
       if (ring) {
-        ring.setAttribute('stroke-width', String(cue.ringWidth + exchange.energy * 3.2));
+        ring.setAttribute('stroke-width', String(base.ringWidth + cue.ringWidth - 1.2 + exchange.energy * 3.2));
         ring.setAttribute('stroke-opacity', String(Math.min(1, 0.92 + exchange.energy * 0.08)));
         ring.setAttribute('stroke-dasharray', stitch.energy > 0 ? '255 65' : 'none');
         ring.setAttribute('transform', `rotate(${stitch.progress * 115 + cue.rotation}) scale(${cue.ringScale})`);
@@ -67,8 +75,8 @@ export default function GlEclipse({ glSim: _glSim }: { glSim: GlSim }) {
       const halo = haloRef.current;
       if (halo) {
         const accent = Math.max(exchange.energy * 0.18, transit.energy * 0.42);
-        halo.setAttribute('transform', `scale(${(1 + accent) * cue.haloScale})`);
-        halo.style.opacity = String(Math.min(1, cue.haloOpacity + accent * 0.18));
+        halo.setAttribute('transform', `scale(${base.haloScale * (1 + accent) * cue.haloScale})`);
+        halo.style.opacity = String(Math.min(1, base.haloOpacity + cue.haloOpacity - .82 + accent * 0.18));
         const colorFx = cue.hueStrength > 0.01 ? `saturate(${1.4 + cue.hueStrength * 0.18}) contrast(1.28)` : '';
         halo.style.filter = `${colorFx} blur(${cue.haloBlur}px)`.trim();
       }
@@ -81,28 +89,14 @@ export default function GlEclipse({ glSim: _glSim }: { glSim: GlSim }) {
       cancelAnimationFrame(raf);
       setShowcasePose({ active: false, x: 0.5, y: 0.5, scale: 1 });
     };
-  }, [_glSim.playingIdRef]);
+  }, [_glSim.hoverIdRef, _glSim.playingIdRef]);
 
   return (
     <>
     <svg className="pointer-events-none fixed inset-0 z-[23] h-full w-full" aria-hidden="true">
-      <defs>
-        <radialGradient ref={haloGradientRef} id="gl-eclipse-halo" style={{ color: 'white' }}>
-          <stop offset="0%" stopColor="currentColor" stopOpacity="0.08" />
-          <stop offset="22%" stopColor="currentColor" stopOpacity="0.18" />
-          <stop offset="24%" stopColor="currentColor" stopOpacity="0.55" />
-          <stop offset="36%" stopColor="currentColor" stopOpacity="0.32" />
-          <stop offset="60%" stopColor="currentColor" stopOpacity="0.10" />
-          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-        </radialGradient>
-      </defs>
       {/* opacity 0↔1 缓动（0.45s ≈ 球淡出 0.5s 同步）；transform 由 rAF 每帧写 */}
       <g ref={gRef} style={{ opacity: 0, transition: 'opacity 0.45s ease' }}>
-        <circle ref={haloRef} r="220" fill="url(#gl-eclipse-halo)" />
-        <g ref={coreRef}>
-          <circle r="50" fill="black" />
-        </g>
-        <circle ref={ringRef} r="51" fill="none" stroke="white" strokeWidth="1.2" strokeOpacity="0.92" />
+        <EclipseBody coreRef={coreRef} ringRef={ringRef} haloRef={haloRef} gradientRef={haloGradientRef} />
         <circle ref={echoRingRef} r="54" fill="none" stroke="#c8e7df" strokeWidth="1.4" style={{ opacity: 0 }} />
       </g>
     </svg>

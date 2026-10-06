@@ -4,6 +4,7 @@ export interface PlaybackFocus {
   x: number;
   y: number;
   scale: number;
+  hovered?: boolean;
 }
 
 const EMPTY_FOCUS: PlaybackFocus = { active: false, trackId: null, x: 0.5, y: 0.5, scale: 1 };

@@ -1,11 +1,8 @@
 .sound-imprint.track-circle { --circle-diameter: 56%; --circle-dx: 0px; --circle-dy: 0px; --circle-mix: 0; aspect-ratio: 1; animation: none; }
 .track-circle__hit { position: absolute; left: 50%; top: 50%; width: var(--circle-diameter); height: var(--circle-diameter); transform: translate(calc(-50% + var(--circle-dx)), calc(-50% + var(--circle-dy))); padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
-.track-circle__fallback { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--circle-color); box-shadow: 0 0 18px 4px color-mix(in srgb, var(--circle-color) 36%, transparent); opacity: 0; transition: opacity .3s; }
+.track-circle__fallback { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--circle-color); box-shadow: 0 0 18px 4px color-mix(in srgb, var(--circle-color) var(--circle-halo, 36%), transparent); opacity: 0; transition: opacity .3s; }
 .track-circle__fallback[data-visible='true'] { opacity: calc(1 - var(--circle-mix)); }
 .track-circle__fallback[data-initializing='true'] { transition: none; }
 .track-circle .track-circle__eclipse { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; opacity: var(--circle-mix); }
-.track-circle__corona { transform-origin: 0 0; animation: circle-corona 9s ease-in-out infinite alternate; }
-.track-circle[data-circle-visible='false'] .track-circle__corona { animation-play-state: paused; }
 .track-circle__hit:focus-visible { outline-offset: 8px; }
-@keyframes circle-corona { from { opacity: .85; transform: scale(.99); } to { opacity: 1; transform: scale(1.025); } }
-@media (prefers-reduced-motion: reduce) { .track-circle__corona { animation: none; } .track-circle__fallback { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .track-circle__fallback { transition: none; } }

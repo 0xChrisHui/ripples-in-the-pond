@@ -1,0 +1,14 @@
+{
+  "me": {
+    "headers": 1,
+    "owner": "archive"
+  },
+  "failure": "/未接管",
+  "errors": {
+    "page": [
+      "i: Failed to connect to MetaMask\n    at Object.connect (chrome-extension://ejbalbakoplchlghecdalmeeeajnimhm/scripts/inpage.js:7:84292)",
+      "i: Failed to connect to MetaMask\n    at Object.connect (chrome-extension://ejbalbakoplchlghecdalmeeeajnimhm/scripts/inpage.js:7:84292)"
+    ],
+    "console": []
+  }
+}

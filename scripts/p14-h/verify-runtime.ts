@@ -19,6 +19,9 @@ const advance = (seconds: number, frame = input) => {
 runtime.step(input, 0);
 let state = advance(5);
 assert.equal(state.phase, 'visible');
+const beforeStall = state.pose;
+runtime.step(input, now += 10000);
+assert.equal(runtime.getSnapshot().pose.sx, beforeStall.sx, '长卡顿恢复帧不能追赶路线而跳位');
 state = advance(1, { ...input, playback: 'playing' });
 const frozen = state.pose;
 advance(30, { ...input, playback: 'paused' });

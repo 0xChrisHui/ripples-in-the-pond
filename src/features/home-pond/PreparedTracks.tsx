@@ -2,6 +2,8 @@
 import { usePathname, useSearchParams } from 'next/navigation';
 import TrackCatalog from '@/src/components/music-catalog/TrackCatalog';
 import { initialTrackForView } from '@/src/lib/music-catalog/experience/route-selection';
+import { findOriginalTrackByAsset } from '@/src/lib/music-catalog/asset-registry';
+import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import '@/app/tracks/tracks.css';
 import '@/app/tracks/tracks-pond.css';
 
@@ -9,6 +11,12 @@ import '@/app/tracks/tracks-pond.css';
 export default function PreparedTracks() {
   const params = useSearchParams();
   const pathname = usePathname();
+  const asset = pathname.match(/^\/score\/material\/(1|10)\/(0x[0-9a-fA-F]{40})\/(\d+)$/);
+  const single = pathname.startsWith('/score/material/');
+  const original = asset ? findOriginalTrackByAsset(Number(asset[1]), asset[2], asset[3]) : null;
   const track = pathname === '/tracks' || pathname === '/tracks/pond' ? params.get('track') ?? undefined : undefined;
-  return <TrackCatalog initialTrackId={initialTrackForView({ track })} />;
+  if (single && !original) return <main className="material-catalog" data-track-surface="pond">
+    <h1>原曲不存在</h1><PondRouteLink href="/tracks">返回曲目</PondRouteLink>
+  </main>;
+  return <TrackCatalog initialTrackId={original?.trackId ?? initialTrackForView({ track })} single={single} appearance="pond" />;
 }

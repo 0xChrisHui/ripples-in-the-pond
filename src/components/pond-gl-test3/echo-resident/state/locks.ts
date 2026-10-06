@@ -39,7 +39,7 @@ export function stepLocks(s: ResidentLocks, frame: ResidentEchoFrameInput, pendi
   }
   s.previousInteraction = interacted; s.previousPlayback = playback;
   const scenePaused = !frame.available || !frame.healthy || !frame.sceneReady || frame.scenePresence <= 0 || frame.otherPlaybackActive;
-  const absoluteHold = playback || s.waitingForScene || scenePaused || frame.reducedMotion;
+  const absoluteHold = playback || s.waitingForScene || scenePaused || frame.reducedMotion || s.interaction.pointerDown;
   const protection = s.playbackProtection > 0;
   const deltaMotion = absoluteHold || protection ? 0 : rampDelta(s, delta, interacted ? 0 : 1, c, random);
   // 播放和场景隐藏即时冻结；交互则按五阶曲线减速，不突然刹车。

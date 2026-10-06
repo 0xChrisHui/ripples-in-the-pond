@@ -20,8 +20,9 @@ function layoutKey(l: ResidentEchoLayout): string {
 function nextDrift(from: ResidentPoint, start: number, state: ResidentMotionState, c: ResidentEchoConfig, r: ResidentRandom) {
   const rect = state.bounds.rect;
   const duration = sampleRange(r.drift, c.driftSeconds);
-  const shortSide = Math.min(rect.width, rect.height);
-  const distance = Math.min(shortSide * sampleRange(r.drift, c.driftFraction), c.maxDriftPx,
+  // 窄屏仍沿充足的纵向空间游移，不让大圆扣除边界后的短边把路线压到几像素。
+  const span = Math.max(rect.width, rect.height);
+  const distance = Math.min(span * sampleRange(r.drift, c.driftFraction), c.maxDriftPx,
     c.maxSpeedPxPerSecond * duration / 1.875);
   for (let i = 0; i < c.maxCandidates; i++) {
     const angle = r.drift.next() * Math.PI * 2;
@@ -48,6 +49,16 @@ export function createMotionState(l: ResidentEchoLayout, c: ResidentEchoConfig, 
   };
   state.drift = nextDrift(center, 0, state, c, r);
   return state;
+}
+/** 拖拽只改平面落点，浮沉/呼吸与独立随机流不受逐次pointermove影响。 */
+export function moveMotion(s: ResidentMotionState, point: ResidentPoint, time: number): void {
+  const rect = s.bounds.rect;
+  const target = { x: Math.max(rect.x, Math.min(rect.x + rect.width, point.x)),
+    y: Math.max(rect.y, Math.min(rect.y + rect.height, point.y)) };
+  s.drift = { ...s.drift, from: target, to: target, start: time };
+}
+export function resumeMotion(s: ResidentMotionState, time: number, c: ResidentEchoConfig, r: ResidentRandom): void {
+  s.drift = nextDrift(motionPoint(s, time), time, s, c, r);
 }
 /** resize 保留段时间和随机状态，仅映射同一段的两个端点。 */
 export function resizeMotion(s: ResidentMotionState, l: ResidentEchoLayout, c: ResidentEchoConfig, time: number): void {

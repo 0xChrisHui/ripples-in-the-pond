@@ -44,7 +44,7 @@
 }
 
 .pond-prepared-archive[data-interactive='true'], .pond-prepared-artist[data-interactive='true'], .pond-prepared-tracks[data-interactive='true'] { pointer-events: auto; }
-.pond-prepared-tracks[data-active='false'] { height: 0; min-height: 0; overflow: clip; }
+.pond-prepared-tracks[data-active='false'] { pointer-events: none; }
 .pond-prepared-tracks { transform: none; }
 
 /* 预备期间先计算真实数据，切换时只播放整层入场。 */
@@ -71,9 +71,14 @@
 }
 
 .pond-route-surface[data-interactive='true'] { pointer-events: auto; }
+.pond-route-surface[data-pond-snapshot-source] { pointer-events: none; }
+
+/* DOM与GL使用共享进度；不叠加CSS过渡或位移，退场完成才隐藏。 */
+[data-pond-surface] { transition: none; transform: none; }
+.persistent-pond-shell .echo-page { background: transparent; padding-top: 80px; }
 
 @media (pointer: coarse) {
-  .pond-route-surface { transform: translateY(4px); }
+  .pond-route-surface { transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

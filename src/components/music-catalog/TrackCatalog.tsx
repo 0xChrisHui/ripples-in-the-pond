@@ -97,21 +97,21 @@ export default function TrackCatalog({ initialTrackId, single = false, appearanc
           </nav>}
         </article>
       </section>
-      <div className="track-reading">
+      <div className="track-reading" data-pond-no-ripple="true">
       <section className="track-story" id="track-story" aria-label={`原曲 ${selected.title} 创作手记`}>
         <div className="track-story__body">
           <div className="track-story__copy">
             {paragraphs.map((paragraph, paragraphIndex) => <p key={`${selected.trackId}-${paragraphIndex}`}>{paragraph}</p>)}
           </div>
-          <footer className="track-story__next">
-            {single ? <PondRouteLink href="/tracks"><small>返回目录</small><strong>全部曲目</strong><b aria-hidden="true">→</b></PondRouteLink>
-              : <button type="button" onClick={() => selectAndReturn(nextTrack.trackId)}>
-                <small>下一首</small><strong>原曲 {nextTrack.title}</strong><b aria-hidden="true">→</b>
-              </button>}
-          </footer>
         </div>
       </section>
       <div className="track-ledger"><MaterialMintPanel track={selected} /><MaterialProvenance track={selected} /></div>
+      <footer className="track-story__next">
+        {single ? <PondRouteLink href="/tracks"><small>返回目录</small><strong>全部曲目</strong><b aria-hidden="true">→</b></PondRouteLink>
+          : <button type="button" onClick={() => selectAndReturn(nextTrack.trackId)}>
+            <small>下一首</small><strong>原曲 {nextTrack.title}</strong><b aria-hidden="true">→</b>
+          </button>}
+      </footer>
       </div>
     </main>
   );

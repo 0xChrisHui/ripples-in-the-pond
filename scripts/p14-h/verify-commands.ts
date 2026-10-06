@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createResidentEchoRuntime } from '../../src/components/pond-gl-test3/echo-resident/runtime';
 import { input, layout } from './fixture';
+import { createResidentGesture } from '../../src/components/pond-gl-test3/echo-resident/state/gesture';
 
 export async function verifyCommands() {
 const runtime = createResidentEchoRuntime({ seed: 3, layout, clock: () => 0 });
@@ -27,5 +28,29 @@ await runtime.request('resume', () => undefined);
 runtime.destroy();
 await runtime.request('play', execute);
 assert.equal(calls, 1, '销毁后命令不得执行');
+const pointerRuntime = createResidentEchoRuntime({ seed: 5, layout });
+const frame = { ...input, reducedMotion: true };
+pointerRuntime.step(frame, 0);
+let pointerCommands = 0;
+const gesture = createResidentGesture(pointerRuntime, () => 'idle', () => { pointerCommands++; });
+const point = { x: 300, y: 300 };
+gesture.begin(1, point);
+gesture.move(1, { x: 307, y: 300 });
+gesture.end(1);
+await Promise.resolve();
+assert.equal(pointerCommands, 1, '阈值以内松开只播放一次');
+pointerRuntime.step(frame, 50);
+gesture.begin(2, point);
+assert.equal(gesture.begin(3, point), false, '第二根手指不能接管现有拖拽');
+gesture.move(2, { x: 308, y: 300 });
+gesture.activate();
+gesture.end(2);
+assert.equal(pointerCommands, 1, '拖动和拖动中的键盘激活都不能误播放');
+gesture.begin(4, point); gesture.cancel(); gesture.end(4);
+assert.equal(pointerCommands, 1, '取消和迟来的pointerup不能播放');
+gesture.activate();
+await Promise.resolve();
+assert.equal(pointerCommands, 2, '没有拖拽时键盘和辅助技术可共用单次激活');
+pointerRuntime.destroy();
 console.log('命令：无自动播放、等待去重、失败解锁、暂停锁与卸载抑制通过');
 }
