@@ -24,7 +24,13 @@ assert.equal(geometry.getAttribute('aParams').getZ(0), 0.5, '完整主体与光�
 assert.equal(material.uniforms.uHaloBreathAmp.value, 0, '独立运动不叠普通球呼吸');
 writeResidentSphere(mesh, material, pose, { ...frame, reducedMotion: false }, false, 5);
 assert.equal(material.uniforms.uTime.value, 5, '表面动态必须使用可冻结的驻留时钟');
-assert.ok(material.uniforms.uEdgeAmp.value > 0 && material.uniforms.uHaloBreathAmp.value > 0, '不能呈现无表面变化的实色贴片');
+assert.equal(material.uniforms.uEdgeAmp.value, 0, '正常态必须保持正圆轮廓');
+runtime.setInteraction({ hovered: true });
+const hovered = runtime.step(frame, 200).pose;
+assert.ok(hovered.bodyRadiusPx > pose.bodyRadiusPx * 1.08, '普通hover在约0.2秒内平滑放大到接近9%');
+writeResidentSphere(mesh, material, hovered, frame, false, 0, true);
+assert.ok(geometry.getAttribute('aParams').getY(0) > 0.3, '普通hover应增强已有光晕');
+assert.equal(runtime.getSnapshot().interaction.hovered, true, '共享日食读取同一hover状态');
 writeResidentSphere(mesh, material, { ...pose, effectivePresence: 0 }, frame, false);
 assert.equal(mesh.visible, false);
 assert.equal(geometry.getAttribute('aParams').getZ(0), 0);

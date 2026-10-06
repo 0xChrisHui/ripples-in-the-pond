@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from '../pond-shell/PondRouteLink';
 import type { EchoArchiveItem } from '@/src/data/echo/types';
 
 const STATUS: Record<EchoArchiveItem['status'], string> = {

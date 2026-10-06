@@ -7,7 +7,7 @@ import { getEffectiveWaterLevel } from '../../water/water-level';
 import { getEclipseMix } from '../../focus/playback-focus';
 import { prefersReducedMotion } from '../../reduced-motion';
 import { useResidentEcho } from '../use-resident-echo';
-import { resolveResidentHostFrame } from './frame-input';
+import { isResidentEchoAvailable, resolveResidentHostFrame } from './frame-input';
 
 function initialLayout(): ResidentEchoLayout {
   return { width: 1, height: 1, controls: [], safeArea: { top: 0, right: 0, bottom: 0, left: 0 },
@@ -54,7 +54,7 @@ export function useResidentHost(options: ResidentHostOptions) {
       layout: { ...layout.current, surface, projection: {
         cx: (size.w || layout.current.width) / 2, cy: (size.h || layout.current.height) / 2,
         mx: pointer.mx, my: pointer.my, focusZ: surface, ...camera } },
-      echoAvailable: current.echo !== null && current.echo.chainId === 10 && current.echo.tokenId === '1',
+      echoAvailable: isResidentEchoAvailable(current.echo, Number(process.env.NEXT_PUBLIC_CHAIN_ID)),
       healthy: current.health === 'healthy', sceneReady: current.ready, homeActive: current.homeActive,
       routePresence: current.scenePresence.current, eclipseMix: getEclipseMix(),
       playback: current.playback.state, otherPlaybackActive: current.otherPlaybackActive,

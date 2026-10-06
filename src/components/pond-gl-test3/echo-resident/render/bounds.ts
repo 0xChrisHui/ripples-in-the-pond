@@ -40,7 +40,7 @@ function selectRegion(layout: ResidentEchoLayout, c: ResidentEchoConfig, radius:
 /** 先找完整包围盒可驻留的空矩形；只有极端短屏才有界缩小尺寸。 */
 export function resolveResidentBounds(layout: ResidentEchoLayout, c: ResidentEchoConfig, current?: ResidentPoint): ResidentEchoBounds {
   const body = Math.max(0, finite(layout.baseRadiusPx)) * c.diameterMultiplier * c.breathScale[1]
-    * Math.max(1, finite(layout.maxProjectionScale, 1.5));
+    * Math.max(1, finite(layout.maxProjectionScale, 1.5)) * 1.09;
   const halo = body * Math.max(1, finite(layout.haloRatio, 1.16));
   const envelope = halo + c.focusRingPx;
   let sizeScale = 1;

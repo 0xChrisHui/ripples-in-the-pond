@@ -3,7 +3,7 @@ import type { ResidentEchoConfig, ResidentRange } from '../../../types/echo-resi
 export const RESIDENT_ECHO_DEFAULTS: Readonly<ResidentEchoConfig> = Object.freeze<ResidentEchoConfig>({
   residentConfigVersion: 1, diameterMultiplier: 2,
   breathScale: [0.9, 1.1], breathCycleSeconds: [14, 28],
-  driftFraction: [0.03, 0.08], driftSeconds: [10, 25],
+  driftFraction: [0.08, 0.16], driftSeconds: [9, 16],
   maxDriftPx: 80, maxSpeedPxPerSecond: 6, maxCandidates: 8,
   depthAboveSurface: [0.04, 0.1], depthBelowSurface: [0.04, 0.12],
   depthCycleSeconds: [10, 25], visibleSeconds: [20, 45], hiddenSeconds: [8, 20],
@@ -13,9 +13,9 @@ export const RESIDENT_ECHO_DEFAULTS: Readonly<ResidentEchoConfig> = Object.freez
   focusRingPx: 4, maxDeltaSeconds: 0.05, hitThreshold: 0.15,
 });
 for (const value of Object.values(RESIDENT_ECHO_DEFAULTS)) if (Array.isArray(value)) Object.freeze(value);
-// 复用现有球shader的轻边缘波与光晕，时钟由驻留控制器统一冻结。
+// 保持正圆，只保留普通球的光晕呼吸，时钟由驻留控制器统一冻结。
 export const RESIDENT_ECHO_SURFACE = Object.freeze({
-  edgeAmp: 0.035, edgeSpeed: 0.7, edgeSoft: 0.008,
+  edgeAmp: 0, edgeSpeed: 0, edgeSoft: 0,
   haloBreathAmp: 0.12, haloBreathSpeed: 1 / 18,
 });
 const ranges = ['breathScale', 'breathCycleSeconds', 'driftFraction', 'driftSeconds',

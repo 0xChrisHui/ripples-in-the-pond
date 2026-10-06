@@ -16,14 +16,14 @@ export function residentUniforms() {
 const matrix = new Matrix4();
 /** 最终 alpha 只写 aParams.z；水上 pass 仍消费它，主体和光晕都能完全隐藏。 */
 export function writeResidentSphere(mesh: InstancedMesh, material: ShaderMaterial, pose: ResidentEchoPose,
-  input: ResidentEchoFrameInput, colorGrade: boolean, motionSeconds = 0): void {
+  input: ResidentEchoFrameInput, colorGrade: boolean, motionSeconds = 0, hovered = false): void {
   const scene = resolveResidentScenePose(pose, input), tuning = getTuning();
   mesh.visible = pose.effectivePresence > 0 && pose.bodyRadiusPx > 0;
   matrix.makeScale(pose.haloRadiusPx * 2, pose.haloRadiusPx * 2, 1);
   matrix.setPosition(pose.sx, pose.sy, pose.depth);
   mesh.setMatrixAt(0, matrix); mesh.instanceMatrix.needsUpdate = true;
   const params = mesh.geometry.getAttribute('aParams') as InstancedBufferAttribute;
-  params.setXYZW(0, 0.8 * tuning.fill, 0.3 * tuning.halo, scene.shaderAlpha, scene.blurAmt); params.needsUpdate = true;
+  params.setXYZW(0, 0.8 * tuning.fill, (hovered ? 0.5 : 0.3) * tuning.halo, scene.shaderAlpha, scene.blurAmt); params.needsUpdate = true;
   const submerge = mesh.geometry.getAttribute('aSubmerge') as Float32BufferAttribute;
   submerge.setX(0, scene.submerge); submerge.needsUpdate = true;
   material.uniforms.uBodyRatio.value = pose.haloRadiusPx > 0 ? pose.bodyRadiusPx / pose.haloRadiusPx : 1 / 1.16;

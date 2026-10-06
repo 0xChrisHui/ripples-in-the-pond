@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import PondRouteLink from '../pond-shell/PondRouteLink';
 import type { EchoViewData } from '@/src/data/echo/types';
 import EchoPlayer from './EchoPlayer';
 import EchoProvenance from './EchoProvenance';
@@ -35,14 +35,14 @@ export default function EchoPage({ echo }: { echo: EchoViewData }) {
 
       <EchoPlayer recipe={metadata.properties.recipe} clips={metadata.properties.clips} />
 
-      <section className="echo-archive">
+      <section className="echo-archive" data-pond-no-ripple="true">
         <div className="echo-archive__intro">
           <p className="echo-kicker">PERMANENT ARCHIVE</p>
           <h2>一枚作品，两个身份。</h2>
           <p>Origin 记录声音从谁的钱包诞生；owner 记录它此刻在谁手中。转让会改变后者，不会改写前者、配方或 36 段声音。</p>
-          <Link href={`/score/${metadata.properties.sourceScoreTokenId}`}>
+          <PondRouteLink href={`/score/${metadata.properties.sourceScoreTokenId}`}>
             打开触发它的首枚 Score #{metadata.properties.sourceScoreTokenId} →
-          </Link>
+          </PondRouteLink>
         </div>
         <EchoProvenance echo={echo} />
       </section>

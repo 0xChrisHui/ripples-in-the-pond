@@ -88,10 +88,14 @@ export default function ScorePondScene({ score, network }: Props) {
     owner: 'score', flags, glSim: glSim ?? undefined,
     pointerInteractive: interactive, onPerformanceChange: setPerformanceReduced, scenePresence: visual.presence,
   }), [flags, glSim, interactive, visual.presence]);
-  const { health, sceneReady } = useRegisterPondScene(scene, !transition || transition.transaction.interactiveOwner === 'score');
+  const ownsScene = !transition || transition.transaction.interactiveOwner === 'score';
+  const retainsScene = ownsScene || transition?.transaction.stage !== 'stable'
+    && (transition?.transaction.current === 'score' || transition?.transaction.target === 'score');
+  const { health, sceneReady } = useRegisterPondScene(scene, retainsScene);
   useEclipseTransition(
     glSim!, emptyVisitor,
     health === 'healthy' && sceneReady && isPlaying ? visualTrack.id : null,
+    undefined, ownsScene,
   );
 
   // Score 是纵向阅读页：保留鼠标视差，但滚轮必须始终交还给页面滚动。

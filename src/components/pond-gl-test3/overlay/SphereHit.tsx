@@ -36,8 +36,12 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
   const drag = useRef({ down: false, moved: false, x: 0, y: 0 });
   const radius = node.radius;
   const show = hovered || isPlaying;
-  const titleSize = radius * ((node.track.title?.length ?? 1) >= 2 ? 1 : 1.26);
-  const togglePlayback = useCallback(() => { void glSim.toggle(node.track); }, [glSim, node.track]);
+  const title = node.echo ? '36' : node.track.title;
+  const titleSize = radius * ((title?.length ?? 1) >= 2 ? 1 : 1.26);
+  const togglePlayback = useCallback(() => {
+    if (node.echo) void glSim.toggleEcho?.();
+    else void glSim.toggle(node.track);
+  }, [glSim, node]);
   const finishDrag = useCallback(() => {
     const state = drag.current;
     if (!state.down && !state.moved) return;
@@ -79,8 +83,8 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
   };
 
   return (
-    <button type="button" ref={register} data-track-id={node.track.id} data-render-node-id={node.id}
-      aria-label={`${isPlaying ? '暂停' : '播放'} ${node.track.title}`} aria-pressed={isPlaying}
+    <button type="button" ref={register} data-track-id={node.track?.id} data-echo-id={node.echo?.identity} data-render-node-id={node.id}
+      aria-label={`${isPlaying ? '暂停' : '播放'} ${node.echo ? '36 · ECHO #1' : title}`} aria-pressed={isPlaying}
       onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
       onPointerCancel={finishDrag} onLostPointerCapture={finishDrag} onKeyDown={onKeyDown}
       onPointerEnter={() => { setHovered(true); glSim.setHover(node.id); }}
@@ -96,7 +100,7 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
         transform: 'translate(-50%, -50%)', fontFamily: 'var(--font-modak), sans-serif',
         fontSize: titleSize, fontWeight: 400, color: '#fff', opacity: hovered ? 0.55 : 0.32,
         pointerEvents: 'none', whiteSpace: 'nowrap', transition: 'opacity 0.25s ease' }}>
-        {node.track.title}
+        {title}
       </span>}
       <svg width={26} height={26} viewBox="-13 -13 26 26" style={{ position: 'absolute',
         left: radius - 13, top: radius - 13, opacity: show ? 1 : 0,

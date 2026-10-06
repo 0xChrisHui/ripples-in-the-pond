@@ -17,8 +17,6 @@ import { loadP9Tuning } from '@/src/components/pond-gl-test3/p9/tuning/p9-tuning
 import { useGlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
 import FeaturedEchoBottomPlayer from '@/src/components/pond-gl-test3/visitor/FeaturedEchoBottomPlayer';
 import { useFeaturedEchoPlayback } from '@/src/components/pond-gl-test3/visitor/useFeaturedEchoPlayback';
-import { EchoResidentHit } from '@/src/components/pond-gl-test3/echo-resident/EchoResidentHit';
-import { useResidentHost } from '@/src/components/pond-gl-test3/echo-resident/host/use-resident-host';
 import type { FeaturedEcho, FeaturedEchoResponse } from '@/src/types/featured-echo';
 import PersistentWaterCore from '@/src/components/pond-shell/PersistentWaterCore';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
@@ -27,23 +25,12 @@ import { usePreparedArchive } from '@/src/components/pond-shell/use-prepared-arc
 import { useOptionalPondSceneSlot } from '@/src/components/pond-shell/scene-slot';
 import HomeEclipseDriver from '@/src/components/pond-shell/HomeEclipseDriver';
 import PersistentRouteSurfaces from './PersistentRouteSurfaces';
+import PondSceneLayers, { ARCHIVE_FLAGS } from './PondSceneLayers';
+import { getScenePresence } from '@/src/components/pond-shell/motion/scene-presence';
 import dynamic from 'next/dynamic';
 const SandboxControls = dynamic(() => import('./SandboxControls'), { ssr: false });
 type PondMode = 'production' | 'test3' | 'test4';
 /** 生产与沙盒共用同一水塘；沙盒控制器保持在独立异步 chunk。 */
-const ARCHIVE_FLAGS: GLFlags = {
-  ...DEFAULT_GL_FLAGS,
-  // presence 已让圆圈不可见；保留实例避免返回首页时重编译着色器。
-  glSpheres: true,
-  sphereLabels: false,
-  sphereMotion: false,
-  sphereDrift: false,
-  glEclipse: false,
-  floatMotes: false,
-  waterPlants: false,
-  reefStones: false,
-  crystalPillars: false,
-};
 export default function PondExperience({ mode, persistent = false, children }: {
   mode: PondMode;
   persistent?: boolean;
@@ -58,10 +45,10 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const p9Enabled = mode !== 'test4';
   const phase = transition?.phase ?? (pathname === '/' ? 'home' : 'archive');
   const homeVisible = !persistent || phase === 'home' || phase === 'entering-home';
-  const homeInteractive = !persistent || phase === 'home';
-  const renderHomeScene = !persistent || (phase !== 'archive' && phase !== 'score' && phase !== 'tracks' && phase !== 'artist');
+  const homeInteractive = !persistent || transition?.transaction.interactiveOwner === 'home';
+  const renderHomeScene = homeInteractive || (transition?.transaction.current === 'home' && transition.transaction.stage !== 'stable');
   const prepareArchive = usePreparedArchive(pathname, persistent);
-  const sceneMotion = useScenePresence(phase, transition?.duration ?? 0);
+  const sceneMotion = useScenePresence(phase, transition?.duration ?? 0, persistent);
   const [homeInitialized, setHomeInitialized] = useState(homeVisible);
   const [glFlags, setGlFlags] = useState<GLFlags>(DEFAULT_GL_FLAGS);
   const [runtimeGlHealth, setRuntimeGlHealth] = useState<GlHealth>('unavailable');
@@ -85,30 +72,31 @@ export default function PondExperience({ mode, persistent = false, children }: {
     homeInitialized && (glFlags.glSpheres || glFlags.water || glFlags.waterFx),
     echoPlayback.active,
     homeInteractive,
+    { echo: featuredEcho, playingId: echoPlayback.playing ? featuredEcho?.playbackId ?? null : null, toggle: echoPlayback.toggle },
   );
-  const registeredScene = persistent && sceneSlot?.scene && sceneSlot.scene.owner === transition?.transaction.interactiveOwner ? sceneSlot.scene : null;
+  const scoreScene = persistent ? sceneSlot?.scenes.score : undefined;
+  const tracksScene = persistent ? sceneSlot?.scenes.tracks : undefined;
+  const registeredScene = scoreScene ?? tracksScene;
+  const scorePresence = useMemo(() => ({ get current() {
+    return (scoreScene?.scenePresence?.current ?? 1) * getScenePresence('score');
+  } }), [scoreScene]);
   const sceneFlags = useMemo(
     () => persistent && !renderHomeScene ? ARCHIVE_FLAGS : glFlags,
     [glFlags, persistent, renderHomeScene],
   );
   const coreFlags = useMemo(() => registeredScene ? {
     ...registeredScene.flags,
+    glSpheres: scoreScene ? scoreScene.flags.glSpheres : glFlags.glSpheres,
     // 水面花瓣属于持久 Water Core，路由 Scene 不得卸载并重排它。
     flowerPetals: glFlags.flowerPetals,
     forceFallback: glFlags.forceFallback,
-  } : sceneFlags, [glFlags.flowerPetals, glFlags.forceFallback, registeredScene, sceneFlags]);
+  } : sceneFlags, [glFlags.flowerPetals, glFlags.forceFallback, glFlags.glSpheres, registeredScene, sceneFlags, scoreScene]);
   const glHealth: GlHealth = glFlags.forceFallback ? 'forced' : runtimeGlHealth;
   const glOk = glHealth === 'healthy' && sceneReady;
   const regularPlayingId = playing && currentTrack ? currentTrack.id : null;
   const playingId = echoPlayback.playing ? featuredEcho?.playbackId ?? null : regularPlayingId;
-  const resident = useResidentHost({ glSim, echo: featuredEcho, playback: echoPlayback,
-    health: glHealth, ready: sceneReady, homeActive: glFlags.glSpheres && renderHomeScene,
-    otherPlaybackActive: playing, scenePresence: sceneMotion.presence });
-  const coreSim = registeredScene ? registeredScene.glSim : glSim;
+  const coreSim = scoreScene?.glSim ?? glSim;
   const coreVisitor = registeredScene?.visitor;
-  const coreResident = registeredScene || phase === 'tracks' || phase === 'score' || !resident.runtime ? undefined : {
-    runtime: resident.runtime, getFrameInput: resident.getFrameInput,
-  };
   const mountGl = coreFlags.glBase || coreFlags.glSpheres || coreFlags.water || coreFlags.bgImage
     || coreFlags.rtt || coreFlags.waterFx || coreFlags.floatMotes || coreFlags.waterPlants
     || coreFlags.reefStones || coreFlags.crystalPillars;
@@ -150,11 +138,12 @@ export default function PondExperience({ mode, persistent = false, children }: {
       data-pond-generation={persistent ? transition?.transaction.generation : undefined}
       data-pond-reduced-scene-motion={persistent ? sceneMotion.reduced : undefined}
       style={persistent ? { '--pond-route-duration': `${transition?.duration ?? 0}ms` } as CSSProperties : undefined}>
-      {mountGl && <PersistentWaterCore flags={coreFlags} glSim={coreSim} visitor={coreVisitor} resident={coreResident}
-        sceneContent={registeredScene?.sceneContent}
-        scenePresence={registeredScene ? registeredScene.scenePresence : sceneMotion.presence}
+      {mountGl && <PersistentWaterCore flags={coreFlags} glSim={coreSim} visitor={coreVisitor}
+        sceneContent={<PondSceneLayers home={glSim} flags={glFlags} presence={sceneMotion.presence}
+          reduced={sceneMotion.reduced} score={scoreScene} tracks={tracksScene} />}
+        scenePresence={scoreScene ? scorePresence : sceneMotion.presence}
         reducedSceneMotion={registeredScene ? undefined : sceneMotion.reduced}
-        pointerInteractive={registeredScene?.pointerInteractive}
+        pointerInteractive
         onPerformanceChange={registeredScene?.onPerformanceChange}
         onHealthChange={setRuntimeGlHealth} onSceneReadyChange={setSceneReady} />}
       <PersistentRouteSurfaces persistent={persistent} pathname={pathname}
@@ -183,14 +172,8 @@ export default function PondExperience({ mode, persistent = false, children }: {
           scenePresence={sceneMotion.presence} interactive={homeInteractive}
           reducedSceneMotion={sceneMotion.reduced} />
       )}
-      {glFlags.glSpheres && resident.runtime && sceneReady && homeInteractive && (
-        <div className="pointer-events-none fixed inset-0 z-10">
-          <EchoResidentHit runtime={resident.runtime} getPlayback={resident.getPlayback} execute={resident.execute} />
-        </div>
-      )}
       {renderHomeScene && glFlags.glSpheres && glFlags.glEclipse && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
-      {renderHomeScene && <HomeEclipseDriver glSim={glSim} playingId={glOk && homeInteractive ? playingId : null}
-        resident={resident.runtime && featuredEcho ? {runtime:resident.runtime,playbackId:featuredEcho.playbackId}:undefined} />}
+      {homeInteractive && <HomeEclipseDriver glSim={glSim} playingId={glOk ? playingId : null} />}
       {sandbox && <SandboxControls flags={glFlags} p9={mode === 'test3'} onChange={onGl} />}
       <DraftSavedToast />
       <FeaturedEchoBottomPlayer echo={featuredEcho} playback={echoPlayback} />

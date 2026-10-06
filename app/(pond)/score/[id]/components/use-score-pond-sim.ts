@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ForceCenter, Simulation } from 'd3-force';
-import type { GroupId, SimLink, SimNode } from '@/src/components/archipelago/sphere-config';
+import type { GroupId, SimLink } from '@/src/components/archipelago/sphere-config';
 import { resetDepthShift } from '@/src/components/pond-gl-test3/pointer-fx';
 import type { GlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
 import {
@@ -56,8 +56,8 @@ function stopNode(node: GlPhysNode): void {
   node.vx = 0; node.vy = 0; node._dragLoose = false;
 }
 
-function setCenterStrength(sim: Simulation<SimNode, SimLink> | null, strength: number): void {
-  (sim?.force('center') as ForceCenter<SimNode> | undefined)?.strength(strength);
+function setCenterStrength(sim: Simulation<GlPhysNode, SimLink<GlPhysNode>> | null, strength: number): void {
+  (sim?.force('center') as ForceCenter<GlPhysNode> | undefined)?.strength(strength);
 }
 export type ScorePondMotion = { glSim: GlSim | null; visualActive: boolean; returning: boolean };
 
@@ -66,7 +66,7 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
   const [nodes, setNodes] = useState<GlPhysNode[]>([]);
   const [generation, setGeneration] = useState(0);
   const [atRest, setAtRest] = useState(true);
-  const simRef = useRef<Simulation<SimNode, SimLink> | null>(null);
+  const simRef = useRef<Simulation<GlPhysNode, SimLink<GlPhysNode>> | null>(null);
   const wavesRef = useRef<BgWave[]>([]);
   const playingIdRef = useRef<string | null>(null);
   const hoverIdRef = useRef<string | null>(null);

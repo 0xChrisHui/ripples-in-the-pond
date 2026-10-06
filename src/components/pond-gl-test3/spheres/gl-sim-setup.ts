@@ -14,17 +14,11 @@ import {
   CFG,
   hashStr,
   halton,
-  fLayer,
-  NUM_LAYERS,
-  buildClusterAssignment,
-  computeNodeAttrs,
-  generateLinks,
-  type GroupId,
-  type SimNode,
   type SimLink,
 } from '@/src/components/archipelago/sphere-config';
-import type { Track } from '@/src/types/tracks';
-import { createLayoutRandom, layoutUnit } from '@/src/features/home-pond/layout-seed';
+import type { GlPhysNode } from './simulation/nodes';
+export { buildGlNodes, type GlPhysNode } from './simulation/nodes';
+import { layoutUnit } from '@/src/features/home-pond/layout-seed';
 /**
  * G4 — GL 球的 d3-force sim builder（无 SVG 耦合版）。
  *
@@ -35,66 +29,7 @@ import { createLayoutRandom, layoutUnit } from '@/src/features/home-pond/layout-
  */
 const ALPHA_BASELINE = 0.008; // 出处 sphere-sim-setup.ts:25（持续漂浮 baseline alpha）
 const PAD = 20;               // 出处 sphere-sim-setup.ts:26（边界内缩）
-// z = 基准深度（建点固定，painter 排序用）；displayZ = H5 每帧浮沉后的动态深度（消费方读它）。
-// _dragLoose 对标 sphere-sim-setup.ts；_focusLerp = H5 播放球浮出焦点的缓动状态（见 sphere-motion）。
-export type GlPhysNode = SimNode & {
-  z: number;
-  _dragLoose?: boolean;
-  displayZ?: number;
-  _focusLerp?: number;
-  _waveZ?: number; // /test3：球浮动「层级波动」的 effDepth 域深度偏移（sphere-motion 写、applyFloat 读）
-  _gvx?: number;   // 涟漪推"滑行"速度（独立于 d3 velocityDecay，慢衰减→惯性收尾，见 gl-sim-waves stepSphereGlide）
-  _gvy?: number;
-  // P8-L 生命感逐球状态（各模块每帧写；flag 关时不写 → 读方用 ?? 中性值 = 现状）
-  _shiftOff?: number; // L2-1 滚轮去同步：叠加到深度的每球偏移
-  _lagShift?: number; // L2-1 每球私有缓动值（时滞差）
-  _parGain?: number;  // L2-2 视差幅度增益（缺省视作 1）
-  _parAng?: number;   // L2-2 视差方向偏转弧度（缺省视作 0）
-  _shivX?: number;    // L2-4 偶发颤动屏幕位移 x
-  _shivY?: number;    // L2-4 偶发颤动屏幕位移 y
-  _excite?: number;   // L3-2 扰动激励值（边缘剧烈度）
-  _lifeDim?: number;  // L5-1 透明度隐现系数（缺省视作 1）
-  _visualDim?: number; // P8-L A3：SphereInstances 写入的整体可见度，水面效果只读它
-  _jelVx?: number;    // L3-3 果冻感平滑速度 x
-  _jelVy?: number;    // L3-3 果冻感平滑速度 y
-};
-/** tracksToShow → 节点 + 链接（复刻 SphereCanvas.tsx:64-83 的建点逻辑，含 baseLayer/lw/radius/z） */
-export function buildGlNodes(tracksToShow: Track[], groupId: GroupId, dataVersion = 'legacy'): {
-  nodes: GlPhysNode[];
-  links: SimLink[];
-  assignment: Map<string, number>;
-} {
-  const baseNodes = tracksToShow.map((t) => ({
-    id: t.id,
-    track: t,
-    ...computeNodeAttrs(t, groupId),
-  }));
-  const nodeIds = baseNodes.map((n) => n.id);
-  const { assignment, clusterCount } = buildClusterAssignment(
-    nodeIds, createLayoutRandom(dataVersion, groupId, 'clusters', ...nodeIds),
-  );
-  // baseLayer 由 z 派生（与 use-sphere-z.ts 同公式），z 用于 painter 排序
-  const clusterZ = Array.from({ length: clusterCount }, (_, i) => halton(i + 1, 5));
-  const nodes: GlPhysNode[] = baseNodes.map((n) => {
-    const baseZ = clusterZ[assignment.get(n.id) ?? 0] ?? 0.5;
-    const h = hashStr(n.id);
-    const z = Math.max(0, Math.min(1, baseZ + ((h % 601) / 1000) - 0.3));
-    const baseLayer = Math.max(1, Math.min(NUM_LAYERS, Math.round((1 - z) * (NUM_LAYERS - 1) + 1)));
-    const unit = (key: string) => layoutUnit(dataVersion, groupId, n.id, key);
-    const lw = {
-      amp: 0.6 + unit('lw-amp') * 0.8,
-      f1: 0.04 + unit('lw-f1') * 0.08,
-      f2: 0.10 + unit('lw-f2') * 0.15,
-      p1: unit('lw-p1') * 6.283,
-      p2: unit('lw-p2') * 6.283,
-    };
-    return { ...n, baseLayer, lw, radius: n.kSize * fLayer(baseLayer), z };
-  });
-  // 远先画：z 升序（与 use-sphere-z sortedNodes 同序）→ instance index = 绘制顺序
-  nodes.sort((a, b) => a.z - b.z);
-  const links = generateLinks(nodes, assignment, createLayoutRandom(dataVersion, groupId, 'links', ...nodeIds));
-  return { nodes, links, assignment };
-}
+
 /** cluster 锚点（绝对 px）；resize 时随尺寸等比缩放，故单列类型供 resizeGlSim 用 */
 type ClusterAnchor = { x: number; y: number; strength: number };
 
@@ -102,12 +37,12 @@ type ClusterAnchor = { x: number; y: number; strength: number };
  *  返回 anchors（cluster 锚点 Map）供 J2 resizeGlSim 等比缩放——否则 cluster 力把球拉回旧 px。 */
 export function setupGlSimulation(
   nodes: GlPhysNode[],
-  links: SimLink[],
+  links: SimLink<GlPhysNode>[],
   assignment: Map<string, number>,
   width: number,
   height: number,
   dataVersion = 'legacy',
-): { sim: Simulation<SimNode, SimLink>; anchors: Map<string, ClusterAnchor> } {
+): { sim: Simulation<GlPhysNode, SimLink<GlPhysNode>>; anchors: Map<string, ClusterAnchor> } {
   const cx = width / 2;
   const cy = height / 2;
 
@@ -139,19 +74,19 @@ export function setupGlSimulation(
   });
 
   // 拖过的球让出大部分 cluster 拉力（其余 0.18）— 出处 sphere-sim-setup.ts:85-90
-  const strengthOf = (d: SimNode) =>
+  const strengthOf = (d: GlPhysNode) =>
     (d as GlPhysNode)._dragLoose ? 0.025 : (anchorMap.get(d.id)?.strength ?? 0.1);
 
   // charge/link/collide/cluster/center 全部 viscous=off 档（默认态）— 出处 sphere-sim-setup.ts:94-114
-  const sim = forceSimulation<SimNode>(nodes)
-    .force('link', forceLink<SimNode, SimLink>(links)
+  const sim = forceSimulation<GlPhysNode>(nodes)
+    .force('link', forceLink<GlPhysNode, SimLink<GlPhysNode>>(links)
       .id((d) => d.id)
       .distance((d) => CFG.linkBaseDist + (1 - d.correlation) * CFG.linkVariance)
       .strength((d) => d.correlation * 0.30))
-    .force('charge', forceManyBody<SimNode>().strength((d) => -(70 * (0.6 + d.importance * 0.8))))
-    .force('collide', forceCollide<SimNode>().radius((d) => d.radius * 1.1 + 8).strength(0.85).iterations(4))
-    .force('cluster-x', forceX<SimNode>((d) => anchorMap.get(d.id)?.x ?? cx).strength(strengthOf))
-    .force('cluster-y', forceY<SimNode>((d) => anchorMap.get(d.id)?.y ?? cy).strength(strengthOf))
+    .force('charge', forceManyBody<GlPhysNode>().strength((d) => -(70 * (0.6 + d.importance * 0.8))))
+    .force('collide', forceCollide<GlPhysNode>().radius((d) => d.radius * 1.1 + 8).strength(0.85).iterations(4))
+    .force('cluster-x', forceX<GlPhysNode>((d) => anchorMap.get(d.id)?.x ?? cx).strength(strengthOf))
+    .force('cluster-y', forceY<GlPhysNode>((d) => anchorMap.get(d.id)?.y ?? cy).strength(strengthOf))
     .force('center', forceCenter(cx, cy).strength(0.03))
     .alphaDecay(0.016)
     .velocityDecay(0.5)
@@ -175,7 +110,7 @@ export function setupGlSimulation(
  * 更新中心力 + 边界 clamp 到新宽高。配合 SphereInstances 相机跟随 sizeRef → GL 球与 DOM 命中层保持对齐。
  */
 export function resizeGlSim(
-  sim: Simulation<SimNode, SimLink>,
+  sim: Simulation<GlPhysNode, SimLink<GlPhysNode>>,
   nodes: GlPhysNode[],
   anchors: Map<string, ClusterAnchor>,
   sx: number,
@@ -190,7 +125,7 @@ export function resizeGlSim(
     if (n.fy != null) n.fy *= sy;
   }
   anchors.forEach((a) => { a.x *= sx; a.y *= sy; });
-  const center = sim.force('center') as ForceCenter<SimNode> | undefined;
+  const center = sim.force('center') as ForceCenter<GlPhysNode> | undefined;
   if (center) center.x(width / 2).y(height / 2);
   // 边界 clamp 重注册到新宽高（旧 tick 闭包捕获的是旧 width/height）
   sim.on('tick', () => {

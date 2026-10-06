@@ -29,15 +29,21 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
       if (active.current) setError(caught instanceof Error ? caught.message : '原曲订单暂不可用，请查询已有订单。');
     } finally { if (active.current) setBusy(false); }
   }
-  return <div>
-    <p className="material-muted">Ethereum 原曲可转让，由关联的外部钱包自付 Gas；每钱包每首累计领取一次，转出不恢复资格，每首总量无上限。</p>
+  return <section className="material-chain-row" aria-label="Ethereum 原曲领取">
+    <div className="material-chain-info"><h4>Ethereum</h4>
+      <p className="material-muted">原曲 NFT · 可转让 · 关联外部钱包支付 Gas</p>
+      <p className="material-muted">每钱包每首累计领取一次，转出不恢复资格，每首总量无上限。</p>
+      {!orderId && auth.authenticated && <details className="material-proof-details"><summary>接收地址</summary>
+        <p className="material-uri">{auth.selectedExternalWallet?.address ?? '请使用已关联的链上地址登录'}</p></details>}
+    </div>
+    <div className="material-chain-action">
     {!deployed ? <><p className="material-muted">合约尚未部署，当前未开放收藏。</p>
       <button className="material-collect" type="button" disabled>Ethereum 原曲尚未开放</button></>
       : !auth.authenticated ? <button className="material-collect" type="button" onClick={auth.openLoginModal}>登录后收藏</button>
-        : !orderId && <><p className="material-uri">接收地址：{auth.selectedExternalWallet?.address ?? '请使用已关联的链上地址登录'}</p>
-          <button className="material-collect" type="button" disabled={!external || busy} onClick={() => { void collect(); }}>
-            {busy ? '正在查询并创建订单…' : '收藏这首原曲'}</button></>}
-    {error && <p className="material-error" role="alert">{error}</p>}
-    {orderId && <MaterialOrderView orderId={orderId} embedded />}
-  </div>;
+        : !orderId && <button className="material-collect" type="button" disabled={!external || busy} onClick={() => { void collect(); }}>
+          {busy ? '正在查询并创建订单…' : '领取 ETH 原曲'}</button>}
+    </div>
+    {error && <p className="material-error material-chain-status" role="alert">{error}</p>}
+    {orderId && <div className="material-chain-status"><MaterialOrderView orderId={orderId} embedded /></div>}
+  </section>;
 }

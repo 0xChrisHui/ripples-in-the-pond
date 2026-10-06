@@ -9,17 +9,12 @@ type MintStatus = { status?: string | null; txHash?: string | null; recipientAdd
   error?: string; code?: string; needsReview?: boolean; alreadyMinted?: boolean };
 export default function MaterialMintPanel({ track }: { track: OriginalTrack }) {
   const auth = useAuth();
-  const [network, setNetwork] = useState<10 | 1>(10);
-  // 只重建领取内容，保留选中的网络和持久音乐圆圈；旧请求不能回写新身份/曲目。
+  // 两链独立保留领取状态；换身份或曲目只重建领取内容，不重建音乐圆圈。
   const scope = JSON.stringify([auth.authSource, auth.userId, auth.evmAddress?.toLowerCase(), track.trackId]);
   return <section className="material-mint" aria-label="收藏原曲">
     <h3>收藏原曲</h3>
-    <div className="material-network-choice" role="group" aria-label="收藏网络">
-      <button type="button" aria-pressed={network === 10} onClick={() => setNetwork(10)}>Optimism</button>
-      <button type="button" aria-pressed={network === 1} onClick={() => setNetwork(1)}>Ethereum</button>
-    </div>
-    {network === 1 ? <EthereumMaterialMint key={scope} track={track} />
-      : <OpMaterialMint key={scope} track={track} auth={auth} />}
+    <OpMaterialMint key={`op:${scope}`} track={track} auth={auth} />
+    <EthereumMaterialMint key={`eth:${scope}`} track={track} />
   </section>;
 }
 
@@ -64,19 +59,25 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
     } finally { if (active.current) setBusy(false); }
   }
   const pending = status?.needsReview || ['pending', 'minting_onchain'].includes(status?.status ?? '');
-  return <><p className="material-muted">OP 原曲 SBT 不可转让，平台支付 Gas。</p>
-        {status?.recipientAddress && <p className="material-uri">接收地址：{status.recipientAddress}</p>}
+  return <section className="material-chain-row" aria-label="Optimism 原曲领取">
+    <div className="material-chain-info"><h4>Optimism</h4>
+      <p className="material-muted">原曲 SBT · 不可转让 · 平台支付 Gas</p>
+      {status?.recipientAddress && <details className="material-proof-details"><summary>接收地址</summary>
+        <p className="material-uri">{status.recipientAddress}</p></details>}
+    </div>
+    <div className="material-chain-action">
         {!opAvailable ? <button type="button" className="material-collect" disabled>OP 原曲 SBT 尚未开放</button>
           : !auth.authenticated ? <button type="button" className="material-collect" onClick={auth.openLoginModal}>登录后收藏</button>
           : <button type="button" className="material-collect" disabled={busy || Boolean(pending) || status?.alreadyMinted || status?.status === 'success'
             || status?.code?.startsWith('OP_SBT_') || status?.code === 'OP_SNAPSHOT_PENDING' || !status?.recipientAddress}
             onClick={() => { void collect(); }}>{busy ? '正在提交…' : status?.status === 'success' || status?.alreadyMinted ? '已有收藏记录'
-              : pending ? '等待链上确认 / 核对' : '收藏这首原曲'}</button>}
-    <div className="material-mint-status" aria-live="polite">
+              : pending ? '等待链上确认 / 核对' : '领取 OP 原曲'}</button>}
+    </div>
+    <div className="material-mint-status material-chain-status" aria-live="polite">
       {status?.error && <p>{status.error}</p>}
       {status?.status === 'success' && <p>历史收藏已确认；当前持有情况以链上余额为准。</p>}
       {pending && <p>请求已受理，尚未确认铸造完成。请到“我的”查看已有记录。</p>}
       {status?.txHash && <p className="material-uri">交易：{status.txHash}</p>}
     </div>
-  </>;
+  </section>;
 }

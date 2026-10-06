@@ -2,17 +2,25 @@
 
 import { useEffect, useRef } from 'react';
 import type { ResidentEchoCommand, ResidentEchoPlayback, ResidentEchoRuntime } from '../../../types/echo-resident';
+import { createResidentGesture } from './state/gesture';
+
+const PLAY_PATH = 'M-4.5,-6 L7,0 L-4.5,6 Z';
+const PAUSE_PATH = 'M-5.5,-6 L-2,-6 L-2,6 L-5.5,6 Z M0.5,-6 L4,-6 L4,6 L0.5,6 Z';
 
 type Props = {
   runtime: ResidentEchoRuntime;
   getPlayback: () => ResidentEchoPlayback;
   execute: (command: ResidentEchoCommand) => void | Promise<void>;
 };
-/** 原生按钮负责 click/Enter/Space；不绑定第二份 keydown，也不引入 d3 拖拽。 */
+/** 命中层沿用普通圆的8px拖动阈值与播放提示；几何全部来自同一runtime。 */
 export function EchoResidentHit({ runtime, getPlayback, execute }: Props) {
   const button = useRef<HTMLButtonElement>(null);
   const feedback = useRef<HTMLSpanElement>(null);
+  const icon = useRef<SVGSVGElement>(null), iconPath = useRef<SVGPathElement>(null);
+  const gesture = useRef<ReturnType<typeof createResidentGesture> | null>(null);
   useEffect(() => {
+    const activeGesture = createResidentGesture(runtime, getPlayback, execute);
+    gesture.current = activeGesture;
     const sync = () => {
       const el = button.current;
       if (!el) return;
@@ -32,34 +40,54 @@ export function EchoResidentHit({ runtime, getPlayback, execute }: Props) {
       el.setAttribute('aria-busy', String(snapshot.commandPending));
       el.setAttribute('aria-disabled', String(snapshot.commandPending));
       const state = getPlayback();
+      el.setAttribute('aria-pressed', String(state === 'playing'));
       el.setAttribute('aria-label', `${state === 'playing' ? '暂停' : state === 'paused' ? '继续播放' : state === 'error' || snapshot.commandError ? '重试播放' : '播放'} ECHO #1（第36枚音乐圆圈）`);
+      if (icon.current) icon.current.style.opacity = String(
+        snapshot.interaction.hovered || state === 'playing' ? p.effectivePresence : 0);
+      iconPath.current?.setAttribute('d', state === 'playing' ? PAUSE_PATH : PLAY_PATH);
+      if (!p.interactive) activeGesture.cancel();
       if (feedback.current && feedback.current.textContent !== (snapshot.commandError ?? '')) {
         feedback.current.textContent = snapshot.commandError ?? '';
       }
     };
-    sync(); return runtime.subscribe(sync);
-  }, [runtime, getPlayback]);
-  const releasePointer = () => runtime.setInteraction({ pointerDown: false });
+    sync();
+    const unsubscribe = runtime.subscribe(sync);
+    return () => { unsubscribe(); activeGesture.cancel(); gesture.current = null; };
+  }, [runtime, getPlayback, execute]);
   return <>
     <button ref={button} type="button" aria-label="播放 ECHO #1（第36枚音乐圆圈）"
       aria-hidden="true" tabIndex={-1}
       className="fixed z-20 rounded-full border-0 bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-      style={{ pointerEvents: 'none', visibility: 'hidden', touchAction: 'manipulation' }}
-      onPointerEnter={() => runtime.setInteraction({ hovered: true })}
-      onPointerLeave={() => runtime.setInteraction({ hovered: false, pointerDown: false })}
-      onFocus={() => runtime.setInteraction({ focused: true })}
-      onBlur={() => runtime.setInteraction({ focused: false, pointerDown: false })}
+      style={{ pointerEvents: 'none', visibility: 'hidden', touchAction: 'none', cursor: 'pointer' }}
+      onPointerEnter={(event) => { if (event.pointerType !== 'touch') runtime.setInteraction({ hovered: true }); }}
+      onPointerLeave={() => runtime.setInteraction({ hovered: false })}
+      onFocus={(event) => runtime.setInteraction({ focused: event.currentTarget.matches(':focus-visible') })}
+      onBlur={() => { gesture.current?.cancel(); runtime.setInteraction({ focused: false }); }}
       onPointerDown={(event) => {
-        runtime.setInteraction({ pointerDown: true });
-        event.currentTarget.setPointerCapture(event.pointerId);
+        if (event.button === 0 && gesture.current?.begin(event.pointerId, { x: event.clientX, y: event.clientY })) {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        }
       }}
-      onPointerUp={releasePointer} onPointerCancel={releasePointer} onLostPointerCapture={releasePointer}
-      onClick={() => {
-        const state = getPlayback();
-        const command = state === 'playing' ? 'pause' : state === 'paused' ? 'resume'
-          : state === 'error' || runtime.getSnapshot().commandError ? 'retry' : 'play';
-        void runtime.request(command, execute);
-      }} />
+      onPointerMove={(event) => gesture.current?.move(event.pointerId, { x: event.clientX, y: event.clientY })}
+      onPointerUp={(event) => {
+        const activated = gesture.current?.end(event.pointerId);
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+        if (activated) event.currentTarget.blur();
+      }}
+      onPointerCancel={() => gesture.current?.cancel()} onLostPointerCapture={() => gesture.current?.cancel()}
+      onKeyDown={(event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        if (!event.repeat) gesture.current?.activate();
+      }}
+      onClick={(event) => { if (event.detail === 0) gesture.current?.activate(); }}>
+      <svg ref={icon} width={26} height={26} viewBox="-13 -13 26 26" aria-hidden="true"
+        style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
+          opacity: 0, pointerEvents: 'none', transition: 'opacity 0.2s ease' }}>
+        <circle r={13} fill="rgba(0,0,0,0.55)" stroke="rgba(255,255,255,0.22)" strokeWidth={1} />
+        <path ref={iconPath} d={PLAY_PATH} fill="white" />
+      </svg>
+    </button>
     <span ref={feedback} className="sr-only" role="status" aria-live="polite" />
   </>;
 }

@@ -4,13 +4,13 @@ import { motionPoint, sampleScalar } from '../motion';
 import { normalizeResidentLayout } from './layout';
 
 export function resolveResidentPose(instanceId: string, frameId: number, motion: ResidentMotionState, time: number,
-  presence: ResidentPresenceState, input: ResidentEchoFrameInput, config: ResidentEchoConfig): ResidentEchoPose {
+  presence: ResidentPresenceState, input: ResidentEchoFrameInput, config: ResidentEchoConfig, hoverProgress = 0): ResidentEchoPose {
   const p = motionPoint(motion, time);
   const depth = Math.max(0.02, Math.min(0.98, motion.surface + sampleScalar(motion.depth, time)));
   const breathScale = sampleScalar(motion.scale, time);
   const projectionScale = project(0, 0, depth, input.layout.projection).scale;
   const bodyRadiusPx = Math.max(0, input.layout.baseRadiusPx) * config.diameterMultiplier
-    * breathScale * projectionScale * motion.bounds.sizeScale;
+    * breathScale * projectionScale * motion.bounds.sizeScale * (1 + hoverProgress * 0.09);
   const usable = input.available && input.healthy && input.sceneReady;
   const scenePresence = Number.isFinite(input.scenePresence) ? Math.max(0, Math.min(1, input.scenePresence)) : 0;
   const effectivePresence = usable ? presence.presence * scenePresence : 0;

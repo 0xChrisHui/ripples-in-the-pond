@@ -27,7 +27,7 @@ export function routeTransactionReducer(
   }
   if (event.generation != null && event.generation !== state.generation) return state;
   if (event.type === 'ready') {
-    if (state.stage !== 'preparing' || event.owner !== state.target) return state;
+    if (state.stage !== 'preparing' || state.targetVisualReady || event.owner !== state.target) return state;
     return { ...state, targetVisualReady: true, visualReadyAt: event.at };
   }
   if (event.type === 'reveal') {

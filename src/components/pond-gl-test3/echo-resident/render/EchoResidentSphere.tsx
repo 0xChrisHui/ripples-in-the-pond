@@ -25,7 +25,8 @@ export function EchoResidentSphere({ runtime, getFrameInput, separatePass = fals
     const snapshot = runtime.step(input);
     if (!mesh.current || !material.current) return;
     mesh.current.layers.set(separatePass ? SPHERE_LAYER : BACKGROUND_LAYER);
-    writeResidentSphere(mesh.current, material.current, snapshot.pose, input, colorGrade, snapshot.motionSeconds);
+    writeResidentSphere(mesh.current, material.current, snapshot.pose, input, colorGrade,
+      snapshot.motionSeconds, snapshot.interaction.hovered);
   }, -1);
   return <instancedMesh ref={mesh} args={[undefined, undefined, 1]} frustumCulled={false}>
     <planeGeometry args={[1, 1]}>

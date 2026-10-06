@@ -95,7 +95,7 @@ export default function SphereOverlay({
       data-first-circles={nodes.length > 0} data-all-circles-interactive={allReady}>
       {nodes.map((node) => (
         <SphereHit key={node.id} node={node} glSim={glSim} glHealthy={glHealthy}
-          isPlaying={playingId === node.id} showLabels={showLabels}
+          isPlaying={(node.echo ? glSim.echoPlayingId : playingId) === node.id} showLabels={showLabels}
           register={(element) => {
             if (element) elements.current.set(node.id, element);
             else elements.current.delete(node.id);

@@ -9,6 +9,7 @@ import { useOptionalScoreOrigin } from '@/src/components/pond-shell/score/score-
 import type { PondRoute } from '@/src/components/pond-shell/transition/types';
 import ArtistPondPage from '@/src/components/artist/ArtistPondPage';
 import PondHeader from '@/src/components/pond-gl-test3/overlay/PondHeader';
+import { useRoutePresence } from '@/src/components/pond-shell/motion/use-route-presence';
 
 const PreparedArchive = dynamic(() => import('@/app/(pond)/me/MePondArchive'), { ssr: false });
 const PreparedTracks = dynamic(() => import('./PreparedTracks'), { ssr: false });
@@ -40,14 +41,16 @@ export default function PersistentRouteSurfaces({
   const target = tx?.target ?? current;
   const stage = tx?.stage ?? 'stable';
   const interactive = tx?.interactiveOwner ?? current;
+  useRoutePresence(persistent ? tx : undefined, transition?.duration ?? 520, pathname);
   const homeVisible = !persistent || visible('home', current, target, stage);
   const archiveVisible = persistent && visible('archive', current, target, stage);
   const scoreVisible = persistent && visible('score', current, target, stage);
   const tracksVisible = persistent && visible('tracks', current, target, stage);
   const artistVisible = persistent && visible('artist', current, target, stage);
   const [tracksPrepared, setTracksPrepared] = useState(current === 'tracks');
-  const routeInteractive = interactive === 'score' || (interactive === 'archive' && pathname.startsWith('/me/material'));
-  const pageVisible = scoreVisible || (archiveVisible && pathname.startsWith('/me/material'));
+  const routeOwner = pathname.startsWith('/echo/') ? 'echo' : pathname.startsWith('/me/material') ? 'detail' : 'score';
+  const routeInteractive = interactive === routeOwner;
+  const pageVisible = scoreVisible || visible('echo', current, target, stage) || visible('detail', current, target, stage);
   const routeRef = useRef<HTMLDivElement>(null);
   const tracksRef = useRef<HTMLDivElement>(null);
 
@@ -87,11 +90,12 @@ export default function PersistentRouteSurfaces({
   }, [stage, target, transition, tx?.generation]);
 
   useEffect(() => {
-    if (!transition || (target !== 'score' && target !== 'tracks') || stage !== 'preparing') return;
+    if (!transition || !['score', 'tracks', 'echo', 'detail'].includes(target) || stage !== 'preparing' || tx?.targetVisualReady) return;
     if (pathname !== tx?.href) return;
     const root = target === 'tracks' ? tracksRef.current : routeRef.current;
     const inspect = () => {
-      const selector = target === 'tracks' ? 'main[data-track-surface="pond"]' : 'main[data-score-state], main.score-fallback';
+      const selector = target === 'tracks' ? 'main[data-track-surface="pond"]'
+        : target === 'score' || target === 'echo' ? `main[data-p11-theme="${target}"]` : 'main';
       const node = root?.querySelector<HTMLElement>(selector);
       if (!node || node.getClientRects().length === 0) return;
       transition.reportVisualReady(target, tx?.generation);
@@ -100,34 +104,34 @@ export default function PersistentRouteSurfaces({
     const observer = new MutationObserver(inspect);
     if (root) observer.observe(root, { childList: true, subtree: true, attributes: true });
     return () => observer.disconnect();
-  }, [pathname, stage, target, transition, tx?.generation, tx?.href]);
+  }, [pathname, stage, target, transition, tx?.generation, tx?.href, tx?.targetVisualReady]);
 
   return (
     <>
       {persistent && <PondHeader />}
-      <main className={homeClassName} data-active={homeVisible} data-interactive={interactive === 'home'}
+      <main className={homeClassName} data-pond-surface={persistent ? 'home' : undefined} data-active={homeVisible} data-interactive={interactive === 'home'}
         aria-hidden={!homeVisible} inert={persistent && interactive !== 'home'}
         onTransitionEnd={settleOnReveal} data-pond-root={homeRoot ? 'true' : undefined}
         data-pond-eclipse-active="false" data-gl-health={glHealth} data-scene-ready={sceneReady}>
         {home}
       </main>
-      {prepareArchive && <div className="pond-prepared-archive" data-active={archiveVisible && !pathname.startsWith('/me/material')}
+      {prepareArchive && <div className="pond-prepared-archive" data-pond-surface="archive" data-active={archiveVisible}
         data-interactive={interactive === 'archive' && !pathname.startsWith('/me/material')} data-prepared={transition?.archiveReady}
         aria-hidden={!archiveVisible || pathname.startsWith('/me/material')}
         inert={interactive !== 'archive' || pathname.startsWith('/me/material')} onTransitionEnd={settleOnReveal}>
         <PreparedArchive onPrepared={archivePrepared} showControls={pathname === '/me/test'} />
       </div>}
-      {persistent && tracksPrepared && <div ref={tracksRef} className="pond-prepared-tracks" data-active={tracksVisible}
+      {persistent && tracksPrepared && <div ref={tracksRef} className="pond-prepared-tracks" data-pond-surface="tracks" data-active={tracksVisible}
         data-interactive={interactive === 'tracks'} aria-hidden={!tracksVisible}
         inert={interactive !== 'tracks'} onTransitionEnd={settleOnReveal}>
         <Suspense fallback={null}><PreparedTracks /></Suspense>
       </div>}
-      {persistent && <div className="pond-prepared-artist" data-active={artistVisible}
+      {persistent && <div className="pond-prepared-artist" data-pond-surface="artist" data-active={artistVisible}
         data-interactive={interactive === 'artist'} aria-hidden={!artistVisible}
         inert={interactive !== 'artist'} onTransitionEnd={settleOnReveal}>
         <ArtistPondPage />
       </div>}
-      {persistent && <div ref={routeRef} className="pond-route-surface" data-active={pageVisible}
+      {persistent && <div ref={routeRef} className="pond-route-surface" data-pond-surface={routeOwner} data-active={pageVisible}
         data-interactive={routeInteractive}
         data-archive-placeholder={stage === 'stable' && !pageVisible}
         aria-hidden={!pageVisible} inert={!routeInteractive} onTransitionEnd={settleOnReveal}>

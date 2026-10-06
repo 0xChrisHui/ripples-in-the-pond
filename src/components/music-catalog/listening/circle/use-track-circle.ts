@@ -4,28 +4,35 @@ import { advanceEclipseMix, blendEclipseMix, clearPlaybackFocus, resetEclipseMix
   setPlaybackFocus } from '../../../pond-gl-test3/focus/playback-focus';
 import { circlePlayback, circlePose, type CircleFrame } from './circle-state';
 import { advanceCircleSpring, createCircleMotion, stepCircleMotion, type CircleMotion } from './circle-motion';
+import { getScenePresence } from '../../../pond-shell/motion/scene-presence';
+import { advanceCircleHover } from '../../../pond-gl-test3/eclipse-base/eclipse-motion';
+import { lifeSeeds } from '../../../pond-gl-test3/life/life-core';
 
 const rgb = (color: string): [number, number, number] => [1, 3, 5].map(offset =>
   parseInt(color.slice(offset, offset + 2), 16) / 255) as [number, number, number];
 
 /** DOM锚点只在布局变化时测量；逐帧更新共用pose，不用React刷新动画。 */
 export function useTrackCircle(anchor: RefObject<HTMLElement | null>, trackId: string, phase: string,
-  owns: boolean, degraded: boolean, color: string) {
+  owns: boolean, degraded: boolean, color: string, importance: number) {
   const frame = useRef<CircleFrame>({ x: 0, y: 0, radius: 0, diameter: 0, dx: 0, dy: 0,
-    mix: 0, time: 0, visible: false, width: 1, height: 1, reduced: false, color: rgb(color) });
+    mix: 0, time: 0, visible: false, width: 1, height: 1, reduced: false, color: rgb(color),
+    hover: 0, hovered: false, presence: 0, importance, seed: lifeSeeds(trackId)[4] * Math.PI * 2 });
   const movement = useRef<CircleMotion | null>(null);
   const centre = useRef<{ x: number; y: number; vx: number; vy: number } | null>(null);
   const syncLayout = useRef<(() => void) | null>(null);
-  const inputs = useRef({ phase, degraded, trackId, color: rgb(color) });
+  const inputs = useRef({ phase, degraded, trackId, color: rgb(color), importance, owns });
   useLayoutEffect(() => {
-    inputs.current = { phase, degraded, trackId, color: rgb(color) };
+    if (inputs.current.owns && !owns) {
+      clearPlaybackFocus(); resetEclipseMix(); document.body.style.removeProperty('--pond-eclipse-mix');
+    }
+    inputs.current = { phase, degraded, trackId, color: rgb(color), importance, owns };
+    if (!owns) frame.current.hovered = false;
     syncLayout.current?.();
-  }, [color, degraded, phase, trackId]);
+  }, [color, degraded, importance, owns, phase, trackId]);
   useLayoutEffect(() => {
     const root = anchor.current;
     if (!root) return;
     const frameState = frame.current;
-    if (!owns) { frameState.visible = false; return; }
     let rect = root.getBoundingClientRect();
     if (!movement.current) {
       const seed = crypto.getRandomValues(new Uint32Array(1))[0];
@@ -56,16 +63,19 @@ export function useTrackCircle(anchor: RefObject<HTMLElement | null>, trackId: s
       if (inputs.current.degraded && now - last < 33) { raf = requestAnimationFrame(tick); return; }
       const elapsed = Math.max(0, now - last); const delta = Math.min(64, elapsed); last = now;
       const reduced = media.matches;
-      const { trackId: currentTrackId, phase: currentPhase, color: targetColor } = inputs.current;
-      state = circlePlayback(state, currentTrackId, currentPhase, owns);
-      const mix = owns ? advanceEclipseMix(state.eclipse ? 1 : 0, delta, reduced)
+      const { trackId: currentTrackId, phase: currentPhase, color: targetColor, owns: currentOwns } = inputs.current;
+      const presence = getScenePresence('tracks');
+      state = circlePlayback(state, currentTrackId, currentPhase, currentOwns);
+      const mix = currentOwns ? advanceEclipseMix(state.eclipse ? 1 : 0, delta, reduced)
         : blendEclipseMix(frame.current.mix, 0, delta, reduced);
       // 过渡仍限步长，位移按真实秒数推进，低帧率不能让圆几乎静止。
       const visible = !document.hidden && rect.width > 0 && rect.bottom > 0 && rect.top < innerHeight;
-      if (visible) {
+      if (visible && presence > 0) {
         frameState.time += elapsed / 1000;
         if (!reduced) stepCircleMotion(motion, elapsed / 1000);
       }
+      frameState.hover = advanceCircleHover(frameState.hover, frameState.hovered && currentOwns, elapsed, reduced);
+      if (rect.width <= 0) { frameState.visible = false; raf = requestAnimationFrame(tick); return; }
       // 布局因文字变长而移动时，也保留屏幕位置和速度；滚动仍直接随页面移动。
       const cx = advanceCircleSpring(anchorCentre.x, anchorCentre.vx, rect.left + rect.width / 2 + scrollX, elapsed / 1000, 4);
       const cy = advanceCircleSpring(anchorCentre.y, anchorCentre.vy, rect.top + rect.height / 2 + scrollY, elapsed / 1000, 4);
@@ -73,11 +83,13 @@ export function useTrackCircle(anchor: RefObject<HTMLElement | null>, trackId: s
       anchorCentre.y = reduced ? rect.top + rect.height / 2 + scrollY : cy.position;
       anchorCentre.vx = reduced ? 0 : cx.velocity; anchorCentre.vy = reduced ? 0 : cy.velocity;
       const pose = circlePose(rect.width, innerHeight, frameState.time, reduced, motion);
+      pose.radius *= 1 + frameState.hover * .09; pose.diameter = pose.radius * 2;
       const x = anchorCentre.x - scrollX + pose.dx; const y = anchorCentre.y - scrollY + pose.dy;
       const amount = reduced ? 1 : 1 - Math.exp(-elapsed / 550);
       frameState.color = frameState.color.map((value, i) => value + (targetColor[i] - value) * amount) as [number, number, number];
-      Object.assign(frame.current, pose, { x, y, mix, visible, reduced, width: innerWidth, height: innerHeight });
-      if (owns) {
+      Object.assign(frame.current, pose, { x, y, mix, visible, reduced, presence,
+        importance: inputs.current.importance, width: innerWidth, height: innerHeight });
+      if (currentOwns) {
         if (state.eclipse) setPlaybackFocus({ active: true, trackId: currentTrackId, x: x / innerWidth, y: y / innerHeight, scale: pose.radius / 50 });
         else clearPlaybackFocus();
         document.body.style.setProperty('--pond-eclipse-mix', mix.toFixed(4));
@@ -86,6 +98,7 @@ export function useTrackCircle(anchor: RefObject<HTMLElement | null>, trackId: s
       root.style.setProperty('--circle-diameter', `${pose.diameter}px`);
       root.style.setProperty('--circle-mix', String(mix));
       root.style.setProperty('--circle-color', `rgb(${frameState.color.map(value => value * 255).join(' ')})`);
+      root.style.setProperty('--circle-halo', `${36 + frameState.hover * 24}%`);
       root.dataset.circleMix = mix.toFixed(3); root.dataset.circleDx = pose.dx.toFixed(3);
       root.dataset.circleDy = pose.dy.toFixed(3); root.dataset.circleDiameter = pose.diameter.toFixed(3);
       root.dataset.circleReduced = String(reduced); root.dataset.circleVisible = String(visible);
@@ -93,6 +106,8 @@ export function useTrackCircle(anchor: RefObject<HTMLElement | null>, trackId: s
       root.dataset.circleAnchorX = (anchorCentre.x - scrollX).toFixed(3);
       root.dataset.circleAnchorY = (anchorCentre.y - scrollY).toFixed(3);
       root.dataset.circleColor = frameState.color.map(value => value.toFixed(5)).join(',');
+      root.dataset.circleHover = frameState.hover.toFixed(3);
+      root.dataset.circlePresence = presence.toFixed(3);
       raf = requestAnimationFrame(tick);
     };
     // 回到页面时在绘制前恢复原来的位置、颜色和运动进度，备用圆也复用同一帧。
@@ -103,8 +118,9 @@ export function useTrackCircle(anchor: RefObject<HTMLElement | null>, trackId: s
       document.removeEventListener('visibilitychange', resetClock);
       frameState.visible = false;
       syncLayout.current = null;
-      if (owns) { clearPlaybackFocus(); resetEclipseMix(); document.body.style.removeProperty('--pond-eclipse-mix'); }
+      if (inputs.current.owns) { clearPlaybackFocus(); resetEclipseMix(); document.body.style.removeProperty('--pond-eclipse-mix'); }
     };
-  }, [anchor, owns]);
-  return frame;
+  }, [anchor]);
+  const setHovered = (hovered: boolean) => { frame.current.hovered = hovered; };
+  return { frame, setHovered };
 }

@@ -130,3 +130,37 @@
 - 首次样本本地chunk编译与软件WebGL很慢，点击到前景约8.15秒、GL约10.12秒，不能称为生产无加载或真实用户性能；该证据只证明前景接管后圆圈无额外空白。Me截图捕获初始化阶段，不证明水面加载速度。实际登录账户/领取未验，“我的音乐”仅复用匿名按钮同样式替换文字测量，不冒充认证通过。
 - 首轮观察包含隐藏预备DOM，后改按前景实际接管判断；就绪钩子同步重复风险已加guard；返回断言误用冻结时未回写的circleVisible属性，仅续跑余下断言改查surface交互所有权。始终复用同一浏览器，旧profile不可用才使用一个替代profile；不新增测试服务。保留主工作区77条WIP，本轮仅本地提交，不push或部署。
 - 关键行：MeArchivePage的PageNavigation让共享池塘持有唯一顶栏；EthereumMaterialMint的setOrderId把领取留在当前曲目；PersistentRouteSurfaces的!tx?.targetVisualReady保证首帧就绪每事务只上报一次。
+
+## 2026-10-06 池塘圆圈、转场和双链领取统一（v13）
+
+- 实现用户六项范围：#36正常态正圆，保留双倍尺寸、随机主动漂移、浮沉与隐现，其余采用普通圆hover尺寸/光晕/播放提示、点击/键盘和8px拖动阈值。拖动/取消/多指不会误播放；松手从当前位置接回漂移。低帧率以可见经过时间分段推进，超过0.5秒的长卡顿按挂起处理；狭长屏幕从可用长边选择更可见的随机路线，速度仍受6px/s上限约束。
+- 曲目圆恢复首页材质的边缘波动、柔化和呼吸参数，hover同样放大9%、光晕增强。首页与曲目共用基础日食：黑核、贴合白环和连续光晕；首页仍保留既有P9编舞，曲目不引入按键编舞。换曲随机轨迹、颜色续接与页面返回实例延续原实现。
+- DOM、首页球体与曲目GL读取同一显隐进度，出入场不再叠加独立CSS过渡。旧层固定在当前屏幕位置，新页回顶不会把旧页拖走；动态Score/Echo仅保留无交互退场快照，相关GL场景淡完再注销。重复ready/reveal受到幂等保护，后退/前进复用按路径保存的滚动位置，快速反向从当前亮度续接。Echo与原曲资产路由移入现有池塘分组，单曲复用常驻TrackCatalog，不新增Canvas。
+- OP/ETH两项领取同屏，分别按身份/钱包/曲目隔离状态，不再切链选项卡。保留必要的实际钱包切网、服务端凭证、未知交易核对和重复提交保护；没有执行真实领取。手记→两链领取→永久来源→下一首使用同一620px阅读轴及阅读底层；完整地址按需展开/复制，唯一资产注册表继续提供全部地址。
+- Water Core在各池塘页保持指针输入；裸露水面沿用现有移动/点击涟漪，阅读底层和实际控件通过既有排除规则阻断，触摸滚动沿用原处理。
+- 相关测试证据：驻留Echo数学/运行时/命令/手势/渲染/host专项均通过；曲目连续运动测试9/9、共享基础日食6项通过；新增转场测试3/3覆盖五类核心页面20个方向、重复就绪与过期generation、反向进度和相关路由分类。源码类型检查`npx --no-install tsc --noEmit --project .tmp/pond-check.tsconfig.json`退出0；该配置只排除损坏的Next临时类型缓存，不改变项目配置或依赖。受影响ESLint退出0，所有改动代码≤200行，新增文件目录≤8项，diff格式通过。
+- 浏览器Gate未完成，不能称为视觉验收通过。复用3121及同一profile，原生GPU未完成初始化，软件GPU能显示水面；匿名Me确认顶栏1、owner=archive，但进入首页的后续检查超时。开发服务器记录首页首次编译约66秒；软件渲染和既有MetaMask扩展异常亦影响环境，无法据此确定动画观感或正式性能。原始结果保存在`browser-unification-v13.json`；本轮没有有效的新截图、真实#36播放/拖动实测、双链认证领取或手机视觉证明。停止继续修检查工具，相关项目保留未验标记。
+- 完整生产构建未通过：编译及类型阶段通过，Collecting page data阶段旧app-paths-manifest仍含搬迁前Echo/material路由，产生undefined.replace错误。未修改项目构建配置或清除受保护的浏览器缓存。后续常规tsc读取到Next开发临时类型写入不完整；源码检查采用上述临时配置通过。两项限制均不冒称通过，发布时需要干净构建结果。
+- 原工作区77项用户进度保留；当前release工作树保存本轮实现，本地提交，不push/部署，不改变合约、发行政策、生产数据库或永久对象。
+- 核心走读：`getScenePresence(owner)`同时控制DOM和GL，修改其曲线会改变所有页面转场；`DRAG_THRESHOLD = 8`区分拖动和点击；MaterialMintPanel同时挂载`OpMaterialMint`与`EthereumMaterialMint`，删除任一项会撤掉对应链的直接入口。
+
+## 2026-10-06 首页第36圆可见性修复（v14）
+
+- 实际`/api/echo/featured`返回已核验的OP Sepolia Echo #1（chainId=11155420），宿主却硬编码只接受OP主网10，导致phase=waiting、presence=0并隐藏圆圈。改为与既有`NEXT_PUBLIC_CHAIN_ID`一致且tokenId=1才显示；服务端核验、合约地址来源、材质和运动逻辑不变。
+- 驻留host专项新增测试链、主网、链不匹配和空资产断言，通过；两个受影响源码的ESLint和diff格式检查通过。不运行全量verify或生产构建。
+- 复用3121服务及同一检查浏览器：phase=visible、presence=1、命中区对应第36圆；短样本确认位移，悬停直径从154.47增至167.30px，拖动35px/15px后位置跟随且未误播放。记录`resident-visible-v14.json`，截图`resident-visible-v14.png`已目视确认正圆可见。未验证真实播放或发行；本次证据只覆盖第36圆，不替代v13尚未完成的全页面转场/生产构建Gate。
+- 核心行：`isResidentEchoAvailable(current.echo, Number(process.env.NEXT_PUBLIC_CHAIN_ID))`使首页沿用当前配置的已核验Echo；没有新建合约地址清单。保留原工作区用户WIP，仅本地提交，不push或部署。
+
+## 2026-10-06 封存旧版并建立普通第36圆（v15）
+
+- 用户终止修补旧版，明确要求封存后从普通35圆建立新的第36入口。封存标签`archive/echo36-resident-20261006`指向`604deb7de591a37d766df477317cb7f5cf6b08c1`；说明见`docs/archive/2026-10-06-echo36-resident.md`。旧驻留文件未改，PondExperience不再挂其host、mesh、命中或日食接线。
+- 新Echo节点直接进入普通buildGlNodes/setupGlSimulation/SphereInstances/SphereHit/HomeEclipseDriver路径，大小和颜色采用同一序号参数计算。节点保留独立echo字段与永久播放身份，原曲仍是35首，点击只分流到原有useFeaturedEchoPlayback；没有新增音频引擎、假原曲记录或地址表。共享物理节点类型兼容Echo，Score及实验页只适配类型声明，不改变行为。建点函数拆到simulation/nodes.ts以满足200行上限。
+- 验证：源码TypeScript检查通过（复用.tmp/pond-check.tsconfig.json，排除此前损坏的Next生成缓存）；全部受影响源码ESLint通过；scripts/p15/verify-home-foundation.ts通过。使用当前3121的真实/api/tracks及/api/echo/featured输入，A/B/C均35+1、身份唯一、Echo不含伪造track、同一模拟包含Echo、普通尺寸参数/拖拽释放及缺Echo时35节点的定向断言通过（.tmp/verify-echo36-baseline.ts）。diff检查、修改源码≤200行通过。
+- 浏览器未验：本轮启动独立Edge被自动审批以blocked by policy拒绝，工具未给更具体原因；未绕过拦截，不声称实际播放、动画观感或点击日食已验收。既有3121服务继续运行，本轮不构建、不push、不部署。后续等用户逐步指定新圆的调整，旧特殊动画需求不自动追加。
+
+## 2026-10-07 主线工作结算
+
+- 用户明确要求全部已有进展push到main。fetch确认origin/main为8f9d266，本地领先5个提交、远端无新增分叉；在同一工作树建立codex/ui-settlement-main-20261007，以最新main为父提交，移植b050e03的最终文件状态并压成一个发布提交。原codex/tracks-main-release-20261006完整开发记录保留，旧#36封存标签archive/echo36-resident-20261006一并发布。
+- 最终代码包括池塘转场/基础圆与日食统一、OP/ETH同屏领取入口、纵向阅读布局和普通第36圆；#31恢复原色，#36亮青色。未包含原工作目录77项用户未提交进度，未改合约、数据库、发行政策、依赖或next.config.ts。暂存代码与b050e03逐文件一致。
+- 验证复用v13–v15的源码TypeScript、定向ESLint、转场/圆圈/首页与35+1真实资产输入断言，以及两次颜色修改的定向ESLint；源码、依赖和相关环境未变，不机械重跑。diff格式通过。本轮在当前目录使用独立.tmp/main-build-20261007缓存尝试完整生产Webpack构建，未通过：Google Fonts TLS连接持续断开，使用已有127.0.0.1:7897代理后有界重试仍失败；没有替换字体、注入假响应或改生产配置。根配置和next-env.d.ts未被改动。此前视觉/真实领取与构建未验限制继续有效，不把推送等同于部署或上线验收。
+- 本次完成线为main与封存标签推送成功后核对远端SHA；不等待自动部署，不进行上传、迁移、铸造或SEMI外部操作。Claude接手目录仍为E:/Projects/nft-music-progress-release，当前发布分支如上；后续由用户逐步指定UI修改，旧#36特例不自动恢复。

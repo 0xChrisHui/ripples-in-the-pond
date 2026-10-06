@@ -1,0 +1,55 @@
+{
+  "before": {
+    "instanceId": "resident-echo-3829068064",
+    "frameId": "707",
+    "phase": "visible",
+    "presence": "1",
+    "sizeClamped": "false",
+    "x": 580.265625,
+    "y": 485.703125,
+    "size": 155.15625,
+    "visibility": "visible",
+    "pressed": "false",
+    "label": "播放 ECHO #1（第36枚音乐圆圈）"
+  },
+  "drift": {
+    "instanceId": "resident-echo-3829068064",
+    "frameId": "712",
+    "phase": "visible",
+    "presence": "1",
+    "sizeClamped": "false",
+    "x": 579.765625,
+    "y": 486.546875,
+    "size": 154.46875,
+    "visibility": "visible",
+    "pressed": "false",
+    "label": "播放 ECHO #1（第36枚音乐圆圈）"
+  },
+  "hover": {
+    "instanceId": "resident-echo-3829068064",
+    "frameId": "714",
+    "phase": "visible",
+    "presence": "1",
+    "sizeClamped": "false",
+    "x": 579.7578125,
+    "y": 486.5546875,
+    "size": 167.296875,
+    "visibility": "visible",
+    "pressed": "false",
+    "label": "播放 ECHO #1（第36枚音乐圆圈）"
+  },
+  "hit": "播放 ECHO #1（第36枚音乐圆圈）",
+  "dragged": {
+    "instanceId": "resident-echo-3829068064",
+    "frameId": "716",
+    "phase": "visible",
+    "presence": "1",
+    "sizeClamped": "false",
+    "x": 614.765625,
+    "y": 501.546875,
+    "size": 167.3125,
+    "visibility": "visible",
+    "pressed": "false",
+    "label": "播放 ECHO #1（第36枚音乐圆圈）"
+  }
+}

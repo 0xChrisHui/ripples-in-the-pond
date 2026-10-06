@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Simulation } from 'd3-force';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
-import type { GroupId, SimLink, SimNode } from '@/src/components/archipelago/sphere-config';
+import type { GroupId, SimLink } from '@/src/components/archipelago/sphere-config';
 import type { Track } from '@/src/types/tracks';
 import type { BgWave } from '@/src/components/pond-gl-test3/spheres/gl-sim-waves';
 import {
@@ -20,7 +20,7 @@ export function useSingleSphereSim(track: Track): GlSim {
   const { playing, currentTrack, toggle } = usePlayer();
   const [nodes, setNodes] = useState<GlPhysNode[]>([]);
   const [generation, setGeneration] = useState(0);
-  const simRef = useRef<Simulation<SimNode, SimLink> | null>(null);
+  const simRef = useRef<Simulation<GlPhysNode, SimLink<GlPhysNode>> | null>(null);
   const wavesRef = useRef<BgWave[]>([]);
   const playingIdRef = useRef<string | null>(null);
   const hoverIdRef = useRef<string | null>(null);

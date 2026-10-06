@@ -2,7 +2,6 @@ import type { SimulationLinkDatum, SimulationNodeDatum } from 'd3-force';
 import type { Track } from '@/src/types/tracks';
 
 /** sound-spheres 配置 + 节点/链接生成纯函数 */
-
 // P9 v3 — 仅 A 组扩成汇聚后的 12 色；B/C 保持各自原有 8 色。
 export const GROUP_PALETTES: string[][] = [
   ['#D8A878','#7EA898','#A83A3A','#6A7898','#E8D8B8','#382828','#B8A8C8','#9AA878','#C8504A','#888858','#D88A4A','#5A8868'],
@@ -24,7 +23,7 @@ export const GROUPS: GroupDef[] = [
   { id: 'C', label: '3', color: GROUP_PALETTES[2][0] },
 ];
 
-/** 每组 35 个常规 Track；首页另挂一枚不进入力导的 Pond Echo 访客。 */
+/** 每组35首原曲；首页可额外加入已核验Echo，原曲目录仍只有35首。 */
 export const REGULAR_TRACK_COUNT = 35;
 
 // v31 — 球大小 9/30，靠减 collide 斥力 + 提 outlier 拉力压总占地
@@ -105,7 +104,7 @@ export function halton(i: number, base: number): number {
   return r;
 }
 
-export interface SimLink extends SimulationLinkDatum<SimNode> {
+export interface SimLink<Node extends SimulationNodeDatum = SimNode> extends SimulationLinkDatum<Node> {
   correlation: number;
 }
 
@@ -116,7 +115,7 @@ export function getGroupTracks(gid: GroupId, allTracks: Track[]): Track[] {
   return regular;
 }
 
-// #36 已从常规集合抽离；三个分组都只建立 35 个 d3 节点。
+// 原曲数量不含Echo；第36个视觉入口由首页消费已核验资产后加入。
 export function getGroupTargetCount(_gid: GroupId): number {
   const targets: Record<GroupId, number> = {
     A: REGULAR_TRACK_COUNT,
@@ -139,7 +138,7 @@ export function padTracksToTarget(real: Track[], target: number): Track[] {
 }
 
 // week 派生 importance + 颜色，全 deterministic
-export function computeNodeAttrs(track: Track, groupId: GroupId): {
+export function computeNodeAttrs(track: Pick<Track, 'week'>, groupId: GroupId): {
   groupId: GroupId;
   importance: number;
   radius: number;
@@ -152,20 +151,16 @@ export function computeNodeAttrs(track: Track, groupId: GroupId): {
   const groupIdx = GROUPS.findIndex((g) => g.id === groupId);
   const palette = GROUP_PALETTES[groupIdx];
   const shadeIdx = (track.week - 1) % palette.length;
-  return { groupId, importance, radius: kSize, color: palette[shadeIdx], kSize };
+  return { groupId, importance, radius: kSize, color: track.week === 36 ? '#00E5FF' : palette[shadeIdx], kSize };
 }
 
-/**
- * v32 — 聚落式 link：仅同 cluster 全连接（拉力方向 ≡ cluster anchor，不撕裂）。
- * v86 — 加跨 cluster 稀疏边：每对 cluster 5% 概率 1 条，corr 0.12-0.22 弱拉力
- *       拉力 ≈ 0.04-0.07，远弱于内部 0.15-0.24；距离 ≈ 89-94 自然拉长。
- */
-export function generateLinks(
-  nodes: SimNode[],
+/** 同聚落互连、跨聚落稀疏连接；只使用视觉节点ID，不读取音乐资产。 */
+export function generateLinks<Node extends SimulationNodeDatum & { id: string }>(
+  nodes: Node[],
   assignment: Map<string, number>,
   random: () => number = Math.random,
-): SimLink[] {
-  const links: SimLink[] = [];
+): SimLink<Node>[] {
+  const links: SimLink<Node>[] = [];
   const clusterMembers = new Map<number, number[]>();
   nodes.forEach((n, i) => {
     const c = assignment.get(n.id);
