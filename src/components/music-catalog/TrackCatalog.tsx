@@ -5,7 +5,7 @@ import { usePlayer } from '../player/PlayerProvider';
 import { getMusicCatalog } from '../../lib/music-catalog/asset-registry';
 import MaterialPlayer from './MaterialPlayer';
 import MaterialProvenance from './MaterialProvenance';
-import MaterialMintPanel from './MaterialMintPanel';
+import MaterialMintPanel from './claim/MaterialMintPanel';
 import TrackIndex from './TrackIndex';
 import PageNavigation from '../pond-shell/navigation/PageNavigation';
 import { usePondTransition } from '../pond-shell/pond-transition';
@@ -29,6 +29,12 @@ export default function TrackCatalog({ initialTrackId, single = false, appearanc
     if (continuePlaying) void player.toggle(toPlayerTrack(id));
     else if (player.currentTrack) player.stop();
     setSelectedId(id);
+    // 地址栏同步当前曲目，便于分享；只在本页处于前台、且不是单曲页时改写。
+    const next = tracks.find((track) => track.trackId === id);
+    if (next && !single && active) {
+      const url = new URL(window.location.href); url.searchParams.set('track', String(next.displayNumber));
+      window.history.replaceState(window.history.state, '', url);
+    }
   }
   const index = tracks.findIndex((track) => track.trackId === selectedId);
   const { prepare, getAudioElement } = player;
@@ -81,8 +87,12 @@ export default function TrackCatalog({ initialTrackId, single = false, appearanc
         <article className="track-stage__focus" key={appearance === 'pond' ? 'pond' : selected.trackId}>
           <header className="track-stage__title">
             <h1 id="track-title" aria-label={`原曲 ${selected.title}`}><span>原曲</span><strong>{number}</strong></h1>
-            <blockquote>{excerpt}</blockquote>
-            <a className="track-stage__read" href="#track-story">阅读创作手记 <span aria-hidden="true">↘</span></a>
+            {excerpt ? <blockquote>{excerpt}</blockquote>
+              : <p className="track-stage__pending">创作手记整理中，作者会在之后补充。</p>}
+            <div className="track-stage__links">
+              {excerpt && <a className="track-stage__read" href="#track-story">阅读创作手记 <span aria-hidden="true">↘</span></a>}
+              <a className="track-stage__read" href="#track-collect">收藏这首原曲 <span aria-hidden="true">↘</span></a>
+            </div>
           </header>
           <div className="track-stage__player" data-track-playback="primary">
             <MaterialPlayer track={selected} onControlsVisible={setControlsVisible} visual={appearance === 'pond' ? 'circle' : 'imprint'} />
@@ -91,20 +101,20 @@ export default function TrackCatalog({ initialTrackId, single = false, appearanc
             <button type="button" disabled={index === 0} onClick={() => select(tracks[index - 1].trackId)}>
               <span aria-hidden="true">←</span> 上一首
             </button>
-            <span>{number} / 35</span>
+            <span>{number} / {tracks.length}</span>
             <button type="button" disabled={index === tracks.length - 1}
               onClick={() => select(tracks[index + 1].trackId)}>下一首 <span aria-hidden="true">→</span></button>
           </nav>}
         </article>
       </section>
       <div className="track-reading" data-pond-no-ripple="true">
-      <section className="track-story" id="track-story" aria-label={`原曲 ${selected.title} 创作手记`}>
+      {paragraphs.length > 0 && <section className="track-story" id="track-story" aria-label={`原曲 ${selected.title} 创作手记`}>
         <div className="track-story__body">
           <div className="track-story__copy">
             {paragraphs.map((paragraph, paragraphIndex) => <p key={`${selected.trackId}-${paragraphIndex}`}>{paragraph}</p>)}
           </div>
         </div>
-      </section>
+      </section>}
       <div className="track-ledger"><MaterialMintPanel track={selected} /><MaterialProvenance track={selected} /></div>
       <footer className="track-story__next">
         {single ? <PondRouteLink href="/tracks"><small>返回目录</small><strong>全部曲目</strong><b aria-hidden="true">→</b></PondRouteLink>

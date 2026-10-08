@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import MaterialOrderView from '@/src/components/music-catalog/MaterialOrderView';
+import MaterialOrderView from '@/src/components/music-catalog/claim/MaterialOrderView';
 import { materialOrderId } from '@/src/features/material-catalog/mint/order-model';
 import '@/app/tracks/tracks.css';
 export default async function MaterialOrderPage({ params }: { params: Promise<{ orderId: string }> }) {

@@ -1,12 +1,12 @@
 'use client';
 import Link from 'next/link';
-import PondRouteLink from '../pond-shell/PondRouteLink';
-import PageNavigation from '../pond-shell/navigation/PageNavigation';
+import PondRouteLink from '../../pond-shell/PondRouteLink';
+import PageNavigation from '../../pond-shell/navigation/PageNavigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { useMaterialMint } from '../../features/material-catalog/mint/useMaterialMint';
-import { MATERIAL_STATUS_COPY, type PublicMaterialOrder } from '../../features/material-catalog/mint/order-model';
-import { getChainDefinition } from '../../lib/chain/multichain/registry';
+import { useAuth } from '../../../hooks/useAuth';
+import { useMaterialMint } from '../../../features/material-catalog/mint/useMaterialMint';
+import { MATERIAL_STATUS_COPY, type PublicMaterialOrder } from '../../../features/material-catalog/mint/order-model';
+import { getChainDefinition } from '../../../lib/chain/multichain/registry';
 
 export default function MaterialOrderList() {
   const auth = useAuth(), { listOrders } = useMaterialMint(), owner = auth.userId;

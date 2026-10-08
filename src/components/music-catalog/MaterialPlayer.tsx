@@ -6,6 +6,7 @@ import { getTrackImprint } from '../../lib/music-catalog/experience/imprints';
 import SoundImprint from './listening/SoundImprint';
 import { useOriginalPlayback } from './listening/useOriginalPlayback';
 import TrackCircle from './listening/circle/TrackCircle';
+import MaterialNoticeView from './claim/MaterialNoticeView';
 
 export function formatTrackTime(value: number): string {
   if (!Number.isFinite(value) || value <= 0) return '0:00';
@@ -51,7 +52,7 @@ export default function MaterialPlayer({ track, onControlsVisible, visual = 'imp
           disabled={phase !== 'playing'} label={`原曲 ${track.title} 播放进度`} />
         <span>{formatTrackTime(duration)}</span>
       </div>
-      {phase === 'error' && <p className="material-error" role="alert">音频暂时未能载入，请重新聆听。</p>}
+      {phase === 'error' && <MaterialNoticeView notice={{ tone: 'error', title: '音频暂时未能载入', hint: '请点击“重新聆听”再试一次。' }} />}
     </div>
   </div>;
 }

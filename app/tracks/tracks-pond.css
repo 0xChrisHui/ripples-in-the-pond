@@ -22,7 +22,7 @@
 .track-archive--pond .track-ledger { background: transparent; border: 0; text-shadow: none; }
 .track-archive--pond .track-ledger :is(.material-muted, .material-provenance p, .material-mint-status) { color: #d2d8cf; font-size: 15px; line-height: 1.9; }
 .track-archive--pond .track-ledger .material-uri { color: #becbbd; font-size: 12px; line-height: 1.9; }
-.track-archive--pond .track-ledger .material-network-proof strong { font-size: 16px; }
+.track-archive--pond .track-ledger .material-network-proof h3 { font-size: 16px; }
 .track-archive--pond .track-ledger .material-network-proof span { font-size: 12px; }
 @media (max-width: 699px) {
   .track-header__tools { justify-content: flex-start; }

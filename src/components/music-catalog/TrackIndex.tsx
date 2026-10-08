@@ -43,12 +43,12 @@ export default function TrackIndex({ tracks, selectedId, onSelect, onPrepare }: 
     };
   }, [open]);
   function choose(id: string) { onSelect(id); setOpen(false); }
-  return <nav className="track-index" aria-label="35 首原曲目录" data-track-index="35" data-open={open}>
+  return <nav className="track-index" aria-label={`${tracks.length} 首原曲目录`} data-track-index={tracks.length} data-open={open}>
     <button className="track-index__toggle" ref={trigger} type="button" aria-expanded={open}
-      aria-controls="track-index-panel" onClick={() => setOpen(true)}><span>全部曲目</span><span>35 <b aria-hidden="true">＋</b></span></button>
+      aria-controls="track-index-panel" onClick={() => setOpen(true)}><span>全部曲目</span><span>{tracks.length} <b aria-hidden="true">＋</b></span></button>
     <div className="track-index__panel" id="track-index-panel" ref={panel}
       role={open ? 'dialog' : undefined} aria-modal={open ? true : undefined} aria-label={open ? '选择一首原曲' : undefined}>
-      <header className="track-index__heading"><span>曲目</span><span>01—35</span>
+      <header className="track-index__heading"><span>曲目</span><span>01—{String(tracks.length).padStart(2, '0')}</span>
         <button className="track-index__close" type="button" onClick={() => setOpen(false)} aria-label="关闭曲目目录">×</button>
       </header>
       <div className="track-index__viewport" ref={viewport}>
