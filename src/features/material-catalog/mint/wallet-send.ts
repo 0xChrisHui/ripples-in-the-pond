@@ -1,5 +1,5 @@
 'use client';
-import { createPublicClient, createWalletClient, custom, encodeFunctionData, getAddress, http, keccak256, stringToHex, type Hex,
+import { createPublicClient, createWalletClient, custom, encodeFunctionData, getAddress, keccak256, stringToHex, type Hex,
   type Address } from 'viem';
 import type { ConnectedWallet } from '@privy-io/react-auth';
 import { mainnet, sepolia } from 'viem/chains';
@@ -42,7 +42,8 @@ export async function sendMaterialVoucher(voucher: MaterialVoucher, selected: Pi
   const accounts = await provider.request({method:'eth_accounts'});
   if (!Array.isArray(accounts) || !accounts.some((address:unknown)=>getAddress(String(address))===account)) throw new Error('钱包付款账户发生变化');
   const chain = voucher.chainId===1?mainnet:sepolia;
-  const publicClient = createPublicClient({chain,transport:http()});
+  // 预检走钱包自带节点：http()无URL会落到viem默认公共节点，浏览器直连常因CORS/限流Failed to fetch。
+  const publicClient = createPublicClient({chain,transport:custom(provider)});
   const args = [a,voucher.authorizer,voucher.signature] as const;
   await publicClient.simulateContract({address:voucher.contractAddress,abi:MATERIAL_ABI,functionName:'redeem',args,account});
   const [gas,gasPrice,balance] = await Promise.all([publicClient.estimateContractGas({address:voucher.contractAddress,abi:MATERIAL_ABI,
