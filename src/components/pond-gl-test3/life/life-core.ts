@@ -107,7 +107,7 @@ export function stepFlowDrift(nodes: GlPhysNode[], nowSec: number, playingId: st
   const env = lifeEnv(nowSec);
   const t = nowSec * flowSpeed;
   for (const n of nodes) {
-    if (n.id === playingId || n.fx != null || n.fy != null || n.x == null || n.y == null) continue;
+    if (n.echo || n.id === playingId || n.fx != null || n.fy != null || n.x == null || n.y == null) continue;
     const [fx, fy] = flowAt(n.x * flowScale, n.y * flowScale, t);
     n.vx = (n.vx ?? 0) + fx * flowStrength * env;
     n.vy = (n.vy ?? 0) + fy * flowStrength * env;

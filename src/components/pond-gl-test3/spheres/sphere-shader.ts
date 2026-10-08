@@ -81,7 +81,8 @@ export const sphereFragmentShader = /* glsl */ `
     float th = atan(vUv.y - 0.5, vUv.x - 0.5);
     float w1 = sin(uEdgeK1 * th + vSeed.x + uTime * uEdgeW1);
     float w2 = sin(uEdgeK2 * th - uTime * uEdgeW2 + vSeed.x * 1.7);
-    float eamp = min(uEdgeAmp * (1.0 + uExciteGain * vSeed.y), 0.15);
+    // vSeed.y<0 = 第36特殊圆：稳定正圆，不吃边缘波/激励（借符号位，不新增 varying，兼容共用此片元的其他顶点着色器）
+    float eamp = vSeed.y < 0.0 ? 0.0 : min(uEdgeAmp * (1.0 + uExciteGain * vSeed.y), 0.15);
     float body = min(0.98, bodyRatio * (1.0 + eamp * (0.7 * w1 + 0.3 * w2)));
 
     // body：d < body 实色，边缘抗锯齿 + 边缘虚化 uEdgeSoft；景深失焦 → 轻微加粗边缘 = 软散景（只柔边、不碰颜色）

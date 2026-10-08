@@ -151,7 +151,7 @@ export function computeNodeAttrs(track: Pick<Track, 'week'>, groupId: GroupId): 
   const groupIdx = GROUPS.findIndex((g) => g.id === groupId);
   const palette = GROUP_PALETTES[groupIdx];
   const shadeIdx = (track.week - 1) % palette.length;
-  return { groupId, importance, radius: kSize, color: track.week === 36 ? '#00E5FF' : palette[shadeIdx], kSize };
+  return { groupId, importance, radius: kSize, color: track.week === 36 ? '#FFFFFF' : palette[shadeIdx], kSize };
 }
 
 /** 同聚落互连、跨聚落稀疏连接；只使用视觉节点ID，不读取音乐资产。 */

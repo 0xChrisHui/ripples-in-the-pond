@@ -22,6 +22,7 @@ import { getLifeTuning } from '../life/life-tuning';
 import { stepWakeSpheres } from '../life/wake-field';
 import { prefersReducedMotion } from '../reduced-motion';
 import { getPlaybackFocus } from '../focus/playback-focus';
+import { fillDrawOrder, isSpecial36, stepSpecial36 } from '../special36/special36-step';
 
 // 球色：手动解析 hex → sRGB 0-1，绕过 three 的 Color/ColorManagement（R3F 强制 linear 会让球色暗掉近半）。
 // 自定义 shader 不经 three colorspace_fragment → 手动 sRGB 直通 = 原始值原样显示（与 SVG/CSS 一致）。
@@ -36,6 +37,7 @@ const tmpA = new Matrix4(); // L3-3 果冻矩阵组合暂存
 const tmpB = new Matrix4();
 const TAU = Math.PI * 2;
 let prevTs = 0; // L3-2 激励衰减用：上一帧时间戳（算 dt）
+const drawOrder: number[] = []; // 实例槽位 → 节点下标（第36圆换层时动态插队）
 
 export interface InstanceBuf {
   aColor: Float32Array;
@@ -70,6 +72,9 @@ export interface FrameCtx {
 export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx): void {
   const { nodes, wavesRef, playingId, hoverId, tuning, waterOn, motionOn, proj, drift, life, waveSpeed, waterComposite, scenePresence, reducedSceneMotion } = ctx;
   const now = performance.now();
+  const focus = getPlaybackFocus();
+  const focusedId = focus.active ? focus.trackId : playingId;
+  stepSpecial36(nodes, proj, now, focusedId, hoverId); // 第36特殊圆：漂流/换层/隐现（须在浮动前写 z）
   stepSphereMotion(nodes, now / 1000, motionOn); // 球浮动层级波动 → 写 node._waveZ
   // L2 运动无序：滚轮去同步(写 _shiftOff) / 视差去同步(写 _parGain,_parAng) / 偶发颤动(写 _shivX,_shivY)
   stepWheelDesync(nodes, life.wheelDesync);
@@ -84,8 +89,6 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
   stepWakeSpheres(nodes, proj, playingId, now / 1000, life.wakeSpheres); // L4-1b 尾波扰水下球（喂 _gvx/_gvy 滑行）
   stepSphereGlide(nodes); // 涟漪推的惯性滑行收尾（_gvx 慢衰减加到位置）→ 波过后丝滑滑停
 
-  const focus = getPlaybackFocus();
-  const focusedId = focus.active ? focus.trackId : playingId;
   const anyPlaying = focusedId != null;
   const { aColor, aParams, aSubmerge, aLifeDim, baseColors, hoverLerp, dimLerp } = buf;
   const lt = getLifeTuning();
@@ -96,9 +99,14 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
   const exDecay = Math.exp(-dtSec / Math.max(0.05, lt.exciteDecay)); // L3-2 激励衰减系数
   const reduce = prefersReducedMotion(); // reduced-motion → 光晕呼吸冻结（隐现/运动各自已在 life-core 内冻结）
 
-  for (let i = 0; i < nodes.length; i++) {
+  fillDrawOrder(nodes, drawOrder);
+  // i = 节点下标（逐球平滑状态），slot = 实例槽位（绘制顺序，GPU 缓冲按它写）
+  for (let slot = 0; slot < drawOrder.length; slot++) {
+    const i = drawOrder[slot];
     const n = nodes[i];
     if (n.x == null || n.y == null) continue;
+    const special = isSpecial36(n);
+    const presence = n._presence ?? 1;
     const isPlaying = n.id === focusedId;
     const isHover = n.id === hoverId;
 
@@ -111,7 +119,7 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
     const sceneScale = reducedSceneMotion ? 1 : 0.88 + scenePresence * 0.12;
     const diameter = 2 * n.radius * HALO_R * (1 + hoverLerp[i] * 0.09) * p.scale * sceneScale;
     // L3-3 果冻感：沿速度方向非均匀缩放（速度平滑 lerp 防抖）；关 / reduced-motion → 均匀缩放（现状）
-    if (life.jelly && lt.jellyAmount > 0 && !reduce) {
+    if (life.jelly && lt.jellyAmount > 0 && !reduce && !special) {
       const jvx = (n._jelVx = (n._jelVx ?? 0) + ((n.vx ?? 0) + (n._gvx ?? 0) - (n._jelVx ?? 0)) * 0.2);
       const jvy = (n._jelVy = (n._jelVy ?? 0) + ((n.vy ?? 0) + (n._gvy ?? 0) - (n._jelVy ?? 0)) * 0.2);
       const e = Math.min(0.1, lt.jellyAmount * Math.hypot(jvx, jvy));
@@ -123,7 +131,7 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
     } else {
       tmpMatrix.makeScale(diameter, diameter, 1).setPosition(p.sx, p.sy, 0);
     }
-    mesh.setMatrixAt(i, tmpMatrix);
+    mesh.setMatrixAt(slot, tmpMatrix);
     // L3-2 激励维护**恒跑**（衰减 + 拖拽注入）：注入方 ripple-feed/wake-field 不看 flag，
     // 衰减若只在 edgeOn 内跑会棘轮式涨到 1 不释放 → 之后开边缘 flag 时全场幽灵爆发（review 修）。
     if ((n._excite ?? 0) > 0 || (n.fx != null && n.fy != null)) {
@@ -133,13 +141,13 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
     }
     // L3 aSeed：x=相位种子 φᵢ（边缘波），y=激励值（仅 flag 开时写 GPU buffer）
     if (seedOn) {
-      buf.aSeed[i * 2] = lifeSeeds(n.id)[4] * TAU;
-      buf.aSeed[i * 2 + 1] = n._excite ?? 0;
+      buf.aSeed[slot * 2] = lifeSeeds(n.id)[4] * TAU;
+      buf.aSeed[slot * 2 + 1] = special ? -1 : n._excite ?? 0; // -1 = 稳定正圆（见 sphere-shader）
     }
 
     // 播放球 / hover 且有人在播 → 白；否则球色（复刻 SphereNode renderFill）
     const c = isPlaying || (isHover && anyPlaying) ? WHITE : baseColors[i];
-    aColor[i * 3] = c[0]; aColor[i * 3 + 1] = c[1]; aColor[i * 3 + 2] = c[2];
+    aColor[slot * 3] = c[0]; aColor[slot * 3 + 1] = c[1]; aColor[slot * 3 + 2] = c[2];
 
     let fill = 0.52 + n.importance * 0.36;        // 复刻 baseOpacity
     if (isPlaying) fill = Math.min(0.95, fill + 0.2);
@@ -147,14 +155,14 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
     const waterSubmerge = getSubmerge(displayDepthOf(n));
     const submerge = waterOn ? waterSubmerge : 0;
     const lifeDim = n._lifeDim ?? 1;
-    aSubmerge[i] = waterSubmerge;
-    aLifeDim[i] = lifeDim;
-    n._visualDim = dimLerp[i] * (1 - submerge) * (waterComposite ? 1 : lifeDim) * scenePresence;
-    aParams[i * 4] = Math.min(1, fill * tuning.fill);
-    aParams[i * 4 + 1] = (isHover ? 0.5 : 0.3) * tuning.halo
-      * scenePresence;
-    aParams[i * 4 + 2] = dimLerp[i] * (1 - submerge) * scenePresence; // 其他音乐圆退场；焦点圆由日食黑盘覆盖
-    aParams[i * 4 + 3] = p.blurAmt * rt.dofStrength;          // /test3 景深失焦度 ×强度倍率
+    aSubmerge[slot] = waterSubmerge;
+    aLifeDim[slot] = lifeDim;
+    n._visualDim = dimLerp[i] * (1 - submerge) * (waterComposite ? 1 : lifeDim) * scenePresence * presence;
+    aParams[slot * 4] = Math.min(1, fill * tuning.fill);
+    aParams[slot * 4 + 1] = (isHover ? 0.5 : 0.3) * tuning.halo
+      * scenePresence * presence;
+    aParams[slot * 4 + 2] = dimLerp[i] * (1 - submerge) * scenePresence * presence; // 其他音乐圆退场；焦点圆由日食黑盘覆盖
+    aParams[slot * 4 + 3] = p.blurAmt * rt.dofStrength;          // /test3 景深失焦度 ×强度倍率
   }
 
   mesh.instanceMatrix.needsUpdate = true;

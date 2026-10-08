@@ -21,7 +21,7 @@ export interface BgWave { x: number; y: number; size: number; spawnTime: number;
 export function driftSpheres(nodes: GlPhysNode[], timeSec: number, strength: number): void {
   if (strength <= 0 || prefersReducedMotion()) return;
   for (const n of nodes) {
-    if (n.fx != null || n.fy != null || n.x == null || n.y == null) continue;
+    if (n.echo || n.fx != null || n.fy != null || n.x == null || n.y == null) continue; // 第36圆走自己的漂流
     const lw = n.lw;
     if (!lw) continue;
     const ax = Math.sin(timeSec * (0.11 + lw.f1) + lw.p1) + 0.7 * Math.cos(timeSec * (0.17 + lw.f2) + lw.p2);

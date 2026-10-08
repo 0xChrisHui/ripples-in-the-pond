@@ -74,8 +74,9 @@ export function setupGlSimulation(
   });
 
   // 拖过的球让出大部分 cluster 拉力（其余 0.18）— 出处 sphere-sim-setup.ts:85-90
-  const strengthOf = (d: GlPhysNode) =>
-    (d as GlPhysNode)._dragLoose ? 0.025 : (anchorMap.get(d.id)?.strength ?? 0.1);
+  // 第36特殊圆自主漂流（special36-step），不受 cluster 锚点牵引
+  const strengthOf = (d: GlPhysNode) => d.echo ? 0
+    : d._dragLoose ? 0.025 : (anchorMap.get(d.id)?.strength ?? 0.1);
 
   // charge/link/collide/cluster/center 全部 viscous=off 档（默认态）— 出处 sphere-sim-setup.ts:94-114
   const sim = forceSimulation<GlPhysNode>(nodes)

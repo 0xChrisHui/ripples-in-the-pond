@@ -25,6 +25,7 @@ export type GlPhysNode = Omit<SimNode, 'track'> & GlSource & {
   _excite?: number;   // L3-2 扰动激励值（边缘剧烈度）
   _lifeDim?: number;  // L5-1 透明度隐现系数（缺省视作 1）
   _visualDim?: number; // P8-L A3：SphereInstances 写入的整体可见度，水面效果只读它
+  _presence?: number;  // 第36特殊圆隐现 0..1（special36-step 写；缺省视作 1）
   _jelVx?: number;    // L3-3 果冻感平滑速度 x
   _jelVy?: number;    // L3-3 果冻感平滑速度 y
 };
@@ -60,10 +61,15 @@ export function buildGlNodes(tracksToShow: Track[], groupId: GroupId, dataVersio
       p1: unit('lw-p1') * 6.283,
       p2: unit('lw-p2') * 6.283,
     };
-    return { ...n, baseLayer, lw, radius: n.kSize * fLayer(baseLayer), z };
+    // 第36特殊圆半径 ×2（碰撞/命中/日食都读 radius，同步变大）
+    const radius = n.kSize * fLayer(baseLayer) * (n.echo ? 2 : 1);
+    return { ...n, baseLayer, lw, radius, z };
   });
   // 远先画：z 升序（与 use-sphere-z sortedNodes 同序）→ instance index = 绘制顺序
   nodes.sort((a, b) => a.z - b.z);
-  const links = generateLinks(nodes, assignment, createLayoutRandom(dataVersion, groupId, 'links', ...nodeIds));
+  // 第36圆自主漂流，不受连线拉扯（过滤放在生成后，其余连线保持原随机序列）
+  const echoId = echo?.playbackId;
+  const links = generateLinks(nodes, assignment, createLayoutRandom(dataVersion, groupId, 'links', ...nodeIds))
+    .filter((link) => link.source !== echoId && link.target !== echoId);
   return { nodes, links, assignment };
 }

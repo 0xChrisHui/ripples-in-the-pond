@@ -8,6 +8,7 @@ import { getSubmerge } from '../water/water-level';
 import { project, applyFloat } from '../sphere-projection';
 import { depthOf, displayDepthOf } from '../pointer-fx';
 import { getPlaybackFocus } from '../focus/playback-focus';
+import { SPECIAL36_HIT_MIN } from '../special36/special36-step';
 import SphereHit, { currentSphereContext } from './SphereHit';
 
 type Props = {
@@ -63,7 +64,8 @@ export default function SphereOverlay({
       for (const node of nodes) {
         const element = elements.current.get(node.id);
         if (!element || node.x == null || node.y == null) continue;
-        const dim = focusedId != null && node.id !== focusedId;
+        const presence36 = node._presence ?? 1; // 第36特殊圆隐现；普通球恒 1
+        const dim = (focusedId != null && node.id !== focusedId) || presence36 < SPECIAL36_HIT_MIN;
         const raw = waterOn ? getSubmerge(displayDepthOf(node)) : 0;
         let submerge = raw;
         if (depthModel) {
@@ -78,7 +80,7 @@ export default function SphereOverlay({
         element.style.transform = `translate(${point.sx - node.radius}px, ${point.sy - node.radius}px) scale(${point.scale * sceneScale})`;
         element.style.filter = point.blurAmt > 0.02 ? `blur(${(point.blurAmt * 3).toFixed(2)}px)` : '';
         element.style.opacity = dim ? '0' : String(
-          Math.max(0.4, 1 - submerge * 1.5) * (node._lifeDim ?? 1) * presence,
+          Math.max(0.4, 1 - submerge * 1.5) * (node._lifeDim ?? 1) * presence * presence36,
         );
         element.style.pointerEvents = dim || !interactive ? 'none' : 'auto';
         element.tabIndex = dim || !interactive ? -1 : 0;
