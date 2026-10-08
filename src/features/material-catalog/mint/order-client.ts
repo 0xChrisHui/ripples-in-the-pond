@@ -68,11 +68,24 @@ export function createMaterialMintClient({ userId, wallet, request, send = sendM
     const voucher = parseMaterialVoucher(body);
     if (authorized.status !== 'authorized' || authorized.version !== order.version + 1) throw Error('凭证与冻结订单版本不一致');
     let version = authorized.version;
+    // 对账cron每分钟会给sending订单加版本号；用户在钱包里停留越久版本越容易过期。
+    // 拒绝结果与hash登记只依赖digest且可安全重复，冲突时重读订单、确认仍是同一笔授权后用最新版本重试。
     async function transition(path: string, method: 'POST' | 'PATCH', extra: Record<string, unknown>) {
-      const next = parseMaterialOrder(await request(path, method, { orderId: id, walletAddress: cache.recipientAddress,
-        digest: voucher.digest, version, ...extra }));
-      assertSameMaterialOrder(order, next);
-      if (next.version !== version + 1) throw Error('订单版本响应无效'); version = next.version;
+      const retryable = method === 'PATCH' || path === 'submission';
+      for (let tries = 0; ; tries++) {
+        try {
+          const next = parseMaterialOrder(await request(path, method, { orderId: id, walletAddress: cache.recipientAddress,
+            digest: voucher.digest, version, ...extra }));
+          assertSameMaterialOrder(order, next);
+          if (next.version !== version + 1) throw Error('订单版本响应无效'); version = next.version; return;
+        } catch (error) {
+          if (!retryable || tries >= 3) throw error;
+          const fresh = await getOrder(id);
+          assertSameMaterialOrder(order, fresh);
+          if (fresh.digest !== voucher.digest || !['sending', 'unknown', 'submitted', 'confirming'].includes(fresh.status)) throw error;
+          version = fresh.version;
+        }
+      }
     }
     return send(voucher, wallet!, { attempt: () => transition('attempt', 'POST', {}),
       outcome: outcome => transition('attempt', 'PATCH', { outcome }), submission: txHash => transition('submission', 'POST', { txHash }),

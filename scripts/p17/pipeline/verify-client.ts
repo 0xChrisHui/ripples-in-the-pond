@@ -103,6 +103,25 @@ async function main() {
     const beforeInvalid = requests.length;
     await assert.rejects(() => client.recoverOrder(id, '0x1234' as Hex), /标识无效/);
     assert.equal(requests.length, beforeInvalid, '非法手工hash不能发HTTP或钱包请求');
+    // 对账cron在用户停留钱包期间给sending订单加版本号：拒绝结果必须重读后重试，订单回到待领取。
+    forgetMaterialHash(identity); row.status = 'prepared'; row.digest = id; row.version = 10;
+    const strict = async (path: string, method: string, body?: Record<string, unknown>) => {
+      if (method === 'GET') return path.startsWith('orders?') ? { orders: [row] } : { ...row };
+      if (path === 'authorization') {
+        row.status = 'authorized'; row.version++;
+        return { ...row, authorizer: address, signature: `0x${'11'.repeat(65)}`, authorization: { orderId: id, tokenId: '1',
+          amount: '1', recipient: address, tokenURIHash: id, deadline: '12345678900' } };
+      }
+      if (body?.version !== row.version) throw Error('订单状态已变化');
+      row.version++; row.status = method === 'POST' ? 'sending' : body?.outcome === 'rejected' ? 'prepared' : 'unknown';
+      return { ...row };
+    };
+    const racing = createMaterialMintClient({ userId: 'owner-a', wallet, request: strict,
+      send: async (_voucher: MaterialVoucher, _wallet, state) => {
+        await state.attempt(); row.version += 2; await state.outcome('rejected'); throw Error('用户拒绝');
+      } });
+    await assert.rejects(() => racing.sendOrder(id), /用户拒绝/);
+    assert.equal(row.status, 'prepared', '版本被cron推进后，拒绝结果仍须落库并回到待领取');
     Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => { throw Error('缓存不可读'); } } });
     assert.equal(readMaterialHash(identity), null, '缓存不可用不应阻断真实订单查询与手工恢复');
     console.log('原曲客户端：unknown旧hash优先/不重发、丢回报恢复、CAS、换用户/钱包隔离、同源坐标与坏凭证拒绝，通过（I/O夹具）');

@@ -100,12 +100,13 @@ export default function MaterialOrderView({ orderId, embedded = false }: { order
           {canSendMaterialOrder(order) && !cachedHash && <button className="material-collect" type="button"
             disabled={busy || !sameWallet || !ready || gasHint?.enough === false}
             onClick={() => { void act('send'); }}>{busy ? '等待钱包确认…' : '在钱包中确认领取'}</button>}
-          {recoverable && <><label>已有交易哈希 <input aria-label="已有原曲交易哈希" type="text" value={enteredHash}
+          {recoverable && <details className="material-proof-details"><summary>已在钱包里确认，但这里没有更新？</summary><label>已有交易哈希 <input aria-label="已有原曲交易哈希" type="text" value={enteredHash}
             onChange={event => setHashInput({ scope, value: event.target.value })} disabled={busy} autoComplete="off" spellCheck={false} /></label>
             <button className="material-collect" type="button" disabled={busy || !sameWallet || (enteredHash.trim() ? !validHash : !cachedHash)}
               onClick={() => { void act('recover'); }}>登记已有交易哈希</button>
-            <p className="material-muted">哈希只是查账线索，需链上核对后才会确认领取；此操作不会再次发送交易。</p></>}
+            <p className="material-muted">哈希只是查账线索，需链上核对后才会确认领取；此操作不会再次发送交易。</p></details>}
           {!sameWallet && (canSendMaterialOrder(order) || recoverable) && <p className="material-muted">请连接此订单的接收钱包后继续。</p>}
+          {order.status === 'sending' && !cachedHash && <p className="material-muted">正在等待钱包响应。若已拒绝或关闭了钱包弹窗，稍后点“刷新状态”即可重新领取。</p>}
           {order.status === 'success' && <p className="material-muted">这是历史领取记录；转出不恢复领取资格，当前持有数量以链上余额为准。</p>}
           {order.status === 'success' && asset && <Link href={asset}>打开原曲 →</Link>}
           {order.txHash && <p className="material-muted"><a href={explorerTxUrlFor(order.chainId, order.txHash)} target="_blank" rel="noreferrer">在区块浏览器查看交易 ↗</a></p>}
