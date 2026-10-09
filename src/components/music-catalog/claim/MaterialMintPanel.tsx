@@ -36,6 +36,9 @@ export default function MaterialMintPanel({ track }: { track: OriginalTrack }) {
   </section>;
 }
 
+// 同一用户的接收地址跨曲目复用：切曲目重建组件时不必再等 op/status 才显示。
+const recipientCache = new Map<string, string>();
+
 function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnType<typeof useAuth> }) {
   const { authenticated, getAccessToken } = auth;
   const [status, setStatus] = useState<MintStatus | null>(null);
@@ -56,10 +59,11 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
         const response = await fetchWithAuth(`/api/material-mint/op/status?trackId=${encodeURIComponent(track.trackId)}`,
           { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
         const body = await response.json() as MintStatus;
-        if (!cancelled) setStatus(body);
+        if (!cancelled) { setStatus(body); if (auth.userId && body.recipientAddress) recipientCache.set(auth.userId, body.recipientAddress); }
       } catch { if (!cancelled) setStatus({ error: '收藏状态暂不可用，请稍后查询。' }); }
     })();
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authenticated, getAccessToken, track.trackId, opAvailable]);
   async function collect() {
     if (busy) return;
@@ -80,12 +84,14 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
       if (active.current) setStatus({ error: '请求结果暂不可用，请查询收藏状态后再操作。', needsReview: true });
     } finally { if (active.current) setBusy(false); }
   }
+  // 服务端地址（冻结快照）优先；未返回前先用缓存/当前钱包地址，避免等待请求。
+  const recipient = status?.recipientAddress ?? (auth.userId ? recipientCache.get(auth.userId) : undefined) ?? auth.evmAddress;
   const pending = status?.needsReview || ['pending', 'minting_onchain'].includes(status?.status ?? '');
   return <section className="material-chain-row" aria-label="Optimism 原曲领取">
     <div className="material-chain-info"><h3>Optimism</h3>
       <p className="material-muted">不可转让 SBT · 平台承担 Gas</p>
-      {status?.recipientAddress && <details className="material-proof-details"><summary>接收地址</summary>
-        <p className="material-uri">{status.recipientAddress}</p></details>}
+      {recipient && <details className="material-proof-details"><summary>接收地址</summary>
+        <p className="material-uri">{recipient}</p></details>}
     </div>
     <div className="material-chain-action">
         {!opAvailable ? <button type="button" className="material-collect" disabled>Optimism 原曲暂未开放</button>
