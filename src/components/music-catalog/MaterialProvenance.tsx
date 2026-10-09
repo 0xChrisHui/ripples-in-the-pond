@@ -41,8 +41,8 @@ export default function MaterialProvenance({ track }: { track: OriginalTrack }) 
     {track.deployments.map((deployment) => <article className="proof-card proof-chain"
       key={`${deployment.chainId}/${deployment.contractAddress}`}>
       <header className="material-proof-heading"><h3>{chainTitle(deployment.chainId)}</h3>
-        <span data-status={deployment.status}>{deployment.status === 'ready' ? '✓ 凭证已核验'
-          : deployment.status === 'undeployed' ? '尚未部署' : '凭证待核验'}</span></header>
+        {deployment.status !== 'ready' && <span data-status={deployment.status}>{deployment.status === 'undeployed' ? '尚未部署' : '凭证待核验'}</span>}
+      </header>
       <dl>
         {deployment.contractAddress && <>
           <ProofRow label="铸造合约" value={deployment.contractAddress}

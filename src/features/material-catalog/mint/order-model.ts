@@ -7,7 +7,7 @@ const states = ['prepared', 'authorized', 'sending', 'unknown', 'submitted', 'co
 export const MATERIAL_STATUS_COPY: Record<PublicMaterialOrder['status'], string> = {
   prepared: '待钱包确认', authorized: '待钱包确认', sending: '交易正在发送，请勿重复操作',
   unknown: '交易结果待核对，请勿再次发送', submitted: '已登记交易，等待链上确认',
-  confirming: '等待足够的链上确认', success: '原曲领取已确认',
+  confirming: '等待足够的链上确认', success: '原曲铸造已确认',
   reverted: '交易未成功，可重新检查后发送', cancelled: '订单已取消',
 };
 function record(value: unknown): Record<string, unknown> {

@@ -14,5 +14,5 @@ test('余额不足、网络失败分别给出可执行提示', () => {
 test('可读中文短句原样显示，其余走兜底并折叠技术详情', () => {
   assert.equal(describeMaterialError(new Error('已有交易等待核对，不能再次发送')).title, '已有交易等待核对，不能再次发送');
   const unknown = describeMaterialError(new Error('boom 0xdeadbeef'));
-  assert.equal(unknown.title, '领取暂时没有完成'); assert.match(unknown.detail ?? '', /boom/);
+  assert.equal(unknown.title, '铸造暂时没有完成'); assert.match(unknown.detail ?? '', /boom/);
 });

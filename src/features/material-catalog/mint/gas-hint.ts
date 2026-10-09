@@ -6,7 +6,7 @@ export type GasHint = { fee: bigint; balance: bigint; enough: boolean };
 // 实际 redeem 约 15 万 Gas；与发送前预检一致，余额须覆盖 1.2 倍上限才放行。
 const TYPICAL_GAS = 150000n, GAS_LIMIT = 180000n;
 
-/** 点击领取前读取付款钱包当前链的余额与 Gas 价；链不一致或读取失败返回 null，不阻塞后续预检。 */
+/** 点击铸造前读取付款钱包当前链的余额与 Gas 价；链不一致或读取失败返回 null，不阻塞后续预检。 */
 export async function readGasHint(provider: Eip1193, account: Address, chainId: number): Promise<GasHint | null> {
   try {
     if (Number(await provider.request({ method: 'eth_chainId' })) !== chainId) return null;

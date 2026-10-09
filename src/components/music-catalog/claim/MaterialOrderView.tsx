@@ -83,31 +83,31 @@ export default function MaterialOrderView({ orderId, embedded = false }: { order
   return <Container className={embedded ? 'material-inline-claim' : 'material-catalog'} data-material-claim-inline={embedded || undefined}>
     {!embedded && <><PageNavigation />
       <nav className="material-header" aria-label="返回我的音乐"><PondRouteLink href="/me">← 我的音乐</PondRouteLink></nav>
-      <div className="material-intro"><h1>原曲领取状态</h1><p>已有交易只查询或恢复，不重复发送。</p></div></>}
+      <div className="material-intro"><h1>原曲铸造状态</h1><p>已有交易只查询或恢复，不重复发送。</p></div></>}
     {!auth.ready ? <p role="status">正在确认登录状态…</p> : !auth.authenticated
       ? <button className="material-collect" type="button" onClick={auth.openLoginModal}>登录后查看本人订单</button>
       : <section className="material-mint" aria-live="polite">
         {!order ? <p>正在读取本人订单…</p> : <>
           <Heading className="material-order-title">{MATERIAL_STATUS_COPY[order.status]}</Heading>
-          <p className="material-muted">{getChainDefinition(order.chainId).displayName} · 原曲 Token #{order.tokenId} · 数量 1 · 领取免费，仅需支付 Gas</p>
-          {order.status !== 'cancelled' && <ol className="material-steps" aria-label="领取进度">
+          <p className="material-muted">{getChainDefinition(order.chainId).displayName} · 原曲 Token #{order.tokenId} · 数量 1 · 铸造免费，仅需支付 Gas</p>
+          {order.status !== 'cancelled' && <ol className="material-steps" aria-label="铸造进度">
             {STEPS.map((label, index) => <li key={label} data-state={index < current ? 'done' : index === current ? 'current' : 'todo'}
               aria-current={index === current ? 'step' : undefined}><span aria-hidden="true">{index < current ? '✓' : index + 1}</span>{label}</li>)}
           </ol>}
-          {sendable && gasHint && <p className="material-gas" data-low={!gasHint.enough || undefined}>
+          {!embedded && sendable && gasHint && <p className="material-gas" data-low={!gasHint.enough || undefined}>
             预计 Gas 约 {formatEth(gasHint.fee)} ETH · 钱包余额 {formatEth(gasHint.balance)} ETH
             {!gasHint.enough && ' · 余额偏低，可能无法完成，请先充入少量 ETH'}</p>}
-          {canSendMaterialOrder(order) && !cachedHash && <button className="material-collect" type="button"
+          {!embedded && canSendMaterialOrder(order) && !cachedHash && <button className="material-collect" type="button"
             disabled={busy || !sameWallet || !ready || gasHint?.enough === false}
-            onClick={() => { void act('send'); }}>{busy ? '等待钱包确认…' : '在钱包中确认领取'}</button>}
+            onClick={() => { void act('send'); }}>{busy ? '等待钱包确认…' : '铸造并在钱包中确认'}</button>}
           {recoverable && <details className="material-proof-details"><summary>已在钱包里确认，但这里没有更新？</summary><label>已有交易哈希 <input aria-label="已有原曲交易哈希" type="text" value={enteredHash}
             onChange={event => setHashInput({ scope, value: event.target.value })} disabled={busy} autoComplete="off" spellCheck={false} /></label>
             <button className="material-collect" type="button" disabled={busy || !sameWallet || (enteredHash.trim() ? !validHash : !cachedHash)}
               onClick={() => { void act('recover'); }}>登记已有交易哈希</button>
             <p className="material-muted">哈希只是查账线索，需链上核对后才会确认领取；此操作不会再次发送交易。</p></details>}
-          {!sameWallet && (canSendMaterialOrder(order) || recoverable) && <p className="material-muted">请连接此订单的接收钱包后继续。</p>}
+          {!embedded && !sameWallet && (canSendMaterialOrder(order) || recoverable) && <p className="material-muted">请连接此订单的接收钱包后继续。</p>}
           {order.status === 'sending' && !cachedHash && <p className="material-muted">正在等待钱包响应。若已拒绝或关闭了钱包弹窗，稍后点“刷新状态”即可重新领取。</p>}
-          {order.status === 'success' && <p className="material-muted">这是历史领取记录；转出不恢复领取资格，当前持有数量以链上余额为准。</p>}
+          {order.status === 'success' && <p className="material-muted">这是历史铸造记录；转出不恢复铸造资格，当前持有数量以链上余额为准。</p>}
           {order.status === 'success' && asset && <Link href={asset}>打开原曲 →</Link>}
           {order.txHash && <p className="material-muted"><a href={explorerTxUrlFor(order.chainId, order.txHash)} target="_blank" rel="noreferrer">在区块浏览器查看交易 ↗</a></p>}
           <details className="material-proof-details"><summary>订单详情</summary>

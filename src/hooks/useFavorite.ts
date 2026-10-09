@@ -5,6 +5,7 @@ import { useAuth } from './useAuth';
 import { saveScore } from '@/src/data/jam-source';
 import { fetchWithAuth } from '@/src/lib/fetch-with-auth';
 import { getDrafts, removeDraft } from '@/src/lib/draft-store';
+import { announceMintRecorded } from '@/src/lib/mint-notice';
 
 type FavoriteStatus = 'idle' | 'success';
 
@@ -70,6 +71,9 @@ export function useFavorite(
         });
         return;
       }
+
+      // 服务端已接受入队：右上角提示去「我的」查看（409 已收藏过则不重复提示）
+      if (mintRes.ok) announceMintRecorded();
 
       // 草稿上传（如有）— 失败不影响收藏
       const drafts = getDrafts();
