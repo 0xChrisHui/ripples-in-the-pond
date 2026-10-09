@@ -94,3 +94,16 @@
 
 - 对账 cron 仍会处理无 hash 的 `sending` 订单；根治需改数据库函数与迁移，另立项。
 - Ethereum 凭证来源误标 OP、永久 metadata 的 Minted At 为建单日期（P16 遗留）。
+
+---
+
+## 8. 执行记录（2026-10-09）
+
+| 组 | 状态 | 要点 |
+|---|---|---|
+| A | 代码完成，待真实钱包点验 | ETH 仅外部钱包可见；一步铸造；“领取”统一改“铸造”；删除凭证已核验徽标；按钮不再等待 `op/status`，点击时才等钱包/登录就绪 |
+| B | 代码完成，待点验 | 新事件 `pond:mint-recorded`（`src/lib/mint-notice.ts`）→ `DraftSavedToast` 右上角“你的收藏已记录”，带跳转 /me；`/` 收藏、`/tracks` OP/ETH 提交后触发 |
+| C | 代码完成，待点验 | `/api/me/nfts` 去掉 token_id 去重，合并 legacy / op_sbt / eth 三类；`/me` 深处新增“铸造记录”（唱片+原曲，由已加载数据拼成，无新增请求） |
+| D | 代码完成，待用户目验 | `WaterPetals` 的抠洞去掉“仅播放中”限制，所有音乐圆圈（含第 36 圆）按层变量 vs 水面层比较；未自行运行 GL |
+
+核对结论：N1 卡顿原因是 OP 按钮等 `op/status`、ETH 按钮等钱包校验，且切曲目时领取区整体重建；N2 新 OP SBT 与旧收藏共用 `mint_queue`/`mint_events`，原先被 token_id 去重吞成一条；N3 首页走 `pond-gl-test3`，花瓣是独立 2D canvas，原先只对正在播放的球抠洞；N4 提示组件复用 `DraftSavedToast`。

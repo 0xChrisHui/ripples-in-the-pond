@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
+import type { Track36VisitorState } from '../visitor/track36-state';
 import {
   syncPetals, updatePetals, drawPetals, petalDropScreen, type Petal,
 } from './water-petals-sim';
@@ -24,10 +25,13 @@ import type { ResidentEchoRuntime } from '@/src/types/echo-resident';
  *   水下球不抠（花瓣仍盖其上）。出水程度 = 1−getSubmerge(renderDepth)，与扭曲水面遮罩同口径。
  * 只在挂载时（flowerPetals 开）跑；卸载即停。pointer-events-none 不挡交互。
  */
-export default function WaterPetals({ glSim, resident }: { glSim?: GlSim; resident?: ResidentEchoRuntime }) {
+export default function WaterPetals({ glSim, resident, visitor }: {
+  glSim?: GlSim; resident?: ResidentEchoRuntime; visitor?: RefObject<Track36VisitorState | null>;
+}) {
   const cvRef = useRef<HTMLCanvasElement>(null);
   const glSimRef = useRef<GlSim | undefined>(glSim);
   const residentRef = useRef(resident);
+  const visitorRef = visitor;
   useEffect(() => { glSimRef.current = glSim; }); // 每次 render 同步最新 glSim（切组后 nodes 换新数组）
   useEffect(() => { residentRef.current = resident; }, [resident]);
 
@@ -90,17 +94,18 @@ export default function WaterPetals({ glSim, resident }: { glSim?: GlSim; reside
       applyP9PetalMotion(petals, p9, getShowcasePose());
       ctx.clearRect(0, 0, W, H);
       drawPetals(ctx, petals, t, W, H, dpr, tn.petalSens, tn.petalSize, getP9PetalVisual(p9, petals.length));
-      // 遮挡（/test3 投影适配）：出水球在水面之上 → 抠掉花瓣层上**投影后**球身处（destination-out），露出下层 GL 球 = 球盖花瓣。
-      // emerged=1−没入：出水球 1（全抠/全盖）、水下球 0（不抠 → 花瓣仍盖其上，正确）；过水线渐变。位置/半径走 project()=视觉球。
-      if (nodes) {
-        const playingId = glSimRef.current?.playingIdRef.current;
+      // 遮挡（/test3 投影适配）：音乐圆圈所在层（displayDepthOf）与水面层（getSubmerge）比较——
+      // 圆圈在水面层以上 → 抠掉花瓣层上**投影后**球身处（destination-out），露出下层 GL 球 = 球盖花瓣；
+      // 圆圈在水下 → 不抠，花瓣仍盖其上。emerged=1−没入：出水 1、水下 0，过水线渐变。位置/半径走 project()=视觉球。
+      // 所有音乐圆圈（含第 36 圆）同口径，不再只限正在播放的那一颗。
+      const visitorNode = visitorRef?.current?.node;
+      if (nodes || visitorNode) {
         ctx.save();
         ctx.globalCompositeOperation = 'destination-out';
         ctx.fillStyle = '#000';
-        for (const n of nodes) {
-          if (!playingId || n.id !== playingId) continue;
+        for (const n of [...(nodes ?? []), ...(visitorNode ? [visitorNode] : [])]) {
           if (n.x == null || n.y == null) continue;
-          const emerged = 1 - getSubmerge(displayDepthOf(n));
+          const emerged = (1 - getSubmerge(displayDepthOf(n))) * (n._visualDim ?? 1);
           if (emerged <= 0.01) continue;
           const pr = project(n.x, n.y, depthOf(n), proj, n); // 投影后屏幕位置 + 透视缩放
           ctx.globalAlpha = emerged;
@@ -126,7 +131,7 @@ export default function WaterPetals({ glSim, resident }: { glSim?: GlSim; reside
       window.removeEventListener('resize', resize);
       releaseWakeField();
     };
-  }, []);
+  }, [visitorRef]);
 
   return (
     <canvas

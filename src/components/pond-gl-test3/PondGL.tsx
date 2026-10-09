@@ -169,7 +169,7 @@ export default function PondGL({ flags, glSim, pointerInteractive = true, onPerf
         </Canvas>
       </GLErrorBoundary>
       {/* 水面花瓣层（2D overlay，z-10 在 GL 之上）：出水球用 project() 抠洞 → 球盖花瓣。headless 跟随同源涟漪 */}
-      {sceneReady && !flags.forceFallback && flags.flowerPetals && <WaterPetals glSim={glSim} resident={resident?.runtime} />}
+      {sceneReady && !flags.forceFallback && flags.flowerPetals && <WaterPetals glSim={glSim} resident={resident?.runtime} visitor={visitor} />}
       {/* J1：context lost / forceFallback → 盖兜底夜塘（Canvas 仍在底下跑，撤掉即恢复） */}
       <SceneCover artDir={flags.artDir} visible={showCover} />
     </div>
