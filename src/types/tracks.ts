@@ -51,6 +51,12 @@ export interface OwnedNFT {
   token_id: number;
   tx_hash: string;
   minted_at: string;
+  /** 记录唯一标识；旧缓存可能没有，渲染时回退到 tx_hash。 */
+  id?: string;
+  /** legacy=首页收藏(OP旧合约)；op_sbt=/tracks 的 OP SBT；eth=/tracks 的 Ethereum NFT。同一首可并存，不去重。 */
+  edition?: 'legacy' | 'op_sbt' | 'eth';
+  chain_id?: number;
+  status?: 'pending' | 'success';
 }
 
 /** API 响应：GET /api/tracks */

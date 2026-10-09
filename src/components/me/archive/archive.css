@@ -154,3 +154,9 @@
 
 @media (prefers-reduced-motion: reduce) { .me-archive * { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
 @media (forced-colors: active) { .me-archive { background: Canvas; } }
+
+.me-archive-row--history { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+.me-archive-row--history .me-archive-row__main p { white-space: normal; }
+.me-archive-row--history .me-archive-row__state { justify-items: end; text-align: right; }
+.me-archive-row--history .me-archive-row__state a { color: var(--p11-faint); font-size: var(--p11-text-xs); text-decoration: none; }
+.me-archive__panel--history { margin-top: var(--p11-space-24, 24px); }

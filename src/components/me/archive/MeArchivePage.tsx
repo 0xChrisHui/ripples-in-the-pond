@@ -18,6 +18,8 @@ import EchoArchiveRow from '@/src/components/echo/EchoArchiveRow';
 import ArchiveMintProvider, { ArchiveMintNetworkControl } from '@/src/components/mint/archive/ArchiveMintProvider';
 import { useScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
+import MintHistorySection from './MintHistorySection';
+import { MINT_RECORDED_EVENT } from '@/src/lib/mint-notice';
 import './archive.css';
 
 /** 唱片、待铸造和收藏共用的数据视图；页面外壳可以替换，档案行为保持一致。 */
@@ -53,9 +55,10 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
     && (recordings.resolved || recordings.phase === 'error')
     && (materials.resolved || materials.phase === 'error')));
   useEffect(() => {
-    const refresh = () => { void retry('recordings'); };
-    window.addEventListener('jam:draft-saved', refresh);
-    return () => window.removeEventListener('jam:draft-saved', refresh);
+    const events = [['jam:draft-saved', 'recordings'], [MINT_RECORDED_EVENT, 'materials']] as const;
+    const handlers = events.map(([name, section]) => [name, () => { void retry(section); }] as const);
+    handlers.forEach(([name, handler]) => window.addEventListener(name, handler));
+    return () => handlers.forEach(([name, handler]) => window.removeEventListener(name, handler));
   }, [retry]);
   useEffect(() => { onPrepared?.(prepared); }, [onPrepared, prepared]);
   useEffect(() => () => { onPrepared?.(false); }, [onPrepared]);
@@ -178,11 +181,13 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
                 page={safePages.favorites} pageCount={pageCounts.favorites}
                 onPageChange={(page) => changePage('favorites', page)}>
                 {materials.items.slice(favoriteStart, favoriteStart + ARCHIVE_PAGE_SIZES.favorites).map((nft) => (
-                  <MaterialArchiveRow key={nft.tx_hash || `pending-${nft.token_id}`} nft={nft} />
+                  <MaterialArchiveRow key={nft.id ?? (nft.tx_hash || `pending-${nft.token_id}`)} nft={nft} />
                 ))}
                 {archiveLoading(materials) && (favoriteCount ?? 0) === 0 && <div className="me-archive__skeleton" />}
               </ArchiveSection>
             </div>
+            <MintHistorySection materials={materials.items} scores={scores.items}
+              loading={archiveLoading(materials) || archiveLoading(scores)} />
           </div>
         )}
       </div>
