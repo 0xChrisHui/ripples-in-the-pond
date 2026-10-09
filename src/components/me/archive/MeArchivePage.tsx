@@ -68,7 +68,10 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
   ], [echoes.items, scores.items]);
   const recordCount = recordItems.length > 0 || recordsSettled ? recordItems.length : null;
   const pendingCount = archiveCount(recordings);
-  const favoriteCount = archiveCount(materials);
+  // 收藏按曲目合并：同一首无论在哪收藏、铸在哪条链，只显示一次（逐条来源见“铸造记录”）。
+  const favoriteItems = useMemo(() => materials.items.filter((nft, index, all) => (
+    !nft.track || all.findIndex((other) => other.track?.id === nft.track?.id) === index)), [materials.items]);
+  const favoriteCount = materials.resolved || favoriteItems.length > 0 ? favoriteItems.length : archiveCount(materials);
   const pagination = useArchivePagination({ records: recordCount, pending: pendingCount,
     favorites: favoriteCount });
   const { pageCounts, safePages, starts, changePage, showRecordsPage } = pagination;
@@ -180,7 +183,7 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
                 emptyDescription="收藏的声音会留在这里。"
                 page={safePages.favorites} pageCount={pageCounts.favorites}
                 onPageChange={(page) => changePage('favorites', page)}>
-                {materials.items.slice(favoriteStart, favoriteStart + ARCHIVE_PAGE_SIZES.favorites).map((nft) => (
+                {favoriteItems.slice(favoriteStart, favoriteStart + ARCHIVE_PAGE_SIZES.favorites).map((nft) => (
                   <MaterialArchiveRow key={nft.id ?? (nft.tx_hash || `pending-${nft.token_id}`)} nft={nft} />
                 ))}
                 {archiveLoading(materials) && (favoriteCount ?? 0) === 0 && <div className="me-archive__skeleton" />}

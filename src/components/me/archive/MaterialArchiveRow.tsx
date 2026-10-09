@@ -9,16 +9,13 @@ export default function MaterialArchiveRow({ nft }: { nft: OwnedNFT }) {
   const track = nft.track ?? null;
   const isPlaying = Boolean(track && playing && currentTrack?.id === track.id);
   const title = track?.title ?? '收藏处理中';
-  const kind = nft.edition === 'eth' ? 'Ethereum · NFT' : nft.edition === 'op_sbt' ? 'Optimism · SBT'
-    : nft.edition === 'legacy' ? 'Optimism · 首页收藏' : null;
 
   return (
     <button type="button" className="me-archive-row me-archive-row--favorite"
       data-playing={isPlaying || undefined} disabled={!track}
       aria-label={`${isPlaying ? '停止播放' : '播放'}${title}`}
       onClick={() => { if (track) void toggle(track); }}>
-      <div className="me-archive-row__main"><h3>{title}</h3>
-        {kind && <p>{kind}</p>}</div>
+      <div className="me-archive-row__main"><h3>{title}</h3></div>
       <span className="me-archive-row__play">
         <span aria-hidden="true">{isPlaying ? '■' : '▶'}</span>
         {isPlaying ? '停止' : track ? '播放' : '处理中'}
