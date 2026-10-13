@@ -1801,3 +1801,5 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 为做 A/B 曾用 `git worktree` + node_modules junction，`worktree remove --force` 顺着 junction 删掉了主树部分依赖（旧坑复发）；已用 `npm ci`（锁文件不变，无新依赖）恢复，`git status` 干净。以后做 A/B 直接在原目录 `git checkout <sha> -- app src` 构建后换回。
 
 - 2026-10-13：用户决定 P19 工作量小，并入 P15 作为 P15-J。playbook 移至 `playbook/phase-15/97-j-seamless-loading.md`；STATUS/TASKS/JOURNAL/CSS 注释中的 “P19” 改称 “P15-J”。已推送的提交信息（`p19`）与分支名 `feat/p19-seamless-loading` 不改写 main 历史，对应关系以此条为准。
+
+- 2026-10-13：新 P19 = 中英双语。决定：①中文默认、英文为译文（默认用户所见不变，可逐文件迁移）；②方案 C——服务端固定中文保持静态预渲染，浏览器按 cookie `locale` 切英文，代价是英文用户刷新会先闪一瞬中文；③用 `next-intl`（用户已批准，STACK.md 登记放 Step 1），不加 URL 前缀、不加 middleware；④不选“服务端读 cookie”，因 `/`、`/artist`、`/me`、`/tracks`、`/score` 现为静态预渲染，读 cookie 会全变动态并拖慢 P15-J 刚做的首帧。方案 C 在 next-intl 下是否成立**尚未验证**，Step 0 先验。playbook：`playbook/phase-19/00-overview.md`。
