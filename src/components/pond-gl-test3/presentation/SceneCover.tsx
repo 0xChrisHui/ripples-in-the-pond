@@ -8,7 +8,7 @@ export default function SceneCover({ artDir, visible }: { artDir: GLFlags['artDi
   const background = artDir === 'black' ? POND_NIGHT_BLACK : POND_NIGHT_BACKGROUND;
   return (
     <div aria-hidden="true" data-pond-scene-cover="true" data-visible={visible}
-      className={`pointer-events-none absolute inset-0 transition-opacity duration-150 motion-reduce:transition-none ${visible ? 'opacity-100' : 'opacity-0'}`}
+      className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ease-out motion-reduce:duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}
       style={{ background }}>
       <div className="absolute inset-0 bg-black" style={{ opacity: 'var(--pond-eclipse-mix, 0)' }} />
     </div>

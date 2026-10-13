@@ -1,36 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
 /**
- * J4 — GL 水塘加载/失败浮层（居中，盖在夜塘基调之上）。
- * 水面与声音准备中展示统一文案；慢网（>3s）追加提示。失败时提供重试按钮。
- * 不再像之前那样黑屏一下、球突然蹦出来。pointer-events 仅按钮接管。
+ * GL 水塘加载失败浮层：只在失败时出现，提供重试按钮。
+ * 加载期不再出任何文字，由 SceneCover 作为唯一过渡层。pointer-events 仅按钮接管。
  */
-export default function GlLoading({ error, onRetry }: { error: boolean; onRetry: () => void }) {
-  const [slow, setSlow] = useState(false);
-  useEffect(() => {
-    if (error) return;
-    const t = window.setTimeout(() => setSlow(true), 3000);
-    return () => window.clearTimeout(t);
-  }, [error]);
-
+export default function GlLoading({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="pointer-events-none fixed inset-0 z-40 flex flex-col items-center justify-center gap-2 text-center">
-      {error ? (
-        <button
-          type="button"
-          onClick={onRetry}
-          className="pointer-events-auto rounded border border-white/15 bg-white/5 px-4 py-2 text-[13px] text-white/80 hover:bg-white/10"
-        >
-          加载失败，点击重试
-        </button>
-      ) : (
-        <>
-          <div className="animate-pulse text-sm tracking-[0.3em] text-white/55">声音正在汇入水塘</div>
-          {slow && <div className="text-[11px] tracking-wide text-white/30">网络较慢，正在连接…</div>}
-        </>
-      )}
+      <button
+        type="button"
+        onClick={onRetry}
+        className="pointer-events-auto rounded border border-white/15 bg-white/5 px-4 py-2 text-[13px] text-white/80 hover:bg-white/10"
+      >
+        加载失败，点击重试
+      </button>
     </div>
   );
 }

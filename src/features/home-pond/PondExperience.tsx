@@ -158,8 +158,8 @@ export default function PondExperience({ mode, persistent = false, children }: {
       {!persistent && <PondHeader />}
       {glSim.ready && glOk && <GlNav glSim={glSim} playbackActive={echoPlayback.active}
         featured={featuredEcho !== null} />}
-      {glFlags.glSpheres && (glSim.loading || glSim.error) && (
-        <GlLoading error={glSim.error} onRetry={glSim.retry} />
+      {glFlags.glSpheres && glSim.error && (
+        <GlLoading onRetry={glSim.retry} />
       )}
       <div data-pond-ui="true" className="pointer-events-none fixed left-6 z-30" style={{ top: '14rem' }}>
         <div className="pointer-events-auto">
