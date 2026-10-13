@@ -156,21 +156,27 @@ export default function PondExperience({ mode, persistent = false, children }: {
         <SceneCover artDir={glFlags.artDir} visible={mountGl && !sceneReady} />
       </div>
       {!persistent && <PondHeader />}
-      {glSim.ready && glOk && <GlNav glSim={glSim} playbackActive={echoPlayback.active}
-        featured={featuredEcho !== null} />}
+      {glSim.ready && glOk && (
+        <div className="pond-reveal" data-ready={sceneReady} style={{ '--pond-reveal-delay': '250ms' } as CSSProperties}>
+          <GlNav glSim={glSim} playbackActive={echoPlayback.active} featured={featuredEcho !== null} />
+        </div>
+      )}
       {glFlags.glSpheres && glSim.error && (
         <GlLoading onRetry={glSim.retry} />
       )}
-      <div data-pond-ui="true" className="pointer-events-none fixed left-6 z-30" style={{ top: '14rem' }}>
+      <div data-pond-ui="true" className="pond-reveal pointer-events-none fixed left-6 z-30" data-ready={sceneReady}
+        style={{ top: '14rem', '--pond-reveal-delay': '400ms' } as CSSProperties}>
         <div className="pointer-events-auto">
           {homeInitialized && <TestJam p9Enabled={p9Enabled} enabled={homeInteractive} />}
         </div>
       </div>
       {glFlags.glSpheres && glSim.ready && sceneReady && (
-        <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx}
-          glHealthy={glOk} depthModel={glFlags.depthModel} showLabels={glFlags.sphereLabels}
-          scenePresence={sceneMotion.presence} interactive={homeInteractive}
-          reducedSceneMotion={sceneMotion.reduced} />
+        <div className="pond-reveal" data-ready style={{ '--pond-reveal-delay': '100ms' } as CSSProperties}>
+          <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx}
+            glHealthy={glOk} depthModel={glFlags.depthModel} showLabels={glFlags.sphereLabels}
+            scenePresence={sceneMotion.presence} interactive={homeInteractive}
+            reducedSceneMotion={sceneMotion.reduced} />
+        </div>
       )}
       {renderHomeScene && glFlags.glSpheres && glFlags.glEclipse && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
       {homeInteractive && <HomeEclipseDriver glSim={glSim} playingId={glOk ? playingId : null} />}

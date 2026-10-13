@@ -84,3 +84,13 @@
 @media (prefers-reduced-motion: reduce) {
   .pond-route-surface, .pond-prepared-archive, .pond-prepared-artist, .pond-prepared-tracks { transform: none; }
 }
+
+/* P19：水面就绪后，球体标签 → 导航 → 演奏入口依次淡入（延迟经 --pond-reveal-delay 传入）。 */
+.pond-reveal { opacity: 0; }
+.pond-reveal[data-ready='true'] {
+  animation: pond-reveal-in 700ms var(--p11-ease-out) var(--pond-reveal-delay, 0ms) both;
+}
+@keyframes pond-reveal-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .pond-reveal[data-ready='true'] { animation-duration: 200ms; animation-delay: 0ms; }
+}
