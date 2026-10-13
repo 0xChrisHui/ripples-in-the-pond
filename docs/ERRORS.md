@@ -223,6 +223,7 @@
 
 ### 浏览器 / Web API
 - E003 背景音乐快速点击叠加
+- E067 无头测量页面 hidden 致 rAF 节流（E029 / E048 复发）
 
 ### Next.js / React
 - E001 Tailwind v4 扫描 `.claude/logs/` 导致 Invalid code point
@@ -793,3 +794,11 @@
 - **报错**：`TS6053: File .../.next/types/... not found`。
 - **原因**：同时启动类型检查与 production build，后者重建 `.next/types`，前者读到了已消失的生成文件。
 - **处理**：构建结束后单独重跑类型检查；共享 `.next` 的构建和类型检查须串行，不能把此工具时序误判为产品类型错误。
+
+### E067 — 无头测量页面处于 hidden，rAF 被节流（E029 / E048 复发）
+
+- 📅 2026-10-14 / P19 Step 0 N2 测量
+- 😱 现象：Fast 4G 下英文已在 24s 提交，采样器却从 15s 起不再记录探针可见，英文出现时刻也被推迟到下一次截图。
+- 🧠 原因：CDP 驱动的无头 Edge 页面 `document.visibilityState='hidden'`，`requestAnimationFrame` 被节流，只有截图强制出帧时采样器才运行。沿用的 P15-J 测量脚本没有置前。
+- 🔧 修复：导航前 `Page.bringToFront` + `Emulation.setFocusEmulationEnabled({ enabled: true })`，首个 rAF 记录 `visibilityState=visible` 后整批重测；旧批结果另存留档。
+- 💡 依赖 rAF 的计时证据必须同时记录 `visibilityState`；用 `useLayoutEffect` 或网络事件记录的时刻不受此影响，可用来交叉核对。

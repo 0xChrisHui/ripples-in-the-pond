@@ -1803,3 +1803,41 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - 2026-10-13：用户决定 P19 工作量小，并入 P15 作为 P15-J。playbook 移至 `playbook/phase-15/97-j-seamless-loading.md`；STATUS/TASKS/JOURNAL/CSS 注释中的 “P19” 改称 “P15-J”。已推送的提交信息（`p19`）与分支名 `feat/p19-seamless-loading` 不改写 main 历史，对应关系以此条为准。
 
 - 2026-10-13：新 P19 = 中英双语。决定：①中文默认、英文为译文（默认用户所见不变，可逐文件迁移）；②方案 C——服务端固定中文保持静态预渲染，浏览器按 cookie `locale` 切英文，英文用户看到中文的时长未测，待 Step 0 实测，由用户在 D0 决定是否接受；③用 `next-intl`（用户已批准，STACK.md 登记放 Step 1），不加 URL 前缀、不加 middleware；④不选“服务端读 cookie”，因 `/`、`/artist`、`/me`、`/tracks`、`/score` 现为静态预渲染，读 cookie 会全变动态并拖慢 P15-J 刚做的首帧。方案 C 在 next-intl 下是否成立**尚未验证**，Step 0 先验。playbook：`playbook/phase-19/00-overview.md`。
+
+## 2026-10-14 — P19 Step 0：方案 C 验证与代价测量（N1–N3）
+
+> 实验分支 `spike/p19-i18n-step0`（fe29a02，从 feat/p19-i18n@a88db6e 切出，**保留未删，等用户确认**）。临时装 `next-intl@4.14.9`（依赖全部由作者 amann 发布）；结束后切回本分支 `npm ci`，`node_modules` 无 next-intl / use-intl / @eloqnt / icu-minify 残留。\
+> spike 写法：客户端 `LocaleProvider` 套在 `Providers` 最外层；服务端与水合首帧固定 `zh`，水合后读 cookie → 按需 `import` 英文词典（以中文为底深合并）→ `startTransition` 切换；`request.ts` 固定 `zh`、不读 cookie/headers；`<head>` 内联脚本按 cookie 改 `<html lang>`。测量点：首页导航“艺术家”“← 返回水塘”、艺术家页 folio，另加一个根层探针。\
+> 测量：`next build && next start -p 3100` + Edge 无头（CDP，SwiftShader），沿用 P15-J 网络档位，另加 `Page.bringToFront` + 焦点模拟（见文末）。脚本、原始结果、截图序列在本地忽略目录 `.local-archive/p19-i18n/`（tools/ build/ runs/ shots/）。
+
+**playbook §3 抽查**：F4（`PondNavigation` 默认导出无引用）、F5（`SemiLogin.tsx:76/:111`、`useEthereumScoreMint.ts:36`、`MeArchivePage.tsx:147`）、F6（`lang="zh-CN"` 正好 6 处）与代码一致；F1 由 build 比对确认。
+
+**N1：成立（已实测）**
+- 静态不变：基线（a88db6e）与 spike 两次 build 的页面路由表、API 路由表、`prerender-manifest` 三项 diff 全空；`/artist` 页内用服务端 `getTranslations` 仍为 ○。
+- 首帧中文、水合后英文：静态 HTML 全中文（含服务端组件文字）；英文词典为独立 285B chunk，不在首屏脚本里；每次加载都是先提交 zh、再提交 en。
+- 切换不重挂载（桌面首页，播放中 中→英→中）：同一音频元素进度连续（transition 0→5.38s→12.35s；sync 0→6.63s→13.09s），切换期间 pause/emptied/waiting 事件 0 个；外壳、画布、探针节点均未替换，WebGL 未丢失；截图中日食与水面在原状态上继续。点击到切换完成 71–74ms（transition）/ 9–12ms（sync）。音频源永久网关在无头环境下载不动，测量浏览器内用 CDP 拦截改由本地 `public/tracks/No.1.mp3` 应答，未改项目代码。
+- 无 hydration 报错：生产 20 次加载、dev 模式（英文首页含切换、英文艺术家页、中文对照）控制台中 React / hydration / script 标签 / next-intl 相关告警均为 0。阳性对照 `?i18n=bad`（首次渲染直接读 cookie）在 dev 立刻报 “Hydration failed … regenerated on the client”，外壳与探针节点被整体替换——既证明抓取有效，也证明 §1.1 第 1 条“首帧必须中文”不可省。
+- 缺 key 回退中文：英文词典删掉 `probe.missing`，英文模式显示中文原文，不显示 key 路径，无 MISSING_MESSAGE 报错。做法是“以中文为底深合并英文”，不依赖 `getMessageFallback`。
+- 站内换页（dev，首页点导航到 `/artist`）：`lang` 仍为 en、文字仍为英文、无额外提交、节点未替换。服务端组件文字在英文模式下保持中文，符合 F3 预期。
+- 未测：手机视口下“播放中切换”（模拟触屏时 4 次点击都没触发播放，手机只测了文字切换）；真机；Safari / Firefox。
+- 两种写法：playbook 原写法（`useSyncExternalStore` 同步更新）与 `useState + startTransition` 在全部测量中都没有替换任何节点，包括 Fast 4G 下的 sync 两次。**推断（未构造出复现场景）**：同步更新落到尚未水合的 Suspense 边界时，React 会放弃该边界的服务端 HTML 改为客户端重画，transition 更新则会等边界先水合；本次没出事可能只是时序恰好。Step 1 建议用 transition 写法。
+
+**N2：英文用户看到中文的时长（已实测，ms；“中文可见”取 max(中文出现, FCP) 到英文出现）**
+
+| 档位 | 首页 `/` | 艺术家页 `/artist` | 英文提交时刻 |
+|---|---|---|---|
+| 桌面 不限速 ×3 | 210 / 216 / 213 | 355 / 376 / 408 | 0.66–1.2s |
+| 手机 不限速 ×3 | 382 / 331 / 385 | 334 / 556 / 340 | 0.76–1.1s |
+| 桌面 Fast 4G | 21679 | 21622 | ≈23.6s |
+| 手机 Fast 4G | 21721 | 21736 | ≈23.7s |
+
+- 慢网下中文从首次绘制（≈2.0s）一直显示到 ≈23.6s。原因：切英文要等根节点水合，水合要等 JS 下完（与 P15-J 测得最大 JS ~22s 才收完一致）；英文词典请求 23.4–23.6s 才发出，传输约 0.16s，再约 20ms 提交。把英文词典内联进首包也只能省这 0.16s。
+- 慢网首页用户实际看到的中文：右上导航“艺术家”“曲目”（截图 16.8s 仍为“艺术家”，24.8s 变 “Artist”；spike 只翻了“艺术家”），此时登录按钮尚未出现、水面尚未就绪；艺术家页则是整页简介。
+- 中文 cookie 对照：首次绘制与英文组同量级，无英文提交。sync 写法在 Fast 4G 下数值相同（22350 / 22038）。
+- 局限：本机 `next start` 为 HTTP/1.1（线上 Vercel 为 HTTP/2 + CDN）；SwiftShader 软件 GL；Fast 4G 为 1.6Mbps 模拟。慢网时长主要由“JS 总量 ÷ 带宽”决定，未在真机真网测。
+
+**N3：成立（已实测）**：内联脚本位于 `<head>`、`<body>` 之前（前面只有 async 外链脚本）。英文 cookie 下首个 rAF 与首次绘制时 `lang` 已为 `en`，中文 cookie 为 `zh-CN`；首帧 html 底色 `rgb(1,3,3)` 不变，P15-J 的首帧底色内联不受影响；`<html>` 已有 `suppressHydrationWarning`，dev 模式无 lang 不一致告警，也无 “script tag” 告警；客户端切换时由 provider 同步改 `document.documentElement.lang`，站内换页后不会被 React 改回。
+
+**测量环境修正**：无头 Edge 默认 `visibilityState=hidden`，rAF 被节流，采样器只在截图强制出帧时才走一步（见 ERRORS E067，E029/E048 复发）。第一批 N2 在此状态下测得（存档 `runs/n2-hidden.jsonl`），加置前与焦点模拟后确认 `visible`，上表为修正后重测。英文提交时刻（`useLayoutEffect` 记录）与词典请求时刻（网络事件）两批一致，不受影响。P15-J 的 `measure.mjs` 同样没有置前，其依赖 rAF 的读数可能受影响，**方向与幅度未复核**。另：本次首页 Fast 4G 的 sceneReady 在可见状态下仍为 46–49s（艺术家页约 26s），高于 P15-J 记录的 26–28s，原因未查（采样器每帧算样式、每 2 秒截图、可见后持续渲染都可能），与 N1–N3 无关。
+
+**结论**：N1 成立、N3 成立；N2 不限速约 0.2–0.56 秒，Fast 4G 约 21.6–21.7 秒。D0 交用户决定，未进入 Step 1。
