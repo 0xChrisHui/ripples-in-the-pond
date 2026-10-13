@@ -94,3 +94,24 @@
 @media (prefers-reduced-motion: reduce) {
   .pond-reveal[data-ready='true'] { animation-duration: 200ms; animation-delay: 0ms; }
 }
+
+/* P19：慢网涟漪（SlowRipple）——极淡、纯 CSS；减弱动效时只留静态微光。 */
+.pond-slow-ripple {
+  width: 14rem;
+  height: 14rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(190, 235, 225, 0.12);
+  animation: pond-slow-ripple 3.2s var(--p11-ease-out) infinite;
+}
+@keyframes pond-slow-ripple {
+  from { transform: scale(0.25); opacity: 0.9; }
+  to { transform: scale(1.6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pond-slow-ripple {
+    animation: none;
+    transform: scale(0.6);
+    border: 0;
+    background: radial-gradient(circle, rgba(190, 235, 225, 0.06), transparent 70%);
+  }
+}

@@ -153,7 +153,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
         home={<>
       {/* 跟随页面首屏挂载并高于 DOM 备用圆；最终水面或可用 fallback 就绪后再撤。 */}
       <div className={`fixed inset-0 z-[25] ${mountGl && !sceneReady ? 'pointer-events-auto' : 'pointer-events-none'}`}>
-        <SceneCover artDir={glFlags.artDir} visible={mountGl && !sceneReady} />
+        <SceneCover artDir={glFlags.artDir} visible={mountGl && !sceneReady} waiting={mountGl && !sceneReady} />
       </div>
       {!persistent && <PondHeader />}
       {glSim.ready && glOk && (
