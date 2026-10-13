@@ -1776,3 +1776,26 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 （另一次冷启动不限速桌面：canvas 2727、sceneReady 4213，说明首次运行噪声很大；Fast 4G 数字稳定。）
 
 **N4 结论（先测再定）**：Fast 4G 下 sceneReady≈25s，**瓶颈是 JS 体积而非着色器**：约 20 个 chunk 从 ~190ms 起并行下载，最大两个 1.18MB + 0.86MB（three/GL 相关）直到 ~22s 才完成，随后才拉音效 `/sounds/*.mp3`（~23s 起，约 3s）。不限速时 canvas→sceneReady 仅 ~0.2–0.4s，着色器编译不是瓶颈。→ Step 5 的“低分辨率先出第一帧”**不做**（没有证据）；预加载在带宽受限时抢不到额外带宽，需逐项实测，大概率无收益。
+
+### P19 Step 1–4 改动与 A/B 复测（同机同脚本，前=6296b49，后=本分支）
+
+改动：Step1 `app/loading.tsx` 去文字改夜塘底色，`app/layout.tsx` 的 html 同色，常量 `pond-night.ts` 与 `SceneCover` 共用；Step2 `GlLoading` 只剩失败重试，`SceneCover` 淡出 700ms ease-out；Step3 `.pond-reveal` 球标签 100ms→导航 250ms→演奏入口 400ms 依次淡入；Step4 `SlowRipple`（水面未就绪满 3s 才出现，纯 CSS）。
+
+| 场景（ms） | 改前 L1/L2 文字出现 | 改后文字 | 改前 sceneReady | 改后 sceneReady |
+|---|---|---|---|---|
+| 桌面 不限速 ×3 | 402/244/211 | 全程无 | 1886 / 1319 / 1214 | 3368 / —(1次数据损坏) / 2070 |
+| 手机 不限速 ×3 | 439/186/522 | 全程无 | 1907 / 2105 / 2883 | 2535 / 1486 / 1550 |
+| 桌面 Fast 4G | 2549 | 无 | 26082 | 28131 |
+| 手机 Fast 4G | 2029 | 无 | 26851 | 28006 |
+
+结论：文字确已全部消失（改后 L1/L2 为 undefined）；sceneReady 无可复述的变化（不限速噪声 ±1s，软件 GL；4G 差 1–2s 在噪声内，本阶段 Step1–4 也本就没碰就绪路径）。4G 截图首帧（约 2.8s）为夜塘暗绿底色，无文字。
+
+### Step 5 结论：不做预加载（无可测改善空间，未加任何预加载声明）
+- Fast 4G 瀑布：约 20 个 JS chunk 自 ~0.19s 起已并行请求，最大两个（1.18MB、0.86MB）~22–23s 才收完；瓶颈是带宽×JS 体积，请求本身没有可提前的空档，`preload` 只会与其争带宽。
+- 音效 mp3（4×80KB）在 JS 之后才取，但 canvas→sceneReady 仅 0.3s，sceneReady 不等音效。
+- 22s 后 Privy/WalletConnect 的 `/v3/wallets` 两次各 1.2MB 请求会与后续资源争带宽，在 Providers（全局）里，超出 Step 5 范围，未动；若要继续提速，应另立阶段拆 JS（three/GL chunk）或推迟钱包列表。
+- 着色器编译不是瓶颈（不限速下 canvas→sceneReady ≈ 0.2–0.4s），故不做“低分辨率先出第一帧”。
+- 注：我没有逐项试做预加载再测，是依据瀑布证据判定不做；如需实测可另开。
+
+### 事故记录
+为做 A/B 曾用 `git worktree` + node_modules junction，`worktree remove --force` 顺着 junction 删掉了主树部分依赖（旧坑复发）；已用 `npm ci`（锁文件不变，无新依赖）恢复，`git status` 干净。以后做 A/B 直接在原目录 `git checkout <sha> -- app src` 构建后换回。
