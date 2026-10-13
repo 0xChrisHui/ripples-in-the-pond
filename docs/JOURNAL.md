@@ -1754,7 +1754,7 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **教训**：用户要“计划”时只交计划，不构成执行授权，需等明确的“执行”指令（已有 memory：无指令不行动）。
 - 同日：`public/the36/`（P14 的 36 段碎片音频，4.4MB）按与 `public/tracks/` 前 35 首一致的方式入库（c11efa7）；`contracts/.gas-snapshot` 为可再生文件，改为忽略。
 
-## 2026-10-13 — P19 首页无感加载：开工核对（N1–N5）与 Step 0 基线
+## 2026-10-13 — P15-J 首页无感加载：开工核对（N1–N5）与 Step 0 基线
 
 > 测量方式：`next build && next start -p 3100`（生产构建）+ Edge 无头（CDP，SwiftShader 软件 GL）；每次关缓存；采样器每帧记录各状态首次出现的 `performance.now()`。脚本与逐帧截图在本地忽略目录 `.local-archive/p19/`。Fast 4G = 1.6Mbps/150ms RTT。软件 GL 比真实 GPU 慢，**绝对值只作前后对照，不代表用户真机**。
 
@@ -1777,7 +1777,7 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 
 **N4 结论（先测再定）**：Fast 4G 下 sceneReady≈25s，**瓶颈是 JS 体积而非着色器**：约 20 个 chunk 从 ~190ms 起并行下载，最大两个 1.18MB + 0.86MB（three/GL 相关）直到 ~22s 才完成，随后才拉音效 `/sounds/*.mp3`（~23s 起，约 3s）。不限速时 canvas→sceneReady 仅 ~0.2–0.4s，着色器编译不是瓶颈。→ Step 5 的“低分辨率先出第一帧”**不做**（没有证据）；预加载在带宽受限时抢不到额外带宽，需逐项实测，大概率无收益。
 
-### P19 Step 1–4 改动与 A/B 复测（同机同脚本，前=6296b49，后=本分支）
+### P15-J Step 1–4 改动与 A/B 复测（同机同脚本，前=6296b49，后=本分支）
 
 改动：Step1 `app/loading.tsx` 去文字改夜塘底色，`app/layout.tsx` 的 html 同色，常量 `pond-night.ts` 与 `SceneCover` 共用；Step2 `GlLoading` 只剩失败重试，`SceneCover` 淡出 700ms ease-out；Step3 `.pond-reveal` 球标签 100ms→导航 250ms→演奏入口 400ms 依次淡入；Step4 `SlowRipple`（水面未就绪满 3s 才出现，纯 CSS）。
 
@@ -1799,3 +1799,5 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 
 ### 事故记录
 为做 A/B 曾用 `git worktree` + node_modules junction，`worktree remove --force` 顺着 junction 删掉了主树部分依赖（旧坑复发）；已用 `npm ci`（锁文件不变，无新依赖）恢复，`git status` 干净。以后做 A/B 直接在原目录 `git checkout <sha> -- app src` 构建后换回。
+
+- 2026-10-13：用户决定 P19 工作量小，并入 P15 作为 P15-J。playbook 移至 `playbook/phase-15/97-j-seamless-loading.md`；STATUS/TASKS/JOURNAL/CSS 注释中的 “P19” 改称 “P15-J”。已推送的提交信息（`p19`）与分支名 `feat/p19-seamless-loading` 不改写 main 历史，对应关系以此条为准。

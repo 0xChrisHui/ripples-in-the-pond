@@ -85,7 +85,7 @@
   .pond-route-surface, .pond-prepared-archive, .pond-prepared-artist, .pond-prepared-tracks { transform: none; }
 }
 
-/* P19：水面就绪后，球体标签 → 导航 → 演奏入口依次淡入（延迟经 --pond-reveal-delay 传入）。 */
+/* P15-J：水面就绪后，球体标签 → 导航 → 演奏入口依次淡入（延迟经 --pond-reveal-delay 传入）。 */
 .pond-reveal { opacity: 0; }
 .pond-reveal[data-ready='true'] {
   animation: pond-reveal-in 700ms var(--p11-ease-out) var(--pond-reveal-delay, 0ms) both;
@@ -95,7 +95,7 @@
   .pond-reveal[data-ready='true'] { animation-duration: 200ms; animation-delay: 0ms; }
 }
 
-/* P19：慢网涟漪（SlowRipple）——极淡、纯 CSS；减弱动效时只留静态微光。 */
+/* P15-J：慢网涟漪（SlowRipple）——极淡、纯 CSS；减弱动效时只留静态微光。 */
 .pond-slow-ripple {
   width: 14rem;
   height: 14rem;
