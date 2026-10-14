@@ -7,10 +7,12 @@ import {
   type WalletListEntry,
 } from '@privy-io/react-auth';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { getAddress } from 'viem';
 import { setLoginSession } from './login-session';
 
 type FlowState = 'idle' | 'connecting' | 'signing';
+type WalletErrorKey = 'evmOnly' | 'connectFailed' | 'signFailed';
 
 function isMobileWalletFlow(): boolean {
   return window.matchMedia('(pointer: coarse)').matches
@@ -24,17 +26,18 @@ export default function WalletLoginOptions({
   enabled: boolean;
   onSuccess: () => void;
 }) {
+  const t = useTranslations('walletLogin');
   const { wallets, ready } = useWallets();
   const [pendingAddress, setPendingAddress] = useState<string | null>(null);
   const [flow, setFlow] = useState<FlowState>('idle');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<WalletErrorKey | null>(null);
   const authenticating = useRef(false);
 
   const { connectWallet } = useConnectWallet({
     onSuccess: ({ wallet }) => {
       if (wallet.type !== 'ethereum') {
         setFlow('idle');
-        setError('请选择 EVM 钱包。');
+        setError('evmOnly');
         return;
       }
       setPendingAddress(getAddress(wallet.address));
@@ -42,7 +45,7 @@ export default function WalletLoginOptions({
     },
     onError: () => {
       setFlow('idle');
-      setError('钱包连接已取消或失败，请重试。');
+      setError('connectFailed');
     },
   });
 
@@ -54,7 +57,7 @@ export default function WalletLoginOptions({
       setLoginSession('external_wallet', getAddress(wallet.address));
       onSuccess();
     } catch {
-      setError('钱包已连接，但登录签名未完成。');
+      setError('signFailed');
       setFlow('idle');
     } finally {
       authenticating.current = false;
@@ -89,14 +92,14 @@ export default function WalletLoginOptions({
       <button type="button" className="auth-dialog__email" disabled={busy}
         data-login-autofocus
         onClick={start}>
-        链上地址登录
+        {t('button')}
       </button>
       <p className="auth-dialog__wallet-note" aria-live="polite">
-        {flow === 'connecting' && '正在连接钱包…'}
-        {flow === 'signing' && '请在钱包中签名完成登录…'}
-        {flow === 'idle' && '链上地址登录需要一次免费签名，不会发起交易。'}
+        {flow === 'connecting' && t('connecting')}
+        {flow === 'signing' && t('signing')}
+        {flow === 'idle' && t('note')}
       </p>
-      {error && <p className="semi-login__error" role="alert">{error}</p>}
+      {error && <p className="semi-login__error" role="alert">{t(`errors.${error}`)}</p>}
     </div>
   );
 }

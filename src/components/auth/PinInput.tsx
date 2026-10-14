@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { useTranslations } from 'next-intl';
 
 type PinInputProps = {
   value: string;
@@ -17,6 +18,7 @@ export default function PinInput({
   invalid = false,
   length = 6,
 }: PinInputProps) {
+  const t = useTranslations('semi.pin');
   const refs = useRef<HTMLInputElement[]>([]);
   const digits = Array.from({ length }, (_, i) => value[i] ?? '');
 
@@ -29,7 +31,7 @@ export default function PinInput({
   }
 
   return (
-    <div className="pin-input" role="group" aria-label="六位验证码">
+    <div className="pin-input" role="group" aria-label={t('group')}>
       {digits.map((digit, index) => (
         <input
           key={index}
@@ -42,7 +44,7 @@ export default function PinInput({
           autoComplete={index === 0 ? 'one-time-code' : 'off'}
           value={digit}
           disabled={disabled}
-          aria-label={`验证码第 ${index + 1} 位`}
+          aria-label={t('digit', { index: index + 1 })}
           aria-invalid={invalid}
           onFocus={(event) => event.currentTarget.select()}
           onChange={(e) => {

@@ -1,6 +1,7 @@
 'use client';
 
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/src/hooks/useAuth';
 
 /**
@@ -8,6 +9,7 @@ import { useAuth } from '@/src/hooks/useAuth';
  * "我的音乐"点击跳 /me，登出必须显式点"登出"链接
  */
 export default function LoginButton() {
+  const t = useTranslations('account');
   const { ready, authenticated, openLoginModal, logout, evmAddress } = useAuth();
   const accountClass = 'inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full border border-white/20 px-4 py-1.5 text-sm leading-none text-white transition-colors hover:bg-white/10';
 
@@ -20,7 +22,7 @@ export default function LoginButton() {
         onClick={openLoginModal}
         className={accountClass}
       >
-        登录
+        {t('signIn')}
       </button>
     );
   }
@@ -32,14 +34,14 @@ export default function LoginButton() {
         className={accountClass}
         title={evmAddress ?? undefined}
       >
-        我的音乐
+        {t('myMusic')}
       </PondRouteLink>
       <button
         type="button"
         onClick={logout}
         className="text-xs text-white/40 transition-colors hover:text-white/70"
       >
-        登出
+        {t('signOut')}
       </button>
     </div>
   );

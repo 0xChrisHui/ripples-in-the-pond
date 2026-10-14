@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react';
 import { useLogin, usePrivy } from '@privy-io/react-auth';
+import { useTranslations } from 'next-intl';
 import SemiLogin from './SemiLogin';
 import WalletLoginOptions from './WalletLoginOptions';
 import { setLoginSession } from './login-session';
@@ -55,6 +56,7 @@ export default function LoginModal({ externalWalletLoginEnabled }: {
   externalWalletLoginEnabled: boolean;
 }) {
   const open = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const t = useTranslations('login');
   const [emailError, setEmailError] = useState(false);
   const { ready: privyReady } = usePrivy();
   const emailLoginRequested = useRef(false);
@@ -142,14 +144,14 @@ export default function LoginModal({ externalWalletLoginEnabled }: {
       >
         <header className="auth-dialog__header">
           <div>
-            <p className="auth-dialog__eyebrow">Identity record · 身份页</p>
-            <h2 id={titleId}>找回你的音乐档案</h2>
-            <p id={descriptionId}>登录用于找回你的音乐档案，并继续保存属于你的声音。</p>
+            <p className="auth-dialog__eyebrow">{t('eyebrow')}</p>
+            <h2 id={titleId}>{t('title')}</h2>
+            <p id={descriptionId}>{t('description')}</p>
           </div>
           <button
             type="button"
             onClick={closeLoginModal}
-            aria-label="关闭登录窗口"
+            aria-label={t('close')}
             className="auth-dialog__close"
           >
             <span aria-hidden="true">×</span>
@@ -168,7 +170,7 @@ export default function LoginModal({ externalWalletLoginEnabled }: {
             className="auth-dialog__email auth-dialog__email--primary"
             data-login-autofocus
           >
-            使用邮箱登录
+            {t('email')}
           </button>
         ) : (
           <>
@@ -176,7 +178,7 @@ export default function LoginModal({ externalWalletLoginEnabled }: {
               setLoginSession('semi');
               closeLoginModal();
             }} />
-            <div className="auth-dialog__divider"><span>或</span></div>
+            <div className="auth-dialog__divider"><span>{t('or')}</span></div>
             <button
               type="button"
               onClick={() => {
@@ -187,11 +189,11 @@ export default function LoginModal({ externalWalletLoginEnabled }: {
               disabled={!privyReady}
               className="auth-dialog__email"
             >
-              使用邮箱登录
+              {t('email')}
             </button>
           </>
         )}
-        {emailError && <p className="semi-login__error" role="alert">邮箱登录未完成，请重试。</p>}
+        {emailError && <p className="semi-login__error" role="alert">{t('emailError')}</p>}
         <WalletLoginOptions enabled={externalWalletLoginEnabled} onSuccess={closeLoginModal} />
       </div>
     </div>

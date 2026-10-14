@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { setSemiJwt } from '@/src/lib/auth/client-jwt';
+import { useServerText } from '@/src/i18n/use-server-text';
 import PinInput from './PinInput';
 
 const COUNTDOWN_SECONDS = 60;
@@ -14,31 +16,37 @@ function maskPhone(phone: string): string {
 
 /** 未注册提示 + 跳转 Semi 注册按钮 */
 function RegisterPrompt() {
+  const t = useTranslations('semi.register');
   return (
     <div className="semi-login__register" id="semi-feedback" role="alert">
-      <p>该手机号尚未注册 SEMI社区身份，请先注册后再登录。</p>
+      <p>{t('prompt')}</p>
       <a
         href={SEMI_REGISTER_URL}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="前往注册 SEMI社区身份（新窗口打开）"
+        aria-label={t('linkLabel')}
       >
-        前往注册 SEMI社区身份
+        {t('link')}
       </a>
     </div>
   );
 }
 
 type Phase = 'phone' | 'code';
+type ErrorKey = 'invalidPhone' | 'sendFailed' | 'network' | 'codeLength' | 'codeInvalid' | 'loginFailed' | 'noToken';
+/** server：服务器或浏览器给出的原文，中文模式照旧显示；英文模式只显示 key 对应的前端文案 */
+type LoginError = { key: ErrorKey; server?: string };
 
 /**
  * Phase 7 Track D D2 — SEMI社区身份登录，两阶段身份纸页。
  */
 export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
+  const t = useTranslations('semi');
+  const serverText = useServerText();
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
   const [phase, setPhase] = useState<Phase>('phone');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LoginError | null>(null);
   const [needRegister, setNeedRegister] = useState(false);
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
@@ -55,7 +63,7 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
 
   const sendCode = useCallback(async () => {
     if (!phoneValid) {
-      setError('请输入有效的手机号');
+      setError({ key: 'invalidPhone' });
       return;
     }
     setError(null);
@@ -73,12 +81,13 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
           setNeedRegister(true);
           return;
         }
-        throw new Error(data.error || '发送验证码失败，请稍后重试');
+        setError({ key: 'sendFailed', server: data.error });
+        return;
       }
       setPhase('code');
       setCountdown(COUNTDOWN_SECONDS);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '网络错误，请稍后重试');
+      setError({ key: 'network', server: err instanceof Error ? err.message : undefined });
     } finally {
       setLoading(false);
     }
@@ -87,7 +96,7 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
   const submit = useCallback(async () => {
     const trimmedCode = code.trim();
     if (trimmedCode.length !== 6) {
-      setError('请输入 6 位验证码');
+      setError({ key: 'codeLength' });
       return;
     }
     setError(null);
@@ -100,7 +109,8 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
         body: JSON.stringify({ phone: normalizedPhone, code: trimmedCode }),
       });
       if (res.status === 401) {
-        throw new Error('验证码无效或已过期');
+        setError({ key: 'codeInvalid' });
+        return;
       }
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -108,15 +118,19 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
           setNeedRegister(true);
           return;
         }
-        throw new Error(data.error || '登录失败，请稍后重试');
+        setError({ key: 'loginFailed', server: data.error });
+        return;
       }
       const data = await res.json();
       const token: string | undefined = data?.token;
-      if (!token) throw new Error('登录失败：未返回 token');
+      if (!token) {
+        setError({ key: 'noToken' });
+        return;
+      }
       setSemiJwt(token);
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : '网络错误，请稍后重试');
+      setError({ key: 'network', server: err instanceof Error ? err.message : undefined });
     } finally {
       setLoading(false);
     }
@@ -131,20 +145,24 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
 
   const feedback = needRegister
     ? <RegisterPrompt />
-    : error && <p className="semi-login__error" id="semi-feedback" role="alert">{error}</p>;
+    : error && (
+      <p className="semi-login__error" id="semi-feedback" role="alert">
+        {serverText(error.server, t(`errors.${error.key}`))}
+      </p>
+    );
 
   if (phase === 'phone') {
     return (
       <form className="semi-login" onSubmit={(event) => { event.preventDefault(); void sendCode(); }}>
         <div className="semi-login__step">
-          <p>01 · SEMI社区身份</p>
-          <h3>手机号登录</h3>
+          <p>{t('phone.step')}</p>
+          <h3>{t('phone.title')}</h3>
         </div>
-        <label className="semi-login__label" htmlFor="semi-phone">手机号</label>
+        <label className="semi-login__label" htmlFor="semi-phone">{t('phone.label')}</label>
         <input
           id="semi-phone" type="tel" inputMode="tel" autoComplete="tel"
           value={phone} onChange={(event) => setPhone(event.target.value)} disabled={loading}
-          placeholder="例如 13800000000" aria-invalid={Boolean(error)}
+          placeholder={t('phone.placeholder')} aria-invalid={Boolean(error)}
           aria-describedby={error || needRegister ? 'semi-feedback' : undefined}
           data-login-autofocus
         />
@@ -153,7 +171,7 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
           disabled={loading || !phoneValid}
           className="semi-login__primary"
         >
-          {loading ? '发送中…' : '发送验证码'}
+          {loading ? t('phone.sending') : t('phone.send')}
         </button>
         {feedback}
       </form>
@@ -163,10 +181,10 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
   return (
     <form className="semi-login" onSubmit={(event) => { event.preventDefault(); void submit(); }}>
       <div className="semi-login__step semi-login__step--code">
-        <button type="button" className="semi-login__back" onClick={backToPhone}>← 修改手机号</button>
-        <p>02 · 验证身份</p>
-        <h3>输入验证码</h3>
-        <small>已发送至 {maskPhone(normalizedPhone)}</small>
+        <button type="button" className="semi-login__back" onClick={backToPhone}>{t('code.back')}</button>
+        <p>{t('code.step')}</p>
+        <h3>{t('code.title')}</h3>
+        <small>{t('code.sentTo', { phone: maskPhone(normalizedPhone) })}</small>
       </div>
       <PinInput value={code} onChange={setCode} disabled={loading} invalid={Boolean(error)} />
       <button
@@ -175,14 +193,14 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
         disabled={countdown > 0 || loading}
         className="semi-login__resend"
       >
-        {countdown > 0 ? `${countdown}s 后可重新发送` : '重新发送验证码'}
+        {countdown > 0 ? t('code.resendIn', { seconds: countdown }) : t('code.resend')}
       </button>
       <button
         type="submit"
         disabled={loading || code.length !== 6}
         className="semi-login__primary"
       >
-        {loading ? '登录中…' : '确认并登录'}
+        {loading ? t('code.signingIn') : t('code.submit')}
       </button>
       {feedback}
     </form>

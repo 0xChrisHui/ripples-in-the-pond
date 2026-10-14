@@ -1,5 +1,68 @@
 {
   "localeSwitch": {
     "label": "切换语言"
+  },
+  "account": {
+    "signIn": "登录",
+    "myMusic": "我的音乐",
+    "signOut": "登出"
+  },
+  "login": {
+    "eyebrow": "Identity record · 身份页",
+    "title": "找回你的音乐档案",
+    "description": "登录用于找回你的音乐档案，并继续保存属于你的声音。",
+    "close": "关闭登录窗口",
+    "email": "使用邮箱登录",
+    "or": "或",
+    "emailError": "邮箱登录未完成，请重试。"
+  },
+  "semi": {
+    "register": {
+      "prompt": "该手机号尚未注册 SEMI社区身份，请先注册后再登录。",
+      "link": "前往注册 SEMI社区身份",
+      "linkLabel": "前往注册 SEMI社区身份（新窗口打开）"
+    },
+    "errors": {
+      "invalidPhone": "请输入有效的手机号",
+      "sendFailed": "发送验证码失败，请稍后重试",
+      "network": "网络错误，请稍后重试",
+      "codeLength": "请输入 6 位验证码",
+      "codeInvalid": "验证码无效或已过期",
+      "loginFailed": "登录失败，请稍后重试",
+      "noToken": "登录失败：未返回 token"
+    },
+    "phone": {
+      "step": "01 · SEMI社区身份",
+      "title": "手机号登录",
+      "label": "手机号",
+      "placeholder": "例如 13800000000",
+      "sending": "发送中…",
+      "send": "发送验证码"
+    },
+    "code": {
+      "back": "← 修改手机号",
+      "step": "02 · 验证身份",
+      "title": "输入验证码",
+      "sentTo": "已发送至 {phone}",
+      "resendIn": "{seconds}s 后可重新发送",
+      "resend": "重新发送验证码",
+      "signingIn": "登录中…",
+      "submit": "确认并登录"
+    },
+    "pin": {
+      "group": "六位验证码",
+      "digit": "验证码第 {index} 位"
+    }
+  },
+  "walletLogin": {
+    "button": "链上地址登录",
+    "connecting": "正在连接钱包…",
+    "signing": "请在钱包中签名完成登录…",
+    "note": "链上地址登录需要一次免费签名，不会发起交易。",
+    "errors": {
+      "evmOnly": "请选择 EVM 钱包。",
+      "connectFailed": "钱包连接已取消或失败，请重试。",
+      "signFailed": "钱包已连接，但登录签名未完成。"
+    }
   }
 }

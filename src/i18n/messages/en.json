@@ -1,5 +1,68 @@
 {
   "localeSwitch": {
     "label": "Switch language"
+  },
+  "account": {
+    "signIn": "Sign in",
+    "myMusic": "My music",
+    "signOut": "Sign out"
+  },
+  "login": {
+    "eyebrow": "Identity record",
+    "title": "Return to your music archive",
+    "description": "Sign in to return to your music archive and keep saving the sounds that are yours.",
+    "close": "Close sign-in window",
+    "email": "Sign in with email",
+    "or": "or",
+    "emailError": "Email sign-in wasn't completed. Please try again."
+  },
+  "semi": {
+    "register": {
+      "prompt": "This phone number has no SEMI community identity yet. Please register first, then sign in.",
+      "link": "Register a SEMI community identity",
+      "linkLabel": "Register a SEMI community identity (opens in a new window)"
+    },
+    "errors": {
+      "invalidPhone": "Enter a valid phone number",
+      "sendFailed": "Couldn't send the code. Please try again later.",
+      "network": "Network error. Please try again later.",
+      "codeLength": "Enter the 6-digit code",
+      "codeInvalid": "The code is invalid or has expired",
+      "loginFailed": "Sign-in failed. Please try again later.",
+      "noToken": "Sign-in failed: no token was returned"
+    },
+    "phone": {
+      "step": "01 · SEMI community identity",
+      "title": "Sign in with phone",
+      "label": "Phone number",
+      "placeholder": "e.g. 13800000000",
+      "sending": "Sending…",
+      "send": "Send code"
+    },
+    "code": {
+      "back": "← Change number",
+      "step": "02 · Verify",
+      "title": "Enter the code",
+      "sentTo": "Sent to {phone}",
+      "resendIn": "Resend in {seconds}s",
+      "resend": "Resend code",
+      "signingIn": "Signing in…",
+      "submit": "Confirm and sign in"
+    },
+    "pin": {
+      "group": "6-digit code",
+      "digit": "Code digit {index}"
+    }
+  },
+  "walletLogin": {
+    "button": "Sign in with wallet",
+    "connecting": "Connecting wallet…",
+    "signing": "Approve the signature in your wallet to finish signing in…",
+    "note": "Wallet sign-in needs one free signature. No transaction is sent.",
+    "errors": {
+      "evmOnly": "Please choose an EVM wallet.",
+      "connectFailed": "The wallet connection was cancelled or failed. Please try again.",
+      "signFailed": "The wallet is connected, but the sign-in signature wasn't completed."
+    }
   }
 }
