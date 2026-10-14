@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { useKeyboard } from '@/src/hooks/useKeyboard';
 import { useJam } from '@/src/hooks/useJam';
 import { useRecorder } from '@/src/hooks/useRecorder';
@@ -16,6 +17,7 @@ export default function TestJam({ p9Enabled = false, enabled = true }: {
   p9Enabled?: boolean;
   enabled?: boolean;
 }) {
+  const t = useTranslations('jam');
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function TestJam({ p9Enabled = false, enabled = true }: {
   if (isMobile === null) {
     return (
       <section className="flex items-center justify-center px-6 py-16">
-        <p className="text-sm text-white/30">加载中...</p>
+        <p className="text-sm text-white/30">{t('loading')}</p>
       </section>
     );
   }
@@ -37,9 +39,9 @@ export default function TestJam({ p9Enabled = false, enabled = true }: {
     return (
       <section className="flex items-center justify-center px-6 py-16">
         <p className="text-center text-sm leading-relaxed text-white/50">
-          合奏需要电脑键盘体验
+          {t('keyboardOnly')}
           <br />
-          <span className="text-white/30">请在电脑上打开本页</span>
+          <span className="text-white/30">{t('openOnComputer')}</span>
         </p>
       </section>
     );
@@ -49,6 +51,7 @@ export default function TestJam({ p9Enabled = false, enabled = true }: {
 }
 
 function TestJamDesktop({ p9Enabled, enabled }: { p9Enabled: boolean; enabled: boolean }) {
+  const t = useTranslations('jam');
   const { ready, playSound } = useJam();
 
   const handleRecordComplete = useCallback(
@@ -81,7 +84,7 @@ function TestJamDesktop({ p9Enabled, enabled }: { p9Enabled: boolean; enabled: b
   if (!ready) {
     return (
       <div className="flex items-center justify-center py-16">
-        <p className="text-sm text-white/40">音效加载中...</p>
+        <p className="text-sm text-white/40">{t('soundsLoading')}</p>
       </div>
     );
   }
@@ -89,8 +92,8 @@ function TestJamDesktop({ p9Enabled, enabled }: { p9Enabled: boolean; enabled: b
   return (
     <section className="flex flex-col items-start gap-3">
       <p className="text-[10px] uppercase tracking-[0.14em] text-white/40">
-        {p9Enabled ? '按 A–Z、3–8 或空格演奏 33 个声音动画' : '按 A–Z、3–8 或空格演奏'}
-        {recording && <span className="ml-2 text-red-400/70">● 录制中</span>}
+        {p9Enabled ? t('hintP9') : t('hint')}
+        {recording && <span className="ml-2 text-red-400/70">{t('recording')}</span>}
       </p>
 
       <div className="flex min-h-[28px] flex-wrap items-center gap-1.5">

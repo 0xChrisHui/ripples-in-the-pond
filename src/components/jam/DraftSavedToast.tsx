@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import PondRouteLink from '../pond-shell/PondRouteLink';
 import { MINT_RECORDED_EVENT } from '../../lib/mint-notice';
 
-type Notice = { id: number; title: string; hint: string; href?: string };
+type Notice = { id: number; title: 'draftSaved' | 'mintRecorded'; hint: 'draftSavedHint' | 'mintRecordedHint'; href?: string };
 const COPY = {
-  'jam:draft-saved': { title: '你的创作已记录 ↗', hint: '点击右上角「我的音乐」或「登录」查看' },
-  [MINT_RECORDED_EVENT]: { title: '你的收藏已记录 ↗', hint: '到「我的」查看', href: '/me' },
+  'jam:draft-saved': { title: 'draftSaved', hint: 'draftSavedHint' },
+  [MINT_RECORDED_EVENT]: { title: 'mintRecorded', hint: 'mintRecordedHint', href: '/me' },
 } as const;
 
 /**
@@ -15,6 +16,7 @@ const COPY = {
  * 录制完成 dispatch 'jam:draft-saved'；收藏/铸造提交后 dispatch 'pond:mint-recorded'（带跳转到 /me）。
  */
 export default function DraftSavedToast() {
+  const t = useTranslations('jam');
   const [notice, setNotice] = useState<Notice | null>(null);
 
   useEffect(() => {
@@ -31,8 +33,8 @@ export default function DraftSavedToast() {
 
   if (!notice) return null;
   const body = <>
-    <div className="rounded-lg bg-white/10 px-4 py-2 text-xs text-white/85 backdrop-blur-sm">{notice.title}</div>
-    <p className="text-[10px] tracking-wide text-white/50">{notice.hint}</p>
+    <div className="rounded-lg bg-white/10 px-4 py-2 text-xs text-white/85 backdrop-blur-sm">{t(notice.title)}</div>
+    <p className="text-[10px] tracking-wide text-white/50">{t(notice.hint)}</p>
   </>;
   return (
     <div key={notice.id} className="fixed right-6 top-16 z-[55] flex flex-col items-end gap-1.5 animate-jam-toast-slide">

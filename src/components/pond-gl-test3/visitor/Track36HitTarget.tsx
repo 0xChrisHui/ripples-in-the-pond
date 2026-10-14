@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type RefObject } from 'react';
+import { useTranslations } from 'next-intl';
 import type { FeaturedEcho } from '@/src/types/featured-echo';
 import { getPointerFx, getCameraFx, depthOf } from '../pointer-fx';
 import { project, type ProjCtx } from '../sphere-projection';
@@ -21,9 +22,7 @@ interface Props {
 
 export default function Track36HitTarget({ echo, visitor, playbackState, fallback = false, toggle }: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const action = playbackState === 'playing' ? '暂停'
-    : playbackState === 'paused' ? '继续'
-      : playbackState === 'loading' ? '取消加载' : '播放';
+  const t = useTranslations('player');
   useEffect(() => {
     let raf = 0;
     const loop = () => {
@@ -61,7 +60,7 @@ export default function Track36HitTarget({ echo, visitor, playbackState, fallbac
 
   return (
     <button ref={buttonRef} type="button"
-      aria-label={`${action} 第 36 首 Pond Echo #1：${echo.title}`}
+      aria-label={t('track36Label', { state: playbackState, title: echo.title })}
       aria-pressed={playbackState === 'playing'} data-featured-echo-hit="true"
       data-echo-render-mode={fallback ? 'css-fallback' : 'webgl'}
       onPointerEnter={() => { if (visitor.current) setTrack36InteractionSlow(visitor.current, true); }}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { endNodeDrag, setNodeDrag, type GlPhysNode } from '../spheres/gl-sim-setup';
 import type { GlSim } from '../spheres/use-gl-sim';
 import { getPointerFx, getCameraFx, depthOf } from '../pointer-fx';
@@ -32,6 +33,7 @@ type Props = {
 
 /** 同一个命中节点承载 GL 与轻量兜底，接管时不会重挂按钮或更换音乐身份。 */
 export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealthy, register }: Props) {
+  const t = useTranslations('player');
   const [hovered, setHovered] = useState(false);
   const drag = useRef({ down: false, moved: false, x: 0, y: 0 });
   const radius = node.radius;
@@ -84,7 +86,7 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
 
   return (
     <button type="button" ref={register} data-track-id={node.track?.id} data-echo-id={node.echo?.identity} data-render-node-id={node.id}
-      aria-label={`${isPlaying ? '暂停' : '播放'} ${node.echo ? '36 · ECHO #1' : title}`} aria-pressed={isPlaying}
+      aria-label={t(isPlaying ? 'pauseTitle' : 'playTitle', { title: node.echo ? '36 · ECHO #1' : title })} aria-pressed={isPlaying}
       onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
       onPointerCancel={finishDrag} onLostPointerCapture={finishDrag} onKeyDown={onKeyDown}
       onPointerEnter={() => { setHovered(true); glSim.setHover(node.id); }}

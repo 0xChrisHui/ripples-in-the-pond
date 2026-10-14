@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import PlaybackSeekBar from '@/src/components/common/PlaybackSeekBar';
 import { usePlayer } from './PlayerProvider';
 import { useFavorite } from '@/src/hooks/useFavorite';
@@ -17,6 +18,7 @@ function formatTime(sec: number): string {
 /** 全局试听的窄唱片标签；Score 路由拥有独立播放会话，因此精确隐藏。 */
 export default function BottomPlayer() {
   const pathname = usePathname();
+  const t = useTranslations('player');
   const { playing, currentTrack, duration, startedAt, stop, seek, getCurrentTime } =
     usePlayer();
   const [progress, setProgress] = useState(0);
@@ -55,7 +57,7 @@ export default function BottomPlayer() {
       <aside
         className="bottom-player-shell"
         data-playing={playing}
-        aria-label="全局播放器"
+        aria-label={t('global')}
       >
         <div className="bottom-player">
           <PlaybackSeekBar
@@ -83,16 +85,16 @@ export default function BottomPlayer() {
                 type="button"
                 onClick={favorite}
                 data-active={status === 'success'}
-                aria-label={status === 'success' ? '已收藏' : `收藏《${currentTrack.title}》`}
+                aria-label={status === 'success' ? t('collected') : t('collectTitle', { title: currentTrack.title })}
               >
-                {status === 'success' ? '已收藏' : '收藏'}
+                {status === 'success' ? t('collected') : t('collect')}
               </button>
               <button
                 type="button"
                 onClick={stop}
-                aria-label={`停止播放《${currentTrack.title}》`}
+                aria-label={t('stopTitle', { title: currentTrack.title })}
               >
-                停止
+                {t('stop')}
               </button>
             </div>
           </div>

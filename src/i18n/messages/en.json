@@ -116,5 +116,37 @@
       "pending": "Awaiting mint",
       "favorites": "Collection"
     }
+  },
+  "player": {
+    "global": "Global player",
+    "echoPlayer": "Pond Echo player",
+    "collect": "Collect",
+    "collected": "Collected",
+    "collectTitle": "Collect “{title}”",
+    "stop": "Stop",
+    "stopTitle": "Stop playing “{title}”",
+    "playTitle": "Play {title}",
+    "pauseTitle": "Pause {title}",
+    "echoAction": "{state, select, playing {Pause} paused {Resume} ended {Replay} error {Retry} other {Cancel loading}}",
+    "track36Label": "{state, select, playing {Pause} paused {Resume} loading {Cancel loading} other {Play}} track 36, Pond Echo #1: {title}",
+    "playbackFailed": "Playback failed. Please try again."
+  },
+  "home": {
+    "glRetry": "Failed to load. Tap to retry.",
+    "trackMissing": "This track doesn't exist",
+    "backToTracks": "Back to tracks"
+  },
+  "jam": {
+    "loading": "Loading…",
+    "keyboardOnly": "Playing together needs a computer keyboard",
+    "openOnComputer": "Please open this page on a computer",
+    "soundsLoading": "Loading sounds…",
+    "hintP9": "Press A–Z, 3–8 or Space to play 33 sound animations",
+    "hint": "Press A–Z, 3–8 or Space to play",
+    "recording": "● Recording",
+    "draftSaved": "Your creation has been saved ↗",
+    "draftSavedHint": "Open “My music” or “Sign in” at the top right to see it",
+    "mintRecorded": "Your collection has been recorded ↗",
+    "mintRecordedHint": "See it in “My music”"
   }
 }

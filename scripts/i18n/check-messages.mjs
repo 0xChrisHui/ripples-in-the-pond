@@ -17,8 +17,39 @@ function flatten(tree, prefix, out, errors, lang) {
   return out;
 }
 
-/** ICU 参数名：{name}、{count, plural, ...} 里的 name / count；plural 分支里的 {# 首} 不算参数 */
-const placeholders = (text) => [...new Set([...text.matchAll(/\{\s*([A-Za-z_]\w*)\s*[,}]/g)].map((m) => m[1]))].sort();
+/**
+ * ICU 参数名：{name}、{count, plural, ...}、{state, select, ...} 里的 name / count / state，
+ * 以及 plural/select 分支子消息里再出现的参数；分支内容本身（如 {暂停}、{Pause}、{# 首}）不算参数。
+ */
+function placeholders(text) {
+  const names = new Set();
+  let i = 0;
+  const message = (stopAtBrace) => {
+    while (i < text.length) {
+      if (text[i] === '}' && stopAtBrace) { i++; return; }
+      if (text[i] === '{') { i++; argument(); } else i++;
+    }
+  };
+  const read = (stops) => { const start = i; while (i < text.length && !stops.includes(text[i])) i++; return text.slice(start, i).trim(); };
+  const argument = () => {
+    const name = read([',', '}']);
+    if (name) names.add(name);
+    if (text[i] === '}') { i++; return; }
+    i++; // 跳过 ','
+    const type = read([',', '}']);
+    if (text[i] === '}') { i++; return; }
+    i++;
+    if (!['plural', 'select', 'selectordinal'].includes(type)) { read(['}']); i++; return; }
+    while (i < text.length) {
+      while (/\s/.test(text[i] ?? '')) i++;
+      if (text[i] === '}') { i++; return; }
+      read(['{', '}']); // 分支键：one / other / =0 / offset:1 …
+      if (text[i] === '{') { i++; message(true); }
+    }
+  };
+  message(false);
+  return [...names].sort();
+}
 const HAN = /[㐀-鿿]/;
 
 const errors = [];

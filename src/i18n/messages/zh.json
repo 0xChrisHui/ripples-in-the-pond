@@ -116,5 +116,37 @@
       "pending": "待铸造",
       "favorites": "收藏"
     }
+  },
+  "player": {
+    "global": "全局播放器",
+    "echoPlayer": "Pond Echo 播放器",
+    "collect": "收藏",
+    "collected": "已收藏",
+    "collectTitle": "收藏《{title}》",
+    "stop": "停止",
+    "stopTitle": "停止播放《{title}》",
+    "playTitle": "播放 {title}",
+    "pauseTitle": "暂停 {title}",
+    "echoAction": "{state, select, playing {暂停} paused {继续} ended {重新播放} error {重试} other {取消加载}}",
+    "track36Label": "{state, select, playing {暂停} paused {继续} loading {取消加载} other {播放}} 第 36 首 Pond Echo #1：{title}",
+    "playbackFailed": "播放失败，请重试"
+  },
+  "home": {
+    "glRetry": "加载失败，点击重试",
+    "trackMissing": "原曲不存在",
+    "backToTracks": "返回曲目"
+  },
+  "jam": {
+    "loading": "加载中...",
+    "keyboardOnly": "合奏需要电脑键盘体验",
+    "openOnComputer": "请在电脑上打开本页",
+    "soundsLoading": "音效加载中...",
+    "hintP9": "按 A–Z、3–8 或空格演奏 33 个声音动画",
+    "hint": "按 A–Z、3–8 或空格演奏",
+    "recording": "● 录制中",
+    "draftSaved": "你的创作已记录 ↗",
+    "draftSavedHint": "点击右上角「我的音乐」或「登录」查看",
+    "mintRecorded": "你的收藏已记录 ↗",
+    "mintRecordedHint": "到「我的」查看"
   }
 }
