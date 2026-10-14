@@ -1,5 +1,6 @@
 'use client';
 import PondRouteLink from '../pond-shell/PondRouteLink';
+import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { usePlayer } from '../player/PlayerProvider';
 import { getMusicCatalog } from '../../lib/music-catalog/asset-registry';
@@ -15,6 +16,7 @@ import { clearTrackWarmup, warmTrackAudio } from '../player/track-preload';
 export default function TrackCatalog({ initialTrackId, single = false, appearance = single ? 'archive' : 'pond' }: {
   initialTrackId?: string; single?: boolean; appearance?: 'archive' | 'pond';
 }) {
+  const t = useTranslations('tracks');
   const catalog = useMemo(() => getMusicCatalog(), []);
   const tracks = useMemo(() => [...catalog.tracks].sort((a, b) => a.displayNumber - b.displayNumber), [catalog]);
   const [selectedId, setSelectedId] = useState(initialTrackId ?? tracks[0].trackId);
@@ -80,35 +82,35 @@ export default function TrackCatalog({ initialTrackId, single = false, appearanc
       data-controls-visible={controlsVisible && player.currentTrack?.id === selected.trackId}>
       <PageNavigation />
       <div className="pond-global-header-spacer" />
-      {single && <nav className="track-asset-navigation" aria-label="曲目目录"><PondRouteLink href="/tracks">全部曲目 →</PondRouteLink></nav>}
+      {single && <nav className="track-asset-navigation" aria-label={t('catalogNav')}><PondRouteLink href="/tracks">{t('allTracksLink')}</PondRouteLink></nav>}
       <section className="track-stage" data-track-stage="true" aria-labelledby="track-title">
         {!single && <TrackIndex tracks={tracks} selectedId={selectedId} onSelect={select}
           onPrepare={(id) => warmTrackAudio(toPlayerTrack(id))} />}
         <article className="track-stage__focus" key={appearance === 'pond' ? 'pond' : selected.trackId}>
           <header className="track-stage__title">
-            <h1 id="track-title" aria-label={`原曲 ${selected.title}`}><span>原曲</span><strong>{number}</strong></h1>
+            <h1 id="track-title" aria-label={t('trackLabel', { title: selected.title })}><span>{t('trackWord')}</span><strong>{number}</strong></h1>
             {excerpt ? <blockquote>{excerpt}</blockquote>
-              : <p className="track-stage__pending">创作手记整理中，作者会在之后补充。</p>}
+              : <p className="track-stage__pending">{t('notesPending')}</p>}
             <div className="track-stage__links">
-              {excerpt && <a className="track-stage__read" href="#track-story">阅读创作手记 <span aria-hidden="true">↘</span></a>}
-              <a className="track-stage__read" href="#track-collect">收藏这首原曲 <span aria-hidden="true">↘</span></a>
+              {excerpt && <a className="track-stage__read" href="#track-story">{t('readNotes')} <span aria-hidden="true">↘</span></a>}
+              <a className="track-stage__read" href="#track-collect">{t('collectThis')} <span aria-hidden="true">↘</span></a>
             </div>
           </header>
           <div className="track-stage__player" data-track-playback="primary">
             <MaterialPlayer track={selected} onControlsVisible={setControlsVisible} visual={appearance === 'pond' ? 'circle' : 'imprint'} />
           </div>
-          {!single && <nav className="track-switcher" aria-label="相邻曲目">
+          {!single && <nav className="track-switcher" aria-label={t('adjacent')}>
             <button type="button" disabled={index === 0} onClick={() => select(tracks[index - 1].trackId)}>
-              <span aria-hidden="true">←</span> 上一首
+              <span aria-hidden="true">←</span> {t('previous')}
             </button>
             <span>{number} / {tracks.length}</span>
             <button type="button" disabled={index === tracks.length - 1}
-              onClick={() => select(tracks[index + 1].trackId)}>下一首 <span aria-hidden="true">→</span></button>
+              onClick={() => select(tracks[index + 1].trackId)}>{t('next')} <span aria-hidden="true">→</span></button>
           </nav>}
         </article>
       </section>
       <div className="track-reading" data-pond-no-ripple="true">
-      {paragraphs.length > 0 && <section className="track-story" id="track-story" aria-label={`原曲 ${selected.title} 创作手记`}>
+      {paragraphs.length > 0 && <section className="track-story" id="track-story" aria-label={t('notesLabel', { title: selected.title })}>
         <div className="track-story__body">
           <div className="track-story__copy">
             {paragraphs.map((paragraph, paragraphIndex) => <p key={`${selected.trackId}-${paragraphIndex}`}>{paragraph}</p>)}
@@ -117,9 +119,9 @@ export default function TrackCatalog({ initialTrackId, single = false, appearanc
       </section>}
       <div className="track-ledger"><MaterialMintPanel track={selected} /><MaterialProvenance track={selected} /></div>
       <footer className="track-story__next">
-        {single ? <PondRouteLink href="/tracks"><small>返回目录</small><strong>全部曲目</strong><b aria-hidden="true">→</b></PondRouteLink>
+        {single ? <PondRouteLink href="/tracks"><small>{t('backToList')}</small><strong>{t('allTracks')}</strong><b aria-hidden="true">→</b></PondRouteLink>
           : <button type="button" onClick={() => selectAndReturn(nextTrack.trackId)}>
-            <small>下一首</small><strong>原曲 {nextTrack.title}</strong><b aria-hidden="true">→</b>
+            <small>{t('next')}</small><strong>{t('trackLabel', { title: nextTrack.title })}</strong><b aria-hidden="true">→</b>
           </button>}
       </footer>
       </div>

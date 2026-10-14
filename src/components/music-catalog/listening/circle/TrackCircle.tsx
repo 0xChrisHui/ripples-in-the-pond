@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { computeNodeAttrs } from '../../../archipelago/sphere-config';
 import { DEFAULT_GL_FLAGS } from '../../../pond-gl-test3/gl-flags';
 import { useRegisterPondScene, type PondSceneDescriptor } from '../../../pond-shell/scene-slot';
@@ -18,6 +19,7 @@ const CIRCLE_FLAGS = { ...DEFAULT_GL_FLAGS, glSpheres: false, glEclipse: false, 
 export default function TrackCircle({ track, phase, onAction }: {
   track: OriginalTrack; phase: string; onAction: () => void;
 }) {
+  const t = useTranslations('tracks');
   const anchor = useRef<HTMLElement>(null);
   const transition = usePondTransition();
   const owns = transition?.transaction.interactiveOwner === 'tracks';
@@ -39,14 +41,14 @@ export default function TrackCircle({ track, phase, onAction }: {
   const { health, sceneReady } = useRegisterPondScene(descriptor, active);
   const glAvailable = health === 'healthy' && sceneReady;
   const glVisible = active && rendered && glAvailable;
-  const label = phase === 'preparing' ? '取消准备' : phase === 'playing' ? '停止聆听' : '开始聆听';
+  const label = t(phase === 'preparing' ? 'listen.preparing' : phase === 'playing' ? 'listen.playing' : 'listen.idle');
   return <figure ref={anchor} className="sound-imprint track-circle" data-track-circle={track.trackId}
     data-phase={phase} data-circle-renderer={glVisible ? 'webgl' : 'fallback'} data-circle-degraded={degraded}>
     <button className="track-circle__hit" type="button" onClick={onAction} disabled={!owns}
       onPointerEnter={(event) => { if (event.pointerType !== 'touch') setHovered(true); }}
       onPointerLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)} onBlur={() => setHovered(false)}
-      aria-label={`${label}原曲 ${track.title}`} aria-pressed={phase === 'playing'}>
+      aria-label={t('circleLabel', { action: label, title: track.title })} aria-pressed={phase === 'playing'}>
       <span className="track-circle__fallback" data-visible={active && (!glAvailable || !everRendered)}
         data-initializing={!everRendered} aria-hidden="true" />
     </button>

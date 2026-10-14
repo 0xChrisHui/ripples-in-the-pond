@@ -1,5 +1,6 @@
 'use client';
 import { useId, useMemo, type CSSProperties } from 'react';
+import { useTranslations } from 'next-intl';
 import type { TrackImprint } from '../../../lib/music-catalog/experience/imprints';
 
 type Point = { x: number; y: number };
@@ -35,6 +36,7 @@ function curve(points: Point[]): string {
 export default function SoundImprint({ imprint, trackId, phase, progress }: {
   imprint: TrackImprint; trackId: string; phase: string; progress: number;
 }) {
+  const t = useTranslations('tracks');
   const id = useId().replace(/:/g, '');
   const shapes = useMemo(() => contours(imprint), [imprint]);
   const sample = Math.min(95.999, Math.max(0, progress) * 96);
@@ -44,7 +46,7 @@ export default function SoundImprint({ imprint, trackId, phase, progress }: {
   const energy = phase === 'playing' ? imprint.envelope[index] : 0;
   return <figure className="sound-imprint" data-imprint-track={trackId} data-phase={phase}
     style={{ '--imprint-energy': energy } as CSSProperties}>
-    <svg viewBox="0 0 640 640" role="img" aria-label="由这首原曲的真实声音生成的水纹刻印">
+    <svg viewBox="0 0 640 640" role="img" aria-label={t('imprintLabel')}>
       <defs>
         <linearGradient id={`${id}-ink`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#e2c8a5" /><stop offset=".5" stopColor="#b99a74" />

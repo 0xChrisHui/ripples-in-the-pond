@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { OriginalTrack } from '../../lib/music-catalog/types';
 
 type Props = { tracks: OriginalTrack[]; selectedId: string; onSelect: (trackId: string) => void;
@@ -7,6 +8,7 @@ type Props = { tracks: OriginalTrack[]; selectedId: string; onSelect: (trackId: 
 
 /** 数字方格共用一份曲目模型；目录滚动不会带动整页跳动。 */
 export default function TrackIndex({ tracks, selectedId, onSelect, onPrepare }: Props) {
+  const t = useTranslations('tracks');
   const [open, setOpen] = useState(false);
   const current = useRef<HTMLButtonElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
@@ -43,13 +45,13 @@ export default function TrackIndex({ tracks, selectedId, onSelect, onPrepare }: 
     };
   }, [open]);
   function choose(id: string) { onSelect(id); setOpen(false); }
-  return <nav className="track-index" aria-label={`${tracks.length} 首原曲目录`} data-track-index={tracks.length} data-open={open}>
+  return <nav className="track-index" aria-label={t('indexLabel', { count: tracks.length })} data-track-index={tracks.length} data-open={open}>
     <button className="track-index__toggle" ref={trigger} type="button" aria-expanded={open}
-      aria-controls="track-index-panel" onClick={() => setOpen(true)}><span>全部曲目</span><span>{tracks.length} <b aria-hidden="true">＋</b></span></button>
+      aria-controls="track-index-panel" onClick={() => setOpen(true)}><span>{t('allTracks')}</span><span>{tracks.length} <b aria-hidden="true">＋</b></span></button>
     <div className="track-index__panel" id="track-index-panel" ref={panel}
-      role={open ? 'dialog' : undefined} aria-modal={open ? true : undefined} aria-label={open ? '选择一首原曲' : undefined}>
-      <header className="track-index__heading"><span>曲目</span><span>01—{String(tracks.length).padStart(2, '0')}</span>
-        <button className="track-index__close" type="button" onClick={() => setOpen(false)} aria-label="关闭曲目目录">×</button>
+      role={open ? 'dialog' : undefined} aria-modal={open ? true : undefined} aria-label={open ? t('chooseTrack') : undefined}>
+      <header className="track-index__heading"><span>{t('indexHeading')}</span><span>01—{String(tracks.length).padStart(2, '0')}</span>
+        <button className="track-index__close" type="button" onClick={() => setOpen(false)} aria-label={t('closeIndex')}>×</button>
       </header>
       <div className="track-index__viewport" ref={viewport}>
         {tracks.map((track) => {
@@ -57,7 +59,7 @@ export default function TrackIndex({ tracks, selectedId, onSelect, onPrepare }: 
           return <button key={track.trackId} ref={selected ? current : undefined} type="button"
             onClick={() => choose(track.trackId)} aria-pressed={selected} aria-current={selected}
             onPointerEnter={() => onPrepare?.(track.trackId)} onFocus={() => onPrepare?.(track.trackId)}
-            aria-label={`切换到原曲 ${track.title}`} title={`原曲 ${track.title}`}
+            aria-label={t('switchTo', { title: track.title })} title={t('trackLabel', { title: track.title })}
             data-track-index-item={track.displayNumber}>
             <span className="track-index__number">{String(track.displayNumber).padStart(2, '0')}</span>
           </button>;

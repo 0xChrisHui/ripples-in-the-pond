@@ -1,16 +1,21 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { announceMintRecorded } from '../../../lib/mint-notice';
 import { waitUntil } from '../../../features/material-catalog/mint/wait-until';
 import { useAuth } from '../../../hooks/useAuth';
 import { fetchWithAuth } from '../../../lib/fetch-with-auth';
+import { useServerText } from '../../../i18n/use-server-text';
 import type { OriginalTrack } from '../../../lib/music-catalog/types';
 import { getOriginalMintDeployment } from '../../../lib/music-catalog/asset-registry';
 import EthereumMaterialMint from './EthereumMaterialMint';
 import MaterialNoticeView from './MaterialNoticeView';
+type OpErrorKey = 'statusUnavailable' | 'notReady' | 'resultUnknown';
+/** error 为服务端原文（中文模式照旧显示）；errorKey 为本地文案 */
 type MintStatus = { status?: string | null; txHash?: string | null; recipientAddress?: string; recipientFrozen?: boolean;
-  error?: string; code?: string; needsReview?: boolean; alreadyMinted?: boolean };
+  error?: string; errorKey?: OpErrorKey; code?: string; needsReview?: boolean; alreadyMinted?: boolean };
 export default function MaterialMintPanel({ track }: { track: OriginalTrack }) {
+  const t = useTranslations('material');
   const auth = useAuth();
   const latest = useRef(auth);
   useEffect(() => { latest.current = auth; });
@@ -23,14 +28,14 @@ export default function MaterialMintPanel({ track }: { track: OriginalTrack }) {
     await waitUntil(() => latest.current.ready, 15000);
     if (!latest.current.authenticated) latest.current.openLoginModal();
   }
-  return <section className="material-mint" id="track-collect" aria-label="收藏原曲">
-    <h2>收藏原曲</h2>
-    <details className="material-rules"><summary>铸造规则</summary><ul>
-      <li>同一首原曲可以在首页收藏，也可以在这里铸造，两者互不冲突，都会记录到「我的」。</li>
-      <li>Ethereum 上每个钱包对同一首累计只能铸造一次，转出后不恢复；每首总量不设上限，铸造本身不收费。</li>
-      <li>Optimism 为不可转让的 SBT，Gas 由平台支付；Ethereum 为可转让的 NFT，需用你的外部钱包支付 Gas。</li>
+  return <section className="material-mint" id="track-collect" aria-label={t('panelTitle')}>
+    <h2>{t('panelTitle')}</h2>
+    <details className="material-rules"><summary>{t('rulesSummary')}</summary><ul>
+      <li>{t('ruleHome')}</li>
+      <li>{t('ruleEth')}</li>
+      <li>{t('ruleOp')}</li>
     </ul></details>
-    {!auth.authenticated ? <button type="button" className="material-collect" onClick={() => { void login(); }}>登录后收藏</button> : <>
+    {!auth.authenticated ? <button type="button" className="material-collect" onClick={() => { void login(); }}>{t('signInToCollect')}</button> : <>
       <OpMaterialMint key={`op:${scope}`} track={track} auth={auth} />
       {external && <EthereumMaterialMint key={`eth:${scope}`} track={track} />}</>}
   </section>;
@@ -40,6 +45,7 @@ export default function MaterialMintPanel({ track }: { track: OriginalTrack }) {
 const recipientCache = new Map<string, string>();
 
 function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnType<typeof useAuth> }) {
+  const t = useTranslations('material'), serverText = useServerText();
   const { authenticated, getAccessToken } = auth;
   const [status, setStatus] = useState<MintStatus | null>(null);
   const [busy, setBusy] = useState(false);
@@ -60,7 +66,7 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
           { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
         const body = await response.json() as MintStatus;
         if (!cancelled) { setStatus(body); if (auth.userId && body.recipientAddress) recipientCache.set(auth.userId, body.recipientAddress); }
-      } catch { if (!cancelled) setStatus({ error: '收藏状态暂不可用，请稍后查询。' }); }
+      } catch { if (!cancelled) setStatus({ errorKey: 'statusUnavailable' }); }
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,38 +80,40 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
         await new Promise((resolve) => setTimeout(resolve, 300)); token = await auth.getAccessToken();
       }
       if (!active.current) return;
-      if (!token) { setStatus({ error: '登录状态还没有准备好，请稍后再点一次。' }); return; }
+      if (!token) { setStatus({ errorKey: 'notReady' }); return; }
       const response = await fetchWithAuth('/api/material-mint/op', { method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ trackId: track.trackId }) });
       const result = await response.json() as MintStatus;
       if (response.ok && !result.error) announceMintRecorded();
       if (active.current) setStatus(result);
     } catch {
-      if (active.current) setStatus({ error: '请求结果暂不可用，请查询收藏状态后再操作。', needsReview: true });
+      if (active.current) setStatus({ errorKey: 'resultUnknown', needsReview: true });
     } finally { if (active.current) setBusy(false); }
   }
   // 服务端地址（冻结快照）优先；未返回前先用缓存/当前钱包地址，避免等待请求。
   const recipient = status?.recipientAddress ?? (auth.userId ? recipientCache.get(auth.userId) : undefined) ?? auth.evmAddress;
   const pending = status?.needsReview || ['pending', 'minting_onchain'].includes(status?.status ?? '');
-  return <section className="material-chain-row" aria-label="Optimism 原曲领取">
+  const errorText = status?.errorKey ? t(`op.errors.${status.errorKey}`)
+    : status?.error ? serverText(status.error, t('op.errors.server')) : null;
+  return <section className="material-chain-row" aria-label={t('op.label')}>
     <div className="material-chain-info"><h3>Optimism</h3>
-      <p className="material-muted">不可转让 SBT · 平台承担 Gas</p>
-      {recipient && <details className="material-proof-details"><summary>接收地址</summary>
+      <p className="material-muted">{t('op.kind')}</p>
+      {recipient && <details className="material-proof-details"><summary>{t('recipient')}</summary>
         <p className="material-uri">{recipient}</p></details>}
     </div>
     <div className="material-chain-action">
-        {!opAvailable ? <button type="button" className="material-collect" disabled>Optimism 原曲暂未开放</button>
+        {!opAvailable ? <button type="button" className="material-collect" disabled>{t('op.unavailable')}</button>
           : <button type="button" className="material-collect" disabled={busy || Boolean(pending) || status?.alreadyMinted || status?.status === 'success'
             || status?.code?.startsWith('OP_SBT_') || status?.code === 'OP_SNAPSHOT_PENDING'}
-            onClick={() => { void collect(); }}>{busy ? '正在提交…' : status?.status === 'success' || status?.alreadyMinted ? '已有收藏记录'
-              : pending ? '等待链上确认 / 核对' : '铸造 Optimism 原曲'}</button>}
+            onClick={() => { void collect(); }}>{busy ? t('op.submitting') : status?.status === 'success' || status?.alreadyMinted ? t('op.alreadyCollected')
+              : pending ? t('op.pending') : t('op.mint')}</button>}
     </div>
     <div className="material-mint-status material-chain-status" aria-live="polite">
-      {status?.error && <MaterialNoticeView notice={{ tone: 'warn', title: status.error,
-        hint: status.needsReview ? '请到“我的”查看已有记录，确认后再操作。' : undefined }} />}
-      {status?.status === 'success' && <p>历史收藏已确认；当前持有情况以链上余额为准。</p>}
-      {pending && <p>请求已受理，尚未确认铸造完成。请到“我的”查看已有记录。</p>}
-      {status?.txHash && <p className="material-uri">交易：{status.txHash}</p>}
+      {errorText && <MaterialNoticeView notice={{ tone: 'warn', title: errorText,
+        hint: status?.needsReview ? t('op.reviewHint') : undefined }} />}
+      {status?.status === 'success' && <p>{t('op.successNote')}</p>}
+      {pending && <p>{t('op.pendingNote')}</p>}
+      {status?.txHash && <p className="material-uri">{t('tx', { hash: status.txHash })}</p>}
     </div>
   </section>;
 }

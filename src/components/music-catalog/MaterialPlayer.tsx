@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useMemo, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import PlaybackSeekBar from '../common/PlaybackSeekBar';
 import type { OriginalTrack } from '../../lib/music-catalog/types';
 import { getTrackImprint } from '../../lib/music-catalog/experience/imprints';
@@ -16,6 +17,7 @@ export function formatTrackTime(value: number): string {
 export default function MaterialPlayer({ track, onControlsVisible, visual = 'imprint' }: {
   track: OriginalTrack; onControlsVisible?: (visible: boolean) => void; visual?: 'imprint' | 'circle';
 }) {
+  const t = useTranslations('tracks');
   const playback = useOriginalPlayback(track);
   const controls = useRef<HTMLDivElement>(null);
   const imprint = useMemo(() => getTrackImprint(track.trackId), [track.trackId]);
@@ -28,7 +30,6 @@ export default function MaterialPlayer({ track, onControlsVisible, visual = 'imp
     observer.observe(element);
     return () => observer.disconnect();
   }, [onControlsVisible]);
-  const labels = { idle: '开始聆听', preparing: '取消准备', playing: '停止聆听', ended: '再听一次', error: '重新聆听' };
   return <div className="material-player" data-phase={phase} data-playing={phase === 'playing'}
     data-track-motion={visual === 'circle' ? 'circle' : 'sound'} data-track-edition={String(track.displayNumber).padStart(2, '0')}>
     {visual === 'circle' ? <TrackCircle track={track} phase={phase} onAction={() => { void playback.action(); }} />
@@ -39,20 +40,20 @@ export default function MaterialPlayer({ track, onControlsVisible, visual = 'imp
         <button className="material-player__action" type="button" onClick={() => { void playback.action(); }}>
           <span className="material-player__action-symbol" aria-hidden="true">
             {active ? <i className="material-player__stop" /> : <i className="material-player__play" />}
-          </span><span>{labels[phase]}</span>
+          </span><span>{t(`listen.${phase}`)}</span>
         </button>
         <span className="material-player__status" role="status">
-          {phase === 'preparing' ? '音频正在准备' : phase === 'playing' ? '正在播放' : phase === 'ended' ? '聆听结束' : ''}
+          {phase === 'preparing' ? t('statusPreparing') : phase === 'playing' ? t('statusPlaying') : phase === 'ended' ? t('statusEnded') : ''}
         </span>
       </div>
       <div className="material-seek">
         <span>{formatTrackTime(position)}</span>
         <PlaybackSeekBar value={position * 1000} duration={duration * 1000}
           onSeek={(value) => playback.seek(value / 1000)} formatValue={(value) => formatTrackTime(value / 1000)}
-          disabled={phase !== 'playing'} label={`原曲 ${track.title} 播放进度`} />
+          disabled={phase !== 'playing'} label={t('seekLabel', { title: track.title })} />
         <span>{formatTrackTime(duration)}</span>
       </div>
-      {phase === 'error' && <MaterialNoticeView notice={{ tone: 'error', title: '音频暂时未能载入', hint: '请点击“重新聆听”再试一次。' }} />}
+      {phase === 'error' && <MaterialNoticeView notice={{ tone: 'error', title: t('audioFailed'), hint: t('audioFailedHint') }} />}
     </div>
   </div>;
 }
