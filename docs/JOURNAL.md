@@ -1863,3 +1863,5 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - **待用户**：审英文措辞（`01-review-table.md`）、D2、D5、验收后删 spike 分支并决定合入。
 
 - 2026-10-14：用户验收 P19 后的决定：①CN/EN “还不错”；②英文措辞先不改；③**D2 全部翻译**——艺术家名 Ye Yuhan、简介、项目介绍、照片说明、35 首手记（英文另存 `src/i18n/content/`，英文模式才下载；摘要按英文句号截断；**不改** `catalog.v1.json`，N6 仍未查；手记是第一人称私人文字，翻译为机器初稿，建议艺术家过目，几处存疑见 `02-acceptance.md`）；④**D5 翻译**——下载海报按 `?lang=en` 出英文版（不带参数与原来一致，已实测），OG 图因爬虫无 cookie 且分享链接固定，做成“英文 · 中文”并列（`og-copy.ts` 的 `ogBilingual`），`alt` 须字面量故不走词典；⑤删除 `spike/p19-i18n-step0` 分支（当时在 fe29a02）。仍未合入 main、未推送。服务端取词典用 `use-intl/core` 的 `createTranslator`（next-intl 的依赖，STACK 已登记）。`src/i18n/` 根目录已满 8 个文件，新增内容放 `src/i18n/content/`。
+
+- 2026-10-14：P19 N6 已查清：`catalog.v1.json` 的 revision 含手记文字，且被铸造订单校验，**不能改**；所以英文手记另存 `src/i18n/content/artist-notes.en.json` 是对的（英文模式才下载）。艺术家改完英文后只更新这份 json，不碰 catalog。

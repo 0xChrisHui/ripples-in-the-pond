@@ -45,6 +45,12 @@
 
 ## ⏳ Later / 开放项
 
+- **P19 英文手记回流**：艺术家过目并改完 35 首手记英文后，更新 `src/i18n/content/artist-notes.en.json`。注意 `catalog.v1.json` 的 revision 含手记文字且被铸造订单校验，不能改，英文手记另存是对的（N6 已查清，见 JOURNAL）。
+- **P19 Step 7 剩余：API 改错误码**：服务器接口目前返回中文原文，应改为错误码由前端按语言展示；英文模式已在展示层拦截，暂不阻塞。
+- **P19 N7 Privy 弹窗语言**：类型里有 `intl.textLocalization`，未接入、未实测，需实测能否随 CN/EN 切换。
+- **`scripts/ui/tracks-experience.test.ts` 重写**：P19 之前就已过期（断言的 `data-track-position` 早已不存在，`/tracks` 舞台 HTML 是客户端加载，静态渲染读不到）；需用 packages 之外的方式（如浏览器实测脚本）补，不装新依赖。
+- **目录超 8 文件整理**：`src/lib/self-mint`、`src/types` 超硬线，`verify.sh` 一直报这一项旧失败。
+- **首页 Fast 4G 水面就绪 46–49 秒原因未查**：P15-J 记录为 26–28 秒；怀疑采样器每帧算样式、每 2 秒截图、可见后持续渲染，未验证，与 P19 无关。
 - **P16 两项非阻塞标签已本地修正**：作品凭证来源统一显示“链上合约”；新订单永久 metadata 将建单日标为 `Prepared At`，已冻结 Token #1 保留原文。详见收口 Review 的 P2-1/P2-2。
 - **P16 私密档案补证（非阻塞）**：正式数据与 `/me` 查询逻辑已核对；原钱包本人确认待铸造项消失、Token #1 出现在“我的唱片”。本次未使用用户登录会话。
 - **P16 扩展钱包矩阵（非主网编号阻塞项）**：补 imToken / WalletConnect 真实 mint 与 Phantom/OKX 入口 smoke。
