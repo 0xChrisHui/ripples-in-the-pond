@@ -12,7 +12,7 @@
 
 **P15-J 首页无感加载（2026-10-13，分支 feat/p19-seamless-loading，未合并未推送）**：Step 0–6 完成，加载期全程无文字、首帧即夜塘底色、单层 SceneCover 700ms 淡出、元素依次淡入、慢网 3s 涟漪；Step 5 实测无预加载收益故不做。视觉部分未目验，见 JOURNAL 2026-10-13。
 
-**P19 中英双语（2026-10-14，分支 feat/p19-i18n，未合并未推送）**：中文默认、右上角 CN/EN 切换，方案 C（服务端固定中文、浏览器按 cookie 切英文），库 `next-intl`。Step 0 验证成立（spike 分支 `spike/p19-i18n-step0` 收口时删）；D0 用户选 A（接受英文用户刷新时先见中文：不限速约 0.2–0.56s、Fast 4G 约 21.6s）；Step 1 地基完成。用户授权 P19 一口气跑完 playbook、最后统一验收，进度以本分支 JOURNAL 为准。`verify.sh` 有两项与 P19 无关的既有失败：`src/lib/self-mint`、`src/types` 目录超 8 文件；Production snapshot Gate 期望 12 条记录（疑 P16 主网新增，未核实）。**P19 下一步**：Step 2 起按 `playbook/phase-19/00-overview.md` 连续执行。
+**P19 中英双语（2026-10-14，分支 feat/p19-i18n，未合并未推送）**：中文默认、右上角 CN/EN 切换，方案 C（服务端固定中文、浏览器按 cookie 切英文），库 `next-intl`。Step 0–6、8 已做完并本地提交，**待用户验收**：CN/EN 已露出（桌面在顶栏、手机在菜单），全站主要页面已迁入词典（573 条，英文为机器初稿待审），英文无残留中文界面文案（D2 艺术家内容除外），切换不刷新、播放中不断音；静态路由与 prerender 清单与开工前一致。D0 用户选 A（英文用户刷新先见中文：不限速约 0.2–0.56s、Fast 4G 约 21.6s）。**Step 7（分享海报/OG 图英文版、API 错误码）延后**：英文模式已在展示层拦截服务器中文原文，不阻塞；D2（艺术家名/简介/手记英文）、D5（海报语言）待用户定。验收说明见 `playbook/phase-19/02-acceptance.md`，对照表见 `01-review-table.md`。spike 分支 `spike/p19-i18n-step0` 验收后再删。`verify.sh` 有两项与 P19 无关的既有失败：`src/lib/self-mint`、`src/types` 目录超 8 文件；Production snapshot Gate 期望 12 条记录（未核实）。**P19 下一步**：用户验收；通过后再决定合入 main。
 
 **下一步**：2026-10-04用户补款后，ETH与OP各35/35项目留存全部确认，unknown=0；ETH生产签发材料/政策与对账接线已完成，ETH领取入口及70项同源证明已发布：源码5dd2003、部署dpl_EjJNTBsSq2XBz1doAzxyb8RPEc3Y Ready，正式域名与受控对账HTTP检查通过。本轮ETH执行已收口。真实登录钱包完整点击路径未验；SEMI仍需实际环境，UI按用户指令延期，不要求现在验收。权威结果与十项表见 `reviews/evidence/parallel-2026-10/20261002-night-01/morning-summary.md`；下方旧阶段仅为历史。
 

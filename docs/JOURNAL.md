@@ -1851,3 +1851,13 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 - 2026-10-14：P19 Step 2 CN/EN 切换（`src/components/pond-shell/navigation/LocaleSwitch.tsx`，常量 `LOCALE_SWITCH_VISIBLE=false`，Step 8 打开）。**订正 playbook F4**：右上角并非 4 处独立头部——`ScorePondHeader`、`TrackCatalog`（含 `/tracks/archive`）、echo layout 都经 `PageNavigation` 渲染同一个 `PondHeader`，`(pond)` 路由由 `PersistentRouteSurfaces` 渲染它，故只挂 `PondHeader` 一处即覆盖全部生产页面（沙盒 `/test3`/`/test4` 同带，`/test1` 不受影响）。位置：桌面在“曲目”与分隔线之间（保持登录在最右、不破坏 `nav > :last-child` 的登录宽度预留），手机在菜单按钮左侧免展开可见。语言名“中文 / English”按无障碍惯例用各自语言书写、不进词典；删去未用的 `localeSwitch.current`。临时打开常量实测：7 条路由 × 桌面/手机，点 EN 后 lang/aria-pressed/cookie 正确、画布未重建，刷新与整页换页保持，点 CN 复原，React/intl 报错 0。
 
 - 2026-10-14：P19 Step 6 排版。伪语言（每条英文 +40%、重音字母、补长做成可换行的词）构建全站审计：桌面/手机 9 条路由 + 登录弹窗 0 横向溢出、0 截断。发现并修复一处真问题：CN/EN 露出后 390px 手机首页品牌名被截断（需 262px 只剩 219px）→ **手机端 CN/EN 改放进菜单面板与登录同行，桌面仍在顶栏**（偏离 playbook“头部直接可见”的字面要求，换来手机顶栏与现状完全一致，待用户验收确认）。首轮伪语言用不可断的长串补长，误报 3 处“超出屏幕”，改为可换行后消失，属工具假象。字距：宽字距绝大多数在全大写等宽小标签（英文同样适用），只把曲目播放器“开始聆听”衬线按钮在 `:lang(en)` 下由 .08em 收到 .02em；头部导航 Artist/Tracks 的等宽宽字距与品牌字标一致，保留。
+
+## 2026-10-14 — P19 收尾（Step 8）与验收前说明
+
+- **范围**：Step 0–6、8 完成；**Step 7（分享海报/OG 图英文版、API 改错误码）延后**——展示层已拦截服务器中文原文，不阻塞露出按钮；分享到 X/微博的模板文案已入词典。
+- **偏离计划**：①手机端 CN/EN 放进菜单面板（390px 顶栏放不下会截断品牌名，实测 262px 需 / 219px 可用）；②playbook F4“4 处独立头部”订正为只挂 `PondHeader` 一处（其余经 `PageNavigation` 复用它）；③切换用 `useState + startTransition`；④`EditionStamp` 等中英并列标签按 D3 英文只留英文。
+- **实现上的几条约定（给以后加文案的人）**：存进状态/由 hook 产出的文案存 `Msg`（`src/i18n/msg.ts`，key+插值），不要存成品字符串，否则切换语言时已显示的文字停在旧语言；服务端组件里的文字用 `<T k="...">`（`src/i18n/T.tsx`）；服务器/引擎返回的中文原文走 `useServerText`（中文模式照旧显示，英文模式显示前端文案）；状态/单复数用 ICU `select`/`plural`，禁止拼接；词典检查脚本能解析 ICU 分支。
+- **测试**：`scripts/ui/material-error.test.ts` 随 `describeMaterialError` 新签名更新并加英文断言；`tracks-experience.test.ts` **本来就过期**（断言的 `data-track-position` 在 P19 前的 a88db6e 已不存在，且 `/tracks` 舞台 HTML 为客户端加载），不是 P19 引入，未改。
+- **验收前实测**（详见 `playbook/phase-19/02-acceptance.md`）：静态路由与 prerender 清单与开工前一致；中文默认页面与开工前逐项对比文字一致；英文 10 条路由无残留中文界面文案；伪语言 0 溢出；播放中切换语言音频进度连续、无 pause/emptied、画布未重建；`verify.sh` 仅剩两项与 P19 无关的旧失败。
+- **未测/未做**：真机、Safari/Firefox、登录后的“我的”与铸造流程、手机视口下播放中切换；N6（`catalog.v1.json` 是否属永久清单）未查；N7 Privy 仅确认类型里有 `intl.textLocalization`，未接入。
+- **待用户**：审英文措辞（`01-review-table.md`）、D2、D5、验收后删 spike 分支并决定合入。

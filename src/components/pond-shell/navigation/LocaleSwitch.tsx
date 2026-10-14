@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 import { useLocaleSwitch } from '@/src/i18n/LocaleProvider';
 import type { Locale } from '@/src/i18n/locale';
 
-/** P19：右上角 CN/EN 露出开关。Step 8 前保持 false（线上零变化）；开发时可手动写 cookie `locale=en` 测试。 */
-export const LOCALE_SWITCH_VISIBLE = false;
+/** P19：右上角 CN/EN 露出开关（Step 8 打开）。改回 false 即全站隐藏，已有 cookie 的用户仍按 cookie 显示。 */
+export const LOCALE_SWITCH_VISIBLE = true;
 
 // 语言名用各自语言书写、不随界面翻译（无障碍惯例），所以不进词典
 const OPTIONS: { locale: Locale; label: string; name: string; lang: string }[] = [

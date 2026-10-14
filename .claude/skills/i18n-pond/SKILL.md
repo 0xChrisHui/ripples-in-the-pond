@@ -73,6 +73,13 @@ description: 给 Ripples in the Pond 做中英双语（中文默认、英文为�
 - **首帧一律中文**：浏览器第一次渲染必须与服务端 HTML 一致；**禁止在组件首次渲染时读 cookie / localStorage 决定语言**，否则 hydration 失败、整棵树在客户端重建（Step 0 阳性对照已证实）。
 - 切换语言 = 写 cookie + provider 换词典，**不调用** `router.refresh()`。
 - 英文缺 key 时显示中文原文（provider 以中文为底合并英文），不会显示 `ns.key` 路径。
+- **模块顶层常量 / hook 产出的文案**：存 `Msg`（`src/i18n/msg.ts` 的 `msg(key, values)`），渲染处用 `useMsg()` 翻译；不要存成品字符串（切换语言时已显示的文字会停在旧语言）。
+- **服务端组件里的纯文字**：用 `<T k="ns.key" />`（`src/i18n/T.tsx`）。属性（aria-label 等）则需把那块放进客户端组件。
+- **服务器 / 引擎返回的中文原文**：显示前过 `useServerText()(原文, 英文兜底)`——中文模式照旧显示原文，英文模式显示前端文案。
+- **按状态 / 数量选词**：用 ICU `{state, select, a {…} other {…}}` / `plural`，key 类型用 `as const` 收窄；`npm run i18n:check` 能解析 ICU 分支。
+- **日期**：服务端会渲染的用 `useFormatter()`（固定时区）；只在浏览器渲染的可用 `toLocaleString(HTML_LANG[locale])`。
+- **标签页标题**：服务端 metadata 保持中文；英文由 `use-localized-title.ts` 按词典 `titles.*` 替换中文片段，新增标题片段要同步加进 `titles`。
+- **测试英文版面**：用伪语言（每条 +40%、重音字母、补长用可换行的词）构建后扫溢出，测完恢复 en.json，别提交。
 - OG 图 / 海报是服务端渲染，爬虫不带 cookie，只能出固定语言（playbook D5、N5）；Satori 里含多个子节点的 `div` 必须显式 `display:flex`，"变量+文字"混排要合成模板字符串。
 
 ## 4. 布局溢出检查
