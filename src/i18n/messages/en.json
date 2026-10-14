@@ -561,5 +561,154 @@
       "metamask": "Connect original MetaMask wallet",
       "reconnect": "Reconnect original wallet"
     }
+  },
+  "share": {
+    "author": {
+      "x": "This is the sound I left in the pond today. What would yours sound like?\n“{title}”",
+      "weibo": "Same base track, and everyone leaves a different sound. This is my version. Come in and play a little; I'd love to hear yours.\n“{title}”"
+    },
+    "listener": {
+      "x": "Heard this and wondered how you would play it.\n“{title}”",
+      "weibo": "Found an interesting improvisation. Same base track: what sound would someone else leave? Sharing it with you, and I'd love to hear your version too.\n“{title}”"
+    },
+    "copyLink": "Copy link",
+    "unavailable": "Share link unavailable",
+    "copied": "Copied",
+    "copyFailed": "Copy failed",
+    "expand": "Show share options",
+    "share": "Share",
+    "toX": "Share on X",
+    "toWeibo": "Share on Weibo",
+    "poster": "Download poster"
+  },
+  "score": {
+    "backToArchive": "Back to archive",
+    "backToArchiveLink": "← Back to archive",
+    "backToPondShort": "Back to the pond",
+    "backToPondDefault": "Back to the pond",
+    "leave": "Leave this work",
+    "shareWork": "Share this work",
+    "inProgressTitle": "Ripples · In progress",
+    "eventCount": " · {count, plural, one {# event} other {# events}}",
+    "permanentEvents": "{title} · {count, plural, one {# permanent event} other {# permanent events}}",
+    "refreshStatus": "Refresh progress",
+    "opening": "Opening the permanent record",
+    "reading": "Loading",
+    "readingRecord": "Loading the permanent record",
+    "readingRecordEllipsis": "Loading the permanent record…",
+    "queue": {
+      "pending": "Queued for production",
+      "uploading_events": "Saving the performance",
+      "preparing_package": "Verifying permanent resources",
+      "minting_onchain": "Writing to OP Mainnet",
+      "uploading_metadata": "Assembling the permanent work",
+      "setting_uri": "Binding the permanent player",
+      "finalizing_snapshot": "Generating the verification snapshot",
+      "success": "The permanent work is complete",
+      "failed": "The work wasn't completed"
+    },
+    "failure": {
+      "snapshot_unavailable": "The verified playback snapshot is temporarily unavailable",
+      "metadata_unavailable": "The permanent data can't be read right now",
+      "queue_failed": "This record couldn't be completed",
+      "other": "The work's data is temporarily unavailable"
+    },
+    "detail": {
+      "processing": "The work's identity, share link and any credentials already generated will stay here; refresh later to see progress.",
+      "snapshotUnavailable": "This doesn't mean the mint failed; the known identity of the work can still be verified below.",
+      "failed": "The known onchain identity and permanent credentials remain below for independent verification."
+    },
+    "fallback": {
+      "title": "This record can't be loaded right now",
+      "body": "We haven't filled in unknown details with placeholder data. You can try again or return to your archive; once the onchain and permanent data are back, the original link will keep working."
+    },
+    "playback": {
+      "errorDetail": "{error}; the identity and credentials can still be verified.",
+      "errorDefault": "The permanent playback resources are unavailable",
+      "pausedAt": "Paused at {time}",
+      "playedFull": "Played in full · {time}",
+      "playingDetail": "The permanent recording, the eclipse and the key choreography share one clock.",
+      "queued": "Your play request is recorded; playback starts automatically once resources are verified.",
+      "preparing": "Preparing the base track and opening sounds first; tap now to queue playback.",
+      "idle": "Permanent audio only starts a playback session after you tap.",
+      "pause": "Pause",
+      "cancelWait": "Cancel",
+      "playWhenReady": "Play when ready"
+    },
+    "archive": {
+      "sources": {
+        "contract": "Onchain contract",
+        "database": "Work database",
+        "metadata": "Permanent metadata"
+      },
+      "fields": {
+        "contract": "ScoreNFT contract",
+        "creator": "Creator",
+        "currentHolder": "Current holder",
+        "mintTransaction": "Mint transaction",
+        "setUriTransaction": "Finalization transaction",
+        "tokenUri": "Onchain token URI",
+        "metadata": "Permanent metadata",
+        "events": "Permanent events",
+        "base": "Permanent base track",
+        "sounds": "Permanent sound table",
+        "decoder": "Permanent player"
+      },
+      "missing": {
+        "creator": "The permanent source doesn't provide a creator address",
+        "currentHolder": "Can't read the current holder right now",
+        "mintTransaction": "This source doesn't record a mint transaction",
+        "setUriTransaction": "This source doesn't record a finalization transaction"
+      },
+      "checkingHolder": "Checking the current holder",
+      "dateMissing": "Time not recorded",
+      "inProgress": "In progress",
+      "eyebrow": "Permanent record",
+      "title": "Work credentials",
+      "intro": "Playback inputs come verbatim from the permanent resources pinned to this work. Short values are for reading; copying keeps the full hash. The creator and the current holder are always recorded separately.",
+      "openDecoder": "Open the permanent player in a new tab"
+    }
+  },
+  "record": {
+    "state": {
+      "idle": {
+        "action": "Play",
+        "status": "Tap the record to play"
+      },
+      "loading": {
+        "action": "Preparing",
+        "status": "Preparing the permanent recording…"
+      },
+      "playing": {
+        "action": "Stop",
+        "status": "Playing"
+      },
+      "paused": {
+        "action": "Resume",
+        "status": "Paused"
+      },
+      "ended": {
+        "action": "Play again",
+        "status": "Finished"
+      },
+      "error": {
+        "action": "Retry",
+        "status": "Playback unavailable"
+      }
+    },
+    "controls": "{title} playback controls"
+  },
+  "ledger": {
+    "title": "Permanent credentials",
+    "count": "{count, plural, one {# record} other {# records}}",
+    "missing": "Not recorded · not provided by the original source",
+    "source": "Source: {source}",
+    "copied": "Copied",
+    "copyFailed": "Copy failed",
+    "copyFull": "Copy full value",
+    "external": "View external record",
+    "copiedFull": "Full value copied",
+    "copyFailedManual": "Copy failed; please select the full value manually",
+    "valueLabel": "{label}: {value}"
   }
 }

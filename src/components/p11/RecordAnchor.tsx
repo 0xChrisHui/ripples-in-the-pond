@@ -1,6 +1,7 @@
 'use client';
 
 import { useId, type ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 
 export type RecordAnchorState =
   | 'idle'
@@ -24,14 +25,7 @@ type Props = {
   loadingActionLabel?: string;
 };
 
-const stateCopy: Record<RecordAnchorState, { action: string; status: string }> = {
-  idle: { action: '开始播放', status: '点击唱片，开始播放' },
-  loading: { action: '正在准备', status: '正在准备永久录音…' },
-  playing: { action: '停止', status: '正在播放' },
-  paused: { action: '继续播放', status: '播放已暂停' },
-  ended: { action: '再次播放', status: '播放已结束' },
-  error: { action: '重试', status: '播放暂不可用' },
-};
+// 各状态的动作与说明文案在词典 record.state.<state>
 
 /** 父组件掌管播放状态；唱片与日食始终调用同一个主动作。 */
 export default function RecordAnchor({
@@ -43,24 +37,26 @@ export default function RecordAnchor({
   statusText,
   detailText,
   disabled = false,
-  playingActionLabel = '停止',
+  playingActionLabel,
   allowBusyAction = false,
-  loadingActionLabel = '正在准备',
+  loadingActionLabel,
 }: Props) {
+  const t = useTranslations('record');
   const statusId = useId();
-  const copy = stateCopy[state];
+  const copy = { action: t(`state.${state}.action`), status: t(`state.${state}.status`) };
   const isPlaying = state === 'playing';
   const isBusy = state === 'loading';
   const actionDisabled = disabled || (isBusy && !allowBusyAction);
   const showsEclipse = isPlaying && eclipseVisual != null;
-  const actionLabel = isPlaying ? playingActionLabel : isBusy ? loadingActionLabel : copy.action;
+  const actionLabel = isPlaying ? playingActionLabel ?? t('state.playing.action')
+    : isBusy ? loadingActionLabel ?? t('state.loading.action') : copy.action;
 
   return (
     <section
       className="record-anchor"
       data-state={state}
       data-visual={showsEclipse ? 'eclipse' : 'record'}
-      aria-label={`${title} 播放控制`}
+      aria-label={t('controls', { title })}
     >
       <button
         className="record-anchor__visual"

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useMessages, useTranslations } from 'next-intl';
 import { useAuth } from '@/src/hooks/useAuth';
 import { isScoreAuthor, scoreShareCopy, scoreShareIntent, scoreShareUrl } from './experience/share-copy';
 
@@ -32,7 +33,9 @@ async function copyText(value: string): Promise<boolean> {
 export default function ShareActions({
   id, tokenId, trackTitle, canonicalPath, posterPath, creatorAddress,
 }: Props) {
-  const [feedback, setFeedback] = useState('复制链接');
+  const t = useTranslations('share');
+  const shareTemplates = useMessages().share;
+  const [feedback, setFeedback] = useState<'copyLink' | 'unavailable' | 'copied' | 'copyFailed'>('copyLink');
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const slug = tokenId ?? id;
   const auth = useAuth();
@@ -54,28 +57,28 @@ export default function ShareActions({
 
   const openIntent = (kind: 'x' | 'weibo') => {
     const url = getUrl();
-    if (!url) { setFeedback('分享链接暂不可用'); return; }
-    const target = scoreShareIntent(kind, scoreShareCopy(kind, trackTitle, author), url);
+    if (!url) { setFeedback('unavailable'); return; }
+    const target = scoreShareIntent(kind, scoreShareCopy(kind, trackTitle, author, shareTemplates), url);
     const popup = window.open(target, '_blank', 'noopener,noreferrer');
     if (!popup) window.location.href = target;
   };
 
   const copy = async () => {
     const url = getUrl();
-    setFeedback(url ? await copyText(url) ? '已复制' : '复制失败' : '分享链接暂不可用');
+    setFeedback(url ? await copyText(url) ? 'copied' : 'copyFailed' : 'unavailable');
   };
 
   return (
     <div className="score-share-actions" data-pond-ui="true">
       <details ref={detailsRef}>
-        <summary aria-label="展开分享方式">分享</summary>
+        <summary aria-label={t('expand')}>{t('share')}</summary>
         <div className="score-share-actions__menu">
-          {!available && <p>分享链接暂不可用</p>}
-          <button type="button" disabled={!available} onClick={copy}>{feedback}</button>
-          <button type="button" disabled={!available} onClick={() => openIntent('x')}>分享到 X</button>
-          <button type="button" disabled={!available} onClick={() => openIntent('weibo')}>分享到微博</button>
+          {!available && <p>{t('unavailable')}</p>}
+          <button type="button" disabled={!available} onClick={copy}>{t(feedback)}</button>
+          <button type="button" disabled={!available} onClick={() => openIntent('x')}>{t('toX')}</button>
+          <button type="button" disabled={!available} onClick={() => openIntent('weibo')}>{t('toWeibo')}</button>
           {posterPath !== null && (
-            <a href={posterPath ?? `/score/${slug}/poster`} download={`ripples-${slug}.png`}>下载海报</a>
+            <a href={posterPath ?? `/score/${slug}/poster`} download={`ripples-${slug}.png`}>{t('poster')}</a>
           )}
         </div>
       </details>

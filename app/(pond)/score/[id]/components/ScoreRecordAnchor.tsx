@@ -1,6 +1,8 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import RecordAnchor, { type RecordAnchorState } from '@/src/components/p11/RecordAnchor';
+import { useServerText } from '@/src/i18n/use-server-text';
 import PlaybackSeekBar from '@/src/components/common/PlaybackSeekBar';
 import type { UseScorePlaybackResult } from '@/src/features/score-playback/types';
 
@@ -22,6 +24,8 @@ function timeLabel(ms: number): string {
 }
 
 export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAvailable }: Props) {
+  const t = useTranslations('score.playback');
+  const serverText = useServerText();
   const state = anchorState(playback);
   const perform = () => {
     if (playback.state === 'error') {
@@ -32,18 +36,18 @@ export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAv
     else void playback.toggle();
   };
   const detail = playback.state === 'error'
-    ? `${playback.errorMessage ?? '永久播放资源暂不可用'}；身份与凭证仍可核验。`
+    ? t('errorDetail', { error: serverText(playback.errorMessage, t('errorDefault')) })
     : playback.state === 'paused'
-      ? `已暂停在 ${timeLabel(playback.positionMs)}`
+      ? t('pausedAt', { time: timeLabel(playback.positionMs) })
       : playback.state === 'ended'
-        ? `已完整播放 ${timeLabel(playback.durationMs)}`
+        ? t('playedFull', { time: timeLabel(playback.durationMs) })
         : playback.state === 'playing'
-          ? '永久录音、日食与按键编舞保持同一时钟。'
+          ? t('playingDetail')
           : playback.state === 'loading'
             ? playback.playRequested
-              ? '已记录播放请求，资源验证完成后会自动开始。'
-              : '正在优先准备底曲与开场音效，现在点击即可排队播放。'
-            : '永久音频只会在你主动点击后建立播放会话。';
+              ? t('queued')
+              : t('preparing')
+            : t('idle');
   const eclipse = eclipseAvailable
     ? <span className="score-eclipse-viewport-anchor" />
     : <span className="score-eclipse-fallback" />;
@@ -56,9 +60,9 @@ export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAv
         coverUrl={coverUrl}
         onAction={perform}
         eclipseVisual={eclipse}
-        playingActionLabel="暂停"
+        playingActionLabel={t('pause')}
         allowBusyAction
-        loadingActionLabel={playback.playRequested ? '取消等待' : '准备好后播放'}
+        loadingActionLabel={playback.playRequested ? t('cancelWait') : t('playWhenReady')}
         detailText={detail}
       />
       <PlaybackSeekBar

@@ -2,36 +2,40 @@ import EditionStamp, { type EditionStatus } from '@/src/components/p11/EditionSt
 import ProvenanceLedger, { type ProvenanceEntry } from '@/src/components/p11/ProvenanceLedger';
 import type { ScorePageData, ScoreProvenance } from '@/src/data/score-source';
 import type { ScoreHolderState } from './use-score-holder';
+import { useTranslations } from 'next-intl';
 
-const sourceLabels = {
-  contract: '链上合约',
-  database: '作品数据库',
-  metadata: '永久 metadata',
-  'metadata.animation_url': 'metadata.animation_url',
-} as const;
+type Translate = ReturnType<typeof useTranslations<'score.archive'>>;
+// 来源与字段标签在词典 score.archive.*；metadata.animation_url、Token ID 是技术写法，中英相同，保留字面量
+const sourceKeys = { contract: 'contract', database: 'database', metadata: 'metadata' } as const;
+function sourceLabel(t: Translate, source: ScoreProvenance[keyof ScoreProvenance]['source']): string {
+  return source === 'metadata.animation_url' ? source : t(`sources.${sourceKeys[source]}`);
+}
 
-const fields: Array<{ key: keyof ScoreProvenance; label: string; missing?: string }> = [
-  { key: 'contract', label: 'ScoreNFT 合约' },
-  { key: 'token', label: 'Token ID' },
-  { key: 'creator', label: '创作者', missing: '永久来源未提供创作者地址' },
-  { key: 'currentHolder', label: '当前持有者', missing: '暂时无法读取当前持有者' },
-  { key: 'mintTransaction', label: '铸造交易', missing: '当前来源未记录铸造交易' },
-  { key: 'setUriTransaction', label: '定稿交易', missing: '当前来源未记录定稿交易' },
-  { key: 'tokenUri', label: '链上 Token URI' },
-  { key: 'metadata', label: '永久 Metadata' },
-  { key: 'events', label: '永久事件' },
-  { key: 'base', label: '永久底曲' },
-  { key: 'sounds', label: '永久音效表' },
-  { key: 'decoder', label: '永久播放器' },
+const fields: Array<{ key: keyof ScoreProvenance; missing?: boolean }> = [
+  { key: 'contract' },
+  { key: 'token' },
+  { key: 'creator', missing: true },
+  { key: 'currentHolder', missing: true },
+  { key: 'mintTransaction', missing: true },
+  { key: 'setUriTransaction', missing: true },
+  { key: 'tokenUri' },
+  { key: 'metadata' },
+  { key: 'events' },
+  { key: 'base' },
+  { key: 'sounds' },
+  { key: 'decoder' },
 ];
+type MissingKey = 'creator' | 'currentHolder' | 'mintTransaction' | 'setUriTransaction';
 
-function ledgerEntries(provenance: ScoreProvenance, holder?: ScoreHolderState): ProvenanceEntry[] {
-  return fields.map(({ key, label, missing }) => {
+function ledgerEntries(t: Translate, provenance: ScoreProvenance, holder?: ScoreHolderState): ProvenanceEntry[] {
+  return fields.map(({ key, missing: hasMissing }) => {
+    const label = key === 'token' ? 'Token ID' : t(`fields.${key as Exclude<keyof ScoreProvenance, 'token'>}`);
+    const missing = hasMissing ? t(`missing.${key as MissingKey}`) : undefined;
     if (key === 'currentHolder' && holder) {
       return {
-        id: key, label, value: holder.value, source: sourceLabels.contract,
+        id: key, label, value: holder.value, source: sourceLabel(t, 'contract'),
         href: holder.href ?? undefined, copyable: true,
-        missingLabel: holder.status === 'loading' ? '正在核对当前持有者' : missing,
+        missingLabel: holder.status === 'loading' ? t('checkingHolder') : missing,
       };
     }
     const item = provenance[key];
@@ -39,7 +43,7 @@ function ledgerEntries(provenance: ScoreProvenance, holder?: ScoreHolderState): 
       id: key,
       label,
       value: item.value,
-      source: sourceLabels[item.source],
+      source: sourceLabel(t, item.source),
       href: item.href ?? undefined,
       missingLabel: missing,
       copyable: key !== 'token',
@@ -54,9 +58,9 @@ function statusFor(score: ScorePageData): EditionStatus {
   return score.degraded ? 'degraded' : 'finalized';
 }
 
-function dateLabel(score: ScorePageData): string {
+function dateLabel(score: ScorePageData, missing: string): string {
   const value = score.confirmedAt ?? score.createdAt ?? score.mintedAt;
-  if (!value) return '时间未记录';
+  if (!value) return missing;
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('zh-CN');
 }
@@ -64,25 +68,23 @@ function dateLabel(score: ScorePageData): string {
 export default function ScoreArchive({
   score, holder,
 }: { score: ScorePageData; holder?: ScoreHolderState }) {
-  const token = score.tokenId == null ? '制作中' : `Token #${score.tokenId}`;
+  const t = useTranslations('score.archive');
+  const token = score.tokenId == null ? t('inProgress') : `Token #${score.tokenId}`;
   return (
     <section className="score-archive" aria-labelledby="score-archive-title">
       <div className="score-archive__intro">
-        <p className="score-archive__eyebrow">Permanent record · 永久档案</p>
-        <h2 id="score-archive-title">作品凭证</h2>
-        <p>
-          播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希；
-          创作者与当前持有者始终分开记录。
-        </p>
+        <p className="score-archive__eyebrow">{t('eyebrow')}</p>
+        <h2 id="score-archive-title">{t('title')}</h2>
+        <p>{t('intro')}</p>
         {score.provenance.decoder.href && (
           <a className="score-archive__decoder" href={score.provenance.decoder.href} target="_blank" rel="noopener noreferrer">
-            在新标签打开永久播放器 <span aria-hidden="true">↗</span>
+            {t('openDecoder')} <span aria-hidden="true">↗</span>
           </a>
         )}
       </div>
-      <ProvenanceLedger entries={ledgerEntries(score.provenance, holder)} />
+      <ProvenanceLedger entries={ledgerEntries(t, score.provenance, holder)} />
       <div className="score-archive__edition">
-        <EditionStamp status={statusFor(score)} detail={`${token} · ${dateLabel(score)}`} />
+        <EditionStamp status={statusFor(score)} detail={`${token} · ${dateLabel(score, t('dateMissing'))}`} />
       </div>
     </section>
   );

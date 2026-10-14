@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 export type ProvenanceEntry = {
   id: string;
@@ -50,7 +51,9 @@ async function copyFullValue(value: string): Promise<boolean> {
 }
 
 /** 账面短显以便阅读，但复制动作始终写入未截断的原始值。 */
-export default function ProvenanceLedger({ title = '永久凭证', entries }: Props) {
+export default function ProvenanceLedger({ title: titleProp, entries }: Props) {
+  const t = useTranslations('ledger');
+  const title = titleProp ?? t('title');
   const [copyResult, setCopyResult] = useState<{ id: string; ok: boolean } | null>(null);
 
   async function copyEntry(entry: ProvenanceEntry) {
@@ -63,7 +66,7 @@ export default function ProvenanceLedger({ title = '永久凭证', entries }: Pr
     <section className="provenance-ledger" aria-label={title}>
       <header className="provenance-ledger__header">
         <p>{title}</p>
-        <span>{entries.length} 项记录</span>
+        <span>{t('count', { count: entries.length })}</span>
       </header>
 
       <dl className="provenance-ledger__list">
@@ -77,27 +80,27 @@ export default function ProvenanceLedger({ title = '永久凭证', entries }: Pr
               <dd>
                 <div className="provenance-ledger__value">
                   {hasValue ? (
-                    <code title={entry.value ?? undefined} aria-label={`${entry.label}：${entry.value}`}>
+                    <code title={entry.value ?? undefined} aria-label={t('valueLabel', { label: entry.label, value: entry.value ?? '' })}>
                       {feedback && !feedback.ok
                         ? entry.value
                         : entry.displayValue ?? shortValue(entry.value as string)}
                     </code>
                   ) : (
                     <span className="provenance-ledger__missing">
-                      {entry.missingLabel ?? '未记录 · 原始来源未提供'}
+                      {entry.missingLabel ?? t('missing')}
                     </span>
                   )}
-                  <small>来源：{entry.source}</small>
+                  <small>{t('source', { source: entry.source })}</small>
                 </div>
                 <div className="provenance-ledger__actions">
                   {hasValue && entry.copyable !== false && (
                     <button type="button" onClick={() => copyEntry(entry)}>
-                      {feedback ? (feedback.ok ? '已复制' : '复制失败') : '复制完整值'}
+                      {feedback ? (feedback.ok ? t('copied') : t('copyFailed')) : t('copyFull')}
                     </button>
                   )}
                   {hasValue && entry.href && (
                     <a href={entry.href} target="_blank" rel="noopener noreferrer">
-                      查看外部记录 <span aria-hidden="true">↗</span>
+                      {t('external')} <span aria-hidden="true">↗</span>
                     </a>
                   )}
                 </div>
@@ -107,7 +110,7 @@ export default function ProvenanceLedger({ title = '永久凭证', entries }: Pr
         })}
       </dl>
       <p className="p11-visually-hidden" aria-live="polite">
-        {copyResult && (copyResult.ok ? '完整值已复制' : '复制失败，请手动选择完整值')}
+        {copyResult && (copyResult.ok ? t('copiedFull') : t('copyFailedManual'))}
       </p>
     </section>
   );

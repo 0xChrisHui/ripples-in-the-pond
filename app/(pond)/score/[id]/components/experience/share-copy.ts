@@ -1,21 +1,14 @@
+import zh from '@/src/i18n/messages/zh.json';
+
 type Platform = 'x' | 'weibo';
-const COPY = {
-  author: {
-    x: '这是我今天留在水塘里的声音。换你，会弹成什么样？',
-    weibo: '同一首底曲，每个人都能留下不同的声音。这是我的这一版。你也可以进去弹一段，我很想听听你的版本。',
-  },
-  listener: {
-    x: '听到这一段，很想知道换你会弹成什么样。',
-    weibo: '发现一段有意思的即兴演奏。同一首底曲，换个人会留下怎样的声音？把它分享给你，也想听听你的版本。',
-  },
-};
+/** 分享模板（含 {title}）在词典 share.author / share.listener；不传时用中文，保持原有分享文案 */
+type ShareTemplates = { author: Record<Platform, string>; listener: Record<Platform, string> };
 export function isScoreAuthor(authenticated: boolean, address?: string | null, creator?: string | null): boolean {
   const valid = (value?: string | null) => Boolean(value && /^0x[0-9a-f]{40}$/i.test(value));
   return authenticated && valid(address) && valid(creator) && address!.toLowerCase() === creator!.toLowerCase();
 }
-export function scoreShareCopy(platform: Platform, title: string, author: boolean): string {
-  return `${COPY[author ? 'author' : 'listener'][platform]}
-《${title}》`;
+export function scoreShareCopy(platform: Platform, title: string, author: boolean, templates: ShareTemplates = zh.share): string {
+  return templates[author ? 'author' : 'listener'][platform].replace('{title}', title);
 }
 export function scoreShareUrl(base: string, path?: string): string | null {
   if (!path?.startsWith('/score/') || path.startsWith('//') || /[?#\\]/.test(path)) return null;

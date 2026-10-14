@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { preload } from 'react-dom';
 import EditionStamp from '@/src/components/p11/EditionStamp';
 import ScorePondHeader from '@/src/components/p11/ScorePondHeader';
@@ -56,6 +57,7 @@ function visualTrackOf(score: ScoreReadyData): Track {
 export default function ScorePondScene({ score, network }: Props) {
   preloadStartupAudio(score);
   const playback = useScorePlayback(score.playbackBootstrap);
+  const t = useTranslations('score');
   const pathname = usePathname();
   const scoreOrigin = useScoreOrigin();
   const { origin, confirmScore } = scoreOrigin;
@@ -159,7 +161,7 @@ export default function ScorePondScene({ score, network }: Props) {
       <section className="score-pond-page__hero">
         <ScorePondHeader
           backHref="/me"
-          backLabel="返回档案"
+          backLabel={t('backToArchive')}
           network={network}
           tokenLabel={tokenLabel}
           onBeforeLeave={() => { void playback.pause(); }}
@@ -169,7 +171,7 @@ export default function ScorePondScene({ score, network }: Props) {
         <div className="score-pond-page__identity" data-pond-ui="true">
           <EditionStamp status={editionStatus} detail={tokenLabel} />
           <h1>{title}</h1>
-          <p>{score.trackTitle} · {score.eventCount} 个永久事件</p>
+          <p>{t('permanentEvents', { title: score.trackTitle, count: score.eventCount })}</p>
         </div>
         <div className="score-pond-page__anchor" data-pond-ui="true"
           data-score-token-id={score.tokenId} data-score-anchor-ready={anchored || undefined}

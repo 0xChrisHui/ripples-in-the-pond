@@ -561,5 +561,154 @@
       "metamask": "连接原 MetaMask 钱包",
       "reconnect": "重新连接原钱包"
     }
+  },
+  "share": {
+    "author": {
+      "x": "这是我今天留在水塘里的声音。换你，会弹成什么样？\n《{title}》",
+      "weibo": "同一首底曲，每个人都能留下不同的声音。这是我的这一版。你也可以进去弹一段，我很想听听你的版本。\n《{title}》"
+    },
+    "listener": {
+      "x": "听到这一段，很想知道换你会弹成什么样。\n《{title}》",
+      "weibo": "发现一段有意思的即兴演奏。同一首底曲，换个人会留下怎样的声音？把它分享给你，也想听听你的版本。\n《{title}》"
+    },
+    "copyLink": "复制链接",
+    "unavailable": "分享链接暂不可用",
+    "copied": "已复制",
+    "copyFailed": "复制失败",
+    "expand": "展开分享方式",
+    "share": "分享",
+    "toX": "分享到 X",
+    "toWeibo": "分享到微博",
+    "poster": "下载海报"
+  },
+  "score": {
+    "backToArchive": "返回档案",
+    "backToArchiveLink": "← 返回档案",
+    "backToPondShort": "回到水塘",
+    "backToPondDefault": "返回池塘",
+    "leave": "离开作品",
+    "shareWork": "分享作品",
+    "inProgressTitle": "Ripples · 制作中",
+    "eventCount": " · {count} 个事件",
+    "permanentEvents": "{title} · {count} 个永久事件",
+    "refreshStatus": "刷新制作状态",
+    "opening": "正在打开永久唱片",
+    "reading": "正在读取",
+    "readingRecord": "正在读取永久唱片",
+    "readingRecordEllipsis": "正在读取永久唱片…",
+    "queue": {
+      "pending": "已进入作品制作队列",
+      "uploading_events": "正在保存演奏动作",
+      "preparing_package": "正在核验永久资源",
+      "minting_onchain": "正在写入 OP Mainnet",
+      "uploading_metadata": "正在装配永久作品",
+      "setting_uri": "正在绑定永久播放器",
+      "finalizing_snapshot": "正在生成验证快照",
+      "success": "永久作品已完成",
+      "failed": "作品制作没有完成"
+    },
+    "failure": {
+      "snapshot_unavailable": "已验证播放快照暂时不可用",
+      "metadata_unavailable": "永久资料暂时无法读取",
+      "queue_failed": "这枚唱片制作未能完成",
+      "other": "作品资料暂时不可用"
+    },
+    "detail": {
+      "processing": "作品身份、分享链接和已经生成的凭证会留在这里；稍后刷新即可查看进度。",
+      "snapshotUnavailable": "这不代表铸造失败；已知的作品身份仍可在下方核验。",
+      "failed": "已知链上身份与永久凭证仍保留在下方，可据此独立核验。"
+    },
+    "fallback": {
+      "title": "这枚唱片暂时无法读取",
+      "body": "我们没有用占位数据补齐未知信息。你可以重试，或先回到档案； 一旦链上与永久资料恢复，原链接会继续有效。"
+    },
+    "playback": {
+      "errorDetail": "{error}；身份与凭证仍可核验。",
+      "errorDefault": "永久播放资源暂不可用",
+      "pausedAt": "已暂停在 {time}",
+      "playedFull": "已完整播放 {time}",
+      "playingDetail": "永久录音、日食与按键编舞保持同一时钟。",
+      "queued": "已记录播放请求，资源验证完成后会自动开始。",
+      "preparing": "正在优先准备底曲与开场音效，现在点击即可排队播放。",
+      "idle": "永久音频只会在你主动点击后建立播放会话。",
+      "pause": "暂停",
+      "cancelWait": "取消等待",
+      "playWhenReady": "准备好后播放"
+    },
+    "archive": {
+      "sources": {
+        "contract": "链上合约",
+        "database": "作品数据库",
+        "metadata": "永久 metadata"
+      },
+      "fields": {
+        "contract": "ScoreNFT 合约",
+        "creator": "创作者",
+        "currentHolder": "当前持有者",
+        "mintTransaction": "铸造交易",
+        "setUriTransaction": "定稿交易",
+        "tokenUri": "链上 Token URI",
+        "metadata": "永久 Metadata",
+        "events": "永久事件",
+        "base": "永久底曲",
+        "sounds": "永久音效表",
+        "decoder": "永久播放器"
+      },
+      "missing": {
+        "creator": "永久来源未提供创作者地址",
+        "currentHolder": "暂时无法读取当前持有者",
+        "mintTransaction": "当前来源未记录铸造交易",
+        "setUriTransaction": "当前来源未记录定稿交易"
+      },
+      "checkingHolder": "正在核对当前持有者",
+      "dateMissing": "时间未记录",
+      "inProgress": "制作中",
+      "eyebrow": "Permanent record · 永久档案",
+      "title": "作品凭证",
+      "intro": "播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。",
+      "openDecoder": "在新标签打开永久播放器"
+    }
+  },
+  "record": {
+    "state": {
+      "idle": {
+        "action": "开始播放",
+        "status": "点击唱片，开始播放"
+      },
+      "loading": {
+        "action": "正在准备",
+        "status": "正在准备永久录音…"
+      },
+      "playing": {
+        "action": "停止",
+        "status": "正在播放"
+      },
+      "paused": {
+        "action": "继续播放",
+        "status": "播放已暂停"
+      },
+      "ended": {
+        "action": "再次播放",
+        "status": "播放已结束"
+      },
+      "error": {
+        "action": "重试",
+        "status": "播放暂不可用"
+      }
+    },
+    "controls": "{title} 播放控制"
+  },
+  "ledger": {
+    "title": "永久凭证",
+    "count": "{count} 项记录",
+    "missing": "未记录 · 原始来源未提供",
+    "source": "来源：{source}",
+    "copied": "已复制",
+    "copyFailed": "复制失败",
+    "copyFull": "复制完整值",
+    "external": "查看外部记录",
+    "copiedFull": "完整值已复制",
+    "copyFailedManual": "复制失败，请手动选择完整值",
+    "valueLabel": "{label}：{value}"
   }
 }
