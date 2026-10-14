@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import LoginButton from '@/src/components/auth/LoginButton';
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import { usePondNavigationWarmup } from '@/src/components/pond-shell/navigation/PondNavigation';
+import LocaleSwitch from '@/src/components/pond-shell/navigation/LocaleSwitch';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import '@/src/components/pond-shell/navigation/header.css';
 
@@ -71,11 +72,13 @@ export default function PondHeader() {
 
       <nav aria-label="主导航" className="pointer-events-auto hidden min-h-11 items-center gap-7 md:flex">
         <PublicLinks />
+        <LocaleSwitch />
         <span className="h-4 w-px bg-[var(--p11-line)]" aria-hidden="true" />
         <LoginButton />
       </nav>
 
-      <div className="pointer-events-auto relative md:hidden">
+      <div className="pointer-events-auto relative flex items-center gap-1 md:hidden">
+        <LocaleSwitch />
         <button
           type="button"
           aria-expanded={menuOpen}

@@ -14,3 +14,10 @@
 .artist-page--pond { padding-top: max(84px, calc(env(safe-area-inset-top) + 72px)); }
 .echo-page, .echo-unavailable { padding-top: max(96px, calc(env(safe-area-inset-top) + 84px)); }
 @media (max-width: 767px) { .pond-global-header-spacer { height: 72px; } }
+/* P19：CN / EN 切换；选中项亮、未选中项弱，触控高度 44px */
+.pond-locale-switch { display: inline-flex; align-items: center; font-family: var(--p11-font-mono); font-size: 11px; letter-spacing: var(--p11-tracking-mono, 0.08em); }
+.pond-locale-switch__option { min-width: 30px; min-height: 44px; padding: 0 4px; color: var(--p11-faint); transition: color 150ms var(--p11-ease-out); }
+.pond-locale-switch__option[aria-pressed='true'] { color: var(--p11-bone); }
+.pond-locale-switch__option:hover { color: var(--p11-brass-strong); }
+.pond-locale-switch__option:focus-visible { outline: 2px solid var(--p11-focus-color); outline-offset: 2px; }
+.pond-locale-switch__sep { color: var(--p11-faint); }

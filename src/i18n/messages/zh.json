@@ -1,6 +1,5 @@
 {
   "localeSwitch": {
-    "label": "切换语言",
-    "current": "当前语言：{language}"
+    "label": "切换语言"
   }
 }
