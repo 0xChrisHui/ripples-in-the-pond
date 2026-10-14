@@ -2,7 +2,7 @@ import EditionStamp, { type EditionStatus } from '@/src/components/p11/EditionSt
 import ProvenanceLedger, { type ProvenanceEntry } from '@/src/components/p11/ProvenanceLedger';
 import type { ScorePageData, ScoreProvenance } from '@/src/data/score-source';
 import type { ScoreHolderState } from './use-score-holder';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 
 type Translate = ReturnType<typeof useTranslations<'score.archive'>>;
 // 来源与字段标签在词典 score.archive.*；metadata.animation_url、Token ID 是技术写法，中英相同，保留字面量
@@ -58,17 +58,19 @@ function statusFor(score: ScorePageData): EditionStatus {
   return score.degraded ? 'degraded' : 'finalized';
 }
 
-function dateLabel(score: ScorePageData, missing: string): string {
+/** 服务端会渲染这一日期：用 provider 的固定时区格式化，服务端与浏览器结果一致（P19 N4） */
+function dateLabel(score: ScorePageData, missing: string, format: ReturnType<typeof useFormatter>): string {
   const value = score.confirmedAt ?? score.createdAt ?? score.mintedAt;
   if (!value) return missing;
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('zh-CN');
+  return Number.isNaN(date.getTime()) ? value : format.dateTime(date, { year: 'numeric', month: 'numeric', day: 'numeric' });
 }
 
 export default function ScoreArchive({
   score, holder,
 }: { score: ScorePageData; holder?: ScoreHolderState }) {
   const t = useTranslations('score.archive');
+  const format = useFormatter();
   const token = score.tokenId == null ? t('inProgress') : `Token #${score.tokenId}`;
   return (
     <section className="score-archive" aria-labelledby="score-archive-title">
@@ -84,7 +86,7 @@ export default function ScoreArchive({
       </div>
       <ProvenanceLedger entries={ledgerEntries(t, score.provenance, holder)} />
       <div className="score-archive__edition">
-        <EditionStamp status={statusFor(score)} detail={`${token} · ${dateLabel(score, t('dateMissing'))}`} />
+        <EditionStamp status={statusFor(score)} detail={`${token} · ${dateLabel(score, t('dateMissing'), format)}`} />
       </div>
     </section>
   );

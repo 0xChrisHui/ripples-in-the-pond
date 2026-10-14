@@ -753,5 +753,13 @@
       "playing": "Playing",
       "copiedFull": "Full 36-character recipe copied"
     }
+  },
+  "titles": {
+    "tracks": "Tracks",
+    "workUnavailable": "Work unavailable",
+    "workMissing": "Work not found",
+    "echoMissing": "Pond Echo not found",
+    "echoUnavailable": "Pond Echo unavailable",
+    "editionPending": "Record in progress"
   }
 }

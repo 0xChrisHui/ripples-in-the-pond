@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useLocaleSwitch } from '@/src/i18n/LocaleProvider';
+import { HTML_LANG } from '@/src/i18n/locale';
 import EditionStamp from '@/src/components/p11/EditionStamp';
 import RecordAnchor from '@/src/components/p11/RecordAnchor';
 import ScorePondHeader from '@/src/components/p11/ScorePondHeader';
@@ -23,6 +25,7 @@ function failureKey(score: ScoreFailedData) {
 
 export default function ScoreLifecycle({ score, network }: Props) {
   const t = useTranslations('score');
+  const { locale } = useLocaleSwitch();
   const scoreOrigin = useScoreOrigin();
   useEffect(() => {
     const origin = scoreOrigin.origin;
@@ -50,7 +53,7 @@ export default function ScoreLifecycle({ score, network }: Props) {
       data-p11-theme="score"
       data-theme="dark"
       data-score-state={score.state}
-      lang="zh-CN"
+      lang={HTML_LANG[locale]}
     >
       <section className="score-pond-page__hero">
         <ScorePondHeader

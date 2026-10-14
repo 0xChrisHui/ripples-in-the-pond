@@ -9,6 +9,7 @@ import {
   DEFAULT_LOCALE, HTML_LANG, TIME_ZONE, loadMessages, messagesFor, readLocaleCookie, writeLocaleCookie,
   type Locale,
 } from './locale';
+import { useLocalizedTitle } from './use-localized-title';
 
 type LocaleSwitch = { locale: Locale; setLocale: (next: Locale) => void };
 
@@ -51,6 +52,7 @@ export default function LocaleProvider({ children }: { children: ReactNode }) {
     if (saved !== DEFAULT_LOCALE) void apply(saved);
   }, [apply]);
 
+  useLocalizedTitle(locale);
   const value = useMemo(() => ({ locale, setLocale }), [locale, setLocale]);
 
   return (

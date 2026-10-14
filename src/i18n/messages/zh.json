@@ -753,5 +753,13 @@
       "playing": "正在播放",
       "copiedFull": "完整 36 位配方已复制"
     }
+  },
+  "titles": {
+    "tracks": "曲目",
+    "workUnavailable": "作品暂不可用",
+    "workMissing": "作品不存在",
+    "echoMissing": "Pond Echo 不存在",
+    "echoUnavailable": "Pond Echo 暂不可用",
+    "editionPending": "制作中的唱片"
   }
 }

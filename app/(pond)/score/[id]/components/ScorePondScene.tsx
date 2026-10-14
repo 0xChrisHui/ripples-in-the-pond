@@ -3,6 +3,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useLocaleSwitch } from '@/src/i18n/LocaleProvider';
+import { HTML_LANG } from '@/src/i18n/locale';
 import { preload } from 'react-dom';
 import EditionStamp from '@/src/components/p11/EditionStamp';
 import ScorePondHeader from '@/src/components/p11/ScorePondHeader';
@@ -58,6 +60,7 @@ export default function ScorePondScene({ score, network }: Props) {
   preloadStartupAudio(score);
   const playback = useScorePlayback(score.playbackBootstrap);
   const t = useTranslations('score');
+  const { locale } = useLocaleSwitch();
   const pathname = usePathname();
   const scoreOrigin = useScoreOrigin();
   const { origin, confirmScore } = scoreOrigin;
@@ -151,7 +154,7 @@ export default function ScorePondScene({ score, network }: Props) {
       data-first-sound-expected-ms={playback.firstSoundExpectedMs ?? undefined}
       data-gl-health={health}
       data-scene-ready={sceneReady}
-      lang="zh-CN"
+      lang={HTML_LANG[locale]}
     >
       {glSim?.ready && health === 'healthy' && sceneReady && (
         <div className="score-eclipse-layer" onTransitionEnd={visual.onTransitionEnd}>

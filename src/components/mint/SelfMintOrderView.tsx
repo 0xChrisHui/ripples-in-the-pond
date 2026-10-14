@@ -9,6 +9,8 @@ import { useAuth } from '@/src/hooks/useAuth';
 import { useEthereumScoreMint, type MintGasEstimate } from '@/src/hooks/useEthereumScoreMint';
 import { forgetMintHash, readMintHash, recoverMintHash } from '@/src/lib/self-mint/client-hash';
 import { useServerText } from '@/src/i18n/use-server-text';
+import { useLocaleSwitch } from '@/src/i18n/LocaleProvider';
+import { HTML_LANG } from '@/src/i18n/locale';
 import ReconnectMintWallet from './ReconnectMintWallet';
 import MintOrderFacts from './MintOrderFacts';
 import { useMintDialogFocus } from './hooks/useMintDialogFocus';
@@ -22,7 +24,7 @@ export default function SelfMintOrderView({ orderId, onClose }: {
   orderId: Hex; onClose: () => void;
 }) {
   const t = useTranslations('selfMint'), tc = useTranslations('common'), serverText = useServerText();
-  const auth = useAuth();
+  const auth = useAuth(), { locale } = useLocaleSwitch();
   const getAccessToken = auth.getAccessToken;
   const { prepareOrder, sendOrder } = useEthereumScoreMint();
   const [order, setOrder] = useState<PublicOrder | null>(null);
@@ -67,9 +69,9 @@ export default function SelfMintOrderView({ orderId, onClose }: {
       forgetMintHash(orderId);
     }
     setRecoverableHash(readMintHash(orderId));
-    setLastCheckedAt(new Date().toLocaleTimeString('zh-CN', { hour12: false }));
+    setLastCheckedAt(new Date().toLocaleTimeString(HTML_LANG[locale], { hour12: false }));
     setError((current) => result.status === 'manual_review' || result.sendAttempted ? current : null);
-  }, [getAccessToken, orderId, walletAddress]);
+  }, [getAccessToken, locale, orderId, walletAddress]);
 
   useSerialRefresh(load, busy, (caught) => { setError(failure('readFailed', caught)); });
 

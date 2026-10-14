@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import type { OwnedNFT } from '@/src/types/tracks';
 import type { OwnedScoreNFT } from '@/src/types/score-mint';
 import { explorerTxUrlFor, getChainDefinition } from '@/src/lib/chain/multichain/registry';
+import { useLocaleSwitch } from '@/src/i18n/LocaleProvider';
+import { HTML_LANG } from '@/src/i18n/locale';
 import ArchiveSection from './ArchiveSection';
 
 type Kind = 'kindEth' | 'kindOp' | 'kindHome' | 'kindScore';
@@ -20,6 +22,7 @@ export default function MintHistorySection({ materials, scores, loading }: {
   materials: OwnedNFT[]; scores: OwnedScoreNFT[]; loading: boolean;
 }) {
   const t = useTranslations('me');
+  const { locale } = useLocaleSwitch();
   const entries = useMemo<Entry[]>(() => [
     ...materials.map((nft): Entry => {
       const chainId = nft.chain_id ?? 10;
@@ -42,7 +45,7 @@ export default function MintHistorySection({ materials, scores, loading }: {
         {entries.map((entry) => (
           <div key={entry.key} className="me-archive-row me-archive-row--history" data-status={entry.state === 'done' ? 'success' : undefined}>
             <div className="me-archive-row__main"><h3>{entry.title ?? t('material.processing')}</h3>
-              <p>{entry.chain} · {t(`history.${entry.kind}`)} · {new Date(entry.time).toLocaleString('zh-CN', { hour12: false })}</p></div>
+              <p>{entry.chain} · {t(`history.${entry.kind}`)} · {new Date(entry.time).toLocaleString(HTML_LANG[locale], { hour12: false })}</p></div>
             <div className="me-archive-row__state">{t(`history.${entry.state}`)}
               {entry.href && <a href={entry.href} target="_blank" rel="noreferrer">{t('history.tx')}</a>}</div>
           </div>

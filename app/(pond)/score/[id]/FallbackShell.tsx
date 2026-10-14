@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useLocaleSwitch } from '@/src/i18n/LocaleProvider';
+import { HTML_LANG } from '@/src/i18n/locale';
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import { useScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
 
@@ -9,6 +11,7 @@ import { useScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
 export default function FallbackShell() {
   const t = useTranslations('score');
   const tc = useTranslations('common');
+  const { locale } = useLocaleSwitch();
   const scoreOrigin = useScoreOrigin();
   useEffect(() => {
     const origin = scoreOrigin.origin;
@@ -16,7 +19,7 @@ export default function FallbackShell() {
   }, [scoreOrigin]);
   return (
     <main className="score-fallback" data-p11-theme="score" data-theme="dark"
-      data-score-state="fallback" lang="zh-CN">
+      data-score-state="fallback" lang={HTML_LANG[locale]}>
       <section className="score-fallback__content">
         <span className="score-fallback__mark" aria-hidden="true">○</span>
         <h1>{t('fallback.title')}</h1>
