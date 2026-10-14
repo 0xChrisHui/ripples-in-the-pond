@@ -106,6 +106,16 @@ else
 fi
 echo ""
 
+# 2h. P19：中英词典 key 集合相同、{占位符} 一致、无空文案。
+echo "── 2h. 中英词典一致性 ──"
+if npm run -s i18n:check 2>&1; then
+  echo "$OK 词典一致性通过"
+else
+  echo "$FAIL 词典一致性失败"
+  EXIT_CODE=1
+fi
+echo ""
+
 # 3. 文件大小检查（额外保险，hook 也会查）
 # 硬线与 .claude/hooks/check-file-size.js + docs/CONVENTIONS.md §1.1 同步：
 #   - 普通代码文件 ≤220 行

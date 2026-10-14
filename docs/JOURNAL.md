@@ -1843,3 +1843,7 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 **结论**：N1 成立、N3 成立；N2 不限速约 0.2–0.56 秒，Fast 4G 约 21.6–21.7 秒。D0 交用户决定，未进入 Step 1。
 
 - 2026-10-14：P19 D0 用户选 **A（接受）**：英文用户刷新时先显示服务端中文、水合后切英文，不加“先隐藏再淡入”。已知代价按 Step 0 实测：不限速约 0.2–0.56 秒，Fast 4G 约 21.6 秒。以后若在意，可单独评估 B（隐藏淡入）或 C2（middleware 改写到预渲染英文页）。spike 分支 `spike/p19-i18n-step0` 保留到 P19 收口再删（用户定）。
+
+- 2026-10-14：P19 Step 1 地基的几处取舍：①切换用 `useState + startTransition`，不用 playbook 原写的 `useSyncExternalStore`——两者 Step 0 实测都没出事，但同步更新落在尚未水合的 Suspense 边界时理论上会让 React 放弃服务端 HTML（推断，未复现），transition 会等边界水合；首帧固定中文仍由“初始 state = zh、水合后才读 cookie”保证。②英文必须与中文同构靠两层：`locale.ts` 里把英文词典赋给 `Messages`（中文结构）类型，缺 key 时 `tsc` 报错（已实测）；运行时再以中文为底合并英文兜底。③`timeZone` 暂统一填 `Asia/Shanghai`，只为消除 next-intl 在服务端渲染客户端组件时的 ENVIRONMENT_FALLBACK 报错；目前没有日期走 next-intl，正式方案仍按 N4 在 Step 5 定。④一致性检查 `npm run i18n:check`（`scripts/i18n/check-messages.mjs`）暂未接入 `verify.sh`，待用户定。⑤Step 1 词典只有 `localeSwitch.label`、`localeSwitch.current` 两个示例 key，预留给 Step 2 按钮，尚无组件消费。包体积：四个静态页首屏 JS 各 +10.9KB gzip（+34.8KB 原始），英文词典单独 211B，仅英文 cookie 下载。
+
+- 2026-10-14：用户授权 **P19 一口气跑完 playbook**：各步本地 commit 后不停，D1/D3/D4/D6 由 AI 按推荐定并在此记录，英文措辞最后一张总对照表统一审，“大不了到时候再改”。仅限 P19，暂停 AGENTS 铁律①“一步一停”与 slow mode 逐步复述。仍须停下：push / 合并 main / 部署、写生产库、合约 / 链上 / Arweave、改 `/test1`、新依赖、方案不成立。D2（曲目名、艺术家名与简介、手记）默认保持中文不机翻，D5 分享卡延后，均留用户最后定。`verify.sh` 新增 2h 词典一致性检查。

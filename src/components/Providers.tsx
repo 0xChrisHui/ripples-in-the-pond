@@ -6,6 +6,7 @@ import { PlayerProvider } from '@/src/components/player/PlayerProvider';
 import BottomPlayer from '@/src/components/player/BottomPlayer';
 import LoginModal from '@/src/components/auth/LoginModal';
 import NavigationFeedback from '@/src/components/navigation/NavigationFeedback';
+import LocaleProvider from '@/src/i18n/LocaleProvider';
 
 /**
  * 全局 Provider 包装层
@@ -13,22 +14,25 @@ import NavigationFeedback from '@/src/components/navigation/NavigationFeedback';
  * 所以抽成这个 client component 中转
  *
  * Phase 7 Track B B2：挂全站登录 modal（两 tab：Privy 邮箱 / Semi 社区钱包）
+ * P19：最外层套语言 provider，登录弹窗与播放器也在其内，切换语言时只有用到文案的组件重渲染
  */
 export default function Providers({ children, externalWalletLoginEnabled }: {
   children: React.ReactNode;
   externalWalletLoginEnabled: boolean;
 }) {
   return (
-    <PrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
-      config={privyConfig}
-    >
-      <PlayerProvider>
-        {children}
-        <NavigationFeedback />
-        <BottomPlayer />
-        <LoginModal externalWalletLoginEnabled={externalWalletLoginEnabled} />
-      </PlayerProvider>
-    </PrivyProvider>
+    <LocaleProvider>
+      <PrivyProvider
+        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+        config={privyConfig}
+      >
+        <PlayerProvider>
+          {children}
+          <NavigationFeedback />
+          <BottomPlayer />
+          <LoginModal externalWalletLoginEnabled={externalWalletLoginEnabled} />
+        </PlayerProvider>
+      </PrivyProvider>
+    </LocaleProvider>
   );
 }

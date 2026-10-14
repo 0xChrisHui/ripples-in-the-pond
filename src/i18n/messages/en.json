@@ -1,0 +1,6 @@
+{
+  "localeSwitch": {
+    "label": "Switch language",
+    "current": "Current language: {language}"
+  }
+}

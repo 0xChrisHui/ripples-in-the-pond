@@ -25,7 +25,8 @@
     "p15:h7:release": "tsx scripts/p15-h/release/apply-release.ts --execute --confirm-production-write",
     "p15:h7:verify-production": "tsx scripts/p15-h/release/verify-production-release.ts",
     "p15:i:measure-score": "node scripts/p15-i/measure-score.mjs",
-    "p15:i:verify": "tsx scripts/p15-i/instant-start.test.ts"
+    "p15:i:verify": "tsx scripts/p15-i/instant-start.test.ts",
+    "i18n:check": "node scripts/i18n/check-messages.mjs"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.41.0",
@@ -43,6 +44,7 @@
     "d3-zoom": "^3.0.0",
     "jose": "^6.2.2",
     "next": "16.1.6",
+    "next-intl": "4.14.9",
     "qrcode": "^1.5.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",

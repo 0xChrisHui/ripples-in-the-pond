@@ -15,6 +15,9 @@
 > ⚠️ 注意：原 ARCHITECTURE.md 写的是 Next.js 14。本项目实际用 16。
 > 若遇到 16 的 breaking change（如 Server Actions 默认配置变化），按 16 文档处理。
 
+### 国际化
+- `next-intl` 4.14.x（P19 登记，2026-10-13 用户批准，2026-10-14 Step 1 安装）— 中英双语。用法限定为“方案 C”无路由模式：服务端固定中文、页面保持静态预渲染，浏览器按 cookie `locale` 切英文；**不加 URL 前缀、不加 middleware、根布局不读 cookie**。配置与 provider 在 `src/i18n/`，规则见 `playbook/phase-19/00-overview.md`。
+
 ### 区块链
 - `viem` — 后端链交互；P16 前端只允许编码、模拟、估算和读链，禁止建立第二套钱包发送客户端
 - `@privy-io/react-auth` — 前端登录 SDK；外部钱包连接、切链和 P16 Ethereum 交易发送的唯一入口
@@ -134,6 +137,9 @@
 
 ### Phase 10-A（2026-07-11 登记 + 安装）
 新增：`qrcode` + `@types/qrcode`（海报二维码，用户批准；playbook `phase-10/10-a-share-poster.md` A2）
+
+### Phase 19（2026-10-14 登记 + 安装）
+新增：`next-intl`（中英双语，用户 2026-10-13 批准；playbook `phase-19/00-overview.md` Step 1）。随包引入 `use-intl`、`icu-minify`、`@eloqnt/*`、`next-intl-swc-plugin-extractor` 等，均由同一作者发布（Step 0 核对）。
 
 ---
 

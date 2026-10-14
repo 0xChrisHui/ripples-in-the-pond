@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Cormorant_Garamond, Azeret_Mono, Modak } from "next/font/google";
 import Providers from "@/src/components/Providers";
 import { POND_NIGHT_BACKGROUND } from "@/src/components/pond-gl-test3/presentation/pond-night";
+import { LANG_BOOT_SCRIPT } from "@/src/i18n/locale";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -61,7 +62,11 @@ export default function RootLayout({
     // suppressHydrationWarning 仅压制 html/body 根节点 — 处理浏览器扩展（NeonLingo / Monica AI 之类）
     // 在 React hydrate 前往 html/body 注入 CSS 变量或 data 属性导致的 hydration mismatch；
     // 子树的真实 hydration bug 仍会正常报警。
+    // P19：lang 在服务端固定 zh-CN（页面保持静态），英文 cookie 由 <head> 内联脚本在首帧前改成 en。
     <html lang="zh-CN" suppressHydrationWarning style={{ background: POND_NIGHT_BACKGROUND, backgroundColor: "#010303" }}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: LANG_BOOT_SCRIPT }} />
+      </head>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} ${azeretMono.variable} ${modak.variable} antialiased`}
