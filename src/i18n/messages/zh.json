@@ -115,6 +115,128 @@
       "records": "我的唱片",
       "pending": "待铸造",
       "favorites": "收藏"
+    },
+    "identityPendingTitle": "正在确认你的档案",
+    "identityPendingDescription": "身份确认后，你的音乐会立即出现。",
+    "signInTitle": "登录后找回你的音乐",
+    "signInDescription": "登录用于找回你的私人音乐档案。",
+    "updating": "正在更新…",
+    "empty": {
+      "records": "铸造完成的唱片会留在这里。",
+      "pending": "新录音会在这里保留 24 小时。",
+      "favorites": "收藏的声音会留在这里。"
+    },
+    "errors": {
+      "records": "唱片档案读取失败",
+      "pending": "录音档案读取失败",
+      "favorites": "素材档案读取失败"
+    },
+    "echoes": {
+      "cache": "正在显示上次链上确认，正后台核对当前持有人…",
+      "truncated": "链上持有超过 {count} 枚，仅显示前一部分",
+      "originUnavailable": "来源状态暂不可用；当前持有列表仍以链上为准"
+    },
+    "archive": {
+      "checkingDetail": "正在核对缓存中的收藏记录，当前持有情况尚未确认。",
+      "checkingDetailWithError": "{error}；正在核对缓存中的收藏记录，当前持有情况尚未确认。",
+      "statusError": "暂无法核实",
+      "statusChecking": "持有人核对中",
+      "statusWarning": "档案有提示",
+      "statusRefreshing": "更新中",
+      "countLoading": "{title}正在读取",
+      "count": "{title}{count}项",
+      "detailsLabel": "{status}，查看说明",
+      "details": "{status} · 说明",
+      "emptyTitle": "{title}尚无记录",
+      "pagination": "{title}分页",
+      "prev": "← 上一页",
+      "next": "下一页 →"
+    },
+    "scoreStatus": {
+      "pending": "等待制作",
+      "uploading_events": "保存演奏中",
+      "preparing_package": "核验永久资源",
+      "minting_onchain": "写入链上",
+      "uploading_metadata": "装配唱片",
+      "setting_uri": "绑定永久播放器",
+      "finalizing_snapshot": "生成验证快照",
+      "success": "永久唱片",
+      "failed": "制作未完成",
+      "preparing_assets": "永久保存中",
+      "ready_to_sign": "等待钱包确认",
+      "submitted": "交易已提交",
+      "confirming": "等待链上确认",
+      "expired": "授权已过期",
+      "manual_review": "正在核对链上结果"
+    },
+    "score": {
+      "safeRetry": "制作已停止，可从详情核验",
+      "needsReview": "需要核验后再处理",
+      "open": "打开唱片",
+      "viewDetails": "查看详情",
+      "viewProgress": "查看进度",
+      "ethSelfPaid": "Ethereum · 自付 Gas",
+      "orderSyncing": "订单同步中"
+    },
+    "recording": {
+      "expired": "即将消失",
+      "expiresIn": "{clock} 后消失",
+      "reconnect": "请先重新连接原钱包",
+      "archiveFailed": "作品档案建立失败",
+      "uploadFailed": "上传失败，仍保存在此设备",
+      "localOnly": "仅保存在此设备",
+      "syncing": "正在同步",
+      "previewFailed": "试听加载失败，可重试",
+      "loading": "读取中…",
+      "retryPlay": "重试播放",
+      "play": "播放",
+      "stop": "停止",
+      "minting": "正在铸造…",
+      "submitted": "已提交",
+      "mintLabel": "将{title}铸造为唱片",
+      "creatingOrder": "正在建立铸造订单…",
+      "retryMint": "重试铸造",
+      "mint": "铸造唱片",
+      "uploaded": "已上传录音",
+      "remote": "{track} · 第 {seq} 次录音",
+      "local": "本机录音 · {index}"
+    },
+    "material": {
+      "processing": "收藏处理中",
+      "playLabel": "播放{title}",
+      "stopLabel": "停止播放{title}",
+      "play": "播放",
+      "stop": "停止",
+      "pending": "处理中"
+    },
+    "history": {
+      "title": "铸造记录",
+      "empty": "唱片与原曲的铸造记录会出现在这里。",
+      "kindEth": "原曲 NFT",
+      "kindOp": "原曲 SBT",
+      "kindHome": "首页收藏",
+      "kindScore": "唱片",
+      "pending": "处理中",
+      "done": "已完成",
+      "attention": "需要处理",
+      "tx": "交易 ↗"
+    },
+    "echoStatus": {
+      "owned": "当前持有",
+      "excluded_prelaunch": "启用前作品",
+      "pending": "等待制作",
+      "preparing_media": "核验永久媒体",
+      "uploading_metadata": "写入永久档案",
+      "minting_onchain": "链上铸造中",
+      "confirming_onchain": "等待链上确认",
+      "safe_retry": "安全重试中",
+      "manual_review": "等待人工核验",
+      "success": "已转出"
+    },
+    "echoRow": {
+      "failed": "已失败关闭，详情保留在运维记录",
+      "open": "打开作品",
+      "status": "查看状态"
     }
   },
   "player": {
@@ -316,6 +438,128 @@
       "networkTitle": "网络暂时不通",
       "networkHint": "请检查网络后点“刷新状态”再试；订单已保留，不会重复发送。",
       "reviewHint": "请以下方订单状态为准；若显示“待核对”，请勿重复发送。"
+    }
+  },
+  "selfMint": {
+    "copy": {
+      "busy": {
+        "title": "正在打开 MetaMask",
+        "detail": "请在钱包窗口中检查并确认这笔 {chain} 铸造交易。"
+      },
+      "asset": {
+        "events": {
+          "title": "正在永久保存演奏事件 · 1/3",
+          "detail": "后台正在固定你的演奏数据，页面会自动更新。"
+        },
+        "package": {
+          "title": "正在生成永久作品包 · 2/3",
+          "detail": "演奏事件已保存，正在组合声音与播放器资源。"
+        },
+        "metadata": {
+          "title": "正在固定作品身份 · 3/3",
+          "detail": "最后一步完成后会立即打开钱包确认入口。"
+        },
+        "complete": {
+          "title": "永久素材准备完成",
+          "detail": "正在切换到钱包确认。"
+        }
+      },
+      "snapshotPending": {
+        "title": "链上铸造成功",
+        "detail": "正在等待永久资源同步到可读取网关，完成后会自动开放作品。无需再次支付 Gas。"
+      },
+      "status": {
+        "preparing_assets": {
+          "title": "正在准备并永久保存作品",
+          "detail": "素材写入后不可删除；这里可以安全关闭，后台会继续。"
+        },
+        "ready_to_sign": {
+          "title": "确认铸造费用",
+          "detail": "还没有扣除费用；确认美元 Gas 预估后，再打开钱包。"
+        },
+        "submitted": {
+          "title": "交易已提交",
+          "detail": "不要重复发送。即使关闭页面，后台仍会继续核验。"
+        },
+        "confirming": {
+          "title": "等待链上确认",
+          "detail": "合约已看到作品，达到确认数后会开放永久页面。"
+        },
+        "success": {
+          "title": "铸造完成",
+          "detail": "永久作品与链上身份已完成一致性核验。"
+        },
+        "expired": {
+          "title": "授权已过期",
+          "detail": "永久素材仍然有效，可以生成新授权，不需要重新上传。"
+        },
+        "failed": {
+          "title": "交易已明确失败",
+          "detail": "只有完成链上清查后，系统才允许重新选择铸造方式。"
+        },
+        "manual_review": {
+          "title": "铸造结果需要核对",
+          "detail": "系统已暂停重发，请保留当前交易并等待核对，避免重复支付 Gas。"
+        }
+      }
+    },
+    "close": "关闭铸造弹窗",
+    "progress": "铸造进度",
+    "loading": "正在读取铸造档案…",
+    "eyebrow": "Reserved edition · 未铸造 Token #{tokenId}",
+    "walletMismatch": "当前钱包与接收地址不同；你可以查看进度，但不能继续签名。",
+    "walletNotConnected": "原钱包尚未连接；连接后可以继续签名，不需要重新创建订单。",
+    "walletRestoring": "正在恢复原钱包连接，请稍候…",
+    "insufficient": "当前钱包余额不足以支付这笔 Gas。",
+    "returnedHash": "钱包已返回交易哈希：",
+    "openingWallet": "正在打开钱包…",
+    "confirmMint": "确认并铸造 · {usd}",
+    "noBalance": "钱包余额不足",
+    "waitingGas": "等待 Gas 预估",
+    "reestimate": "重新估算 Gas",
+    "checkingTx": "正在核对交易…",
+    "recoverHash": "用已有交易哈希恢复",
+    "openWork": "打开永久作品 →",
+    "release": "完成清查并重新选择",
+    "refresh": "刷新状态",
+    "lastChecked": "上次读取 {time}",
+    "errors": {
+      "readFailed": "订单读取失败",
+      "gasFailed": "Gas 预估失败",
+      "sendFailed": "钱包交易没有完成",
+      "recoverFailed": "交易登记失败",
+      "releaseFailed": "暂不能重新选择"
+    },
+    "facts": {
+      "network": "网络",
+      "gas": "预估 Gas",
+      "gasValue": "约 {usd}",
+      "testnet": " · 测试网参考",
+      "gasUnavailable": "美元估算暂不可用",
+      "estimating": "正在估算美元费用…",
+      "preparingEstimate": "正在准备美元费用估算…",
+      "recipient": "接收钱包",
+      "tx": "交易"
+    },
+    "network": {
+      "unconfigured": "Ethereum 未配置",
+      "switchLabel": "{name}，切换网络",
+      "label": "铸造网络",
+      "choose": "选择网络",
+      "unavailable": "当前账号暂不可用",
+      "opDefault": "默认 · 平台代付 Gas",
+      "ethSelf": "钱包自付 Gas",
+      "testnet": "测试网 · 钱包自付 Gas",
+      "ethMissing": "Ethereum 网络未配置"
+    },
+    "reconnect": {
+      "wrongWallet": "请连接这笔订单原来的 EVM 钱包。",
+      "connectFailed": "钱包连接未完成，请重试。",
+      "connectFailedReason": "钱包连接未完成（{reason}）。请确认小狐狸已解锁，并选择原钱包地址。",
+      "description": "请连接订单原钱包 {address}",
+      "connecting": "正在连接钱包…",
+      "metamask": "连接原 MetaMask 钱包",
+      "reconnect": "重新连接原钱包"
     }
   }
 }

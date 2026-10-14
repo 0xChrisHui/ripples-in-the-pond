@@ -3,6 +3,9 @@
 import { useEffect, useLayoutEffect, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/src/hooks/useAuth';
+import { useTranslations } from 'next-intl';
+import { useMsg } from '@/src/i18n/msg';
+import { useServerText } from '@/src/i18n/use-server-text';
 import { useMeArchive } from '@/src/hooks/me/useMeArchive';
 import { useOwnedEchoes } from '@/src/hooks/me/useOwnedEchoes';
 import { useScoreRoutePreload } from '@/src/hooks/me/useScoreRoutePreload';
@@ -30,6 +33,8 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
   const scoreOrigin = useScoreOrigin();
   const transition = usePondTransition();
   const auth = useAuth();
+  const t = useTranslations('me'), ta = useTranslations('account');
+  const msgText = useMsg(), serverText = useServerText();
   const { ownerId, scores, recordings, materials, retry } = useMeArchive({
     authenticated: auth.authenticated,
     authSource: auth.authSource,
@@ -134,19 +139,19 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
       <div className="me-archive__inner">
         <PageNavigation />
         {identityPending ? (
-          <ArchiveEmpty title="正在确认你的档案" description="身份确认后，你的音乐会立即出现。" />
+          <ArchiveEmpty title={t('identityPendingTitle')} description={t('identityPendingDescription')} />
         ) : !auth.authenticated ? (
-          <ArchiveEmpty title="登录后找回你的音乐" description="登录用于找回你的私人音乐档案。"
-            action={<button type="button" onClick={auth.openLoginModal}>登录</button>} />
+          <ArchiveEmpty title={t('signInTitle')} description={t('signInDescription')}
+            action={<button type="button" onClick={auth.openLoginModal}>{ta('signIn')}</button>} />
         ) : (
           <div className="me-archive__dashboard">
             <div className="me-archive__panel me-archive__panel--records" id="pond-echoes">
-              <ArchiveSection id="records" title="我的唱片" count={recordCount}
+              <ArchiveSection id="records" title={t('sections.records')} count={recordCount}
                 loading={archiveLoading(scores) || (Boolean(auth.evmAddress)
                   && (echoes.phase === 'idle' || echoes.phase === 'loading'))}
-                error={[scores.error, echoes.error].filter(Boolean).join('；') || null}
-                warning={echoes.warning} onRetry={() => { void retry('scores'); void echoes.retry(); }}
-                emptyDescription="铸造完成的唱片会留在这里。"
+                error={serverText([scores.error, echoes.error].filter(Boolean).join('；') || null, t('errors.records')) || null}
+                warning={echoes.warning.map(msgText).join('；') || null} onRetry={() => { void retry('scores'); void echoes.retry(); }}
+                emptyDescription={t('empty.records')}
                 page={safePages.records} pageCount={pageCounts.records}
                 onPageChange={(page) => changePage('records', page)}>
                 {recordItems.slice(recordStart, recordStart + ARCHIVE_PAGE_SIZES.records).map((row, index) => (
@@ -161,10 +166,10 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
 
             <div className="me-archive__panel me-archive__panel--pending">
               {auth.walletCapability.loginEntry === 'external_wallet' && <ArchiveMintNetworkControl />}
-              <ArchiveSection id="pending" title="待铸造" count={pendingCount}
+              <ArchiveSection id="pending" title={t('sections.pending')} count={pendingCount}
                 loading={archiveLoading(recordings)} refreshing={recordings.phase === 'refreshing'}
-                error={recordings.error} onRetry={() => { void retry('recordings'); }}
-                emptyDescription="新录音会在这里保留 24 小时。"
+                error={recordings.error && serverText(recordings.error, t('errors.pending'))} onRetry={() => { void retry('recordings'); }}
+                emptyDescription={t('empty.pending')}
                 page={safePages.pending} pageCount={pageCounts.pending}
                 onPageChange={(page) => changePage('pending', page)}>
                 {recordings.items.slice(pendingStart, pendingStart + ARCHIVE_PAGE_SIZES.pending).map((recording, index) => (
@@ -176,11 +181,11 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
             </div>
 
             <div className="me-archive__panel me-archive__panel--favorites">
-              <ArchiveSection id="favorites" title="收藏" count={favoriteCount}
-                loading={archiveLoading(materials)} error={materials.error}
-                warning={materials.cached ? '正在更新…' : null}
+              <ArchiveSection id="favorites" title={t('sections.favorites')} count={favoriteCount}
+                loading={archiveLoading(materials)} error={materials.error && serverText(materials.error, t('errors.favorites'))}
+                checkingOwner={Boolean(materials.cached)}
                 onRetry={() => { void retry('materials'); }}
-                emptyDescription="收藏的声音会留在这里。"
+                emptyDescription={t('empty.favorites')}
                 page={safePages.favorites} pageCount={pageCounts.favorites}
                 onPageChange={(page) => changePage('favorites', page)}>
                 {favoriteItems.slice(favoriteStart, favoriteStart + ARCHIVE_PAGE_SIZES.favorites).map((nft) => (

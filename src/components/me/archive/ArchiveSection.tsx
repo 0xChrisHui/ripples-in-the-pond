@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 import ArchiveEmpty from './ArchiveEmpty';
 
 type Props = {
@@ -9,6 +10,8 @@ type Props = {
   refreshing?: boolean;
   error?: string | null;
   warning?: string | null;
+  /** 缓存中的收藏记录正在核对持有人（原先靠比对 warning 文字判断，改成显式状态以便多语言） */
+  checkingOwner?: boolean;
   onRetry?: () => void;
   emptyDescription: string;
   page?: number;
@@ -26,6 +29,7 @@ export default function ArchiveSection({
   refreshing = false,
   error = null,
   warning = null,
+  checkingOwner = false,
   onRetry,
   emptyDescription,
   page = 0,
@@ -33,27 +37,30 @@ export default function ArchiveSection({
   onPageChange,
   children,
 }: Props) {
+  const t = useTranslations('me.archive');
+  const tc = useTranslations('common');
   const isEmpty = !loading && !error && count === 0;
-  const checkingOwner = warning === '正在更新…';
-  const detail = checkingOwner ? `${error ? `${error}；` : ''}正在核对缓存中的收藏记录，当前持有情况尚未确认。` : error ?? warning;
-  const status = error ? '暂无法核实' : checkingOwner ? '持有人核对中' : warning ? '档案有提示' : refreshing ? '更新中' : '';
+  const detail = checkingOwner
+    ? (error ? t('checkingDetailWithError', { error }) : t('checkingDetail')) : error ?? warning;
+  const status = error ? t('statusError') : checkingOwner ? t('statusChecking') : warning ? t('statusWarning')
+    : refreshing ? t('statusRefreshing') : '';
 
   return (
     <section className="archive-section" aria-labelledby={`${id}-title`}
       data-archive-section={id} data-archive-page={page}>
       <header className="archive-section__header">
         <h2 id={`${id}-title`}>{title}</h2>
-        <span aria-label={count == null ? `${title}正在读取` : `${title}${count}项`}>
+        <span aria-label={count == null ? t('countLoading', { title }) : t('count', { title, count })}>
           {count == null ? '—' : count}
         </span>
         <div className="archive-section__status">
           <span className="archive-section__announcement" aria-live="polite" aria-atomic="true">{status}</span>
           {detail && (
             <details className="archive-section__details" key={detail}>
-              <summary aria-label={`${status}，查看说明`}>{status} · 说明</summary>
+              <summary aria-label={t('detailsLabel', { status })}>{t('details', { status })}</summary>
               <div className="archive-section__notice">
                 <p>{detail}</p>
-                {error && onRetry && <button type="button" onClick={onRetry}>重新读取</button>}
+                {error && onRetry && <button type="button" onClick={onRetry}>{tc('retry')}</button>}
               </div>
             </details>
           )}
@@ -64,15 +71,15 @@ export default function ArchiveSection({
       {isEmpty && (
         <ArchiveEmpty
           compact
-          title={`${title}尚无记录`}
+          title={t('emptyTitle', { title })}
           description={emptyDescription}
         />
       )}
       {pageCount > 1 && onPageChange && (
-        <nav className="archive-section__pagination" aria-label={`${title}分页`}>
-          <button type="button" disabled={page === 0} onClick={() => onPageChange(page - 1)}>← 上一页</button>
+        <nav className="archive-section__pagination" aria-label={t('pagination', { title })}>
+          <button type="button" disabled={page === 0} onClick={() => onPageChange(page - 1)}>{t('prev')}</button>
           <span>{page + 1} / {pageCount}</span>
-          <button type="button" disabled={page >= pageCount - 1} onClick={() => onPageChange(page + 1)}>下一页 →</button>
+          <button type="button" disabled={page >= pageCount - 1} onClick={() => onPageChange(page + 1)}>{t('next')}</button>
         </nav>
       )}
     </section>

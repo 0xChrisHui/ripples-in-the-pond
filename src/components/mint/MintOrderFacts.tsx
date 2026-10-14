@@ -2,6 +2,7 @@ import type { Hex } from 'viem';
 import {
   explorerAddressUrlFor, explorerTxUrlFor, getChainDefinition,
 } from '@/src/lib/chain/multichain/registry';
+import { useTranslations } from 'next-intl';
 import ChainLogo from './ChainLogo';
 import { formatGasUsd, type PublicOrder } from './self-mint-copy';
 
@@ -23,22 +24,23 @@ export default function MintOrderFacts({ order, hash, showGas, estimateActive, g
   gasEstimate: GasEstimate | null;
   gasError: string | null;
 }) {
+  const t = useTranslations('selfMint.facts');
   return (
     <dl className="self-mint-status__facts">
       <div data-kind="network">
-        <dt>网络</dt>
+        <dt>{t('network')}</dt>
         <dd><ChainLogo chainId={order.chainId} />
           {getChainDefinition(order.chainId).displayName}</dd>
       </div>
       {showGas && <div data-kind="gas" data-pending={!gasEstimate && !gasError}>
-        <dt>预估 Gas</dt>
+        <dt>{t('gas')}</dt>
         <dd aria-live="polite">{gasEstimate
-          ? `约 ${formatGasUsd(gasEstimate.usd)}${order.chainId === 11155111 ? ' · 测试网参考' : ''}`
-          : gasError ? '美元估算暂不可用'
-            : estimateActive ? '正在估算美元费用…' : '正在准备美元费用估算…'}</dd>
+          ? `${t('gasValue', { usd: formatGasUsd(gasEstimate.usd) })}${order.chainId === 11155111 ? t('testnet') : ''}`
+          : gasError ? t('gasUnavailable')
+            : estimateActive ? t('estimating') : t('preparingEstimate')}</dd>
       </div>}
       <div data-wide="true">
-        <dt>接收钱包</dt>
+        <dt>{t('recipient')}</dt>
         <dd><HashValue value={order.recipientAddress} /></dd>
       </div>
       <div data-wide="true">
@@ -53,7 +55,7 @@ export default function MintOrderFacts({ order, hash, showGas, estimateActive, g
         <dd><HashValue value={order.orderId} /></dd>
       </div>
       {hash && <div data-wide="true">
-        <dt>交易</dt>
+        <dt>{t('tx')}</dt>
         <dd><a href={explorerTxUrlFor(order.chainId, hash)} target="_blank" rel="noreferrer"
           title={hash}><HashValue value={hash} /><span aria-hidden="true">↗</span></a></dd>
       </div>}

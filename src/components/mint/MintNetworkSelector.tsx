@@ -1,15 +1,16 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import ChainLogo from './ChainLogo';
 import './mint-network-selector.css';
 
-function displayName(chainId: number): string {
+function displayName(chainId: number, unconfigured: string): string {
   if (chainId === 10) return 'OP Mainnet';
   if (chainId === 11155420) return 'OP Sepolia';
   if (chainId === 1) return 'Ethereum Mainnet';
   if (chainId === 11155111) return 'Ethereum Sepolia';
-  return 'Ethereum 未配置';
+  return unconfigured;
 }
 
 export default function MintNetworkSelector({
@@ -25,10 +26,11 @@ export default function MintNetworkSelector({
   ethereumEnabled: boolean;
   onChange: (chainId: 10 | 11155420 | 1 | 11155111) => void;
 }) {
+  const t = useTranslations('selfMint.network');
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const options: Array<{ chainId: 10 | 11155420 | 1 | 11155111; label: string }> = [
-    { chainId: opChainId, label: displayName(opChainId) },
-    ...(ethereumChainId ? [{ chainId: ethereumChainId, label: displayName(ethereumChainId) }] : []),
+    { chainId: opChainId, label: displayName(opChainId, t('unconfigured')) },
+    ...(ethereumChainId ? [{ chainId: ethereumChainId, label: displayName(ethereumChainId, t('unconfigured')) }] : []),
   ];
 
   useEffect(() => {
@@ -51,20 +53,20 @@ export default function MintNetworkSelector({
 
   return (
     <details ref={detailsRef} className="mint-network">
-      <summary aria-label={`${displayName(value)}，切换网络`}>
+      <summary aria-label={t('switchLabel', { name: displayName(value, t('unconfigured')) })}>
         <span className="mint-network__trigger">
           <ChainLogo chainId={value} />
           <span className="mint-network__trigger-copy">
-            <small>铸造网络</small>
+            <small>{t('label')}</small>
             <span className="mint-network__label">
               {options.map((option) => <span key={option.chainId} className="mint-network__measure" aria-hidden="true">{option.label}</span>)}
-              <span>{displayName(value)}</span>
+              <span>{displayName(value, t('unconfigured'))}</span>
             </span>
           </span>
           <span className="mint-network__chevron" aria-hidden="true" />
         </span>
       </summary>
-      <div className="mint-network__menu" role="group" aria-label="选择网络">
+      <div className="mint-network__menu" role="group" aria-label={t('choose')}>
         {options.map((option, index) => {
           const enabled = index === 0 || ethereumEnabled;
           return (
@@ -83,16 +85,16 @@ export default function MintNetworkSelector({
               <ChainLogo chainId={option.chainId} />
               <span className="mint-network__option-copy">
                 <span>{option.label}</span>
-                <small>{!enabled ? '当前账号暂不可用'
-                  : option.chainId === opChainId ? '默认 · 平台代付 Gas'
-                    : option.chainId === 1 ? '钱包自付 Gas'
-                      : '测试网 · 钱包自付 Gas'}</small>
+                <small>{t(!enabled ? 'unavailable'
+                  : option.chainId === opChainId ? 'opDefault'
+                    : option.chainId === 1 ? 'ethSelf'
+                      : 'testnet')}</small>
               </span>
               {value === option.chainId && <span className="mint-network__check" aria-hidden="true">✓</span>}
             </button>
           );
         })}
-        {ethereumChainId === null && <p className="mint-network__unavailable">Ethereum 网络未配置</p>}
+        {ethereumChainId === null && <p className="mint-network__unavailable">{t('ethMissing')}</p>}
       </div>
     </details>
   );

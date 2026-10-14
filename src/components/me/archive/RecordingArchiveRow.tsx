@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useMsg } from '@/src/i18n/msg';
+import { useServerText } from '@/src/i18n/use-server-text';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
 import { fetchMyScoreEvents } from '@/src/data/jam-source';
 import { useAuth } from '@/src/hooks/useAuth';
@@ -12,9 +15,10 @@ import type { KeyEvent } from '@/src/types/jam';
 
 type Props = { recording: ArchiveRecording; index: number; onQueued: () => void };
 
-function remainingLabel(expiresAt: string, now: number): { label: string; urgent: boolean; expired: boolean } {
+/** clock 为空表示已到期 */
+function remainingLabel(expiresAt: string, now: number): { clock: string | null; urgent: boolean; expired: boolean } {
   const remaining = new Date(expiresAt).getTime() - now;
-  if (remaining <= 0) return { label: '即将消失', urgent: true, expired: true };
+  if (remaining <= 0) return { clock: null, urgent: true, expired: true };
   const totalSeconds = Math.ceil(remaining / 1000);
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -22,11 +26,14 @@ function remainingLabel(expiresAt: string, now: number): { label: string; urgent
   const clock = hours > 0
     ? `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
     : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-  return { label: `${clock} 后消失`, urgent: remaining <= 60 * 60 * 1000, expired: false };
+  return { clock, urgent: remaining <= 60 * 60 * 1000, expired: false };
 }
 
 /** 录音行复用全局 Player 与既有入队 hook，不创建第二条音频路径。 */
 export default function RecordingArchiveRow({ recording, index, onQueued }: Props) {
+  const t = useTranslations('me.recording');
+  const msgText = useMsg();
+  const serverText = useServerText();
   const auth = useAuth();
   const archiveMint = useArchiveMintContext();
   const { state: mintState, mint } = useMintScore();
@@ -36,7 +43,8 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
   const [eventsError, setEventsError] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const [selfMintBusy, setSelfMintBusy] = useState(false);
-  const [selfMintError, setSelfMintError] = useState<string | null>(null);
+  /** server：服务端/抛出的原文（中文模式照旧显示） */
+  const [selfMintError, setSelfMintError] = useState<{ key: 'reconnect' | 'archiveFailed'; server?: string } | null>(null);
   const queuedRef = useRef(false);
   const expiredRef = useRef(false);
   const callbackRef = useRef(onQueued);
@@ -84,7 +92,7 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
   async function prepareEthereumMint() {
     const wallet = auth.selectedExternalWallet;
     if (!wallet || !auth.walletCapability.canSelfPayEthGas || !recording.pendingScoreId) {
-      setSelfMintError('请先重新连接原钱包');
+      setSelfMintError({ key: 'reconnect' });
       return;
     }
     setSelfMintBusy(true);
@@ -103,12 +111,13 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
       if (!response.ok || !result.orderId) throw new Error(result.error ?? '作品档案建立失败');
       archiveMint.openOrder(result.orderId);
     } catch (caught) {
-      setSelfMintError(caught instanceof Error ? caught.message : '作品档案建立失败');
+      setSelfMintError({ key: 'archiveFailed', server: caught instanceof Error ? caught.message : undefined });
       setSelfMintBusy(false);
     }
   }
 
-  const localState = recording.uploadFailed ? '上传失败，仍保存在此设备' : '仅保存在此设备';
+  const localState = t(recording.uploadFailed ? 'uploadFailed' : 'localOnly');
+  const title = recording.label ? msgText(recording.label) : recording.title;
   const expiry = remainingLabel(recording.expiresAt, now);
   useEffect(() => {
     if (expiry.expired && !expiredRef.current) {
@@ -121,34 +130,34 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
       data-expiry={expiry.urgent ? 'urgent' : 'normal'}>
       <p className="me-archive-row__index">{String(index + 1).padStart(2, '0')}</p>
       <div className="me-archive-row__main">
-        <h3>{recording.title}</h3>
+        <h3>{title}</h3>
       </div>
       <div className="me-archive-row__state">
-        <strong className="me-archive-row__expiry">{expiry.label}</strong>
-        {recording.awaitingRefresh && <small>正在同步</small>}
+        <strong className="me-archive-row__expiry">{expiry.clock ? t('expiresIn', { clock: expiry.clock }) : t('expired')}</strong>
+        {recording.awaitingRefresh && <small>{t('syncing')}</small>}
         {!recording.pendingScoreId && <small>{localState}</small>}
-        {eventsError && <small role="alert">试听加载失败，可重试</small>}
-        {selfMintError && <small role="alert">{selfMintError}</small>}
+        {eventsError && <small role="alert">{t('previewFailed')}</small>}
+        {selfMintError && <small role="alert">{serverText(selfMintError.server, t(selfMintError.key))}</small>}
       </div>
       {recording.pendingScoreId ? (
         <div className="me-archive-row__actions">
           {canPlay && (
             <button type="button" onClick={playRecording} disabled={eventsLoading}>
-              {eventsLoading ? '读取中…' : eventsError ? '重试播放' : isPlaying ? '停止' : '播放'}
+              {eventsLoading ? t('loading') : eventsError ? t('retryPlay') : isPlaying ? t('stop') : t('play')}
             </button>
           )}
           {mintState === 'queued' || mintState === 'success' ? (
-            <span>{mintState === 'queued' ? '正在铸造…' : '已提交'}</span>
+            <span>{mintState === 'queued' ? t('minting') : t('submitted')}</span>
           ) : (
             <button className="me-archive-row__mint" type="button"
               disabled={selfMintBusy}
-              aria-label={`将${recording.title}铸造为唱片`}
+              aria-label={t('mintLabel', { title })}
               onClick={() => {
                 if (archiveMint.chainId === 1 || archiveMint.chainId === 11155111) {
                   void prepareEthereumMint();
                 } else void mint(recording.pendingScoreId!);
               }}>
-              {selfMintBusy ? '正在建立铸造订单…' : mintState === 'error' ? '重试铸造' : '铸造唱片'} <span aria-hidden="true">→</span>
+              {selfMintBusy ? t('creatingOrder') : mintState === 'error' ? t('retryMint') : t('mint')} <span aria-hidden="true">→</span>
             </button>
           )}
         </div>

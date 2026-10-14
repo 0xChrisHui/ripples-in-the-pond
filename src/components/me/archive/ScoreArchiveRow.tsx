@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
 import type { OwnedScoreNFT } from '@/src/types/jam';
 import { ownedScoreHref } from '@/src/hooks/me/archive/score-route';
@@ -8,34 +9,18 @@ import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/score/score-origin';
 import { useArchiveMintContext } from '@/src/components/mint/archive/ArchiveMintProvider';
 
-const STATUS_LABELS: Record<OwnedScoreNFT['status'], string> = {
-  pending: '等待制作',
-  uploading_events: '保存演奏中',
-  preparing_package: '核验永久资源',
-  minting_onchain: '写入链上',
-  uploading_metadata: '装配唱片',
-  setting_uri: '绑定永久播放器',
-  finalizing_snapshot: '生成验证快照',
-  success: '永久唱片',
-  failed: '制作未完成',
-  preparing_assets: '永久保存中',
-  ready_to_sign: '等待钱包确认',
-  submitted: '交易已提交',
-  confirming: '等待链上确认',
-  expired: '授权已过期',
-  manual_review: '正在核对链上结果',
-};
-
-function failureDetail(score: OwnedScoreNFT): string | null {
+// 状态文案在词典 me.scoreStatus.<status>
+function failureDetail(score: OwnedScoreNFT): 'safeRetry' | 'needsReview' | null {
   if (score.status !== 'failed') return null;
-  if (score.failureKind === 'safe_retry') return '制作已停止，可从详情核验';
-  return '需要核验后再处理';
+  if (score.failureKind === 'safe_retry') return 'safeRetry';
+  return 'needsReview';
 }
 
 type Props = { score: OwnedScoreNFT; index: number; ownerKey: string };
 
 /** 只有稳定 Token 行增强为锚点；其余状态始终保留普通链接语义。 */
 export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
+  const t = useTranslations('me');
   const rowRef = useRef<HTMLElement>(null);
   const pendingRef = useRef(false);
   const [pending, setPending] = useState(false);
@@ -57,7 +42,7 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
   const title = isPermanent
     ? `${networkLabel} · Token #${score.tokenId}` : score.trackTitle;
   const detail = failureDetail(score);
-  const action = isPermanent ? '打开唱片' : score.status === 'failed' ? '查看详情' : '查看进度';
+  const action = t(isPermanent ? 'score.open' : score.status === 'failed' ? 'score.viewDetails' : 'score.viewProgress');
 
   const openScore = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey
@@ -104,17 +89,17 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
       <div className="me-archive-row__main">
         <h3>{title}</h3>
         {isPermanent && <p>{score.trackTitle}</p>}
-        {isEthereum && !isPermanent && <p>Ethereum · 自付 Gas</p>}
+        {isEthereum && !isPermanent && <p>{t('score.ethSelfPaid')}</p>}
       </div>
       <div className="me-archive-row__state">
-        <span>{STATUS_LABELS[score.status]}</span>
-        {detail && <small>{detail}</small>}
+        <span>{t(`scoreStatus.${score.status}`)}</span>
+        {detail && <small>{t(`score.${detail}`)}</small>}
       </div>
       {isEthereum && !isPermanent ? (
         score.orderId ? <button className="me-archive-row__action" type="button"
           onClick={() => archiveMint.openOrder(score.orderId as `0x${string}`)}>
           {action} <span aria-hidden="true">→</span>
-        </button> : <span className="me-archive-row__state">订单同步中</span>
+        </button> : <span className="me-archive-row__state">{t('score.orderSyncing')}</span>
       ) : (
         <Link className="me-archive-row__action" href={href} prefetch={false} onClick={openScore}
           aria-disabled={pending || undefined}>

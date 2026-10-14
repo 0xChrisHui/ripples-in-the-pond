@@ -115,6 +115,128 @@
       "records": "My records",
       "pending": "Awaiting mint",
       "favorites": "Collection"
+    },
+    "identityPendingTitle": "Confirming your archive",
+    "identityPendingDescription": "Your music will appear as soon as your identity is confirmed.",
+    "signInTitle": "Sign in to find your music",
+    "signInDescription": "Sign in to return to your private music archive.",
+    "updating": "Updating…",
+    "empty": {
+      "records": "Records you've minted will stay here.",
+      "pending": "New recordings are kept here for 24 hours.",
+      "favorites": "Sounds you collect will stay here."
+    },
+    "errors": {
+      "records": "Couldn't load your records",
+      "pending": "Couldn't load your recordings",
+      "favorites": "Couldn't load your collection"
+    },
+    "echoes": {
+      "cache": "Showing the last onchain confirmation while checking the current owner in the background…",
+      "truncated": "More than {count} are held onchain; only the first part is shown",
+      "originUnavailable": "Origin status is unavailable; the current holdings list still follows the chain"
+    },
+    "archive": {
+      "checkingDetail": "Checking cached collection records; current holdings aren't confirmed yet.",
+      "checkingDetailWithError": "{error}; checking cached collection records; current holdings aren't confirmed yet.",
+      "statusError": "Can't verify right now",
+      "statusChecking": "Checking owner",
+      "statusWarning": "Archive notice",
+      "statusRefreshing": "Updating",
+      "countLoading": "{title}: loading",
+      "count": "{title}: {count, plural, one {# item} other {# items}}",
+      "detailsLabel": "{status}, see details",
+      "details": "{status} · Details",
+      "emptyTitle": "Nothing in {title} yet",
+      "pagination": "{title} pages",
+      "prev": "← Previous",
+      "next": "Next →"
+    },
+    "scoreStatus": {
+      "pending": "Waiting to be made",
+      "uploading_events": "Saving the performance",
+      "preparing_package": "Verifying permanent resources",
+      "minting_onchain": "Writing onchain",
+      "uploading_metadata": "Assembling the record",
+      "setting_uri": "Binding the permanent player",
+      "finalizing_snapshot": "Generating the verification snapshot",
+      "success": "Permanent record",
+      "failed": "Not completed",
+      "preparing_assets": "Saving permanently",
+      "ready_to_sign": "Awaiting wallet confirmation",
+      "submitted": "Transaction submitted",
+      "confirming": "Awaiting onchain confirmation",
+      "expired": "Authorization expired",
+      "manual_review": "Checking the onchain result"
+    },
+    "score": {
+      "safeRetry": "Stopped; you can verify it from the details",
+      "needsReview": "Needs verification before going further",
+      "open": "Open record",
+      "viewDetails": "View details",
+      "viewProgress": "View progress",
+      "ethSelfPaid": "Ethereum · You pay gas",
+      "orderSyncing": "Syncing order"
+    },
+    "recording": {
+      "expired": "Disappearing soon",
+      "expiresIn": "Disappears in {clock}",
+      "reconnect": "Reconnect your original wallet first",
+      "archiveFailed": "Couldn't create the work's archive",
+      "uploadFailed": "Upload failed; still saved on this device",
+      "localOnly": "Saved only on this device",
+      "syncing": "Syncing",
+      "previewFailed": "Preview failed to load; you can retry",
+      "loading": "Loading…",
+      "retryPlay": "Retry playback",
+      "play": "Play",
+      "stop": "Stop",
+      "minting": "Minting…",
+      "submitted": "Submitted",
+      "mintLabel": "Mint {title} as a record",
+      "creatingOrder": "Creating mint order…",
+      "retryMint": "Retry mint",
+      "mint": "Mint record",
+      "uploaded": "Uploaded recording",
+      "remote": "{track} · Recording {seq}",
+      "local": "Local recording · {index}"
+    },
+    "material": {
+      "processing": "Collection in progress",
+      "playLabel": "Play {title}",
+      "stopLabel": "Stop playing {title}",
+      "play": "Play",
+      "stop": "Stop",
+      "pending": "Processing"
+    },
+    "history": {
+      "title": "Mint history",
+      "empty": "Mint records for your records and tracks will appear here.",
+      "kindEth": "Track NFT",
+      "kindOp": "Track SBT",
+      "kindHome": "Collected in the pond",
+      "kindScore": "Record",
+      "pending": "Processing",
+      "done": "Done",
+      "attention": "Needs attention",
+      "tx": "Transaction ↗"
+    },
+    "echoStatus": {
+      "owned": "Currently held",
+      "excluded_prelaunch": "Pre-launch work",
+      "pending": "Waiting to be made",
+      "preparing_media": "Verifying permanent media",
+      "uploading_metadata": "Writing the permanent archive",
+      "minting_onchain": "Minting onchain",
+      "confirming_onchain": "Awaiting onchain confirmation",
+      "safe_retry": "Retrying safely",
+      "manual_review": "Awaiting manual review",
+      "success": "Transferred out"
+    },
+    "echoRow": {
+      "failed": "Closed after failure; details are kept in the operations log",
+      "open": "Open work",
+      "status": "View status"
     }
   },
   "player": {
@@ -316,6 +438,128 @@
       "networkTitle": "The network is unavailable right now",
       "networkHint": "Check your connection, then tap “Refresh status” to try again. Your order is kept and won't be sent twice.",
       "reviewHint": "Go by the order status below; if it says “pending review”, don't send again."
+    }
+  },
+  "selfMint": {
+    "copy": {
+      "busy": {
+        "title": "Opening MetaMask",
+        "detail": "Check and confirm this {chain} mint transaction in your wallet window."
+      },
+      "asset": {
+        "events": {
+          "title": "Permanently saving the performance events · 1/3",
+          "detail": "Your performance data is being pinned in the background; this page updates automatically."
+        },
+        "package": {
+          "title": "Building the permanent work package · 2/3",
+          "detail": "The performance events are saved; now combining the sounds and player resources."
+        },
+        "metadata": {
+          "title": "Pinning the work's identity · 3/3",
+          "detail": "When this last step finishes, wallet confirmation opens right away."
+        },
+        "complete": {
+          "title": "Permanent materials are ready",
+          "detail": "Switching to wallet confirmation."
+        }
+      },
+      "snapshotPending": {
+        "title": "Minted onchain",
+        "detail": "Waiting for the permanent resources to sync to a readable gateway; the work opens automatically when done. You don't need to pay gas again."
+      },
+      "status": {
+        "preparing_assets": {
+          "title": "Preparing and permanently saving your work",
+          "detail": "Once written, materials can't be deleted. You can safely close this; it continues in the background."
+        },
+        "ready_to_sign": {
+          "title": "Confirm the mint cost",
+          "detail": "Nothing has been charged yet. Confirm the USD gas estimate, then open your wallet."
+        },
+        "submitted": {
+          "title": "Transaction submitted",
+          "detail": "Don't send it again. Verification continues in the background even if you close this page."
+        },
+        "confirming": {
+          "title": "Awaiting onchain confirmation",
+          "detail": "The contract has seen your work; the permanent page opens once there are enough confirmations."
+        },
+        "success": {
+          "title": "Mint complete",
+          "detail": "The permanent work and its onchain identity have been verified as consistent."
+        },
+        "expired": {
+          "title": "Authorization expired",
+          "detail": "The permanent materials are still valid; you can generate a new authorization without re-uploading."
+        },
+        "failed": {
+          "title": "The transaction definitely failed",
+          "detail": "You can choose a mint method again only after an onchain check is complete."
+        },
+        "manual_review": {
+          "title": "The mint result needs review",
+          "detail": "Resending is paused. Keep the current transaction and wait for review to avoid paying gas twice."
+        }
+      }
+    },
+    "close": "Close mint dialog",
+    "progress": "Mint progress",
+    "loading": "Loading the mint record…",
+    "eyebrow": "Reserved edition · Unminted token #{tokenId}",
+    "walletMismatch": "This wallet differs from the receiving address; you can view progress but can't continue signing.",
+    "walletNotConnected": "The original wallet isn't connected yet; connect it to continue signing without creating a new order.",
+    "walletRestoring": "Restoring the original wallet connection, please wait…",
+    "insufficient": "This wallet's balance isn't enough to pay this gas.",
+    "returnedHash": "Your wallet returned a transaction hash: ",
+    "openingWallet": "Opening wallet…",
+    "confirmMint": "Confirm and mint · {usd}",
+    "noBalance": "Insufficient balance",
+    "waitingGas": "Waiting for gas estimate",
+    "reestimate": "Re-estimate gas",
+    "checkingTx": "Checking transaction…",
+    "recoverHash": "Recover with existing transaction hash",
+    "openWork": "Open permanent work →",
+    "release": "Finish the check and choose again",
+    "refresh": "Refresh status",
+    "lastChecked": "Last checked {time}",
+    "errors": {
+      "readFailed": "Couldn't load the order",
+      "gasFailed": "Gas estimate failed",
+      "sendFailed": "The wallet transaction didn't complete",
+      "recoverFailed": "Couldn't register the transaction",
+      "releaseFailed": "Can't choose again yet"
+    },
+    "facts": {
+      "network": "Network",
+      "gas": "Estimated gas",
+      "gasValue": "About {usd}",
+      "testnet": " · Testnet reference",
+      "gasUnavailable": "USD estimate unavailable",
+      "estimating": "Estimating USD cost…",
+      "preparingEstimate": "Preparing USD cost estimate…",
+      "recipient": "Receiving wallet",
+      "tx": "Transaction"
+    },
+    "network": {
+      "unconfigured": "Ethereum not configured",
+      "switchLabel": "{name}, switch network",
+      "label": "Mint network",
+      "choose": "Choose network",
+      "unavailable": "Not available for this account",
+      "opDefault": "Default · Platform pays gas",
+      "ethSelf": "Wallet pays gas",
+      "testnet": "Testnet · Wallet pays gas",
+      "ethMissing": "Ethereum network not configured"
+    },
+    "reconnect": {
+      "wrongWallet": "Please connect the original EVM wallet for this order.",
+      "connectFailed": "The wallet connection didn't complete. Please try again.",
+      "connectFailedReason": "The wallet connection didn't complete ({reason}). Make sure MetaMask is unlocked and choose the original wallet address.",
+      "description": "Connect the order's original wallet {address}",
+      "connecting": "Connecting wallet…",
+      "metamask": "Connect original MetaMask wallet",
+      "reconnect": "Reconnect original wallet"
     }
   }
 }

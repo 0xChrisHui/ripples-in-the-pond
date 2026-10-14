@@ -11,19 +11,20 @@ import {
   type ArchiveAuthSource,
 } from './archive-cache';
 import type { ArchiveSlice } from './archive-state';
+import { msg, type Msg } from '@/src/i18n/msg';
 
-type EchoSlice = ArchiveSlice<EchoArchiveItem> & { warning: string | null };
+/** warning 存 Msg（key + 插值），切换语言时已显示的提示会随之换语言 */
+type EchoSlice = ArchiveSlice<EchoArchiveItem> & { warning: Msg[] };
 const EMPTY: EchoSlice = {
-  items: [], phase: 'idle', error: null, resolved: false, warning: null,
+  items: [], phase: 'idle', error: null, resolved: false, warning: [],
 };
-export const ECHO_CACHE_NOTICE = '正在显示上次链上确认，正后台核对当前持有人…';
+const ECHO_CACHE_NOTICE = msg('me.echoes.cache');
 
-function responseWarning(result: MyEchoesResponse): string | null {
-  const warnings = [
-    result.truncated ? `链上持有超过 ${result.echoes.length} 枚，仅显示前一部分` : null,
-    result.originStatusUnavailable ? '来源状态暂不可用；当前持有列表仍以链上为准' : null,
-  ].filter((value): value is string => Boolean(value));
-  return warnings.join('；') || null;
+function responseWarning(result: MyEchoesResponse): Msg[] {
+  return [
+    result.truncated ? msg('me.echoes.truncated', { count: result.echoes.length }) : null,
+    result.originStatusUnavailable ? msg('me.echoes.originUnavailable') : null,
+  ].filter((value): value is Msg => Boolean(value));
 }
 
 function errorMessage(error: unknown): string {
@@ -57,7 +58,7 @@ export function useOwnedEchoes(input: {
     const cached = readArchiveCache(activeIdentity, 'echoes', validCachedEcho);
     setSlice(cached
       ? { items: cached.items, phase: 'refreshing', error: null,
-        resolved: true, cached: true, warning: ECHO_CACHE_NOTICE }
+        resolved: true, cached: true, warning: [ECHO_CACHE_NOTICE] }
       : { ...EMPTY, phase: 'loading' });
 
     async function execute() {
@@ -76,7 +77,7 @@ export function useOwnedEchoes(input: {
           error: current.cached
             ? `当前链上核对失败；以下为上次链上确认：${errorMessage(error)}`
             : errorMessage(error),
-          warning: null }));
+          warning: [] }));
       }
     }
     void execute();

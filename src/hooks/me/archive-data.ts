@@ -1,5 +1,6 @@
 import type { Draft } from '@/src/lib/draft-store';
 import { DRAFT_TTL_MS } from '@/src/lib/constants';
+import { msg, type Msg } from '@/src/i18n/msg';
 import type { KeyEvent, MyScoresResponse, SaveScoreResponse } from '@/src/types/jam';
 import type { OwnedNFT, Track } from '@/src/types/tracks';
 
@@ -14,6 +15,8 @@ export type ArchiveRecording = {
   eventCount: number;
   uploadFailed?: boolean;
   awaitingRefresh?: boolean;
+  /** 显示用标题（随语言切换）；title 保留中文原值供缓存与旧逻辑使用 */
+  label?: Msg;
 };
 
 export function uploadedRecording(
@@ -23,6 +26,7 @@ export function uploadedRecording(
   return {
     key: `server-${result.scoreId}`,
     title: '已上传录音',
+    label: msg('me.recording.uploaded'),
     createdAt: draft.createdAt,
     expiresAt: result.expiresAt,
     pendingScoreId: result.scoreId,
@@ -41,6 +45,7 @@ export function recordingsFrom(
   const remote = server.map((score) => ({
     key: `server-${score.id}`,
     title: `${score.track.title} · 第 ${score.seq} 次录音`,
+    label: msg('me.recording.remote', { track: score.track.title, seq: score.seq }),
     createdAt: score.createdAt,
     expiresAt: score.expiresAt,
     pendingScoreId: score.id,
@@ -55,6 +60,7 @@ export function recordingsFrom(
   const local = drafts.map((draft, index) => ({
     key: `local-${draft.trackId}`,
     title: `本机录音 · ${String(index + 1).padStart(2, '0')}`,
+    label: msg('me.recording.local', { index: String(index + 1).padStart(2, '0') }),
     createdAt: draft.createdAt,
     expiresAt: new Date(new Date(draft.createdAt).getTime() + DRAFT_TTL_MS).toISOString(),
     eventCount: draft.eventsData.length,
