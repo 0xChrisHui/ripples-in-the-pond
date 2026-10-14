@@ -81,8 +81,7 @@ export default function PondHeader() {
         <LoginButton />
       </nav>
 
-      <div className="pointer-events-auto relative flex items-center gap-1 md:hidden">
-        <LocaleSwitch />
+      <div className="pointer-events-auto relative md:hidden">
         <button
           type="button"
           aria-expanded={menuOpen}
@@ -106,7 +105,9 @@ export default function PondHeader() {
           >
             <div className="flex flex-col">
               <PublicLinks onNavigate={() => setMenuOpen(false)} />
-              <div className="flex min-h-14 items-center justify-end pt-2">
+              <div className="flex min-h-14 items-center justify-between gap-3 pt-2">
+                {/* P19：手机顶栏放不下 CN/EN（会截断品牌名），放进菜单与登录同行；桌面在顶栏 */}
+                <LocaleSwitch />
                 <LoginButton />
               </div>
             </div>
