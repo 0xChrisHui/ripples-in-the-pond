@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import type { ArtistContent } from '@/src/content/artist';
 
 type Props = {
@@ -6,6 +7,7 @@ type Props = {
 };
 
 export default function ArtistPortrait({ content }: Props) {
+  const t = useTranslations('artist');
   return (
     <section className="artist-portrait" aria-labelledby="artist-name">
       <figure className="artist-portrait__figure">
@@ -21,7 +23,7 @@ export default function ArtistPortrait({ content }: Props) {
       </figure>
       <div className="artist-portrait__copy">
         <div className="artist-portrait__heading">
-          <p className="artist-page__folio">ARTIST / 叶禹含</p>
+          <p className="artist-page__folio">{t('folio')}</p>
           <h1 id="artist-name">{content.displayName}</h1>
         </div>
         <div className="artist-portrait__text">

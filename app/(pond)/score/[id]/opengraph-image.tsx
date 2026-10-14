@@ -1,8 +1,10 @@
 import { ImageResponse } from 'next/og';
 import { getScoreById } from '@/src/data/score-source';
+import { ogBilingual, ogText } from '@/src/i18n/content/og-copy';
 
 export const runtime = 'nodejs';
-export const alt = 'Ripples in the Pond — 永久唱片';
+// alt 须为字面量；与词典 og.alt 的“英文 · 中文”并列同形
+export const alt = 'Ripples in the Pond — Permanent record · 永久唱片';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -28,8 +30,9 @@ export default async function OgImage({ params }: Props) {
   const score = await getScoreById(id);
   if (!score) return fallbackImage();
   const cover = await availableCover(score.coverUrl);
-  const title = score.tokenId == null ? 'Ripples · 制作中' : `Ripples #${score.tokenId}`;
-  const events = score.eventCount == null ? '事件数待核验' : `${score.eventCount} 个永久事件`;
+  const title = score.tokenId == null ? ogText('en', 'inProgressTitle') : `Ripples #${score.tokenId}`; // 状态行已含“制作中”
+  // OG 图读者语言未知：中英并列
+  const events = score.eventCount == null ? ogBilingual('eventsPending') : ogBilingual('events', { count: score.eventCount });
 
   return new ImageResponse(
     <div style={{

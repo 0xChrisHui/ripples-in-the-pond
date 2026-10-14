@@ -1,6 +1,6 @@
 # P19 中英对照总表（待审）
 
-> 生成自 `src/i18n/messages`，共 573 条。中文为现网原文（一字未改），英文为机器初稿，**尚未校对**。
+> 生成自 `src/i18n/messages`，共 585 条。中文为现网原文（一字未改），英文为机器初稿，**尚未校对**。
 > 审阅方式：直接在“你的修改”列写新措辞，或告诉我 key + 新译文；改完我会重跑 `npm run i18n:check`。
 > `{xxx}` 为程序填入的内容，`{x, select/plural, ...}` 为按状态/数量选词，请保留花括号结构。
 
@@ -691,7 +691,7 @@
 | `echo.recipe.playing` | 正在播放 | Playing |
 | `echo.recipe.copiedFull` | 完整 36 位配方已复制 | Full 36-character recipe copied |
 
-## titles（6 条）
+## titles（7 条）
 
 | key | 中文 | 英文 |
 |---|---|---|
@@ -701,4 +701,26 @@
 | `titles.echoMissing` | Pond Echo 不存在 | Pond Echo not found |
 | `titles.echoUnavailable` | Pond Echo 暂不可用 | Pond Echo unavailable |
 | `titles.editionPending` | 制作中的唱片 | Record in progress |
+| `titles.artistName` | 叶禹含 | Ye Yuhan |
+
+## artist（1 条）
+
+| key | 中文 | 英文 |
+|---|---|---|
+| `artist.folio` | ARTIST / 叶禹含 | ARTIST / YE YUHAN |
+
+## og（10 条）
+
+| key | 中文 | 英文 |
+|---|---|---|
+| `og.inProgressTitle` | Ripples · 制作中 | Ripples · In progress |
+| `og.posterStatusReady` | PERMANENT SCORE · 已定稿 | PERMANENT SCORE · FINALIZED |
+| `og.posterStatusProcessing` | 正在制作永久唱片 | Pressing the permanent record |
+| `og.posterStatusFailed` | 永久凭证仍可核验 | Permanent credentials can still be verified |
+| `og.eventsPending` | 事件数待核验 | Event count pending verification |
+| `og.events` | {count} 个永久事件 | {count, plural, one {# permanent event} other {# permanent events}} |
+| `og.track` | 永久音乐唱片 | Permanent music record |
+| `og.work` | 永久作品 | Permanent work |
+| `og.alt` | 永久唱片 | Permanent record |
+| `og.altMultichain` | 多链永久唱片 | Multichain permanent record |
 

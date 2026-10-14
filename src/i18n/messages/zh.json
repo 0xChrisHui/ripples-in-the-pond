@@ -760,6 +760,22 @@
     "workMissing": "作品不存在",
     "echoMissing": "Pond Echo 不存在",
     "echoUnavailable": "Pond Echo 暂不可用",
-    "editionPending": "制作中的唱片"
+    "editionPending": "制作中的唱片",
+    "artistName": "叶禹含"
+  },
+  "artist": {
+    "folio": "ARTIST / 叶禹含"
+  },
+  "og": {
+    "inProgressTitle": "Ripples · 制作中",
+    "posterStatusReady": "PERMANENT SCORE · 已定稿",
+    "posterStatusProcessing": "正在制作永久唱片",
+    "posterStatusFailed": "永久凭证仍可核验",
+    "eventsPending": "事件数待核验",
+    "events": "{count} 个永久事件",
+    "track": "永久音乐唱片",
+    "work": "永久作品",
+    "alt": "永久唱片",
+    "altMultichain": "多链永久唱片"
   }
 }

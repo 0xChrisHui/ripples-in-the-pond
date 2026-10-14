@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 import QRCode from 'qrcode';
 import { getScoreById } from '@/src/data/score-source';
+import { ogText, posterLocale } from '@/src/i18n/content/og-copy';
 
 export const runtime = 'nodejs';
 const SIZE = { width: 1080, height: 1920 };
@@ -28,15 +29,16 @@ function shortAddress(value: string): string {
 
 type Props = { params: Promise<{ id: string }> };
 
-export async function GET(_request: Request, { params }: Props) {
+export async function GET(request: Request, { params }: Props) {
   const { id } = await params;
+  const lang = posterLocale(request); // 下载链接带 ?lang=en 时出英文海报，否则与原来一致
   const score = await getScoreById(id);
   if (!score) return new Response('score not found', { status: 404 });
   const cover = await availableCover(score.coverUrl);
   const slug = score.tokenId == null ? score.id : String(score.tokenId);
-  const title = score.tokenId == null ? 'Ripples · 制作中' : `Ripples #${score.tokenId}`;
+  const title = score.tokenId == null ? ogText(lang, 'inProgressTitle') : `Ripples #${score.tokenId}`;
   const edition = score.tokenId == null ? 'PRESSING IN PROGRESS' : `TOKEN #${String(score.tokenId).padStart(3, '0')}`;
-  const events = score.eventCount == null ? '事件数待核验' : `${score.eventCount} 个永久事件`;
+  const events = score.eventCount == null ? ogText(lang, 'eventsPending') : ogText(lang, 'events', { count: score.eventCount });
   const creator = score.creatorAddress ? shortAddress(score.creatorAddress) : null;
   const fullUrl = `${appBase()}/score/${slug}`;
   let qrDataUrl: string | null = null;
@@ -91,7 +93,7 @@ export async function GET(_request: Request, { params }: Props) {
       </div>
       <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 112, textAlign: 'center' }}>
         <div style={{ display: 'flex', color: '#c3a15f', fontFamily: 'monospace', fontSize: 18, letterSpacing: '.18em' }}>
-          {score.state === 'ready' ? 'PERMANENT SCORE · 已定稿' : score.state === 'processing' ? '正在制作永久唱片' : '永久凭证仍可核验'}
+          {ogText(lang, score.state === 'ready' ? 'posterStatusReady' : score.state === 'processing' ? 'posterStatusProcessing' : 'posterStatusFailed')}
         </div>
         <div style={{ display: 'flex', marginTop: 28, fontSize: 82, fontWeight: 400, lineHeight: 1, letterSpacing: '-.025em' }}>{title}</div>
         <div style={{ display: 'flex', marginTop: 24, color: '#aaa397', fontSize: 38 }}>{score.trackTitle}</div>

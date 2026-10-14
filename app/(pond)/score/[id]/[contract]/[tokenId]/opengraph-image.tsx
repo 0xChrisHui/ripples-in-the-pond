@@ -1,9 +1,11 @@
 import { ImageResponse } from 'next/og';
 import { getMultichainScore } from '@/src/data/score/multichain';
 import { getChainDefinition } from '@/src/lib/chain/multichain/registry';
+import { ogBilingual } from '@/src/i18n/content/og-copy';
 
 export const runtime = 'nodejs';
-export const alt = 'Ripples in the Pond — 多链永久唱片';
+// alt 须为字面量；与词典 og.altMultichain 的“英文 · 中文”并列同形
+export const alt = 'Ripples in the Pond — Multichain permanent record · 多链永久唱片';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -14,8 +16,8 @@ export default async function MultichainOgImage({ params }: Props) {
   const score = await getMultichainScore(id, contract, tokenId);
   const network = score ? getChainDefinition(score.chainId).displayName : 'Ethereum';
   const title = score?.tokenId ? `Ripples #${score.tokenId}` : 'Ripples in the Pond';
-  const track = score?.trackTitle ?? '永久音乐唱片';
-  const events = score?.eventCount == null ? '永久作品' : `${score.eventCount} 个永久事件`;
+  const track = score?.trackTitle ?? ogBilingual('track');
+  const events = score?.eventCount == null ? ogBilingual('work') : ogBilingual('events', { count: score.eventCount });
   return new ImageResponse(
     <div style={{
       display: 'flex', position: 'relative', width: '100%', height: '100%',

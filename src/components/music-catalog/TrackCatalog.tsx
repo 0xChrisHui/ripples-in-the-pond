@@ -12,11 +12,15 @@ import PageNavigation from '../pond-shell/navigation/PageNavigation';
 import { usePondTransition } from '../pond-shell/pond-transition';
 import { releaseOriginalPlayback, toPlayerTrack } from '../../lib/music-catalog/player-adapter';
 import { clearTrackWarmup, warmTrackAudio } from '../player/track-preload';
+import { useLocaleSwitch } from '../../i18n/LocaleProvider';
+import { useEnglishContent } from '../../i18n/content/use-english-content';
 
 export default function TrackCatalog({ initialTrackId, single = false, appearance = single ? 'archive' : 'pond' }: {
   initialTrackId?: string; single?: boolean; appearance?: 'archive' | 'pond';
 }) {
   const t = useTranslations('tracks');
+  const { locale } = useLocaleSwitch();
+  const english = useEnglishContent(locale);
   const catalog = useMemo(() => getMusicCatalog(), []);
   const tracks = useMemo(() => [...catalog.tracks].sort((a, b) => a.displayNumber - b.displayNumber), [catalog]);
   const [selectedId, setSelectedId] = useState(initialTrackId ?? tracks[0].trackId);
@@ -64,11 +68,15 @@ export default function TrackCatalog({ initialTrackId, single = false, appearanc
   }, [active, getAudioElement, index, prepare, selectedId, tracks]);
   useEffect(() => clearTrackWarmup, []);
   const number = String(selected.displayNumber).padStart(2, '0');
-  const note = selected.notes.text?.trim() ?? '';
+  // 英文模式用英文手记（另存，未改动 catalog 数据）；尚未加载完或某首没有英文时回落中文原文
+  const englishNote = english?.notes[String(selected.displayNumber)];
+  const note = (englishNote ?? selected.notes.text)?.trim() ?? '';
   const paragraphs = note.split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
   // 只摘取作者第一段的完整句子；完整手记保持原文和换行。
   const opening = paragraphs[0] ?? '';
-  const excerpt = opening.length > 60 ? opening.match(/^.{1,90}?[。！？]/su)?.[0] ?? opening : opening;
+  const excerpt = englishNote
+    ? opening.length > 150 ? opening.match(/^.{1,220}?[.!?…](?=\s|$)/su)?.[0] ?? opening : opening
+    : opening.length > 60 ? opening.match(/^.{1,90}?[。！？]/su)?.[0] ?? opening : opening;
   const nextTrack = tracks[index + 1] ?? tracks[0];
   function selectAndReturn(id: string) {
     select(id);

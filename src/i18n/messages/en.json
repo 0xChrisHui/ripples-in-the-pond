@@ -760,6 +760,22 @@
     "workMissing": "Work not found",
     "echoMissing": "Pond Echo not found",
     "echoUnavailable": "Pond Echo unavailable",
-    "editionPending": "Record in progress"
+    "editionPending": "Record in progress",
+    "artistName": "Ye Yuhan"
+  },
+  "artist": {
+    "folio": "ARTIST / YE YUHAN"
+  },
+  "og": {
+    "inProgressTitle": "Ripples · In progress",
+    "posterStatusReady": "PERMANENT SCORE · FINALIZED",
+    "posterStatusProcessing": "Pressing the permanent record",
+    "posterStatusFailed": "Permanent credentials can still be verified",
+    "eventsPending": "Event count pending verification",
+    "events": "{count, plural, one {# permanent event} other {# permanent events}}",
+    "track": "Permanent music record",
+    "work": "Permanent work",
+    "alt": "Permanent record",
+    "altMultichain": "Multichain permanent record"
   }
 }

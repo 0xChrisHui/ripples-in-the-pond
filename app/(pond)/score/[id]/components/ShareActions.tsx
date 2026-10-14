@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useMessages, useTranslations } from 'next-intl';
+import { useLocaleSwitch } from '@/src/i18n/LocaleProvider';
 import { useAuth } from '@/src/hooks/useAuth';
 import { isScoreAuthor, scoreShareCopy, scoreShareIntent, scoreShareUrl } from './experience/share-copy';
 
@@ -34,6 +35,7 @@ export default function ShareActions({
   id, tokenId, trackTitle, canonicalPath, posterPath, creatorAddress,
 }: Props) {
   const t = useTranslations('share');
+  const { locale } = useLocaleSwitch();
   const shareTemplates = useMessages().share;
   const [feedback, setFeedback] = useState<'copyLink' | 'unavailable' | 'copied' | 'copyFailed'>('copyLink');
   const detailsRef = useRef<HTMLDetailsElement>(null);
@@ -78,7 +80,7 @@ export default function ShareActions({
           <button type="button" disabled={!available} onClick={() => openIntent('x')}>{t('toX')}</button>
           <button type="button" disabled={!available} onClick={() => openIntent('weibo')}>{t('toWeibo')}</button>
           {posterPath !== null && (
-            <a href={posterPath ?? `/score/${slug}/poster`} download={`ripples-${slug}.png`}>{t('poster')}</a>
+            <a href={`${posterPath ?? `/score/${slug}/poster`}${locale === 'en' ? '?lang=en' : ''}`} download={`ripples-${slug}.png`}>{t('poster')}</a>
           )}
         </div>
       </details>
