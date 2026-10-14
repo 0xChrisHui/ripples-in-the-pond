@@ -1,4 +1,5 @@
 import '@/app/artist/artist.css';
+import T from '@/src/i18n/T';
 
 export default function ArtistLoading() {
   return (
@@ -22,7 +23,7 @@ export default function ArtistLoading() {
             <span className="artist-loading__line artist-loading__block" />
           </div>
         </section>
-        <p className="p11-visually-hidden">正在读取艺术家页面</p>
+        <p className="p11-visually-hidden"><T k="loading.artist" /></p>
       </div>
     </main>
   );

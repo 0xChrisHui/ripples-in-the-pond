@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   error: Error & { digest?: string };
@@ -21,6 +22,7 @@ export default function RouteErrorShell({
   description,
   logScope,
 }: Props) {
+  const t = useTranslations('common');
   useEffect(() => { console.error(`[${logScope}]`, error); }, [error, logScope]);
 
   return (
@@ -49,14 +51,14 @@ export default function RouteErrorShell({
             style={{ borderColor: 'var(--p11-brass)', color: 'var(--p11-bone)' }}
             type="button"
           >
-            重新读取
+            {t('retry')}
           </button>
           <Link
             className="inline-flex min-h-11 items-center rounded-full border px-6 text-sm"
             href="/"
             style={{ borderColor: 'var(--p11-line-strong)', color: 'var(--p11-muted)' }}
           >
-            ← 返回水塘
+            {t('backToPond')}
           </Link>
         </div>
       </section>

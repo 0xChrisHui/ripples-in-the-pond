@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import LoginButton from '@/src/components/auth/LoginButton';
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import { usePondNavigationWarmup } from '@/src/components/pond-shell/navigation/PondNavigation';
@@ -12,6 +13,7 @@ import '@/src/components/pond-shell/navigation/header.css';
 const MENU_ID = 'pond-public-navigation';
 
 function PublicLinks({ onNavigate }: { onNavigate?: () => void }) {
+  const t = useTranslations('nav');
   const linkClass = [
     'flex min-h-11 items-center border-b border-[var(--p11-line)]',
     'text-sm text-[var(--p11-muted)] transition-colors duration-150',
@@ -23,9 +25,9 @@ function PublicLinks({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <>
       <PondRouteLink href="/artist" onClick={onNavigate} className={linkClass}>
-        艺术家
+        {t('artist')}
       </PondRouteLink>
-      <PondRouteLink href="/tracks" onClick={onNavigate} className={linkClass}>曲目</PondRouteLink>
+      <PondRouteLink href="/tracks" onClick={onNavigate} className={linkClass}>{t('tracks')}</PondRouteLink>
     </>
   );
 }
@@ -36,6 +38,8 @@ export default function PondHeader() {
   const transition = usePondTransition();
   const home = transition ? transition.transaction.interactiveOwner === 'home' : pathname === '/';
   const [menuOpen, setMenuOpen] = useState(false);
+  const t = useTranslations('nav');
+  const tc = useTranslations('common');
   usePondNavigationWarmup();
   const isSandbox = pathname === '/test3' || pathname === '/test4';
 
@@ -62,7 +66,7 @@ export default function PondHeader() {
       >
         {home || isSandbox ? <span className="block truncate font-[family-name:var(--p11-font-display)] text-xl font-light leading-none tracking-[0.04em] md:text-2xl">
           Ripples in the Pond
-        </span> : <span className="pond-global-header__back">← 返回水塘</span>}
+        </span> : <span className="pond-global-header__back">{tc('backToPond')}</span>}
         {isSandbox && (
           <span className="mt-1.5 block font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--p11-faint)]">
             {pathname} · GL sandbox
@@ -70,7 +74,7 @@ export default function PondHeader() {
         )}
       </PondRouteLink>
 
-      <nav aria-label="主导航" className="pointer-events-auto hidden min-h-11 items-center gap-7 md:flex">
+      <nav aria-label={t('main')} className="pointer-events-auto hidden min-h-11 items-center gap-7 md:flex">
         <PublicLinks />
         <LocaleSwitch />
         <span className="h-4 w-px bg-[var(--p11-line)]" aria-hidden="true" />
@@ -83,7 +87,7 @@ export default function PondHeader() {
           type="button"
           aria-expanded={menuOpen}
           aria-controls={MENU_ID}
-          aria-label={menuOpen ? '关闭主菜单' : '打开主菜单'}
+          aria-label={menuOpen ? t('closeMenu') : t('openMenu')}
           data-pond-focus-entry="home"
           onClick={() => setMenuOpen((open) => !open)}
           className="pond-global-header__menu-button flex h-11 w-11 items-center justify-center border border-[var(--p11-line)] bg-[var(--p11-overlay)] text-[var(--p11-bone)] backdrop-blur-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--p11-focus-color)]"

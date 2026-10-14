@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { useTranslations } from 'next-intl';
 import './playback-seek-bar.css';
 
 type Props = {
@@ -20,8 +21,9 @@ function clamp(value: number, duration: number): number {
 /** 采用指针捕获：拖动始终跟手，松开后再一次性重排音频时间轴。 */
 export default function PlaybackSeekBar({
   className = '', value, duration, onSeek, formatValue,
-  disabled = false, label = '播放进度',
+  disabled = false, label,
 }: Props) {
+  const t = useTranslations('common');
   const railRef = useRef<HTMLSpanElement>(null);
   const draggingRef = useRef(false);
   const draftRef = useRef(value);
@@ -95,7 +97,7 @@ export default function PlaybackSeekBar({
 
   return (
     <div className={`playback-seek ${className}`} role="slider" tabIndex={unavailable ? -1 : 0}
-      aria-label={label} aria-orientation="horizontal" aria-disabled={unavailable}
+      aria-label={label ?? t('playbackProgress')} aria-orientation="horizontal" aria-disabled={unavailable}
       aria-valuemin={0} aria-valuemax={Math.round(safeDuration)} aria-valuenow={Math.round(displayValue)}
       aria-valuetext={`${formatValue(displayValue)} / ${formatValue(safeDuration)}`}
       data-dragging={dragging} data-disabled={unavailable}

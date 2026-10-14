@@ -64,5 +64,57 @@
       "connectFailed": "钱包连接已取消或失败，请重试。",
       "signFailed": "钱包已连接，但登录签名未完成。"
     }
+  },
+  "common": {
+    "retry": "重新读取",
+    "backToPond": "← 返回水塘",
+    "backToPondPlain": "返回水塘",
+    "loadingPage": "页面加载中",
+    "playbackProgress": "播放进度"
+  },
+  "nav": {
+    "artist": "艺术家",
+    "tracks": "曲目",
+    "main": "主导航",
+    "openMenu": "打开主菜单",
+    "closeMenu": "关闭主菜单"
+  },
+  "errorPage": {
+    "title": "刚才的水波没有完成",
+    "description": "页面遇到了临时问题。你可以重新读取；作品凭证和永久资源不会因此改变。"
+  },
+  "notFound": {
+    "title": "这里没有这枚唱片",
+    "description": "链接可能有误，或这件作品从未存在。数据库暂时不可用时，我们不会把它误报成 404。"
+  },
+  "routeError": {
+    "artist": {
+      "eyebrow": "ARTIST / 叶禹含",
+      "title": "叶禹含的艺术家页面暂时无法读取",
+      "description": "人物与项目介绍没有被占位内容替代。可以重新读取，或先回到水塘。"
+    },
+    "me": {
+      "eyebrow": "PERSONAL ARCHIVE · 私人档案",
+      "title": "音乐档案暂时无法读取",
+      "description": "你的唱片、录音和声音素材没有被改动。可以重新读取，或先回到水塘。"
+    },
+    "score": {
+      "eyebrow": "PERMANENT RECORD · 永久唱片",
+      "title": "这枚唱片暂时无法读取",
+      "description": "我们不会用占位资料补齐未知信息。可以重新读取，或先回到水塘。"
+    }
+  },
+  "loading": {
+    "artist": "正在读取艺术家页面",
+    "echoTitle": "正在沿着涟漪找回作品。",
+    "echoDescription": "链上持有人与永久 metadata 会分别核验；任何一项失败都不会用数据库内容替代。",
+    "meArchive": "正在读取音乐档案"
+  },
+  "me": {
+    "sections": {
+      "records": "我的唱片",
+      "pending": "待铸造",
+      "favorites": "收藏"
+    }
   }
 }

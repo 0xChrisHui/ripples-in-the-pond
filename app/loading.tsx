@@ -1,4 +1,5 @@
 import { POND_NIGHT_BACKGROUND } from '@/src/components/pond-gl-test3/presentation/pond-night';
+import T from '@/src/i18n/T';
 
 /** 路由兜底：只铺夜塘底色，不出任何文字；与 SceneCover 同色，交接无跳变。 */
 export default function HomeLoading() {
@@ -8,7 +9,7 @@ export default function HomeLoading() {
       style={{ background: POND_NIGHT_BACKGROUND }}
       aria-busy="true"
     >
-      <p role="status" className="sr-only">页面加载中</p>
+      <p role="status" className="sr-only"><T k="common.loadingPage" /></p>
     </main>
   );
 }

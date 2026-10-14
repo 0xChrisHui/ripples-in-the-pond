@@ -64,5 +64,57 @@
       "connectFailed": "The wallet connection was cancelled or failed. Please try again.",
       "signFailed": "The wallet is connected, but the sign-in signature wasn't completed."
     }
+  },
+  "common": {
+    "retry": "Try again",
+    "backToPond": "← Back to the pond",
+    "backToPondPlain": "Back to the pond",
+    "loadingPage": "Loading page",
+    "playbackProgress": "Playback progress"
+  },
+  "nav": {
+    "artist": "Artist",
+    "tracks": "Tracks",
+    "main": "Main navigation",
+    "openMenu": "Open main menu",
+    "closeMenu": "Close main menu"
+  },
+  "errorPage": {
+    "title": "That ripple didn't finish",
+    "description": "The page ran into a temporary problem. You can try again; your work's credentials and permanent resources are not affected."
+  },
+  "notFound": {
+    "title": "There's no record here",
+    "description": "The link may be wrong, or this work never existed. When our database is temporarily unavailable, we won't misreport it as a 404."
+  },
+  "routeError": {
+    "artist": {
+      "eyebrow": "ARTIST / 叶禹含",
+      "title": "The artist page can't be loaded right now",
+      "description": "We haven't replaced the artist and project introduction with placeholder content. Try again, or head back to the pond for now."
+    },
+    "me": {
+      "eyebrow": "PERSONAL ARCHIVE",
+      "title": "Your music archive can't be loaded right now",
+      "description": "Your records, recordings and sound materials haven't been changed. Try again, or head back to the pond for now."
+    },
+    "score": {
+      "eyebrow": "PERMANENT RECORD",
+      "title": "This record can't be loaded right now",
+      "description": "We won't fill in unknown details with placeholders. Try again, or head back to the pond for now."
+    }
+  },
+  "loading": {
+    "artist": "Loading the artist page",
+    "echoTitle": "Following the ripples back to this work.",
+    "echoDescription": "The onchain owner and the permanent metadata are verified separately; if either fails, we won't substitute database content.",
+    "meArchive": "Loading your music archive"
+  },
+  "me": {
+    "sections": {
+      "records": "My records",
+      "pending": "Awaiting mint",
+      "favorites": "Collection"
+    }
   }
 }
