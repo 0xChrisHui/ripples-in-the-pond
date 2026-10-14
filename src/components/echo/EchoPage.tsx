@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import PondRouteLink from '../pond-shell/PondRouteLink';
 import type { EchoViewData } from '@/src/data/echo/types';
 import EchoPlayer from './EchoPlayer';
@@ -7,7 +10,9 @@ function shortAddress(address: string): string {
   return `${address.slice(0, 8)}…${address.slice(-6)}`;
 }
 
+/** 客户端组件只为让文字随语言切换（P19 F3）；Echo 路由本就是动态渲染，服务端 HTML 仍输出中文 */
 export default function EchoPage({ echo }: { echo: EchoViewData }) {
+  const t = useTranslations('echo');
   const metadata = echo.metadata;
   const transferred = echo.owner.toLowerCase() !== echo.originWallet.toLowerCase();
   return (
@@ -18,16 +23,16 @@ export default function EchoPage({ echo }: { echo: EchoViewData }) {
 
       <section className="echo-hero" aria-labelledby="echo-title">
         <div className="echo-hero__copy">
-          <p className="echo-kicker">POND ECHOES · 池中回声</p>
+          <p className="echo-kicker">{t('kicker')}</p>
           <h1 id="echo-title">{metadata.name}</h1>
           <p>{metadata.description}</p>
           <dl className="echo-identity">
-            <div><dt>原始创作者</dt><dd title={echo.originWallet}>{shortAddress(echo.originWallet)}</dd></div>
-            <div><dt>当前持有人</dt><dd title={echo.owner}>{shortAddress(echo.owner)}</dd></div>
+            <div><dt>{t('origin')}</dt><dd title={echo.originWallet}>{shortAddress(echo.originWallet)}</dd></div>
+            <div><dt>{t('owner')}</dt><dd title={echo.owner}>{shortAddress(echo.owner)}</dd></div>
           </dl>
-          {transferred && <p className="echo-transfer-note">这枚作品已经转让；来源钱包仍永久保留，当前持有人来自链上 ownerOf。</p>}
+          {transferred && <p className="echo-transfer-note">{t('transferred')}</p>}
         </div>
-        <div className="echo-hero__art" role="img" aria-label="Pond Echoes 系列永久封面"
+        <div className="echo-hero__art" role="img" aria-label={t('cover')}
           style={{ backgroundImage: `url(${JSON.stringify(echo.imageUrl)})` }}>
           <span aria-hidden="true" /><span aria-hidden="true" /><span aria-hidden="true" />
         </div>
@@ -38,10 +43,10 @@ export default function EchoPage({ echo }: { echo: EchoViewData }) {
       <section className="echo-archive" data-pond-no-ripple="true">
         <div className="echo-archive__intro">
           <p className="echo-kicker">PERMANENT ARCHIVE</p>
-          <h2>一枚作品，两个身份。</h2>
-          <p>Origin 记录声音从谁的钱包诞生；owner 记录它此刻在谁手中。转让会改变后者，不会改写前者、配方或 36 段声音。</p>
+          <h2>{t('identityTitle')}</h2>
+          <p>{t('identityBody')}</p>
           <PondRouteLink href={`/score/${metadata.properties.sourceScoreTokenId}`}>
-            打开触发它的首枚 Score #{metadata.properties.sourceScoreTokenId} →
+            {t('sourceScore', { tokenId: metadata.properties.sourceScoreTokenId })}
           </PondRouteLink>
         </div>
         <EchoProvenance echo={echo} />

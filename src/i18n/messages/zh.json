@@ -710,5 +710,48 @@
     "copiedFull": "完整值已复制",
     "copyFailedManual": "复制失败，请手动选择完整值",
     "valueLabel": "{label}：{value}"
+  },
+  "echo": {
+    "kicker": "POND ECHOES · 池中回声",
+    "origin": "原始创作者",
+    "owner": "当前持有人",
+    "transferred": "这枚作品已经转让；来源钱包仍永久保留，当前持有人来自链上 ownerOf。",
+    "cover": "Pond Echoes 系列永久封面",
+    "identityTitle": "一枚作品，两个身份。",
+    "identityBody": "Origin 记录声音从谁的钱包诞生；owner 记录它此刻在谁手中。转让会改变后者，不会改写前者、配方或 36 段声音。",
+    "sourceScore": "打开触发它的首枚 Score #{tokenId} →",
+    "gatewaysMatch": "{count} 个网关字节一致",
+    "permanentMetadata": "永久 metadata",
+    "unavailableTitle": "这圈回声暂时没有抵达。",
+    "unavailableToken": "链上作品存在，但当前无法从两个独立网关取得一致的永久档案。请稍后重试；配方与所有权不会因此改变。",
+    "unavailableOrigin": "来源钱包已经固定，但链上或永久网关暂时没有返回可核验的完整作品。系统不会用临时数据替代。",
+    "backToPond": "返回池塘",
+    "viewArchive": "查看我的档案",
+    "player": {
+      "label": "Pond Echo 永久播放器",
+      "state": {
+        "idle": "等待永久音频",
+        "loading": "正在准备永久音频",
+        "ready": "可以播放",
+        "playing": "正在播放",
+        "paused": "已暂停",
+        "ended": "播放完成",
+        "error": "播放暂不可用"
+      },
+      "action": "{state, select, playing {暂停} paused {继续} ended {重新播放} error {重新载入} other {播放完整作品}}",
+      "start": "从第一圈涟漪开始",
+      "part": "第 {index} / 36 段",
+      "loaded": "已取得 {loaded} / {total} 个唯一片段",
+      "crossfade": "60ms 等功率衔接 · 无自动播放",
+      "errorDefault": "Pond Echo 播放器发生未知错误"
+    },
+    "recipe": {
+      "title": "声音航图",
+      "copied": "已复制",
+      "copy": "复制配方",
+      "order": "36 段声音播放顺序",
+      "playing": "正在播放",
+      "copiedFull": "完整 36 位配方已复制"
+    }
   }
 }

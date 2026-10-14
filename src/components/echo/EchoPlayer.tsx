@@ -1,6 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
+import { useServerText } from '@/src/i18n/use-server-text';
 import PlaybackSeekBar from '@/src/components/common/PlaybackSeekBar';
 import { useWalletRecipePlayer } from '@/src/features/wallet-recipe/player/use-wallet-recipe-player';
 import type { WalletRecipeMetadataClipV1 } from '@/src/types/wallet-recipe';
@@ -11,15 +13,14 @@ function timeLabel(milliseconds: number): string {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
-const STATE_LABEL = {
-  idle: '等待永久音频', loading: '正在准备永久音频', ready: '可以播放',
-  playing: '正在播放', paused: '已暂停', ended: '播放完成', error: '播放暂不可用',
-} as const;
+// 状态文案在词典 echo.player.state.<state>
 
 export default function EchoPlayer({ recipe, clips }: {
   recipe: string;
   clips: Record<string, WalletRecipeMetadataClipV1>;
 }) {
+  const t = useTranslations('echo.player');
+  const serverText = useServerText();
   const input = useMemo(() => ({ recipe, clips }), [recipe, clips]);
   const player = useWalletRecipePlayer(input);
   const waiting = player.state === 'idle' || player.state === 'loading';
@@ -31,21 +32,18 @@ export default function EchoPlayer({ recipe, clips }: {
     if (player.state === 'error') return player.retryLoad();
     return player.play();
   }
-  const action = player.state === 'playing' ? '暂停'
-    : player.state === 'paused' ? '继续'
-      : player.state === 'ended' ? '重新播放'
-        : player.state === 'error' ? '重新载入' : '播放完整作品';
+  const action = t('action', { state: player.state });
 
   return (
-    <section className="echo-player" data-state={player.state} aria-label="Pond Echo 永久播放器">
+    <section className="echo-player" data-state={player.state} aria-label={t('label')}>
       <div className="echo-player__pulse" aria-hidden="true">
         <span>{player.currentKey ?? recipe[0]}</span>
       </div>
       <div className="echo-player__body">
-        <p className="echo-player__status" aria-live="polite">{STATE_LABEL[player.state]}</p>
-        <h2>{player.currentIndex == null ? '从第一圈涟漪开始' : `第 ${player.currentIndex + 1} / 36 段`}</h2>
+        <p className="echo-player__status" aria-live="polite">{t(`state.${player.state}`)}</p>
+        <h2>{player.currentIndex == null ? t('start') : t('part', { index: player.currentIndex + 1 })}</h2>
         <p className="echo-player__loading">
-          {waiting ? `已取得 ${player.loadedUniqueCount} / ${player.totalUniqueCount} 个唯一片段` : '60ms 等功率衔接 · 无自动播放'}
+          {waiting ? t('loaded', { loaded: player.loadedUniqueCount, total: player.totalUniqueCount }) : t('crossfade')}
         </p>
         <PlaybackSeekBar className="echo-player__track" value={player.positionMs}
           duration={player.durationMs} onSeek={player.seek} formatValue={timeLabel}
@@ -53,7 +51,7 @@ export default function EchoPlayer({ recipe, clips }: {
         <div className="echo-player__time">
           <time>{timeLabel(player.positionMs)}</time><time>{timeLabel(player.durationMs)}</time>
         </div>
-        {player.errorMessage && <p className="echo-player__error" role="alert">{player.errorMessage}</p>}
+        {player.errorMessage && <p className="echo-player__error" role="alert">{serverText(player.errorMessage, t('errorDefault'))}</p>}
         <button type="button" className="echo-player__action" onClick={() => { void primaryAction(); }}
           disabled={waiting}>{action}</button>
       </div>

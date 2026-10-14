@@ -33,7 +33,7 @@ export default async function EchoTokenPage({ params }: Props) {
     echo = await getEchoByTokenIdCached(tokenId);
   } catch (error) {
     console.error('[echo-page] permanent data unavailable:', tokenId.toString(), error);
-    return <EchoUnavailable message="链上作品存在，但当前无法从两个独立网关取得一致的永久档案。请稍后重试；配方与所有权不会因此改变。" />;
+    return <EchoUnavailable reason="token" />;
   }
   if (!echo) notFound();
   return <EchoPage echo={echo} />;

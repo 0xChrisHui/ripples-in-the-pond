@@ -710,5 +710,48 @@
     "copiedFull": "Full value copied",
     "copyFailedManual": "Copy failed; please select the full value manually",
     "valueLabel": "{label}: {value}"
+  },
+  "echo": {
+    "kicker": "POND ECHOES",
+    "origin": "Origin creator",
+    "owner": "Current owner",
+    "transferred": "This work has been transferred. The origin wallet is kept permanently; the current owner comes from the onchain ownerOf.",
+    "cover": "Permanent cover of the Pond Echoes series",
+    "identityTitle": "One work, two identities.",
+    "identityBody": "Origin records which wallet the sound was born from; owner records whose hands it's in right now. A transfer changes the latter, never the former, the recipe or the 36 sounds.",
+    "sourceScore": "Open Score #{tokenId}, the first one that triggered it →",
+    "gatewaysMatch": "{count, plural, one {# gateway} other {# gateways}} byte-identical",
+    "permanentMetadata": "Permanent metadata",
+    "unavailableTitle": "This echo hasn't arrived yet.",
+    "unavailableToken": "The work exists onchain, but we can't get a consistent permanent archive from two independent gateways right now. Please try again later; the recipe and ownership won't change.",
+    "unavailableOrigin": "The origin wallet is fixed, but the chain or the permanent gateways haven't returned a complete, verifiable work yet. We won't substitute temporary data.",
+    "backToPond": "Back to the pond",
+    "viewArchive": "View my archive",
+    "player": {
+      "label": "Pond Echo permanent player",
+      "state": {
+        "idle": "Waiting for permanent audio",
+        "loading": "Preparing permanent audio",
+        "ready": "Ready to play",
+        "playing": "Playing",
+        "paused": "Paused",
+        "ended": "Finished",
+        "error": "Playback unavailable"
+      },
+      "action": "{state, select, playing {Pause} paused {Resume} ended {Replay} error {Reload} other {Play the full work}}",
+      "start": "Starting from the first ripple",
+      "part": "Part {index} / 36",
+      "loaded": "Loaded {loaded} / {total} unique clips",
+      "crossfade": "60 ms equal-power crossfade · No autoplay",
+      "errorDefault": "The Pond Echo player hit an unknown error"
+    },
+    "recipe": {
+      "title": "Sound chart",
+      "copied": "Copied",
+      "copy": "Copy recipe",
+      "order": "Playback order of the 36 sounds",
+      "playing": "Playing",
+      "copiedFull": "Full 36-character recipe copied"
+    }
   }
 }

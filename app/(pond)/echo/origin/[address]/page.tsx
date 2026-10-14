@@ -29,7 +29,7 @@ export default async function EchoOriginPage({ params }: Props) {
     echo = await getEchoByOriginCached(address);
   } catch (error) {
     console.error('[echo-origin-page] permanent data unavailable:', address, error);
-    return <EchoUnavailable message="来源钱包已经固定，但链上或永久网关暂时没有返回可核验的完整作品。系统不会用临时数据替代。" />;
+    return <EchoUnavailable reason="origin" />;
   }
   if (!echo) notFound();
   return <EchoPage echo={echo} />;

@@ -1,7 +1,11 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import ProvenanceLedger, { type ProvenanceEntry } from '@/src/components/p11/ProvenanceLedger';
 import type { EchoViewData } from '@/src/data/echo/types';
 
 export default function EchoProvenance({ echo }: { echo: EchoViewData }) {
+  const t = useTranslations('echo');
   const properties = echo.metadata.properties;
   const entries: ProvenanceEntry[] = [
     { id: 'origin', label: 'Origin wallet', value: echo.originWallet,
@@ -15,11 +19,11 @@ export default function EchoProvenance({ echo }: { echo: EchoViewData }) {
     { id: 'uri', label: 'tokenURI', value: echo.tokenUri,
       source: 'PondEchoes.tokenURI', href: `${echo.verifiedGateways[0]}/${echo.metadataTxId}` },
     { id: 'metadata', label: 'Metadata txid', value: echo.metadataTxId,
-      source: `${echo.verifiedGateways.length} 个网关字节一致`, href: `${echo.verifiedGateways[0]}/${echo.metadataTxId}` },
+      source: t('gatewaysMatch', { count: echo.verifiedGateways.length }), href: `${echo.verifiedGateways[0]}/${echo.metadataTxId}` },
     { id: 'manifest', label: 'Clip manifest', value: properties.clipManifest,
-      source: '永久 metadata', href: `${echo.verifiedGateways[0]}/${properties.clipManifest.slice(5)}` },
+      source: t('permanentMetadata'), href: `${echo.verifiedGateways[0]}/${properties.clipManifest.slice(5)}` },
     { id: 'decoder', label: 'Permanent Decoder', value: echo.metadata.animation_url,
-      source: '永久 metadata', href: echo.metadata.animation_url.replace('ar://', `${echo.verifiedGateways[0]}/`) },
+      source: t('permanentMetadata'), href: echo.metadata.animation_url.replace('ar://', `${echo.verifiedGateways[0]}/`) },
   ];
-  return <ProvenanceLedger title="永久凭证" entries={entries} />;
+  return <ProvenanceLedger entries={entries} />;
 }
