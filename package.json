@@ -50,6 +50,7 @@
     "react-dom": "19.2.3",
     "server-only": "^0.0.1",
     "three": "^0.184.0",
+    "use-intl": "4.14.9",
     "viem": "^2.47.11"
   },
   "devDependencies": {
