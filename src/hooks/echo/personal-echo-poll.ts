@@ -13,14 +13,14 @@ type PollOptions = {
   maxMs?: number;
 };
 
-/** 只在 pending 后复查；时间、可见性与请求取消均由调用方提供。 */
+/** pending 自动轮询；本轮结束可唤醒，找到 Echo 或销毁后永久停止。 */
 export function createPersonalEchoPoll({
   query, onEcho, onError, isVisible, now, setTimer, clearTimer, createAbortController,
   intervalMs = 30_000, maxMs = 20 * 60_000,
 }: PollOptions) {
   let started = false;
-  let stopped = false;
-  let polling = false;
+  let state: 'idle' | 'polling' | 'found' | 'destroyed' = 'idle';
+  let lastRequestedAt: number | null = null;
   let deadline: number | null = null;
   let timer: unknown = null;
   let request: AbortController | null = null;
@@ -30,76 +30,88 @@ export function createPersonalEchoPoll({
     timer = null;
   }
 
-  function stop() {
-    stopped = true;
-    polling = false;
+  function finish(nextState: 'idle' | 'found' | 'destroyed') {
+    state = nextState;
+    deadline = null;
     cancelTimer();
     request?.abort();
+    request = null;
+  }
+
+  function terminal() {
+    return state === 'found' || state === 'destroyed';
   }
 
   function expired() {
     if (deadline === null || now() < deadline) return false;
-    stop();
+    finish('idle');
     return true;
   }
 
   function schedule(delay: number) {
-    if (stopped || deadline === null) return;
+    if (state !== 'polling' || deadline === null) return;
     cancelTimer();
     timer = setTimer(() => {
       timer = null;
-      if (stopped || expired()) return;
+      if (state !== 'polling' || expired()) return;
       if (isVisible()) void execute();
       else schedule(intervalMs);
     }, Math.min(delay, Math.max(0, deadline - now())));
   }
 
   async function execute() {
-    if (stopped || request || expired()) return;
+    if (terminal() || request || expired()) return;
     cancelTimer();
     const controller = createAbortController();
     request = controller;
-    let nextAt = now() + intervalMs;
+    lastRequestedAt = now();
+    let nextAt = lastRequestedAt + intervalMs;
     // 💭 为什么不只在响应后计时：慢请求也必须受首次 pending 的绝对期限约束。
     if (deadline !== null) schedule(deadline - now());
     try {
       const response = await query(controller.signal);
-      if (stopped || controller.signal.aborted || expired()) return;
+      if (terminal() || controller.signal.aborted || expired()) return;
       if (response.echo !== null || !response.pending) {
-        stop();
+        finish(response.echo !== null ? 'found' : 'idle');
         onEcho(response.echo);
         return;
       }
       if (deadline === null) {
         deadline = now() + maxMs;
         nextAt = now() + intervalMs;
-        polling = true;
+        state = 'polling';
       }
       onEcho(null);
     } catch (error: unknown) {
-      if (stopped || controller.signal.aborted || expired()) return;
+      if (terminal() || controller.signal.aborted || expired()) return;
       onError(error);
-      if (!polling) {
-        stop();
+      if (state !== 'polling') {
+        finish('idle');
         onEcho(null);
       }
     } finally {
-      request = null;
-      if (!stopped && polling) schedule(Math.max(0, nextAt - now()));
+      // 到期后的旧请求可能迟到，不能清掉新一轮的请求或定时器。
+      if (request === controller) {
+        request = null;
+        if (state === 'polling') schedule(Math.max(0, nextAt - now()));
+      }
     }
   }
 
   return {
     start() {
-      if (started || stopped) return;
+      if (started || terminal()) return;
       started = true;
       void execute();
     },
     recheck() {
-      if (!polling || stopped || expired() || !isVisible()) return;
+      if (!started || terminal() || !isVisible()) return;
+      expired();
+      // 冷却只约束本轮结束后的唤醒；轮询中的聚焦仍可立即复查。
+      if (state === 'idle' && lastRequestedAt !== null && now() - lastRequestedAt < intervalMs) return;
       void execute();
     },
-    stop,
-    get polling() { return polling; },
+    stop() { finish('destroyed'); },
+    get polling() { return state === 'polling'; },
   };
 }
