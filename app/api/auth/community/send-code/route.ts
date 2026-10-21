@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { sendSemiCode, checkSemiRegistered, SEMI_NOT_REGISTERED } from "@/src/lib/auth/semi-client";
+import { sendSemiCode } from "@/src/lib/auth/semi-client";
 
 /**
  * POST /api/auth/community/send-code
@@ -45,14 +45,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "请输入有效的手机号" }, { status: 400 });
     }
 
-    // 未注册（或没在 Semi App 建钱包）不发码，引导先注册；查询失败(null)放行，验证阶段兜底
-    const registered = await checkSemiRegistered(phone);
-    if (registered === false) {
-      return NextResponse.json(
-        { error: "该手机号尚未注册 Semi 钱包", code: SEMI_NOT_REGISTERED },
-        { status: 403 },
-      );
-    }
+    // 不做"是否注册"预检：get_by_handle 按用户名查，手机号用户改过 handle 会被误拦。
+    // 无钱包的号码在验证码阶段由 getSemiUser 抛 SEMI_NOT_REGISTERED 引导注册。
 
     // fail-closed：短信花真钱，限流不可用宁可拒发也不裸奔
     if (!phoneLimiter) {
