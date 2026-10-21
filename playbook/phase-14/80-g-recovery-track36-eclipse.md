@@ -24,6 +24,7 @@ P14 首枚主网空投成功后，生产 Score 事件源游标从约 1.567 亿�
 ## 2. 冻结的产品合同
 
 ### 2.1 第 36 枚音乐圆圈的身份
+> **2026-10-21 已被取代**：#36 身份规则由 [`95-i-personal-echo.md`](./95-i-personal-echo.md) 取代——首页 #36 只代表当前登录钱包自己生成（origin）的 Pond Echo；公共 `/api/echo/featured` 已下线。本节以下内容仅作历史记录。
 
 - #36 固定代表已经成功空投、公开页为 `/echo/1` 的 **ECHO #1**；唯一内容真值来自 OP Mainnet `PondEchoes.tokenURI(1)` 与该 URI 指向的永久 metadata `recipe + clips`。
 - #36 **不是** MSTR、不是 `tracks.week=36`、不是 MaterialNFT，也不是第 36 个常规力导 Track。候选完整母带及其权利、试听、上传 Gate 全部退出本轨。

@@ -18,10 +18,6 @@ export type FeaturedEcho = {
   durationMs: number;
 };
 
-export type FeaturedEchoResponse = {
-  echo: FeaturedEcho | null;
-};
-
 export type PersonalEchoHomeResponse = {
   echo: FeaturedEcho | null;
   pending: boolean;

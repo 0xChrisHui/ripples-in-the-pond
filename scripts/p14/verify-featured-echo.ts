@@ -48,38 +48,44 @@ async function main() {
   if (process.argv.includes('--live') && !process.env.ALCHEMY_RPC_URL) {
     process.env.ALCHEMY_RPC_URL = process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL;
   }
-  const featured = toFeaturedEcho(echo, 10);
-  assert.deepEqual(Object.keys(featured), [
-    'kind', 'chainId', 'contractAddress', 'tokenId', 'identity', 'playbackId',
-    'title', 'href', 'recipe', 'clips', 'durationMs',
-  ]);
-  assert.deepEqual(featured, {
-    kind: 'pond-echo',
-    chainId: 10,
-    contractAddress: echo.contractAddress,
-    tokenId: '1',
-    identity: `eip155:10:${echo.contractAddress}:1`,
-    playbackId: `pond-echo:eip155:10:${echo.contractAddress}:1`,
-    title: echo.metadata.name,
-    href: '/echo/1',
-    recipe: echo.metadata.properties.recipe,
-    clips: echo.metadata.properties.clips,
-    durationMs: echo.metadata.properties.durationMs,
-  });
-  for (const forbidden of ['owner', 'originWallet', 'audio_url', 'material_mintable']) {
-    assert.equal(forbidden in featured, false, `DTO 不应包含 ${forbidden}`);
+  for (const tokenId of ['1', '2']) {
+    const featured = toFeaturedEcho({ ...echo, tokenId }, 10);
+    assert.deepEqual(Object.keys(featured), [
+      'kind', 'chainId', 'contractAddress', 'tokenId', 'identity', 'playbackId',
+      'title', 'href', 'recipe', 'clips', 'durationMs',
+    ]);
+    assert.deepEqual(featured, {
+      kind: 'pond-echo',
+      chainId: 10,
+      contractAddress: echo.contractAddress,
+      tokenId,
+      identity: `eip155:10:${echo.contractAddress}:${tokenId}`,
+      playbackId: `pond-echo:eip155:10:${echo.contractAddress}:${tokenId}`,
+      title: echo.metadata.name,
+      href: `/echo/${tokenId}`,
+      recipe: echo.metadata.properties.recipe,
+      clips: echo.metadata.properties.clips,
+      durationMs: echo.metadata.properties.durationMs,
+    });
+    for (const forbidden of ['owner', 'originWallet', 'audio_url', 'material_mintable']) {
+      assert.equal(forbidden in featured, false, `DTO 不应包含 ${forbidden}`);
+    }
   }
-  assert.throws(
-    () => toFeaturedEcho({ ...echo, tokenId: '2' }, 10),
-    /只接受 Pond Echo #1/,
-  );
-  console.log('Pond Echo #1 首页 DTO 映射与字段边界：通过');
+  for (const tokenId of ['0', 'abc']) {
+    assert.throws(
+      () => toFeaturedEcho({ ...echo, tokenId }, 10),
+      /Pond Echo 编号必须是正整数十进制字符串/,
+    );
+  }
+  console.log('Pond Echo 首页 DTO：#1/#2 映射、非法编号拒绝与字段边界通过');
 
   if (!process.argv.includes('--live')) return;
-  // live Gate：npx tsx --conditions=react-server scripts/p14/verify-featured-echo.ts --live
+  // 联网只读验收：npx tsx --conditions=react-server scripts/p14/verify-featured-echo.ts --live --token=2
+  const tokenId = process.argv.find((arg) => arg.startsWith('--token='))?.slice('--token='.length) ?? '1';
+  assert.match(tokenId, /^[1-9][0-9]*$/, '--token 必须是正整数十进制字符串');
   const { getEchoByTokenId } = await import('../../src/data/echo/source');
-  const liveView = await getEchoByTokenId(1n);
-  assert.ok(liveView, '生产链上尚未铸造 Pond Echo #1');
+  const liveView = await getEchoByTokenId(BigInt(tokenId));
+  assert.ok(liveView, `当前链上尚未铸造 Pond Echo #${tokenId}`);
   const live = toFeaturedEcho(liveView, Number(process.env.NEXT_PUBLIC_CHAIN_ID));
   const timeline = createWalletRecipeTimeline({ recipe: live.recipe, clips: live.clips });
   const controller = new AbortController();

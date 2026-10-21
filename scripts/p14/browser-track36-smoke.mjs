@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { frameDelta, meanBrightness } from './browser-smoke/image-metrics.mjs';
+const bearer = process.env.P14_BEARER;
+if (!bearer) { console.error('首页 #36 已改为登录钱包私有，需提供测试钱包 token（P14_BEARER）'); process.exit(2); }
 const CDP = process.env.P14_CDP ?? 'http://localhost:9336', APP = process.env.P14_APP ?? 'http://localhost:3014/';
 const OUT = path.resolve('reviews/evidence/p14-g6-track36');
 const REGULAR = 'button[aria-pressed]:not([data-featured-echo-hit])';
@@ -70,8 +72,8 @@ async function clickAt(cdp, p) {
   await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: p.x, y: p.y, button: 'left', clickCount: 1 });
   await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: p.x, y: p.y, button: 'left', clickCount: 1 });
 }
-async function apiJson(url) {
-  const response = await fetch(url, { signal: AbortSignal.timeout(30_000) });
+async function apiJson(url, headers) {
+  const response = await fetch(url, { headers, signal: AbortSignal.timeout(30_000) });
   const text = await response.text();
   assert.equal(response.status, 200, `${url} HTTP ${response.status}: ${text.slice(0, 300)}`);
   return JSON.parse(text);
@@ -88,11 +90,11 @@ async function stopRegular(cdp) {
   await waitFor(cdp, `document.querySelector('[data-pond-root]')?.dataset.pondEclipseActive==='false'`, '普通音乐停止');
   await waitFor(cdp, `Number(getComputedStyle(document.body).getPropertyValue('--pond-eclipse-mix'))<.2`, '水底贴图恢复');
 }
-const echoDto = (await apiJson(`${APP}api/echo/featured`)).echo;
+const echoDto = (await apiJson(`${APP}api/me/pond-echo/home`, { Authorization: `Bearer ${bearer}` })).echo;
 assert.equal(echoDto?.kind, 'pond-echo');
-assert.equal(echoDto?.tokenId, '1');
-assert.equal(echoDto?.href, '/echo/1');
-assert.equal(echoDto?.identity, `eip155:${echoDto?.chainId}:${echoDto?.contractAddress}:1`, 'ECHO identity 必须绑定 chainId + contract + tokenId');
+assert.match(echoDto?.tokenId, /^[1-9][0-9]*$/, 'ECHO tokenId 必须是正整数');
+assert.equal(echoDto?.href, `/echo/${echoDto.tokenId}`);
+assert.equal(echoDto?.identity, `eip155:${echoDto.chainId}:${echoDto.contractAddress}:${echoDto.tokenId}`, 'ECHO identity 必须绑定 chainId + contract + tokenId');
 assert.equal(echoDto?.playbackId, `pond-echo:${echoDto?.identity}`);
 assert.match(echoDto.recipe, /^[A-Z0-9]{36}$/); assert.ok(echoDto.durationMs > 0);
 assert.ok([...new Set(echoDto.recipe)].every((key) => echoDto.clips[key]?.uri?.startsWith('ar://')));
