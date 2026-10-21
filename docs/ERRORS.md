@@ -802,3 +802,11 @@
 - 🧠 原因：CDP 驱动的无头 Edge 页面 `document.visibilityState='hidden'`，`requestAnimationFrame` 被节流，只有截图强制出帧时采样器才运行。沿用的 P15-J 测量脚本没有置前。
 - 🔧 修复：导航前 `Page.bringToFront` + `Emulation.setFocusEmulationEnabled({ enabled: true })`，首个 rAF 记录 `visibilityState=visible` 后整批重测；旧批结果另存留档。
 - 💡 依赖 rAF 的计时证据必须同时记录 `visibilityState`；用 `useLayoutEffect` 或网络事件记录的时刻不受此影响，可用来交叉核对。
+
+### E068 — 删除 API 路由后 tsc 报 `.next/types/validator.ts` 找不到模块
+
+- 📅 2026-10-21 / P14-I I5
+- 😱 现象：删除 `app/api/echo/featured/route.ts` 后 `npx tsc --noEmit` 失败，错误指向 `.next/types/validator.ts` 仍 import 已删除的路由。
+- 🧠 原因：`.next/types` 是上次 dev/build 生成的路由类型，被 tsconfig 收录；删路由不会自动刷新它。
+- 🔧 修复：`npx next typegen` 重新生成路由类型后 tsc 通过（build 也会重新生成）。
+- 💡 删除/改名路由后先 typegen 再判定类型错误，不要误判为产品代码问题；dev 开着时不要跑（`.next` 互踩）。

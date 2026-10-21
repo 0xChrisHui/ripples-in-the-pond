@@ -958,3 +958,27 @@
 ## 2026-09-24 — 夜间连续执行
 
 - 本轮按用户授权快速连续收口，跳过逐文件复述。
+
+### 私有接口与 `Cache-Control: private, no-store`（P14-I I1）
+
+- **是什么**：按登录身份返回不同内容的接口，响应必须禁止 CDN/共享缓存保存；`public, s-maxage` 会让第一个人的结果发给所有人。
+- **类比**：银行柜台按身份证办业务，回执不能贴在大厅公告栏上。
+- **第一次出现**：`app/api/me/pond-echo/home/route.ts`（取代写死 ECHO #1 且公共缓存的 `/api/echo/featured`）。
+
+### origin（生成者）≠ owner（现持有人）（P14-I I1）
+
+- **是什么**：Pond Echo 合约记着每枚由哪个钱包生成（`tokenIdByOrigin`），与 NFT 后来转给谁无关；首页 #36 按 origin 选，转走仍显示、转入不显示。
+- **类比**：书的作者署名不会因为书被卖给别人而改变。
+- **第一次出现**：`src/data/echo/home-echo.ts` 的 `resolveHomeEcho`。
+
+### d3-force 力会缓存参数（P14-I I3）
+
+- **是什么**：`forceCollide` 在初始化时把每个节点的半径算好存起来，之后改节点字段不会生效，必须重新设置 `radius` 才会刷新；碰撞力还不受 alpha 衰减控制，所以“低 alpha 重启”挡不住碰撞把邻居挤开。
+- **类比**：考场座位表开考前就打印好了，中途换座要重新打印，否则监考还按旧表。
+- **第一次出现**：`src/components/pond-gl-test3/spheres/gl-sim-setup.ts` 的 `collisionRadius` 与 `echo-node.ts` 的逐帧刷新。
+
+### 依赖注入让定时逻辑可测（P14-I I4）
+
+- **是什么**：把 `setTimeout`、当前时间、可见性、请求函数都作为参数传进轮询器，测试时换成假时钟就能“快进 20 分钟”而不用真的等。
+- **类比**：演习时用沙盘和计时器模拟一整天，不必真等到天黑。
+- **第一次出现**：`src/hooks/echo/personal-echo-poll.ts` 与 `scripts/p14-i/personal-echo-poll.test.ts`。
