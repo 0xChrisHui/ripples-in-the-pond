@@ -17,7 +17,7 @@ import { loadP9Tuning } from '@/src/components/pond-gl-test3/p9/tuning/p9-tuning
 import { useGlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
 import FeaturedEchoBottomPlayer from '@/src/components/pond-gl-test3/visitor/FeaturedEchoBottomPlayer';
 import { useFeaturedEchoPlayback } from '@/src/components/pond-gl-test3/visitor/useFeaturedEchoPlayback';
-import type { FeaturedEcho, FeaturedEchoResponse } from '@/src/types/featured-echo';
+import { usePersonalEcho } from '@/src/hooks/echo/usePersonalEcho';
 import PersistentWaterCore from '@/src/components/pond-shell/PersistentWaterCore';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScenePresence } from '@/src/components/pond-shell/motion/use-scene-presence';
@@ -53,7 +53,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const [glFlags, setGlFlags] = useState<GLFlags>(DEFAULT_GL_FLAGS);
   const [runtimeGlHealth, setRuntimeGlHealth] = useState<GlHealth>('unavailable');
   const [sceneReady, setSceneReady] = useState(false);
-  const [featuredEcho, setFeaturedEcho] = useState<FeaturedEcho | null>(null);
+  const featuredEcho = usePersonalEcho(homeInitialized);
   useEffect(() => {
     queueMicrotask(() => setMountId(`pond-${crypto.randomUUID()}`));
     // 不用 useSearchParams：它会迫使外壳整体进入 Suspense，并发导航时冻结持续水面。
@@ -109,22 +109,6 @@ export default function PondExperience({ mode, persistent = false, children }: {
     setCameraFx({ dof: glFlags.dof, perspective: glFlags.perspective, parallax: glFlags.parallax });
   }, [glFlags.dof, glFlags.perspective, glFlags.parallax, registeredScene]);
   useEffect(() => { if (p9Enabled && homeInteractive) loadP9Tuning(); }, [homeInteractive, p9Enabled]);
-  useEffect(() => {
-    if (!homeInitialized) return;
-    const controller = new AbortController();
-    void fetch('/api/echo/featured', { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) throw new Error(`featured echo HTTP ${response.status}`);
-        const body = await response.json() as FeaturedEchoResponse;
-        setFeaturedEcho(body.echo);
-      })
-      .catch((error: unknown) => {
-        if (controller.signal.aborted) return;
-        console.info('[pond] Pond Echo #1 暂不展示:', error);
-        setFeaturedEcho(null);
-      });
-    return () => controller.abort();
-  }, [homeInitialized]);
   return (
     <div className={persistent ? 'persistent-pond-shell' : undefined}
       data-pond-shell={persistent || undefined} data-pond-mount-id={persistent ? mountId ?? undefined : undefined}
