@@ -20,6 +20,21 @@ assert.equal(entering.value, 1);
 assert.equal(entering.phase, 'visible');
 assert.equal(entering.elapsed, 0, '入场结束才开始原可见期计时');
 
+// 首次可见期沿用 8–45 秒且不乘 mood；后续自然循环仍为 12–90 秒 / mood。
+const random = Math.random;
+try {
+  Math.random = () => 0.5;
+  for (const mood of [0.5, 1, 1.6]) {
+    const presence = createPresence(true);
+    stepPresence(presence, 1.5, false, mood);
+    assert.equal(presence.phase, 'visible');
+    assert.ok(Math.abs(presence.dur - Math.sqrt(8 * 45)) < 1e-10, '首次可见期不得套用自然循环或 mood');
+    for (let phase = 0; phase < 4; phase++) stepPresence(presence, presence.dur, false, mood);
+    assert.equal(presence.phase, 'visible');
+    assert.ok(Math.abs(presence.dur - Math.sqrt(12 * 90) / mood) < 1e-10, '自然循环时长必须保持原样');
+  }
+} finally { Math.random = random; }
+
 // 防止登出从 1 重算造成闪亮，以及悬停/播放/拖拽重新拉亮退场节点。
 for (const from of [0, 0.2, 0.73, 1]) {
   const leaving = createPresence();

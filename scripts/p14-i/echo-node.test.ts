@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { forceCenter } from 'd3-force';
+import { forceCenter, forceManyBody, type ForceCollide, type ForceManyBody } from 'd3-force';
 import { buildGlNodes, setupGlSimulation, type GlPhysNode } from '@/src/components/pond-gl-test3/spheres/gl-sim-setup';
 import { reconcileEchoNode, toggleCurrentEcho } from '@/src/components/pond-gl-test3/spheres/simulation/echo-node';
 import { advanceSpecial36Transition, getSpecial36Presence } from '@/src/components/pond-gl-test3/special36/special36-step';
@@ -89,6 +89,41 @@ for (const group of ['A', 'B', 'C'] as const) {
   }
 }
 console.log('I3 三组桌面/手机布局、出生点、节点连续性、身份切换、center 与低 alpha 通过');
+
+// 单独测量原 charge 的首 tick 影响，防止碰撞渐变掩盖了电荷突变。
+for (const [w, h] of [[320, 568], [667, 375], [1440, 900]]) {
+  let maxCharge = 0;
+  for (const group of ['A', 'B', 'C'] as const) {
+    const built = buildGlNodes(tracks, group, 'lifecycle');
+    const { sim } = setupGlSimulation(built.nodes, built.links, built.assignment, w, h, 'lifecycle');
+    sim.stop();
+    try {
+      for (let i = 0; i < 600; i++) { sim.tick(); sim.on('tick')?.call(sim); }
+      const proj = { ...projection, cx: w / 2, cy: h / 2 };
+      const nodes = reconcileEchoNode(sim, echo, group, 'lifecycle', proj, false, false);
+      const withEcho = nodes.map((n) => ({ ...n })), without = withEcho.slice(0, 35).map((n) => ({ ...n }));
+      const charge = sim.force('charge') as ForceManyBody<GlPhysNode>;
+      for (const sample of [withEcho, without]) {
+        const force = forceManyBody<GlPhysNode>().strength(charge.strength());
+        force.initialize(sample, () => 0.5);
+        force(sim.alpha() + (sim.alphaTarget() - sim.alpha()) * sim.alphaDecay());
+      }
+      without.forEach((n, i) => {
+        const other = withEcho[i];
+        maxCharge = Math.max(maxCharge, Math.hypot(other.vx! - n.vx!, other.vy! - n.vy!) * (1 - sim.velocityDecay()));
+      });
+      const special = nodes[35], collide = sim.force('collide') as ForceCollide<GlPhysNode>;
+      advanceSpecial36Transition(special, 1.5, false);
+      const presence = getSpecial36Presence(special);
+      for (const phase of ['visible', 'out', 'hidden', 'in'] as const) {
+        presence.phase = phase; presence.value = 0.25; special._presence = 0.25;
+        assert.equal(collide.radius()(special, 35, nodes), special.radius * 1.1 + 8, '自然隐现不改变原碰撞手感');
+      }
+    } finally { sim.stop(); }
+  }
+  console.log(`${w}×${h} 原 charge 首 tick 最大额外位移：${maxCharge}px`);
+  assert.ok(maxCharge <= 2, `${w}×${h} 原 charge 超过 2px，需要按 presence 渐入`);
+}
 
 async function verifyPlaybackDelegation() {
   const built = buildGlNodes(tracks, 'A', 'playback');

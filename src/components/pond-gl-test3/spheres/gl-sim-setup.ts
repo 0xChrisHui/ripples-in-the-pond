@@ -19,6 +19,7 @@ import {
 import type { GlPhysNode } from './simulation/nodes';
 export { buildGlNodes, type GlPhysNode } from './simulation/nodes';
 import { layoutUnit } from '@/src/features/home-pond/layout-seed';
+import { getSpecial36Presence } from '../special36/special36-step';
 /**
  * G4 — GL 球的 d3-force sim builder（无 SVG 耦合版）。
  *
@@ -32,6 +33,14 @@ const PAD = 20;               // 出处 sphere-sim-setup.ts:26（边界内缩）
 
 /** cluster 锚点（绝对 px）；resize 时随尺寸等比缩放，故单列类型供 resizeGlSim 用 */
 type ClusterAnchor = { x: number; y: number; strength: number };
+
+/** 只在身份入退场缩放 #36；自然隐现仍沿用完整碰撞半径。 */
+function collisionRadius(node: GlPhysNode): number {
+  const radius = node.radius * 1.1 + 8;
+  if (!node.echo) return radius;
+  const { phase, value } = getSpecial36Presence(node);
+  return radius * (phase === 'arriving' || phase === 'leaving' || phase === 'removed' ? value : 1);
+}
 
 /** 建 sim（力参数快照自 sphere-sim-setup.ts:34-133，去掉 onTick 的 SVG 写入）。
  *  返回 anchors（cluster 锚点 Map）供 J2 resizeGlSim 等比缩放——否则 cluster 力把球拉回旧 px。 */
@@ -90,7 +99,7 @@ export function setupGlSimulation(
       .distance((d) => CFG.linkBaseDist + (1 - d.correlation) * CFG.linkVariance)
       .strength((d) => d.correlation * 0.30))
     .force('charge', forceManyBody<GlPhysNode>().strength((d) => -(70 * (0.6 + d.importance * 0.8))))
-    .force('collide', forceCollide<GlPhysNode>().radius((d) => d.radius * 1.1 + 8).strength(0.85).iterations(4))
+    .force('collide', forceCollide<GlPhysNode>().radius(collisionRadius).strength(0.85).iterations(4))
     .force('cluster-x', forceX<GlPhysNode>((d) => anchorMap.get(d.id)?.x ?? cx).strength(strengthOf))
     .force('cluster-y', forceY<GlPhysNode>((d) => anchorMap.get(d.id)?.y ?? cy).strength(strengthOf))
     .force('center', center)

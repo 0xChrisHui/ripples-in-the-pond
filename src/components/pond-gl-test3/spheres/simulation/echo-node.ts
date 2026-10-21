@@ -1,5 +1,5 @@
 'use client';
-import type { Simulation } from 'd3-force';
+import type { ForceCollide, Simulation } from 'd3-force';
 import { computeNodeAttrs, type GroupId, type SimLink } from '@/src/components/archipelago/sphere-config';
 import type { FeaturedEcho } from '@/src/types/featured-echo';
 import { createGlNode, type GlPhysNode } from './nodes';
@@ -90,6 +90,9 @@ export function observeEchoNode(
     const proj = { cx: w / 2, cy: h / 2, ...getPointerFx(), ...getCameraFx(), focusZ: getEffectiveWaterLevel() };
     const before = sim.nodes();
     const next = reconcileEchoNode(sim, echo, groupId, dataVersion, proj, media.matches, !document.hidden);
+    // d3 缓存半径；过渡帧与偏好切换时刷新，稳定期没有 rAF 循环。
+    const collide = sim.force('collide') as ForceCollide<GlPhysNode> | undefined;
+    if (next.some((n) => n.echo)) collide?.radius(collide.radius());
     if (publishCurrent || next !== before) queueMicrotask(() => { if (active) publish(sim.nodes()); });
   };
   const schedule = () => {

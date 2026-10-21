@@ -75,7 +75,9 @@ export function stepPresence(s: PresenceState, dt: number, held: boolean, mood: 
     const eased = u * u * (3 - 2 * u);
     s.value = s.phase === 'arriving' ? eased : s.from * (1 - eased);
     if (u === 1) {
-      if (s.phase === 'arriving') enter(s, 'visible', mood);
+      if (s.phase === 'arriving') {
+        s.phase = 'visible'; s.elapsed = 0; s.from = 1; s.dur = logRand(8, 45);
+      }
       else s.phase = 'removed';
     }
     return events;
