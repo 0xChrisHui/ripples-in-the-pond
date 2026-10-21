@@ -68,11 +68,16 @@ export default function PondExperience({ mode, persistent = false, children }: {
   useEffect(() => {
     if (homeVisible) queueMicrotask(() => setHomeInitialized(true));
   }, [homeVisible]);
+  // 水面首次就绪后才把 #36 交给 GL：否则 1.5s 渐显会在加载遮罩后耗尽。锁存，避免之后抖动触发退场。
+  const [echoRevealed, setEchoRevealed] = useState(false);
+  useEffect(() => {
+    if (sceneReady) queueMicrotask(() => setEchoRevealed(true));
+  }, [sceneReady]);
   const glSim = useGlSim(
     homeInitialized && (glFlags.glSpheres || glFlags.water || glFlags.waterFx),
     echoPlayback.active,
     homeInteractive,
-    { echo: featuredEcho, playingId: echoPlayback.playing ? featuredEcho?.playbackId ?? null : null, toggle: echoPlayback.toggle },
+    { echo: echoRevealed ? featuredEcho : null, playingId: echoPlayback.playing ? featuredEcho?.playbackId ?? null : null, toggle: echoPlayback.toggle },
   );
   const scoreScene = persistent ? sceneSlot?.scenes.score : undefined;
   const tracksScene = persistent ? sceneSlot?.scenes.tracks : undefined;

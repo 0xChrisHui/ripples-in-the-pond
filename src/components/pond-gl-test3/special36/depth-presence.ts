@@ -40,12 +40,20 @@ export function stepLayer(s: LayerState, now: number, mood: number): number {
   return z;
 }
 
-type Phase = 'visible' | 'out' | 'hidden' | 'in';
+type Phase = 'visible' | 'out' | 'hidden' | 'in' | 'arriving' | 'leaving' | 'removed';
 export interface PresenceState { phase: Phase; elapsed: number; dur: number; from: number; floor: number; value: number; ease: Ease; held: boolean }
 export interface PresenceEvents { relocate: boolean; sink: boolean }
 
-export function createPresence(): PresenceState {
-  return { phase: 'visible', elapsed: 0, dur: logRand(8, 45), from: 1, floor: 0, value: 1, ease: pickEase(), held: false };
+export function createPresence(arriving = false, reduced = false): PresenceState {
+  const s: PresenceState = { phase: 'visible', elapsed: 0, dur: logRand(8, 45), from: 1, floor: 0, value: 1, ease: pickEase(), held: false };
+  if (arriving && !reduced) { s.phase = 'arriving'; s.dur = 1.5; s.from = 0; s.value = 0; }
+  return s;
+}
+/** 身份退场优先于 held；重复请求不重置已经走过的退场时间。 */
+export function leavePresence(s: PresenceState, reduced = false): void {
+  if (reduced) { s.phase = 'removed'; s.value = 0; return; }
+  if (s.phase === 'leaving' || s.phase === 'removed') return;
+  s.phase = 'leaving'; s.elapsed = 0; s.dur = 1.35; s.from = s.value; s.held = false;
 }
 function enter(s: PresenceState, phase: Phase, mood: number): void {
   s.phase = phase; s.elapsed = 0; s.from = s.value; s.ease = pickEase();
@@ -57,8 +65,21 @@ function enter(s: PresenceState, phase: Phase, mood: number): void {
   else s.dur = logRand(0.6, 5);
 }
 /** held=播放/悬停/拖拽中：快速回到完全可见并暂停计时；松开后重新给一段可见期。 */
-export function stepPresence(s: PresenceState, dt: number, held: boolean, mood: number): PresenceEvents {
+export function stepPresence(s: PresenceState, dt: number, held: boolean, mood: number, reduced = false): PresenceEvents {
   const events: PresenceEvents = { relocate: false, sink: false };
+  if (s.phase === 'removed') return events;
+  // 入退场独占透明度，完成入场才启动原来的 visible 随机时钟。
+  if (s.phase === 'arriving' || s.phase === 'leaving') {
+    s.elapsed += dt;
+    const u = reduced ? 1 : clamp(s.elapsed / s.dur, 0, 1);
+    const eased = u * u * (3 - 2 * u);
+    s.value = s.phase === 'arriving' ? eased : s.from * (1 - eased);
+    if (u === 1) {
+      if (s.phase === 'arriving') enter(s, 'visible', mood);
+      else s.phase = 'removed';
+    }
+    return events;
+  }
   if (held) {
     s.held = true;
     s.value = Math.min(1, s.value + dt / 0.4);

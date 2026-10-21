@@ -3,18 +3,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Simulation } from 'd3-force';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
 import { scheduleAudioPrewarm } from '@/src/features/home-pond/audio-prewarm';
+import { cacheHomeTracksResponse, readHomeTracksSnapshot } from '@/src/features/home-pond/tracks-cache';
 import {
-  cacheHomeTracksResponse,
-  readHomeTracksSnapshot,
-} from '@/src/features/home-pond/tracks-cache';
-import {
-  GROUPS,
-  getGroupTracks,
-  getGroupTargetCount,
-  padTracksToTarget,
-  REGULAR_TRACK_COUNT,
-  type GroupId,
-  type SimLink,
+  GROUPS, getGroupTracks, getGroupTargetCount, padTracksToTarget, REGULAR_TRACK_COUNT, type GroupId, type SimLink,
 } from '@/src/components/archipelago/sphere-config';
 import type { HomeTracksSnapshot } from '@/src/types/home-pond';
 import type { FeaturedEcho } from '@/src/types/featured-echo';
@@ -23,6 +14,7 @@ import { buildGlNodes, setupGlSimulation, resizeGlSim, type GlPhysNode } from '.
 import type { BgWave } from './gl-sim-waves';
 import { resetWaterLine } from '../water/water-level';
 import { resetDepthShift } from '../pointer-fx';
+import { observeEchoNode, toggleCurrentEcho } from './simulation/echo-node';
 const EMPTY_TRACKS: Track[] = [];
 /** 首页圆圈共用取数、分组和物理模拟；播放仍交由各自已存在的播放器。 */
 export interface GlSim {
@@ -131,8 +123,9 @@ export function useGlSim(
     if (!initialized || tracks.length === 0) {
       simRef.current?.stop();
       simRef.current = null;
-      queueMicrotask(() => setNodes([]));
-      return;
+      let active = true;
+      queueMicrotask(() => { if (active) setNodes([]); });
+      return () => { active = false; };
     }
     const w = window.innerWidth, h = window.innerHeight;
     sizeRef.current = { w, h };
@@ -142,15 +135,21 @@ export function useGlSim(
     resetWaterLine();
     resetDepthShift();
     const dataVersion = snapshot?.dataVersion ?? 'uncached';
-    const { nodes: built, links, assignment } = buildGlNodes(show, groupId, dataVersion, echo);
+    const { nodes: built, links, assignment } = buildGlNodes(show, groupId, dataVersion);
     simRef.current?.stop();
     const { sim, anchors } = setupGlSimulation(built, links, assignment, w, h, dataVersion);
     simRef.current = sim;
     anchorsRef.current = anchors;
     wavesRef.current = [];
-    queueMicrotask(() => setNodes(built));
-    return () => { simRef.current?.stop(); };
-  }, [initialized, tracks, groupId, snapshot?.dataVersion, echo]);
+    queueMicrotask(() => { if (simRef.current === sim) setNodes(sim.nodes()); });
+    return () => { sim.stop(); if (simRef.current === sim) simRef.current = null; };
+  }, [initialized, tracks, groupId, snapshot?.dataVersion]);
+  // 建 sim 后统一追加；对象变化可以重跑协调，但只有 identity 变化才触发入退场。
+  useEffect(() => {
+    const sim = simRef.current;
+    if (!sim) return;
+    return observeEchoNode(sim, echo, groupId, snapshot?.dataVersion ?? 'uncached', sizeRef, setNodes);
+  }, [echo, initialized, tracks, groupId, snapshot?.dataVersion]);
   // document.hidden 时暂停 sim（性能预算：后台标签不跑物理）
   useEffect(() => {
     if (!initialized) return;
@@ -189,7 +188,7 @@ export function useGlSim(
     return scheduleAudioPrewarm(padded);
   }, [initialized, tracks, groupId, nodes.length]);
   return {
-    toggleEcho: featured?.toggle, echoPlayingId: featured?.playingId,
+    toggleEcho: featured && (() => toggleCurrentEcho(simRef.current, echo, featured.toggle)), echoPlayingId: featured?.playingId,
     ready: nodes.length > 0,
     loading: nodes.length === 0 && !tracksError,
     error: tracksError,

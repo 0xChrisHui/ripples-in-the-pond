@@ -11,7 +11,7 @@ import { project, unproject, type ProjCtx } from '../sphere-projection';
 import { depthOf } from '../pointer-fx';
 import { prefersReducedMotion } from '../reduced-motion';
 import { createDrift, replanDrift, stepDrift, type DriftState, type Pt, type RectPx } from './drift-path';
-import { createLayer, createPresence, sinkLayer, stepLayer, stepPresence, type LayerState, type PresenceState } from './depth-presence';
+import { createLayer, createPresence, leavePresence, sinkLayer, stepLayer, stepPresence, type LayerState, type PresenceState } from './depth-presence';
 import { clamp, rand, stepMood } from './random';
 
 /** 第36圆 = 首页加入的已核验 Echo 节点。 */
@@ -29,16 +29,40 @@ const NAV_BAND = 60;                         // 导航避让渐入带(px)：纵�
 
 interface State { drift: DriftState; layer: LayerState; presence: PresenceState; clock: number; last: number; dragging: boolean }
 const states = new WeakMap<GlPhysNode, State>();
+const presences = new WeakMap<GlPhysNode, PresenceState>();
+
+export function getSpecial36Presence(n: GlPhysNode): PresenceState {
+  let s = presences.get(n);
+  if (!s) { s = createPresence(); presences.set(n, s); }
+  return s;
+}
+export function enterSpecial36(n: GlPhysNode, reduced: boolean): void {
+  const s = createPresence(true, reduced);
+  presences.set(n, s);
+  n._presence = s.value;
+}
+export function leaveSpecial36(n: GlPhysNode, reduced: boolean): void {
+  const s = getSpecial36Presence(n);
+  leavePresence(s, reduced);
+  n._presence = s.value;
+}
+/** 身份过渡由可清理的独立帧时钟推进；GL 暂不可用时也能完成退场。 */
+export function advanceSpecial36Transition(n: GlPhysNode, dt: number, reduced: boolean): void {
+  const s = getSpecial36Presence(n);
+  if (s.phase !== 'arriving' && s.phase !== 'leaving' && s.phase !== 'removed') return;
+  stepPresence(s, dt, false, 1, reduced);
+  n._presence = s.value;
+}
 
 interface Frame { left: number; top: number; rect: RectPx; r: number }
-function frameFor(n: GlPhysNode, proj: ProjCtx): Frame {
+export function frameFor(n: GlPhysNode, proj: ProjCtx): Frame {
   const scale = project(proj.cx, proj.cy, depthOf(n), proj).scale;
   const r = n.radius * HALO_R * scale * 1.12;
   const w = proj.cx * 2, h = proj.cy * 2;
   const left = EDGE + r, top = TOP + r;
   return { left, top, r, rect: { w: Math.max(1, w - EDGE - r - left), h: Math.max(1, h - EDGE - r - top) } };
 }
-function toScreen(p: Pt, f: Frame): Pt {
+export function toScreen(p: Pt, f: Frame): Pt {
   let x = f.left + p.x * f.rect.w;
   const y = f.top + p.y * f.rect.h;
   // 避开分组导航：越深入导航高度带，越把 x 推到导航右侧（smoothstep 渐入，无折角）
@@ -60,12 +84,14 @@ export function stepSpecial36(nodes: GlPhysNode[], proj: ProjCtx, nowMs: number,
   const n = nodes.find(isSpecial36);
   if (!n || n.x == null || n.y == null) return;
   const now = nowMs / 1000;
-  if (prefersReducedMotion()) { n._presence = 1; return; }
+  const presence = getSpecial36Presence(n);
+  const transitioning = presence.phase === 'arriving' || presence.phase === 'leaving' || presence.phase === 'removed';
+  if (prefersReducedMotion()) { n._presence = transitioning ? presence.value : 1; return; }
   let s = states.get(n);
   if (!s) {
     const f = frameFor(n, proj);
     s = { drift: createDrift(toNormalized(n, proj, f), 0, 1, f.rect), layer: createLayer(n.z, 0),
-      presence: createPresence(), clock: 0, last: now, dragging: false };
+      presence, clock: 0, last: now, dragging: false };
     states.set(n, s);
   }
   const dt = clamp(now - s.last, 0, 0.1);
@@ -74,7 +100,8 @@ export function stepSpecial36(nodes: GlPhysNode[], proj: ProjCtx, nowMs: number,
   const playing = n.id === focusedId;
   const dragged = n.fx != null || n.fy != null;
 
-  const events = stepPresence(s.presence, dt, playing || dragged || n.id === hoverId, mood);
+  const events = transitioning ? { sink: false, relocate: false }
+    : stepPresence(s.presence, dt, playing || dragged || n.id === hoverId, mood);
   n._presence = s.presence.value;
 
   if (dragged) { s.dragging = true; return; }

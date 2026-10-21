@@ -78,6 +78,11 @@ export function setupGlSimulation(
   const strengthOf = (d: GlPhysNode) => d.echo ? 0
     : d._dragLoose ? 0.025 : (anchorMap.get(d.id)?.strength ?? 0.1);
 
+  // 保留原生 center 的全部参数与 resize 接口，只让普通球参与质心计算和位移。
+  const center = forceCenter<GlPhysNode>(cx, cy).strength(0.03);
+  const initializeCenter = center.initialize;
+  center.initialize = (current, random) => initializeCenter(current.filter((n) => !n.echo), random);
+
   // charge/link/collide/cluster/center 全部 viscous=off 档（默认态）— 出处 sphere-sim-setup.ts:94-114
   const sim = forceSimulation<GlPhysNode>(nodes)
     .force('link', forceLink<GlPhysNode, SimLink<GlPhysNode>>(links)
@@ -88,7 +93,7 @@ export function setupGlSimulation(
     .force('collide', forceCollide<GlPhysNode>().radius((d) => d.radius * 1.1 + 8).strength(0.85).iterations(4))
     .force('cluster-x', forceX<GlPhysNode>((d) => anchorMap.get(d.id)?.x ?? cx).strength(strengthOf))
     .force('cluster-y', forceY<GlPhysNode>((d) => anchorMap.get(d.id)?.y ?? cy).strength(strengthOf))
-    .force('center', forceCenter(cx, cy).strength(0.03))
+    .force('center', center)
     .alphaDecay(0.016)
     .velocityDecay(0.5)
     .alphaTarget(ALPHA_BASELINE)
@@ -96,7 +101,7 @@ export function setupGlSimulation(
 
   // tick：仅边界 clamp（不写 DOM）— 出处 sphere-sim-setup.ts:124-128
   sim.on('tick', () => {
-    nodes.forEach((n) => {
+    sim.nodes().forEach((n) => {
       if (n.fx != null || n.fy != null) return;
       if (n.x != null) n.x = Math.max(PAD, Math.min(width - PAD, n.x));
       if (n.y != null) n.y = Math.max(PAD, Math.min(height - PAD, n.y));
@@ -130,7 +135,7 @@ export function resizeGlSim(
   if (center) center.x(width / 2).y(height / 2);
   // 边界 clamp 重注册到新宽高（旧 tick 闭包捕获的是旧 width/height）
   sim.on('tick', () => {
-    nodes.forEach((n) => {
+    sim.nodes().forEach((n) => {
       if (n.fx != null || n.fy != null) return;
       if (n.x != null) n.x = Math.max(PAD, Math.min(width - PAD, n.x));
       if (n.y != null) n.y = Math.max(PAD, Math.min(height - PAD, n.y));

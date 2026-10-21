@@ -29,8 +29,27 @@ export type GlPhysNode = Omit<SimNode, 'track'> & GlSource & {
   _jelVx?: number;    // L3-3 果冻感平滑速度 x
   _jelVy?: number;    // L3-3 果冻感平滑速度 y
 };
-/** tracksToShow → 节点 + 链接（复刻 SphereCanvas.tsx:64-83 的建点逻辑，含 baseLayer/lw/radius/z） */
-export function buildGlNodes(tracksToShow: Track[], groupId: GroupId, dataVersion = 'legacy', echo: FeaturedEcho | null = null): {
+/** 普通球和 Echo 共用属性计算，Echo 不参与普通球的聚落与连线种子。 */
+export function createGlNode(
+  n: GlSource & { id: string } & ReturnType<typeof computeNodeAttrs>, baseZ: number, dataVersion: string,
+): GlPhysNode {
+  const h = hashStr(n.id);
+  const z = Math.max(0, Math.min(1, baseZ + ((h % 601) / 1000) - 0.3));
+  const baseLayer = Math.max(1, Math.min(NUM_LAYERS, Math.round((1 - z) * (NUM_LAYERS - 1) + 1)));
+  const unit = (key: string) => layoutUnit(dataVersion, n.groupId, n.id, key);
+  const lw = {
+    amp: 0.6 + unit('lw-amp') * 0.8,
+    f1: 0.04 + unit('lw-f1') * 0.08,
+    f2: 0.10 + unit('lw-f2') * 0.15,
+    p1: unit('lw-p1') * 6.283,
+    p2: unit('lw-p2') * 6.283,
+  };
+  // 第36特殊圆半径 ×2（碰撞/命中/日食都读 radius，同步变大）
+  const radius = n.kSize * fLayer(baseLayer) * (n.echo ? 2 : 1);
+  return { ...n, baseLayer, lw, radius, z };
+}
+/** tracksToShow → 仅普通节点 + 链接；#36 由独立的追加路径负责。 */
+export function buildGlNodes(tracksToShow: Track[], groupId: GroupId, dataVersion = 'legacy'): {
   nodes: GlPhysNode[];
   links: SimLink<GlPhysNode>[];
   assignment: Map<string, number>;
@@ -40,8 +59,6 @@ export function buildGlNodes(tracksToShow: Track[], groupId: GroupId, dataVersio
     track: t,
     ...computeNodeAttrs(t, groupId),
   }));
-  // 只复用第36个视觉序号，不伪造原曲记录或音频地址。
-  if (echo) baseNodes.push({ id: echo.playbackId, echo, ...computeNodeAttrs({ week: 36 }, groupId) });
   const nodeIds = baseNodes.map((n) => n.id);
   const { assignment, clusterCount } = buildClusterAssignment(
     nodeIds, createLayoutRandom(dataVersion, groupId, 'clusters', ...nodeIds),
@@ -50,26 +67,10 @@ export function buildGlNodes(tracksToShow: Track[], groupId: GroupId, dataVersio
   const clusterZ = Array.from({ length: clusterCount }, (_, i) => halton(i + 1, 5));
   const nodes: GlPhysNode[] = baseNodes.map((n) => {
     const baseZ = clusterZ[assignment.get(n.id) ?? 0] ?? 0.5;
-    const h = hashStr(n.id);
-    const z = Math.max(0, Math.min(1, baseZ + ((h % 601) / 1000) - 0.3));
-    const baseLayer = Math.max(1, Math.min(NUM_LAYERS, Math.round((1 - z) * (NUM_LAYERS - 1) + 1)));
-    const unit = (key: string) => layoutUnit(dataVersion, groupId, n.id, key);
-    const lw = {
-      amp: 0.6 + unit('lw-amp') * 0.8,
-      f1: 0.04 + unit('lw-f1') * 0.08,
-      f2: 0.10 + unit('lw-f2') * 0.15,
-      p1: unit('lw-p1') * 6.283,
-      p2: unit('lw-p2') * 6.283,
-    };
-    // 第36特殊圆半径 ×2（碰撞/命中/日食都读 radius，同步变大）
-    const radius = n.kSize * fLayer(baseLayer) * (n.echo ? 2 : 1);
-    return { ...n, baseLayer, lw, radius, z };
+    return createGlNode(n, baseZ, dataVersion);
   });
   // 远先画：z 升序（与 use-sphere-z sortedNodes 同序）→ instance index = 绘制顺序
   nodes.sort((a, b) => a.z - b.z);
-  // 第36圆自主漂流，不受连线拉扯（过滤放在生成后，其余连线保持原随机序列）
-  const echoId = echo?.playbackId;
-  const links = generateLinks(nodes, assignment, createLayoutRandom(dataVersion, groupId, 'links', ...nodeIds))
-    .filter((link) => link.source !== echoId && link.target !== echoId);
+  const links = generateLinks(nodes, assignment, createLayoutRandom(dataVersion, groupId, 'links', ...nodeIds));
   return { nodes, links, assignment };
 }

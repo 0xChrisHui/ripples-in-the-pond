@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useRef, type RefObject } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, type RefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { DoubleSide, InstancedMesh, OrthographicCamera, ShaderMaterial } from 'three';
 import { sphereVertexShader, sphereFragmentShader } from './sphere-shader';
@@ -76,6 +76,17 @@ function configurePixelCamera(cam: OrthographicCamera, w: number, h: number): vo
   cam.updateProjectionMatrix();
 }
 
+/** 追加/移除只复用同下标、同节点的平滑值；真正切组仍从初始值开始。 */
+export function preserveInstanceSmoothing(
+  nodes: GlSim['nodes'], buf: InstanceBuf, previous: { nodes: GlSim['nodes']; buf: InstanceBuf } | null,
+): void {
+  nodes.forEach((node, i) => {
+    if (previous?.nodes[i] !== node) return;
+    buf.hoverLerp[i] = previous.buf.hoverLerp[i];
+    buf.dimLerp[i] = previous.buf.dimLerp[i];
+  });
+}
+
 export default function SphereInstances(
   { glSim, waterOn, motionOn, sphereDrift, separatePass = false, colorGrade = false, life, scenePresence, reducedSceneMotion = false }: { glSim: GlSim; waterOn: boolean; motionOn: boolean; sphereDrift: boolean; separatePass?: boolean; colorGrade?: boolean; life: LifeFlags; scenePresence?: RefObject<number>; reducedSceneMotion?: boolean },
 ) {
@@ -102,6 +113,13 @@ export default function SphereInstances(
     hoverLerp: new Float32Array(count),
     dimLerp: new Float32Array(count).fill(1),
   }), [nodes, count]);
+
+  const previous = useRef<{ nodes: GlSim['nodes']; buf: InstanceBuf } | null>(null);
+  useLayoutEffect(() => {
+    preserveInstanceSmoothing(nodes, buf, previous.current);
+    previous.current = { nodes, buf };
+    // aLifeDim 按绘制槽位写，每帧从节点 _lifeDim 重新生成，无独立平滑时钟。
+  }, [nodes, buf]);
 
   // 调色 uniform（稳定对象，每帧从 store 同步到 .value）
   const uniforms = useMemo<SphereUniforms>(() => ({
