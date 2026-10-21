@@ -15,7 +15,7 @@
 - [x] I1 私有接口 `/api/me/pond-echo/home` + 队列读取抽共享函数
 - [x] I2 首页 `usePersonalEcho()` 替换公共 featured 请求（浏览器未实测，留 I6）
 - [x] I3 追加/移除 #36 不重建 35 球 + 渐显渐隐（gpt-6-astra；入场 1.5s / 退场 1.35s；纯函数测试通过，视觉未目验，留 I6）
-- [ ] I4 空投未到账 pending 轮询（单测，不写库）
+- [x] I4 空投未到账 pending 轮询（30s / 上限 20 分钟 / 聚焦复查；fake timer 单测通过，不写库）
 - [ ] I5 下线 `/api/echo/featured`、清理脚本与文案、同步文档
 - [ ] I6 用户目验六种状态（未登录 / 无 Echo / 普通 / 转走 / 转入 / 登出）；推送与部署另行放行
 

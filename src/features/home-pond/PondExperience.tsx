@@ -53,7 +53,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const [glFlags, setGlFlags] = useState<GLFlags>(DEFAULT_GL_FLAGS);
   const [runtimeGlHealth, setRuntimeGlHealth] = useState<GlHealth>('unavailable');
   const [sceneReady, setSceneReady] = useState(false);
-  const featuredEcho = usePersonalEcho(homeInitialized);
+  const featuredEcho = usePersonalEcho(homeInitialized, homeVisible);
   useEffect(() => {
     queueMicrotask(() => setMountId(`pond-${crypto.randomUUID()}`));
     // 不用 useSearchParams：它会迫使外壳整体进入 Suspense，并发导航时冻结持续水面。
