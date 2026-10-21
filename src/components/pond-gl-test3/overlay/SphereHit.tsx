@@ -86,7 +86,7 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
 
   return (
     <button type="button" ref={register} data-track-id={node.track?.id} data-echo-id={node.echo?.identity} data-render-node-id={node.id}
-      aria-label={t(isPlaying ? 'pauseTitle' : 'playTitle', { title: node.echo ? '36 · ECHO #1' : title })} aria-pressed={isPlaying}
+      aria-label={t(isPlaying ? 'pauseTitle' : 'playTitle', { title: node.echo ? `36 · ECHO #${node.echo.tokenId}` : title })} aria-pressed={isPlaying}
       onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
       onPointerCancel={finishDrag} onLostPointerCapture={finishDrag} onKeyDown={onKeyDown}
       onPointerEnter={() => { setHovered(true); glSim.setHover(node.id); }}
