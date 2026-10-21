@@ -7,19 +7,21 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-- ETH/OP留存70/70全部确认；ETH领取配置与真实证明已正式发布，源码5dd2003，生产HTTP与受控对账检查通过。真实登录钱包完整点击未验，SEMI实际环境与延期UI仍是后续事项，不索要当前UI验收。
+### P14-I 首页 #36 = 当前登录钱包自己的 Pond Echo（2026-10-21 开工，分支 feat/p14-i）
 
-## ⏭ Next：P14-I 首页 #36 = 当前登录钱包自己的 Pond Echo（2026-10-21，分支 feat/p14-i，计划已定，未开发）
-
-- 方案 `playbook/phase-14/95-i-personal-echo.md`；启动提示词 `playbook/phase-14/96-i-launch-prompt.md`。开工时由执行 AI 提拔到 Now。
-- [ ] Step 0 提交文档基线（95/96 与台账登记）
-- [ ] I0 只读基线（verify.sh 基线、测试网 3 枚 Echo 核对）
+- 方案 `playbook/phase-14/95-i-personal-echo.md`；启动提示词 `playbook/phase-14/96-i-launch-prompt.md`。
+- [x] Step 0 提交文档基线（95/96 与台账登记，6933898）
+- [x] I0 只读基线（verify.sh 基线仅目录超限两项既有失败；测试网 3 枚 Echo 与期望一致）
 - [ ] I1 私有接口 `/api/me/pond-echo/home` + 队列读取抽共享函数
 - [ ] I2 首页 `usePersonalEcho()` 替换公共 featured 请求
 - [ ] I3 追加/移除 #36 不重建 35 球 + 渐显渐隐（gpt-6-astra）
 - [ ] I4 空投未到账 pending 轮询（单测，不写库）
 - [ ] I5 下线 `/api/echo/featured`、清理脚本与文案、同步文档
 - [ ] I6 用户目验六种状态（未登录 / 无 Echo / 普通 / 转走 / 转入 / 登出）；推送与部署另行放行
+
+## ✅ 最近完成：ETH/OP 留存与领取入口（2026-10-04）
+
+- ETH/OP留存70/70全部确认；ETH领取配置与真实证明已正式发布，源码5dd2003，生产HTTP与受控对账检查通过。真实登录钱包完整点击未验，SEMI实际环境与延期UI仍是后续事项，不索要当前UI验收。
 
 ## ✅ 最近完成：P19 中英双语（2026-10-14，分支 feat/p19-i18n，本地提交，待用户验收，未合并未推送）
 
