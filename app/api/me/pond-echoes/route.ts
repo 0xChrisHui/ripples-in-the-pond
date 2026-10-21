@@ -1,39 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAddress } from 'viem';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
-import { CHAIN_ID_NUM } from '@/src/lib/chain/chain-config';
-import { SCORE_NFT_ADDRESS } from '@/src/lib/chain/contracts';
 import { publicClient } from '@/src/lib/chain/public-client';
 import { getWalletRecipeAddress, WALLET_RECIPE_ABI } from '@/src/lib/chain/wallet-recipe-contract';
 import { getOwnedEchoes } from '@/src/data/echo/source';
+import { readOriginQueue } from '@/src/data/echo/origin-queue';
 import type { EchoArchiveItem, MyEchoesResponse } from '@/src/data/echo/types';
 import { formatPondEchoName } from '@/src/lib/wallet-recipe/metadata';
-import { supabaseAdmin } from '@/src/lib/supabase';
 import { ServerTiming } from '@/src/lib/performance/server-timing';
-import type { WalletRecipeQueueStatus } from '@/src/types/wallet-recipe';
-
-type OriginRow = {
-  status: WalletRecipeQueueStatus;
-  token_id: number | null;
-  token_uri: string | null;
-  origin_wallet: string;
-  last_error: string | null;
-};
 
 async function readOriginHistory(origin: string, timing: ServerTiming): Promise<{
   item: EchoArchiveItem | null;
   unavailable: boolean;
 }> {
-  let scoreContract: string;
-  try { scoreContract = getAddress(SCORE_NFT_ADDRESS).toLowerCase(); } catch { return { item: null, unavailable: true }; }
-  const { data, error } = await timing.measure('db', () => (
-    supabaseAdmin.from('wallet_recipe_queue')
-      .select('status,token_id,token_uri,origin_wallet,last_error')
-      .eq('chain_id', CHAIN_ID_NUM).eq('source_score_contract', scoreContract)
-      .eq('origin_wallet_key', origin.toLowerCase()).maybeSingle()
-  ));
-  if (error) return { item: null, unavailable: true };
-  const row = data as OriginRow | null;
+  const { row, unavailable } = await readOriginQueue(origin, timing);
+  if (unavailable) return { item: null, unavailable: true };
   if (!row) return { item: null, unavailable: false };
   let currentOwner: string | null = null;
   const contract = getWalletRecipeAddress();

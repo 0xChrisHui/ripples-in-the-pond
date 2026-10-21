@@ -12,7 +12,7 @@
 - 方案 `playbook/phase-14/95-i-personal-echo.md`；启动提示词 `playbook/phase-14/96-i-launch-prompt.md`。
 - [x] Step 0 提交文档基线（95/96 与台账登记，6933898）
 - [x] I0 只读基线（verify.sh 基线仅目录超限两项既有失败；测试网 3 枚 Echo 与期望一致）
-- [ ] I1 私有接口 `/api/me/pond-echo/home` + 队列读取抽共享函数
+- [x] I1 私有接口 `/api/me/pond-echo/home` + 队列读取抽共享函数
 - [ ] I2 首页 `usePersonalEcho()` 替换公共 featured 请求
 - [ ] I3 追加/移除 #36 不重建 35 球 + 渐显渐隐（gpt-6-astra）
 - [ ] I4 空投未到账 pending 轮询（单测，不写库）
