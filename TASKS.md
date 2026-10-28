@@ -7,7 +7,17 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-### P14-I 首页 #36 = 当前登录钱包自己的 Pond Echo（2026-10-21 开工，分支 feat/p14-i）
+### P14-J Echo 流水线恢复 + 已铸唱片补发 #36（2026-10-28 立项，分支 feat/p14-j）
+
+- 方案 `playbook/phase-14/97-j-echo-pipeline-recovery.md`（J-A 已由用户确认；J-B 规则待用户回答）。
+- [x] J-A0 只读核实：生产 `WALLET_RECIPE_MODE=observe`；运营钱包 OP 余额 0.0101 ETH、Turbo 约 0.54 credit 够用；5 笔失败订单 events 在三家网关 5/5×3/3 一致
+- [ ] J-A1 网关校验改三选二（arweave.net / ardrive.net / arweave.tokyo）+ OP 队列“已上传未可读”不计次等待（退避、最长约 2 小时）+ 单测 + Codex 审查（推送需放行）
+- [ ] J-A2 上线修复（用户放行）
+- [ ] J-A3 补投 5 笔失败订单中的 4 笔（`0x991b` 只补较新一笔；写生产库，先 dry-run、逐笔放行）
+- [ ] J-A4 Vercel 生产 `WALLET_RECIPE_MODE` 改 `live`（AI 操作，改前告知、改后核验）→ 真实端到端：首铸→空投→首页渐显
+- [ ] J-B 手动补发 #36（规则五问待用户回答；任何写库/发交易逐批放行）
+
+### P14-I 首页 #36 = 当前登录钱包自己的 Pond Echo（2026-10-21 开工，分支 feat/p14-i；已上线，剩部署后复核③）
 
 - 方案 `playbook/phase-14/95-i-personal-echo.md`；启动提示词 `playbook/phase-14/96-i-launch-prompt.md`。
 - [x] Step 0 提交文档基线（95/96 与台账登记，6933898）
