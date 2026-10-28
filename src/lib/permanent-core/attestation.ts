@@ -75,7 +75,7 @@ export async function attestPermanentResource(
     // 少数坏副本可由两份正确副本排除；凑不齐且存在身份冲突时不能伪装成传播等待。
     if (settled.some((item) => item.status === 'rejected'
       && !(item.reason instanceof PermanentResourceUnavailableError))) throw new Error(message);
-    throw new PermanentResourcePendingError(message);
+    throw new PermanentResourcePendingError(message, [identity.arTxId]);
   }
   if (valid.some((bytes) => !Buffer.from(valid[0]).equals(Buffer.from(bytes)))) {
     throw new Error('永久资源双网关字节不一致');

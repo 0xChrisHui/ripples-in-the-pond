@@ -7,10 +7,37 @@ const MAX_RETRY = 3;
 
 /** 仅网关暂不可读属于等待，身份冲突不能使用此类型。 */
 export class PermanentResourcePendingError extends Error {
-  constructor(message: string) {
+  readonly arTxIds: string[];
+
+  constructor(message: string, arTxIds: readonly string[] = []) {
     super(message);
     this.name = 'PermanentResourcePendingError';
+    this.arTxIds = [...new Set(arTxIds)];
   }
+}
+
+/** 等齐所有资源，避免先返回的传播等待掩盖后到的身份冲突。 */
+export async function settleAttestations<T extends readonly unknown[]>(
+  promises: T,
+): Promise<{ -readonly [K in keyof T]: Awaited<T[K]> }> {
+  const settled = await Promise.allSettled(promises);
+  const failures = settled.filter((item): item is PromiseRejectedResult => item.status === 'rejected');
+  const errors = failures.filter((item) => !(item.reason instanceof PermanentResourcePendingError));
+  if (errors.length) {
+    const critical = errors.find((item) => (
+      item.reason instanceof Error ? item.reason.message : String(item.reason)
+    ).startsWith('CRITICAL'));
+    throw (critical ?? errors[0]).reason;
+  }
+  if (failures.length) {
+    const pending = failures.map((item) => item.reason as PermanentResourcePendingError);
+    throw new PermanentResourcePendingError(
+      pending.map((error) => error.message).join('; '), pending.flatMap((error) => error.arTxIds),
+    );
+  }
+  return settled.map((item) => (item as PromiseFulfilledResult<unknown>).value) as {
+    -readonly [K in keyof T]: Awaited<T[K]>
+  };
 }
 
 export function permanentWaitDelayMs(ageMs: number): number {
@@ -25,17 +52,31 @@ type QueueErrorUpdate = Partial<Pick<ScoreMintQueueRow,
   'status' | 'retry_count' | 'last_error' | 'locked_by' | 'lease_expires_at' | 'updated_at'
 >> & { failure_kind?: ScoreFailureKind | null };
 
-/** 注入时钟与首个上传意图时间；不能用每次 claim 都会刷新的 updated_at 计算年龄。 */
+type QueueErrorRow = Pick<ScoreMintQueueRow, 'retry_count' | 'created_at'
+  | 'events_upload_state' | 'package_upload_state' | 'metadata_upload_state'>;
+
+function permanentWaitAgeMs(uploadStartedAt: string | null, createdAt: string, nowMs: number): number {
+  const usable = (time: number) => Number.isFinite(time) && time <= nowMs + 60_000;
+  const uploaded = Date.parse(uploadStartedAt ?? '');
+  const anchor = usable(uploaded) ? uploaded : Date.parse(createdAt);
+  // 容忍一分钟时钟偏差但不产生负年龄；两种时间均异常时必须耗用普通重试。
+  return usable(anchor) ? Math.max(0, nowMs - anchor) : Number.NaN;
+}
+
+/** 注入认领时的上传状态、时钟及当前不可读资源的上传时间，禁止用 updated_at 续期。 */
 export function scoreQueueErrorDecision(
   error: unknown,
-  row: Pick<ScoreMintQueueRow, 'retry_count' | 'created_at'>,
+  row: QueueErrorRow,
   nowMs: number,
   uploadStartedAt: string | null = null,
 ): { waiting: boolean; update: QueueErrorUpdate } {
   const message = error instanceof Error ? error.message : String(error);
-  const ageMs = nowMs - Date.parse(uploadStartedAt ?? row.created_at);
+  const ageMs = permanentWaitAgeMs(uploadStartedAt, row.created_at, nowMs);
   const critical = message.startsWith('CRITICAL');
-  const waiting = !critical && error instanceof PermanentResourcePendingError && !isPermanentWaitExpired(ageMs);
+  const uploadUnknown = [row.events_upload_state, row.package_upload_state, row.metadata_upload_state]
+    .some((state) => state === 'uploading' || state === 'upload_result_unknown');
+  const waiting = !critical && !uploadUnknown
+    && error instanceof PermanentResourcePendingError && !isPermanentWaitExpired(ageMs);
   const delayMs = permanentWaitDelayMs(ageMs);
   const update: QueueErrorUpdate = {
     last_error: (waiting

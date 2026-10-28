@@ -7,6 +7,8 @@ const pending = new PermanentResourcePendingError('永久资源未达到双网�
 const oldRow = {
   retry_count: 2, created_at: iso(24 * 60 * 60_000), status: 'uploading_events',
   locked_by: 'worker', lease_expires_at: new Date(nowMs + 300_000).toISOString(),
+  events_upload_state: 'uploaded' as const, package_upload_state: 'none' as const,
+  metadata_upload_state: 'none' as const,
 };
 
 // 注入固定时钟和账本时间，验证与 route 共用的决策及实际应用后的队列字段。
@@ -60,4 +62,34 @@ assert.equal(scoreQueueErrorDecision(new Error('原始\n错误'), recent, nowMs)
 const criticalPending = scoreQueueErrorDecision(new PermanentResourcePendingError('CRITICAL: 状态损坏'), recent, nowMs);
 assert.equal(criticalPending.waiting, false);
 assert.equal(criticalPending.update.failure_kind, 'manual_review');
+
+for (const field of ['events_upload_state', 'package_upload_state', 'metadata_upload_state'] as const) {
+  for (const state of ['uploading', 'upload_result_unknown'] as const) {
+    for (const retry of [0, 1, 2]) {
+      const result = scoreQueueErrorDecision(pending, { ...recent, [field]: state, retry_count: retry }, nowMs);
+      assert.equal(result.waiting, false);
+      assert.equal(result.update.retry_count, retry + 1);
+      assert.equal(result.update.status, retry === 2 ? 'failed' : undefined);
+      assert.equal(result.update.failure_kind, retry === 2 ? 'safe_retry' : undefined);
+    }
+  }
+}
+// 时钟偏差只允许一分钟；失效账本回退创建时间，不能重新开启老订单的窗口。
+for (const badAnchor of ['损坏时间', iso(-60_001), iso(-24 * 60 * 60_000)]) {
+  const fallback = scoreQueueErrorDecision(pending, recent, nowMs, badAnchor);
+  assert.equal(fallback.waiting, true);
+  assert.equal(fallback.update.lease_expires_at, new Date(nowMs + 60_000).toISOString());
+  assert.equal(scoreQueueErrorDecision(pending, oldRow, nowMs, badAnchor).waiting, false);
+  for (const created_at of ['损坏时间', iso(-60_001)]) {
+    const expired = scoreQueueErrorDecision(pending, { ...recent, created_at }, nowMs, badAnchor);
+    assert.equal(expired.waiting, false);
+    assert.equal(expired.update.retry_count, 1);
+  }
+}
+for (const skew of [1, 60_000]) {
+  const result = scoreQueueErrorDecision(pending, oldRow, nowMs, iso(-skew));
+  assert.equal(result.waiting, true);
+  assert.equal(result.update.lease_expires_at, new Date(nowMs + 60_000).toISOString());
+}
+assert.equal(scoreQueueErrorDecision(pending, { ...recent, created_at: iso(-60_001) }, nowMs).waiting, false);
 console.log('通过');

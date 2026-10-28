@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
 
   let claimedId: string | null = null;
   let claimedRetry = 0;
-  let claimedCreatedAt = '';
+  let claimedRow: ScoreMintQueueRow | null = null;
   const leaseOwner = randomUUID();
 
   try {
@@ -66,7 +66,7 @@ export async function GET(req: NextRequest) {
     const row = rows[0] as ScoreMintQueueRow;
     claimedId = row.id;
     claimedRetry = row.retry_count;
-    claimedCreatedAt = row.created_at;
+    claimedRow = row;
 
     console.log(`[score-cron] picked ${row.id} status=${row.status} lease=${leaseOwner}`);
 
@@ -131,18 +131,21 @@ export async function GET(req: NextRequest) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('[score-cron] error:', msg);
 
-    if (claimedId) {
+    if (claimedId && claimedRow) {
       let uploadStartedAt: string | null = null;
-      if (err instanceof PermanentResourcePendingError) {
-        const { data, error } = await supabaseAdmin.from('score_arweave_upload_ledger')
-          .select('attempted_at').eq('queue_id', claimedId)
-          .order('attempted_at', { ascending: true }).limit(1).maybeSingle();
-        if (error) console.error('[score-cron] 上传账本读取失败，回退订单创建时间:', error.message);
-        uploadStartedAt = data?.attempted_at ?? null;
+      if (err instanceof PermanentResourcePendingError && err.arTxIds.length) {
+        try {
+          // 老订单的新资源需要独立传播窗口，不能让旧 events 的时间提前耗尽它。
+          const { data, error } = await supabaseAdmin.from('score_arweave_upload_ledger')
+            .select('attempted_at').eq('queue_id', claimedId).in('arweave_tx_id', err.arTxIds)
+            .order('attempted_at', { ascending: false }).limit(1).maybeSingle();
+          if (error) throw error;
+          uploadStartedAt = data?.attempted_at ?? null;
+        } catch (error) {
+          console.error('[score-cron] 上传账本读取失败，回退订单创建时间:', error);
+        }
       }
-      const { waiting, update } = scoreQueueErrorDecision(err, {
-        retry_count: claimedRetry, created_at: claimedCreatedAt,
-      }, Date.now(), uploadStartedAt);
+      const { waiting, update } = scoreQueueErrorDecision(err, claimedRow, Date.now(), uploadStartedAt);
 
       let errorUpdate = supabaseAdmin
         .from('score_nft_queue')

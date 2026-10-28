@@ -1,6 +1,7 @@
 import { CHAIN_ID_NUM } from '@/src/lib/chain/chain-config';
 import { SCORE_NFT_ADDRESS } from '@/src/lib/chain/contracts';
 import { attestPermanentResource } from '@/src/lib/permanent-core/attestation';
+import { settleAttestations } from '@/src/lib/permanent-core/permanent-wait';
 import { canonicalizeJson, parseScorePackageV3, sha256Hex } from '@/src/lib/score-package';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
@@ -33,7 +34,7 @@ export async function stepFinalizeSnapshot(
     base: identity(row.base_ar_tx_id, row.base_sha256, row.base_bytes, row.base_mime),
     decoder: identity(row.decoder_ar_tx_id, row.decoder_sha256, row.decoder_bytes, row.decoder_mime),
   };
-  const [metadataBytes, packageBytes, eventsBytes, soundsBytes] = await Promise.all([
+  const [metadataBytes, packageBytes, eventsBytes, soundsBytes] = await settleAttestations([
     attestPermanentResource(refs.metadata), attestPermanentResource(refs.package),
     attestPermanentResource(refs.events), attestPermanentResource(refs.soundSet),
     attestPermanentResource(refs.base), attestPermanentResource(refs.decoder),

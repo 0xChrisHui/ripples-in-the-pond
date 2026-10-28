@@ -1,4 +1,5 @@
 import { attestPermanentResource } from '@/src/lib/permanent-core/attestation';
+import { settleAttestations } from '@/src/lib/permanent-core/permanent-wait';
 import {
   SCORE_PACKAGE_SCHEMA, serializeScorePackageV3, type ScorePackageV3,
 } from '@/src/lib/score-package';
@@ -75,7 +76,7 @@ export async function stepPreparePackage(
     throw new Error('events 尚未双网关验证');
   }
   const resources = requirePinned(row);
-  const [eventsBytes, , soundsBytes] = await Promise.all([
+  const [eventsBytes, , soundsBytes] = await settleAttestations([
     attestPermanentResource(resources.events),
     attestPermanentResource(resources.base),
     attestPermanentResource(resources.soundSet),

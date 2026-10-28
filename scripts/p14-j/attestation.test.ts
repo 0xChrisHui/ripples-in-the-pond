@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { attestPermanentResource, readVerifiedPermanentResource } from '../../src/lib/permanent-core/attestation';
-import { PermanentResourcePendingError } from '../../src/lib/permanent-core/permanent-wait';
+import { PermanentResourcePendingError, settleAttestations } from '../../src/lib/permanent-core/permanent-wait';
 import { arweaveTxIdOf, arweaveGatewayUrls } from '../../src/lib/arweave/shared';
 
 const gateways = ['https://arweave.net', 'https://ardrive.net', 'https://arweave.tokyo'];
@@ -18,11 +18,52 @@ function isQuorumError(error: unknown, pending: boolean): boolean {
   assert.ok(error instanceof Error);
   assert.ok(error.message.startsWith('永久资源未达到双网关 quorum：'));
   assert.equal(error instanceof PermanentResourcePendingError, pending);
+  if (error instanceof PermanentResourcePendingError) assert.deepEqual(error.arTxIds, [identity.arTxId]);
   for (const gateway of gateways) assert.ok(error.message.includes(gateway));
   return true;
 }
 
+async function testSettledAttestations(): Promise<void> {
+  const pending = new PermanentResourcePendingError('网关甲尚未传播', ['tx-a']);
+  const conflict = new Error('永久资源未达到双网关 quorum：SHA-256 mismatch');
+  const critical = new Error('CRITICAL: 上传结果未知');
+  // 手动控制完成顺序，证明错误级别不再受网关快慢或输入顺序影响。
+  for (const errors of [[pending, conflict], [conflict, pending]]) {
+    for (const finishOrder of [[0, 1], [1, 0]]) {
+      const rejectors: Array<(error: Error) => void> = [];
+      const promises = errors.map(() => new Promise<never>((_, reject) => rejectors.push(reject)));
+      const result = assert.rejects(settleAttestations(promises), (error) => error === conflict);
+      rejectors[finishOrder[0]](errors[finishOrder[0]]);
+      await Promise.resolve();
+      rejectors[finishOrder[1]](errors[finishOrder[1]]);
+      await result;
+    }
+  }
+  for (const errors of [[pending, conflict, critical], [critical, conflict, pending]]) {
+    await assert.rejects(settleAttestations(errors.map((error) => Promise.reject(error))),
+      (error) => error === critical);
+  }
+  await assert.rejects(settleAttestations([
+    Promise.reject(pending), Promise.resolve('正常资源'),
+    Promise.reject(new PermanentResourcePendingError('网关乙尚未传播', ['tx-a', 'tx-b'])),
+  ]), (error) => {
+    assert.ok(error instanceof PermanentResourcePendingError);
+    assert.deepEqual(error.arTxIds, ['tx-a', 'tx-b']);
+    assert.ok(error.message.includes('网关甲尚未传播') && error.message.includes('网关乙尚未传播'));
+    return true;
+  });
+  await assert.rejects(settleAttestations([Promise.reject(pending), Promise.reject('普通异常')]),
+    (error) => error === '普通异常');
+  let resolveFirst!: (value: string) => void;
+  const first = new Promise<string>((resolve) => { resolveFirst = resolve; });
+  const success = settleAttestations([first, Promise.resolve(7)] as const);
+  resolveFirst('第一项');
+  assert.deepEqual(await success, ['第一项', 7]);
+  assert.deepEqual(await settleAttestations([]), []);
+}
+
 async function main(): Promise<void> {
+  await testSettledAttestations();
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (input) => {
     const url = String(input);

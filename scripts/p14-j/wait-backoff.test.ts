@@ -23,6 +23,7 @@ const pending = new PermanentResourcePendingError('永久资源未达到双网�
 for (const age of [limit, limit + 1]) {
   const result = scoreQueueErrorDecision(pending, {
     retry_count: 0, created_at: new Date(nowMs - age).toISOString(),
+    events_upload_state: 'uploaded', package_upload_state: 'none', metadata_upload_state: 'none',
   }, nowMs);
   assert.equal(result.waiting, false);
   assert.equal(result.update.retry_count, 1);

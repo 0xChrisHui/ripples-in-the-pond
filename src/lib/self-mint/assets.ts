@@ -2,6 +2,7 @@ import 'server-only';
 
 import { uploadBuffer, resolveArUrl } from '@/src/lib/arweave';
 import { attestPermanentResource } from '@/src/lib/permanent-core/attestation';
+import { PermanentResourcePendingError } from '@/src/lib/permanent-core/permanent-wait';
 import {
   SCORE_PACKAGE_SCHEMA,
   serializeScorePackageV3,
@@ -75,7 +76,7 @@ async function uploadAndVerify(
       await attestPermanentResource({ arTxId: stored.txId, ...identity });
       return writeUpload(row, owner, kind, identity, 'verified', stored.txId);
     } catch (error) {
-      if (error instanceof Error && error.message.startsWith('永久资源未达到双网关 quorum')) {
+      if (error instanceof PermanentResourcePendingError) {
         return false;
       }
       throw new Error(`CRITICAL: ${kind} 永久资源身份冲突`, { cause: error });
