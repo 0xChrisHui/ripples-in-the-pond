@@ -9,6 +9,7 @@ import WaterSurface from './water/WaterSurface';
 import WaterDistort from './water/WaterDistort';
 import RttSpike from './water/spike/RttSpike';
 import FloatingMotes from './decor/FloatingMotes';
+import PondBubbles from './decor/bubbles/PondBubbles';
 import WaterPlants from './decor/WaterPlants';
 import WaterColumns from './decor/WaterColumns';
 import BgImage from './BgImage';
@@ -146,6 +147,8 @@ export default function PondGL({ flags, glSim, pointerInteractive = true, onPerf
           {flags.water && !flags.waterFx && <WaterSurface artDir={flags.artDir} />}
           {/* K8 + P9：常驻零绘制以接按键临时编舞；开关只决定静息态是否可见，不改用户保存参数。 */}
           <FloatingMotes enabled={flags.floatMotes} waterZoom={flags.waterZoom} />
+          {/* P20：池塘气泡（背景层、被折射；flag 默认关，关 = 不挂载） */}
+          {flags.pondBubbles && <PondBubbles glSim={glSim} />}
           {/* K9：水生植物层（俯视睡莲叶 + 边缘芦苇；进 realScene 被合成扭曲；绕中心随 K6 缩放当强参照 + 涟漪轻晃）。OFF=不挂载=现状 */}
           {flags.waterPlants && <WaterPlants waterZoom={flags.waterZoom} />}
           {/* K12：水位标尺柱（礁石/水晶簇）——钉死、水从其身上漫过=水位/深度参照 + 中心一点透视。OFF=不挂载=现状 */}

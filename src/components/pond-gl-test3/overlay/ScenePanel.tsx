@@ -57,6 +57,7 @@ export default function ScenePanel({ glFlags, onGl }: Props) {
           <Row label="月光倒影" checked={glFlags.moonReflect} onChange={(v) => onGl({ moonReflect: v })} />
           <Row label="水面花瓣" checked={glFlags.flowerPetals} onChange={(v) => onGl({ flowerPetals: v })} />
           <Row label="漂浮微光" checked={glFlags.floatMotes} onChange={(v) => onGl({ floatMotes: v })} />
+          <Row label="池塘气泡" checked={glFlags.pondBubbles} onChange={(v) => onGl({ pondBubbles: v })} />
           <div className="mb-1 mt-2 text-[10px] uppercase tracking-wider text-white/30">相机</div>
           <Row label="焦平面景深" checked={glFlags.dof} onChange={(v) => onGl({ dof: v })} />
           <Row label="一点透视" checked={glFlags.perspective} onChange={(v) => onGl({ perspective: v })} />
