@@ -7,15 +7,18 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-### P14-J Echo 流水线恢复 + 已铸唱片补发 #36（2026-10-28 立项，分支 feat/p14-j）
+### P14-J Echo 流水线恢复 + 已铸唱片补发 #36（2026-10-28 完成上线，分支 feat/p14-j；剩 0x414c 与用户目验两项后续）
 
-- 方案 `playbook/phase-14/97-j-echo-pipeline-recovery.md`（J-A 已由用户确认；J-B 规则待用户回答）。
+- 方案 `playbook/phase-14/97-j-echo-pipeline-recovery.md`；J-A、J-B 均按用户“全部按建议”落地。
 - [x] J-A0 只读核实：生产 `WALLET_RECIPE_MODE=observe`；运营钱包 OP 余额 0.0101 ETH、Turbo 约 0.54 credit 够用；5 笔失败订单 events 在三家网关 5/5×3/3 一致
 - [x] J-A1 网关校验改三选二（arweave.net / ardrive.net / arweave.tokyo）+ OP 队列“已上传未可读”不计次等待（退避、最长约 2 小时，按当前不可读资源自己的上传时间计）+ 4 组离线测试 + 对 5 笔失败订单只读联调 5/5 通过；一轮 Codex 只读审查的 3 项阻塞已修（f633838 + 返工）；本地提交，未推送
 - [x] J-A2 上线修复（2026-10-28 用户“go”：verify.sh 与基线一致 → 推 main 8ed9fee → Vercel Ready → 站点/新接口/cron 正常）
 - [x] J-A3 补投失败订单：19bd7235（0x991b）→ OP Score #5 成功（链上持有人与 tokenURI 已核）；5b0064f2、511ed2ca、167d6699 已补投、流水线处理中；f345bc2c 保持 failed
 - [x] J-A4 Vercel 生产 WALLET_RECIPE_MODE=live（vercel env update 读回确认 → redeploy 到 pond-ripple.xyz）：0xBEEC 自 9/21 的 pending 开始处理，Score #5 被自动发现登记
-- [~] J-B 放行 0x19da、0xFD86 已执行（无 migration，CAS 单条 UPDATE）；5 枚 Echo（0x19da、0xFD86、0xBEEC、0x991b、0x414c）铸造中，待全部 success 后由用户在正式站目验
+- [x] J-B 放行 0x19da、0xFD86（无 migration，CAS 单条 UPDATE）。收尾时点（2026-10-28）：Echo #2 0xFD86、#3 0x19da、#4 0xBEEC、#5 0x991b 均已 success（#1 为原有 0x456b）；补投 Score：#5 0x991b、#6 0x19da 成功，0xBEEC 第二张在最后的元数据步骤
+- [ ] **后续核验 ①**：`167d6699`（0x414c，用户邮箱账号）仍在 OP 队列排队，收尾时尚未轮到；其 Score 铸出后还要再排一次 Echo 队。用以下只读检查确认：score_nft_queue 该单 success 且 wallet_recipe_queue 中 0x414c 为 success（echo 编号非空）
+- [ ] **后续核验 ②（用户）**：在正式站登录 0x991b / 0xBEEC / 0x19da / 0xFD86 任一，看首页 #36 渐显与 /me 的 Echo；`/echo/<id>` 可播放
+- [ ] 未决问题：用户提到“/score 页面即便没有成功铸造也可点击播放聆听”，意图尚未澄清（已问三次）；若为需求再单独立项
 
 ### P14-I 首页 #36 = 当前登录钱包自己的 Pond Echo（2026-10-21 开工，分支 feat/p14-i；已上线，剩部署后复核③）
 
@@ -71,6 +74,8 @@
   - [x] 完成第一枚主网 mint 与链、库、metadata、公开页面播放核验；私密 `/me` 目验边界见开放项
 
 ## ⏳ Later / 开放项
+
+- **OP 铸造队列吞吐（2026-10-28，P14-J 期间实测，待用户决定是否立项）**：process-score-queue 由 cron-job.org 每分钟触发、每次只推进一个订单的一步，且严格按创建时间一次只处理最老的一单；全局运营钱包锁还与 Echo 铸造互抢（日志可见 operator_busy）。实测单张 Score 约 20 分钟（理论最快约 6 分钟），20 人同时铸造最后一人约等 2–7 小时。改进方向：①每次触发连推多步（单步仅约 15 秒、额度 30 秒）；②不发链上交易的步骤（上传、打包、快照）不占钱包锁、可并行；③界面显示“前面还有 N 位”。现网铸造量极低（两个月 4 人），暂不紧迫。
 
 - **测试登录凭证隔离（2026-10-28，P14-I 全量审查）**：本地按 SEMI 格式签的测试凭证与生产共用 issuer/audience，若本地签名密钥与生产相同则在正式站同样有效。改为独立测试密钥 + 生产拒收的 audience、有效期 ≤45 分钟、只存内存；需要提前作废时写对应环境 `jwt_blacklist` 并读回核验。
 - **JWT 黑名单查询出错时放行（基线问题，2026-10-28 审查发现）**：`src/lib/auth/jwt.ts` 只看 data 不看 error，数据库异常时已撤销凭证可能通过；撤销写入也未检查错误。改为查询失败即拒绝、写入后读回。动认证主链路，单独处理。

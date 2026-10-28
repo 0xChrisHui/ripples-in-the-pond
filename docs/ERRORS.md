@@ -810,3 +810,19 @@
 - 🧠 原因：`.next/types` 是上次 dev/build 生成的路由类型，被 tsconfig 收录；删路由不会自动刷新它。
 - 🔧 修复：`npx next typegen` 重新生成路由类型后 tsc 通过（build 也会重新生成）。
 - 💡 删除/改名路由后先 typegen 再判定类型错误，不要误判为产品代码问题；dev 开着时不要跑（`.next` 互踩）。
+
+### E069 — 操作生产队列的脚本用了本地 `CHAIN_ID_NUM`，演练得到 0 行
+
+- 📅 2026-10-28 / P14-J J-B
+- 😱 现象：`release-prelaunch-echoes.ts` 对生产库演练显示“共 0 个被排除的老用户”，但库里明明有 2 个。
+- 🧠 原因：本地 `.env.local` 的 `NEXT_PUBLIC_CHAIN_ID` 是 OP Sepolia（11155420），而 `.env.local` 连的是生产 Supabase；脚本按 `CHAIN_ID_NUM` 过滤，查的是测试网的行。
+- 🔧 修复：脚本里显式写主网链号 10，并注释原因。
+- 💡 本地“测试网链配置 + 生产库”混用时，凡是读写生产表的脚本都要显式写链号，演练结果为 0 先怀疑过滤条件而不是“没有数据”。
+
+### E070 — `vercel redeploy` 报 “Deployment belongs to a different team”
+
+- 📅 2026-10-28 / P14-J J-A4
+- 😱 现象：对生产部署执行 `vercel redeploy <url>` 报团队不一致，但 `vercel ls` 能列出该部署。
+- 🧠 原因：CLI 当前默认团队与项目所在团队（`0x991-thomas-projects`）不同。
+- 🔧 修复：加 `--scope 0x991-thomas-projects`；改环境变量用 `vercel env update <NAME> production`（原地更新，避免先删后加的空档），改完 `vercel env pull` 到临时目录只读回该键。
+- 💡 环境变量改动必须 redeploy 才生效；读回只取单个键并立即删除临时文件。
