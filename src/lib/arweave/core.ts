@@ -17,9 +17,8 @@ export { ARWEAVE_GATEWAYS, resolveArUrl } from './shared';
 export type { ArweaveGateway } from './shared';
 
 // 多网关 fallback 列表，顺序即优先级
-// 只保留两个经过本机 curl 探测确认可达 + Arweave 生态公认主力的网关：
-// - arweave.net       Arweave 官方主网关
-// - ario.permagate.io AR.IO 社区运营的第二大网关
+// P14-J：取数据与上传后读回使用三家已核实的网关；permagate 已下线。
+// 历史 permagate 引用仅在 shared.ts 的地址识别中保留。
 // Phase 3 S0 硬门槛：本机 verify-arweave-cors.ts 作 smoke test，
 // 真正的"全球可达"验证延后到 S6 真部署 decoder 后浏览器跨设备手测。
 // 注：早期版本列的 ar-io.dev / arweave.dev / gateway.irys.xyz 是错列/被 ESET 拦。

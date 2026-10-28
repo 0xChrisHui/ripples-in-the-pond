@@ -1,5 +1,6 @@
-import { ARWEAVE_AUDIO_GATEWAYS, ARWEAVE_GATEWAYS } from '@/src/lib/arweave/shared';
+import { ARWEAVE_ATTEST_GATEWAYS } from '@/src/lib/arweave/shared';
 import { sha256Hex } from '@/src/lib/score-package';
+import { PermanentResourcePendingError } from './permanent-wait';
 
 export type PermanentResourceIdentity = Readonly<{
   arTxId: string;
@@ -9,7 +10,7 @@ export type PermanentResourceIdentity = Readonly<{
 }>;
 
 const TIMEOUT_MS = 15_000;
-const READ_GATEWAYS = [...new Set([...ARWEAVE_GATEWAYS, ...ARWEAVE_AUDIO_GATEWAYS])];
+const READ_GATEWAYS = ARWEAVE_ATTEST_GATEWAYS;
 
 export class PermanentResourceUnavailableError extends Error {
   constructor(message: string) {
@@ -37,11 +38,18 @@ async function readGateway(
   } catch (caught) {
     throw new PermanentResourceUnavailableError(String(caught));
   }
-  if (!response.ok) throw new PermanentResourceUnavailableError(`HTTP ${response.status}`);
+  // 💭 202 = 网关已收到但数据尚在传播（返回的是占位文本），属于“暂不可读”；
+  //   不能落到下面的 MIME 比对被误判成身份冲突，否则新上传的文件会走普通重试快速耗尽。
+  if (!response.ok || response.status === 202) throw new PermanentResourceUnavailableError(`HTTP ${response.status}`);
   if (normalizeMime(response.headers.get('content-type')) !== normalizeMime(identity.mime)) {
     throw new PermanentResourceIntegrityError(`MIME ${response.headers.get('content-type') ?? 'missing'}`);
   }
-  const bytes = new Uint8Array(await response.arrayBuffer());
+  let bytes: Uint8Array;
+  try {
+    bytes = new Uint8Array(await response.arrayBuffer());
+  } catch (caught) {
+    throw new PermanentResourceUnavailableError(String(caught));
+  }
   if (bytes.byteLength !== identity.bytes) {
     throw new PermanentResourceIntegrityError(`bytes ${bytes.byteLength} != ${identity.bytes}`);
   }
@@ -51,21 +59,25 @@ async function readGateway(
   return bytes;
 }
 
-/** 两个独立网关都返回同一组已固定字节，才允许队列继续。 */
+/** 三家候选中至少两个独立网关返回同一组已固定字节，才允许队列继续。 */
 export async function attestPermanentResource(
   identity: PermanentResourceIdentity,
 ): Promise<Uint8Array> {
   const settled = await Promise.allSettled(
-    ARWEAVE_GATEWAYS.map((gateway) => readGateway(gateway, identity)),
+    ARWEAVE_ATTEST_GATEWAYS.map((gateway) => readGateway(gateway, identity)),
   );
   const valid = settled.flatMap((item) => item.status === 'fulfilled' ? [item.value] : []);
   if (valid.length < 2) {
     const reasons = settled.map((item, index) => item.status === 'rejected'
-      ? `${ARWEAVE_GATEWAYS[index]}: ${String(item.reason)}`
-      : `${ARWEAVE_GATEWAYS[index]}: ok`);
-    throw new Error(`永久资源未达到双网关 quorum：${reasons.join('; ')}`);
+      ? `${ARWEAVE_ATTEST_GATEWAYS[index]}: ${String(item.reason)}`
+      : `${ARWEAVE_ATTEST_GATEWAYS[index]}: ok`);
+    const message = `永久资源未达到双网关 quorum：${reasons.join('; ')}`;
+    // 少数坏副本可由两份正确副本排除；凑不齐且存在身份冲突时不能伪装成传播等待。
+    if (settled.some((item) => item.status === 'rejected'
+      && !(item.reason instanceof PermanentResourceUnavailableError))) throw new Error(message);
+    throw new PermanentResourcePendingError(message);
   }
-  if (!Buffer.from(valid[0]).equals(Buffer.from(valid[1]))) {
+  if (valid.some((bytes) => !Buffer.from(valid[0]).equals(Buffer.from(bytes)))) {
     throw new Error('永久资源双网关字节不一致');
   }
   return valid[0];

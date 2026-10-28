@@ -5,7 +5,8 @@ import type { ScorePlaybackManifest } from '@/src/types/jam';
 
 const TX_ID_RE = /^[a-zA-Z0-9_-]{43}$/;
 const MAX_METADATA_BYTES = 128 * 1024;
-const GATEWAY_HOSTS = new Set(ARWEAVE_GATEWAYS.map((gateway) => new URL(gateway).host));
+// 历史永久引用可能写着已下线网关；识别名单不能等同于取数据名单。
+const GATEWAY_HOSTS = new Set([...ARWEAVE_GATEWAYS.map((gateway) => new URL(gateway).host), 'ario.permagate.io']);
 
 export type ScoreProvenanceSource = 'contract' | 'database' | 'metadata' | 'metadata.animation_url';
 export type ScoreProvenanceEntry = {

@@ -10,6 +10,7 @@ import { stepPreparePackage } from './steps-package';
 import { stepMintOnchain } from './steps-mint';
 import { stepSetTokenUri } from './steps-set-uri';
 import { stepFinalizeSnapshot } from './steps-finalize';
+import { PermanentResourcePendingError, scoreQueueErrorDecision } from '@/src/lib/permanent-core/permanent-wait';
 
 /**
  * GET /api/cron/process-score-queue?secret=xxx
@@ -31,8 +32,6 @@ import { stepFinalizeSnapshot } from './steps-finalize';
  *   - "CRITICAL: ..." 错误（chain 已发但 DB 失败 / mint 卡死窗口超限）→ 直接 failed=manual_review，alert 邮件
  */
 
-const MAX_RETRY = 3;
-
 export async function GET(req: NextRequest) {
   if (!verifyCronSecret(req)) {
     return NextResponse.json({ error: '无效的 secret' }, { status: 401 });
@@ -48,6 +47,7 @@ export async function GET(req: NextRequest) {
 
   let claimedId: string | null = null;
   let claimedRetry = 0;
+  let claimedCreatedAt = '';
   const leaseOwner = randomUUID();
 
   try {
@@ -66,6 +66,7 @@ export async function GET(req: NextRequest) {
     const row = rows[0] as ScoreMintQueueRow;
     claimedId = row.id;
     claimedRetry = row.retry_count;
+    claimedCreatedAt = row.created_at;
 
     console.log(`[score-cron] picked ${row.id} status=${row.status} lease=${leaseOwner}`);
 
@@ -130,36 +131,38 @@ export async function GET(req: NextRequest) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('[score-cron] error:', msg);
 
-    // 失败处理：CRITICAL 直接 failed 不 retry（chain 已发但 DB 失败的场景）
-    // 普通错误 retry_count++，耗尽后 failed；不论何种都释放 lease
-    // P1-8 修复（2026-05-08 strict CTO review）：failed 时必须给 failure_kind，
-    //   CRITICAL → manual_review（链上状态未知，ops 介入）
-    //   retry 耗尽 → safe_retry（已确认链上未发或已 revert，可自动重试）
     if (claimedId) {
-      const isCritical = msg.startsWith('CRITICAL');
-      const shouldFail = isCritical || claimedRetry + 1 >= MAX_RETRY;
-      const failureKind: 'manual_review' | 'safe_retry' | null = shouldFail
-        ? (isCritical ? 'manual_review' : 'safe_retry')
-        : null;
+      let uploadStartedAt: string | null = null;
+      if (err instanceof PermanentResourcePendingError) {
+        const { data, error } = await supabaseAdmin.from('score_arweave_upload_ledger')
+          .select('attempted_at').eq('queue_id', claimedId)
+          .order('attempted_at', { ascending: true }).limit(1).maybeSingle();
+        if (error) console.error('[score-cron] 上传账本读取失败，回退订单创建时间:', error.message);
+        uploadStartedAt = data?.attempted_at ?? null;
+      }
+      const { waiting, update } = scoreQueueErrorDecision(err, {
+        retry_count: claimedRetry, created_at: claimedCreatedAt,
+      }, Date.now(), uploadStartedAt);
 
-      await supabaseAdmin
+      let errorUpdate = supabaseAdmin
         .from('score_nft_queue')
-        .update({
-          ...(shouldFail
-            ? { status: 'failed' as const, failure_kind: failureKind }
-            : {}),
-          retry_count: isCritical ? claimedRetry : claimedRetry + 1,
-          last_error: msg.slice(0, 500),
-          locked_by: null,
-          lease_expires_at: null,
-          updated_at: new Date().toISOString(),
-        })
+        .update(update)
         .eq('id', claimedId)
         .eq('locked_by', leaseOwner);
 
+      // 等待只由仍持有有效 lease 的 worker 写入，且写入成功才向调用方报告等待。
+      if (waiting) errorUpdate = errorUpdate.gt('lease_expires_at', update.updated_at!);
+      const { data: errorUpdated, error: updateError } = await errorUpdate.select('id');
+      if (waiting) {
+        if (updateError || !errorUpdated?.length) {
+          console.error('[score-cron] 等待状态未写入:', updateError?.message ?? 'lease 已失效');
+          return NextResponse.json({ error: '等待状态未写入' }, { status: 500 });
+        }
+        return NextResponse.json({ result: 'waiting', processed: 1, queueId: claimedId });
+      }
       // Phase 7 A8：manual_review 是不可自动恢复的状态，需要人工介入。
       // fire-and-forget 调一次邮件告警；sendAlert 内部自带 try/catch + 未配 env 静默 log。
-      if (failureKind === 'manual_review') {
+      if (update.failure_kind === 'manual_review') {
         void sendAlert({
           subject: 'score_nft_queue manual_review',
           body: [

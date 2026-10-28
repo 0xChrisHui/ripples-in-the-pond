@@ -1,8 +1,12 @@
 /** 浏览器与服务端共用的 Arweave 永久地址合同。 */
 export const ARWEAVE_GATEWAYS = [
   'https://arweave.net',
-  'https://ario.permagate.io',
+  'https://ardrive.net',
+  'https://arweave.tokyo',
 ] as const;
+
+/** 校验与取数据使用同一组存活网关，仍须至少两家独立确认。 */
+export const ARWEAVE_ATTEST_GATEWAYS = ARWEAVE_GATEWAYS;
 
 /** 浏览器长音频使用三条已在 P14 资源审计中实际验证过的独立候选。 */
 export const ARWEAVE_AUDIO_GATEWAYS = [
@@ -34,7 +38,8 @@ export function arweaveTxIdOf(value: string | null): string | null {
     const url = new URL(value);
     const segments = url.pathname.split('/').filter(Boolean);
     const txId = segments[0] ?? '';
-    const knownGateway = [...ARWEAVE_GATEWAYS, ...ARWEAVE_AUDIO_GATEWAYS].some(
+    // 历史引用仍需解析，但下线网关不能再进入取数据候选。
+    const knownGateway = [...ARWEAVE_GATEWAYS, ...ARWEAVE_AUDIO_GATEWAYS, 'https://ario.permagate.io'].some(
       (gateway) => new URL(gateway).host === url.host,
     );
     return knownGateway && segments.length === 1 && TX_ID_RE.test(txId) ? txId : null;
