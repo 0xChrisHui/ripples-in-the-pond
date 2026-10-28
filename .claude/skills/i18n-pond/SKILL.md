@@ -23,9 +23,9 @@ description: 给 Ripples in the Pond 做中英双语（中文默认、英文为�
 |---|---|---|
 | 已上链 / Arweave 永久内容（metadata、snapshot、events、sounds） | **不改**，改了会和链上快照不一致 | STATUS：17 项永久资源已核验 |
 | `src/data/score/*` 里 `throw new Error('中文')` 一类校验报错 | 开发者向，**不翻译**；已核实 `metadata.ts` 只有这类 | 2026-10-13 抽查 |
-| 沙盒页 `/test` `/test1~4` `/score-lab` `/me/test` `/v1` | 默认不翻译，**待用户定**（playbook D1）；`/test1` 任何情况都不改 | 未确认 |
-| 曲目名、艺术家简介（`src/content/artist.ts`）、艺术家手记（`artist-notes.json`）、艺术家名英文写法 | **待用户定**（playbook D2）；**手记不机翻** | 未确认 |
-| `public/music-catalog/catalog.v1.json` | 是否属于发行/永久清单待查（playbook N6），查清前不改 | 未确认 |
+| 沙盒页 `/test` `/test1~4` `/score-lab` `/me/test` `/v1` | 默认不翻译，**不翻译**（D1 已定）；`/test1` 任何情况都不改 | 已确认 |
+| 曲目名、艺术家简介（`src/content/artist.ts`）、艺术家手记（`artist-notes.json`）、艺术家名英文写法 | **全部翻译**（D2 已定），英文另存 `src/i18n/content/`；35 首手记英文以艺术家确认版为准 | 已确认 |
+| `public/music-catalog/catalog.v1.json` | 属永久清单（revision 含手记文字且被铸造订单校验），**不能改**（N6 已查清） | 已确认 |
 | `console.*`、代码注释 | 不翻译 | — |
 | API 错误文案（`app/api` 约 220 行） | 最后阶段，改成错误码由前端映射，不在后端按语言返回（playbook Step 7）；之前先在展示层拦截服务器原文 | 方案 |
 
