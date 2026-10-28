@@ -15,7 +15,7 @@ export interface BubbleView {
   depth: number;         // 0 池底 → 1 水面（外观：越深越小越软越淡）
 }
 
-interface Bubble { delay: number; rise: number; dwell: number; size: number; sway: number; freq: number; phase: number }
+interface Bubble { delay: number; rise: number; dwell: number; size: number; sway: number; freq: number; phase: number; popped: boolean }
 interface Chain { t: number; ox: number; oy: number; end: number; bubbles: Bubble[] }
 export interface BubbleSim { time: number; nextAt: number; chain: Chain | null }
 
@@ -26,6 +26,7 @@ export interface SimEnv {
   playing: boolean;       // 日蚀期间：串间隔加倍
   reduced: boolean;       // 减弱动效：不生成
   tuning: BubbleTuning;
+  onPop: (x: number, y: number) => void; // 泡在水面停完、破掉的瞬间（屏幕像素）；球挡住时不触发
 }
 
 const D_BOTTOM = 0.05;
@@ -74,9 +75,9 @@ function buildChain(rng: Rng, env: SimEnv, ox: number, oy: number): Chain {
     const dwell = between(rng, [0.3, 1.2]);
     bubbles.push({
       delay, rise, dwell, size: 0.67 + 0.73 * rng(),
-      sway: 2 + 5 * rng(), freq: 0.8 + 0.8 * rng(), phase: 6.2831853 * rng(),
+      sway: 2 + 5 * rng(), freq: 0.8 + 0.8 * rng(), phase: 6.2831853 * rng(), popped: false,
     });
-    end = Math.max(end, delay + rise + dwell);
+    end = Math.max(end, delay + rise + dwell + 0.2); // +0.2 秒：让最后一个泡的破水在串结束前触发
     delay += between(rng, [0.4, 1.5]);
   }
   return { t: 0, ox, oy, end, bubbles };
@@ -125,12 +126,19 @@ export function stepBubbles(sim: BubbleSim, dt: number, env: SimEnv, rng: Rng, o
   let count = 0;
   for (const b of chain.bubbles) {
     const tb = chain.t - b.delay;
-    if (tb < 0 || tb > b.rise + b.dwell) continue;
+    if (tb < 0) continue;
     const u = clamp01(tb / b.rise);
     const e = Math.pow(u, 0.85);
     const s = scaleAt(env, e);
-    const x = cx + (chain.ox - cx) * s + Math.sin(tb * b.freq + b.phase) * b.sway * (0.4 + e);
+    const x = cx + (chain.ox - cx) * s + Math.sin(Math.min(tb, b.rise + b.dwell) * b.freq + b.phase) * b.sway * (0.4 + e);
     const y = cy + (chain.oy - cy) * s;
+    if (tb > b.rise + b.dwell) {
+      if (!b.popped) {
+        b.popped = true;
+        if (discFade(env, x, y) > 0.5) env.onPop(x, y);
+      }
+      continue;
+    }
     const dwellP = clamp01((tb - b.rise) / b.dwell);
     const life = clamp01(u / FADE_IN) * (1 - dwellP * dwellP);
     const slot = out[count] ?? (out[count] = { x: 0, y: 0, radius: 0, alpha: 0, depth: 0 });

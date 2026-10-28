@@ -7,6 +7,7 @@ import ScenePanel from '@/src/components/pond-gl-test3/overlay/ScenePanel';
 import TunePanel from '@/src/components/pond-gl-test3/overlay/TunePanel';
 import P9TuningPanel from '@/src/components/pond-gl-test3/p9/tuning/P9TuningPanel';
 import RippleSpikePanel from '@/src/components/pond-gl-test3/water/spike/RippleSpikePanel';
+import BubblePanel from '@/src/components/pond-gl-test3/decor/bubbles/BubblePanel';
 
 type Props = {
   flags: GLFlags;
@@ -25,6 +26,7 @@ export default function SandboxControls({ flags, p9, onChange }: Props) {
         {flags.glSpheres && <TunePanel />}
         {flags.glSpheres && <LifePanel />}
         {showWaterTools && <RippleSpikePanel />}
+        {flags.pondBubbles && <BubblePanel />}
       </div>
       <ScenePanel glFlags={flags} onGl={onChange} />
       <PerfHUD />

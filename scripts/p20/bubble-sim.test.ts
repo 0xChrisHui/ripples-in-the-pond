@@ -8,7 +8,7 @@ function seeded(seed: number) {
 }
 const W = 1440, H = 900;
 const base = (over: Partial<SimEnv> = {}): SimEnv => ({
-  w: W, h: H, discs: [], discCount: 0, surfaceD: 0.525, playing: false, reduced: false, tuning: DEFAULT_BUBBLE_TUNING, ...over,
+  w: W, h: H, discs: [], discCount: 0, surfaceD: 0.525, playing: false, reduced: false, tuning: DEFAULT_BUBBLE_TUNING, onPop: () => {}, ...over,
 });
 
 /** 跑 seconds 秒，返回每帧可见泡数组与"出现过的串"数（可见→全无 的次数）。 */
@@ -83,5 +83,24 @@ function run(seed: number, seconds: number, env: SimEnv) {
       assert.ok(v.x > W * 0.12 && v.x < W * 0.88 && v.y > H * 0.12 && v.y < H * 0.88, `水面落点 (${v.x | 0},${v.y | 0})`);
     }
   }
+}
+// 8. 破水：每个泡恰好破一次，落在水面（泡数 = 破水数）；被球挡住的不破
+{
+  const rng = seeded(17), sim = createBubbleSim(rng), out: BubbleView[] = [];
+  const pops: Array<[number, number]> = [];
+  const env = base({ onPop: (x, y) => pops.push([x, y]) });
+  let shown = 0, lastShown = 0;
+  for (let t = 0; t < 33; t += 1 / 60) { // 首串最迟 8 秒起、25 秒内收尾，下一串最早 35 秒
+    const n = stepBubbles(sim, 1 / 60, env, rng, out);
+    if (n > 0) shown = Math.max(shown, n);
+    lastShown = n;
+  }
+  assert.ok(pops.length >= 3 && pops.length <= 6, `一串破水数 ${pops.length}`);
+  assert.equal(lastShown, 0);
+  for (const [x, y] of pops) assert.ok(x > W * 0.1 && x < W * 0.9 && y > H * 0.1 && y < H * 0.9);
+  const covered = [{ x: W / 2, y: H / 2, r: 5000 }];
+  const sim2 = createBubbleSim(seeded(17)); const got: number[] = [];
+  for (let t = 0; t < 33; t += 1 / 60) stepBubbles(sim2, 1 / 60, base({ discs: covered, discCount: 1, onPop: () => got.push(1) }), seeded(17), out);
+  assert.equal(got.length, 0);
 }
 console.log('P20 气泡模拟测试通过');

@@ -20,6 +20,14 @@ const MAX_BUBBLES = 8;
 const BASE_OPACITY = 0.4;
 const MIN_SPRITE_PX = 6;      // 光环半径只占精灵的 0.3，再小边缘会被截
 const COLOR = new Color('#cce5ff');
+// 破水：只要极小水纹，不推球——size/duration 为 0 时 use-gl-sim 的推球波下一帧就被过滤掉，不会产生 NaN。
+const POP_STRENGTH = 0.04;    // 对比点击滴水 0.1
+const POP_RADIUS = 0.006;     // 对比点击滴水 0.01（占屏比）
+function popRipple(x: number, y: number): void {
+  window.dispatchEvent(new CustomEvent('bg-ripple:wave', {
+    detail: { x, y, strength: POP_STRENGTH * getBubbleTuning().opacity, radius: POP_RADIUS, size: 0, duration: 0 },
+  }));
+}
 
 export default function PondBubbles({ glSim }: { glSim?: GlSim }) {
   const pointsRef = useRef<Points>(null);
@@ -48,7 +56,7 @@ export default function PondBubbles({ glSim }: { glSim?: GlSim }) {
     const discCount = collectDiscs(glSim, w, h, discs);
     const n = Math.min(MAX_BUBBLES, stepBubbles(sim, Math.min(delta, 0.1), {
       w, h, discs, discCount, surfaceD: getEffectiveWaterLevel(),
-      playing: glSim?.playingIdRef.current != null, reduced: prefersReducedMotion(), tuning,
+      playing: glSim?.playingIdRef.current != null, reduced: prefersReducedMotion(), tuning, onPop: popRipple,
     }, Math.random, views));
     const pos = geometry.getAttribute('position') as BufferAttribute;
     const size = geometry.getAttribute('aSize') as BufferAttribute;
