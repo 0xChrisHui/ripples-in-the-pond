@@ -89,7 +89,7 @@
   },
   "routeError": {
     "artist": {
-      "eyebrow": "ARTIST / 叶禹含",
+      "eyebrow": "ARTIST / YE YUHAN",
       "title": "The artist page can't be loaded right now",
       "description": "We haven't replaced the artist and project introduction with placeholder content. Try again, or head back to the pond for now."
     },
@@ -120,7 +120,6 @@
     "identityPendingDescription": "Your music will appear as soon as your identity is confirmed.",
     "signInTitle": "Sign in to find your music",
     "signInDescription": "Sign in to return to your private music archive.",
-    "updating": "Updating…",
     "empty": {
       "records": "Records you've minted will stay here.",
       "pending": "New recordings are kept here for 24 hours.",
@@ -774,8 +773,6 @@
     "eventsPending": "Event count pending verification",
     "events": "{count, plural, one {# permanent event} other {# permanent events}}",
     "track": "Permanent music record",
-    "work": "Permanent work",
-    "alt": "Permanent record",
-    "altMultichain": "Multichain permanent record"
+    "work": "Permanent work"
   }
 }

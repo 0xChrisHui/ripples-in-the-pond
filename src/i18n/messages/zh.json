@@ -120,7 +120,6 @@
     "identityPendingDescription": "身份确认后，你的音乐会立即出现。",
     "signInTitle": "登录后找回你的音乐",
     "signInDescription": "登录用于找回你的私人音乐档案。",
-    "updating": "正在更新…",
     "empty": {
       "records": "铸造完成的唱片会留在这里。",
       "pending": "新录音会在这里保留 24 小时。",
@@ -774,8 +773,6 @@
     "eventsPending": "事件数待核验",
     "events": "{count} 个永久事件",
     "track": "永久音乐唱片",
-    "work": "永久作品",
-    "alt": "永久唱片",
-    "altMultichain": "多链永久唱片"
+    "work": "永久作品"
   }
 }

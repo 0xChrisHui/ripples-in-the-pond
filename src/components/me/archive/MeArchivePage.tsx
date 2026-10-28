@@ -49,6 +49,7 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
     evmAddress: auth.evmAddress,
     getAccessToken: auth.getAccessToken,
   });
+  const recordsError = [scores.error, echoes.error].filter(Boolean).join('；') || null;
   const archiveReady = Boolean(auth.userId && ownerId === auth.userId);
   const identityPending = !auth.ready || (auth.authenticated && !archiveReady);
   const ownerKey = auth.authenticated && auth.authSource && auth.userId
@@ -149,7 +150,7 @@ export default function MeArchivePage({ variant = 'default', onPrepared }: {
               <ArchiveSection id="records" title={t('sections.records')} count={recordCount}
                 loading={archiveLoading(scores) || (Boolean(auth.evmAddress)
                   && (echoes.phase === 'idle' || echoes.phase === 'loading'))}
-                error={serverText([scores.error, echoes.error].filter(Boolean).join('；') || null, t('errors.records')) || null}
+                error={recordsError && serverText(recordsError, t('errors.records'))}
                 warning={echoes.warning.map(msgText).join('；') || null} onRetry={() => { void retry('scores'); void echoes.retry(); }}
                 emptyDescription={t('empty.records')}
                 page={safePages.records} pageCount={pageCounts.records}
