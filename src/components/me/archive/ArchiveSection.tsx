@@ -42,6 +42,8 @@ export default function ArchiveSection({
   const isEmpty = !loading && !error && count === 0;
   const detail = checkingOwner
     ? (error ? t('checkingDetailWithError', { error }) : t('checkingDetail')) : error ?? warning;
+  // 展开状态的身份只随提示类型变化；用文案当 key 会让切换语言时已展开的说明被收起
+  const detailKind = checkingOwner ? 'checking' : error ? 'error' : 'warning';
   const status = error ? t('statusError') : checkingOwner ? t('statusChecking') : warning ? t('statusWarning')
     : refreshing ? t('statusRefreshing') : '';
 
@@ -56,7 +58,7 @@ export default function ArchiveSection({
         <div className="archive-section__status">
           <span className="archive-section__announcement" aria-live="polite" aria-atomic="true">{status}</span>
           {detail && (
-            <details className="archive-section__details" key={detail}>
+            <details className="archive-section__details" key={detailKind}>
               <summary aria-label={t('detailsLabel', { status })}>{t('details', { status })}</summary>
               <div className="archive-section__notice">
                 <p>{detail}</p>

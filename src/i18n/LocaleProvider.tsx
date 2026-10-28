@@ -11,9 +11,10 @@ import {
 } from './locale';
 import { useLocalizedTitle } from './use-localized-title';
 
-type LocaleSwitch = { locale: Locale; setLocale: (next: Locale) => void };
+/** locale 是当前已生效的语言；pendingLocale 是最后一次点选的目标（英文词典下载期间两者不同，点回当前语言即可取消） */
+type LocaleSwitch = { locale: Locale; pendingLocale: Locale; setLocale: (next: Locale) => void };
 
-const LocaleSwitchContext = createContext<LocaleSwitch>({ locale: DEFAULT_LOCALE, setLocale: () => {} });
+const LocaleSwitchContext = createContext<LocaleSwitch>({ locale: DEFAULT_LOCALE, pendingLocale: DEFAULT_LOCALE, setLocale: () => {} });
 
 /** 读当前语言 / 切换语言（Step 2 的 CN/EN 按钮用） */
 export function useLocaleSwitch() {
@@ -26,11 +27,13 @@ export function useLocaleSwitch() {
  */
 export default function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
+  const [pendingLocale, setPendingLocale] = useState<Locale>(DEFAULT_LOCALE);
   const active = useRef<Locale>(DEFAULT_LOCALE);
   const requested = useRef<Locale>(DEFAULT_LOCALE);
 
   const apply = useCallback(async (target: Locale) => {
     requested.current = target;
+    setPendingLocale(target);
     const ready = await loadMessages(target).then(() => true, (error: unknown) => {
       console.error('[i18n] 词典加载失败，保持当前语言', error);
       return false;
@@ -38,6 +41,7 @@ export default function LocaleProvider({ children }: { children: ReactNode }) {
     if (requested.current !== target) return; // 连续切换时只认最后一次
     const next = ready ? target : active.current;
     active.current = next;
+    setPendingLocale(next);
     document.documentElement.lang = HTML_LANG[next];
     startTransition(() => setLocaleState(next));
   }, []);
@@ -49,11 +53,12 @@ export default function LocaleProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const saved = readLocaleCookie();
-    if (saved !== DEFAULT_LOCALE) void apply(saved);
+    // 微任务里再进 apply：apply 开头会同步更新 pendingLocale，不能直接在 effect 体内 setState
+    if (saved !== DEFAULT_LOCALE) void Promise.resolve().then(() => apply(saved));
   }, [apply]);
 
   useLocalizedTitle(locale);
-  const value = useMemo(() => ({ locale, setLocale }), [locale, setLocale]);
+  const value = useMemo(() => ({ locale, pendingLocale, setLocale }), [locale, pendingLocale, setLocale]);
 
   return (
     <LocaleSwitchContext.Provider value={value}>

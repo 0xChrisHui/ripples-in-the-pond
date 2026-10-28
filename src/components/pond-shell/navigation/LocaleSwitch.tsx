@@ -17,7 +17,7 @@ const OPTIONS: { locale: Locale; label: string; name: string; lang: string }[] =
 /** 全站唯一的语言切换：挂在 PondHeader（所有生产页面的右上角都经由它）。点击只换词典，不刷新页面。 */
 export default function LocaleSwitch() {
   const t = useTranslations('localeSwitch');
-  const { locale, setLocale } = useLocaleSwitch();
+  const { locale, pendingLocale, setLocale } = useLocaleSwitch();
   if (!LOCALE_SWITCH_VISIBLE) return null;
   return (
     <div role="group" aria-label={t('label')} className="pond-locale-switch">
@@ -29,7 +29,7 @@ export default function LocaleSwitch() {
             lang={option.lang}
             aria-label={option.name}
             aria-pressed={locale === option.locale}
-            onClick={() => { if (locale !== option.locale) setLocale(option.locale); }}
+            onClick={() => { if (option.locale !== pendingLocale) setLocale(option.locale); }}
             className="pond-locale-switch__option"
           >
             {option.label}
