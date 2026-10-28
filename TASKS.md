@@ -7,7 +7,7 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
-### P14-J Echo 流水线恢复 + 已铸唱片补发 #36（2026-10-28 完成上线，分支 feat/p14-j；剩 0x414c 与用户目验两项后续）
+### P14-J Echo 流水线恢复 + 已铸唱片补发 #36（2026-10-28 完成上线并全部铸完，分支 feat/p14-j；剩用户目验一项）
 
 - 方案 `playbook/phase-14/97-j-echo-pipeline-recovery.md`；J-A、J-B 均按用户“全部按建议”落地。
 - [x] J-A0 只读核实：生产 `WALLET_RECIPE_MODE=observe`；运营钱包 OP 余额 0.0101 ETH、Turbo 约 0.54 credit 够用；5 笔失败订单 events 在三家网关 5/5×3/3 一致
@@ -16,7 +16,7 @@
 - [x] J-A3 补投失败订单：19bd7235（0x991b）→ OP Score #5 成功（链上持有人与 tokenURI 已核）；5b0064f2、511ed2ca、167d6699 已补投、流水线处理中；f345bc2c 保持 failed
 - [x] J-A4 Vercel 生产 WALLET_RECIPE_MODE=live（vercel env update 读回确认 → redeploy 到 pond-ripple.xyz）：0xBEEC 自 9/21 的 pending 开始处理，Score #5 被自动发现登记
 - [x] J-B 放行 0x19da、0xFD86（无 migration，CAS 单条 UPDATE）。收尾时点（2026-10-28）：Echo #2 0xFD86、#3 0x19da、#4 0xBEEC、#5 0x991b 均已 success（#1 为原有 0x456b）；补投 Score：#5 0x991b、#6 0x19da 成功，0xBEEC 第二张在最后的元数据步骤
-- [ ] **后续核验 ①**：`167d6699`（0x414c，用户邮箱账号）仍在 OP 队列排队，收尾时尚未轮到；其 Score 铸出后还要再排一次 Echo 队。用以下只读检查确认：score_nft_queue 该单 success 且 wallet_recipe_queue 中 0x414c 为 success（echo 编号非空）
+- [x] **后续核验 ①**（2026-10-28 09:11 完成）：167d6699（0x414c）success → OP Score #8；0x414c Echo #6。补投订单全部成功：Score #5 0x991b、#6 0x19da、#7 0xBEEC、#8 0x414c。链上核对：Pond Echoes totalSupply=6（#1–#6），0xFD86/0x19da/0x991b/0x414c 的 tokenIdByOrigin 与持有人均为本人
 - [ ] **后续核验 ②（用户）**：在正式站登录 0x991b / 0xBEEC / 0x19da / 0xFD86 任一，看首页 #36 渐显与 /me 的 Echo；`/echo/<id>` 可播放
 - [ ] 未决问题：用户提到“/score 页面即便没有成功铸造也可点击播放聆听”，意图尚未澄清（已问三次）；若为需求再单独立项
 

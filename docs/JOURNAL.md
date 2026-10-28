@@ -1884,3 +1884,5 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 
 - 2026-10-28：P19 收尾。Codex（gpt-6.1-sol，max）完整审查 P19 后，Claude 对照 main 复核 5 项 P1 全部成立，另自查未发现新问题。关键根因：①`MeArchivePage` 把“无错误”也交给 `serverText` 兜底，正常档案恒显示读取失败（P19 引入的回归）；②提示/错误存成翻译成品，切换语言后停在旧语言——统一改为存词典键、渲染时取词（`MaterialNotice` 存键，`renderMaterialNotice` 取词）；③英文模式只拦标题没拦“技术详情”，含中文时整体隐藏；④旧录音缓存无 `label`，改为校验缺 label 判无效，不升全局缓存版本。另修 P2：`pendingLocale` 让点回当前语言可取消待切换；英文内容下载失败不缓存 Promise；`<details>` key 不再用文案。教训：Codex 在内存紧张时并行开子进程会崩（页面文件 1455），重跑须提示串行；用 python 改含 `
 ` 的源码时转义会被工具层吃掉，改用 `chr(92)`。未做：浏览器复测。
+
+- 2026-10-28：P14-J 数据补发全部完成（09:11）。补投 Score #5 0x991b、#6 0x19da、#7 0xBEEC、#8 0x414c；Echo #2 0xFD86、#3 0x19da、#4 0xBEEC、#5 0x991b、#6 0x414c，#1 为原有 0x456b。链上 Pond Echoes totalSupply=6，已逐个核对 4 个钱包的 tokenIdByOrigin 与持有人。日志出现“等待永久资源传播”：刚上传的文件在 arweave.net 上数分钟读不到而 ardrive.net 可读，新的等待分支正常工作，未再把订单判失败。仍待：用户正式站登录目验。
