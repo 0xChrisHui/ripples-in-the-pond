@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createPersonalEchoPoll } from '@/src/hooks/echo/personal-echo-poll';
 import type { FeaturedEcho, PersonalEchoHomeResponse } from '@/src/types/featured-echo';
-import { echo } from './echo-fixtures';
+import { echo } from '@/scripts/p14-i/echo-fixtures';
 
 const pending: PersonalEchoHomeResponse = { echo: null, pending: true };
 const empty: PersonalEchoHomeResponse = { echo: null, pending: false };
@@ -114,7 +114,7 @@ async function main() {
     assert.equal(h.errors.length, 2); assert.equal(h.poll.polling, false);
     for (const message of ['网络错误', '查询失败（状态码 503）']) {
       const initial = setup(async (_signal, count) => { if (count === 1) throw new Error(message); return pending; });
-      initial.poll.start(); await flush(); initial.poll.recheck(); await initial.advance(60_000);
+      initial.poll.start(); await flush(); await initial.advance(60_000);
       assert.deepEqual(initial.outputs, [null]); assert.equal(initial.errors.length, 1);
       assert.equal(initial.poll.polling, false); assert.equal(initial.timers.size, 0);
       assert.equal(initial.signals.length, 1);
@@ -122,21 +122,22 @@ async function main() {
       assert.equal(initial.poll.polling, true); initial.poll.stop();
     }
   }
-  { // g：无 Echo 本轮结束；按请求开始节流，隐藏不查，重复唤醒不并发、不排队。
+  { // g：无 Echo 本轮结束；冷却内多次唤醒合并为一次延后补查，隐藏不查，不并发。
     for (const pendingFirst of [false, true]) {
       const h = setup(async (_signal, count) => pendingFirst && count === 1 ? pending : empty);
       h.poll.start(); await flush(); await h.advance(pendingFirst ? 30_000 : 0);
       assert.equal(h.poll.polling, false); assert.equal(h.outputs.at(-1), null);
       const before = h.signals.length;
       h.poll.recheck(); await h.advance(29_999); h.poll.recheck(); await flush();
-      assert.equal(h.signals.length, before); assert.equal(h.timers.size, 0);
-      await h.advance(1); h.visibility.active = false; h.poll.recheck();
+      assert.equal(h.signals.length, before); assert.equal(h.timers.size, 1);
+      await h.advance(1); assert.equal(h.signals.length, before + 1); assert.equal(h.timers.size, 0);
+      await h.advance(30_000); h.visibility.active = false; h.poll.recheck();
       h.visibility.active = true; h.visibility.documentVisible = false; h.poll.recheck();
-      await flush(); assert.equal(h.signals.length, before); assert.equal(h.timers.size, 0);
+      await flush(); assert.equal(h.signals.length, before + 1); assert.equal(h.timers.size, 0);
       h.visibility.documentVisible = true; h.poll.recheck(); h.poll.recheck(); await flush();
-      assert.equal(h.signals.length, before + 1); assert.equal(h.timers.size, 0);
+      assert.equal(h.signals.length, before + 2); assert.equal(h.timers.size, 0);
       h.poll.stop(); await h.advance(30_000); h.poll.recheck(); await flush();
-      assert.equal(h.signals.length, before + 1);
+      assert.equal(h.signals.length, before + 2);
     }
     const h = setup(async () => ({ echo, pending: true }));
     h.poll.start(); await flush(); assert.equal(h.outputs[0], echo);
@@ -188,12 +189,11 @@ async function main() {
     await h.advance(1_169_999); assert.equal(h.signals.length, 41); assert.equal(h.poll.polling, true);
     await h.advance(1); assert.equal(h.poll.polling, false); assert.equal(h.timers.size, 0);
   }
-  { // 冷却从请求开始计，慢首查返回后不另等 30 秒。
+  { // 冷却从请求开始计：慢首查返回后的唤醒在“请求开始 +30 秒”补查，不另等 30 秒。
     const waiting = deferred(), h = setup((_signal, count) => count === 1 ? waiting.promise : Promise.resolve(empty));
     h.poll.start(); await h.advance(29_999); waiting.resolve(empty); await flush();
-    h.poll.recheck(); await flush(); assert.equal(h.signals.length, 1); assert.equal(h.timers.size, 0);
-    await h.advance(1); h.poll.recheck(); await flush(); assert.equal(h.signals.length, 2);
-    h.poll.stop();
+    h.poll.recheck(); await flush(); assert.equal(h.signals.length, 1); assert.equal(h.timers.size, 1);
+    await h.advance(1); await flush(); assert.equal(h.signals.length, 2); h.poll.stop();
   }
   console.log('通过');
 }

@@ -6,14 +6,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/src/hooks/useAuth';
 import { fetchWithAuth } from '@/src/lib/fetch-with-auth';
 import type { FeaturedEcho, PersonalEchoHomeResponse } from '@/src/types/featured-echo';
-import { createPersonalEchoPoll } from './personal-echo-poll';
+import { createPersonalEchoPoll } from '@/src/hooks/echo/personal-echo-poll';
+import { createPersonalEchoCache, identityKeyOf, visibleEcho } from '@/src/hooks/echo/personal-echo-identity';
 
-const echoCache = new Map<string, FeaturedEcho>();
+const echoCache = createPersonalEchoCache();
 
 export function usePersonalEcho(enabled: boolean, active: boolean): FeaturedEcho | null {
   const { authenticated, authSource, userId, evmAddress, getAccessToken } = useAuth();
-  const key = authenticated && authSource && userId && evmAddress
-    ? `${authSource}:${userId}:${evmAddress.toLowerCase()}` : null;
+  const key = identityKeyOf({ authenticated, authSource, userId, evmAddress });
   const [snapshot, setSnapshot] = useState<{
     key: string | null;
     echo: FeaturedEcho | null;
@@ -31,7 +31,7 @@ export function usePersonalEcho(enabled: boolean, active: boolean): FeaturedEcho
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
-    if (!authenticated) echoCache.clear();
+    echoCache.syncAuthentication(authenticated);
     if (!enabled || !key) {
       queueMicrotask(() => {
         if (!signal.aborted) setSnapshot({ key: null, echo: null });
@@ -42,10 +42,7 @@ export function usePersonalEcho(enabled: boolean, active: boolean): FeaturedEcho
 
     function publish(echo: FeaturedEcho | null) {
       if (signal.aborted) return;
-      const cached = echoCache.get(identityKey);
-      const stableEcho = echo && cached?.identity === echo.identity ? cached : echo;
-      if (stableEcho) echoCache.set(identityKey, stableEcho);
-      else echoCache.delete(identityKey);
+      const stableEcho = echoCache.remember(identityKey, echo);
       setSnapshot((current) => (
         current.key === identityKey && current.echo?.identity === stableEcho?.identity
           ? current : { key: identityKey, echo: stableEcho }
@@ -97,5 +94,5 @@ export function usePersonalEcho(enabled: boolean, active: boolean): FeaturedEcho
     };
   }, [authenticated, enabled, key]);
 
-  return enabled && key && snapshot.key === key ? snapshot.echo : null;
+  return visibleEcho(enabled, key, snapshot);
 }

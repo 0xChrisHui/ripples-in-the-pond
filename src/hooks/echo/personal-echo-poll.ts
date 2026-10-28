@@ -108,7 +108,16 @@ export function createPersonalEchoPoll({
       if (!started || terminal() || !isVisible()) return;
       expired();
       // 冷却只约束本轮结束后的唤醒；轮询中的聚焦仍可立即复查。
-      if (state === 'idle' && lastRequestedAt !== null && now() - lastRequestedAt < intervalMs) return;
+      if (state === 'idle' && lastRequestedAt !== null && now() - lastRequestedAt < intervalMs) {
+        // 唯一一次唤醒也不能丢；重复唤醒合并，按请求开始时刻补足冷却。
+        if (!request && timer === null) {
+          timer = setTimer(() => {
+            timer = null;
+            if (state === 'idle' && isVisible()) void execute();
+          }, lastRequestedAt + intervalMs - now());
+        }
+        return;
+      }
       void execute();
     },
     stop() { finish('destroyed'); },

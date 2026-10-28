@@ -1,9 +1,9 @@
-import '../_env';
+import './test-env';
 import assert from 'node:assert/strict';
 import type { NextRequest } from 'next/server';
 import { GET } from '@/app/api/me/pond-echo/home/route';
 import { toFeaturedEcho } from '@/src/data/echo/featured';
-import { HOME_ECHO_CACHE_CONTROL, isOriginEchoPending, resolveHomeEcho } from '@/src/data/echo/home-echo';
+import { handleHomeEchoRequest, HOME_ECHO_CACHE_CONTROL, isOriginEchoPending, resolveHomeEcho } from '@/src/data/echo/home-echo';
 import type { EchoViewData } from '@/src/data/echo/types';
 import type { RecipeV1, WalletRecipeQueueStatus } from '@/src/types/wallet-recipe';
 
@@ -133,6 +133,47 @@ async function verifyAnonymousRoute(): Promise<void> {
   }
 }
 
+async function verifyRequestBranches(): Promise<void> {
+  const body = { echo: toFeaturedEcho(fixture(), chainId), pending: false };
+  const cases = [
+    { address: null, status: 401, body: { error: '未登录' } },
+    { address: '无效地址', status: 400, body: { error: '登录钱包地址无效' } },
+    { address: origin.toLowerCase(), status: 200, body },
+    { address: origin, status: 200, body: { echo: null, pending: true } },
+    { address: origin, status: 200, body: { echo: null, pending: false } },
+    { address: origin, status: 503, body: { echo: null, pending: false, error: '池中回声暂不可用' } },
+  ];
+  const previousFetch = globalThis.fetch, previousError = console.error;
+  globalThis.fetch = async () => { throw new Error('接口分支测试禁止访问网络或数据库'); };
+  const errors: unknown[][] = [];
+  console.error = (...args: unknown[]) => { errors.push(args); };
+  try {
+    for (const item of cases) {
+      let resolved = false;
+      const request = new Request('http://localhost/api/me/pond-echo/home');
+      const response = await handleHomeEchoRequest(request, {
+        authenticate: async (received) => {
+          assert.equal(received, request);
+          return item.address === null ? null : { evmAddress: item.address, userId: '测试用户', authSource: 'semi' };
+        },
+        resolve: async (wallet, deps) => {
+          resolved = true; assert.equal(wallet, origin); assert.equal(deps?.chainId, chainId);
+          if (item.status === 503) throw new Error('测试解析失败');
+          assert.ok(item.body.echo !== undefined && item.body.pending !== undefined);
+          return { echo: item.body.echo, pending: item.body.pending };
+        },
+        chainId,
+      });
+      assert.equal(response.status, item.status);
+      assert.deepEqual(await response.json(), item.body);
+      assert.equal(response.headers.get('Cache-Control'), 'private, no-store');
+      assert.match(response.headers.get('Server-Timing') ?? '', /auth;dur=.*serialize;dur=.*total;dur=/);
+      assert.equal(resolved, item.status === 200 || item.status === 503);
+    }
+    assert.equal(errors.length, 1);
+  } finally { globalThis.fetch = previousFetch; console.error = previousError; }
+}
+
 async function main(): Promise<void> {
   assert.equal(toFeaturedEcho(fixture(), chainId).tokenId, '3');
   for (const tokenId of ['0', 'abc', '-1', '1.5', '01', '', '3\n']) {
@@ -141,6 +182,7 @@ async function main(): Promise<void> {
   await verifyOriginSelection();
   await verifyPending();
   await verifyAnonymousRoute();
+  await verifyRequestBranches();
   console.log('P14-I I1 私有首页 Echo 测试通过');
 }
 
