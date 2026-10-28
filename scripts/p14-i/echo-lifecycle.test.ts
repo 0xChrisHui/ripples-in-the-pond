@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import type { ForceCollide } from 'd3-force';
-import { buildGlNodes, setupGlSimulation, type GlPhysNode } from '@/src/components/pond-gl-test3/spheres/gl-sim-setup';
+import { type GlPhysNode } from '@/src/components/pond-gl-test3/spheres/gl-sim-setup';
 import { observeEchoNode } from '@/src/components/pond-gl-test3/spheres/simulation/echo-node';
 import { getSpecial36Presence } from '@/src/components/pond-gl-test3/special36/special36-step';
-import { echo, otherEcho, tracks } from './echo-fixtures';
+import { createEchoSimulation, echo, otherEcho, measureEchoDisplacement, mulberry32 } from './echo-fixtures';
 
 async function main() {
   let now = 0, nextFrame = 0, publications = 0;
@@ -20,11 +20,7 @@ async function main() {
   };
   const saved = new Map(Object.keys(environment).map((key) => [key, Object.getOwnPropertyDescriptor(globalThis, key)]));
   Object.entries(environment).forEach(([key, value]) => Object.defineProperty(globalThis, key, { configurable: true, value }));
-  const createSim = (w = 1200, h = 800, group: 'A' | 'B' | 'C' = 'A') => {
-    const built = buildGlNodes(tracks, group, 'lifecycle');
-    return setupGlSimulation(built.nodes, built.links, built.assignment, w, h, 'lifecycle').sim.stop();
-  };
-  const sim = createSim();
+  const sim = createEchoSimulation();
   const collide = sim.force('collide') as ForceCollide<GlPhysNode>;
   const radiusOf = collide.radius(), radii = new Map<GlPhysNode, number>();
   let radiusReads = 0;
@@ -32,7 +28,7 @@ async function main() {
     const radius = radiusOf(node, index, nodes);
     radiusReads++; radii.set(node, radius); return radius;
   });
-  let publishedNodes: ReturnType<typeof buildGlNodes>['nodes'] | null = null;
+  let publishedNodes: GlPhysNode[] | null = null;
   const size = { current: { w: 1200, h: 800 } };
   const observe = (value: typeof echo | null) => {
     const cleanup = observeEchoNode(sim, value, 'A', 'lifecycle', size, (nodes) => {
@@ -106,7 +102,7 @@ async function main() {
     cleanup(); cleanup = observe(null);
     const stale = [...frames.values()][0];
     cleanup();
-    const replacement = createSim();
+    const replacement = createEchoSimulation();
     let rebuiltPublications = 0;
     const cleanupReplacement = observeEchoNode(replacement, echo, 'A', 'lifecycle', size, () => rebuiltPublications++);
     replacement.stop();
@@ -140,44 +136,26 @@ async function main() {
     assert.equal(frames.size, 0, '卸载后监听器不能再次排入帧回调');
     assert.equal(sim.nodes().length, 35);
 
-    // 实际 observer 驱动过渡，真实 d3 每 tick 与相同 alpha 的无 Echo 对照比较位移向量。
+    // 50 个固定种子覆盖三种视口与全部分组，逐种子守住原 2px 预算。
     media.matches = false;
     const results: { viewport: string; entering: number; leaving: number }[] = [];
-    const tick = (target: typeof sim) => { target.tick(); target.on('tick')?.call(target); };
-    for (const [w, h] of [[320, 568], [667, 375], [1440, 900]]) {
-      const maxima = [0, 0];
-      for (const group of ['A', 'B', 'C'] as const) {
-        const subject = createSim(w, h, group), control = createSim(w, h, group);
-        try {
-          for (let i = 0; i < 600; i++) { tick(subject); tick(control); }
-          for (const [phase, value] of [echo, null].entries()) {
-            cleanup = observeEchoNode(subject, value, group, 'lifecycle', { current: { w, h } }, (nodes) => {
-              assert.equal(nodes, subject.nodes());
-            });
-            subject.stop();
-            // 含 presence=0 的追加首 tick、过渡完成 tick，以及移除后的下一 tick。
-            for (let frame = 0; frame < (phase === 0 ? 93 : 84); frame++) {
-              if (frame) await advance(1000 / 60);
-              subject.stop(); control.alpha(subject.alpha());
-              const before = subject.nodes().slice(0, 35).map((n, i) => ({
-                x: n.x!, y: n.y!, cx: control.nodes()[i].x!, cy: control.nodes()[i].y!,
-              }));
-              tick(subject); tick(control);
-              subject.nodes().slice(0, 35).forEach((n, i) => {
-                const c = control.nodes()[i], b = before[i];
-                const extra = Math.hypot((n.x! - b.x) - (c.x! - b.cx), (n.y! - b.y) - (c.y! - b.cy));
-                assert.ok(Number.isFinite(extra), '位移必须是有限值');
-                maxima[phase] = Math.max(maxima[phase], extra);
-              });
+    const random = Math.random;
+    try {
+      for (const [w, h] of [[320, 568], [667, 375], [1440, 900]]) {
+        const maxima = [0, 0];
+        for (let seed = 1; seed <= 50; seed++) {
+          Math.random = mulberry32(seed);
+          for (const group of ['A', 'B', 'C'] as const) {
+            const measured = await measureEchoDisplacement(w, h, group, advance, () => frames.size);
+            for (const [phase, extra] of measured.entries()) {
+              assert.ok(extra <= 2, `${w}×${h} seed=${seed} ${group} ${phase === 0 ? '入场' : '退场'}最大单 tick 额外位移 ${extra}px 超过 2px`);
+              maxima[phase] = Math.max(maxima[phase], extra);
             }
-            assert.equal(frames.size, 0, '过渡完成不得继续逐帧刷新碰撞');
-            assert.equal(subject.nodes().length, phase === 0 ? 36 : 35);
-            cleanup();
           }
-        } finally { cleanup(); subject.stop(); control.stop(); }
+        }
+        results.push({ viewport: `${w}×${h}`, entering: maxima[0], leaving: maxima[1] });
       }
-      results.push({ viewport: `${w}×${h}`, entering: maxima[0], leaving: maxima[1] });
-    }
+    } finally { Math.random = random; }
     console.table(results);
     for (const { viewport, entering, leaving } of results) {
       assert.ok(entering <= 2, `${viewport} 入场最大单 tick 额外位移 ${entering}px 超过 2px`);

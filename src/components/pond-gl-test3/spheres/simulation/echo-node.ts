@@ -15,29 +15,35 @@ import { rand } from '../../special36/random';
 type EchoSim = Simulation<GlPhysNode, SimLink<GlPhysNode>>;
 type SizeRef = { current: { w: number; h: number } };
 
-/** 安全区内随机挑一个不遮挡、不碰撞的出生点；全无空位时退回最空旷处。 */
+/** 安全区内随机挑空位；全无空位时按旧版中心点网格回退，避免抖动加重挤球。 */
 function placeEcho(node: GlPhysNode, nodes: GlPhysNode[], proj: ProjCtx): void {
   const frame = frameFor(node, proj);
   let best = { x: proj.cx, y: proj.cy }, bestGap = -Infinity;
   // 💭 为什么不总选最空处：35 球布局固定，最空处每次都落在同一角（I6 目验：总在右下角）。
   const free: { x: number; y: number }[] = [];
-  for (let row = 1; row <= 9; row++) {
-    for (let col = 1; col <= 9; col++) {
-      // 格内抖动后再算间距，随机落点仍受遮挡/碰撞检查约束。
-      const screen = toScreen({ x: (col + rand(-0.5, 0.5)) / 10, y: (row + rand(-0.5, 0.5)) / 10 }, frame);
-      const point = unproject(screen.x, screen.y, depthOf(node), proj, node);
-      if (point.x < 20 || point.y < 20 || point.x > proj.cx * 2 - 20 || point.y > proj.cy * 2 - 20) continue;
-      let gap = Infinity;
-      for (const n of nodes) {
-        const p = project(n.x ?? proj.cx, n.y ?? proj.cy, depthOf(n), proj, n);
-        const visual = Math.hypot(screen.x - p.sx, screen.y - p.sy) - frame.r - n.radius * HALO_R * p.scale;
-        const physical = Math.hypot(point.x - (n.x ?? proj.cx), point.y - (n.y ?? proj.cy))
-          - (node.radius + n.radius) * 1.1 - 16;
-        gap = Math.min(gap, visual, physical);
+  // 仅追加时扫描；第一轮无空位才扫描中心点，回退顺序与旧版严格一致。
+  for (const jitter of [true, false]) {
+    for (let row = 1; row <= 9; row++) {
+      for (let col = 1; col <= 9; col++) {
+        const screen = toScreen({
+          x: (col + (jitter ? rand(-0.5, 0.5) : 0)) / 10,
+          y: (row + (jitter ? rand(-0.5, 0.5) : 0)) / 10,
+        }, frame);
+        const point = unproject(screen.x, screen.y, depthOf(node), proj, node);
+        if (point.x < 20 || point.y < 20 || point.x > proj.cx * 2 - 20 || point.y > proj.cy * 2 - 20) continue;
+        let gap = Infinity;
+        for (const n of nodes) {
+          const p = project(n.x ?? proj.cx, n.y ?? proj.cy, depthOf(n), proj, n);
+          const visual = Math.hypot(screen.x - p.sx, screen.y - p.sy) - frame.r - n.radius * HALO_R * p.scale;
+          const physical = Math.hypot(point.x - (n.x ?? proj.cx), point.y - (n.y ?? proj.cy))
+            - (node.radius + n.radius) * 1.1 - 16;
+          gap = Math.min(gap, visual, physical);
+        }
+        if (jitter && gap >= 0) free.push(point);
+        if (!jitter && gap > bestGap) { best = point; bestGap = gap; }
       }
-      if (gap >= 0) free.push(point);
-      if (gap > bestGap) { best = point; bestGap = gap; }
     }
+    if (free.length > 0) break;
   }
   const spot = free.length > 0 ? free[Math.floor(rand(0, free.length))] : best;
   node.x = spot.x; node.y = spot.y; node.vx = 0; node.vy = 0;

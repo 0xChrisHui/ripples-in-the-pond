@@ -6,7 +6,9 @@ import { advanceSpecial36Transition, getSpecial36Presence } from '@/src/componen
 import { project } from '@/src/components/pond-gl-test3/sphere-projection';
 import { depthOf } from '@/src/components/pond-gl-test3/pointer-fx';
 import { HALO_R } from '@/src/components/pond-gl-test3/spheres/sphere-shader';
-import { echo, otherEcho, projection, tracks } from './echo-fixtures';
+import { echo, otherEcho, projection, tracks, verifyCrowdedFallback } from './echo-fixtures';
+
+verifyCrowdedFallback();
 
 const motion = (nodes: GlPhysNode[]) => nodes.map(({ id, x, y, vx, vy, fx, fy }) => ({ id, x, y, vx, vy, fx, fy }));
 for (const group of ['A', 'B', 'C'] as const) {
