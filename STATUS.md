@@ -18,6 +18,8 @@
 
 **P14-J Echo 流水线恢复 + 已铸唱片补发（2026-10-28 完成上线，main 8ed9fee，Vercel 已部署）**：根因两条——①`ario.permagate.io` 下线，OP 铸造的“双网关校验”只认 arweave.net + 它，自 9/23 起 5 笔订单全失败（均未发链上交易）；②生产 `WALLET_RECIPE_MODE=observe`，空投处理器只观察不处理，`0xBEEC` 自 9/21 pending。修复：校验改为 arweave.net / ardrive.net / arweave.tokyo 三选二；“已上传未可读”不再耗尽重试（按当前资源自己的上传时间等待，最长约 2 小时）；补投 4 笔订单；Vercel 切 live；放行上线前老用户 `0x19da`、`0xFD86`（无 migration，对 D5 原规则的有意例外）。结果（收尾时点）：Echo #2–#6 已全部铸完（0xFD86、0x19da、0xBEEC、0x991b、0x414c），#1 为原有 0x456b，链上 totalSupply=6；补投 Score #5–#8 全部成功。**未收尾**：仅剩用户在正式站登录目验。已知未改：OP 队列串行、单张约 20 分钟（见 TASKS Later）。方案 `playbook/phase-14/97-j-echo-pipeline-recovery.md`。
 
+**P20 池塘气泡与手记（2026-10-28，分支 feat/p20-pond-bubbles，未合并未推送，视觉全部未目验）**：Step 0–6 代码层已做完并逐步本地提交（基线 a9f5e42；#36 变淡 da8e17b → 气泡 42d86be → 手记片段 a2aa92d → 破水与调参 66ea47c → 手记出场 787e011 → 跨页透传 ca5713e）。`pondBubbles` 默认关，`/test4?pondBubbles=1` 或 `/?pondBubbles=1`（整页加载）可开。代码层已验：tsc、ESLint、两个单测（`scripts/p20/`：气泡模拟 10 组、手记切分）、词典检查、无头 Edge 加载无 shader 报错。**效果层均未验**：无头环境画不出球与气泡，没有任何截图能证明气泡的外观、被折射、避让球、手记排版与悬停框。待用户做 Gate A（`/test4` 目验 #36 变淡与气泡观感，定 D1/D2）、Gate B（生产外壳逐路由目验，定 D6 是否默认开）。详见 `playbook/phase-20/00-overview.md` 末尾“执行记录”。
+
 **下一步**：P14-I、P14-J 均已上线并铸完，仅剩 P14-J 的用户正式站登录目验（见 TASKS）；用户转去处理 P19。
 
 **P14-I/J 历史（2026-10-28）**：P14-I 已上线（2026-10-28 main 8de3de5，Vercel 自动部署）。正式站匿名复核通过：首页 35 球、无 echo 请求、无 456b；新接口 401 + private,no-store；旧 `/api/echo/featured` 404。剩用户在正式站登录有 Echo 的钱包目验 #36 与耗时（TASKS 复核③）。其余并行线（P19 合入、P15-J 目验）见上方各段。
