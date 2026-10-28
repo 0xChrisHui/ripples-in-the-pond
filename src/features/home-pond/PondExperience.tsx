@@ -86,7 +86,8 @@ export default function PondExperience({ mode, persistent = false, children }: {
     return (scoreScene?.scenePresence?.current ?? 1) * getScenePresence('score');
   } }), [scoreScene]);
   const sceneFlags = useMemo(
-    () => persistent && !renderHomeScene ? ARCHIVE_FLAGS : glFlags,
+    // 池塘气泡属于持久水面核心：档案场景（/me、/artist）也跟随首页的 pondBubbles（与花瓣同理）
+    () => persistent && !renderHomeScene ? { ...ARCHIVE_FLAGS, pondBubbles: glFlags.pondBubbles } : glFlags,
     [glFlags, persistent, renderHomeScene],
   );
   const coreFlags = useMemo(() => registeredScene ? {
@@ -94,8 +95,9 @@ export default function PondExperience({ mode, persistent = false, children }: {
     glSpheres: scoreScene ? scoreScene.flags.glSpheres : glFlags.glSpheres,
     // 水面花瓣属于持久 Water Core，路由 Scene 不得卸载并重排它。
     flowerPetals: glFlags.flowerPetals,
+    pondBubbles: glFlags.pondBubbles,
     forceFallback: glFlags.forceFallback,
-  } : sceneFlags, [glFlags.flowerPetals, glFlags.forceFallback, glFlags.glSpheres, registeredScene, sceneFlags, scoreScene]);
+  } : sceneFlags, [glFlags.flowerPetals, glFlags.pondBubbles, glFlags.forceFallback, glFlags.glSpheres, registeredScene, sceneFlags, scoreScene]);
   const glHealth: GlHealth = glFlags.forceFallback ? 'forced' : runtimeGlHealth;
   const glOk = glHealth === 'healthy' && sceneReady;
   const regularPlayingId = playing && currentTrack ? currentTrack.id : null;
