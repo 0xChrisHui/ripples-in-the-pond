@@ -26,6 +26,7 @@ export type GlPhysNode = Omit<SimNode, 'track'> & GlSource & {
   _lifeDim?: number;  // L5-1 透明度隐现系数（缺省视作 1）
   _visualDim?: number; // P8-L A3：SphereInstances 写入的整体可见度，水面效果只读它
   _presence?: number;  // 第36特殊圆隐现 0..1（special36-step 写；缺省视作 1）
+  _calm?: number;     // 第36圆默认态变淡系数 0..1（special36-calm 写；播放/日食时回 0）
   _jelVx?: number;    // L3-3 果冻感平滑速度 x
   _jelVy?: number;    // L3-3 果冻感平滑速度 y
 };

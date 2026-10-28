@@ -23,6 +23,7 @@ import { stepWakeSpheres } from '../life/wake-field';
 import { prefersReducedMotion } from '../reduced-motion';
 import { getPlaybackFocus } from '../focus/playback-focus';
 import { fillDrawOrder, isSpecial36, stepSpecial36 } from '../special36/special36-step';
+import { stepSpecial36Calm } from '../special36/special36-calm';
 
 // 球色：手动解析 hex → sRGB 0-1，绕过 three 的 Color/ColorManagement（R3F 强制 linear 会让球色暗掉近半）。
 // 自定义 shader 不经 three colorspace_fragment → 手动 sRGB 直通 = 原始值原样显示（与 SVG/CSS 一致）。
@@ -146,8 +147,10 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
     }
 
     // 播放球 / hover 且有人在播 → 白；否则球色（复刻 SphereNode renderFill）
-    const c = isPlaying || (isHover && anyPlaying) ? WHITE : baseColors[i];
-    aColor[slot * 3] = c[0]; aColor[slot * 3 + 1] = c[1]; aColor[slot * 3 + 2] = c[2];
+    const lit = isPlaying || (isHover && anyPlaying);
+    const c = lit ? WHITE : baseColors[i];
+    const calm = stepSpecial36Calm(n, !lit); // P20：第36圆默认态变淡（其余球恒为 1）
+    aColor[slot * 3] = c[0] * calm.light; aColor[slot * 3 + 1] = c[1] * calm.light; aColor[slot * 3 + 2] = c[2] * calm.light;
 
     let fill = 0.52 + n.importance * 0.36;        // 复刻 baseOpacity
     if (isPlaying) fill = Math.min(0.95, fill + 0.2);
@@ -161,7 +164,7 @@ export function writeFrame(mesh: InstancedMesh, buf: InstanceBuf, ctx: FrameCtx)
     aParams[slot * 4] = Math.min(1, fill * tuning.fill);
     aParams[slot * 4 + 1] = (isHover ? 0.5 : 0.3) * tuning.halo
       * scenePresence * presence;
-    aParams[slot * 4 + 2] = dimLerp[i] * (1 - submerge) * scenePresence * presence; // 其他音乐圆退场；焦点圆由日食黑盘覆盖
+    aParams[slot * 4 + 2] = dimLerp[i] * (1 - submerge) * scenePresence * presence * calm.alpha; // 其他音乐圆退场；焦点圆由日食黑盘覆盖
     aParams[slot * 4 + 3] = p.blurAmt * rt.dofStrength;          // /test3 景深失焦度 ×强度倍率
   }
 
