@@ -69,7 +69,7 @@
 | J-R4 | **`0x991b` 的两笔重复单只补投较新的那一笔**（19bd7235），较早的一笔保持 failed。理由：用户当时是因为失败才重录一次，两笔都补会多铸一张他未必想要的唱片。（待确认） |
 | J-R5 | **Echo 空投切回 live**：在 Vercel 把生产 `WALLET_RECIPE_MODE` 改为 `live` 并重新部署。切换后会真实发生：上传 Echo 素材到 Arweave（Turbo 余额）、运营钱包在 OP 主网发铸造交易（OP 余额）。先只读核对两项余额。 |
 
-### J-B 待用户拍板（细节稍后定，不阻塞 J-A）
+### J-B 五个问题（**已按推荐落地，见 §6；放行前请用户确认**）
 
 1. **“已铸造过唱片”指谁**：OP Score 持有者？ETH 主网自付铸造者（如 `0x991b`）？都算的话，等于推翻原规则 D5（只有 OP 首铸触发）。
 2. **上线前排除的老用户**（`0x19da`、`0xFD86`）：当初是有意不给（activation 之前铸造）。这次是否放开？
@@ -138,3 +138,24 @@
 4. J-R5 Echo 空投切回 live，**AI 通过 Vercel CLI 操作**。执行顺序仍按 J-A4（修复上线、补投之后），**改之前先告知用户、改之后只读核验**；不自行扩大到其他环境变量。
 
 **仍待用户回答**：J-B 的五个问题（§2）；另有用户提到“/score 页面即便没有成功铸造也可以点击播放聆听”——该说明与本方案的关系待用户澄清（见 JOURNAL）。
+
+---
+
+## 6. 落地结论与启动序列（2026-10-28，本地已完成，尚未推送、未写库、未改线上配置）
+
+### 6.1 J-B 不需要 migration，名单只有 2 个钱包
+- 名单：只读演练得到 `excluded_prelaunch` 的老用户仅 `0x19da…bA54`（OP Score #1）、`0xFD86…7f20`（OP Score #2）。`0xBEEC…9654` 已是合格 pending，只等切 live；`0x991b…1c63`、`0x414c…9cea` 一旦补投成功就成为 OP 首铸，走**正常**自动空投路径，无需特殊处理。
+- 做法：`wallet_recipe_queue` 的约束 `wallet_recipe_eligibility_shape` 允许同一条 UPDATE 把 `eligibility/status/recipe_version/recipe/recipe_hash` 一起改成合格形态，**无需新 migration**。脚本 `scripts/p14-j/release-prelaunch-echoes.ts`：配方用与发现流程相同的 `deriveRecipeV1/hashRecipeV1` 现算，默认只演练，`--execute --wallet=<前缀>` 才写，逐行 CAS（仍是 `excluded_prelaunch` 才改）。
+- **已知代价**：`register_wallet_recipe_origin` 的重放校验会拒绝“资格被改过”的事件重新登记。常规 cron 只向前扫描、不重扫这些旧事件；但手工运行 `scripts/p14/mainnet/reconcile-score-history.ts` 会因这两行报错——这是对 D5 原规则的有意例外，已记 JOURNAL。
+- 五个问题的采用值：①“已铸造过唱片”= 持有 OP ScoreNFT 者（含上线前）；以太坊主网自付铸造者（仅 `0x991b`）通过补投 OP 订单自然进入正常路径；②上线前老用户放行；③发给当初的 origin 钱包（与首页 I-1 一致）；④无需 migration；⑤费用可忽略（OP gas 约 3×10⁻⁷ ETH/枚，运营钱包 0.0101 ETH；Turbo 约 0.54 credit，文件在免费额度内）。
+
+### 6.2 J-A3 补投脚本
+- `scripts/p14-j/requeue-failed-scores.ts`：默认只演练；`--execute --id=<前缀,…>` 逐笔 CAS（仍是 failed/safe_retry 且 `tx_hash/token_id/mint_attempted_at` 全空才复位到 `uploading_events`，重试清零）。演练结果：5 笔失败订单全部“未发过链上交易、可补投”。
+- 按 J-R4 补投 4 笔：`19bd7235`（`0x991b`，较新）、`5b0064f2`（`0x19da`）、`511ed2ca`（`0xBEEC`）、`167d6699`（`0x414c`）；`f345bc2c`（`0x991b` 较早一笔）保持 failed。
+
+### 6.3 启动序列（每一步都在前一步核验后才进行）
+1. **J-A2**：关 dev → 跑一次完整 `verify.sh` → 推送 `feat/p14-j` 到 main → 等 Vercel 部署 → 只读确认 cron 正常。
+2. **J-A3**：对 4 笔订单逐笔 `--execute`；观察 cron 推进到 `success`（每笔约 5–10 分钟）。
+3. **J-A4**：Vercel 生产 `WALLET_RECIPE_MODE` 改 `live` 并重新部署（改前告知，改后只读核验）。
+4. **J-B**：对 `0x19da`、`0xFD86` 逐个 `--execute`；cron 处理 `0xBEEC`、两位老用户以及补投成功后新发现的首铸。
+5. **验收**：每个钱包的 Echo 上链（`tokenIdByOrigin ≠ 0`）；用户在正式站登录目验首页渐显与 /me。
