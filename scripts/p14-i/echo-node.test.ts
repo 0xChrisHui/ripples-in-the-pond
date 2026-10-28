@@ -159,3 +159,21 @@ async function verifyPlaybackDelegation() {
   console.log('I3 播放委托的身份、退场与命中阈值保护通过');
 }
 void verifyPlaybackDelegation().catch((error: unknown) => { console.error(error); process.exitCode = 1; });
+
+// I6 目验反馈：出生点不能每次都落在同一角，应在不碰撞的空位中随机。
+{
+  const [w, h] = [1200, 800];
+  const proj = { ...projection, cx: w / 2, cy: h / 2 };
+  const regions = new Set<string>();
+  for (let i = 0; i < 40; i++) {
+    const built = buildGlNodes(tracks, 'A', 'I3');
+    const { sim } = setupGlSimulation(built.nodes, built.links, built.assignment, w, h, 'I3');
+    sim.stop();
+    const special = reconcileEchoNode(sim, echo, 'A', 'I3', proj, false, false)[35];
+    assert.ok(built.nodes.every((n) => Math.hypot(n.x! - special.x!, n.y! - special.y!)
+      >= (n.radius + special.radius) * 1.1 + 16), '随机出生点仍须避开首帧碰撞');
+    regions.add(`${Math.floor(special.x! / (w / 3))},${Math.floor(special.y! / (h / 3))}`);
+  }
+  assert.ok(regions.size >= 3, `40 次出生只落在 ${regions.size} 个九宫格区域，不够随机`);
+  console.log(`I6 出生点随机：40 次落在 ${regions.size} 个九宫格区域`);
+}

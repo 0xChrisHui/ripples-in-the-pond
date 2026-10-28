@@ -10,17 +10,21 @@ import { HALO_R } from '../sphere-shader';
 import {
   advanceSpecial36Transition, enterSpecial36, frameFor, getSpecial36Presence, leaveSpecial36, toScreen, SPECIAL36_HIT_MIN,
 } from '../../special36/special36-step';
+import { rand } from '../../special36/random';
 
 type EchoSim = Simulation<GlPhysNode, SimLink<GlPhysNode>>;
 type SizeRef = { current: { w: number; h: number } };
 
-/** 安全区内选最空旷的出生点，同时考虑屏幕遮挡与 sim 碰撞距离。 */
+/** 安全区内随机挑一个不遮挡、不碰撞的出生点；全无空位时退回最空旷处。 */
 function placeEcho(node: GlPhysNode, nodes: GlPhysNode[], proj: ProjCtx): void {
   const frame = frameFor(node, proj);
   let best = { x: proj.cx, y: proj.cy }, bestGap = -Infinity;
+  // 💭 为什么不总选最空处：35 球布局固定，最空处每次都落在同一角（I6 目验：总在右下角）。
+  const free: { x: number; y: number }[] = [];
   for (let row = 1; row <= 9; row++) {
     for (let col = 1; col <= 9; col++) {
-      const screen = toScreen({ x: col / 10, y: row / 10 }, frame);
+      // 格内抖动后再算间距，随机落点仍受遮挡/碰撞检查约束。
+      const screen = toScreen({ x: (col + rand(-0.5, 0.5)) / 10, y: (row + rand(-0.5, 0.5)) / 10 }, frame);
       const point = unproject(screen.x, screen.y, depthOf(node), proj, node);
       if (point.x < 20 || point.y < 20 || point.x > proj.cx * 2 - 20 || point.y > proj.cy * 2 - 20) continue;
       let gap = Infinity;
@@ -31,10 +35,12 @@ function placeEcho(node: GlPhysNode, nodes: GlPhysNode[], proj: ProjCtx): void {
           - (node.radius + n.radius) * 1.1 - 16;
         gap = Math.min(gap, visual, physical);
       }
+      if (gap >= 0) free.push(point);
       if (gap > bestGap) { best = point; bestGap = gap; }
     }
   }
-  node.x = best.x; node.y = best.y; node.vx = 0; node.vy = 0;
+  const spot = free.length > 0 ? free[Math.floor(rand(0, free.length))] : best;
+  node.x = spot.x; node.y = spot.y; node.vx = 0; node.vy = 0;
 }
 
 /** 仅按永久身份协调；A 完整退场后再追加 B，任意时刻最多一个 Echo。 */
