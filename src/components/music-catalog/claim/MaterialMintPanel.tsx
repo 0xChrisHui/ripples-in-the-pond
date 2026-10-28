@@ -9,7 +9,7 @@ import { useServerText } from '../../../i18n/use-server-text';
 import type { OriginalTrack } from '../../../lib/music-catalog/types';
 import { getOriginalMintDeployment } from '../../../lib/music-catalog/asset-registry';
 import EthereumMaterialMint from './EthereumMaterialMint';
-import MaterialNoticeView from './MaterialNoticeView';
+import { MaterialNoticeBox } from './MaterialNoticeView';
 type OpErrorKey = 'statusUnavailable' | 'notReady' | 'resultUnknown';
 /** error 为服务端原文（中文模式照旧显示）；errorKey 为本地文案 */
 type MintStatus = { status?: string | null; txHash?: string | null; recipientAddress?: string; recipientFrozen?: boolean;
@@ -109,7 +109,7 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
               : pending ? t('op.pending') : t('op.mint')}</button>}
     </div>
     <div className="material-mint-status material-chain-status" aria-live="polite">
-      {errorText && <MaterialNoticeView notice={{ tone: 'warn', title: errorText,
+      {errorText && <MaterialNoticeBox notice={{ tone: 'warn', title: errorText,
         hint: status?.needsReview ? t('op.reviewHint') : undefined }} />}
       {status?.status === 'success' && <p>{t('op.successNote')}</p>}
       {pending && <p>{t('op.pendingNote')}</p>}

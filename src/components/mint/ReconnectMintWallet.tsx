@@ -13,7 +13,8 @@ export default function ReconnectMintWallet({ expectedAddress, walletClientType 
   const { wallets } = useWallets();
   const t = useTranslations('selfMint.reconnect');
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // 只存错误类别与原因，渲染时取词：切换语言后提示同步换语言
+  const [error, setError] = useState<{ key: 'wrongWallet' | 'connectFailed' | 'connectFailedReason'; reason?: string } | null>(null);
   const isMetaMask = walletClientType?.toLowerCase() === 'metamask';
 
   useEffect(() => {
@@ -29,19 +30,20 @@ export default function ReconnectMintWallet({ expectedAddress, walletClientType 
       try {
         if (wallet.type !== 'ethereum'
           || getAddress(wallet.address) !== getAddress(expectedAddress)) {
-          throw new Error(t('wrongWallet'));
+          setError({ key: 'wrongWallet' });
+          return;
         }
         setLoginSession('external_wallet', getAddress(expectedAddress));
         setError(null);
-      } catch (caught) {
-        setError(caught instanceof Error ? caught.message : t('connectFailed'));
+      } catch {
+        setError({ key: 'connectFailed' });
       } finally {
         setBusy(false);
       }
     },
     onError: (reason) => {
       setBusy(false);
-      setError(t('connectFailedReason', { reason: String(reason) }));
+      setError({ key: 'connectFailedReason', reason: String(reason) });
     },
   });
 
@@ -62,7 +64,7 @@ export default function ReconnectMintWallet({ expectedAddress, walletClientType 
       <button type="button" disabled={busy} onClick={start}>
         {busy ? t('connecting') : isMetaMask ? t('metamask') : t('reconnect')}
       </button>
-      {error && <p role="alert">{error}</p>}
+      {error && <p role="alert">{t(error.key, { reason: error.reason ?? '' })}</p>}
     </>
   );
 }

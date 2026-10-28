@@ -7,7 +7,7 @@ import { getTrackImprint } from '../../lib/music-catalog/experience/imprints';
 import SoundImprint from './listening/SoundImprint';
 import { useOriginalPlayback } from './listening/useOriginalPlayback';
 import TrackCircle from './listening/circle/TrackCircle';
-import MaterialNoticeView from './claim/MaterialNoticeView';
+import { MaterialNoticeBox } from './claim/MaterialNoticeView';
 
 export function formatTrackTime(value: number): string {
   if (!Number.isFinite(value) || value <= 0) return '0:00';
@@ -53,7 +53,7 @@ export default function MaterialPlayer({ track, onControlsVisible, visual = 'imp
           disabled={phase !== 'playing'} label={t('seekLabel', { title: track.title })} />
         <span>{formatTrackTime(duration)}</span>
       </div>
-      {phase === 'error' && <MaterialNoticeView notice={{ tone: 'error', title: t('audioFailed'), hint: t('audioFailedHint') }} />}
+      {phase === 'error' && <MaterialNoticeBox notice={{ tone: 'error', title: t('audioFailed'), hint: t('audioFailedHint') }} />}
     </div>
   </div>;
 }

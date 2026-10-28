@@ -9,7 +9,7 @@ import { announceMintRecorded } from '../../../lib/mint-notice';
 import { waitUntil } from '../../../features/material-catalog/mint/wait-until';
 import { getOriginalDeployment } from '../../../lib/music-catalog/asset-registry';
 import type { OriginalTrack } from '../../../lib/music-catalog/types';
-import { describeMaterialError, useMaterialErrorCopy, type MaterialNotice } from '../../../features/material-catalog/mint/friendly-error';
+import { describeMaterialError, localMaterialNotice, type MaterialNotice } from '../../../features/material-catalog/mint/friendly-error';
 import MaterialNoticeView from './MaterialNoticeView';
 import MaterialOrderView from './MaterialOrderView';
 
@@ -17,7 +17,7 @@ const BUSY_KEYS = { wallet: 'busyWallet', order: 'busyOrder', sign: 'busySign' }
 
 /** 一步铸造：点击后依次等待钱包就绪、建单（或复用已有订单）、直接弹出钱包签名。 */
 export default function EthereumMaterialMint({ track }: { track: OriginalTrack }) {
-  const t = useTranslations('material'), copy = useMaterialErrorCopy();
+  const t = useTranslations('material');
   const auth = useAuth(), mint = useMaterialMint();
   const latest = useRef({ auth, mint });
   useEffect(() => { latest.current = { auth, mint }; });
@@ -48,9 +48,9 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
     if (!deployed || busy) return;
     setNotice(null); setBusy('wallet');
     try {
-      // 本地文案直接成提示（与原“短中文原文作标题”同形），英文模式也能看到具体原因
+      // 本地原因只存词典键，渲染时按当前语言取词
       if (!await waitUntil(ready, 25000)) {
-        if (active.current) setNotice({ tone: 'error', title: t('eth.walletNotReady'), hint: copy.reviewHint });
+        if (active.current) setNotice(localMaterialNotice('eth.walletNotReady'));
         return;
       }
       if (!active.current) return;
@@ -64,7 +64,7 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
         if (active.current) setOrder(current);
       }
     } catch (caught) {
-      if (active.current) setNotice(describeMaterialError(caught, copy, t('eth.orderUnavailable')));
+      if (active.current) setNotice(describeMaterialError(caught, 'eth.orderUnavailable'));
     } finally { if (active.current) { setBusy(null); setRefresh((value) => value + 1); } }
   }
   const finished = order && !canSendMaterialOrder(order);

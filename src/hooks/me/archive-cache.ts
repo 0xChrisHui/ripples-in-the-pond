@@ -90,6 +90,8 @@ export function validCachedRecording(value: unknown): value is ArchiveRecording 
   return Boolean(item
     && typeof item.key === 'string'
     && typeof item.title === 'string'
+    // P19 前的旧缓存只有中文 title、没有可翻译的 label：判为无效，按未命中重新读取，避免英文模式显示中文标题
+    && typeof object(item.label)?.key === 'string'
     && typeof item.createdAt === 'string'
     && typeof item.pendingScoreId === 'string'
     && Number.isFinite(item.eventCount)

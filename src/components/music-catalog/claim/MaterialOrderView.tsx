@@ -8,7 +8,7 @@ import { getAddress, type Hex } from 'viem';
 import { useAuth } from '../../../hooks/useAuth';
 import { useMaterialMint } from '../../../features/material-catalog/mint/useMaterialMint';
 import { canSendMaterialOrder, type PublicMaterialOrder } from '../../../features/material-catalog/mint/order-model';
-import { describeMaterialError, useMaterialErrorCopy, type MaterialNotice } from '../../../features/material-catalog/mint/friendly-error';
+import { describeMaterialError, type MaterialNotice } from '../../../features/material-catalog/mint/friendly-error';
 import { formatEth, readGasHint, type GasHint } from '../../../features/material-catalog/mint/gas-hint';
 import MaterialNoticeView from './MaterialNoticeView';
 import { readMaterialHash } from '../../../features/material-catalog/mint/attempt-cache';
@@ -24,7 +24,7 @@ function stepIndex(status: PublicMaterialOrder['status']) {
 }
 
 export default function MaterialOrderView({ orderId, embedded = false }: { orderId: Hex; embedded?: boolean }) {
-  const t = useTranslations('material'), copy = useMaterialErrorCopy();
+  const t = useTranslations('material');
   const auth = useAuth(), { getOrder, sendOrder, recoverOrder } = useMaterialMint();
   const owner = auth.userId, scope = `${owner}:${orderId}`, activeScope = useRef(scope); activeScope.current = scope;
   const [loaded, setLoaded] = useState<{ owner: string; order: PublicMaterialOrder } | null>(null);
@@ -45,9 +45,8 @@ export default function MaterialOrderView({ orderId, embedded = false }: { order
     if (!auth.authenticated) return;
     let active = true;
     void load().catch(error => { if (active && activeScope.current === scope) setNotice({ scope,
-      notice: describeMaterialError(error, copy, t('order.unavailable')) }); });
+      notice: describeMaterialError(error, 'order.unavailable') }); });
     return () => { active = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 文案随语言变化不应重新读取订单
   }, [auth.authenticated, load, scope]);
   async function act(action: 'send' | 'recover' | 'refresh') {
     if (busy) return; setBusy(true); setNotice(null);
@@ -56,7 +55,7 @@ export default function MaterialOrderView({ orderId, embedded = false }: { order
       if (action === 'recover') await recoverOrder(orderId, enteredHash.trim() ? enteredHash.trim().toLowerCase() as Hex : undefined);
       await load();
     } catch (caught) {
-      const failure = describeMaterialError(caught, copy, t('order.requestUnavailable'));
+      const failure = describeMaterialError(caught, 'order.requestUnavailable');
       if (activeScope.current === scope) setNotice({ scope, notice: failure });
       // 钱包拒绝/失败后订单状态已变化；静默刷新让按钮与步骤同步，同时保留上面的提示。
       if (action === 'send') await load().then(() => { if (activeScope.current === scope) setNotice({ scope,

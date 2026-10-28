@@ -50,12 +50,17 @@ const track = {
 };
 
 assert.notEqual(archiveIdentityKey(privy), archiveIdentityKey(semi), '同 userId 的登录源仍须隔离');
+const label = { key: 'me.recording.uploaded' };
 assert.equal(validCachedRecording({
-  key: 'server-1', title: '录音', createdAt: track.created_at,
+  key: 'server-1', title: '录音', label, createdAt: track.created_at,
   pendingScoreId: 'score-1', eventCount: 1, track,
 }), true);
 assert.equal(validCachedRecording({
   key: 'server-1', title: '录音', createdAt: track.created_at,
+  pendingScoreId: 'score-1', eventCount: 1, track,
+}), false, 'P19 前没有 label 的旧缓存必须失效，否则英文模式显示中文标题');
+assert.equal(validCachedRecording({
+  key: 'server-1', title: '录音', label, createdAt: track.created_at,
   pendingScoreId: 'score-1', eventCount: 1,
   track: { ...track, audio_gateway_urls: undefined },
 }), false, '旧录音 Track 合同必须失效');
