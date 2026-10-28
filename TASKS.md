@@ -12,10 +12,10 @@
 - 方案 `playbook/phase-14/97-j-echo-pipeline-recovery.md`（J-A 已由用户确认；J-B 规则待用户回答）。
 - [x] J-A0 只读核实：生产 `WALLET_RECIPE_MODE=observe`；运营钱包 OP 余额 0.0101 ETH、Turbo 约 0.54 credit 够用；5 笔失败订单 events 在三家网关 5/5×3/3 一致
 - [x] J-A1 网关校验改三选二（arweave.net / ardrive.net / arweave.tokyo）+ OP 队列“已上传未可读”不计次等待（退避、最长约 2 小时，按当前不可读资源自己的上传时间计）+ 4 组离线测试 + 对 5 笔失败订单只读联调 5/5 通过；一轮 Codex 只读审查的 3 项阻塞已修（f633838 + 返工）；本地提交，未推送
-- [ ] J-A2 上线修复（用户放行）
-- [ ] J-A3 补投 5 笔失败订单中的 4 笔（`0x991b` 只补较新一笔；写生产库，先 dry-run、逐笔放行）
-- [ ] J-A4 Vercel 生产 `WALLET_RECIPE_MODE` 改 `live`（AI 操作，改前告知、改后核验）→ 真实端到端：首铸→空投→首页渐显
-- [ ] J-B 手动补发 #36（规则五问待用户回答；任何写库/发交易逐批放行）
+- [x] J-A2 上线修复（2026-10-28 用户“go”：verify.sh 与基线一致 → 推 main 8ed9fee → Vercel Ready → 站点/新接口/cron 正常）
+- [x] J-A3 补投失败订单：19bd7235（0x991b）→ OP Score #5 成功（链上持有人与 tokenURI 已核）；5b0064f2、511ed2ca、167d6699 已补投、流水线处理中；f345bc2c 保持 failed
+- [x] J-A4 Vercel 生产 WALLET_RECIPE_MODE=live（vercel env update 读回确认 → redeploy 到 pond-ripple.xyz）：0xBEEC 自 9/21 的 pending 开始处理，Score #5 被自动发现登记
+- [~] J-B 放行 0x19da、0xFD86 已执行（无 migration，CAS 单条 UPDATE）；5 枚 Echo（0x19da、0xFD86、0xBEEC、0x991b、0x414c）铸造中，待全部 success 后由用户在正式站目验
 
 ### P14-I 首页 #36 = 当前登录钱包自己的 Pond Echo（2026-10-21 开工，分支 feat/p14-i；已上线，剩部署后复核③）
 
