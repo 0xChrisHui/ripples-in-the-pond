@@ -255,7 +255,8 @@
   "home": {
     "glRetry": "Failed to load. Tap to retry.",
     "trackMissing": "This track doesn't exist",
-    "backToTracks": "Back to tracks"
+    "backToTracks": "Back to tracks",
+    "noteLabel": "Artist's note"
   },
   "jam": {
     "loading": "Loading…",

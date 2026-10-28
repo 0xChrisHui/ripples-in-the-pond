@@ -9,6 +9,7 @@ import { prefersReducedMotion } from '../../reduced-motion';
 import { collectDiscs, type Disc } from './bubble-env';
 import { createBubbleSim, stepBubbles, type BubbleView } from './bubble-sim';
 import { getBubbleTuning } from './bubble-tuning';
+import { hasNoteHost, makeCarrierPort, setSuppressed } from './bubble-bridge';
 import { bubbleFragment, bubbleVertex } from './bubble-shaders';
 
 /**
@@ -44,6 +45,7 @@ export default function PondBubbles({ glSim }: { glSim?: GlSim }) {
     g.setDrawRange(0, 0);
     return g;
   }, []);
+  const port = useMemo(() => makeCarrierPort(() => ({ w: glSim?.sizeRef.current.w || window.innerWidth, h: glSim?.sizeRef.current.h || window.innerHeight })), [glSim]);
   const uniforms = useMemo(() => ({ uColor: { value: COLOR }, uOpacity: { value: BASE_OPACITY } }), []);
 
   useFrame((state, delta) => {
@@ -54,9 +56,12 @@ export default function PondBubbles({ glSim }: { glSim?: GlSim }) {
     const h = Math.max(1, glSim?.sizeRef.current.h || window.innerHeight);
     const tuning = getBubbleTuning();
     const discCount = collectDiscs(glSim, w, h, discs);
+    const playing = glSim?.playingIdRef.current != null;
+    const reduced = prefersReducedMotion();
+    setSuppressed(playing || reduced); // 日蚀 / 减弱动效期间撤下手记（D4）
     const n = Math.min(MAX_BUBBLES, stepBubbles(sim, Math.min(delta, 0.1), {
-      w, h, discs, discCount, surfaceD: getEffectiveWaterLevel(),
-      playing: glSim?.playingIdRef.current != null, reduced: prefersReducedMotion(), tuning, onPop: popRipple,
+      w, h, discs, discCount, surfaceD: getEffectiveWaterLevel(), playing, reduced, tuning,
+      carrier: hasNoteHost() ? port : undefined, onPop: popRipple,
     }, Math.random, views));
     const pos = geometry.getAttribute('position') as BufferAttribute;
     const size = geometry.getAttribute('aSize') as BufferAttribute;

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { createBubbleSim, stepBubbles, type BubbleView, type SimEnv } from '../../src/components/pond-gl-test3/decor/bubbles/bubble-sim';
+import { stayDuration, toDisplayLines } from '../../src/components/pond-gl-test3/decor/bubbles/notes/note-display';
 import { DEFAULT_BUBBLE_TUNING } from '../../src/components/pond-gl-test3/decor/bubbles/bubble-tuning';
 
 function seeded(seed: number) {
@@ -102,5 +103,39 @@ function run(seed: number, seconds: number, env: SimEnv) {
   const sim2 = createBubbleSim(seeded(17)); const got: number[] = [];
   for (let t = 0; t < 33; t += 1 / 60) stepBubbles(sim2, 1 / 60, base({ discs: covered, discCount: 1, onPop: () => got.push(1) }), seeded(17), out);
   assert.equal(got.length, 0);
+}
+// 9. 载体泡：到水面后停住，宿主放行才破；宿主失联时不会永远挂着；无宿主的环境不出载体
+{
+  const noPort = (e: SimEnv) => e.carrier === undefined;
+  const rng = seeded(31), sim = createBubbleSim(rng), out: BubbleView[] = [];
+  let arrived: [number, number] | null = null, released = false, pops = 0;
+  const port = { arrive: (x: number, y: number) => { arrived = [x, y]; return 7; }, isReleased: () => released, clear: () => { released = true; } };
+  const env = base({ carrier: port, onPop: () => { pops++; } });
+  assert.ok(!noPort(env));
+  sim.untilNote = 1; // 第一串就带手记
+  let holdFrames = 0;
+  for (let t = 0; t < 120; t += 1 / 60) {
+    const n = stepBubbles(sim, 1 / 60, env, rng, out);
+    if (arrived && !released) { holdFrames++; if (holdFrames > 60 * 20) released = true; assert.ok(n >= 1, '载体泡停留时必须仍可见'); }
+  }
+  assert.ok(arrived, '载体泡应到达水面并登记');
+  assert.ok(holdFrames >= 60 * 20, `放行前应一直停着，实际 ${holdFrames} 帧`);
+  const popsAfter = pops;
+  assert.ok(popsAfter >= 3, `放行后整串应都破完（${popsAfter}）`);
+  // 无 carrier 端口：永不挑载体
+  const rng2 = seeded(31), sim2 = createBubbleSim(rng2); sim2.untilNote = 1;
+  for (let t = 0; t < 60; t += 1 / 60) stepBubbles(sim2, 1 / 60, base({ onPop: () => {} }), rng2, out);
+}
+// 10. 手记排版规则
+{
+  const lines = toDisplayLines('第一句。第二句！第三句？第四句；第五句。第六句。第七句。第八句。');
+  assert.equal(lines.length, 6);
+  assert.ok(lines[5].includes('第七句') && lines[5].includes('第八句'));
+  assert.deepEqual(toDisplayLines('没有标点的一行'), ['没有标点的一行']);
+  assert.deepEqual(toDisplayLines('It is 3.5 meters deep. Very clear.'), ['It is 3.5 meters deep.', 'Very clear.']);
+  const short = stayDuration('短', 'zh', 1, 0.5), long = stayDuration('长'.repeat(80), 'zh', 3, 0.5);
+  assert.ok(long > short && long < 14000 && short >= 3000);
+  assert.ok(stayDuration('a'.repeat(180), 'en', 3, 0.5) < 14000);
+  assert.ok(stayDuration('x', 'zh', 1, 0) < stayDuration('x', 'zh', 1, 0.999));
 }
 console.log('P20 气泡模拟测试通过');
