@@ -9,7 +9,7 @@ export type EnglishContent = { artist: ArtistContent; notes: Record<string, stri
 let pending: Promise<EnglishContent> | null = null;
 
 /** 英文的艺术家内容与手记体积较大，只有选了英文才下载（与英文词典同一原则） */
-function loadEnglishContent(): Promise<EnglishContent> {
+export function loadEnglishContent(): Promise<EnglishContent> {
   pending ??= Promise.all([import('./artist.en'), import('./artist-notes.en.json')])
     .then(([artist, notes]) => ({ artist: artist.artistContentEn, notes: notes.default as Record<string, string> }))
     .catch((error: unknown) => {
