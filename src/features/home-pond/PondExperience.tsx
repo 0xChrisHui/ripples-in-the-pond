@@ -18,6 +18,7 @@ import { useGlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
 import FeaturedEchoBottomPlayer from '@/src/components/pond-gl-test3/visitor/FeaturedEchoBottomPlayer';
 import { useFeaturedEchoPlayback } from '@/src/components/pond-gl-test3/visitor/useFeaturedEchoPlayback';
 import { usePersonalEcho } from '@/src/hooks/echo/usePersonalEcho';
+import { readDevFakeEcho } from '@/src/hooks/echo/dev-fake-echo';
 import PersistentWaterCore from '@/src/components/pond-shell/PersistentWaterCore';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScenePresence } from '@/src/components/pond-shell/motion/use-scene-presence';
@@ -53,12 +54,14 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const [glFlags, setGlFlags] = useState<GLFlags>(DEFAULT_GL_FLAGS);
   const [runtimeGlHealth, setRuntimeGlHealth] = useState<GlHealth>('unavailable');
   const [sceneReady, setSceneReady] = useState(false);
-  const featuredEcho = usePersonalEcho(homeInitialized, homeVisible);
+  const personalEcho = usePersonalEcho(homeInitialized, homeVisible);
+  const [devFakeEcho, setDevFakeEcho] = useState<ReturnType<typeof readDevFakeEcho>>(null);
+  const featuredEcho = devFakeEcho ?? personalEcho; // 仅开发环境 ?fakeEcho=1，生产恒为 personalEcho
   useEffect(() => {
     queueMicrotask(() => setMountId(`pond-${crypto.randomUUID()}`));
     // 不用 useSearchParams：它会迫使外壳整体进入 Suspense，并发导航时冻结持续水面。
     const search = window.location.search;
-    if (search) queueMicrotask(() => setGlFlags(parseGLFlags(new URLSearchParams(search))));
+    if (search) queueMicrotask(() => { setGlFlags(parseGLFlags(new URLSearchParams(search))); setDevFakeEcho(readDevFakeEcho(search)); });
   }, []);
   const onGl = useCallback((patch: Partial<GLFlags>) => {
     setGlFlags((flags) => ({ ...flags, ...patch }));
