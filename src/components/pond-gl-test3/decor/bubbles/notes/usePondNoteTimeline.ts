@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { FADE_MS, REVEAL_STEP_MS, RESUME_FLOOR_MS, stayDuration, toDisplayLines } from './note-display';
+import { stayDuration, toDisplayLines } from './note-display';
+import { getBubbleTuning } from '../bubble-tuning';
 import type { NoteLang } from './snippet-split';
 
 /**
@@ -17,7 +18,7 @@ export function usePondNoteTimeline(text: string, lang: NoteLang, paused: boolea
   useEffect(() => { doneRef.current = onDone; }, [onDone]);
 
   useEffect(() => {
-    const ids = lines.map((_, i) => window.setTimeout(() => setShown(i + 1), 200 + i * REVEAL_STEP_MS));
+    const ids = lines.map((_, i) => window.setTimeout(() => setShown(i + 1), 200 + i * getBubbleTuning().revealStep));
     return () => ids.forEach(window.clearTimeout);
     // lines 由 text 决定；text 变化 = 新的一条（宿主用 key 重挂），这里只在挂载时排一次
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -25,18 +26,18 @@ export function usePondNoteTimeline(text: string, lang: NoteLang, paused: boolea
 
   useEffect(() => {
     if (phase === 'out' || paused) return;
-    const s = (stay.current ??= { left: stayDuration(text, lang, lines.length, Math.random()), since: 0 });
+    const s = (stay.current ??= { left: stayDuration(text, lang, lines.length, Math.random(), getBubbleTuning()), since: 0 });
     s.since = performance.now();
     const id = window.setTimeout(() => setPhase('out'), s.left);
     return () => {
       window.clearTimeout(id);
-      s.left = Math.max(s.left - (performance.now() - s.since), RESUME_FLOOR_MS);
+      s.left = Math.max(s.left - (performance.now() - s.since), getBubbleTuning().resumeFloor);
     };
   }, [paused, phase, text, lang, lines.length]);
 
   useEffect(() => {
     if (phase !== 'out') return;
-    const id = window.setTimeout(() => doneRef.current(), FADE_MS);
+    const id = window.setTimeout(() => doneRef.current(), getBubbleTuning().fadeMs);
     return () => window.clearTimeout(id);
   }, [phase]);
 

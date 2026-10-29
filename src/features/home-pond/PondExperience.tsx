@@ -21,6 +21,7 @@ import { usePersonalEcho } from '@/src/hooks/echo/usePersonalEcho';
 import { readDevFakeEcho } from '@/src/hooks/echo/dev-fake-echo';
 import PersistentWaterCore from '@/src/components/pond-shell/PersistentWaterCore';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
+import { LAB_PATH } from '@/src/components/pond-shell/transition/types';
 import { useScenePresence } from '@/src/components/pond-shell/motion/use-scene-presence';
 import { usePreparedArchive } from '@/src/components/pond-shell/use-prepared-archive';
 import { useOptionalPondSceneSlot } from '@/src/components/pond-shell/scene-slot';
@@ -42,7 +43,8 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const sceneSlot = useOptionalPondSceneSlot();
   const reportCore = sceneSlot?.reportCore;
   const [mountId, setMountId] = useState<string | null>(null);
-  const sandbox = mode !== 'production';
+  const lab = pathname === LAB_PATH;
+  const sandbox = mode !== 'production' || lab; // /test5 = 首页外壳 + 沙盒控制台
   const p9Enabled = mode !== 'test4';
   const phase = transition?.phase ?? (pathname === '/' ? 'home' : 'archive');
   const homeVisible = !persistent || phase === 'home' || phase === 'entering-home';
@@ -61,7 +63,14 @@ export default function PondExperience({ mode, persistent = false, children }: {
     queueMicrotask(() => setMountId(`pond-${crypto.randomUUID()}`));
     // 不用 useSearchParams：它会迫使外壳整体进入 Suspense，并发导航时冻结持续水面。
     const search = window.location.search;
-    if (search) queueMicrotask(() => { setGlFlags(parseGLFlags(new URLSearchParams(search))); setDevFakeEcho(readDevFakeEcho(search)); });
+    if (search || window.location.pathname === LAB_PATH) queueMicrotask(() => {
+      const sp = new URLSearchParams(search);
+      const parsed = parseGLFlags(sp);
+      // /test5 默认打开气泡与假 #36，便于直接调参；URL 参数仍可显式覆盖
+      const isLab = window.location.pathname === LAB_PATH;
+      setGlFlags(isLab && !sp.has('pondBubbles') ? { ...parsed, pondBubbles: true } : parsed);
+      setDevFakeEcho(isLab && !sp.has('fakeEcho') ? readDevFakeEcho('?fakeEcho=1') : readDevFakeEcho(search));
+    });
   }, []);
   const onGl = useCallback((patch: Partial<GLFlags>) => {
     setGlFlags((flags) => ({ ...flags, ...patch }));

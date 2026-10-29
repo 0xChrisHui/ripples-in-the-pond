@@ -25,8 +25,11 @@ export type PondRouteEvent =
   | { type: 'settle'; generation: number; pathname: string; at: number }
   | { type: 'cancel'; generation?: number; at: number };
 
+/** 开发用调参页（P20）：按首页处理，生产构建下该页返回 404。 */
+export const LAB_PATH = '/test5';
+
 export function routeForPath(pathname: string): PondRoute {
-  if (pathname === '/') return 'home';
+  if (pathname === '/' || pathname === LAB_PATH) return 'home';
   if (pathname === '/tracks' || pathname === '/tracks/pond' || pathname.startsWith('/score/material/')) return 'tracks';
   if (pathname === '/artist') return 'artist';
   if (pathname.startsWith('/echo/')) return 'echo';
