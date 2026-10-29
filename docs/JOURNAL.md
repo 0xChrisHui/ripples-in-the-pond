@@ -1891,3 +1891,5 @@ Phase 6 kickoff 3 个产品决策冻结。后续不允许执行中自然飘移�
 
 
 - 2026-10-29：P20 加 `/test5` 调参页。原因：`/test4`（独立挂载）在用户浏览器里水塘与球不出来，无头对照显示其 `data-pond-scene-ready` 卡在 false，而 `/`（持久外壳）正常；根因未查清，改为不依赖它。做法：`/test5` 放在 `(pond)` 路由组内，`routeForPath` 把它当首页（常量 `LAB_PATH`），`PondExperience` 对该路径开沙盒控制台、默认打开 `pondBubbles` 与开发假 #36；生产构建下该页 `notFound()`。气泡与手记的 90 余个数值全部收进 `bubble-tuning.ts`（含 localStorage 记忆），控制台按分组生成，带“立即冒一串/出手记/复制改动 JSON/全部重置”。**未目验**：控制台里各项参数的实际观感。
+
+- 2026-10-29：P20 收尾并合入 main（用户“先当 P20 已经搞定，锁定，完整收尾，push to main，方便主工作树开工 P22”）。决定：①`pondBubbles` 保持默认关，参数由用户在 `/test5` 调好后另提交；②开发假 #36 保留（仅开发环境有效，生产恒 null）；③`verify.sh` 无新增失败即视为通过，3 项旧失败不处理；④一并提交此前未提交的 `AGENTS.md`（行数线 200→220）、`playbook/phase-21|22`、两份 Codex 审查，使 P22 能从 main 直接开工。
