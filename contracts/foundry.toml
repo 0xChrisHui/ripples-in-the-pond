@@ -13,3 +13,6 @@ solc_version = "0.8.33"
 evm_version = "cancun"
 optimizer = true
 optimizer_runs = 200
+
+# P22：测试用主网字节码 fixture（Registry / TBA 实现），只读
+fs_permissions = [{ access = "read", path = "./test/p22/fixtures" }]
