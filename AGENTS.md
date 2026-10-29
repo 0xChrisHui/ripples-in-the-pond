@@ -42,7 +42,7 @@
 
 1. `STATUS.md` — 当前做到哪
 2. `TASKS.md` — 现在该做什么
-3. `docs/CONVENTIONS.md` — 代码规范（200 行硬线 / 坏味道清单）
+3. `docs/CONVENTIONS.md` — 代码规范（220 行硬线 / 坏味道清单）
 4. `docs/STACK.md` — 技术栈白名单 / 黑名单
 5. 当前 playbook step（用户会告诉你是哪一步，例如 `playbook/phase-0-minimal.md` 的 Step N）
 
@@ -85,7 +85,7 @@
 
 详见 `docs/CONVENTIONS.md`。最致命的几条：
 
-- ❌ 单个代码文件超过 200 行（`docs/` 和 `playbook/` 的 markdown 不受限）
+- ❌ 单个代码文件超过 220 行（`docs/` 和 `playbook/` 的 markdown 不受限；route.ts 放宽到 270）
 - ❌ 单层目录超过 8 个文件
 - ❌ 前端文件 import `operator-wallet.ts` 或 `OPERATOR_PRIVATE_KEY`
 - ❌ 任何文件 import `wagmi` / `ethers` / `howler` / `tone`
