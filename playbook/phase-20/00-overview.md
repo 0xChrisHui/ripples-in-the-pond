@@ -183,7 +183,7 @@
 
 | 步 | 提交 | 内容 | 代码层验证 |
 |---|---|---|---|
-| 1 | `da8e17b` | #36 默认态变淡：新 `special36/special36-calm.ts`，`aParams.z` ×0.85、球色 ×0.88，仅认 `node.echo`，播放/悬停高亮时平滑回 0；`nodes.ts` 加 `_calm` | tsc、ESLint |
+| 1 | `da8e17b` | #36 默认态变淡：新 `special36/special36-calm.ts`，`aParams.z` ×0.85、球色 ×0.75，仅认 `node.echo`，播放/悬停高亮时平滑回 0；`nodes.ts` 加 `_calm` | tsc、ESLint |
 | 2 | `42d86be` | `decor/bubbles/`：模拟 `bubble-sim.ts`、可见球投影 `bubble-env.ts`、shader、`PondBubbles.tsx`、调参存储；`pondBubbles` flag（默认关）、ScenePanel 开关、PondGL 一行挂载 | tsc、ESLint、`scripts/p20/bubble-sim.test.ts` |
 | 4 | `a2aa92d` | 手记片段池 `notes/`（子代理完成，已审）：按非空行切、中英独立、英文失败返回空；`use-english-content.ts` 仅加 `export` | 单测、tsc、ESLint |
 | 3 | `66ea47c` | 破水涟漪（`bg-ripple:wave` 带 `size:0,duration:0`，只出水纹不推球）、`BubblePanel` 调参面板 | 同上 |

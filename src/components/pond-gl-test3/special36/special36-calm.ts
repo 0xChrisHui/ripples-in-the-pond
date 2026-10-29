@@ -7,8 +7,8 @@
  */
 import type { GlPhysNode } from '../spheres/simulation/nodes';
 
-export const CALM_ALPHA = 0.85; // 默认态最终主体覆盖率
-export const CALM_LIGHT = 0.88; // 默认态球色亮度
+export const CALM_ALPHA = 0.85; // 默认态最终主体覆盖率（不透明度）
+export const CALM_LIGHT = 0.75; // 默认态球色亮度
 const FOLLOW = 0.12;            // 与 dimLerp 同节奏的逐帧趋近
 
 export interface CalmFactor { alpha: number; light: number }
