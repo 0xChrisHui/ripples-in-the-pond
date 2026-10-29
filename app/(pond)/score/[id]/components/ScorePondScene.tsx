@@ -22,6 +22,7 @@ import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/score/score-origin';
 import type { Track } from '@/src/types/tracks';
 import { buildScoreRoute } from '@/src/lib/chain/multichain/registry';
+import ScorePackPanel from '@/src/components/score-pack/ScorePackPanel';
 import ScoreArchive from './ScoreArchive';
 import ScoreRecordAnchor from './ScoreRecordAnchor';
 import ShareActions from './ShareActions';
@@ -117,6 +118,8 @@ export default function ScorePondScene({ score, network }: Props) {
   const canonicalPath = multichain
     ? buildScoreRoute(score.chainId!, score.contractAddress!, score.tokenId)
     : `/score/${score.tokenId}`;
+  const packTarget = multichain
+    ? { chainId: score.chainId!, contract: score.contractAddress!, tokenId: score.tokenId } : null;
   const editionStatus = score.degraded ? 'degraded' : 'finalized';
   const anchored = origin?.href === pathname && origin.tokenId === score.tokenId;
   const transaction = transition?.transaction;
@@ -188,6 +191,7 @@ export default function ScorePondScene({ score, network }: Props) {
         </div>
       </section>
       <ScoreArchive score={score} holder={holder} />
+      {packTarget && <ScorePackPanel target={packTarget} />}
     </main>
   );
 }

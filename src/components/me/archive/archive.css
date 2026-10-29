@@ -160,3 +160,13 @@
 .me-archive-row--history .me-archive-row__state { justify-items: end; text-align: right; }
 .me-archive-row--history .me-archive-row__state a { color: var(--p11-faint); font-size: var(--p11-text-xs); text-decoration: none; }
 .me-archive__panel--history { margin-top: var(--p11-space-24, 24px); }
+
+.me-archive-row__pack {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--p11-muted);
+  font-size: var(--p11-text-sm);
+  cursor: pointer;
+}
+.me-archive-row__pack input { accent-color: var(--p11-brass); }

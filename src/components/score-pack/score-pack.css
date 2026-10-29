@@ -1,0 +1,112 @@
+/* P22 资产包：沿用夜塘 p11 设计令牌，面板与可视化页共用。 */
+.score-pack {
+  position: relative;
+  z-index: 50;
+  display: grid;
+  width: min(100%, var(--p11-ledger-max));
+  margin: 0 auto;
+  gap: var(--p11-space-12);
+  padding: var(--p11-space-48) var(--p11-page-inset) var(--p11-space-64);
+  color: var(--p11-bone);
+}
+.score-pack__eyebrow {
+  color: var(--p11-brass);
+  font: var(--p11-text-xs)/1 var(--p11-font-mono);
+  letter-spacing: var(--p11-tracking-label);
+  text-transform: uppercase;
+}
+.score-pack h2 {
+  font: 300 clamp(1.75rem, 4vw, 2.75rem)/1.1 var(--p11-font-display);
+  letter-spacing: var(--p11-tracking-tight);
+}
+.score-pack__intro {
+  max-width: 62ch;
+  color: var(--p11-muted);
+  font-size: var(--p11-text-body);
+  line-height: var(--p11-leading-body);
+}
+.score-pack__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--p11-space-16); }
+.score-pack__actions small { color: var(--p11-muted); font-size: var(--p11-text-sm); }
+.score-pack__button {
+  min-height: var(--p11-touch-target);
+  padding: 0 var(--p11-space-24);
+  border: 1px solid var(--p11-brass);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--p11-brass-strong);
+  font: inherit;
+  cursor: pointer;
+}
+.score-pack__button:hover:not(:disabled) { background: color-mix(in srgb, var(--p11-brass) 16%, transparent); }
+.score-pack__button:disabled { opacity: 0.55; cursor: progress; }
+.score-pack__state { color: var(--p11-brass-strong); font: var(--p11-text-sm)/1 var(--p11-font-mono); }
+.score-pack__link {
+  display: inline-flex;
+  min-height: var(--p11-touch-target);
+  align-items: center;
+  color: var(--p11-brass-strong);
+  font-size: var(--p11-text-sm);
+  text-underline-offset: 4px;
+}
+.score-pack__error { color: #e8a0a0; font-size: var(--p11-text-sm); }
+
+/* ---- 可视化页：钥匙 → 保险箱 → 素材 ---- */
+.pack-page {
+  min-height: 100svh;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: var(--p11-space-48);
+  padding: var(--p11-space-64) var(--p11-page-inset) var(--p11-space-96);
+  background: var(--p11-ink);
+  color: var(--p11-bone);
+}
+.pack-page > * { width: min(100%, 64rem); }
+.pack-page__head { display: grid; gap: var(--p11-space-12); }
+.pack-page__head h1 {
+  font: 300 clamp(2.25rem, 6vw, 4.5rem)/1 var(--p11-font-display);
+  letter-spacing: var(--p11-tracking-tight);
+}
+.pack-page__lead { max-width: 62ch; color: var(--p11-muted); line-height: var(--p11-leading-body); }
+
+.pack-flow { display: grid; gap: 0; justify-items: center; }
+.pack-node {
+  width: min(100%, 40rem);
+  display: grid;
+  gap: var(--p11-space-8);
+  padding: var(--p11-space-24);
+  border: 1px solid var(--p11-line-strong);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--p11-ink) 86%, var(--p11-brass) 4%);
+}
+.pack-node[data-kind='vault'] { border-color: var(--p11-brass); box-shadow: 0 0 48px color-mix(in srgb, var(--p11-brass) 18%, transparent); }
+.pack-node__label {
+  color: var(--p11-brass);
+  font: var(--p11-text-xs)/1 var(--p11-font-mono);
+  letter-spacing: var(--p11-tracking-label);
+  text-transform: uppercase;
+}
+.pack-node dl { display: grid; gap: var(--p11-space-8); margin: 0; }
+.pack-node dt { color: var(--p11-muted); font-size: var(--p11-text-sm); }
+.pack-node dd { margin: 0; overflow-wrap: anywhere; font: var(--p11-text-sm)/1.5 var(--p11-font-mono); }
+.pack-node a { color: var(--p11-brass-strong); text-underline-offset: 4px; }
+.pack-link-line { width: 1px; height: var(--p11-space-48); background: linear-gradient(var(--p11-brass), transparent); }
+
+.pack-assets { display: grid; gap: var(--p11-space-12); }
+.pack-assets__grid { display: flex; flex-wrap: wrap; gap: var(--p11-space-8); padding: 0; margin: 0; list-style: none; }
+.pack-chip {
+  padding: 6px 12px;
+  border: 1px solid var(--p11-line-strong);
+  border-radius: 999px;
+  font: var(--p11-text-xs)/1 var(--p11-font-mono);
+}
+.pack-chip[data-held='true'] { border-color: var(--p11-brass); color: var(--p11-brass-strong); }
+.pack-chip[data-held='false'] { opacity: 0.5; text-decoration: line-through; }
+.pack-note { color: var(--p11-muted); font-size: var(--p11-text-sm); line-height: var(--p11-leading-body); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .pack-node { animation: pack-rise 520ms ease both; }
+  .pack-node[data-kind='vault'] { animation-delay: 120ms; }
+  .pack-node[data-kind='assets'] { animation-delay: 240ms; }
+}
+@keyframes pack-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }

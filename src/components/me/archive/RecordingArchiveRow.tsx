@@ -13,6 +13,13 @@ import { useArchiveMintContext } from '@/src/components/mint/archive/ArchiveMint
 import type { ArchiveRecording } from '@/src/hooks/me/useMeArchive';
 import type { KeyEvent } from '@/src/types/jam';
 
+/** Next 只内联字面量写法的 NEXT_PUBLIC_*：OP 代付两条链各写一行；未配置即不显示勾选框。 */
+function packEnabledFor(chainId: number): boolean {
+  if (chainId === 10) return Boolean(process.env.NEXT_PUBLIC_P22_OPENER_10);
+  if (chainId === 11155420) return Boolean(process.env.NEXT_PUBLIC_P22_OPENER_11155420);
+  return false;
+}
+
 type Props = { recording: ArchiveRecording; index: number; onQueued: () => void };
 
 /** clock 为空表示已到期 */
@@ -45,6 +52,9 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
   const [selfMintBusy, setSelfMintBusy] = useState(false);
   /** server：服务端/抛出的原文（中文模式照旧显示） */
   const [selfMintError, setSelfMintError] = useState<{ key: 'reconnect' | 'archiveFailed'; server?: string } | null>(null);
+  const tPack = useTranslations('me.pack');
+  const [wantPack, setWantPack] = useState(false);
+  const packAvailable = packEnabledFor(archiveMint.chainId);
   const queuedRef = useRef(false);
   const expiredRef = useRef(false);
   const callbackRef = useRef(onQueued);
@@ -65,6 +75,24 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
       callbackRef.current();
     }
   }, [mintState]);
+
+  /** 勾选意图写库并绑定该作品：关页后 OP 仍会在 Score 铸成时自动开包。 */
+  async function togglePack(next: boolean) {
+    if (!recording.pendingScoreId) return;
+    setWantPack(next);
+    try {
+      const token = await auth.getAccessToken();
+      if (!token) throw new Error('unauthenticated');
+      const response = await fetch('/api/score-pack/intent', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pendingScoreId: recording.pendingScoreId, wanted: next }),
+      });
+      if (!response.ok) throw new Error('intent');
+    } catch {
+      setWantPack(!next);
+    }
+  }
 
   async function playRecording() {
     const { track, pendingScoreId } = recording;
@@ -145,6 +173,12 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
             <button type="button" onClick={playRecording} disabled={eventsLoading}>
               {eventsLoading ? t('loading') : eventsError ? t('retryPlay') : isPlaying ? t('stop') : t('play')}
             </button>
+          )}
+          {packAvailable && mintState !== 'queued' && mintState !== 'success' && (
+            <label className="me-archive-row__pack" title={tPack('hint')}>
+              <input type="checkbox" checked={wantPack} onChange={(e) => void togglePack(e.target.checked)} />
+              {tPack('label')}
+            </label>
           )}
           {mintState === 'queued' || mintState === 'success' ? (
             <span>{mintState === 'queued' ? t('minting') : t('submitted')}</span>
