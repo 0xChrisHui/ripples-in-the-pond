@@ -12,11 +12,19 @@ import BubblePanel from '@/src/components/pond-gl-test3/decor/bubbles/panel/Bubb
 type Props = {
   flags: GLFlags;
   p9: boolean;
+  bubblesOnly?: boolean; // /test5：只留气泡控制台
   onChange: (patch: Partial<GLFlags>) => void;
 };
 
 /** 调参工具独立成异步块，生产首页永远不会下载这组沙盒 UI。 */
-export default function SandboxControls({ flags, p9, onChange }: Props) {
+export default function SandboxControls({ flags, p9, bubblesOnly = false, onChange }: Props) {
+  if (bubblesOnly) {
+    return (
+      <div data-pond-ui="true" className="pointer-events-none fixed bottom-3 right-3 z-50">
+        <BubblePanel />
+      </div>
+    );
+  }
   const showWaterTools = flags.rtt || flags.waterFx || flags.floatMotes
     || flags.waterPlants || flags.reefStones || flags.crystalPillars;
   return (

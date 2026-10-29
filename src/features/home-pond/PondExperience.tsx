@@ -183,7 +183,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
       )}
       {renderHomeScene && glFlags.glSpheres && glFlags.glEclipse && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
       {homeInteractive && <HomeEclipseDriver glSim={glSim} playingId={glOk ? playingId : null} />}
-      {sandbox && <SandboxControls flags={glFlags} p9={mode === 'test3'} onChange={onGl} />}
+      {sandbox && <SandboxControls flags={glFlags} p9={mode === 'test3'} bubblesOnly={lab} onChange={onGl} />}
       <DraftSavedToast />
       <FeaturedEchoBottomPlayer echo={featuredEcho} playback={echoPlayback} />
         </>}>{children}</PersistentRouteSurfaces>
