@@ -77,6 +77,8 @@ contract DeployScorePack is Script {
 
     /// 两类网络都校验非零、互异、deployer 不担任角色；主网额外要求 admin 延迟 >= 1 天。
     function _precheck(Config memory c, bool mainnet) internal view {
+        // 预测的开包合约地址基于 deployer、实际广播用 key：两者必须是同一个钱包，否则地址预测会错位
+        require(c.deployer == vm.addr(c.key), "deployer must match key");
         require(c.admin != address(0) && c.signer != address(0) && c.pauser != address(0), "zero role");
         require(c.admin != c.signer && c.admin != c.pauser && c.signer != c.pauser, "roles must differ");
         require(

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function ScorePackPage({ params }: Props) {
   const { id, contract, tokenId } = await params;
   const chainId = Number(id);
-  if (![1, 10, 11155111, 11155420].includes(chainId) || !/^[1-9]\d{0,15}$/.test(tokenId)) notFound();
+  if (![1, 10, 11155111, 11155420].includes(chainId) || !/^[1-9]\d{0,15}$/.test(tokenId) || BigInt(tokenId) > BigInt(Number.MAX_SAFE_INTEGER)) notFound();
   let address: string;
   try { address = getAddress(contract); } catch { notFound(); }
   return <PackView target={{ chainId, contract: address, tokenId: Number(tokenId) }} />;

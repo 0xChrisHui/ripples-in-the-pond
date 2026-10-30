@@ -1,4 +1,5 @@
 import { verifyCronSecret } from '@/src/lib/auth/cron-auth';
+import { safeMessage } from '@/src/lib/score-pack/redact';
 import { runScorePackCycle } from './cycle';
 
 export const runtime = 'nodejs';
@@ -10,7 +11,7 @@ export async function GET(request: Request) {
     const result = await runScorePackCycle({ batch: 5 });
     return Response.json(result, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
-    console.error('[score-pack-cron]', error instanceof Error ? error.message : error);
+    console.error('[score-pack-cron]', safeMessage(error));
     return Response.json({ code: 'SCORE_PACK_CRON_FAILED' }, { status: 503 });
   }
 }

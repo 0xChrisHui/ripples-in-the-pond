@@ -7,6 +7,7 @@ import { PACK_VOUCHER_TYPES } from '../../src/lib/score-pack/contract';
 import {
   buildVoucher, packDomain, soundIdsHash, voucherDigest,
 } from '../../src/lib/score-pack/voucher';
+import { redact, safeMessage } from '../../src/lib/score-pack/redact';
 import {
   canTransition, checkOpQuota, retryDelayMs, settleByChainTruth, shouldAbandon, utcDayStart,
 } from '../../src/lib/score-pack/rules';
@@ -107,6 +108,15 @@ async function main() {
     assert.ok(retryDelayMs(1) < retryDelayMs(2));
     assert.ok(retryDelayMs(99) <= 60 * 60_000);
   }
+  // 脱敏：RPC 报错里的完整 URL（含 API key）只能留主机名
+  {
+    const leaked = 'HTTP request failed. URL: https://opt-mainnet.g.alchemy.com/v2/alch_SECRETKEY123 Request body: {}';
+    assert.ok(!redact(leaked).includes('SECRETKEY123'));
+    assert.ok(redact(leaked).includes('opt-mainnet.g.alchemy.com'));
+    assert.ok(!safeMessage(new Error(leaked)).includes('SECRETKEY123'));
+    assert.ok(safeMessage(new Error('x'.repeat(2000)), 100).length <= 100);
+  }
+
   console.log('P22 pack tests: ok');
 }
 

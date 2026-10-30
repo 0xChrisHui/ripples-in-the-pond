@@ -129,4 +129,12 @@ contract DeployScorePackTest is PackTestBase {
         vm.expectRevert("deployer must not be the operator wallet");
         d.execute(c);
     }
+
+    function test_rejectsDeployerKeyMismatch() public {
+        DeployScorePack d = new DeployScorePack();
+        DeployScorePack.Config memory c = _mainnet(1);
+        c.deployer = address(0x1234); // 与 key 对不上
+        vm.expectRevert("deployer must match key");
+        d.execute(c);
+    }
 }

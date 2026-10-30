@@ -6,6 +6,7 @@ import { readOpened, readPackOpenedEvent, readScoreOwner } from '@/src/lib/score
 import { getPackChainConfig, SCORE_PACK_OPENER_ABI } from '@/src/lib/score-pack/contract';
 import { transitionOrder, type PackOrderRow } from '@/src/lib/score-pack/orders';
 import { OP_MAX_ATTEMPTS, retryDelayMs, shouldAbandon } from '@/src/lib/score-pack/rules';
+import { safeMessage } from '@/src/lib/score-pack/redact';
 import { buildVoucher, signVoucher } from '@/src/lib/score-pack/voucher';
 
 const OP_RECEIPT_WAIT_MS = 15 * 60_000;
@@ -23,8 +24,9 @@ export async function reconcileOrder(order: PackOrderRow, nowMs = Date.now()): P
   if (await readOpened(cfg, tokenId)) {
     // 优先按订单哈希读回执；读不到事件也照样收口为 opened（链上 opened 是真值）
     const event = await readPackOpenedEvent(cfg, tokenId, order.tx_hash as `0x${string}` | null);
+    // 事件读不到时不信任用户上报的哈希（可能是别的交易），置空等下一轮扫描补齐
     await transitionOrder(order.id, order.status, 'opened', {
-      tx_hash: event?.txHash.toLowerCase() ?? order.tx_hash,
+      tx_hash: event?.txHash.toLowerCase() ?? null,
       block_number: event ? Number(event.blockNumber) : null,
       account_address: event?.account.toLowerCase() ?? null,
       opened_at: new Date().toISOString(), failure_code: null, locked_by: null, lease_expires_at: null,
@@ -32,6 +34,7 @@ export async function reconcileOrder(order: PackOrderRow, nowMs = Date.now()): P
     return 'opened';
   }
 
+  // 读取失败（RPC 超时等）会抛出 → 本轮该订单记为 failed，订单保持原状（Codex P1-2）
   const owner = await readScoreOwner(order.chain_id, getAddress(order.score_contract), tokenId);
   if (shouldAbandon({
     status: order.status, createdAtMs: Date.parse(order.created_at), nowMs,
@@ -63,9 +66,17 @@ export async function reconcileOrder(order: PackOrderRow, nowMs = Date.now()): P
     return 'waiting';
   }
 
-  // OP 的 unsent：凭证已过期且链上仍未开 → 回到队列，按递增间隔重试
+  // OP 的 unsent：凭证已过期且链上仍未开 → 回到队列，按递增间隔重试。
+  // 但"广播抛错"可能是已进 mempool 的超时：运营钱包还有未确认交易（pending nonce > latest nonce）时一律等待（Codex P1-3）
   if (order.status === 'unsent' && order.mode === 'op_sponsored'
     && (order.voucher_deadline ?? 0) * 1000 < nowMs) {
+    const operator = operatorWalletClient.account.address;
+    const chainClient = getChainPublicClient(order.chain_id);
+    const [pending, latest] = await Promise.all([
+      chainClient.getTransactionCount({ address: operator, blockTag: 'pending' }),
+      chainClient.getTransactionCount({ address: operator, blockTag: 'latest' }),
+    ]);
+    if (pending !== latest) return 'waiting';
     await transitionOrder(order.id, 'unsent', 'queued', {
       next_attempt_at: new Date(nowMs + retryDelayMs(order.attempts)).toISOString(),
       locked_by: null, lease_expires_at: null,
@@ -78,7 +89,12 @@ export async function reconcileOrder(order: PackOrderRow, nowMs = Date.now()): P
 /** OP 代付：先落"发送意图"再广播；广播抛错留在 unsent，由 reconcileOrder 对账后再决定重发。 */
 export async function sendSponsoredOrder(order: PackOrderRow, workerId: string): Promise<StepResult> {
   const cfg = getPackChainConfig(order.chain_id);
-  if (!cfg || order.chain_id !== CHAIN_ID_NUM || !order.sound_ids || !order.track_token_id) return 'waiting';
+  if (!cfg || order.chain_id !== CHAIN_ID_NUM) return 'waiting';
+  if (!order.sound_ids?.length || !order.track_token_id) {
+    // 素材字段缺失不会自己恢复：进终态并留下原因，不要无限等待（Codex P1-4）
+    await transitionOrder(order.id, 'queued', 'abandoned', { failure_code: 'MISSING_PACK_FIELDS' });
+    return 'abandoned';
+  }
   if (order.attempts >= OP_MAX_ATTEMPTS) {
     await transitionOrder(order.id, 'queued', 'abandoned', { failure_code: 'MAX_ATTEMPTS' });
     return 'abandoned';
@@ -104,7 +120,7 @@ export async function sendSponsoredOrder(order: PackOrderRow, workerId: string):
     return 'sent';
   } catch (error) {
     await transitionOrder(order.id, 'unsent', 'unsent', {
-      last_error: (error instanceof Error ? error.message : String(error)).slice(0, 2000),
+      last_error: safeMessage(error, 2000),
       failure_code: 'SEND_FAILED',
     });
     return 'failed';

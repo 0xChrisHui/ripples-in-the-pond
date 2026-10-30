@@ -79,10 +79,16 @@ async function reserve(req: PackRequest, score: Address): Promise<PackOrderRow> 
 export async function requestSponsoredPack(req: PackRequest): Promise<PackOrderRow> {
   const { score, pack } = await checkEligibility({ ...req, mode: 'op_sponsored' });
   const order = await reserve({ ...req, mode: 'op_sponsored' }, score);
-  await supabaseAdmin.from('score_pack_orders').update({
+  const { error } = await supabaseAdmin.from('score_pack_orders').update({
     track_token_id: pack.trackTokenId.toString(), sound_ids: pack.soundIds.map(String),
     updated_at: new Date().toISOString(),
   }).eq('id', order.id);
+  if (error) {
+    // 素材字段没写进去的订单永远发不出去：当场放弃并让请求失败，用户可重试（Codex P1-4）
+    await supabaseAdmin.from('score_pack_orders').update({ status: 'abandoned', failure_code: 'PACK_FIELDS_WRITE_FAILED' })
+      .eq('id', order.id).eq('status', 'queued');
+    throw new Error(`订单素材字段写入失败：${error.message}`);
+  }
   return order;
 }
 
@@ -92,11 +98,12 @@ export async function issueSelfPaidVoucher(req: PackRequest) {
   const order = await reserve({ ...req, mode: 'eth_self_paid' }, score);
   const voucher = buildVoucher(req.tokenId, req.holder, pack);
   const signed = await signVoucher(req.chainId, cfg.opener, voucher);
-  await supabaseAdmin.from('score_pack_orders').update({
+  const { error } = await supabaseAdmin.from('score_pack_orders').update({
     track_token_id: pack.trackTokenId.toString(), sound_ids: pack.soundIds.map(String),
     voucher_digest: signed.digest.toLowerCase(), voucher_deadline: Number(voucher.deadline),
     signer_address: signed.signer.toLowerCase(), updated_at: new Date().toISOString(),
   }).eq('id', order.id);
+  if (error) throw new Error(`订单凭证记录写入失败：${error.message}`); // 钱包尚未拿到凭证，用户可重试
   return {
     orderId: order.id, opener: cfg.opener, chainId: req.chainId,
     voucher: voucherToJson(voucher), signer: signed.signer, signature: signed.signature,

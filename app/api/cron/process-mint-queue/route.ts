@@ -4,6 +4,7 @@ import { verifyCronSecret } from '@/src/lib/auth/cron-auth';
 import { acquireOpLock, releaseOpLock } from '@/src/lib/chain/operator-lock';
 import { tryConfirmMinting, trySendNew } from './steps';
 import { reconcileMaterialMints } from '@/src/lib/material-mint/server/reconcile/worker';
+import { safeMessage } from '@/src/lib/score-pack/redact';
 import { runScorePackCycle } from '../process-score-pack/cycle';
 
 /**
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
       try {
         scorePack = await runScorePackCycle({ batch: 1, lockHolder: holder });
       } catch (error) {
-        console.error('[mint-queue] score-pack cycle failed:', error instanceof Error ? error.message : error);
+        console.error('[mint-queue] score-pack cycle failed:', safeMessage(error));
       }
     }
 
