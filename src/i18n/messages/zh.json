@@ -812,7 +812,8 @@
       "ACTIVE_ORDER_EXISTS": "这枚 Score 已有进行中的开通请求。",
       "PACK_DISABLED": "这条链暂未开放资产包。",
       "UNAUTHENTICATED": "请先登录。",
-      "generic": "暂时无法开通，请稍后再试。"
+      "generic": "暂时无法开通，请稍后再试。",
+      "NOT_ENABLED": "资产包功能内测中，暂未向你的账号开放。"
     },
     "pageEyebrow": "Score pack · 资产包",
     "pageTitle": "钥匙与保险箱",

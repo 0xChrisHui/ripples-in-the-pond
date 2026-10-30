@@ -11,7 +11,7 @@ import { PackOrderError, reserveOrder, type PackOrderRow } from './orders';
 import { buildVoucher, signVoucher, voucherToJson } from './voucher';
 
 export type IssueErrorCode =
-  | 'PACK_DISABLED' | 'WRONG_CONTRACT' | 'NOT_HOLDER' | 'ALREADY_OPENED' | 'NO_SNAPSHOT'
+  | 'PACK_DISABLED' | 'NOT_ENABLED' | 'WRONG_CONTRACT' | 'NOT_HOLDER' | 'ALREADY_OPENED' | 'NO_SNAPSHOT'
   | 'MISSING_ASSETS' | 'EMPTY_PACK' | 'TOO_MANY_SOUNDS' | 'GLOBAL_LIMIT' | 'USER_LIMIT'
   | 'ACTIVE_ORDER_EXISTS';
 
@@ -33,8 +33,16 @@ export type PackRequest = {
 
 type Checked = { cfg: PackChainConfig; score: Address; pack: DerivedPack };
 
+/** 内测名单：P22_ALLOWED_USER_IDS 为 '*' 表示全员开放，否则是逗号分隔的用户 id；未配置视为无人可用。 */
+export function isPackEnabledFor(userId: string): boolean {
+  const raw = (process.env.P22_ALLOWED_USER_IDS ?? '').trim();
+  if (raw === '*') return true;
+  return raw.split(',').map((item) => item.trim()).filter(Boolean).includes(userId);
+}
+
 /** 资格检查：链上真值（持有人、是否已开）→ 永久 snapshot 派生素材清单。清单永远由服务端派生。 */
 export async function checkEligibility(req: PackRequest): Promise<Checked> {
+  if (!isPackEnabledFor(req.userId)) throw new PackIssueError('NOT_ENABLED', 403);
   const cfg = getPackChainConfig(req.chainId);
   if (!cfg) throw new PackIssueError('PACK_DISABLED', 404);
   const score = getAddress(req.scoreContract);

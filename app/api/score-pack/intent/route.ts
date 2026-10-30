@@ -1,5 +1,6 @@
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 import { supabaseAdmin } from '@/src/lib/supabase';
+import { isPackEnabledFor } from '@/src/lib/score-pack/issue';
 import { badRequest, packErrorResponse } from '../_shared';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -9,6 +10,9 @@ export async function POST(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (!auth) return Response.json({ error: 'UNAUTHENTICATED', code: 'UNAUTHENTICATED' }, { status: 401 });
+    if (!isPackEnabledFor(auth.userId)) {
+      return Response.json({ error: 'NOT_ENABLED', code: 'NOT_ENABLED' }, { status: 403 });
+    }
     const body = await request.json() as { pendingScoreId?: unknown; wanted?: unknown };
     if (typeof body.pendingScoreId !== 'string' || !UUID.test(body.pendingScoreId)
       || typeof body.wanted !== 'boolean') return badRequest('INVALID_INTENT');

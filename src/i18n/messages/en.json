@@ -812,7 +812,8 @@
       "ACTIVE_ORDER_EXISTS": "This Score already has an opening in progress.",
       "PACK_DISABLED": "Asset packs aren't available on this chain yet.",
       "UNAUTHENTICATED": "Please sign in first.",
-      "generic": "Couldn't open it right now. Please try again later."
+      "generic": "Couldn't open it right now. Please try again later.",
+      "NOT_ENABLED": "The asset pack is in beta and isn't open to your account yet."
     },
     "pageEyebrow": "Score pack",
     "pageTitle": "Key and vault",
