@@ -58,3 +58,11 @@
 - `VerifyScorePack` 读真链核对通过；占位素材已登记（音效 1–33、背景音乐 1–35）。
 - 端到端：Score #2 由非持有人提交 `open` 成功（gas 223578），TBA 同样地址 `0x5319…7b59`（账户地址只由 Score 决定，与 opener 无关），第二次开包被拒绝。
 - 主网部署前置：全新部署钱包、运营钱包地址（`P22_OPERATOR_ADDRESS`）、独立 admin/signer/pauser。
+
+## P22-0b 与 P22-B 准备（2026-10-30）
+
+- P22-0b 已按用户授权完成：`docs/ARCHITECTURE.md` 决策 6/7、`docs/STACK.md`（链选择）、`docs/CONVENTIONS.md`（钱包写入例外）已同步，提交 `ee21ab2`。
+- 素材 metadata 生成器 `scripts/p22/build-asset-metadata.ts`（只写本地，不上传）：音效 33/33、背景音乐 35/35，单个文件最大 525 字节。音频全部复用已有 Arweave 文件，只需新传 metadata 与图片。
+- **上传成本估算**（Turbo 公开报价，1 GiB ≈ \$73.08；2026-10-30）：70 个 metadata（约 0.6 KB）合计约 \$0.005；2 张图片（各 ≤100 KB）各约 \$0.007；合计不到 \$0.02。过往 <105 KB 的文件在账本里 `costWinc` 为 0（免费档），实际可能为 \$0。
+- **上传前提（未满足）**：①两张图片（音效共用一张、背景音乐共用一张）需要设计，当前为占位值；②`.env.local` 无 `TURBO_WALLET_*`，需用户提供 Turbo 钱包路径；③上传属付费动作，需用户批准。
+- 主网合约登记还需把 70 个 metadata 的 `ar://` 地址回填到 `defineTokens`。
