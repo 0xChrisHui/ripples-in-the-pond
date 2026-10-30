@@ -64,9 +64,15 @@ async function main() {
       if (receipt.status !== 'success') throw new Error(`${label} 登记交易失败 ${hash}`);
       console.log(`  已登记 ${group[0]}–${group[group.length - 1]} tx ${hash} gas ${receipt.gasUsed}`);
     }
-    const missing = [];
-    for (const id of ids) {
-      if (!await pub.readContract({ address, abi: ABI, functionName: 'isDefined', args: [BigInt(id)] })) missing.push(id);
+    // 公共节点可能还没同步到刚确认的区块：读回最多重试 6 次（每次间隔 5 秒）再判定缺失
+    let missing: number[] = ids;
+    for (let attempt = 0; attempt < 6 && missing.length; attempt += 1) {
+      if (attempt) await new Promise((resolve) => setTimeout(resolve, 5_000));
+      const next: number[] = [];
+      for (const id of missing) {
+        if (!await pub.readContract({ address, abi: ABI, functionName: 'isDefined', args: [BigInt(id)] })) next.push(id);
+      }
+      missing = next;
     }
     if (!dryRun && missing.length) throw new Error(`${label} 仍有未登记 ${missing.join(',')}`);
   }
