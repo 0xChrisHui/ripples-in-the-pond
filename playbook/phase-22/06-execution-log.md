@@ -31,3 +31,16 @@
 - 每链：`NEXT_PUBLIC_P22_OPENER_<chainId>`、`NEXT_PUBLIC_P22_SOUNDS_<chainId>`、`NEXT_PUBLIC_P22_TRACKS_<chainId>`、`NEXT_PUBLIC_P22_DEPLOY_BLOCK_<chainId>`
 - 服务端：`P22_SIGNER_PRIVATE_KEY`、`P22_SIGNER_ADDRESS`（独立于 operator）
 - 部署脚本：`P22_SCORE_ADDRESS`、`P22_ADMIN_ADDRESS`、`P22_SIGNER_ADDRESS`、`P22_PAUSER_ADDRESS`、`P22_SOUND_CONTRACT_URI`、`P22_TRACK_CONTRACT_URI`、`P22_ADMIN_DELAY_SECONDS`
+
+## P22-A2 OP Sepolia 部署与端到端（2026-10-30）
+
+| 合约 | 地址 |
+|---|---|
+| ScorePackOpener | `0x646d46312C0ad844d90a39C5c60bb3f8571391e4` |
+| PondSoundNFT | `0xF8501Aa707899644b9943Ba2Fb9a2cBea2590Db0` |
+| PondTrackNFT | `0xbc99085aeB238d5329640eB6c899A9C3Ee1b71aF` |
+
+- 部署者 `0x306D…1633`（现有热钱包，部署后不持有任何角色，已读回确认）；admin / signer / pauser 为新生成的测试网专用钥匙，保存在桌面 `p22-testnet-keys.json`，**仅限测试网，主网必须另换**。
+- 素材 URI 是占位地址（`ar://P22-testnet-placeholder-not-real-…`），登记了音效 1–33、背景音乐 1–35。主网换真实 Arweave 地址。
+- 端到端（`scripts/p22/e2e-open.ts`）：服务端同一套凭证代码签名，由**非持有人**地址提交 `open`，Score #2 的账户 `0x5319…7b59` 收到背景音乐 1 份 + 音效 1/2/3 各 1 份，`opened=true`，gas 292972；第二次开包被拒绝。
+- 未做：浏览器界面实测、cron 与数据库路径联调（无测试库）、ETH Sepolia（已决定跳过）。
