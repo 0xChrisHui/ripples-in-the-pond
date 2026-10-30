@@ -12,14 +12,17 @@
 | P22-D 界面 | 代码完成，未目验 | `/score` 开通面板、`/me` OP 勾选框 |
 | P22-E 可视化页 | 代码完成，未目验 | `/score/[chainId]/[contract]/[tokenId]/pack` |
 
+## 用户决定（2026-10-30）
+
+- **范围：只给用现行 33 个音效铸成的 Score 开包。** 用过旧版音频的 Score（如 ETH Token #1）不盘点旧音效，开包会被服务端以 MISSING_ASSETS 拒绝，属预期行为，不是缺陷。
+- **ETH 用补开逻辑：** 不做"Score 确认后自动弹第二次钱包确认"，ETH 用户在 `/score` 页点"开通资产包"。OP 保持勾选后自动开包。
+
 ## 未做（需用户放行或前置条件）
 
 - P22-0b 规则文档同步（`ARCHITECTURE.md` 决策 6/7、`STACK.md:33`、`CONVENTIONS.md:71`）：改前须用户确认。
 - P22-A2 测试网部署、P22-B Arweave 上传（付费）、P22-G 主网：均为用户 Gate。
 - migration `063_score_pack_orders.sql` 未跑，测试库与正式库都要用户放行。
 - 浏览器实测（P22-D/E/F）：依赖测试网合约与 migration。
-- ETH 勾选后"Score 确认后自动弹第二次钱包确认"：**未实现**。ETH 用户目前在 `/score` 页点"开通资产包"补开；`/me` 勾选框只对 OP 显示。
-- 历史旧音效（Score #1 用过的旧音频）未盘点进 `asset-map.json`，现表只有当前 33 个，旧 Score 开包会因 MISSING_ASSETS 被拒；P22-B 盘点两链后用 `--extra-sha` 补。
 - 素材 metadata/图片尚未上传，`defineTokens` 还没调用。
 - 并发测试（与旧 Score/素材/Pond Echo worker 同跑）与 cron 的 DB 路径无自动化测试。
 
