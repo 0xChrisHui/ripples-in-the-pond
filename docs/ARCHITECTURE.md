@@ -121,9 +121,10 @@ P17唯一`music-catalog`保存35首永久身份、ERC1155坐标及revision；曲
 - TBA 里"装着"几个 MaterialNFT (ERC-1155)：1 份底曲 + N 份音效。这些是**子 NFT**
 - ScoreNFT 转手 → TBA 跟着转手 → 子 NFT 跟着转手
 
-> ⚠️ Phase 6 D-C3 修订：**TBA 当前未实装**（见决策 7）。
-> 当前 ScoreNFT 作为独立 ERC-721 存在，回放完全自包含，不依赖 TBA。
-> 上述母子结构是未来扩展形态，真做时必须新部署 MintOrchestrator。
+> ⚠️ Phase 6 D-C3 修订：ScoreNFT 本身作为独立 ERC-721 存在，回放完全自包含，不依赖 TBA。
+> **P22 修订（2026-10-30）**：资产包以"事后开包"实现，不改已部署的 ScoreNFT / MintOrchestrator——
+> 由独立的 `ScorePackOpener` 在 Score 铸成后创建其 ERC-6551 账户，并向账户铸入不可转让的音效/背景音乐 ERC-1155
+> （见决策 7 与 `playbook/phase-22/`）。素材不可单独转出，随 Score 转手；原先"新部署 MintOrchestrator"的要求不再适用于该能力。
 
 **澄清两个常见误解**：
 1. **封面图不是单独的 NFT**——它是 ScoreNFT 的视觉外观（PNG 文件），不是一个独立 token
@@ -141,7 +142,12 @@ P17唯一`music-catalog`保存35首永久身份、ERC1155坐标及revision；曲
 
 `pending_scores` 24h **不再过期已被铸造的草稿**（B8 P2 起入队后 status='draft' 不变）；`events_data` 保留为队列记录与永久输入的可核验镜像，不再是已铸详情页的 canonical 回放来源。
 
-### 决策 7：ERC-6551 TBA 当前未实装（Phase 6 D-C3 修订）
+### 决策 7：ERC-6551 TBA（Phase 6 D-C3 修订；P22 于 2026-10-30 以事后开包方式实装）
+
+> **P22 现状**：OP 与 Ethereum 两条链各部署 `ScorePackOpener`、`PondSoundNFT`、`PondTrackNFT`（均不可升级）。
+> TBA 直接使用 Tokenbound 的 `0x41C8…44eC` 实现（经 Sourcify 核验，四链 runtime hash 一致），经规范 ERC-6551 Registry
+> 创建；账户不可升级。服务端签发 EIP-712 凭证，合约验签 + 持有人校验，每枚 Score 只能开一次。
+> 不涉及 MintOrchestrator，也不改 ScoreNFT。以下为 Phase 6 当时的历史记录。
 
 **原 Phase 3 设计**：MintOrchestrator 内置 `setTbaEnabled` 开关 + `_maybeCreateTba` 空钩子，作为未来 ERC-6551 接入点。理由是"标准未定稿，留扩展点"。
 

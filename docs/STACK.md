@@ -30,7 +30,9 @@
 - **默认测试链**：OP Sepolia（chainId 11155420）
 - **P16 ScoreNFT 测试链**：Ethereum Sepolia（chainId 11155111）— 外部钱包自付 Gas
 - **P16 ScoreNFT 生产链**：Ethereum Mainnet（chainId 1）— 独立不可逆 Gate 通过后才开放
-- P14 Pond Echo 和非 ScoreNFT 资产保持 OP-only
+- P14 Pond Echo 保持 OP-only
+- **P22 Score 资产包**：OP 与 Ethereum 两条链都部署（Sepolia 先行）；OP 项目方代付，Ethereum 用户自付。不新增 npm 依赖，复用 viem / OpenZeppelin 4.9.6 / Privy provider。
+  直接调用已部署的 ERC-6551 Registry 与 Tokenbound AccountV3 实现（第三方合约，自带 ERC-4337 入口）；**我们不实现、不导入 ERC-4337 / Bundler / Paymaster / `@account-abstraction/*`**，只走普通交易。
 - RPC 与浏览器按 chain registry 配置，不在业务组件硬编码网络地址
 
 ### 安全
