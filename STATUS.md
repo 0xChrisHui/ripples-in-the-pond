@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**P22 Score 资产包（2026-10-30 已上线，内测中，分支已合入 main）**：两条主网合约已部署（opener `0xa61f7fd863E255A0B96FfC53EfD5f1B974dB0941`、sounds `0x20dD346Ec1Fc763b5279a114DC4576e705B7D056`、tracks `0x8Ffb846ce8020eC519bc17235B704A62E0f7D7f2`），70 个素材已登记；生产库 migration 063 已执行；功能由 `P22_ALLOWED_USER_IDS` 控制，当前仅用户账号可用，**真实钱包的浏览器验收未做**（OP/ETH 链路只在 fork 与测试网用脚本验证）。详情见 TASKS 与 `playbook/phase-22/06-execution-log.md`。
+**P22 Score 资产包（2026-10-30 已上线并对所有用户开放，已合入 main）**：两条主网合约已部署（opener `0xa61f7fd863E255A0B96FfC53EfD5f1B974dB0941`、sounds `0x20dD346Ec1Fc763b5279a114DC4576e705B7D056`、tracks `0x8Ffb846ce8020eC519bc17235B704A62E0f7D7f2`），70 个素材已登记；生产库 migration 063 已执行；用户已用真实钱包验收 ETH Token #1 与 OP #5（链上与数据库均 opened）；`P22_ALLOWED_USER_IDS=*`。详情见 TASKS 与 `playbook/phase-22/06-execution-log.md`。
 
 **Phase**: **Phase 11 已完成并冻结；Phase 16 Ethereum Mainnet 核心主链路已完成，2026-10-02 上线收口 Review 通过。** 首枚 Token #1 的链上交易、正式订单、永久资源和公开播放一致。最终证据见 `reviews/2026-10-02-p16-mainnet-closeout-review.md`；`playbook/phase-16/05-minimal-loop.md` 保留为早期 Sepolia 施工记录，不代表当前仍未上线。
 
