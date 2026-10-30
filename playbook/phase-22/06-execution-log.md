@@ -64,5 +64,6 @@
 - P22-0b 已按用户授权完成：`docs/ARCHITECTURE.md` 决策 6/7、`docs/STACK.md`（链选择）、`docs/CONVENTIONS.md`（钱包写入例外）已同步，提交 `ee21ab2`。
 - 素材 metadata 生成器 `scripts/p22/build-asset-metadata.ts`（只写本地，不上传）：音效 33/33、背景音乐 35/35，单个文件最大 525 字节。音频全部复用已有 Arweave 文件，只需新传 metadata 与图片。
 - **上传成本估算**（Turbo 公开报价，1 GiB ≈ \$73.08；2026-10-30）：70 个 metadata（约 0.6 KB）合计约 \$0.005；2 张图片（各 ≤100 KB）各约 \$0.007；合计不到 \$0.02。过往 <105 KB 的文件在账本里 `costWinc` 为 0（免费档），实际可能为 \$0。
-- **上传前提（未满足）**：①两张图片（音效共用一张、背景音乐共用一张）需要设计，当前为占位值；②`.env.local` 无 `TURBO_WALLET_*`，需用户提供 Turbo 钱包路径；③上传属付费动作，需用户批准。
+- **上传前提（未满足）**：①两张图片（音效共用一张、背景音乐共用一张）需要设计，当前为占位值；②Turbo 钱包已配置（`TURBO_WALLET_PATH` 指向存在的文件）；③上传属付费动作，需用户批准。
 - 主网合约登记还需把 70 个 metadata 的 `ar://` 地址回填到 `defineTokens`。
+- Turbo 余额实测（只读，`getTurboUploadBudget`）：可用 536,146,205,390 winc（约 \$2.5）；70 个 metadata + 2 张图片需约 3.9×10^9 winc（约 \$0.02），余额约为所需的 136 倍，无需充值。
