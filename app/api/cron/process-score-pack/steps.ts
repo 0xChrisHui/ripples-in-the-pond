@@ -21,7 +21,8 @@ export async function reconcileOrder(order: PackOrderRow, nowMs = Date.now()): P
   const tokenId = BigInt(order.token_id);
 
   if (await readOpened(cfg, tokenId)) {
-    const event = await readPackOpenedEvent(cfg, tokenId);
+    // 优先按订单哈希读回执；读不到事件也照样收口为 opened（链上 opened 是真值）
+    const event = await readPackOpenedEvent(cfg, tokenId, order.tx_hash as `0x${string}` | null);
     await transitionOrder(order.id, order.status, 'opened', {
       tx_hash: event?.txHash.toLowerCase() ?? order.tx_hash,
       block_number: event ? Number(event.blockNumber) : null,

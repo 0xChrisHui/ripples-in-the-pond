@@ -80,6 +80,18 @@ export async function findActiveOrder(
   return data as PackOrderRow | null;
 }
 
+/** 该 Score 最近一笔带交易哈希的订单（给读回执解析事件用，任何状态都行）。 */
+export async function findKnownTxHash(
+  chainId: number, scoreContract: string, tokenId: bigint,
+): Promise<`0x${string}` | null> {
+  const { data, error } = await supabaseAdmin.from('score_pack_orders').select('tx_hash')
+    .eq('chain_id', chainId).eq('score_contract', scoreContract.toLowerCase())
+    .eq('token_id', Number(tokenId)).not('tx_hash', 'is', null)
+    .order('created_at', { ascending: false }).limit(1).maybeSingle();
+  if (error) throw error;
+  return (data?.tx_hash as `0x${string}` | undefined) ?? null;
+}
+
 export async function findOrderById(id: string): Promise<PackOrderRow | null> {
   const { data, error } = await supabaseAdmin.from('score_pack_orders').select('*').eq('id', id).maybeSingle();
   if (error) throw error;

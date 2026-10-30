@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { getAddress, type Address, type Hex } from 'viem';
+import { getAddress, parseEventLogs, type Address, type Hex } from 'viem';
 import { getChainPublicClient } from '@/src/lib/chain/multichain/public-client';
 import {
   POND_ASSET_ABI, SCORE_OWNER_ABI, SCORE_PACK_OPENER_ABI, type PackChainConfig,
@@ -38,21 +38,37 @@ function deployBlock(chainId: number): bigint {
   return raw && /^\d+$/.test(raw) ? BigInt(raw) : 0n;
 }
 
-/** 按 PackOpened 事件取开包交易（恢复优先走事件，不依赖用户上报的 hash）。 */
+/**
+ * 取 PackOpened 事件。优先用已知交易哈希读回执（任何 RPC 套餐都能用）；
+ * 没有哈希时才扫日志——免费档 RPC 的 eth_getLogs 只允许约 10 个区块范围，会报错，此时返回 null 而不是抛出。
+ */
 export async function readPackOpenedEvent(
-  cfg: PackChainConfig, tokenId: bigint,
+  cfg: PackChainConfig, tokenId: bigint, txHash?: Hex | null,
 ): Promise<PackOpenedEvent | null> {
-  const logs = await getChainPublicClient(cfg.chainId).getContractEvents({
-    address: cfg.opener, abi: SCORE_PACK_OPENER_ABI, eventName: 'PackOpened',
-    args: { scoreTokenId: tokenId }, fromBlock: deployBlock(cfg.chainId), toBlock: 'latest',
-  });
-  const log = logs[0];
+  const client = getChainPublicClient(cfg.chainId);
+  type Decoded = { args: { scoreTokenId: bigint; account: Address; holder: Address; trackTokenId: bigint;
+    soundIds: readonly bigint[]; caller: Address }; transactionHash: Hex | null; blockNumber: bigint | null };
+  let log: Decoded | undefined;
+  try {
+    if (txHash) {
+      const receipt = await client.getTransactionReceipt({ hash: txHash });
+      log = (parseEventLogs({ abi: SCORE_PACK_OPENER_ABI, eventName: 'PackOpened', logs: receipt.logs }) as Decoded[])
+        .find((item) => item.args.scoreTokenId === tokenId);
+    } else {
+      const logs = await client.getContractEvents({
+        address: cfg.opener, abi: SCORE_PACK_OPENER_ABI, eventName: 'PackOpened',
+        args: { scoreTokenId: tokenId }, fromBlock: deployBlock(cfg.chainId), toBlock: 'latest',
+      });
+      log = logs[0] as unknown as Decoded | undefined;
+    }
+  } catch {
+    return null;
+  }
   if (!log || !log.transactionHash || log.blockNumber == null) return null;
   return {
     txHash: log.transactionHash, blockNumber: log.blockNumber,
-    account: getAddress(log.args.account!), holder: getAddress(log.args.holder!),
-    trackTokenId: log.args.trackTokenId!, soundIds: [...log.args.soundIds!],
-    caller: getAddress(log.args.caller!),
+    account: getAddress(log.args.account), holder: getAddress(log.args.holder),
+    trackTokenId: log.args.trackTokenId, soundIds: [...log.args.soundIds], caller: getAddress(log.args.caller),
   };
 }
 
@@ -69,7 +85,7 @@ export type PackSnapshot = {
 };
 
 export async function readPackSnapshot(
-  cfg: PackChainConfig, score: Address, tokenId: bigint,
+  cfg: PackChainConfig, score: Address, tokenId: bigint, knownTxHash?: Hex | null,
 ): Promise<PackSnapshot> {
   const client = getChainPublicClient(cfg.chainId);
   const [owner, opened, account, readAtBlock] = await Promise.all([
@@ -83,7 +99,7 @@ export async function readPackSnapshot(
   const tba = getAddress(account);
   const [code, event] = await Promise.all([
     client.getCode({ address: tba }),
-    opened ? readPackOpenedEvent(cfg, tokenId) : Promise.resolve(null),
+    opened ? readPackOpenedEvent(cfg, tokenId, knownTxHash) : Promise.resolve(null),
   ]);
   let trackBalance: bigint | null = null;
   let soundBalances: PackSnapshot['soundBalances'] = [];

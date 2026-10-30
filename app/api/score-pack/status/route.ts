@@ -2,7 +2,7 @@ import { getAddress } from 'viem';
 import { getConfiguredScoreAddress } from '@/src/lib/chain/multichain/registry';
 import { readPackSnapshot } from '@/src/lib/score-pack/chain';
 import { getPackChainConfig } from '@/src/lib/score-pack/contract';
-import { findActiveOrder, publicPackOrder } from '@/src/lib/score-pack/orders';
+import { findActiveOrder, findKnownTxHash, publicPackOrder } from '@/src/lib/score-pack/orders';
 import { badRequest, packErrorResponse, parseTarget } from '../_shared';
 
 export const dynamic = 'force-dynamic';
@@ -21,8 +21,9 @@ export async function GET(request: Request) {
     if (getAddress(target.scoreContract) !== getConfiguredScoreAddress(target.chainId)) {
       return badRequest('WRONG_CONTRACT');
     }
+    const knownTx = await findKnownTxHash(target.chainId, target.scoreContract, target.tokenId);
     const [snapshot, order] = await Promise.all([
-      readPackSnapshot(cfg, getAddress(target.scoreContract), target.tokenId),
+      readPackSnapshot(cfg, getAddress(target.scoreContract), target.tokenId, knownTx),
       findActiveOrder(target.chainId, target.scoreContract, target.tokenId),
     ]);
     return Response.json({
