@@ -7,6 +7,15 @@
 
 ## 🎯 Now（最多 1 件，AI 正在做的）
 
+### P22 Score 资产包（2026-10-30 已上线，内测中；待用户用自己的账号验收后对所有人开放）
+
+- 方案 `playbook/phase-22/00-overview.md`；执行与证据 `06-execution-log.md`、`07-mainnet-runbook.md`；安全自查 `reviews/2026-10-30-p22-contract-security-review.md`。
+- [x] 三个合约已部署并读回核对：以太坊主网与 OP 主网，地址相同（opener `0xa61f…0941`、sounds `0x20dD…D056`、tracks `0x8Ffb…D7f2`）；70 个素材已登记；素材 metadata 已上传 Arweave。
+- [x] 生产库 migration 063 已执行（先在事务里试跑并回滚验证，再正式执行）；Vercel 生产环境变量已配；`main` 已部署（5eb62cc）；cron 逻辑嵌入 `process-mint-queue` 空闲分支，另有独立入口 `/api/cron/process-score-pack`。
+- [x] 内测开关：`P22_ALLOWED_USER_IDS`（当前只有用户自己的账号）。**对所有人开放 = 把它改成 `*` 后重新部署。**
+- [ ] 用户验收：用钱包 `0x991b…1c63` 登录，ETH Token #1（`/score/1/0xdeC9…f02A/1`）与 OP #5（`/score/10/0xAc3F…A4AA/5`）各点一次"开通资产包"，核对 `/pack` 页。
+- [ ] 开放后：Vercel 的 `P22_ALLOWED_USER_IDS` 改 `*`；OP #1（旧音效）会被拒绝，属预期；新封面设计另开计划（见 Later）。
+
 ### P14-J Echo 流水线恢复 + 已铸唱片补发 #36（2026-10-28 完成上线并全部铸完，分支 feat/p14-j；剩用户目验一项）
 
 - 方案 `playbook/phase-14/97-j-echo-pipeline-recovery.md`；J-A、J-B 均按用户“全部按建议”落地。

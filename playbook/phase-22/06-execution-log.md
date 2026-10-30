@@ -99,3 +99,12 @@
 - 剩余资金已转回充值来源 `0x991b…1c63`（以太坊 tx `0xb228df21…4e45`，OP tx `0x68b55da4…4b34`）。
 - 踩坑：公共 RPC 读回有延迟，登记后立刻读会误报"未登记"；`define-tokens.ts` 已加重试。别因此重发登记交易。
 - **应用侧尚未上线**：migration 063 未跑、环境变量未配、cron 未建、分支未合并。用户账号验收后再对所有人开放。
+
+## 应用侧上线（2026-10-30）
+
+- 生产库（ref `uupo…`）migration 063：先 `begin`-等价的"异常强制回滚"试跑（订单幂等、换持有人放弃旧单、每日额度、唯一约束、模式检查全部通过，回滚后表数为 0），再正式执行；结果 2 张表、唯一索引 `score_pack_one_active`、两表 RLS 开启、匿名角色不可调用预占函数、0 行。
+- 生产库全量派生核对（只读，`scripts/p22/derive-all.ts`）：9 枚已发布 Score，8 枚可开包，仅 OP #1 因旧音效被拒（符合范围决定）。**纠正此前说法：ETH Token #1 用现行音效，可以开包。**
+- Vercel 生产环境变量 11 个（`NEXT_PUBLIC_P22_*` ×8、`P22_SIGNER_ADDRESS`、`P22_SIGNER_PRIVATE_KEY`（敏感）、`P22_ALLOWED_USER_IDS`）。注意 Vercel 生产变量默认是敏感类型（只写不可读），公开变量用 `--no-sensitive` 才能读回核对；`vercel env add --value` 在此机器可用，不需要 REST。
+- `main` 快进合并并推送（132bbc6、5eb62cc）→ Vercel 生产部署 Ready。线上验证：status 接口返回两枚 Score 的链上状态与 TBA 地址（与 fork 彩排一致）、错误合约拒绝、cron 无授权 401、/pack 页 200、开包接口要求登录、独立 cron 入口与 `process-mint-queue` 嵌入分支均正常。
+- 内测开关：`P22_ALLOWED_USER_IDS` = 用户账号 `a8493ebd-…`（钱包 `0x991b…1c63`）。
+- 仍未做：真实钱包的浏览器点击验收（ETH 弹窗签名、OP 排队到上链）；cron-job.org 无需新建任务（已嵌入每分钟入口）。

@@ -6,6 +6,8 @@
 
 ## 当前阶段
 
+**P22 Score 资产包（2026-10-30 已上线，内测中，分支已合入 main）**：两条主网合约已部署（opener `0xa61f7fd863E255A0B96FfC53EfD5f1B974dB0941`、sounds `0x20dD346Ec1Fc763b5279a114DC4576e705B7D056`、tracks `0x8Ffb846ce8020eC519bc17235B704A62E0f7D7f2`），70 个素材已登记；生产库 migration 063 已执行；功能由 `P22_ALLOWED_USER_IDS` 控制，当前仅用户账号可用，**真实钱包的浏览器验收未做**（OP/ETH 链路只在 fork 与测试网用脚本验证）。详情见 TASKS 与 `playbook/phase-22/06-execution-log.md`。
+
 **Phase**: **Phase 11 已完成并冻结；Phase 16 Ethereum Mainnet 核心主链路已完成，2026-10-02 上线收口 Review 通过。** 首枚 Token #1 的链上交易、正式订单、永久资源和公开播放一致。最终证据见 `reviews/2026-10-02-p16-mainnet-closeout-review.md`；`playbook/phase-16/05-minimal-loop.md` 保留为早期 Sepolia 施工记录，不代表当前仍未上线。
 
 **首页第36特殊圆（2026-10-08，未提交待验收）**：白色正圆、半径×2、主动随机漂流/换层/隐现已在本地实现，类型检查、定向ESLint、3小时无头仿真（桌面/手机零越界、零NaN、10层全到达）和本地浏览器观察（移动、隐现不可点、播放日食同步变大）通过。等用户目验观感后再提交；方案记录 `docs/superpowers/plans/2026-10-08-special36.md`。
