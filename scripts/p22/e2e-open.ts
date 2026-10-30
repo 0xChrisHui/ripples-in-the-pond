@@ -5,7 +5,7 @@
  */
 import { createPublicClient, createWalletClient, getAddress, http, type Hex } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { optimismSepolia } from 'viem/chains';
+import { mainnet, optimism, optimismSepolia } from 'viem/chains';
 import { POND_ASSET_ABI, SCORE_OWNER_ABI, SCORE_PACK_OPENER_ABI } from '../../src/lib/score-pack/contract';
 import { buildVoucher, signVoucher } from '../../src/lib/score-pack/voucher';
 
@@ -16,10 +16,11 @@ const env = (name: string) => {
 };
 
 async function main() {
-  const chainId = optimismSepolia.id;
-  const publicClient = createPublicClient({ chain: optimismSepolia, transport: http(env('RPC_URL')) });
+  const chain = process.env.CHAIN_ID === '1' ? mainnet : process.env.CHAIN_ID === '10' ? optimism : optimismSepolia;
+  const chainId = chain.id;
+  const publicClient = createPublicClient({ chain, transport: http(env('RPC_URL')) });
   const submitter = privateKeyToAccount(env('SUBMITTER_KEY') as Hex);
-  const wallet = createWalletClient({ account: submitter, chain: optimismSepolia, transport: http(env('RPC_URL')) });
+  const wallet = createWalletClient({ account: submitter, chain, transport: http(env('RPC_URL')) });
   const opener = getAddress(env('OPENER'));
   const tokenId = BigInt(env('TOKEN_ID'));
 

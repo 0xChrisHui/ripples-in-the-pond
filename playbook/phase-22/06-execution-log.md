@@ -74,3 +74,11 @@
 - 已生成两张候选 PNG（旧封面去掉右下角编号，1000×1000）：`sound.png`（取自 OP Score #1 的封面）、`track.png`（取自 ETH Token #1 的封面），放在桌面 `p22-asset-images/`，待用户过目；**用户满意前不上传 Arweave**。
 - 用 PNG 而不是原 SVG：Semi 里旧封面显示异常，PNG 不依赖 SVG 渲染（原因仍待核实）。
 - 满意后的步骤：上传 2 张图 → 拿到 `ar://` 地址 → 用 `--sound-image/--track-image` 重生成 70 个 metadata → 上传 → 回填登记脚本。登记到主网后不可改。
+
+## 素材上传与主网彩排（2026-10-30，用户授权"全按推荐、不再审批"）
+
+- 素材图片去掉了起笔折角（`data/p22/images/`）；2 张图 + 70 个 metadata + 2 个合集 metadata 已上传 Arweave（Turbo，账本 `data/p22/upload-ledger.json` 共 72 条，抽查 8 项读回哈希一致），登记地址在 `data/p22/asset-uris.json`。
+- 新增 `scripts/p22/define-tokens.ts`（只追加、可 dry-run、读回核对）与 `scripts/p22/upload-assets.ts`。
+- **OP 主网 fork 与以太坊主网 fork 各完整彩排一遍**：部署（模拟 11.1M gas）→ 登记（音效 2.93M + 背景音乐 3.10M gas）→ `VerifyScorePack` 通过 → 真实主网 Score（OP #2、ETH #1）由非持有人提交开包成功（gas 约 29.3 万）→ 第二次开包被拒绝。两条链的合约地址相同（全新部署钱包 nonce 确定）。
+- 主网部署**未执行**：所有钱包在主网无可用 ETH（只有运营热钱包有约 0.01 OP-ETH，不动它以免触发余额告警）。手册 `07-mainnet-runbook.md`。
+- 以太坊 gas 实测 1.2–1.3 gwei（早些时候 22 gwei 为短时高峰），主网总成本约 0.025 ETH。
