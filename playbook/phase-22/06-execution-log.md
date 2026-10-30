@@ -67,3 +67,10 @@
 - **上传前提（未满足）**：①两张图片（音效共用一张、背景音乐共用一张）需要设计，当前为占位值；②Turbo 钱包已配置（`TURBO_WALLET_PATH` 指向存在的文件）；③上传属付费动作，需用户批准。
 - 主网合约登记还需把 70 个 metadata 的 `ar://` 地址回填到 `defineTokens`。
 - Turbo 余额实测（只读，`getTurboUploadBudget`）：可用 536,146,205,390 winc（约 \$2.5）；70 个 metadata + 2 张图片需约 3.9×10^9 winc（约 \$0.02），余额约为所需的 136 倍，无需充值。
+
+## 素材图决定（2026-10-30）
+
+- 用户决定：P22 素材图**先用旧版 Score 波浪封面**，新封面设计之后单开计划（见 TASKS Later）。
+- 已生成两张候选 PNG（旧封面去掉右下角编号，1000×1000）：`sound.png`（取自 OP Score #1 的封面）、`track.png`（取自 ETH Token #1 的封面），放在桌面 `p22-asset-images/`，待用户过目；**用户满意前不上传 Arweave**。
+- 用 PNG 而不是原 SVG：Semi 里旧封面显示异常，PNG 不依赖 SVG 渲染（原因仍待核实）。
+- 满意后的步骤：上传 2 张图 → 拿到 `ar://` 地址 → 用 `--sound-image/--track-image` 重生成 70 个 metadata → 上传 → 回填登记脚本。登记到主网后不可改。
