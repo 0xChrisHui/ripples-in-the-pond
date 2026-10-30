@@ -12,8 +12,8 @@
 | salt | `bytes32(0)` |
 | chainId | `block.chainid`（本链） |
 | 创建后 | 立即可用，无需 `initialize`（fork 实测：`token()`、`owner()` 正确，支持 ERC-1155 接收） |
-| 升级 | 账户含 `upgradeTo` / `upgradeToAndCall`，Score 持有人可升级自己的 TBA；素材合约禁转让，升级不能转出素材 |
-| 部署脚本护栏 | 链上 `codehash` 必须等于冻结值，否则拒绝部署 |
+| 升级 | **不可升级**（2026-10-30 订正）：逻辑含 UUPS 的 `upgradeTo`，但克隆账户的 ERC-1967 槽为空，`onlyProxy` 必然拒绝（有测试）。持有人仍可 `lock`（最长 365 天）、设置执行授权与接收回调覆盖，转手后这些都失效 |
+| 部署脚本护栏 | 链上 `codehash` 必须等于冻结值；主网 Score 地址写死；主网要求全新部署钱包（nonce=0）且不得是运营钱包；运营钱包主网必填且不得等于 signer/admin/pauser；开包合约构造时核对两个素材合约已绑定本合约；部署后用 `VerifyScorePack` 读真链核对 |
 
 弃用 AccountProxy 的理由：创建后须再发一笔 `initialize`，开包合约在初始化前铸 ERC-1155 会失败。
 

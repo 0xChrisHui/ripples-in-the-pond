@@ -9,6 +9,8 @@ import { OP_MAX_ATTEMPTS, retryDelayMs, shouldAbandon } from '@/src/lib/score-pa
 import { buildVoucher, signVoucher } from '@/src/lib/score-pack/voucher';
 
 const OP_RECEIPT_WAIT_MS = 15 * 60_000;
+/** 64 个音效 + 新建账户实测约 1.9M；留余量，防持有人用接收回调覆盖烧光代付 Gas。 */
+const OPEN_GAS_CAP = 2_500_000n;
 
 export type StepResult = 'opened' | 'abandoned' | 'reverted' | 'requeued' | 'sent' | 'waiting' | 'failed';
 
@@ -95,7 +97,7 @@ export async function sendSponsoredOrder(order: PackOrderRow, workerId: string):
   try {
     const hash = await operatorWalletClient.writeContract({
       address: cfg.opener, abi: SCORE_PACK_OPENER_ABI, functionName: 'open',
-      args: [voucher, signed.signer, signed.signature],
+      args: [voucher, signed.signer, signed.signature], gas: OPEN_GAS_CAP,
     });
     await transitionOrder(order.id, 'unsent', 'submitted_unknown', { tx_hash: hash.toLowerCase() });
     return 'sent';

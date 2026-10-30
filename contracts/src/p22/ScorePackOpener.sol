@@ -19,6 +19,7 @@ interface IERC6551Registry {
 }
 
 interface IPondAsset {
+    function opener() external view returns (address);
     function mint(address to, uint256 id) external;
     function mintBatch(address to, uint256[] calldata ids) external;
 }
@@ -85,6 +86,10 @@ contract ScorePackOpener is EIP712, AccessControlDefaultAdminRules, Pausable, Re
                 || sounds_ == address(0) || tracks_ == address(0) || sounds_ == tracks_
         ) revert InvalidConfig();
         if (signer_ == address(0) || pauser_ == address(0)) revert InvalidConfig();
+        // 两个素材合约必须已绑定到本合约：部署途中 nonce 错位会在这里直接失败，而不是留下永久错绑
+        if (IPondAsset(sounds_).opener() != address(this) || IPondAsset(tracks_).opener() != address(this)) {
+            revert InvalidConfig();
+        }
         if (admin_ == signer_ || admin_ == pauser_ || signer_ == pauser_) revert InvalidConfig();
         score = IERC721(score_);
         sounds = IPondAsset(sounds_);

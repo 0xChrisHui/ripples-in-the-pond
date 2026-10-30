@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import {PackTestBase, ITba} from "./PackTestBase.sol";
 import {ScorePackOpener} from "../../src/p22/ScorePackOpener.sol";
+import {PondSoundNFT} from "../../src/p22/PondSoundNFT.sol";
 import {PondSoulboundAsset} from "../../src/p22/PondSoulboundAsset.sol";
 
 contract ScorePackOpenerTest is PackTestBase {
@@ -198,6 +199,15 @@ contract ScorePackOpenerTest is PackTestBase {
         vm.expectRevert(ScorePackOpener.InvalidConfig.selector);
         new ScorePackOpener(
             address(score), address(sound), address(track), REGISTRY, address(0x1234), admin, signer, pauser, 1 days
+        );
+    }
+
+    /// 素材合约绑定的不是本合约（部署 nonce 错位）：开包合约构造直接失败。
+    function test_constructorRejectsMisboundAssets() public {
+        PondSoundNFT wrong = new PondSoundNFT(AR, address(0xDEAD), admin, pauser, 1 days);
+        vm.expectRevert(ScorePackOpener.InvalidConfig.selector);
+        new ScorePackOpener(
+            address(score), address(wrong), address(track), REGISTRY, ACCOUNT_IMPL, admin, signer, pauser, 1 days
         );
     }
 }

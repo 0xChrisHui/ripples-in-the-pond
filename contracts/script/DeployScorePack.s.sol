@@ -14,6 +14,10 @@ contract DeployScorePack is Script {
     bytes32 internal constant REGISTRY_HASH = 0xda1d5b06e579f9e42e59b00fbc22939896ecb38dc8830d40de0a2508fecd6735;
     bytes32 internal constant ACCOUNT_HASH = 0xdf5eeb80b53e48dfd667fff5264976de4004fdd27eef4f6b954d182109f0f85b;
 
+    /// 主网 Score 合约写死：环境变量填错不能让三个合约永久绑错。
+    address internal constant OP_MAINNET_SCORE = 0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA;
+    address internal constant ETH_MAINNET_SCORE = 0xdeC99da00290d15f0742b0abd26e4Cd5d121f02A;
+
     struct Config {
         uint256 key;
         address deployer;
@@ -21,6 +25,8 @@ contract DeployScorePack is Script {
         address admin;
         address signer;
         address pauser;
+        /// OP 代付提交者（运营热钱包）：主网必填，且不得等于 signer / admin / pauser
+        address operator;
         string soundUri;
         string trackUri;
         uint48 delay;
@@ -63,6 +69,7 @@ contract DeployScorePack is Script {
         c.admin = vm.envAddress("P22_ADMIN_ADDRESS");
         c.signer = vm.envAddress("P22_SIGNER_ADDRESS");
         c.pauser = vm.envAddress("P22_PAUSER_ADDRESS");
+        c.operator = vm.envOr("P22_OPERATOR_ADDRESS", address(0));
         c.soundUri = vm.envString("P22_SOUND_CONTRACT_URI");
         c.trackUri = vm.envString("P22_TRACK_CONTRACT_URI");
         c.delay = uint48(vm.envUint("P22_ADMIN_DELAY_SECONDS"));
@@ -75,6 +82,16 @@ contract DeployScorePack is Script {
         require(
             c.deployer != c.admin && c.deployer != c.signer && c.deployer != c.pauser, "deployer must hold no role"
         );
+        if (c.operator != address(0)) {
+            require(c.operator != c.signer && c.operator != c.admin && c.operator != c.pauser, "operator must differ");
+        }
+        if (mainnet) {
+            require(c.operator != address(0), "operator required on mainnet");
+            require(c.deployer != c.operator, "deployer must not be the operator wallet");
+            require(c.score == (block.chainid == 10 ? OP_MAINNET_SCORE : ETH_MAINNET_SCORE), "score address mismatch");
+            // 一次性部署钱包：nonce 必须为 0，开包合约地址的预测才不会被其他交易打乱
+            require(vm.getNonce(c.deployer) == 0, "deployer must be a fresh wallet");
+        }
         require(REGISTRY.codehash == REGISTRY_HASH, "registry code mismatch");
         require(ACCOUNT_IMPL.codehash == ACCOUNT_HASH, "account impl code mismatch");
         require(c.score.code.length > 0, "score has no code");

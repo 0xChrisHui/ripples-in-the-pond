@@ -32,7 +32,7 @@
 - 服务端：`P22_SIGNER_PRIVATE_KEY`、`P22_SIGNER_ADDRESS`（独立于 operator）
 - 部署脚本：`P22_SCORE_ADDRESS`、`P22_ADMIN_ADDRESS`、`P22_SIGNER_ADDRESS`、`P22_PAUSER_ADDRESS`、`P22_SOUND_CONTRACT_URI`、`P22_TRACK_CONTRACT_URI`、`P22_ADMIN_DELAY_SECONDS`
 
-## P22-A2 OP Sepolia 部署与端到端（2026-10-30）
+## P22-A2 OP Sepolia 部署与端到端（2026-10-30，第一版，已被下方重部署取代）
 
 | 合约 | 地址 |
 |---|---|
@@ -44,3 +44,17 @@
 - 素材 URI 是占位地址（`ar://P22-testnet-placeholder-not-real-…`），登记了音效 1–33、背景音乐 1–35。主网换真实 Arweave 地址。
 - 端到端（`scripts/p22/e2e-open.ts`）：服务端同一套凭证代码签名，由**非持有人**地址提交 `open`，Score #2 的账户 `0x5319…7b59` 收到背景音乐 1 份 + 音效 1/2/3 各 1 份，`opened=true`，gas 292972；第二次开包被拒绝。
 - 未做：浏览器界面实测、cron 与数据库路径联调（无测试库）、ETH Sepolia（已决定跳过）。
+
+## 安全修复后重部署 OP Sepolia（2026-10-30，当前有效）
+
+开包合约构造函数新增绑定校验，旧版作废（旧地址 `0x646d…91e4` 等不再使用）。
+
+| 合约 | 地址 |
+|---|---|
+| ScorePackOpener | `0x4Db23587222c2BDd3aa051558AB4e37F945d7399` |
+| PondSoundNFT | `0xa269619706bD25B648a10Cd0AC32671847C572b9` |
+| PondTrackNFT | `0xbF394442603447B022Bd7057F98CcEC386D8c35E` |
+
+- `VerifyScorePack` 读真链核对通过；占位素材已登记（音效 1–33、背景音乐 1–35）。
+- 端到端：Score #2 由非持有人提交 `open` 成功（gas 223578），TBA 同样地址 `0x5319…7b59`（账户地址只由 Score 决定，与 opener 无关），第二次开包被拒绝。
+- 主网部署前置：全新部署钱包、运营钱包地址（`P22_OPERATOR_ADDRESS`）、独立 admin/signer/pauser。

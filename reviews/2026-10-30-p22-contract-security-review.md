@@ -8,7 +8,17 @@
 
 合约层没有发现可直接造成资产被盗、素材被转出或重复开包的问题。主要风险在**部署环节**（部署后不可改），有 2 项中等问题建议主网前修。
 
-## 中等
+## 修复状态（2026-10-30 已修，forge test 138 全绿）
+
+| 项 | 处理 |
+|---|---|
+| M1 | 部署脚本写死两条主网 Score 地址并校验（`test_rejectsWrongScoreAddressOnMainnets`） |
+| M2 | 开包合约构造时核对素材合约绑定（`test_constructorRejectsMisboundAssets`）；主网要求 nonce=0 的新钱包；新增读真链核对脚本 `VerifyScorePack`，已在 OP Sepolia 通过 |
+| L1 | 新增 `P22_OPERATOR_ADDRESS`，主网必填且须与 signer/admin/pauser/deployer 不同 |
+| L2 | cron 发送 `open` 加 gas 上限 2.5M |
+| L3 | 接受，靠 signer 轮换 |
+
+## 中等（以下为修复前的原始记录）
 
 **M1 部署脚本没有钉死 Score 合约地址。** `P22_SCORE_ADDRESS` 全靠环境变量；主网填错时，开包合约会永久绑在错误的 Score 上，三个合约整套作废（约 0.33 ETH）。建议：OP 主网与以太坊主网写死 `0xAc3F…A4AA`、`0xdeC9…f02A` 并校验。
 
@@ -29,7 +39,7 @@
 
 ## 冻结表订正
 
-`05-frozen-decisions.md` §1 写"Score 持有人可升级 TBA"——**错误**。直接绑定 `0x41C8…` 时，克隆账户的 ERC-1967 槽为空，UUPS `onlyProxy` 必然拒绝 `upgradeTo`（已测）。TBA 实际不可升级。Tokenbound guardian 只管升级白名单和跨链执行者，对本链账户无权限。
+`05-frozen-decisions.md` §1 原写"Score 持有人可升级 TBA"——**错误，已订正**。直接绑定 `0x41C8…` 时，克隆账户的 ERC-1967 槽为空，UUPS `onlyProxy` 必然拒绝 `upgradeTo`（已测）。TBA 实际不可升级。Tokenbound guardian 只管升级白名单和跨链执行者，对本链账户无权限。
 
 ## 已验证（有测试）
 
