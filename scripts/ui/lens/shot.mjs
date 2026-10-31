@@ -27,7 +27,7 @@ async function shot(name, width, height, mobile) {
 }
 try {
   await send('Page.enable'); await send('Runtime.enable');
-  if (lang === 'en') await send('Network.setCookie', { name: 'NEXT_LOCALE', value: 'en', url: origin }).catch(() => {});
+  if (lang === 'en') await send('Network.setCookie', { name: 'locale', value: 'en', url: origin }).catch(() => {});
   await shot('desktop', 1440, 900, false);
   await shot('phone', 390, 844, true);
 } finally {

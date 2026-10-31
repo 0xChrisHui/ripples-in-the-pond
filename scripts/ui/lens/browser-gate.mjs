@@ -115,6 +115,15 @@ try {
   await waitFor("location.pathname==='/artist'");
   await waitFor("document.querySelector('.lens-veil')?.dataset.on==='false'");
   ok('去 /artist：遮罩撤下');
+  // 8. 旧 /tracks 仍可手输打开；站内（顶栏、手机菜单）没有任何 /tracks 链接；/score 重定向到 /lens
+  await send('Page.navigate', { url: `${origin}/tracks` });
+  await waitFor(`document.querySelector('[data-track-surface="pond"]') && document.querySelector('.pond-global-header')`);
+  assert.equal(await evaluate(`document.querySelectorAll('a[href="/tracks"]').length`), 0, '站内不应有 /tracks 链接');
+  assert.equal(await evaluate(`document.querySelectorAll('.pond-global-header nav a[href="/lens"]').length`), 1);
+  ok('手输 /tracks 仍可用，站内无 /tracks 链接');
+  await send('Page.navigate', { url: `${origin}/score` });
+  await waitFor("location.pathname==='/lens'");
+  ok('/score 重定向到 /lens');
   assert.deepEqual(browser.pageErrors, [], `页面异常：${browser.pageErrors.join('\n')}`);
   console.log(`\n全部 ${results.length} 项通过`);
 } catch (error) {
