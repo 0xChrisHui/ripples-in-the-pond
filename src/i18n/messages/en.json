@@ -765,7 +765,8 @@
     "echoMissing": "Pond Echo not found",
     "echoUnavailable": "Pond Echo unavailable",
     "editionPending": "Record in progress",
-    "artistName": "Ye Yuhan"
+    "artistName": "Ye Yuhan",
+    "details": "Details"
   },
   "artist": {
     "folio": "ARTIST / YE YUHAN"

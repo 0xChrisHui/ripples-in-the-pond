@@ -1,2 +1,2 @@
 import { redirect } from 'next/navigation';
-export default function ScoreIndexPage() { redirect('/tracks'); }
+export default function ScoreIndexPage() { redirect('/lens'); }

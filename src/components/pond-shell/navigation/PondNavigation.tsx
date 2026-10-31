@@ -8,7 +8,7 @@ import './navigation.css';
 export function usePondNavigationWarmup(): void {
   const router = useRouter();
   useEffect(() => {
-    router.prefetch('/artist'); router.prefetch('/tracks'); router.prefetch('/me');
+    router.prefetch('/artist'); router.prefetch('/lens'); router.prefetch('/me');
     // 路由预取不会准备常驻曲目前景；空闲时提前加载，避免首次点击串行等待两个chunk。
     const warm = () => { void import('@/src/features/home-pond/PreparedTracks'); };
     if ('requestIdleCallback' in window) {
@@ -25,7 +25,7 @@ export default function PondNavigation({ showTracks = false }: { showTracks?: bo
   usePondNavigationWarmup();
   return <nav className="pond-page-navigation" aria-label="主导航">
     <PondRouteLink href="/artist">艺术家</PondRouteLink>
-    {showTracks && <PondRouteLink href="/tracks">曲目</PondRouteLink>}
+    {showTracks && <PondRouteLink href="/lens">详情</PondRouteLink>}
     <LoginButton />
   </nav>;
 }

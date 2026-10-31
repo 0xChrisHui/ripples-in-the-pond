@@ -27,7 +27,9 @@ async function click(selector) {
 const circle = "(() => { const n=document.querySelector('[data-track-circle]'); return {session:n.dataset.circleSession,dx:+n.dataset.circleDx,dy:+n.dataset.circleDy,time:+n.dataset.circleTime,color:n.dataset.circleColor,track:document.querySelector('.track-archive').dataset.selectedTrack}; })()";
 const header = "(() => { const n=document.querySelector('.pond-global-header'); return n ? {left:n.getBoundingClientRect().left,top:n.getBoundingClientRect().top,links:[...n.querySelectorAll('nav a,nav button')].map(a=>({label:a.textContent.trim(),x:a.getBoundingClientRect().x,y:a.getBoundingClientRect().y})),back:n.querySelector('a').textContent.trim()} : null; })()";
 async function route(selector, path, owner) {
-  await click(selector);
+  // P21：站内不再有 /tracks 入口。'typed:' 前缀 = 模拟手输路径（Next 客户端路由，保留共享 Canvas）。
+  if (selector.startsWith('typed:')) await evaluate("window.next.router.push("+JSON.stringify(selector.slice(6))+"); true");
+  else await click(selector);
   await waitFor("document.querySelector('[data-pond-shell]')?.dataset.pondInteractiveOwner==='"+owner+"'");
   const firstCircle = owner === 'tracks' ? await evaluate(circle) : null;
   await waitFor("location.pathname==='"+path+"' && document.querySelector('[data-pond-shell]')?.dataset.pondStage==='stable'");
@@ -51,7 +53,7 @@ try {
   evidence.tracksHeader = await evaluate(header); assert.ok(evidence.tracksHeader);
   await sleep(300); const before = await evaluate(circle);
   await route('.pond-global-header__home', '/', 'home'); evidence.homeHeader = await evaluate(header);
-  const after = await route('.pond-global-header nav a[href="/tracks"]', '/tracks', 'tracks');
+  const after = await route('typed:/tracks', '/tracks', 'tracks');
   evidence.reentry = { before, after };
   assert.equal(await evaluate("document.querySelector('[data-track-circle]')===window.__circle"), true);
   assert.equal(before.session, after.session); assert.equal(after.track, '7');
@@ -68,7 +70,7 @@ try {
   assert.equal(await evaluate("document.querySelector('.material-player').dataset.phase"), 'idle');
   await route('.pond-global-header nav a[href="/artist"]', '/artist', 'artist'); evidence.artistHeader = await evaluate(header);
   await shot('artist-header');
-  await route('.pond-global-header nav a[href="/tracks"]', '/tracks', 'tracks');
+  await route('typed:/tracks', '/tracks', 'tracks');
   }
   for (const current of [evidence.homeHeader, evidence.artistHeader]) assert.deepEqual(current.links, evidence.tracksHeader.links);
   assert.equal(evidence.artistHeader.back, '← 返回水塘');
@@ -80,7 +82,7 @@ try {
   await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await sleep(300); assert.ok(await evaluate('document.documentElement.scrollWidth<=innerWidth'));
   await click('.pond-global-header__menu-button');
-  assert.ok(await evaluate("document.querySelector('#pond-public-navigation a[href=\"/tracks\"]')?.getBoundingClientRect().width>0"));
+  assert.ok(await evaluate("document.querySelector('#pond-public-navigation a[href=\"/lens\"]')?.getBoundingClientRect().width>0"));
   await shot('mobile-header'); await click('.pond-global-header__menu-button');
   await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
   for (const path of ['/me', '/score/1', '/echo/1']) {
@@ -94,7 +96,7 @@ try {
   await send('Page.navigate', { url: origin+'/score/1' });
   await waitFor("document.querySelector('[data-pond-shell]')?.dataset.pondMountId && document.querySelector('[data-pond-shell] canvas') && document.querySelector('.pond-global-header nav button')?.textContent==='登录'");
   await evaluate("window.__water=document.querySelector('[data-pond-shell] canvas');true");
-  await route('.pond-global-header nav a[href="/tracks"]', '/tracks', 'tracks');
+  await route('typed:/tracks', '/tracks', 'tracks');
   await waitFor("document.querySelector('[data-track-circle]')?.dataset.circleRenderer==='webgl'");
   evidence.scoreToTracks = '等待真实挂载后，共享Canvas保留，曲目重新取得WebGL场景';
   assert.deepEqual(browser.pageErrors, []); assert.deepEqual(browser.consoleErrors, []);

@@ -90,7 +90,7 @@ export default function TrackCatalog({ initialTrackId, single = false, appearanc
       data-controls-visible={controlsVisible && player.currentTrack?.id === selected.trackId}>
       <PageNavigation />
       <div className="pond-global-header-spacer" />
-      {single && <nav className="track-asset-navigation" aria-label={t('catalogNav')}><PondRouteLink href="/tracks">{t('allTracksLink')}</PondRouteLink></nav>}
+      {single && <nav className="track-asset-navigation" aria-label={t('catalogNav')}><PondRouteLink href={`/lens?track=${selected.displayNumber}`}>{t('allTracksLink')}</PondRouteLink></nav>}
       <section className="track-stage" data-track-stage="true" aria-labelledby="track-title">
         {!single && <TrackIndex tracks={tracks} selectedId={selectedId} onSelect={select}
           onPrepare={(id) => warmTrackAudio(toPlayerTrack(id))} />}
@@ -127,7 +127,7 @@ export default function TrackCatalog({ initialTrackId, single = false, appearanc
       </section>}
       <div className="track-ledger"><MaterialMintPanel track={selected} /><MaterialProvenance track={selected} /></div>
       <footer className="track-story__next">
-        {single ? <PondRouteLink href="/tracks"><small>{t('backToList')}</small><strong>{t('allTracks')}</strong><b aria-hidden="true">→</b></PondRouteLink>
+        {single ? <PondRouteLink href={`/lens?track=${selected.displayNumber}`}><small>{t('backToList')}</small><strong>{t('allTracks')}</strong><b aria-hidden="true">→</b></PondRouteLink>
           : <button type="button" onClick={() => selectAndReturn(nextTrack.trackId)}>
             <small>{t('next')}</small><strong>{t('trackLabel', { title: nextTrack.title })}</strong><b aria-hidden="true">→</b>
           </button>}

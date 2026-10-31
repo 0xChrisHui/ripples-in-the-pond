@@ -765,7 +765,8 @@
     "echoMissing": "Pond Echo 不存在",
     "echoUnavailable": "Pond Echo 暂不可用",
     "editionPending": "制作中的唱片",
-    "artistName": "叶禹含"
+    "artistName": "叶禹含",
+    "details": "详情"
   },
   "artist": {
     "folio": "ARTIST / 叶禹含"

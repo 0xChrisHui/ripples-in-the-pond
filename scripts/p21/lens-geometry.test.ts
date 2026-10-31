@@ -43,4 +43,13 @@ const phoneSize = { w: 358, h: 420 };
 const p = placePanel({ id: 'p', x: 195, y: 300, r: 40, echo: false }, phoneSize, phone);
 assert.ok(p.left >= 12 && p.left + phoneSize.w <= phone.w - 12 && p.top >= 76 && p.top + phoneSize.h <= phone.h - 12);
 assert.ok(p.side === 'below' || p.side === 'above');
+// 手机竖屏 + 高面板 + 球在屏幕中部：不盖住球，内部滚动（maxH），完整在画面内
+const tall = { w: 300, h: 483 };
+const t2 = placePanel({ id: 't', x: 225, y: 563, r: 11, echo: false }, tall, phone);
+assert.ok(t2.maxH != null && t2.maxH >= 160, `应压低高度：${JSON.stringify(t2)}`);
+assert.ok(t2.top + t2.maxH <= phone.h - 12 && t2.top >= 76);
+assert.ok(563 < t2.top || 563 > t2.top + t2.maxH, '面板不得盖住球');
+const t3 = placePanel({ id: 't', x: 100, y: 200, r: 11, echo: false }, tall, phone);
+assert.ok(t3.top >= 76 && t3.top + (t3.maxH ?? tall.h) <= phone.h - 12);
+assert.ok(200 < t3.top || 200 > t3.top + (t3.maxH ?? tall.h), '面板不得盖住球');
 console.log('lens-geometry ✅');

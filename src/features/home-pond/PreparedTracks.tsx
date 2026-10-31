@@ -18,7 +18,7 @@ export default function PreparedTracks() {
   const original = asset ? findOriginalTrackByAsset(Number(asset[1]), asset[2], asset[3]) : null;
   const track = pathname === '/tracks' || pathname === '/tracks/pond' ? params.get('track') ?? undefined : undefined;
   if (single && !original) return <main className="material-catalog" data-track-surface="pond">
-    <h1>{t('trackMissing')}</h1><PondRouteLink href="/tracks">{t('backToTracks')}</PondRouteLink>
+    <h1>{t('trackMissing')}</h1><PondRouteLink href="/lens">{t('backToTracks')}</PondRouteLink>
   </main>;
   return <TrackCatalog initialTrackId={original?.trackId ?? initialTrackForView({ track })} single={single} appearance="pond" />;
 }

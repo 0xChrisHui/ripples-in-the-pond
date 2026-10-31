@@ -2,7 +2,8 @@
 export type Circle = { id: string; x: number; y: number; r: number; echo: boolean };
 export type Viewport = { w: number; h: number; topInset: number };
 export type Side = 'right' | 'left' | 'below' | 'above';
-export type Placement = { left: number; top: number; side: Side };
+/** maxH：面板比可用空间高时的高度上限（内部滚动），保证面板不盖住球。 */
+export type Placement = { left: number; top: number; side: Side; maxH?: number };
 
 /** 光圈（指针）落在哪个球上：多球重叠取「离圆心最近（按半径归一）」的那个。 */
 export function pickCircle(circles: Circle[], px: number, py: number, tolerance = 0): Circle | null {
@@ -27,6 +28,7 @@ export function easeToward(current: number, target: number, dtMs: number, tauMs:
 
 const GAP = 14;
 const EDGE = 12;
+const MIN_SCROLL_ROOM = 160;
 
 function fit(side: Side, a: Circle, w: number, h: number, v: Viewport): Placement | null {
   let left = 0, top = 0;
@@ -55,7 +57,17 @@ export function placePanel(anchor: Circle, size: { w: number; h: number }, v: Vi
     const hit = fit(side, anchor, size.w, size.h, v);
     if (hit) return hit;
   }
-  // 都放不下（极小视口）：贴底部居中，保证不越界。
+  // 完整放不下（手机竖屏、面板很高）：取上/下空间较大的一侧，压低面板高度并内部滚动，绝不盖住球。
+  const roomBelow = v.h - (anchor.y + anchor.r + GAP) - EDGE;
+  const roomAbove = anchor.y - anchor.r - GAP - (v.topInset + EDGE);
+  const below = roomBelow >= roomAbove;
+  const room = Math.max(roomBelow, roomAbove);
+  const left = Math.min(Math.max(anchor.x - size.w / 2, EDGE), Math.max(EDGE, v.w - size.w - EDGE));
+  if (room >= MIN_SCROLL_ROOM) {
+    return below ? { left, top: anchor.y + anchor.r + GAP, side: 'below', maxH: room }
+      : { left, top: v.topInset + EDGE, side: 'above', maxH: room };
+  }
+  // 极小视口：贴底部居中，保证不越界。
   return {
     left: Math.max(EDGE, (v.w - size.w) / 2),
     top: Math.max(v.topInset + EDGE, v.h - size.h - EDGE),

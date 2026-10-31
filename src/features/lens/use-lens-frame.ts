@@ -89,7 +89,7 @@ export function useLensFrame(args: Args) {
       if (circle) anchor = circle;
       const panel = s.panelRef.current;
       if (panel && anchor && panelId) {
-        const placed = placePanel(anchor, { w: panel.offsetWidth, h: panel.offsetHeight },
+        const placed = placePanel(anchor, { w: panel.offsetWidth, h: panel.scrollHeight + 2 },
           { w: innerWidth, h: innerHeight, topInset: innerWidth < 768 ? 64 : 76 }, side);
         if (side && placed.side !== side && !s.reduced) {
           panel.dataset.flip = 'true';
@@ -97,6 +97,7 @@ export function useLensFrame(args: Args) {
           flipTimer = window.setTimeout(() => { delete panel.dataset.flip; }, 140);
         }
         side = placed.side;
+        panel.style.maxHeight = placed.maxH ? `${Math.floor(placed.maxH)}px` : '';
         panel.style.transform = `translate3d(${placed.left.toFixed(1)}px, ${placed.top.toFixed(1)}px, 0)`;
         panel.dataset.placed = 'true';
       }
