@@ -92,6 +92,8 @@
 
 ## ⏳ Later / 开放项
 
+- **P22 收尾遗留（2026-10-31 用户决定暂缓）**：①给 pauser `0x2E37…65eD` 转少量 ETH（以太坊约 0.003、OP 约 0.0003），否则应急暂停发不出交易；并把桌面 `p22-mainnet-keys.json` 移到 `C:/Users/Hui/.ripples-secrets/` 离线备份；②在 Semi 钱包确认 OP #5 / ETH #1 展示正常（P22-F 回归项，未验）；③实测一次 OP 铸造时勾选“同时开通资产包”的自动开包（意图→cron，唯一没真实验证的路径）；④Alchemy 旧 App（泄露过 key 的那个）确认新 App 有流量后删除；Vercel 里 Preview/Development 的旧 `ALCHEMY_RPC_URL` 条目是遗留；⑤清理本地：`E:/p22-audit-src`、桌面 `alchemy-server.txt`、`p22-mainnet-keys.json` 里的 deployer。已知并接受：ETH 订单收口未等确认数；status 请求失败时前端沿用旧状态。
+
 - **新 Score 封面设计（2026-10-30 用户提出，P22 之后单开计划）**：日食版音乐圆圈，每张图的差异在圆圈周边的白色波浪（线条+色块，要更丰富）。现有封面是 `scripts/arweave/generate-covers.ts` 的 100 张 SVG 池，**用户在 Semi 钱包里看到新版 Score 封面是纯绿色**（原因未核实，疑 Semi 没渲染 SVG 波浪线）。开计划时先用 PNG/SVG 各一张在 Semi 实测，再定格式；封面不在合约里，换封面不改合约，但已铸 Score 不能改，改封面池要写生产库（用户 Gate）；生成器另有左边缘起笔折角的小瑕疵。P22 素材图暂用旧版波浪封面（去编号、PNG），见 `playbook/phase-22/06-execution-log.md`。
 
 - **OP 铸造队列吞吐（2026-10-28，P14-J 期间实测，待用户决定是否立项）**：process-score-queue 由 cron-job.org 每分钟触发、每次只推进一个订单的一步，且严格按创建时间一次只处理最老的一单；全局运营钱包锁还与 Echo 铸造互抢（日志可见 operator_busy）。实测单张 Score 约 20 分钟（理论最快约 6 分钟），20 人同时铸造最后一人约等 2–7 小时。改进方向：①每次触发连推多步（单步仅约 15 秒、额度 30 秒）；②不发链上交易的步骤（上传、打包、快照）不占钱包锁、可并行；③界面显示“前面还有 N 位”。现网铸造量极低（两个月 4 人），暂不紧迫。
