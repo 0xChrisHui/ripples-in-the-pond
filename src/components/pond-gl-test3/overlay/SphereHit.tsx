@@ -7,7 +7,7 @@ import type { GlSim } from '../spheres/use-gl-sim';
 import { getPointerFx, getCameraFx, depthOf } from '../pointer-fx';
 import { getEffectiveWaterLevel } from '../water/water-level';
 import { unproject, type ProjCtx } from '../sphere-projection';
-import { getLensBridge } from './lens-bridge';
+import { getLensBridge } from '@/src/features/lens/bridge/lens-bridge';
 
 const PLAY_PATH = 'M-4.5,-6 L7,0 L-4.5,6 Z';
 const PAUSE_PATH = 'M-5.5,-6 L-2,-6 L-2,6 L-5.5,6 Z M0.5,-6 L4,-6 L4,6 L0.5,6 Z';

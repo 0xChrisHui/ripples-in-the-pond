@@ -236,6 +236,8 @@
 - `tsc --noEmit`、定向 ESLint、`i18n:check`（657 key）通过；`verify.sh` 仅余开工前就有的旧失败（线上 snapshot Gate、`self-mint`/`types` 目录超 8 文件）。
 - 单测：`scripts/p21/lens-geometry.test.ts`（选球、缓动、桌面/手机面板摆放）、`scripts/ui/pond-unification/transition.test.ts`（别名事务）。已并入 `verify.sh` 2i。
 - 浏览器门禁（无头 Edge + CDP，针对 `next dev`；SwiftShader 能画出球）：`scripts/ui/lens/browser-gate.mjs` 13 项（别名同场景无事务、光圈跟随、读出曲号、面板在画面内且两条链、宽限、点空白退出、后退前进、Esc、深链只选中、去别页遮罩撤下、`/tracks` 手输可用且站内无链接、`/score` 重定向）；`playback-gate.mjs`（桌面真实音频：点击播放锁定 → 鼠标自由 → Esc 停止 → Esc 回 `/`；手机：轻点两次播放、点空白两级）；`veil-check.mjs`（光圈内亮度保持约 94%，光圈外约 52%）；`shot.mjs`（中英桌面/手机截图，英文无中文残留）。
+- **生产构建（`next build` + `next start`）**：`/lens` 为静态预渲染（○），原有路由不变；同样的 `browser-gate`（13 项）与 `playback-gate` 全部通过；`chunk-check.mjs`：首页 46 个 JS，点“详情”后才新增 1 个（功能层独立 chunk，首页不下载）。
+- 目录规则：`lens-bridge` 放 `src/features/lens/bridge/`（`overlay/` 已满 8 个文件）；`src/features/lens/` 根目录 8 个文件，其余在 `panel/`、`bridge/`。
 - 证据截图：`reviews/evidence/lens-{desktop,phone}-{zh,en}.png`。
 
 ### 9.5 未做 / 需你目验

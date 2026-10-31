@@ -1,4 +1,4 @@
-import type { GlPhysNode } from '../spheres/gl-sim-setup';
+import type { GlPhysNode } from '@/src/components/pond-gl-test3/spheres/gl-sim-setup';
 
 /**
  * /lens 功能层与球命中层之间的最小桥：功能层挂载时登记回调，命中层只读。

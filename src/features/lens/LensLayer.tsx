@@ -1,7 +1,7 @@
 'use client';
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
-import { setLensBridge } from '@/src/components/pond-gl-test3/overlay/lens-bridge';
+import { setLensBridge } from './bridge/lens-bridge';
 import type { GlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { isHomePath, LENS_PATH } from '@/src/components/pond-shell/transition/types';
