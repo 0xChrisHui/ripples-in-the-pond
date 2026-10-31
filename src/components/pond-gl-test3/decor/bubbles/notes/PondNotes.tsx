@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { usePathname } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
+import { LENS_PATH } from '@/src/components/pond-shell/transition/types';
 import { getCarrier, isSuppressed, registerNoteHost, releaseCarrier, subscribeBridge } from '../bubble-bridge';
 import { defaultNoteSources } from './default-sources';
 import { loadSnippetPool, pickSnippet } from './snippet-pool';
@@ -83,7 +85,8 @@ function NoteView({ note, u, v, onDone }: { note: Active; u: number; v: number; 
 export default function PondNotes() {
   const locale: NoteLang = useLocale() === 'en' ? 'en' : 'zh';
   const carrier = useSyncExternalStore(subscribeBridge, getCarrier, () => null);
-  const suppressed = useSyncExternalStore(subscribeBridge, isSuppressed, () => false);
+  // P21：/lens 不显示创作手记（气泡照常）；与日蚀 / 减弱动效同一条撤下路径
+  const suppressed = useSyncExternalStore(subscribeBridge, isSuppressed, () => false) || usePathname() === LENS_PATH;
   const [active, setActive] = useState<Active | null>(null);
   const lastIndex = useRef<Record<NoteLang, number | null>>({ zh: null, en: null });
 

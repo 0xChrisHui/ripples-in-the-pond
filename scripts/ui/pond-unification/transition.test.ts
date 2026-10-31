@@ -38,3 +38,25 @@ test('原曲、Echo、恢复地址不会误被当作私人档案或Score', () =>
   assert.equal(routeForPath('/me/material/0x123'), 'detail');
   assert.equal(routeForPath('/me?mintOrder=x'.split('?')[0]), 'archive');
 });
+
+test('P21：/lens 是首页别名，/ ↔ /lens 不开事务，只让 href 跟上地址栏', () => {
+  assert.equal(routeForPath('/lens'), 'home');
+  assert.equal(routeForPath('/lens/'.slice(0, 5)), 'home');
+  const home = initialRouteTransaction('/');
+  const aliased = reduce(home, { type: 'alias', pathname: '/lens' });
+  assert.equal(aliased.stage, 'stable');
+  assert.equal(aliased.current, 'home');
+  assert.equal(aliased.generation, home.generation, '别名切换不得推进 generation');
+  assert.equal(aliased.href, '/lens');
+  assert.equal(aliased.currentHref, '/lens');
+  assert.equal(reduce(aliased, { type: 'alias', pathname: '/lens' }), aliased, '重复别名幂等');
+  // 跨场景路径不是别名：忽略
+  assert.equal(reduce(home, { type: 'alias', pathname: '/me' }), home);
+  // 事务进行中不接受别名
+  const moving = reduce(home, { type: 'start', target: routeForPath('/me'), href: '/me', at: 1 });
+  assert.equal(reduce(moving, { type: 'alias', pathname: '/lens' }), moving);
+  // 从 /lens 去 /me 再取消：回到 /lens 而不是 /
+  const away = reduce(aliased, { type: 'start', target: routeForPath('/me'), href: '/me', at: 2 });
+  assert.equal(away.currentHref, '/lens');
+  assert.equal(reduce(away, { type: 'cancel', at: 3 }).href, '/lens');
+});

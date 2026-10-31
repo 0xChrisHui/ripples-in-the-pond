@@ -186,3 +186,61 @@
 - 本地 `.env.local` 可能连生产库：不点真实收藏 / 铸造
 - 新增文案中英两套；英文为机器初稿时交你审
 - 说"完成"前分清代码层与效果层，没目验就明说
+
+---
+
+## 9. 执行记录（2026-10-31，分支 `feat/p21-lens`，基线 main `8fe15d1`）
+
+> 用户授权“一口气搞 P21，遇到决策点按推荐方案、中间不打断”。下列 D 项全部按本文 §5 的默认执行；**未推送、未部署、未写库**。
+
+### 9.1 N1 同场景切换语义（已实现并由门禁验证）
+
+| 场景 | 行为 |
+|---|---|
+| 站内 `/ → /lens`、`/lens → /`（点击、顶栏、PondRouteLink） | `navigate()` 发现目标与当前都是首页场景且事务稳定 → 只 `router.push`，**不开事务**：无 start/ready/reveal、不冻结表层、不出遮罩、Canvas 与 mountId 不变 |
+| 后退 / 前进 `/ ↔ /lens` | `popstate` 同样跳过事务 |
+| `usePathname` 变化后 | 稳定态下 `landed === current && pathname !== tx.href` → 发 `alias` 事件，只更新 `href/currentHref`（generation 不变），保证后续 `cancel`、`/lens → /me` 取消时回到 `/lens` 而不是 `/` |
+| 只改 query（`/lens?track=N`） | 路径不变，`useSearchParams`（在 `/lens` 自己的 Suspense 内）重新读取；外壳不进 Suspense |
+| 事务进行中（如正在去 `/me`）再点 | 走原有事务逻辑，不当别名 |
+| 首次直接打开 `/lens` | `initialRouteTransaction('/lens')` → `home`，`LensSlot` 初始即挂载 |
+| `/lens → /me`、`/artist` 等 | 正常事务；离开时停止原曲与 #36，遮罩淡出（层保持挂载不重建） |
+| 其他隐含“首页 = `/`”处 | `isHomePath()` 收口：`PondHeader`、`use-prepared-archive`、`PersistentRouteSurfaces`、`PondExperience`、`routeForPath`；除 F2 列出的五处外未发现其他 |
+
+### 9.2 N2 交互状态表（已实现）
+
+| 状态 | 进入 | 光圈 | 面板 | 退出 |
+|---|---|---|---|---|
+| 跟随 | 默认；播放结束 / 停止 / 失败 | 缓动跟指针（τ=85ms；减弱动效直接跟手）；无指针则画面中心 | 指针在球内 → 该球；离开球后 200ms 宽限；指针或键盘焦点在面板内保持 | — |
+| 悬停 | 指针落在原曲球内 | 同跟随 | 显示该球链上信息；#36 不出面板 | 离开 + 宽限结束 |
+| 播放锁定 | 该球开始播放（原曲 `playing`，#36 `echoPlayingId`） | 锁在球心并随球漂，半径 `max(基准, 球半径×1.8)`；鼠标自由 | 锁定球的面板常驻（含收藏键，收藏键因此够得着） | 播放结束 / 停止 / 失败 / 暂停 |
+| 选中（手机轻点、键盘 Tab、深链） | 手机第一次轻点；Tab 聚焦（`:focus-visible`）；`?track=N` | 钉在该球 | 显示面板 | 手机点空白（= 退出）；失焦；深链选中在真实鼠标移动后撤销 |
+| 加载中 / 失败 | 点击后到 `playing` 前 | 不锁定（以 `playing` 为准） | 不变 | 失败回跟随 |
+| 外部播放器抢占 | 单曲页 / 底部播放器接管 | `lockedId` 随 `playing` 变化自动解锁 | — | — |
+| 登录弹窗 / 手机菜单 | 弹窗有 `role=dialog[aria-modal]`；菜单有 `#pond-public-navigation` | — | 面板 `focus-within` 保持 | Esc 只关它们，不退出 `/lens` |
+| 退出 | Esc / 点空白（不含按钮、链接、面板、`data-pond-ui`、弹窗）/ 顶栏「详情」再点（`LENS_EXIT_EVENT`） | — | — | 锁定中：先 `stop()` + Echo 停止并解锁；跟随中：`navigate('/')` |
+
+### 9.3 实际决定与偏离
+
+1. **选球用球按钮的真实屏幕矩形**（`getBoundingClientRect`），不重新计算投影链：与肉眼所见、点击命中永远一致，且自动尊重 `dim`（播放时其它球不可点）、#36 隐现、减弱动效缩放。N3 因此不再需要单独的容差半径。
+2. **遮罩用 `radial-gradient` 背景而不是 `mask-image`**：同样每帧只改三个 CSS 变量，少一层合成；暗度 .6、光圈半径 120（手机 90）、柔边 40（D3，待目验）。
+3. **命中层与功能层之间用 `lens-bridge`（模块级回调）**：`SphereHit` 新增 `lensMode`（默认 false = 首页原行为）；轻点“选中 vs 播放”由功能层按 `pointerType` 判定（手机第一次只选中，桌面鼠标直接播放，键盘 Enter/Space 直接播放，#36 直接播放）。
+4. **`MaterialMintPanel` 新增 `compact`**：不输出 `id="track-collect"`、标题与规则折叠；紧凑样式写在 `src/features/lens/panel/lens-panel.css`，不改旧页 `.track-ledger`。
+5. **手机上面板很高放不下时**：取球上/下空间较大的一侧、压低高度并内部滚动，保证不盖住球（门禁在 390×844 验证第二次轻点能点到球）。
+6. **`/score` → `/lens`（D1）；单曲页“全部曲目”两处 → `/lens?track=当前曲号`（D2）**，文案未改（仍是“全部曲目”）；预取 `/tracks` → `/lens`。
+7. 深链用 `replaceState(window.history.state, …)` 写回（与 `TrackCatalog` 同一做法，Next 不会因此重读 query，不会回环）；站内换 query 靠 `router.push`（门禁用 `window.next.router.push` 验证）。
+8. 旧 `scripts/ui/tracks-circle/integration-gate.mjs`：顶栏入口断言改为 `typed:` 前缀（Next 客户端路由模拟手输，保留共享 Canvas）；手机菜单断言改 `/lens`。其余 `tracks-*` 旧门禁点的是 `/tracks/pond` 老链接（早已过期），未动。
+9. 文件拆分：`PondExperience.tsx` 192 → 约 160 行，抽出 `host/use-home-flags.ts`、`host/use-core-flags.ts`、`host/LensSlot.tsx`。
+
+### 9.4 验证（代码层）
+
+- `tsc --noEmit`、定向 ESLint、`i18n:check`（657 key）通过；`verify.sh` 仅余开工前就有的旧失败（线上 snapshot Gate、`self-mint`/`types` 目录超 8 文件）。
+- 单测：`scripts/p21/lens-geometry.test.ts`（选球、缓动、桌面/手机面板摆放）、`scripts/ui/pond-unification/transition.test.ts`（别名事务）。已并入 `verify.sh` 2i。
+- 浏览器门禁（无头 Edge + CDP，针对 `next dev`；SwiftShader 能画出球）：`scripts/ui/lens/browser-gate.mjs` 13 项（别名同场景无事务、光圈跟随、读出曲号、面板在画面内且两条链、宽限、点空白退出、后退前进、Esc、深链只选中、去别页遮罩撤下、`/tracks` 手输可用且站内无链接、`/score` 重定向）；`playback-gate.mjs`（桌面真实音频：点击播放锁定 → 鼠标自由 → Esc 停止 → Esc 回 `/`；手机：轻点两次播放、点空白两级）；`veil-check.mjs`（光圈内亮度保持约 94%，光圈外约 52%）；`shot.mjs`（中英桌面/手机截图，英文无中文残留）。
+- 证据截图：`reviews/evidence/lens-{desktop,phone}-{zh,en}.png`。
+
+### 9.5 未做 / 需你目验
+
+- **你亲自目验**：光圈手感（D3 暗度/半径/柔边）、面板排版与字号（D5）、真实手机的轻点与滚动、慢网与 WebGL 兜底；无头浏览器测不到手感。
+- 真实登录状态下收藏键的完整点击链路（F17）未测，也不提交真实收藏。
+- 收藏键在“悬停但未播放”时只在光圈跟随期可达（指针移进面板有宽限）；键盘用户要进面板，需先 Enter 播放锁定（此时其它球 `tabIndex=-1`，Tab 直达面板）。
+- 首屏资源对比：`/lens` 功能层是 `dynamic(..., { ssr:false })` 懒加载，首页不下载，但未做逐字节的资源清单对比（N5/性能基线未测）。

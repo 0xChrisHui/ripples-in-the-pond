@@ -116,6 +116,16 @@ else
 fi
 echo ""
 
+# 2i. P21：/lens 几何（选球、光圈缓动、面板摆放）与 / ↔ /lens 别名事务。
+echo "── 2i. /lens 几何与别名事务 ──"
+if npx tsx scripts/p21/lens-geometry.test.ts 2>&1 && npx tsx --test scripts/ui/pond-unification/transition.test.ts 2>&1 | tail -4; then
+  echo "$OK /lens 单测通过"
+else
+  echo "$FAIL /lens 单测失败"
+  EXIT_CODE=1
+fi
+echo ""
+
 # 3. 文件大小检查（额外保险，hook 也会查）
 # 硬线与 .claude/hooks/check-file-size.js + docs/CONVENTIONS.md §1.1 同步：
 #   - 普通代码文件 ≤220 行

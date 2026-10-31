@@ -6,6 +6,8 @@
 
 ## 当前阶段
 
+**P21 `/lens` 详情页（2026-10-31，分支 feat/p21-lens，本地提交，未推送未合并）**：顶栏“曲目”改为“详情 / Details”指向 `/lens`；`/lens` 是首页别名（同场景切换，不开过渡事务，Canvas 与挂载 id 不变）。半透明黑遮罩 + 跟随光圈（带惯性），光圈落在原曲球上显示 OP + ETH 链上信息面板与收藏键（未登录为登录入口）；只有点击播放才锁定（原曲与 #36），Esc / 点空白 / 再点“详情”两级退出，登录弹窗与手机菜单优先；手机第一次轻点选中、第二次播放；`/lens?track=N` 只选中；站内不再有 `/tracks` 入口（`/score`、单曲页“全部曲目”、预取均指 `/lens`），手输 `/tracks` 照常可用。验证：tsc、ESLint、词典、几何与别名单测、无头浏览器门禁（别名 13 项 + 播放/手机）、遮罩亮度对比通过；`verify.sh` 无新增失败。**未目验**：光圈手感与面板排版（D3/D5）、真实手机、真实登录收藏。详见 `playbook/phase-21/00-overview.md` §9。
+
 **P22 Score 资产包（2026-10-30 已上线并对所有用户开放，已合入 main）**：两条主网合约已部署（opener `0xa61f7fd863E255A0B96FfC53EfD5f1B974dB0941`、sounds `0x20dD346Ec1Fc763b5279a114DC4576e705B7D056`、tracks `0x8Ffb846ce8020eC519bc17235B704A62E0f7D7f2`），70 个素材已登记；生产库 migration 063 已执行；用户已用真实钱包验收 ETH Token #1 与 OP #5（链上与数据库均 opened）；`P22_ALLOWED_USER_IDS=*`。详情见 TASKS 与 `playbook/phase-22/06-execution-log.md`。
 
 **Phase**: **Phase 11 已完成并冻结；Phase 16 Ethereum Mainnet 核心主链路已完成，2026-10-02 上线收口 Review 通过。** 首枚 Token #1 的链上交易、正式订单、永久资源和公开播放一致。最终证据见 `reviews/2026-10-02-p16-mainnet-closeout-review.md`；`playbook/phase-16/05-minimal-loop.md` 保留为早期 Sepolia 施工记录，不代表当前仍未上线。
