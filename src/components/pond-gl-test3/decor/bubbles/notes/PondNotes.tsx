@@ -86,7 +86,8 @@ export default function PondNotes() {
   const locale: NoteLang = useLocale() === 'en' ? 'en' : 'zh';
   const carrier = useSyncExternalStore(subscribeBridge, getCarrier, () => null);
   // P21：/lens 不显示创作手记（气泡照常）；与日蚀 / 减弱动效同一条撤下路径
-  const suppressed = useSyncExternalStore(subscribeBridge, isSuppressed, () => false) || usePathname() === LENS_PATH;
+  const onLens = usePathname() === LENS_PATH;
+  const suppressed = useSyncExternalStore(subscribeBridge, isSuppressed, () => false) || onLens;
   const [active, setActive] = useState<Active | null>(null);
   const lastIndex = useRef<Record<NoteLang, number | null>>({ zh: null, en: null });
 
