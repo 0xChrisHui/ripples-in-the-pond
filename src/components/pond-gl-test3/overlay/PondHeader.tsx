@@ -8,13 +8,15 @@ import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import { usePondNavigationWarmup } from '@/src/components/pond-shell/navigation/PondNavigation';
 import LocaleSwitch from '@/src/components/pond-shell/navigation/LocaleSwitch';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
-import { isHomePath } from '@/src/components/pond-shell/transition/types';
+import { isHomePath, LENS_PATH } from '@/src/components/pond-shell/transition/types';
+import { requestLensExit } from '@/src/features/lens/lens-events';
 import '@/src/components/pond-shell/navigation/header.css';
 
 const MENU_ID = 'pond-public-navigation';
 
 function PublicLinks({ onNavigate }: { onNavigate?: () => void }) {
   const t = useTranslations('nav');
+  const onLens = usePathname() === LENS_PATH;
   const linkClass = [
     'flex min-h-11 items-center border-b border-[var(--p11-line)]',
     'text-sm text-[var(--p11-muted)] transition-colors duration-150',
@@ -28,7 +30,11 @@ function PublicLinks({ onNavigate }: { onNavigate?: () => void }) {
       <PondRouteLink href="/artist" onClick={onNavigate} className={linkClass}>
         {t('artist')}
       </PondRouteLink>
-      <PondRouteLink href="/tracks" onClick={onNavigate} className={linkClass}>{t('tracks')}</PondRouteLink>
+      {/* 已在 /lens 时再点一次 = 退出（播放中先停止），不重复导航 */}
+      <PondRouteLink href={LENS_PATH} className={linkClass} aria-current={onLens ? 'page' : undefined}
+        onClick={(event) => { onNavigate?.(); if (onLens) { event.preventDefault(); requestLensExit(); } }}>
+        {t('tracks')}
+      </PondRouteLink>
     </>
   );
 }

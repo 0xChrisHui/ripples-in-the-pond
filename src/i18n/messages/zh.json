@@ -74,7 +74,7 @@
   },
   "nav": {
     "artist": "艺术家",
-    "tracks": "曲目",
+    "tracks": "详情",
     "main": "主导航",
     "openMenu": "打开主菜单",
     "closeMenu": "关闭主菜单"
@@ -841,5 +841,20 @@
     "loading": "正在读取链上状态…",
     "unavailable": "暂时无法读取链上状态。",
     "backToScore": "回到作品"
+  },
+  "lens": {
+    "eyebrow": "链上信息",
+    "title": "原曲 {number}",
+    "panelLabel": "原曲 {number} 的链上信息",
+    "contract": "合约",
+    "status": "状态",
+    "ready": "已就绪",
+    "copy": "复制",
+    "copied": "已复制",
+    "copyContract": "复制 {chain} 合约地址",
+    "openSingle": "单曲页",
+    "explorer": "区块浏览器",
+    "play": "播放",
+    "pause": "暂停"
   }
 }

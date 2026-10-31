@@ -74,7 +74,7 @@
   },
   "nav": {
     "artist": "Artist",
-    "tracks": "Tracks",
+    "tracks": "Details",
     "main": "Main navigation",
     "openMenu": "Open main menu",
     "closeMenu": "Close main menu"
@@ -841,5 +841,20 @@
     "loading": "Reading on-chain state…",
     "unavailable": "Can't read on-chain state right now.",
     "backToScore": "Back to the Score"
+  },
+  "lens": {
+    "eyebrow": "Onchain",
+    "title": "Original {number}",
+    "panelLabel": "Onchain details for original {number}",
+    "contract": "Contract",
+    "status": "Status",
+    "ready": "Ready",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyContract": "Copy {chain} contract address",
+    "openSingle": "Track page",
+    "explorer": "Explorer",
+    "play": "Play",
+    "pause": "Pause"
   }
 }

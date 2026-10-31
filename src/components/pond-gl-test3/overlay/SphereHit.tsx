@@ -7,6 +7,7 @@ import type { GlSim } from '../spheres/use-gl-sim';
 import { getPointerFx, getCameraFx, depthOf } from '../pointer-fx';
 import { getEffectiveWaterLevel } from '../water/water-level';
 import { unproject, type ProjCtx } from '../sphere-projection';
+import { getLensBridge } from './lens-bridge';
 
 const PLAY_PATH = 'M-4.5,-6 L7,0 L-4.5,6 Z';
 const PAUSE_PATH = 'M-5.5,-6 L-2,-6 L-2,6 L-5.5,6 Z M0.5,-6 L4,-6 L4,6 L0.5,6 Z';
@@ -29,15 +30,17 @@ type Props = {
   showLabels: boolean;
   glHealthy: boolean;
   register: (element: HTMLButtonElement | null) => void;
+  /** /lens：不拖球、不显示悬停播放图标，点击交给功能层先判定（默认 false = 首页原行为）。 */
+  lensMode?: boolean;
 };
 
 /** 同一个命中节点承载 GL 与轻量兜底，接管时不会重挂按钮或更换音乐身份。 */
-export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealthy, register }: Props) {
+export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealthy, register, lensMode = false }: Props) {
   const t = useTranslations('player');
   const [hovered, setHovered] = useState(false);
   const drag = useRef({ down: false, moved: false, x: 0, y: 0 });
   const radius = node.radius;
-  const show = hovered || isPlaying;
+  const show = !lensMode && (hovered || isPlaying);
   const title = node.echo ? '36' : node.track.title;
   const titleSize = radius * ((title?.length ?? 1) >= 2 ? 1 : 1.26);
   const togglePlayback = useCallback(() => {
@@ -60,7 +63,7 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
   };
   const onMove = (event: React.PointerEvent<HTMLButtonElement>) => {
     const state = drag.current;
-    if (!state.down) return;
+    if (!state.down || lensMode) return;
     if (!state.moved) {
       if (Math.hypot(event.clientX - state.x, event.clientY - state.y) < DRAG_THRESHOLD) return;
       state.moved = true;
@@ -76,12 +79,16 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
     finishDrag();
-    if (shouldToggle) { togglePlayback(); event.currentTarget.blur(); }
+    if (shouldToggle) {
+      const via = event.pointerType === 'mouse' ? 'mouse' : 'touch';
+      if (!(lensMode && getLensBridge().activate?.(node, via))) togglePlayback();
+      event.currentTarget.blur();
+    }
   };
   const onKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
-    togglePlayback();
+    if (!(lensMode && getLensBridge().activate?.(node, 'key'))) togglePlayback();
   };
 
   return (
@@ -89,6 +96,8 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
       aria-label={t(isPlaying ? 'pauseTitle' : 'playTitle', { title: node.echo ? `36 · ECHO #${node.echo.tokenId}` : title })} aria-pressed={isPlaying}
       onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
       onPointerCancel={finishDrag} onLostPointerCapture={finishDrag} onKeyDown={onKeyDown}
+      onFocus={(event) => { if (lensMode && event.currentTarget.matches(':focus-visible')) getLensBridge().focus?.(node); }}
+      onBlur={() => { if (lensMode) getLensBridge().focus?.(null); }}
       onPointerEnter={() => { setHovered(true); glSim.setHover(node.id); }}
       onPointerLeave={() => { setHovered(false); glSim.setHover(null); }}
       style={{ position: 'absolute', width: radius * 2, height: radius * 2, padding: 0,

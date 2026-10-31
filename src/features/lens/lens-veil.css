@@ -1,0 +1,10 @@
+/* 半透明黑遮罩 + 跟随光圈：每帧只改 --lx / --ly / --lr 三个变量；不拦截任何指针。 */
+.lens-veil {
+  position: fixed; inset: 0; z-index: 12; pointer-events: none; opacity: 0;
+  --lx: 50vw; --ly: 50vh; --lr: 120px; --lsoft: 40px; --ld: .6;
+  background: radial-gradient(circle at var(--lx) var(--ly),
+    rgba(0, 0, 0, 0) max(0px, calc(var(--lr) - var(--lsoft))), rgba(0, 0, 0, var(--ld)) calc(var(--lr) + var(--lsoft)));
+  transition: opacity .42s ease;
+}
+.lens-veil[data-on="true"] { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .lens-veil { transition-duration: .12s; } }

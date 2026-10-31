@@ -19,9 +19,10 @@ import { useFeaturedEchoPlayback } from '@/src/components/pond-gl-test3/visitor/
 import { usePersonalEcho } from '@/src/hooks/echo/usePersonalEcho';
 import { useHomeFlags } from './host/use-home-flags';
 import { useCoreFlags } from './host/use-core-flags';
+import LensSlot from './host/LensSlot';
 import PersistentWaterCore from '@/src/components/pond-shell/PersistentWaterCore';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
-import { isHomePath, LAB_PATH } from '@/src/components/pond-shell/transition/types';
+import { isHomePath, LAB_PATH, LENS_PATH } from '@/src/components/pond-shell/transition/types';
 import { useScenePresence } from '@/src/components/pond-shell/motion/use-scene-presence';
 import { usePreparedArchive } from '@/src/components/pond-shell/use-prepared-archive';
 import { useOptionalPondSceneSlot } from '@/src/components/pond-shell/scene-slot';
@@ -143,9 +144,10 @@ export default function PondExperience({ mode, persistent = false, children }: {
           <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx}
             glHealthy={glOk} depthModel={glFlags.depthModel} showLabels={glFlags.sphereLabels}
             scenePresence={sceneMotion.presence} interactive={homeInteractive}
-            reducedSceneMotion={sceneMotion.reduced} />
+            reducedSceneMotion={sceneMotion.reduced} lensMode={pathname === LENS_PATH} />
         </div>
       )}
+      {glFlags.glSpheres && glSim.ready && sceneReady && <LensSlot pathname={pathname} glSim={glSim} stopEcho={echoPlayback.stop} />}
       {renderHomeScene && glFlags.glSpheres && glFlags.glEclipse && glSim.ready && glOk && <GlEclipse glSim={glSim} />}
       {homeInteractive && <HomeEclipseDriver glSim={glSim} playingId={glOk ? playingId : null} />}
       {sandbox && <SandboxControls flags={glFlags} p9={mode === 'test3'} bubblesOnly={lab} onChange={onGl} />}

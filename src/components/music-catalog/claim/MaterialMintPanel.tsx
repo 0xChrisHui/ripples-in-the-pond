@@ -14,7 +14,8 @@ type OpErrorKey = 'statusUnavailable' | 'notReady' | 'resultUnknown';
 /** error 为服务端原文（中文模式照旧显示）；errorKey 为本地文案 */
 type MintStatus = { status?: string | null; txHash?: string | null; recipientAddress?: string; recipientFrozen?: boolean;
   error?: string; errorKey?: OpErrorKey; code?: string; needsReview?: boolean; alreadyMinted?: boolean };
-export default function MaterialMintPanel({ track }: { track: OriginalTrack }) {
+/** compact：/lens 面板内的紧凑变体——不重复 id="track-collect"，不显示标题与规则折叠。 */
+export default function MaterialMintPanel({ track, compact = false }: { track: OriginalTrack; compact?: boolean }) {
   const t = useTranslations('material');
   const auth = useAuth();
   const latest = useRef(auth);
@@ -28,13 +29,13 @@ export default function MaterialMintPanel({ track }: { track: OriginalTrack }) {
     await waitUntil(() => latest.current.ready, 15000);
     if (!latest.current.authenticated) latest.current.openLoginModal();
   }
-  return <section className="material-mint" id="track-collect" aria-label={t('panelTitle')}>
-    <h2>{t('panelTitle')}</h2>
-    <details className="material-rules"><summary>{t('rulesSummary')}</summary><ul>
+  return <section className="material-mint" id={compact ? undefined : 'track-collect'} aria-label={t('panelTitle')}>
+    {!compact && <h2>{t('panelTitle')}</h2>}
+    {!compact && <details className="material-rules"><summary>{t('rulesSummary')}</summary><ul>
       <li>{t('ruleHome')}</li>
       <li>{t('ruleEth')}</li>
       <li>{t('ruleOp')}</li>
-    </ul></details>
+    </ul></details>}
     {!auth.authenticated ? <button type="button" className="material-collect" onClick={() => { void login(); }}>{t('signInToCollect')}</button> : <>
       <OpMaterialMint key={`op:${scope}`} track={track} auth={auth} />
       {external && <EthereumMaterialMint key={`eth:${scope}`} track={track} />}</>}

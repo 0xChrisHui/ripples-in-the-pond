@@ -1,0 +1,53 @@
+/* /lens 链上信息面板：紧凑小字；按钮与链接点击区 ≥44px（视觉不缩，靠 min-height / padding）。 */
+.lens-panel {
+  position: fixed; left: 0; top: 0; z-index: 28; box-sizing: border-box;
+  width: min(300px, calc(100vw - 24px)); max-height: calc(100dvh - 96px); overflow-y: auto;
+  padding: 14px 16px 12px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 14px;
+  background: rgb(1 7 6 / 72%); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  color: #e6ece4; font-size: 12px; line-height: 1.7; overscroll-behavior: contain;
+  will-change: transform; transition: opacity .14s ease;
+  animation: lens-panel-in .22s ease both;
+}
+.lens-panel:not([data-placed]) { visibility: hidden; } /* 首帧摆好位置前不可见 */
+.lens-panel[data-flip="true"] { opacity: 0; }
+@keyframes lens-panel-in { from { opacity: 0; } to { opacity: 1; } }
+.lens-panel__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.lens-panel__eyebrow { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: rgba(214, 226, 214, .6); }
+.lens-panel__title { margin: 0; font-size: 17px; font-weight: 300; letter-spacing: .04em; }
+.lens-chain { padding: 8px 0 10px; border-top: 1px solid rgba(255, 255, 255, .1); }
+.lens-chain__name { margin: 0 0 4px; font-size: 12px; font-weight: 500; letter-spacing: .02em; }
+.lens-chain__name span { font-weight: 400; color: rgba(214, 226, 214, .62); }
+.lens-chain__facts { margin: 0; }
+.lens-chain__facts > div { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 22px; }
+.lens-chain__facts dt { margin: 0; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: rgba(214, 226, 214, .55); }
+.lens-chain__facts dd { margin: 0; display: flex; align-items: center; gap: 4px; }
+.lens-chain code { font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 11.5px; letter-spacing: .01em; }
+.lens-chain__links { display: flex; flex-wrap: wrap; gap: 0 14px; margin-top: 2px; }
+.lens-link {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 -4px; border: 0; background: none;
+  color: #cfe4f7; font: inherit; font-size: 12px; text-decoration: none; cursor: pointer;
+}
+.lens-link:hover, .lens-link:focus-visible { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.lens-chain__facts .lens-link { min-height: 44px; margin-block: -11px; }
+.lens-play {
+  display: flex; align-items: center; justify-content: center; width: 100%; min-height: 44px; margin-top: 2px;
+  border: 1px solid rgba(255, 255, 255, .22); border-radius: 999px; background: rgba(255, 255, 255, .05);
+  color: #fff; font: inherit; font-size: 12px; letter-spacing: .08em; cursor: pointer;
+}
+.lens-play:hover, .lens-play:focus-visible { background: rgba(255, 255, 255, .12); }
+.lens-collect { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, .1); }
+.lens-collect .material-mint { padding: 0; border: 0; }
+.lens-collect .material-chain-row { display: grid; gap: 4px; padding: 4px 0 8px; }
+.lens-collect h3 { margin: 0; font-size: 12px; font-weight: 500; }
+.lens-collect :is(.material-muted, .material-mint-status, p) { margin: 2px 0; font-size: 11.5px; line-height: 1.7; color: rgba(214, 226, 214, .72); overflow-wrap: anywhere; }
+.lens-collect .material-uri { font-family: var(--font-mono, ui-monospace, monospace); font-size: 11px; word-break: break-all; }
+.lens-collect .material-collect {
+  display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 44px; padding: 6px 14px;
+  border: 1px solid rgba(209, 220, 190, .5); border-radius: 999px; background: rgba(209, 220, 190, .06);
+  color: #e3ecd2; font: inherit; font-size: 12px; cursor: pointer; overflow-wrap: anywhere;
+}
+.lens-collect .material-collect:disabled { opacity: .55; cursor: default; }
+.lens-collect .material-collect:not(:disabled):hover { background: rgba(209, 220, 190, .16); }
+.lens-collect summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-size: 11.5px; }
+.lens-collect .material-notice { margin: 6px 0 0; padding: 8px 10px; border-left: 2px solid rgba(255, 255, 255, .3); background: rgba(255, 255, 255, .05); font-size: 11.5px; line-height: 1.7; }
+@media (prefers-reduced-motion: reduce) { .lens-panel { animation: none; transition: none; } }

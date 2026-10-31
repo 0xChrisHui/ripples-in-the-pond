@@ -20,12 +20,14 @@ type Props = {
   scenePresence?: RefObject<number>;
   interactive?: boolean;
   reducedSceneMotion?: boolean;
+  /** P21 /lens：命中层进入「只选中、不拖动、无悬停图标」模式。 */
+  lensMode?: boolean;
 };
 
 /** GL 与兜底共用节点、投影和命中层，避免接管时重排或失去播放能力。 */
 export default function SphereOverlay({
   glSim, waterOn, glHealthy = true, depthModel = false, showLabels = true,
-  scenePresence, interactive = true, reducedSceneMotion = false,
+  scenePresence, interactive = true, reducedSceneMotion = false, lensMode = false,
 }: Props) {
   const { nodes, playingIdRef, wavesRef } = glSim;
   const { playing, currentTrack } = usePlayer();
@@ -97,7 +99,7 @@ export default function SphereOverlay({
       data-first-circles={nodes.length > 0} data-all-circles-interactive={allReady}>
       {nodes.map((node) => (
         <SphereHit key={node.id} node={node} glSim={glSim} glHealthy={glHealthy}
-          isPlaying={(node.echo ? glSim.echoPlayingId : playingId) === node.id} showLabels={showLabels}
+          isPlaying={(node.echo ? glSim.echoPlayingId : playingId) === node.id} showLabels={showLabels} lensMode={lensMode}
           register={(element) => {
             if (element) elements.current.set(node.id, element);
             else elements.current.delete(node.id);
