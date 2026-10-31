@@ -1,10 +1,9 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import DraftSavedToast from '@/src/components/jam/DraftSavedToast';
 import TestJam from '@/src/components/jam/TestJam';
 import { usePlayer } from '@/src/components/player/PlayerProvider';
-import { DEFAULT_GL_FLAGS, parseGLFlags, type GLFlags } from '@/src/components/pond-gl-test3/gl-flags';
 import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
 import GlEclipse from '@/src/components/pond-gl-test3/overlay/GlEclipse';
 import GlLoading from '@/src/components/pond-gl-test3/overlay/GlLoading';
@@ -18,7 +17,8 @@ import { useGlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
 import FeaturedEchoBottomPlayer from '@/src/components/pond-gl-test3/visitor/FeaturedEchoBottomPlayer';
 import { useFeaturedEchoPlayback } from '@/src/components/pond-gl-test3/visitor/useFeaturedEchoPlayback';
 import { usePersonalEcho } from '@/src/hooks/echo/usePersonalEcho';
-import { readDevFakeEcho } from '@/src/hooks/echo/dev-fake-echo';
+import { useHomeFlags } from './host/use-home-flags';
+import { useCoreFlags } from './host/use-core-flags';
 import PersistentWaterCore from '@/src/components/pond-shell/PersistentWaterCore';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { LAB_PATH } from '@/src/components/pond-shell/transition/types';
@@ -27,8 +27,7 @@ import { usePreparedArchive } from '@/src/components/pond-shell/use-prepared-arc
 import { useOptionalPondSceneSlot } from '@/src/components/pond-shell/scene-slot';
 import HomeEclipseDriver from '@/src/components/pond-shell/HomeEclipseDriver';
 import PersistentRouteSurfaces from './PersistentRouteSurfaces';
-import PondSceneLayers, { ARCHIVE_FLAGS } from './PondSceneLayers';
-import { getScenePresence } from '@/src/components/pond-shell/motion/scene-presence';
+import PondSceneLayers from './PondSceneLayers';
 import dynamic from 'next/dynamic';
 const SandboxControls = dynamic(() => import('./SandboxControls'), { ssr: false });
 type PondMode = 'production' | 'test3' | 'test4';
@@ -42,7 +41,6 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const transition = usePondTransition();
   const sceneSlot = useOptionalPondSceneSlot();
   const reportCore = sceneSlot?.reportCore;
-  const [mountId, setMountId] = useState<string | null>(null);
   const lab = pathname === LAB_PATH;
   const sandbox = mode !== 'production' || lab; // /test5 = 首页外壳 + 沙盒控制台
   const p9Enabled = mode !== 'test4';
@@ -53,28 +51,11 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const prepareArchive = usePreparedArchive(pathname, persistent);
   const sceneMotion = useScenePresence(phase, transition?.duration ?? 0, persistent);
   const [homeInitialized, setHomeInitialized] = useState(homeVisible);
-  const [glFlags, setGlFlags] = useState<GLFlags>(DEFAULT_GL_FLAGS);
   const [runtimeGlHealth, setRuntimeGlHealth] = useState<GlHealth>('unavailable');
   const [sceneReady, setSceneReady] = useState(false);
   const personalEcho = usePersonalEcho(homeInitialized, homeVisible);
-  const [devFakeEcho, setDevFakeEcho] = useState<ReturnType<typeof readDevFakeEcho>>(null);
+  const { mountId, glFlags, devFakeEcho, onGl } = useHomeFlags();
   const featuredEcho = devFakeEcho ?? personalEcho; // 仅开发环境 ?fakeEcho=1，生产恒为 personalEcho
-  useEffect(() => {
-    queueMicrotask(() => setMountId(`pond-${crypto.randomUUID()}`));
-    // 不用 useSearchParams：它会迫使外壳整体进入 Suspense，并发导航时冻结持续水面。
-    const search = window.location.search;
-    if (search || window.location.pathname === LAB_PATH) queueMicrotask(() => {
-      const sp = new URLSearchParams(search);
-      const parsed = parseGLFlags(sp);
-      // /test5 默认打开气泡与假 #36，便于直接调参；URL 参数仍可显式覆盖
-      const isLab = window.location.pathname === LAB_PATH;
-      setGlFlags(isLab && !sp.has('pondBubbles') ? { ...parsed, pondBubbles: true } : parsed);
-      setDevFakeEcho(isLab && !sp.has('fakeEcho') ? readDevFakeEcho('?fakeEcho=1') : readDevFakeEcho(search));
-    });
-  }, []);
-  const onGl = useCallback((patch: Partial<GLFlags>) => {
-    setGlFlags((flags) => ({ ...flags, ...patch }));
-  }, []);
   const { playing, currentTrack } = usePlayer();
   const echoPlayback = useFeaturedEchoPlayback(featuredEcho);
   useEffect(() => {
@@ -93,23 +74,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
   );
   const scoreScene = persistent ? sceneSlot?.scenes.score : undefined;
   const tracksScene = persistent ? sceneSlot?.scenes.tracks : undefined;
-  const registeredScene = scoreScene ?? tracksScene;
-  const scorePresence = useMemo(() => ({ get current() {
-    return (scoreScene?.scenePresence?.current ?? 1) * getScenePresence('score');
-  } }), [scoreScene]);
-  const sceneFlags = useMemo(
-    // 池塘气泡属于持久水面核心：档案场景（/me、/artist）也跟随首页的 pondBubbles（与花瓣同理）
-    () => persistent && !renderHomeScene ? { ...ARCHIVE_FLAGS, pondBubbles: glFlags.pondBubbles } : glFlags,
-    [glFlags, persistent, renderHomeScene],
-  );
-  const coreFlags = useMemo(() => registeredScene ? {
-    ...registeredScene.flags,
-    glSpheres: scoreScene ? scoreScene.flags.glSpheres : glFlags.glSpheres,
-    // 水面花瓣属于持久 Water Core，路由 Scene 不得卸载并重排它。
-    flowerPetals: glFlags.flowerPetals,
-    pondBubbles: glFlags.pondBubbles,
-    forceFallback: glFlags.forceFallback,
-  } : sceneFlags, [glFlags.flowerPetals, glFlags.pondBubbles, glFlags.forceFallback, glFlags.glSpheres, registeredScene, sceneFlags, scoreScene]);
+  const { registeredScene, scorePresence, coreFlags } = useCoreFlags(glFlags, persistent, renderHomeScene, scoreScene, tracksScene);
   const glHealth: GlHealth = glFlags.forceFallback ? 'forced' : runtimeGlHealth;
   const glOk = glHealth === 'healthy' && sceneReady;
   const regularPlayingId = playing && currentTrack ? currentTrack.id : null;
