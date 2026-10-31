@@ -21,7 +21,7 @@ import { useHomeFlags } from './host/use-home-flags';
 import { useCoreFlags } from './host/use-core-flags';
 import PersistentWaterCore from '@/src/components/pond-shell/PersistentWaterCore';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
-import { LAB_PATH } from '@/src/components/pond-shell/transition/types';
+import { isHomePath, LAB_PATH } from '@/src/components/pond-shell/transition/types';
 import { useScenePresence } from '@/src/components/pond-shell/motion/use-scene-presence';
 import { usePreparedArchive } from '@/src/components/pond-shell/use-prepared-archive';
 import { useOptionalPondSceneSlot } from '@/src/components/pond-shell/scene-slot';
@@ -44,7 +44,7 @@ export default function PondExperience({ mode, persistent = false, children }: {
   const lab = pathname === LAB_PATH;
   const sandbox = mode !== 'production' || lab; // /test5 = 首页外壳 + 沙盒控制台
   const p9Enabled = mode !== 'test4';
-  const phase = transition?.phase ?? (pathname === '/' ? 'home' : 'archive');
+  const phase = transition?.phase ?? (isHomePath(pathname) ? 'home' : 'archive');
   const homeVisible = !persistent || phase === 'home' || phase === 'entering-home';
   const homeInteractive = !persistent || transition?.transaction.interactiveOwner === 'home';
   const renderHomeScene = homeInteractive || (transition?.transaction.current === 'home' && transition.transaction.stage !== 'stable');

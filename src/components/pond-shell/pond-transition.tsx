@@ -7,7 +7,7 @@ import { flushSync } from 'react-dom';
 import { initialRouteTransaction, routeTransactionReducer } from './transition/route-reducer';
 import { freezeOutgoingSurface, preserveOutgoingRoute, rememberPondScroll, savedPondScroll } from './motion/route-scroll';
 import {
-  pathWithoutHash, routeForPath, type PondRoute, type PondRouteEvent, type PondRouteTransaction,
+  isHomePath, pathWithoutHash, routeForPath, type PondRoute, type PondRouteEvent, type PondRouteTransaction,
 } from './transition/types';
 export type PondTransitionPhase = PondRoute | 'leaving-home' | 'entering-home';
 type TransitionValue = {
@@ -99,7 +99,10 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
     rememberPondScroll(window.location.pathname);
     historyEntry.current = false;
     const path = pathWithoutHash(href);
-    if (path === window.location.pathname && transactionRef.current.stage === 'stable') {
+    const settled = transactionRef.current.stage === 'stable';
+    // 同路径，或首页场景内的别名切换（/ ↔ /lens）：不走事务，场景不重建、不出遮罩。
+    if (settled && (path === window.location.pathname
+      || isHomePath(path) && transactionRef.current.interactiveOwner === 'home')) {
       router.push(href, { scroll: false }); return transactionRef.current.generation;
     }
     preserveOutgoingRoute(transactionRef.current.interactiveOwner, routeForPath(path));
@@ -141,6 +144,9 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
       cancelled.seen = true; router.replace(cancelled.restore); return;
     }
     if (cancelled?.seen && pathname === cancelled.restore) cancelledNavigation.current = null;
+    if (tx.stage === 'stable' && landed === tx.current && pathname !== tx.href) {
+      apply({ type: 'alias', pathname }); return;
+    }
     if (tx.stage === 'stable' && landed !== tx.current) {
       const next = apply({ type: 'start', target: landed, href: pathname, at: performance.now() });
       if (landed === 'home') reportVisualReady('home', next.generation);
@@ -159,6 +165,8 @@ export function PondTransitionProvider({ children }: { children: ReactNode }) {
       cancelledNavigation.current = null;
       historyEntry.current = true;
       const path = window.location.pathname;
+      const tx = transactionRef.current;
+      if (tx.stage === 'stable' && isHomePath(path) && tx.interactiveOwner === 'home') return; // / ↔ /lens 后退前进
       preserveOutgoingRoute(transactionRef.current.interactiveOwner, routeForPath(path));
       const next = apply({ type: 'start', target: routeForPath(path), href: path, at: performance.now() }, true);
       if (next.target === 'home') reportVisualReady('home', next.generation);

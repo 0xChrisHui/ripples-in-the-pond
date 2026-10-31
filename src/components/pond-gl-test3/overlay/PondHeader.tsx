@@ -8,6 +8,7 @@ import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import { usePondNavigationWarmup } from '@/src/components/pond-shell/navigation/PondNavigation';
 import LocaleSwitch from '@/src/components/pond-shell/navigation/LocaleSwitch';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
+import { isHomePath } from '@/src/components/pond-shell/transition/types';
 import '@/src/components/pond-shell/navigation/header.css';
 
 const MENU_ID = 'pond-public-navigation';
@@ -36,7 +37,7 @@ function PublicLinks({ onNavigate }: { onNavigate?: () => void }) {
 export default function PondHeader() {
   const pathname = usePathname();
   const transition = usePondTransition();
-  const home = transition ? transition.transaction.interactiveOwner === 'home' : pathname === '/';
+  const home = transition ? transition.transaction.interactiveOwner === 'home' : isHomePath(pathname);
   const [menuOpen, setMenuOpen] = useState(false);
   const t = useTranslations('nav');
   const tc = useTranslations('common');

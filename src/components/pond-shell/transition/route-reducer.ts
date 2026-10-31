@@ -25,6 +25,11 @@ export function routeTransactionReducer(
       visualReadyAt: null, revealStartAt: null, settledAt: null,
     };
   }
+  if (event.type === 'alias') {
+    // 同一场景内换路径（/ ↔ /lens）：不开事务，只让 href 跟上地址栏。
+    if (state.stage !== 'stable' || routeForPath(event.pathname) !== state.current || state.href === event.pathname) return state;
+    return { ...state, href: event.pathname, currentHref: event.pathname };
+  }
   if (event.generation != null && event.generation !== state.generation) return state;
   if (event.type === 'ready') {
     if (state.stage !== 'preparing' || state.targetVisualReady || event.owner !== state.target) return state;

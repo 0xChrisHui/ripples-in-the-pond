@@ -1,14 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { isHomePath } from './transition/types';
 
 /** 首页或档案首次出现后持续保留唯一档案实例，后续路由往返不重复请求。 */
 export function usePreparedArchive(pathname: string, persistent: boolean): boolean {
   const archivePath = pathname === '/me' || pathname === '/me/test'
     || pathname === '/tracks' || pathname === '/tracks/pond' || pathname === '/artist';
-  const [initialized, setInitialized] = useState(() => pathname === '/' || archivePath);
+  const [initialized, setInitialized] = useState(() => isHomePath(pathname) || archivePath);
   useEffect(() => {
-    if (!initialized && (pathname === '/' || archivePath)) {
+    if (!initialized && (isHomePath(pathname) || archivePath)) {
       queueMicrotask(() => setInitialized(true));
     }
   }, [archivePath, initialized, pathname]);

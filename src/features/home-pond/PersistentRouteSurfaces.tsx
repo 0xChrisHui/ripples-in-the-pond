@@ -6,7 +6,7 @@ import {
 } from 'react';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { useOptionalScoreOrigin } from '@/src/components/pond-shell/score/score-origin';
-import type { PondRoute } from '@/src/components/pond-shell/transition/types';
+import { isHomePath, type PondRoute } from '@/src/components/pond-shell/transition/types';
 import ArtistPondPage from '@/src/components/artist/ArtistPondPage';
 import PondHeader from '@/src/components/pond-gl-test3/overlay/PondHeader';
 import { useRoutePresence } from '@/src/components/pond-shell/motion/use-route-presence';
@@ -37,7 +37,7 @@ export default function PersistentRouteSurfaces({
   const transition = usePondTransition();
   const scoreOrigin = useOptionalScoreOrigin();
   const tx = transition?.transaction;
-  const current = tx?.current ?? (pathname === '/' ? 'home' : 'archive');
+  const current = tx?.current ?? (isHomePath(pathname) ? 'home' : 'archive');
   const target = tx?.target ?? current;
   const stage = tx?.stage ?? 'stable';
   const interactive = tx?.interactiveOwner ?? current;
