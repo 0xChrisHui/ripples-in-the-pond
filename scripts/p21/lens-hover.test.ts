@@ -90,3 +90,25 @@ const far = run(shownA, 400, 40, () => ({ x: 400, y: 300 }), false, spaced);
 assert.equal(far.state.shown, null, '远离后撤下');
 
 console.log('lens-hover ✅');
+
+// 13. 鼠标离开页面（away，如去操作 MetaMask 窗口）：已显示的面板保持，不启动离开计时；回到页面后按位置决定
+{
+  const circles = [{ id: 'a', x: 300, y: 300, r: 60, echo: false }];
+  let state: HoverState = { shown: 'a', candidate: null, since: 0, leftAt: null };
+  for (let now = 0; now <= 20000; now += 100) {
+    state = stepHover(state, { now, pointer: null, circles, inPanel: false, away: true });
+    assert.equal(state.shown, 'a', `鼠标在页面外 ${now}ms 后面板不应撤下`);
+    assert.equal(state.leftAt, null, '不应记录离开时刻');
+  }
+  // 回到页面、落在空白处：此时才开始离开计时，宽限后撤下
+  let gone = state;
+  for (let now = 20000; now <= 21000; now += 50) gone = stepHover(gone, { now, pointer: { x: 900, y: 700 }, circles, inPanel: false });
+  assert.equal(gone.shown, null, '回到页面后落在空白处，超过宽限应撤下');
+  // 本来没有面板时不受影响
+  assert.deepEqual(stepHover(HOVER_IDLE, { now: 1, pointer: null, circles, inPanel: false, away: true }), HOVER_IDLE);
+  // 触屏没有鼠标（away 不成立）：仍按旧规则撤下
+  let touch: HoverState = { shown: 'a', candidate: null, since: 0, leftAt: null };
+  for (let now = 0; now <= 1000; now += 50) touch = stepHover(touch, { now, pointer: null, circles, inPanel: false });
+  assert.equal(touch.shown, null, '触屏无鼠标时应撤下');
+}
+console.log('lens-hover 13 ✅');

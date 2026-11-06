@@ -74,7 +74,8 @@ export function useLensFrame(args: Args) {
       const inPanel = reported.open && !!panel
         && ((mouse != null && pointInRect(mouse.x, mouse.y, panel.getBoundingClientRect()))
           || panel.contains(document.activeElement));
-      hover = stepHover(hover, { now, pointer: mouse, circles, inPanel });
+      // 有鼠标但离开了页面（如去操作钱包弹窗）：悬停保持，不当作“鼠标离开了球”
+      hover = stepHover(hover, { now, pointer: mouse, circles, inPanel, away: p.mouse && !p.inside });
 
       const pinnedId = s.lockedId ?? s.selectionRef.current?.id ?? null;
       // 铸造进行中（等钱包 / 待确认）的曲目：悬停落空时面板仍停在它身上，直到结果出来再保留几秒。
