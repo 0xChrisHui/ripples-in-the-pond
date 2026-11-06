@@ -23,6 +23,12 @@ type Args = {
 
 const PANEL_TAU_MS = 70;
 
+/** 底部播放器的顶边：面板不得压到它下面。播放器是固定定位，高度随视口与安全区变化，所以每次实测。 */
+function playerTop(): number {
+  const top = document.querySelector('.bottom-player-shell')?.getBoundingClientRect().top;
+  return top && top > 0 ? top - 8 : innerHeight;
+}
+
 /** 读取首页命中层所有可交互球的屏幕圆（用的是球按钮真实矩形，与肉眼所见、点击命中一致）。 */
 function readCircles(): Circle[] {
   const root = document.querySelector('.pond-home-surface');
@@ -103,9 +109,11 @@ export function useLensFrame(args: Args) {
       }
       if (panel && open && anchor) {
         const placed = placePanel(anchor, { w: panel.offsetWidth, h: panel.scrollHeight + 2 },
-          { w: innerWidth, h: innerHeight, topInset: innerWidth < 768 ? 64 : 76 }, side);
+          { w: innerWidth, h: playerTop(), topInset: innerWidth < 768 ? 64 : 76 }, side);
         side = placed.side; // 左右方向沿用：换球不翻面
-        panel.style.maxHeight = placed.maxH ? `${Math.floor(placed.maxH)}px` : '';
+        // 放不下时不滚动：进入紧凑档（隐藏次要链接行），本次打开内保持，关闭后复位。
+        if (placed.maxH) panel.dataset.tight = 'true';
+        panel.style.maxHeight = '';
         if (!panelPos.seeded || s.reduced) {
           panelPos.x = placed.left; panelPos.y = placed.top; panelPos.seeded = true;
         } else {
@@ -116,6 +124,7 @@ export function useLensFrame(args: Args) {
         if (panel.dataset.placed !== 'true') panel.dataset.placed = 'true'; // 首次落位后才允许可见，避免在 (0,0) 闪现
       } else {
         panelPos.seeded = false; // 下次打开直接落位，不从旧位置滑过来
+        if (panel) panel.dataset.tight = 'false';
       }
       frame = requestAnimationFrame(loop);
     };

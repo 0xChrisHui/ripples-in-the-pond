@@ -28,14 +28,14 @@ export default function ChainBlock({ deployment }: { deployment: OriginalDeploym
   return (
     <section className="lens-chain" aria-label={`${chain} · ${standard}`} data-status={deployment.status}>
       <h3 className="lens-chain__name">{chain} <span>· {standard}</span></h3>
-      <dl className="lens-chain__facts">
-        {address && <div><dt>{t('contract')}</dt>
-          <dd><code title={address}>{shortAddress(address)}</code>
-            <button type="button" className="lens-link" onClick={() => { void copy(); }}
-              aria-label={t('copyContract', { chain })}>{copied ? t('copied') : t('copy')}</button></dd></div>}
-        {deployment.tokenId && <div><dt>Token</dt><dd><code>#{deployment.tokenId}</code></dd></div>}
-        <div><dt>{t('status')}</dt><dd>{status}</dd></div>
-      </dl>
+      {/* 一行：合约缩写 + 复制、Token、状态；不再逐项加小标签，省高度 */}
+      <p className="lens-chain__facts">
+        {address && <><code title={address}>{shortAddress(address)}</code>
+          <button type="button" className="lens-link" onClick={() => { void copy(); }}
+            aria-label={t('copyContract', { chain })}>{copied ? t('copied') : t('copy')}</button></>}
+        {deployment.tokenId && <span className="lens-chain__token">#{deployment.tokenId}</span>}
+        <span className="lens-chain__status">{status}</span>
+      </p>
       <div className="lens-chain__links">
         {deployment.publicPlaybackUrl && <PondRouteLink href={deployment.publicPlaybackUrl} className="lens-link">{t('openSingle')}</PondRouteLink>}
         {address && <a href={explorerAddressUrlFor(deployment.chainId, address)} target="_blank" rel="noreferrer"
