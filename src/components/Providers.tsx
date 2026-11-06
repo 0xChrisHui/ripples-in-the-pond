@@ -7,6 +7,7 @@ import BottomPlayer from '@/src/components/player/BottomPlayer';
 import LoginModal from '@/src/components/auth/LoginModal';
 import NavigationFeedback from '@/src/components/navigation/NavigationFeedback';
 import LocaleProvider from '@/src/i18n/LocaleProvider';
+import MintStatusPrefetch from '@/src/components/music-catalog/claim/MintStatusPrefetch';
 
 /**
  * 全局 Provider 包装层
@@ -29,6 +30,7 @@ export default function Providers({ children, externalWalletLoginEnabled }: {
         <PlayerProvider>
           {children}
           <NavigationFeedback />
+          <MintStatusPrefetch />
           <BottomPlayer />
           <LoginModal externalWalletLoginEnabled={externalWalletLoginEnabled} />
         </PlayerProvider>

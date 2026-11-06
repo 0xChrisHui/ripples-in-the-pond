@@ -10,10 +10,7 @@ import type { OriginalTrack } from '../../../lib/music-catalog/types';
 import { getOriginalMintDeployment } from '../../../lib/music-catalog/asset-registry';
 import EthereumMaterialMint from './EthereumMaterialMint';
 import { MaterialNoticeBox } from './MaterialNoticeView';
-type OpErrorKey = 'statusUnavailable' | 'notReady' | 'resultUnknown';
-/** error 为服务端原文（中文模式照旧显示）；errorKey 为本地文案 */
-type MintStatus = { status?: string | null; txHash?: string | null; recipientAddress?: string; recipientFrozen?: boolean;
-  error?: string; errorKey?: OpErrorKey; code?: string; needsReview?: boolean; alreadyMinted?: boolean };
+import { opCache, type MintStatus } from './mint-status-cache';
 /** compact：/lens 面板内的紧凑变体——不重复 id="track-collect"，不显示标题与规则折叠。 */
 export default function MaterialMintPanel({ track, compact = false }: { track: OriginalTrack; compact?: boolean }) {
   const t = useTranslations('material');
@@ -48,7 +45,8 @@ const recipientCache = new Map<string, string>();
 function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnType<typeof useAuth> }) {
   const t = useTranslations('material'), serverText = useServerText();
   const { authenticated, getAccessToken } = auth;
-  const [status, setStatus] = useState<MintStatus | null>(null);
+  // 先用预取缓存作为首帧状态；缓存里没有时为 null（"正在核对"），返回后再更新。
+  const [status, setStatus] = useState<MintStatus | null>(() => (auth.userId ? opCache.get(auth.userId, track.trackId) : undefined) ?? null);
   const [busy, setBusy] = useState(false);
   const active = useRef(true);
   const opAvailable = getOriginalMintDeployment(track.trackId, 10)?.status === 'ready';
@@ -66,7 +64,11 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
         const response = await fetchWithAuth(`/api/material-mint/op/status?trackId=${encodeURIComponent(track.trackId)}`,
           { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
         const body = await response.json() as MintStatus;
-        if (!cancelled) { setStatus(body); if (auth.userId && body.recipientAddress) recipientCache.set(auth.userId, body.recipientAddress); }
+        if (!cancelled) {
+          setStatus(body);
+          if (auth.userId) opCache.set(auth.userId, track.trackId, body);
+          if (auth.userId && body.recipientAddress) recipientCache.set(auth.userId, body.recipientAddress);
+        }
       } catch { if (!cancelled) setStatus({ errorKey: 'statusUnavailable' }); }
     })();
     return () => { cancelled = true; };
@@ -86,7 +88,10 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ trackId: track.trackId }) });
       const result = await response.json() as MintStatus;
       if (response.ok && !result.error) announceMintRecorded();
-      if (active.current) setStatus(result);
+      if (active.current) {
+        setStatus(result);
+        if (auth.userId) opCache.set(auth.userId, track.trackId, result);
+      }
     } catch {
       if (active.current) setStatus({ errorKey: 'resultUnknown', needsReview: true });
     } finally { if (active.current) setBusy(false); }
@@ -94,9 +99,12 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
   // 服务端地址（冻结快照）优先；未返回前先用缓存/当前钱包地址，避免等待请求。
   const recipient = status?.recipientAddress ?? (auth.userId ? recipientCache.get(auth.userId) : undefined) ?? auth.evmAddress;
   const pending = status?.needsReview || ['pending', 'minting_onchain'].includes(status?.status ?? '');
+  const done = status?.status === 'success' || Boolean(status?.alreadyMinted);
+  const checking = status === null && opAvailable;
   const errorText = status?.errorKey ? t(`op.errors.${status.errorKey}`)
     : status?.error ? serverText(status.error, t('op.errors.server')) : null;
-  return <section className="material-chain-row" aria-label={t('op.label')}>
+  const stateName = !opAvailable ? 'unavailable' : checking ? 'checking' : done ? 'done' : pending ? 'pending' : 'idle';
+  return <section className="material-chain-row" aria-label={t('op.label')} data-chain="OP" data-state={stateName}>
     <div className="material-chain-info"><h3>Optimism</h3>
       <p className="material-muted">{t('op.kind')}</p>
       {recipient && <details className="material-proof-details"><summary>{t('recipient')}</summary>
@@ -104,9 +112,9 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
     </div>
     <div className="material-chain-action">
         {!opAvailable ? <button type="button" className="material-collect" disabled>{t('op.unavailable')}</button>
-          : <button type="button" className="material-collect" disabled={busy || Boolean(pending) || status?.alreadyMinted || status?.status === 'success'
+          : <button type="button" className="material-collect" disabled={busy || checking || Boolean(pending) || done
             || status?.code?.startsWith('OP_SBT_') || status?.code === 'OP_SNAPSHOT_PENDING'}
-            onClick={() => { void collect(); }}>{busy ? t('op.submitting') : status?.status === 'success' || status?.alreadyMinted ? t('op.alreadyCollected')
+            onClick={() => { void collect(); }}>{busy ? t('op.submitting') : checking ? t('op.checking') : done ? t('op.alreadyCollected')
               : pending ? t('op.pending') : t('op.mint')}</button>}
     </div>
     <div className="material-mint-status material-chain-status" aria-live="polite">
