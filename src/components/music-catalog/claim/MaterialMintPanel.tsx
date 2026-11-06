@@ -10,6 +10,7 @@ import type { OriginalTrack } from '../../../lib/music-catalog/types';
 import { getOriginalMintDeployment } from '../../../lib/music-catalog/asset-registry';
 import EthereumMaterialMint from './EthereumMaterialMint';
 import { MaterialNoticeBox } from './MaterialNoticeView';
+import PondRouteLink from '../../pond-shell/PondRouteLink';
 import { opCache, type MintStatus } from './mint-status-cache';
 /** compact：/lens 面板内的紧凑变体——不重复 id="track-collect"，不显示标题与规则折叠。 */
 export default function MaterialMintPanel({ track, compact = false }: { track: OriginalTrack; compact?: boolean }) {
@@ -49,7 +50,9 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
   const [status, setStatus] = useState<MintStatus | null>(() => (auth.userId ? opCache.get(auth.userId, track.trackId) : undefined) ?? null);
   const [busy, setBusy] = useState(false);
   const active = useRef(true);
-  const opAvailable = getOriginalMintDeployment(track.trackId, 10)?.status === 'ready';
+  const opDeployment = getOriginalMintDeployment(track.trackId, 10);
+  const opAvailable = opDeployment?.status === 'ready';
+  const pageUrl = opDeployment?.publicPlaybackUrl ?? null;
   useEffect(() => {
     active.current = true;
     return () => { active.current = false; };
@@ -112,6 +115,7 @@ function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnTyp
     </div>
     <div className="material-chain-action">
         {!opAvailable ? <button type="button" className="material-collect" disabled>{t('op.unavailable')}</button>
+          : done && pageUrl ? <PondRouteLink href={`${pageUrl}#track-collect`} className="material-collect">{t('op.viewCollection')}</PondRouteLink>
           : <button type="button" className="material-collect" disabled={busy || checking || Boolean(pending) || done
             || status?.code?.startsWith('OP_SBT_') || status?.code === 'OP_SNAPSHOT_PENDING'}
             onClick={() => { void collect(); }}>{busy ? t('op.submitting') : checking ? t('op.checking') : done ? t('op.alreadyCollected')

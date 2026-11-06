@@ -12,6 +12,7 @@ import type { OriginalTrack } from '../../../lib/music-catalog/types';
 import { describeMaterialError, localMaterialNotice, type MaterialNotice } from '../../../features/material-catalog/mint/friendly-error';
 import MaterialNoticeView from './MaterialNoticeView';
 import MaterialOrderView from './MaterialOrderView';
+import PondRouteLink from '../../pond-shell/PondRouteLink';
 import { ethCache } from './mint-status-cache';
 
 const BUSY_KEYS = { wallet: 'busyWallet', order: 'busyOrder', sign: 'busySign' } as const;
@@ -87,6 +88,7 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
     <div className="material-chain-action">
       {!deployed ? <><p className="material-muted">{t('eth.undeployed')}</p>
         <button className="material-collect" type="button" disabled>{t('eth.unavailable')}</button></>
+        : finished && deployment?.publicPlaybackUrl ? <PondRouteLink href={`${deployment.publicPlaybackUrl}#track-collect`} className="material-collect">{t('eth.viewCollection')}</PondRouteLink>
         : finished ? <button className="material-collect" type="button" disabled>{t('op.alreadyCollected')}</button>
         : <button className="material-collect" type="button" disabled={Boolean(busy) || checking} onClick={() => { void collect(); }}>
           {busy ? t(`eth.${BUSY_KEYS[busy]}`) : checking ? t('eth.checking') : t('eth.mint')}</button>}

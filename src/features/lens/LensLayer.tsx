@@ -6,6 +6,7 @@ import type { GlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
 import { isHomePath, LENS_PATH } from '@/src/components/pond-shell/transition/types';
 import { getOriginalTrack } from '@/src/lib/music-catalog/asset-registry';
+import { requestMintStatusRefresh } from '@/src/components/music-catalog/claim/MintStatusPrefetch';
 import LensPanel from './panel/LensPanel';
 import { useLensDeepLink, useTrackNumbers } from './use-lens-deeplink';
 import { useLensExit } from './use-lens-exit';
@@ -20,6 +21,8 @@ function LensInner({ pathname, glSim, stopEcho }: Props) {
   const player = usePlayer();
   const transition = usePondTransition();
   const numbers = useTrackNumbers();
+  // 进入 /lens 时后台把全部曲目的铸造状态重新核对一遍，悬停面板时直接显示结果。
+  useEffect(() => { if (active) requestMintStatusRefresh(); }, [active]);
   const [panel, setPanel] = useState<PanelState>({ id: null, open: false });
   const [reduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const veilRef = useRef<HTMLDivElement>(null);

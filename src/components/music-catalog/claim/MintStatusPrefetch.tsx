@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { fetchWithAuth } from '../../../lib/fetch-with-auth';
 import { getOriginalDeployment, getOriginalMintDeployment, listReadyOriginals } from '../../../lib/music-catalog/asset-registry';
@@ -7,10 +7,15 @@ import { useMaterialMint } from '../../../features/material-catalog/mint/useMate
 import { clearMintCache, ethCache, opCache, type MintStatus } from './mint-status-cache';
 
 const CONCURRENCY = 4;
+/** 进入 /lens 等场景时调用：立即把全部曲目重新核对一遍（后台进行，界面不等待）。 */
+const REFRESH_EVENT = 'pond:mint-status-refresh';
+export function requestMintStatusRefresh(): void {
+  window.dispatchEvent(new Event(REFRESH_EVENT));
+}
 
 /**
  * 登录后在后台预取所有已上链原曲的铸造状态（OP 收藏记录、以太坊已有订单），写入缓存。
- * 悬停 /lens 面板时直接读缓存，不再现场检索；无界面，挂在全局 Providers。
+ * 进入 /lens 时会再全量核对一次；悬停面板时直接读缓存，不再现场检索。无界面，挂在全局 Providers。
  */
 export default function MintStatusPrefetch() {
   const auth = useAuth();
@@ -21,6 +26,12 @@ export default function MintStatusPrefetch() {
   const { ready, authenticated, userId, walletCapability, selectedExternalWallet } = auth;
   const wallet = walletCapability.walletKind === 'external' ? selectedExternalWallet?.address ?? null : null;
   const identity = authenticated && userId ? `${userId}|${wallet ?? ''}` : null;
+  const [pass, setPass] = useState(0);
+  useEffect(() => {
+    const again = () => setPass((value) => value + 1);
+    window.addEventListener(REFRESH_EVENT, again);
+    return () => window.removeEventListener(REFRESH_EVENT, again);
+  }, []);
 
   useEffect(() => {
     if (!ready) return;
@@ -63,7 +74,7 @@ export default function MintStatusPrefetch() {
     };
     void Promise.all(Array.from({ length: Math.min(CONCURRENCY, work.length) }, lane));
     return () => { cancelled = true; };
-  }, [ready, identity, userId, wallet]);
+  }, [ready, identity, userId, wallet, pass]);
 
   return null;
 }

@@ -67,8 +67,10 @@
 /* 核对中 / 不可用 / 未部署：虚线、弱化，一眼看出不能点 */
 .lens-collect .material-collect:disabled { border-style: dashed; border-color: rgba(255, 255, 255, .2); background: transparent; color: rgba(214, 226, 214, .6); cursor: default; }
 /* 已收藏：实线、带弱绿底，与"可铸造"区分 */
-.lens-collect .material-chain-row[data-state="done"] .material-collect:disabled {
+/* 已收藏：实线、弱绿底，整块是"查看收藏 →"的链接（进入单曲页的铸造区） */
+.lens-collect .material-chain-row[data-state="done"] .material-collect {
   border-style: solid; border-color: rgba(209, 220, 190, .35); background: rgba(209, 220, 190, .06); color: rgba(233, 240, 222, .9);
+  text-decoration: none;
 }
 .lens-collect summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-size: 11.5px; }
 .lens-collect .material-notice { margin: 4px 0 0; padding: 6px 8px; border-left: 2px solid rgba(255, 255, 255, .3); background: rgba(255, 255, 255, .05); font-size: 11.5px; line-height: 1.5; }
