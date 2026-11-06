@@ -74,3 +74,14 @@ export function placePanel(anchor: Circle, size: { w: number; h: number }, v: Vi
     side: 'below',
   };
 }
+
+/**
+ * 光圈瞄准点（纯函数）：选中 / 锁定 → 球心；有过指针 → 最后位置夹到视口内；从未有过指针 → 画面中心。
+ * 指针离开窗口时调用方仍传入最后位置，因此光圈停在边缘，不会回中心再弹回来。
+ */
+export function ringAim(pointer: { x: number; y: number; has: boolean } | null, pinned: Circle | null,
+  w: number, h: number): { x: number; y: number } {
+  if (pinned) return { x: pinned.x, y: pinned.y };
+  if (!pointer?.has) return { x: w / 2, y: h / 2 };
+  return { x: Math.min(Math.max(pointer.x, 0), w), y: Math.min(Math.max(pointer.y, 0), h) };
+}

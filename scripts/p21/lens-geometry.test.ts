@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { easeToward, pickCircle, placePanel, type Circle } from '../../src/features/lens/lens-geometry';
+import { easeToward, pickCircle, placePanel, ringAim, type Circle } from '../../src/features/lens/lens-geometry';
 
 const circles: Circle[] = [
   { id: 'a', x: 100, y: 100, r: 40, echo: false },
@@ -52,4 +52,10 @@ assert.ok(563 < t2.top || 563 > t2.top + t2.maxH, '面板不得盖住球');
 const t3 = placePanel({ id: 't', x: 100, y: 200, r: 11, echo: false }, tall, phone);
 assert.ok(t3.top >= 76 && t3.top + (t3.maxH ?? tall.h) <= phone.h - 12);
 assert.ok(200 < t3.top || 200 > t3.top + (t3.maxH ?? tall.h), '面板不得盖住球');
+// 光圈瞄准：离开窗口保留最后位置（不回中心）、越界夹到视口内、选中优先、从未有指针才居中
+assert.deepEqual(ringAim({ x: 700, y: 0, has: true }, null, 1440, 900), { x: 700, y: 0 }, '边缘停留，不回中心');
+assert.deepEqual(ringAim({ x: 1450, y: -4, has: true }, null, 1440, 900), { x: 1440, y: 0 }, '越界夹到视口内');
+assert.deepEqual(ringAim(null, null, 1440, 900), { x: 720, y: 450 }, '从未有指针：画面中心');
+assert.deepEqual(ringAim({ x: 0, y: 0, has: false }, null, 1440, 900), { x: 720, y: 450 }, '未收到坐标：画面中心');
+assert.deepEqual(ringAim({ x: 5, y: 5, has: true }, { id: 'p', x: 300, y: 200, r: 20, echo: false }, 1440, 900), { x: 300, y: 200 }, '锁定球心优先');
 console.log('lens-geometry ✅');

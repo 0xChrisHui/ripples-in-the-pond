@@ -61,12 +61,12 @@ try {
   const veil = await evaluate(`(() => { const s=document.querySelector('.lens-veil').style; return {x:s.getPropertyValue('--lx'),y:s.getPropertyValue('--ly')}; })()`);
   assert.ok(Math.abs(parseFloat(veil.x) - 700) < 3 && Math.abs(parseFloat(veil.y) - 450) < 3, `光圈应到鼠标处：${JSON.stringify(veil)}`);
   ok('光圈跟随鼠标');
-  await move(ball.x, ball.y); await sleep(500);
+  await move(ball.x, ball.y);
+  // 悬停需停留 SWITCH_DWELL_MS 才选中，等结果出现而不是固定等待
+  await waitFor("/^[0-9]+$/.test(document.querySelector('.lens-veil').dataset.lensTarget ?? '')", 4000);
   const target = await evaluate("document.querySelector('.lens-veil').dataset.lensTarget");
-  assert.match(target, /^\d+$/, `光圈下应读出曲号：${target}`);
   ok(`光圈照到球 → 曲号 ${target}`);
-  await waitFor("document.querySelector('[data-lens-panel]')");
-  await sleep(300);
+  await waitFor("document.querySelector('[data-lens-panel]')?.dataset.placed==='true'");
   const panel = await rectOf('[data-lens-panel]');
   assert.ok(panel.x >= 0 && panel.y >= 70 && panel.x + panel.w <= 1440 && panel.y + panel.h <= 900, `面板越界 ${JSON.stringify(panel)}`);
   assert.equal(await evaluate("document.querySelectorAll('#track-collect').length"), 0, '紧凑变体不得重复 #track-collect');
@@ -75,8 +75,9 @@ try {
   // 面板宽限：鼠标移进面板后面板保持
   await move(panel.cx, panel.cy); await sleep(600);
   assert.ok(await rectOf('[data-lens-panel]'), '鼠标在面板内时面板应保持');
-  await move(80, 820); await sleep(700);
-  assert.equal(await rectOf('[data-lens-panel]'), null, '离开后面板应撤下');
+  await move(80, 820);
+  await waitFor("document.querySelector('[data-lens-panel]')?.dataset.open==='false'", 3000);
+  ok('离开后面板进入淡出（data-open=false）');
   ok('面板宽限与撤下');
 
   // 3. 点空白退出 → /

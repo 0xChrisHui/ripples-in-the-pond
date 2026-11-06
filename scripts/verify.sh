@@ -118,7 +118,7 @@ echo ""
 
 # 2i. P21：/lens 几何（选球、光圈缓动、面板摆放）与 / ↔ /lens 别名事务。
 echo "── 2i. /lens 几何与别名事务 ──"
-if npx tsx scripts/p21/lens-geometry.test.ts 2>&1 && npx tsx --test scripts/ui/pond-unification/transition.test.ts 2>&1 | tail -4; then
+if npx tsx scripts/p21/lens-geometry.test.ts 2>&1 && npx tsx scripts/p21/lens-hover.test.ts 2>&1 && npx tsx --test scripts/ui/pond-unification/transition.test.ts 2>&1 | tail -4; then
   echo "$OK /lens 单测通过"
 else
   echo "$FAIL /lens 单测失败"

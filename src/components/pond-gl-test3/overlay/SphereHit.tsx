@@ -97,7 +97,11 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
       onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
       onPointerCancel={finishDrag} onLostPointerCapture={finishDrag} onKeyDown={onKeyDown}
       onFocus={(event) => { if (lensMode && event.currentTarget.matches(':focus-visible')) getLensBridge().focus?.(node); }}
-      onBlur={() => { if (lensMode) getLensBridge().focus?.(null); }}
+      // 焦点转入面板时保留选中（面板要靠它保持打开）；真正离开功能层由面板的 blur 负责清。
+      onBlur={(event) => {
+        if (!lensMode || event.relatedTarget instanceof Element && event.relatedTarget.closest('[data-lens-panel]')) return;
+        getLensBridge().focus?.(null);
+      }}
       onPointerEnter={() => { setHovered(true); glSim.setHover(node.id); }}
       onPointerLeave={() => { setHovered(false); glSim.setHover(null); }}
       style={{ position: 'absolute', width: radius * 2, height: radius * 2, padding: 0,

@@ -25,7 +25,9 @@ export function useLensDeepLink(args: {
   const param = useSearchParams().get('track');
   const written = useRef<string | null>(null);
   useEffect(() => {
-    if (!active || !ready || param == null || param === written.current) return;
+    // 离开 /lens 后清掉写回记录：再次进入同一个 ?track=N 必须重新选中
+    if (!active) { written.current = null; return; }
+    if (!ready || param == null || param === written.current) return;
     const id = numbers.byNumber.get(Number(param));
     if (id && selectionRef.current?.id !== id) selectionRef.current = { id, source: 'deeplink' };
   }, [active, numbers, param, ready, selectionRef]);

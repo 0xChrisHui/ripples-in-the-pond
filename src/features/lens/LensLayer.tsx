@@ -9,7 +9,7 @@ import { getOriginalTrack } from '@/src/lib/music-catalog/asset-registry';
 import LensPanel from './panel/LensPanel';
 import { useLensDeepLink, useTrackNumbers } from './use-lens-deeplink';
 import { useLensExit } from './use-lens-exit';
-import { useLensFrame, type LensSelection } from './use-lens-frame';
+import { useLensFrame, type LensSelection, type PanelState } from './use-lens-frame';
 import { useLensPointer } from './use-lens-pointer';
 import './lens-veil.css';
 
@@ -20,12 +20,11 @@ function LensInner({ pathname, glSim, stopEcho }: Props) {
   const player = usePlayer();
   const transition = usePondTransition();
   const numbers = useTrackNumbers();
-  const [panelId, setPanelId] = useState<string | null>(null);
+  const [panel, setPanel] = useState<PanelState>({ id: null, open: false });
   const [reduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const veilRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   const selectionRef = useRef<LensSelection>(null);
-  const panelHotRef = useRef(false);
   const regularId = player.playing && player.currentTrack ? player.currentTrack.id : null;
   const lockedId = glSim.echoPlayingId ?? regularId;
 
@@ -42,8 +41,8 @@ function LensInner({ pathname, glSim, stopEcho }: Props) {
     goHome: () => { void navigate?.('/'); },
   });
   useLensFrame({
-    active, reduced, veilRef, panelRef, pointerRef, lockedId, selectionRef, panelHotRef,
-    onPanelId: (id) => { panelHotRef.current = false; setPanelId(id); },
+    active, reduced, veilRef, panelRef, pointerRef, lockedId, selectionRef,
+    onPanel: setPanel,
     numberOf: (id) => {
       if (id == null) return '';
       return glSim.nodes.find((n) => n.id === id)?.echo ? '36' : String(numbers.byId.get(id) ?? '');
@@ -72,8 +71,14 @@ function LensInner({ pathname, glSim, stopEcho }: Props) {
   }, [active, writeUrl]);
 
   useEffect(() => { if (lockedId && active) writeUrl(lockedId); }, [active, lockedId, writeUrl]);
+  // 离开 /lens 时清掉光圈的过期读数，避免隐藏的遮罩残留上一次的选中与锁定状态。
   useEffect(() => {
-    if (!active) { selectionRef.current = null; queueMicrotask(() => setPanelId(null)); }
+    if (active) return;
+    const veil = veilRef.current;
+    if (veil) { veil.dataset.lensTarget = ''; veil.dataset.lensLocked = 'false'; }
+  }, [active]);
+  useEffect(() => {
+    if (!active) { selectionRef.current = null; queueMicrotask(() => setPanel({ id: null, open: false })); }
   }, [active]);
 
   // 从 /lens 去别的页面（/me 等）：原曲与 #36 都停；回首页（/）保持播放。
@@ -83,12 +88,12 @@ function LensInner({ pathname, glSim, stopEcho }: Props) {
     if (was === LENS_PATH && !isHomePath(pathname)) stopAll();
   }, [pathname, stopAll]);
 
-  const node = useMemo(() => (panelId ? glSim.nodes.find((n) => n.id === panelId) : undefined), [glSim.nodes, panelId]);
+  const node = useMemo(() => (panel.id ? glSim.nodes.find((n) => n.id === panel.id) : undefined), [glSim.nodes, panel.id]);
   const track = active && node && !node.echo ? getOriginalTrack(node.id) : null;
   return (
     <>
       <div ref={veilRef} className="lens-veil" data-lens-veil="true" data-on={active} aria-hidden="true" />
-      {track && node?.track && <LensPanel key={track.trackId} ref={panelRef} track={track} hotRef={panelHotRef}
+      {track && node?.track && <LensPanel ref={panelRef} track={track} open={panel.open && active}
         playing={lockedId === node.id} onToggle={() => { void glSim.toggle(node.track); writeUrl(node.id); }} />}
     </>
   );
