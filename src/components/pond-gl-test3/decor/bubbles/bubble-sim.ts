@@ -4,6 +4,7 @@
  * 一串 = 从同一个池底点冒出的若干泡，间隔不规则；随机只在生成一串时取值，运动中不再取随机数。
  * 透视与球一致：屏幕位置 = 中心 + (出生点 − 中心) × (0.5 + d)，d 从池底升到有效水位 →
  * 泡沿径向外飘、变大。生成时避让整条路径上的球；每帧另按到球边缘的距离柔性淡出（球可被拖动 / 浮沉）。
+ * 控制台"立即"请求会打断当前这串、立即开新串；立即出手记时载体泡是第一个泡，不必等整串升完。
  */
 import type { Disc } from './bubble-env';
 import type { BubbleTuning } from './bubble-tuning';
@@ -22,8 +23,14 @@ interface Bubble {
   popped: boolean;
   carrier: boolean; carrierId: number; held: number; // 载体泡：到水面后停住，等手记宿主放行再破
 }
-interface Chain { t: number; ox: number; oy: number; end: number; bubbles: Bubble[] }
-export interface BubbleSim { time: number; nextAt: number; chain: Chain | null; untilNote: number; forced: 'plain' | 'note' | null }
+interface Chain { t: number; ox: number; oy: number; end: number; bubbles: Bubble[]; fromBurst: boolean }
+export type BurstKind = 'plain' | 'note';
+/** 控制台"立即"请求的结果：本帧刚开始 / 避让找不到位置而失败；每帧读完即清空。 */
+export type BurstResult = 'started' | 'failed' | null;
+export interface BubbleSim {
+  time: number; nextAt: number; chain: Chain | null; untilNote: number;
+  forced: BurstKind | null; result: BurstResult;
+}
 
 export interface SimEnv {
   w: number; h: number;
@@ -33,7 +40,7 @@ export interface SimEnv {
   reduced: boolean;       // 减弱动效：不生成
   tuning: BubbleTuning;
   carrier?: CarrierPort;  // 无宿主 / 不出手记时不传
-  burst?: 'plain' | 'note' | null; // 控制台"立即冒一串"
+  burst?: BurstKind | null; // 控制台"立即冒一串 / 出手记"（本帧新请求）
   onPop: (x: number, y: number) => void; // 泡在水面停完、破掉的瞬间（屏幕像素）；球挡住时不触发
 }
 
@@ -47,7 +54,10 @@ const noteEvery = (r: Rng, t: BubbleTuning) => Math.max(1, Math.round(between(r,
 
 export function createBubbleSim(rng: Rng): BubbleSim {
   const t = DEFAULT_BUBBLE_TUNING;
-  return { time: 0, nextAt: between(rng, FADE_FIRST[0], FADE_FIRST[1]), chain: null, untilNote: noteEvery(rng, t), forced: null };
+  return {
+    time: 0, nextAt: between(rng, FADE_FIRST[0], FADE_FIRST[1]), chain: null,
+    untilNote: noteEvery(rng, t), forced: null, result: null,
+  };
 }
 
 function scaleAt(env: SimEnv, u: number): number {
@@ -69,9 +79,11 @@ function pathClear(env: SimEnv, ox: number, oy: number): boolean {
   return true;
 }
 
-function buildChain(rng: Rng, env: SimEnv, ox: number, oy: number, withNote: boolean): Chain {
+/** carrierAt：载体泡的位置（'first' 立即出手记 / 'last' 自然出手记 / null 无手记）。 */
+function buildChain(rng: Rng, env: SimEnv, ox: number, oy: number, carrierAt: 'first' | 'last' | null, fromBurst: boolean): Chain {
   const t = env.tuning;
   const n = Math.max(1, Math.round(between(rng, t.countMin, t.countMax)));
+  const carrierIdx = carrierAt === 'first' ? 0 : carrierAt === 'last' ? n - 1 : -1;
   const bubbles: Bubble[] = [];
   let delay = 0, end = 0;
   for (let i = 0; i < n; i++) {
@@ -80,23 +92,27 @@ function buildChain(rng: Rng, env: SimEnv, ox: number, oy: number, withNote: boo
     bubbles.push({
       delay, rise, dwell, size: between(rng, t.sizeMin, t.sizeMax),
       sway: between(rng, t.swayMin, t.swayMax), freq: between(rng, t.swayFreqMin, t.swayFreqMax), phase: 6.2831853 * rng(),
-      popped: false, carrier: withNote && i === n - 1, carrierId: 0, held: 0,
+      popped: false, carrier: i === carrierIdx, carrierId: 0, held: 0,
     });
     end = Math.max(end, delay + rise + dwell + 0.2); // +0.2 秒：让最后一个泡的破水在串结束前触发
     delay += between(rng, t.popGapMin, t.popGapMax);
   }
-  return { t: 0, ox, oy, end, bubbles };
+  return { t: 0, ox, oy, end, bubbles, fromBurst };
 }
 
-function trySpawn(rng: Rng, env: SimEnv, withNote: boolean): Chain | null {
+/** 立即请求用户在等，多试几个落点（球多时自然出现 5 次常常全被挡）；自然出现仍用 maxTries。 */
+const BURST_TRIES = 40;
+
+function trySpawn(rng: Rng, env: SimEnv, carrierAt: 'first' | 'last' | null, fromBurst: boolean): Chain | null {
   const t = env.tuning;
   const cx = env.w / 2, cy = env.h / 2;
   const sEnd = scaleAt(env, 1);
-  for (let i = 0; i < Math.max(1, Math.round(t.maxTries)); i++) {
+  const tries = fromBurst ? BURST_TRIES : Math.max(1, Math.round(t.maxTries));
+  for (let i = 0; i < tries; i++) {
     const tx = env.w * between(rng, t.areaMin, t.areaMax);
     const ty = env.h * between(rng, t.areaMin, t.areaMax);
     const ox = cx + (tx - cx) / sEnd, oy = cy + (ty - cy) / sEnd; // 水面落点反推出生点
-    if (pathClear(env, ox, oy)) return buildChain(rng, env, ox, oy, withNote);
+    if (pathClear(env, ox, oy)) return buildChain(rng, env, ox, oy, carrierAt, fromBurst);
   }
   return null;
 }
@@ -117,13 +133,22 @@ function discFade(env: SimEnv, x: number, y: number): number {
 export function stepBubbles(sim: BubbleSim, dt: number, env: SimEnv, rng: Rng, out: BubbleView[]): number {
   const t = env.tuning;
   sim.time += dt;
-  if (env.burst) sim.forced = env.burst;
+  sim.result = null;
+  if (env.burst) {
+    sim.forced = env.burst;
+    // 立即：打断当前串（若它带着手记，先撤下），马上开新串
+    if (sim.chain && !env.reduced) { env.carrier?.clear(); sim.chain = null; }
+  }
   if (env.reduced) { if (sim.chain) env.carrier?.clear(); sim.chain = null; sim.forced = null; return 0; }
   if (!sim.chain && (sim.forced || sim.time >= sim.nextAt)) {
-    const withNote = sim.forced ? sim.forced === 'note' && !!env.carrier : sim.untilNote <= 1 && !!env.carrier && !env.playing;
-    sim.chain = trySpawn(rng, env, withNote);
+    const kind = sim.forced;
+    const wantNote = kind ? kind === 'note' : sim.untilNote <= 1 && !env.playing;
+    const withNote = wantNote && !!env.carrier;
+    const carrierAt = withNote ? (kind ? 'first' : 'last') : null;
+    sim.chain = trySpawn(rng, env, carrierAt, kind !== null);
     sim.nextAt = sim.chain ? Infinity : sim.time + between(rng, t.retryMin, t.retryMax);
-    if (sim.chain) sim.untilNote = withNote ? noteEvery(rng, t) : Math.max(1, sim.untilNote - 1);
+    if (sim.chain) sim.untilNote = withNote && !kind ? noteEvery(rng, t) : Math.max(1, sim.untilNote - 1);
+    if (kind) sim.result = sim.chain ? 'started' : 'failed';
     sim.forced = null;
   }
   const chain = sim.chain;
@@ -180,4 +205,9 @@ function stepOne(chain: Chain, b: Bubble, dt: number, env: SimEnv, view: BubbleV
 
 function dwellProgress(tb: number, b: Bubble): number {
   return b.dwell <= 0 ? (tb > b.rise ? 1 : 0) : clamp01((tb - b.rise) / b.dwell);
+}
+
+/** 当前这串是否由控制台"立即"触发（按钮状态用）。 */
+export function chainFromBurst(sim: BubbleSim): boolean {
+  return !!sim.chain && sim.chain.fromBurst;
 }

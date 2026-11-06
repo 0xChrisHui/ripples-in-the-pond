@@ -7,8 +7,8 @@ import type { GlSim } from '../../spheres/use-gl-sim';
 import { getEffectiveWaterLevel } from '../../water/water-level';
 import { prefersReducedMotion } from '../../reduced-motion';
 import { collectDiscs, type Disc } from './bubble-env';
-import { createBubbleSim, stepBubbles, type BubbleView } from './bubble-sim';
-import { getBubbleTuning, takeBurst } from './bubble-tuning';
+import { chainFromBurst, createBubbleSim, stepBubbles, type BubbleSim, type BubbleView, type BurstKind } from './bubble-sim';
+import { getBubbleTuning, getUiState, setUiState, takeBurst } from './bubble-tuning';
 import { hasNoteHost, makeCarrierPort, setSuppressed } from './bubble-bridge';
 import { bubbleFragment, bubbleVertex } from './bubble-shaders';
 
@@ -24,6 +24,22 @@ function popRipple(x: number, y: number): void {
   window.dispatchEvent(new CustomEvent('bg-ripple:wave', {
     detail: { x, y, strength: t.popStrength, radius: t.popRadius, size: 0, duration: 0 },
   }));
+}
+
+/** 把"立即"请求的结果同步给按钮：进行中 / 没有空位（约 2 秒后回到空闲）。 */
+let failTimer = 0;
+function syncBurstUi(sim: BubbleSim, burst: BurstKind | null, reduced: boolean): void {
+  const ui = getUiState();
+  if (burst && reduced) { setUiState({ burst: 'failed', kind: burst }); return; }
+  if (sim.result === 'started') { setUiState({ burst: 'running' }); return; }
+  if (sim.result === 'failed') {
+    setUiState({ burst: 'failed' });
+    window.clearTimeout(failTimer);
+    failTimer = window.setTimeout(() => setUiState({ burst: 'idle', kind: null }), 2000);
+    return;
+  }
+  if (sim.chain && chainFromBurst(sim)) { if (ui.burst !== 'running') setUiState({ burst: 'running' }); return; }
+  if (!sim.chain && ui.burst === 'running') setUiState({ burst: 'idle', kind: null });
 }
 
 export default function PondBubbles({ glSim }: { glSim?: GlSim }) {
@@ -59,11 +75,12 @@ export default function PondBubbles({ glSim }: { glSim?: GlSim }) {
     const playing = glSim?.playingIdRef.current != null;
     const reduced = prefersReducedMotion();
     setSuppressed((playing && tuning.suppressPlaying === 1) || reduced || tuning.notesEnabled === 0); // 日蚀 / 减弱动效期间撤下手记（D4）
+    const burst = takeBurst();
     const n = Math.min(MAX_BUBBLES, stepBubbles(sim, Math.min(delta, 0.1), {
       w, h, discs, discCount, surfaceD: getEffectiveWaterLevel(), playing, reduced, tuning,
-      carrier: hasNoteHost() && tuning.notesEnabled ? port : undefined, burst: takeBurst(), onPop: popRipple,
+      carrier: hasNoteHost() && tuning.notesEnabled ? port : undefined, burst, onPop: popRipple,
     }, Math.random, views));
-    const pos = geometry.getAttribute('position') as BufferAttribute;
+    syncBurstUi(sim, burst, reduced);    const pos = geometry.getAttribute('position') as BufferAttribute;
     const size = geometry.getAttribute('aSize') as BufferAttribute;
     const alpha = geometry.getAttribute('aAlpha') as BufferAttribute;
     const depth = geometry.getAttribute('aDepth') as BufferAttribute;

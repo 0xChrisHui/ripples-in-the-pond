@@ -36,6 +36,27 @@ let loaded = false;
 type Burst = 'plain' | 'note' | null;
 let burst: Burst = null;
 
+/** 控制台按钮与状态行的数据源：立即请求 → 排队 → 进行中 / 没有空位；手记 → 泡在水面 → 显示中。 */
+export interface UiState {
+  burst: 'idle' | 'queued' | 'running' | 'failed';
+  kind: 'plain' | 'note' | null;
+  note: 'idle' | 'surface' | 'showing';
+}
+let uiSnap: UiState = { burst: 'idle', kind: null, note: 'idle' };
+const uiListeners = new Set<() => void>();
+export function getUiState(): UiState { return uiSnap; }
+export function subscribeUi(l: () => void): () => void {
+  uiListeners.add(l);
+  return () => { uiListeners.delete(l); };
+}
+/** 只在值真的变化时换新快照并通知，避免每帧触发重渲染。 */
+export function setUiState(patch: Partial<UiState>): void {
+  const next = { ...uiSnap, ...patch };
+  if (next.burst === uiSnap.burst && next.kind === uiSnap.kind && next.note === uiSnap.note) return;
+  uiSnap = next;
+  uiListeners.forEach((l) => l());
+}
+
 function ensureLoaded(): void {
   if (loaded || typeof window === 'undefined') return;
   loaded = true;
@@ -65,6 +86,9 @@ export function resetBubbleTuning(): void {
   current = { ...DEFAULT_BUBBLE_TUNING };
   persist();
 }
-/** 控制台"立即冒一串"：下一帧生成（note = 带手记）。模拟每帧取走。 */
-export function requestBurst(kind: 'plain' | 'note'): void { burst = kind; }
+/** 控制台"立即冒一串 / 出手记"：下一帧生成（note = 带手记）。模拟每帧取走。 */
+export function requestBurst(kind: 'plain' | 'note'): void {
+  burst = kind;
+  setUiState({ burst: 'queued', kind });
+}
 export function takeBurst(): Burst { const b = burst; burst = null; return b; }

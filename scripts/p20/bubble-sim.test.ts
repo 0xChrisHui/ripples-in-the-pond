@@ -138,4 +138,48 @@ function run(seed: number, seconds: number, env: SimEnv) {
   assert.ok(stayDuration('a'.repeat(180), 'en', 3, 0.5) < 14000);
   assert.ok(stayDuration('x', 'zh', 1, 0) < stayDuration('x', 'zh', 1, 0.999));
 }
+// 11. 立即冒一串：打断正在进行的串，立即开新串（result=started）
+{
+  const rng = seeded(41), sim = createBubbleSim(rng), out: BubbleView[] = [];
+  for (let t = 0; t < 2; t += 1 / 60) stepBubbles(sim, 1 / 60, base(), rng, out); // 先跑一会儿，让自然串开始
+  const before = sim.chain;
+  stepBubbles(sim, 1 / 60, base({ burst: 'plain' }), rng, out);
+  assert.equal(sim.result, 'started');
+  assert.ok(sim.chain && sim.chain !== before, '立即请求必须换成新的一串');
+  assert.equal(sim.chain.fromBurst, true);
+  stepBubbles(sim, 1 / 60, base(), rng, out);
+  assert.equal(sim.result, null, 'result 每帧清空');
+}
+// 12. 立即出手记：载体是第一个泡，不必等整串升完
+{
+  const rng = seeded(43), sim = createBubbleSim(rng), out: BubbleView[] = [];
+  const port = { arrive: () => 9, isReleased: () => false, clear: () => {} };
+  stepBubbles(sim, 1 / 60, base({ burst: 'note', carrier: port }), rng, out);
+  assert.equal(sim.result, 'started');
+  assert.equal(sim.chain!.bubbles[0].carrier, true, '立即出手记时第一个泡是载体');
+  assert.equal(sim.chain!.bubbles.filter((b) => b.carrier).length, 1);
+}
+// 13. 没有宿主时，立即出手记退化为普通一串（不挑载体），仍然 started
+{
+  const rng = seeded(47), sim = createBubbleSim(rng), out: BubbleView[] = [];
+  stepBubbles(sim, 1 / 60, base({ burst: 'note' }), rng, out);
+  assert.equal(sim.result, 'started');
+  assert.equal(sim.chain!.bubbles.some((b) => b.carrier), false);
+}
+// 14. 没有空位：全被球盖住时立即请求报 failed，且不会留下待办
+{
+  const rng = seeded(53), sim = createBubbleSim(rng), out: BubbleView[] = [];
+  const discs = [{ x: W / 2, y: H / 2, r: 5000 }];
+  stepBubbles(sim, 1 / 60, base({ burst: 'plain', discs, discCount: 1 }), rng, out);
+  assert.equal(sim.result, 'failed');
+  assert.equal(sim.chain, null);
+  stepBubbles(sim, 1 / 60, base({ discs, discCount: 1 }), rng, out);
+  assert.equal(sim.result, null);
+}
+// 15. 减弱动效时立即请求不生成（由 PondBubbles 据此显示"没有空位"之外的提示；这里只验 sim 不开串）
+{
+  const rng = seeded(59), sim = createBubbleSim(rng), out: BubbleView[] = [];
+  stepBubbles(sim, 1 / 60, base({ burst: 'plain', reduced: true }), rng, out);
+  assert.equal(sim.chain, null);
+}
 console.log('P20 气泡模拟测试通过');

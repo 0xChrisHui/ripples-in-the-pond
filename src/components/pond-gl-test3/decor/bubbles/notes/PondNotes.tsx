@@ -8,7 +8,7 @@ import { getCarrier, isSuppressed, registerNoteHost, releaseCarrier, subscribeBr
 import { defaultNoteSources } from './default-sources';
 import { loadSnippetPool, pickSnippet } from './snippet-pool';
 import type { NoteLang } from './snippet-split';
-import { getBubbleTuning } from '../bubble-tuning';
+import { getBubbleTuning, setUiState } from '../bubble-tuning';
 import { usePondNoteTimeline } from './usePondNoteTimeline';
 
 /**
@@ -110,6 +110,9 @@ export default function PondNotes() {
   }, [carrierId, locale]);
 
   const done = useCallback(() => releaseCarrier(), []);
-  if (!carrier || suppressed || !active || active.id !== carrier.id || active.lang !== locale) return null;
+  const shown = !!carrier && !!active && !suppressed && active.id === carrier.id && active.lang === locale;
+  // 控制台状态行：载体泡到水面（surface）→ 字出现（showing）→ 撤下（idle）
+  useEffect(() => { setUiState({ note: !carrierId ? 'idle' : shown ? 'showing' : 'surface' }); }, [carrierId, shown]);
+  if (!shown || !carrier || !active) return null;
   return <NoteView key={active.id} note={active} u={carrier.u} v={carrier.v} onDone={done} />;
 }
