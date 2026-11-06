@@ -13,7 +13,7 @@ import { describeMaterialError, localMaterialNotice, type MaterialNotice } from 
 import MaterialNoticeView from './MaterialNoticeView';
 import MaterialOrderView from './MaterialOrderView';
 import PondRouteLink from '../../pond-shell/PondRouteLink';
-import { ethCache, isFinishedOrder, loadMintStatus, mintCacheVersion, subscribeMintCache } from './mint-status-cache';
+import { ethCache, isFinishedOrder, isOrderInFlight, loadMintStatus, mintCacheVersion, setMintActivity, subscribeMintCache } from './mint-status-cache';
 import { mintIdentityOf } from './MintStatusPrefetch';
 
 const BUSY_KEYS = { wallet: 'busyWallet', order: 'busyOrder', sign: 'busySign' } as const;
@@ -49,6 +49,12 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
     void loadMintStatus(identity);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unknown, identityKey]);
+  // 铸造活动：等钱包 / 建单 / 签名 / 订单待确认期间，/lens 面板保持可见（MetaMask 是独立窗口，鼠标离开页面不应撤下面板）。
+  const mintingNow = Boolean(busy) || isOrderInFlight(order);
+  useEffect(() => {
+    setMintActivity(track.trackId, mintingNow);
+    return () => setMintActivity(track.trackId, false);
+  }, [track.trackId, mintingNow]);
   async function collect() {
     if (!deployed || busy) return;
     setNotice(null); setBusy('wallet');
@@ -61,20 +67,22 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
       if (!active.current) return;
       setBusy('order');
       let current = await latest.current.mint.prepareOrder(track.trackId);
+      if (address) ethCache.set(address, track.trackId, current); // 立即写缓存：面板被换走后回来仍能看到进度
       if (active.current) setPicked(current);
       if (canSendMaterialOrder(current)) {
         setBusy('sign');
         try { await latest.current.mint.sendOrder(current.orderId as Hex); announceMintRecorded(); }
         finally { current = await latest.current.mint.getOrder(current.orderId as Hex).catch(() => current); }
+        if (address) ethCache.set(address, track.trackId, current);
         if (active.current) setPicked(current);
       }
-      if (address) ethCache.set(address, track.trackId, current);
     } catch (caught) {
       if (active.current) setNotice(describeMaterialError(caught, 'eth.orderUnavailable'));
     } finally { if (active.current) { setBusy(null); setRefresh((value) => value + 1); } }
   }
   const finished = isFinishedOrder(order);
-  const stateName = !deployed ? 'undeployed' : unknown ? 'checking' : busy ? 'busy' : finished ? 'done' : 'idle';
+  const inFlight = isOrderInFlight(order);
+  const stateName = !deployed ? 'undeployed' : unknown ? 'checking' : busy ? 'busy' : inFlight ? 'pending' : finished ? 'done' : 'idle';
   return <section className="material-chain-row" aria-label={t('eth.label')} data-chain="ETH" data-state={stateName}>
     <div className="material-chain-info"><h3>Ethereum</h3>
       <p className="material-muted">{t('eth.kind')}</p>
@@ -84,12 +92,14 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
     <div className="material-chain-action">
       {!deployed ? <><p className="material-muted">{t('eth.undeployed')}</p>
         <button className="material-collect" type="button" disabled>{t('eth.unavailable')}</button></>
+        : inFlight ? <button className="material-collect" type="button" disabled>{t('eth.inFlight')}</button>
         : finished && deployment?.publicPlaybackUrl ? <PondRouteLink href={`${deployment.publicPlaybackUrl}#track-collect`} className="material-collect">{t('eth.viewCollection')}</PondRouteLink>
         : finished ? <button className="material-collect" type="button" disabled>{t('op.alreadyCollected')}</button>
         : <button className="material-collect" type="button" disabled={Boolean(busy) || unknown} onClick={() => { void collect(); }}>
           {busy ? t(`eth.${BUSY_KEYS[busy]}`) : t('eth.mint')}</button>}
     </div>
     {notice && <div className="material-chain-status"><MaterialNoticeView notice={notice} /></div>}
-    {order && <div className="material-chain-status"><MaterialOrderView key={`${order.orderId}:${refresh}`} orderId={order.orderId as Hex} embedded /></div>}
+    {order && <div className="material-chain-status"><MaterialOrderView key={`${order.orderId}:${refresh}`} orderId={order.orderId as Hex} embedded
+      pollMs={5000} onOrder={(latestOrder) => { if (address) ethCache.set(address, track.trackId, latestOrder); setPicked(latestOrder); }} /></div>}
   </section>;
 }

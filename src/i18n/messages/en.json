@@ -373,6 +373,7 @@
       "undeployed": "The contract isn't deployed yet, so collecting isn't open.",
       "unavailable": "Not yet open on Ethereum",
       "mint": "Mint on Ethereum",
+      "inFlight": "Minting — awaiting confirmation",
       "viewCollection": "View collection →",
       "busyWallet": "Preparing wallet…",
       "busyOrder": "Creating order…",

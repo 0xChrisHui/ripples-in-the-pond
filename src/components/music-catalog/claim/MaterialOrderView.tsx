@@ -23,7 +23,11 @@ function stepIndex(status: PublicMaterialOrder['status']) {
   return 1;
 }
 
-export default function MaterialOrderView({ orderId, embedded = false }: { orderId: Hex; embedded?: boolean }) {
+const IN_FLIGHT = ['sending', 'unknown', 'submitted', 'confirming'];
+/** onOrder：每次拿到最新订单就回报（嵌入时用来同步上层缓存）；pollMs：订单还在链上推进时每隔多久自动刷新一次。 */
+export default function MaterialOrderView({ orderId, embedded = false, onOrder, pollMs }: {
+  orderId: Hex; embedded?: boolean; onOrder?: (order: PublicMaterialOrder) => void; pollMs?: number;
+}) {
   const t = useTranslations('material');
   const auth = useAuth(), { getOrder, sendOrder, recoverOrder } = useMaterialMint();
   const owner = auth.userId, scope = `${owner}:${orderId}`, activeScope = useRef(scope); activeScope.current = scope;
@@ -33,6 +37,7 @@ export default function MaterialOrderView({ orderId, embedded = false }: { order
   const [hashInput, setHashInput] = useState<{ scope: string; value: string } | null>(null);
   const [gas, setGas] = useState<{ key: string; hint: GasHint | null } | null>(null);
   const enteredHash = hashInput?.scope === scope ? hashInput.value : '';
+  const onOrderRef = useRef(onOrder); onOrderRef.current = onOrder;
   const order = auth.authenticated && loaded?.owner === owner && loaded.order.orderId === orderId ? loaded.order : null;
   const load = useCallback(async () => {
     if (!owner) return;
@@ -40,6 +45,7 @@ export default function MaterialOrderView({ orderId, embedded = false }: { order
     const cached = readMaterialHash({ userId: owner, environment: getMusicCatalog().environment, chainId: next.chainId,
       contractAddress: next.contractAddress, recipientAddress: next.recipientAddress, orderId });
     setLoaded({ owner, order: next }); setCachedHash(cached); setNotice(null);
+    onOrderRef.current?.(next);
   }, [getOrder, orderId, owner, scope]);
   useEffect(() => {
     if (!auth.authenticated) return;
@@ -48,6 +54,13 @@ export default function MaterialOrderView({ orderId, embedded = false }: { order
       notice: describeMaterialError(error, 'order.unavailable') }); });
     return () => { active = false; };
   }, [auth.authenticated, load, scope]);
+  // 订单还在链上推进（已发出、待确认）时自动刷新；轮询失败静默，下一轮再试。
+  const inFlight = Boolean(order && IN_FLIGHT.includes(order.status));
+  useEffect(() => {
+    if (!pollMs || !inFlight) return;
+    const timer = window.setInterval(() => { void load().catch(() => undefined); }, pollMs);
+    return () => window.clearInterval(timer);
+  }, [pollMs, inFlight, load]);
   async function act(action: 'send' | 'recover' | 'refresh') {
     if (busy) return; setBusy(true); setNotice(null);
     try {

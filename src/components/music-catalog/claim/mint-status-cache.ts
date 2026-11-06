@@ -88,3 +88,30 @@ export function loadMintStatus(identity: MintIdentity, force = false): Promise<v
 export function isFinishedOrder(order: PublicMaterialOrder | null | undefined): boolean {
   return Boolean(order && !canSendMaterialOrder(order));
 }
+
+/** 订单是否还在链上推进中（已发出、待确认）：此时面板应保持可见，用户才能看到进度。 */
+export function isOrderInFlight(order: PublicMaterialOrder | null | undefined): boolean {
+  return Boolean(order && ['sending', 'unknown', 'submitted', 'confirming'].includes(order.status));
+}
+
+/**
+ * 铸造活动：某首曲目正在铸造（等钱包 / 建单 / 签名 / 订单待确认）。
+ * /lens 面板据此"钉住"该曲目——MetaMask 是独立窗口，鼠标一离开页面悬停就失效，面板不能因此撤下。
+ * 结束后再保留 LINGER_MS，让用户看到最终结果。
+ */
+const LINGER_MS = 8000;
+const active = new Map<string, number>(); // trackId → 结束时刻（0 = 仍在进行）
+export function setMintActivity(trackId: string, on: boolean): void {
+  if (on) { active.set(trackId, 0); return; }
+  if (active.get(trackId) === 0) active.set(trackId, Date.now());
+}
+/** 当前应钉住的曲目：进行中的优先，否则取结束后 LINGER_MS 内最近的一个。 */
+export function mintPinnedTrackId(now = Date.now()): string | null {
+  let latest: string | null = null, latestEnd = 0;
+  for (const [trackId, endedAt] of active) {
+    if (endedAt === 0) return trackId;
+    if (now - endedAt > LINGER_MS) { active.delete(trackId); continue; }
+    if (endedAt > latestEnd) { latest = trackId; latestEnd = endedAt; }
+  }
+  return latest;
+}

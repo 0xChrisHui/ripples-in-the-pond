@@ -373,6 +373,7 @@
       "undeployed": "合约尚未部署，当前未开放收藏。",
       "unavailable": "Ethereum 原曲暂未开放",
       "mint": "铸造 Ethereum 原曲",
+      "inFlight": "铸造中，等待链上确认",
       "viewCollection": "查看收藏 →",
       "busyWallet": "正在准备钱包…",
       "busyOrder": "正在创建订单…",

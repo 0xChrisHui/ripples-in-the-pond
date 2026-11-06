@@ -3,6 +3,7 @@ import { useEffect, useRef, type MutableRefObject, type RefObject } from 'react'
 import { easeToward, placePanel, ringAim, type Circle, type Side } from './lens-geometry';
 import { HOVER_IDLE, stepHover, type HoverState } from './hover/lens-hover';
 import type { LensPointer } from './use-lens-pointer';
+import { mintPinnedTrackId } from '@/src/components/music-catalog/claim/mint-status-cache';
 
 export type LensSelection = { id: string; source: 'tap' | 'deeplink' | 'key' } | null;
 /** id 在关闭后仍保留，让面板淡出时内容不消失。 */
@@ -76,7 +77,8 @@ export function useLensFrame(args: Args) {
       hover = stepHover(hover, { now, pointer: mouse, circles, inPanel });
 
       const pinnedId = s.lockedId ?? s.selectionRef.current?.id ?? null;
-      const wanted = pinnedId ?? hover.shown;
+      // 铸造进行中（等钱包 / 待确认）的曲目：悬停落空时面板仍停在它身上，直到结果出来再保留几秒。
+      const wanted = pinnedId ?? hover.shown ?? mintPinnedTrackId();
       const found = wanted ? circles.find((c) => c.id === wanted) ?? null : null;
       const pinned = pinnedId ? circles.find((c) => c.id === pinnedId) ?? null : null;
 
