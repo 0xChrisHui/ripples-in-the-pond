@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { useTranslations } from 'next-intl';
 import type { Hex } from 'viem';
 import { useAuth } from '../../../hooks/useAuth';
@@ -13,7 +13,8 @@ import { describeMaterialError, localMaterialNotice, type MaterialNotice } from 
 import MaterialNoticeView from './MaterialNoticeView';
 import MaterialOrderView from './MaterialOrderView';
 import PondRouteLink from '../../pond-shell/PondRouteLink';
-import { ethCache } from './mint-status-cache';
+import { ethCache, isFinishedOrder, loadMintStatus, mintCacheVersion, subscribeMintCache } from './mint-status-cache';
+import { mintIdentityOf } from './MintStatusPrefetch';
 
 const BUSY_KEYS = { wallet: 'busyWallet', order: 'busyOrder', sign: 'busySign' } as const;
 
@@ -24,9 +25,9 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
   const latest = useRef({ auth, mint });
   useEffect(() => { latest.current = { auth, mint }; });
   const [busy, setBusy] = useState<'wallet' | 'order' | 'sign' | null>(null), [notice, setNotice] = useState<MaterialNotice | null>(null);
-  // picked：本次会话里铸造或查询得到的订单；cached：预取缓存（首帧即可用）。
+  // picked：本次会话里铸造得到的订单；其余状态来自批量预取的缓存（未知时只禁用按钮）。
   const [picked, setPicked] = useState<PublicMaterialOrder | null>(null), [refresh, setRefresh] = useState(0);
-  const [fetched, setFetched] = useState(false);
+  useSyncExternalStore(subscribeMintCache, mintCacheVersion, mintCacheVersion);
   const active = useRef(true);
   useEffect(() => {
     active.current = true;
@@ -39,20 +40,15 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
   const address = external ? auth.selectedExternalWallet?.address ?? '' : '';
   const cached = address ? ethCache.get(address, track.trackId) : undefined;
   const order = picked ?? cached ?? null;
-  const checking = deployed && external && cached === undefined && !fetched;
-  // 钱包就绪后读取本人在这首上的已有订单（后台刷新，缓存命中时不挡界面）。
+  const unknown = deployed && external && cached === undefined;
+  const identity = mintIdentityOf(auth);
+  const identityKey = identity ? `${identity.userId}|${identity.wallet ?? ''}` : '';
+  // 兜底：正常情况下登录时已批量加载；缓存里仍没有时再请求一次（有冷却）。
   useEffect(() => {
-    if (!deployed || !external || !address) return;
-    let cancelled = false;
-    void mint.listOrders(track.trackId).then((orders) => {
-      const existing = orders.find((item) => item.chainId === 1 && item.tokenId === deployment?.tokenId
-        && item.recipientAddress === address && item.status !== 'cancelled') ?? null;
-      ethCache.set(address, track.trackId, existing);
-      if (!cancelled) { setPicked((prev) => prev ?? existing); setFetched(true); }
-    }).catch(() => { if (!cancelled) setFetched(true); });
-    return () => { cancelled = true; };
+    if (!unknown || !identity) return;
+    void loadMintStatus(identity);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deployed, external, address, track.trackId]);
+  }, [unknown, identityKey]);
   async function collect() {
     if (!deployed || busy) return;
     setNotice(null); setBusy('wallet');
@@ -77,8 +73,8 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
       if (active.current) setNotice(describeMaterialError(caught, 'eth.orderUnavailable'));
     } finally { if (active.current) { setBusy(null); setRefresh((value) => value + 1); } }
   }
-  const finished = Boolean(order && !canSendMaterialOrder(order));
-  const stateName = !deployed ? 'undeployed' : checking ? 'checking' : busy ? 'busy' : finished ? 'done' : 'idle';
+  const finished = isFinishedOrder(order);
+  const stateName = !deployed ? 'undeployed' : unknown ? 'checking' : busy ? 'busy' : finished ? 'done' : 'idle';
   return <section className="material-chain-row" aria-label={t('eth.label')} data-chain="ETH" data-state={stateName}>
     <div className="material-chain-info"><h3>Ethereum</h3>
       <p className="material-muted">{t('eth.kind')}</p>
@@ -90,8 +86,8 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
         <button className="material-collect" type="button" disabled>{t('eth.unavailable')}</button></>
         : finished && deployment?.publicPlaybackUrl ? <PondRouteLink href={`${deployment.publicPlaybackUrl}#track-collect`} className="material-collect">{t('eth.viewCollection')}</PondRouteLink>
         : finished ? <button className="material-collect" type="button" disabled>{t('op.alreadyCollected')}</button>
-        : <button className="material-collect" type="button" disabled={Boolean(busy) || checking} onClick={() => { void collect(); }}>
-          {busy ? t(`eth.${BUSY_KEYS[busy]}`) : checking ? t('eth.checking') : t('eth.mint')}</button>}
+        : <button className="material-collect" type="button" disabled={Boolean(busy) || unknown} onClick={() => { void collect(); }}>
+          {busy ? t(`eth.${BUSY_KEYS[busy]}`) : t('eth.mint')}</button>}
     </div>
     {notice && <div className="material-chain-status"><MaterialNoticeView notice={notice} /></div>}
     {order && <div className="material-chain-status"><MaterialOrderView key={`${order.orderId}:${refresh}`} orderId={order.orderId as Hex} embedded /></div>}
