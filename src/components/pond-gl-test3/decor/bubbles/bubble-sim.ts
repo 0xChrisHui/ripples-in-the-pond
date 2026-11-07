@@ -146,7 +146,8 @@ export function stepBubbles(sim: BubbleSim, dt: number, env: SimEnv, rng: Rng, o
     const withNote = wantNote && !!env.carrier;
     const carrierAt = withNote ? (kind ? 'first' : 'last') : null;
     sim.chain = trySpawn(rng, env, carrierAt, kind !== null);
-    sim.nextAt = sim.chain ? Infinity : sim.time + between(rng, t.retryMin, t.retryMax);
+    // 持续冒泡：避让失败只等 0.5 秒再试，不按正常重试间隔（否则球多时会长时间没有气泡）
+    sim.nextAt = sim.chain ? Infinity : sim.time + (t.continuous ? 0.5 : between(rng, t.retryMin, t.retryMax));
     if (sim.chain) sim.untilNote = withNote && !kind ? noteEvery(rng, t) : Math.max(1, sim.untilNote - 1);
     if (kind) sim.result = sim.chain ? 'started' : 'failed';
     sim.forced = null;
@@ -156,7 +157,8 @@ export function stepBubbles(sim: BubbleSim, dt: number, env: SimEnv, rng: Rng, o
   chain.t += dt;
   if (chain.t >= chain.end) {
     sim.chain = null;
-    sim.nextAt = sim.time + between(rng, t.gapMin, t.gapMax) * t.intervalMult * (env.playing ? t.playingMult : 1);
+    // 持续冒泡：一串结束立即开下一串（忽略串间隔与播放倍率）
+    sim.nextAt = t.continuous ? sim.time : sim.time + between(rng, t.gapMin, t.gapMax) * t.intervalMult * (env.playing ? t.playingMult : 1);
     return 0;
   }
   let count = 0;

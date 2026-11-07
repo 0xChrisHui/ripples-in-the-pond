@@ -182,4 +182,26 @@ function run(seed: number, seconds: number, env: SimEnv) {
   stepBubbles(sim, 1 / 60, base({ burst: 'plain', reduced: true }), rng, out);
   assert.equal(sim.chain, null);
 }
+// 16. 持续冒泡：一串结束立即开下一串（串与串之间没有空档），关闭时仍有正常间隔
+{
+  // 量"最长连续没有气泡在上升"的时长（秒）；串结束那一帧本身会短暂为空，所以只看超过 0.1 秒的空档
+  const countGaps = (continuous: number) => {
+    const rng = seeded(61), sim = createBubbleSim(rng), out: BubbleView[] = [];
+    const env = base({ tuning: { ...DEFAULT_BUBBLE_TUNING, continuous } });
+    // 从第一串出现之后才开始统计：开场要等 3–8 秒，不算串与串之间的空档
+    let gaps = 0, chains = 0, run = 0, longest = 0, started = false, prevChain = null as unknown;
+    for (let t = 0; t < 300; t += 1 / 60) {
+      stepBubbles(sim, 1 / 60, env, rng, out);
+      if (sim.chain && sim.chain !== prevChain) { chains++; started = true; }
+      if (started) { if (!sim.chain) { run++; longest = Math.max(longest, run); } else run = 0; }
+      prevChain = sim.chain;
+    }
+    gaps = longest / 60 > 0.1 ? 1 : 0;
+    return { gaps, chains, longest: longest / 60 };
+  };
+  const on = countGaps(1), off = countGaps(0);
+  assert.ok(on.chains > off.chains * 2, `持续冒泡应明显更多：${on.chains} vs ${off.chains}`);
+  assert.equal(on.gaps, 0, `持续冒泡不应有超过 0.1 秒的空档，最长 ${on.longest.toFixed(2)} 秒`);
+  assert.ok(off.longest > 1, `关闭时应有明显的空档，最长 ${off.longest.toFixed(2)} 秒`);
+}
 console.log('P20 气泡模拟测试通过');

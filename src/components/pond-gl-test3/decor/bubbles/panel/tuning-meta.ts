@@ -6,6 +6,7 @@ export interface Group { title: string; open?: boolean; rows: Row[] }
 
 export const GROUPS: Group[] = [
   { title: '生成节奏', open: true, rows: [
+    { key: 'continuous', label: '持续冒泡（调试用，忽略间隔）', kind: 'bool' },
     { key: 'gapMin', label: '串间隔·最短(秒)', min: 1, max: 60, step: 1 },
     { key: 'gapMax', label: '串间隔·最长(秒)', min: 1, max: 90, step: 1 },
     { key: 'intervalMult', label: '串间隔总倍率', min: 0.05, max: 3, step: 0.05 },

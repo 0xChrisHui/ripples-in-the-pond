@@ -5,7 +5,7 @@
  */
 export const DEFAULT_BUBBLE_TUNING = {
   // ── 生成节奏 ──
-  gapMin: 10, gapMax: 30, intervalMult: 1, playingMult: 2,
+  continuous: 0, gapMin: 10, gapMax: 30, intervalMult: 1, playingMult: 2,
   countMin: 3, countMax: 6, popGapMin: 0.4, popGapMax: 1.5,
   retryMin: 4, retryMax: 8, maxTries: 5, areaMin: 0.15, areaMax: 0.85,
   // ── 运动 ──
