@@ -1,5 +1,5 @@
 'use client';
-import { forwardRef } from 'react';
+import { forwardRef, type CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { OpMaterialMint, useMintAccess } from '@/src/components/music-catalog/claim/MaterialMintPanel';
 import EthereumMaterialMint from '@/src/components/music-catalog/claim/EthereumMaterialMint';
@@ -14,10 +14,11 @@ type Props = {
   open: boolean;
   playing: boolean;
   onToggle: () => void;
+  color: string;
 };
 
 /** 光圈落在原曲球上时的链上信息面板；根节点关闭涟漪并标记为 UI，滚轮照常放行。 */
-const LensPanel = forwardRef<HTMLElement, Props>(function LensPanel({ track, open, playing, onToggle }, ref) {
+const LensPanel = forwardRef<HTMLElement, Props>(function LensPanel({ track, open, playing, onToggle, color }, ref) {
   const t = useTranslations('lens');
   const material = useTranslations('material');
   const { auth, authenticated, external, scope, login } = useMintAccess(track);
@@ -25,7 +26,7 @@ const LensPanel = forwardRef<HTMLElement, Props>(function LensPanel({ track, ope
   const deployments = [...track.deployments].sort((a, b) => (a.chainId === 10 ? -1 : b.chainId === 10 ? 1 : a.chainId - b.chainId));
   return (
     <aside ref={ref} className="lens-panel" data-lens-panel="true" data-open={open ? 'true' : 'false'}
-      data-pond-ui="true" data-pond-no-ripple="true" aria-label={t('panelLabel', { number })}
+      data-pond-ui="true" data-pond-no-ripple="true" aria-label={t('panelLabel', { number })} style={{ '--lens-color': color } as CSSProperties}
       onBlurCapture={(event) => {
         // 焦点离开面板：去到面板内部不处理；去到球上由球的 focus 接管；去到别处则清掉键盘选中。
         const next = event.relatedTarget;
@@ -34,7 +35,7 @@ const LensPanel = forwardRef<HTMLElement, Props>(function LensPanel({ track, ope
       }}>
       <header className="lens-panel__head">
         <span className="lens-panel__eyebrow">{t('eyebrow')}</span>
-        <h2 className="lens-panel__title">{t('title', { number })}</h2>
+        <h2 className="lens-panel__title"><span key={number}>{t('title', { number })}</span></h2>
         <button type="button" className="lens-play" onClick={onToggle} aria-pressed={playing} aria-label={playing ? t('pause') : t('play')}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={playing ? 'M6 5h4v14H6zm8 0h4v14h-4z' : 'M7 4v16l14-8z'} /></svg>
         </button>

@@ -96,7 +96,7 @@ function LensInner({ pathname, glSim, stopEcho }: Props) {
   return (
     <>
       <div ref={veilRef} className="lens-veil" data-lens-veil="true" data-on={active} aria-hidden="true" />
-      {track && node?.track && <LensPanel ref={panelRef} track={track} open={panel.open && active}
+      {track && node?.track && <LensPanel ref={panelRef} track={track} open={panel.open && active} color={node.color}
         playing={lockedId === node.id} onToggle={() => { void glSim.toggle(node.track); writeUrl(node.id); }} />}
     </>
   );
