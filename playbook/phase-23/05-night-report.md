@@ -75,3 +75,20 @@
 ## 本轮主要本地提交
 
 字体f84b252；D卡片1dfdd81、视觉d853d98、抽屉c2c5bd3、收尾345730b；A文案f0ae760、凭证a879ced、首屏/状态deb5fca、播放b5857c4、印章25319fa、双指690fae9、访客/滚动bd508ba、投影71b3d6e；B工具c59dc45、生产账本6a8692e；浏览器验收cacca3a。报告/代表证据收尾实际hash由交付消息补充。
+
+## 发布前两项必修（独立实现审查后的最小修复）
+
+2026-11-14主代理核实两项发布前缺陷并重新授权解冻；本轮仅处理这两项，不启动dev/build，不再外审。
+
+1. **ETH旧收藏意图异步越界**：组件准备订单返回后原来只保护setPicked，卸载/同钱包换曲后仍会继续sendOrder。虽然原逻辑早于P23，这次共享收藏UI直接涉及该路径，因此纳入发布前安全闭环。scope加入实际selectedExternalWallet地址及钱包能力的选中地址；布局提交/卸载时同步最新曲目与身份。准备结果仍写原钱包/曲目缓存，只有仍挂载、同曲目/身份/实际付款钱包时才进入签名。检查作为可选参数沿既有useMaterialMint→order-client→wallet-send传递，在授权返回、切链前后、预检后、attempt返回后再次检查；确认尚未发出时用已有rejected分支释放attempt。已经发出并得到hash后继续原remember/submission/forget与恢复流程，不因UI离开丢hash。没有新钱包客户端、合约或数据库状态机改动。
+2. **播放中resize重新固定音乐球**：原回调无条件pinToRecord，播放effect不会因同设备resize重跑，导致自由球fx/fy被固定。现在resize/转屏重算尺寸和半径；只有静止态pin，播放保持自由，归位中继续原动画追随新中心。
+
+红→绿证据：修前在675b7f4执行P24提供的真实源码复现，ETH卸载后出现wallet-prompt:order-A，播放resize后fx/fy由null/null变216/196，均失败。新增可复跑回归：
+
+- `node --test scripts/p23/regressions/eth-intent.cjs`：真实组件4项通过，覆盖卸载、同钱包换曲、换用户、换实际关联地址、scope大小写、已发hash后卸载仍入原缓存。
+- `node --import tsx --test scripts/p23/regressions/wallet-intent.test.ts`：真实订单客户端与发送器3项通过，覆盖授权/预检/attempt期间失效不再签名、已有hash恢复、发送后hash记账不被取消。
+- `node --test scripts/p23/regressions/score-resize.cjs`：真实Hook3项通过，覆盖播放resize/转屏不固定、静止对齐、归位中不瞬移并最终到新中心。修前新增回归中播放与归位两项失败，修后全过。
+- 上述执行真实业务源码，只在离线环境替换React调度、浏览器、HTTP和钱包I/O边界，不是真实钱包交易验收。
+- 旧P17客户端恢复/幂等完整合同、P24 traffic5项及P23播放文案/轮询/复制/双指/lens几何单测均通过；40项静态布局证据门禁复跑通过。
+- 完整TypeScript与7个改动生产文件定向ESLint通过。新TS回归正常lint；CommonJS离线加载器按项目工具链约定检查，单独关闭仅针对require语法的web规则，其余规则通过。
+- 最终整合verify仍由主代理统一执行。实际修复提交hash由本轮交付消息补充。

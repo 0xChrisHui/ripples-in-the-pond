@@ -110,7 +110,9 @@ export function useScorePondSim(track: Track | null, playing: boolean, perspecti
       raf = requestAnimationFrame(() => {
         const node = nodes[0];
         if (!node) return;
-        pinToRecord(node, w, h, perspective);
+        // 播放继续自由漂流，归位继续沿原动画追随新中心；只有静止态重新固定。
+        if (!playing && atRest) pinToRecord(node, w, h, perspective);
+        else recordCenter(w, h, node, perspective);
         simRef.current?.alpha(0.08).restart();
       });
     };
@@ -121,7 +123,7 @@ export function useScorePondSim(track: Track | null, playing: boolean, perspecti
       window.removeEventListener('resize', onResize);
       window.removeEventListener('orientationchange', onResize);
     };
-  }, [nodes, track, perspective]);
+  }, [nodes, track, perspective, playing, atRest]);
 
   useEffect(() => {
     const node = nodes[0];
