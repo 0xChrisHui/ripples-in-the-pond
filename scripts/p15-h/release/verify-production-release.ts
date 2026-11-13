@@ -21,9 +21,11 @@ async function main(): Promise<void> {
     client.from('tracks').select('id,base_verified_at').eq('published', true),
     client.from('score_playback_snapshot_active').select('*')
       .in('environment', [...SNAPSHOT_ENVIRONMENTS])
+      .in('token_id', [1, 2, 3, 4])
       .eq('chain_id', 10),
     client.from('score_playback_snapshot_revisions').select('*')
       .in('environment', [...SNAPSHOT_ENVIRONMENTS])
+      .in('token_id', [1, 2, 3, 4])
       .eq('chain_id', 10),
     client.from('score_nft_queue').select('id').not('status', 'in', '(success,failed)'),
   ]);
