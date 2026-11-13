@@ -60,3 +60,14 @@
 - 单测（`scripts/p20/bubble-sim.test.ts`）：组数分布、横向位移比例、落点间距、同时只有一条手记。
 - 浏览器（无头 Edge，`/test5`）：手记中心点最上层元素是手记本身；`/`、`/me` 气泡出现且 `/me` 无手记。
 - 观感（位移比例、组数、破水）只能由用户在 `/test5` 目验。
+
+## 第 5 步（A+B 手记层迁移）交接：已查清的结构，尚未改代码
+
+- 手记宿主 `decor/bubbles/notes/PondNotes.tsx` 现在挂在 `PondGL.tsx` 第 178 行附近（`flags.pondBubbles && <PondNotes />`），而 `PondGL` 的外层容器是 `pointer-events-none fixed inset-0 z-0`。
+- 首页交互层 `.pond-home-surface`（`PersistentRouteSurfaces`，`pointer-events: auto`）盖在它上面，所以手记根本收不到鼠标（已在无头浏览器验证：手记中心点最上层元素是 `MAIN.pond-home-surface`）。
+- 首页层里相关层级：`SphereOverlay`（球命中层）`z-10`；`GlEclipse` `z-[23]`；`TestJam` 容器 `z-30`；`LensSlot`（`/lens` 的遮罩 31 / 面板 31）。
+- 迁移目标：把 `<PondNotes />` 从 `PondGL` 移到 `PondExperience.tsx` 的 `home={<>...</>}` 内（与 `SphereOverlay` 同级），层级放在球命中层之下（z < 10），整层 `pointer-events-none`，只有文字块 `pointer-events-auto`。
+- B（不叠在别的页面）：只要手记只挂在 home 片段里，`/me`、`/artist`、`/score` 自然没有；原有的 `/lens` 屏蔽（`usePathname() === LENS_PATH`）保留。
+- 注意：`PondExperience.tsx` 现 159 行；`src/features/home-pond/` 目录已有 8 个文件，**不能再加文件**，新代码放子目录（如 `host/`，现 3 个）。
+- 验收：浏览器里（`/test5`）手记出现后，中心点最上层元素是手记本身；球仍可点击、悬停；`/me` 无手记（`/me` 上气泡是否出现也要看一下）。
+
