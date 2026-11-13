@@ -1,6 +1,6 @@
 # Phase 20 — 池塘气泡与创作手记
 
-> 制定日期：2026-10-28；同日按 Codex 审查修订（`reviews/2026-10-28-p20-p21-playbook-codex-review.md`）。状态：执行计划，尚未开发。\
+> 制定日期：2026-10-28；同日按 Codex 审查修订（`reviews/2026-10-28-p20-p21-playbook-codex-review.md`）。状态：**已完成并收尾（2026-10-29 合入 main；2026-11-13 气泡改造完结，见 `10-bubble-revamp.md`、STATUS、JOURNAL）**。以下为当时的执行计划，细节以 STATUS 与改造方案为准。\
 > **开工前提**：P14-I 已合入 `main`。Step 0 把开工基线固定为一个具体 SHA，不凭 STATUS / TASKS 判断合并状态（两份台账目前有漂移，见 §3 F17）。\
 > 分支：从该 SHA 新开 `feat/p20-pond-bubbles`，不用 worktree。\
 > 本计划**不改合约、不改数据库、不改链上 / Arweave 永久内容、不新增依赖**；`/test1` 不得改动；不改共享的 `archipelago/sphere-config.ts`。\
