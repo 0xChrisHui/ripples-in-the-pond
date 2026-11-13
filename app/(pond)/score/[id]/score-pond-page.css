@@ -1,4 +1,6 @@
 .score-pond-page { position: relative; min-height: 100svh; overflow-x: clip; background: var(--p11-ink); color: var(--p11-bone); touch-action: pan-y; }
+/* 隐藏的预备页仍保留实例，但其长正文不应撑大作品页的滚动范围。 */
+.persistent-pond-shell:has(.score-pond-page) :is(.pond-prepared-artist,.pond-prepared-archive,.pond-prepared-tracks)[data-active='false'] { max-height: 100svh; overflow: clip; }
 .score-pond-page::after { content: ''; position: fixed; z-index: 35; top: 0; left: 0; right: 0; height: 96px; background: linear-gradient(var(--p11-ink),transparent); pointer-events: none; }
 .score-pond-page__hero { position: relative; z-index: 30; display: flex; flex-direction: column; align-items: center; gap: 22px; min-height: 100svh; padding: 110px 20px 44px; }
 .score-pond-page__identity { z-index: 40; display: grid; justify-items: center; gap: 12px; max-width: min(90vw,900px); text-align: center; }

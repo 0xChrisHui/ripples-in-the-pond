@@ -22,7 +22,7 @@ import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/
 import type { Track } from '@/src/types/tracks';
 import { buildScoreRoute } from '@/src/lib/chain/multichain/registry';
 import ScorePackPanel from '@/src/components/score-pack/ScorePackPanel';
-import { getOriginalTrack } from '@/src/lib/music-catalog/asset-registry';
+import { getOriginalTrack, getMusicCatalog } from '@/src/lib/music-catalog/asset-registry';
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import ScoreArchive from './ScoreArchive';
 import ScoreRecordAnchor from './ScoreRecordAnchor';
@@ -117,7 +117,8 @@ export default function ScorePondScene({ score, network }: Props) {
   const title = `Ripples #${score.tokenId}`;
   const created = score.confirmedAt ?? score.createdAt ?? score.mintedAt;
   const date = created ? format.dateTime(new Date(created), { year: 'numeric', month: 'numeric', day: 'numeric' }) : '';
-  const original = score.track ? getOriginalTrack(score.track.id) : null;
+  const original = useMemo(() => (score.track ? getOriginalTrack(score.track.id) : null)
+    ?? getMusicCatalog().tracks.find((track) => track.audioArUri === score.playbackBootstrap.base.ref), [score]);
   const multichain = Boolean(score.chainId && score.contractAddress);
   const canonicalPath = multichain
     ? buildScoreRoute(score.chainId!, score.contractAddress!, score.tokenId)
