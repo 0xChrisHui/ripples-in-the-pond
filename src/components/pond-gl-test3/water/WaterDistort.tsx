@@ -22,7 +22,6 @@ import { sampleP9 } from '../p9/runtime/p9-sampler';
 import { getP9QuietWaves, getP9WaterUniform } from '../p9/consumers/p9-water';
 import { getPondRenderNodes, type Track36VisitorState } from '../visitor/track36-state';
 import { getEclipseMix } from '../focus/playback-focus';
-import { stepLensCalm } from '../focus/lens-calm';
 import { drainTrack36Drops } from '../visitor/track36-ripples';
 import type { ResidentEchoRuntime } from '@/src/types/echo-resident';
 import { writeResidentWaterMask } from '../echo-resident/render/water-mask';
@@ -156,7 +155,7 @@ export default function WaterDistort(
     const p9Water = getP9WaterUniform(p9);
     const p9Quiet = getP9QuietWaves(p9); const quiet = p9Quiet.length > 0 ? p9Quiet : [{ x: showcasePose.x, y: showcasePose.y, ...sampleShowcase('quiet', now) }];
     const waterMod = { water: p9.channels.water, moon: p9.channels.moon };
-    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, { dark: sphereShadow, occlude: shadowOcclude, glow: shadowGlow, contact: shadowContact }, caustics, state.clock.getElapsedTime(), waterZoom, pondFloor, moonReflect, waterMod, quiet, p9Water, getEclipseMix(), stepLensCalm(now));
+    applyTuning(sim, composite, t, debug, state.size.width / Math.max(1, state.size.height), depthModel, { dark: sphereShadow, occlude: shadowOcclude, glow: shadowGlow, contact: shadowContact }, caustics, state.clock.getElapsedTime(), waterZoom, pondFloor, moonReflect, waterMod, quiet, p9Water, getEclipseMix());
     const size = glSim ? glSim.sizeRef.current : { w: 1, h: 1 };
     // /test3 task 4：水位遮罩用与 GL 实例/命中层同款投影 → 透视/视差/深度尺寸下，"水上清晰/水下扭曲"始终贴着球
     const pf = getPointerFx();

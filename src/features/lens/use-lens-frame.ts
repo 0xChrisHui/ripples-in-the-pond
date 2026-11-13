@@ -4,7 +4,6 @@ import { easeToward, placePanel, ringAim, type Circle, type Side } from './lens-
 import { HOVER_IDLE, stepHover, type HoverState } from './hover/lens-hover';
 import type { LensPointer } from './use-lens-pointer';
 import { mintPinnedTrackId } from '@/src/components/music-catalog/claim/mint-status-cache';
-import { setLensRing } from '@/src/components/pond-gl-test3/focus/lens-calm';
 
 export type LensSelection = { id: string; source: 'tap' | 'deeplink' | 'key' } | null;
 /** id 在关闭后仍保留，让面板淡出时内容不消失。 */
@@ -92,7 +91,6 @@ export function useLensFrame(args: Args) {
       const tau = s.reduced ? 0 : 85;
       ring.x = easeToward(ring.x, tx, dt, tau); ring.y = easeToward(ring.y, ty, dt, tau);
       ring.r = easeToward(ring.r, tr, dt, s.reduced ? 0 : 150);
-      setLensRing(ring.x, ring.y, ring.r, innerWidth, innerHeight); // 光圈自带月光跟着同一个圈
       const veil = s.veilRef.current;
       if (veil) {
         veil.style.setProperty('--lx', `${ring.x.toFixed(1)}px`);

@@ -39,7 +39,6 @@ export const compositeMaskFrag = /* glsl */ `
   uniform float uPondFloorStyle;   // K10 塘底花纹（0 细沙偏亮/1 彩晕/2 鹅卵石/3 沙纹/4 矿脉）
   uniform float uMoonReflect;        // K11 月光倒影：0=关（现状）/ 1=开（大柔冷白月华，被涟漪扭碎、随 K6 缩放）
   uniform float uMoonReflectStrength;// 月光倒影强度（≤0.5 克制；偏画面一侧、低不透明 → 不盖过球）
-  uniform float uLensCalm; uniform vec4 uLensRing; uniform vec3 uLensLight, uLensBall; // /lens 光圈自带月光：calm=开关；ring=圆心uv+半径uv；Light/Ball=圈内固定的水面/水下球月光（焦散+倒影的峰值）
   uniform float uBallLightBelow;     // 月光对"水下球"的增亮衰减（0..1）；水上球严格为 0
   uniform float uWaveOnBall;         // 水下球波纹增强：水面涟漪明暗(梯度·朝月)乘性荡漾过水下球面，提升"水下感"；0=关
   uniform vec4  uQuietWaves[5];      // P9 v4.1：最多五条独立安静波
@@ -133,7 +132,8 @@ export const compositeMaskFrag = /* glsl */ `
     // K3 深度调制（uDepthModel<0.5 时 refrMod=moonMod=1.0 → 下面两式与现状逐字一致）：
     // 物理直觉——折射随水下深度变重(光程更长、扭得更狠)：refr ∝ d^a；clamp 上限防深球糊成噪点。
     //           月光高光随深度变弱(水面下衰减)：moon ∝ (1−d)^b，贴水面球高光最强、深球几乎无。
-    float refrMod = 1.0, moonMod = 1.0;
+    float refrMod = 1.0;
+    float moonMod = 1.0;
     if (uDepthModel > 0.5) {
       float d = computeDepth(vUv);
       refrMod = clamp(pow(d, uRefrExp), 0.0, 1.4);   // 上限 1.4：深球折射加强但不破（叠 disp 的 clamp 兜底）
@@ -151,7 +151,8 @@ export const compositeMaskFrag = /* glsl */ `
     float occ = uShadowOcclude > 0.5 ? aMask * clamp(uShadowStrength * 3.0, 0.0, 1.0) : 0.0;
     vec4 scene = texture2D(uBackgroundScene, backgroundUv);
     // K10「亮底」：暗塘底(非球)区域用塘底花纹 mix 替换 → 明亮/彩色的水底（不再"黑上加微光"那种灰雾）。
-    // 球比暗底亮 → 用亮度阈值 notBase 保护，不被塘底覆盖；作 base 在月光/焦散之下。塘底坐标用 vUv+disp（静止，被涟漪折射产生视差）。<0.5 跳过=现状。
+    // 球比暗底亮 → 用亮度阈值 notBase 保护，不被塘底覆盖。作 base 放在月光/焦散之下 = 真水底。<0.5 跳过=现状。
+    // 塘底坐标用 vUv+涟漪折射 disp（静止、只被涟漪折射 → 动水面在静止塘底上产生视差）。
     vec3 base = scene.rgb;
     if (uPondFloor > 0.5) {
       float notBase = smoothstep(0.08, 0.20, max(base.r, max(base.g, base.b))); // 球/亮物≈1（保留），暗塘底≈0（露塘底）
@@ -159,8 +160,7 @@ export const compositeMaskFrag = /* glsl */ `
       // 不透明球 notBase≈1 不受影响；水域 sub=1 时与原式逐字等价（此改仅在球圆盘内、且该处变暗时生效）。
       base = mix(base, pondFloorColor(vUv + disp, uPondFloorStyle), uPondFloorStrength * (1.0 - notBase));
     }
-    float lensM = uLensCalm * (1.0 - smoothstep(0.8, 1.3, length((vUv - uLensRing.xy) / max(uLensRing.zw, vec2(1e-4))))); // 光圈内 1 → 圈外 0
-    vec3 col = base + vec3(spec * uSpec * moonMod * (1.0 - occ) * (1.0 - lensM))
+    vec3 col = base + vec3(spec * uSpec * moonMod * (1.0 - occ))
       + vec3(0.62, 0.76, 0.86) * p9Wave * 0.3;
     vec3 quietColor = vec3(0.92, 0.96, 1.0);
     col += quietColor * quietFront * quietEnergy * 0.34;
@@ -182,7 +182,6 @@ export const compositeMaskFrag = /* glsl */ `
     }
     causV *= 1.0 + uP9Caustic.z * 3.4;
     causV *= 1.0 - clamp(uP9Caustic.w, 0.0, 0.92);
-    causV *= 1.0 - lensM; moonV = mix(moonV, uLensLight, lensM); // 光圈内：游走月光换成固定的峰值月光
     // 背景始终走完整水面路径；球体在最后以预乘 alpha 覆盖，不再从背景抠洞。
     col += causV * (1.0 - occ);
     col += moonV;
@@ -191,7 +190,6 @@ export const compositeMaskFrag = /* glsl */ `
     vec3 moonAmb = (uMoonReflect > 0.5 ? moonReflectTex(hUv, vec2(0.0), uTime) * uMoonReflectStrength * edgeWin : 0.0) * vec3(0.91, 0.95, 1.0);
     float ballAtten = uBallLightBelow;
     vec3 ballLight = dot(causAmb, vec3(0.299, 0.587, 0.114)) >= dot(moonAmb, vec3(0.299, 0.587, 0.114)) ? causAmb : moonAmb;
-    ballLight = mix(ballLight, uLensBall, lensM); // 光圈内水下球的环境月光固定在峰值
     // 水下球"水下感"增强：水面涟漪明暗(梯度·朝月，正=亮带/负=暗带 → 完整波纹荡漾，比 spec 单取高光更"水")乘性打到水下球面。
     // 只给水下球增加波纹光，不把波纹光写回背景。
     float sphereGmag = length(sphereGrad);

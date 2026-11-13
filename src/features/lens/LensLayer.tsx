@@ -12,7 +12,6 @@ import { useLensDeepLink, useTrackNumbers } from './use-lens-deeplink';
 import { useLensExit } from './use-lens-exit';
 import { useLensFrame, type LensSelection, type PanelState } from './use-lens-frame';
 import { useLensPointer } from './use-lens-pointer';
-import { setLensCalm } from '@/src/components/pond-gl-test3/focus/lens-calm';
 import './lens-veil.css';
 
 type Props = { pathname: string; glSim: GlSim; stopEcho: () => void };
@@ -52,12 +51,6 @@ function LensInner({ pathname, glSim, stopEcho }: Props) {
       return glSim.nodes.find((n) => n.id === id)?.echo ? '36' : String(numbers.byId.get(id) ?? '');
     },
   });
-
-  // 光圈期间月光静止（焦散 / 倒影 / 月光高光不再起伏），离开 /lens 恢复
-  useEffect(() => {
-    setLensCalm(active);
-    return () => setLensCalm(false);
-  }, [active]);
 
   // 命中层回调：手机第一次轻点只选中；#36 直接播放；键盘聚焦 = 光圈照到它。
   useEffect(() => {
