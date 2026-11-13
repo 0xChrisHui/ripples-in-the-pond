@@ -646,7 +646,13 @@
       "idle": "Permanent audio only starts a playback session after you tap.",
       "pause": "Pause",
       "cancelWait": "Cancel",
-      "playWhenReady": "Play when ready"
+      "playWhenReady": "Play when ready",
+      "hintIdle": "Tap the record to play",
+      "hintPreparing": "Getting ready · you can tap now",
+      "hintQueued": "Play when ready · cancel",
+      "hintPaused": "Paused",
+      "hintEnded": "Finished · play again",
+      "hintError": "Playback unavailable · retry"
     },
     "archive": {
       "sources": {
@@ -679,8 +685,21 @@
       "eyebrow": "Permanent record",
       "title": "Work credentials",
       "intro": "Playback inputs come verbatim from the permanent resources pinned to this work. Short values are for reading; copying keeps the full hash. The creator and the current holder are always recorded separately.",
-      "openDecoder": "Open the permanent player in a new tab"
-    }
+      "openDecoder": "Open the permanent player in a new tab",
+      "summaryTitle": "About this Score",
+      "mintedDate": "Minted",
+      "chainTitle": "Network",
+      "plainIntro": "This Score lives onchain and on Arweave. Anyone can verify its records.",
+      "expandFull": "View all {count} records",
+      "groups": {
+        "identity": "Identity",
+        "transactions": "Onchain transactions",
+        "files": "Permanent files"
+      }
+    },
+    "workSubtitle": "Based on “{title}” · {count} notes · {date}",
+    "createFromTrack": "Play your own version of this track →",
+    "productionSteps": "Score production steps"
   },
   "record": {
     "state": {
@@ -865,9 +884,15 @@
     "openSingle": "Track page",
     "explorer": "Explorer",
     "play": "Play",
-    "pause": "Pause"
-    ,"expand": "Expand onchain details",
+    "pause": "Pause",
+    "expand": "Expand onchain details",
     "collapse": "Collapse onchain details",
     "collect": "Collect"
+  },
+  "edition": {
+    "finalized": "Finalized",
+    "processing": "Processing",
+    "degraded": "Limited record",
+    "failed": "Failed"
   }
 }

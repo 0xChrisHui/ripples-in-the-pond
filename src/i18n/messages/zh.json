@@ -646,7 +646,13 @@
       "idle": "永久音频只会在你主动点击后建立播放会话。",
       "pause": "暂停",
       "cancelWait": "取消等待",
-      "playWhenReady": "准备好后播放"
+      "playWhenReady": "准备好后播放",
+      "hintIdle": "点唱片开始播放",
+      "hintPreparing": "正在准备，可以先点",
+      "hintQueued": "准备好就开始 · 取消",
+      "hintPaused": "已暂停",
+      "hintEnded": "播完了 · 再听一遍",
+      "hintError": "暂时播放不了 · 重试"
     },
     "archive": {
       "sources": {
@@ -679,8 +685,21 @@
       "eyebrow": "Permanent record · 永久档案",
       "title": "作品凭证",
       "intro": "播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。",
-      "openDecoder": "在新标签打开永久播放器"
-    }
+      "openDecoder": "在新标签打开永久播放器",
+      "summaryTitle": "作品信息",
+      "mintedDate": "铸造时间",
+      "chainTitle": "所在链",
+      "plainIntro": "这枚作品的内容保存在链上与 Arweave，任何人都能独立核对。",
+      "expandFull": "查看完整凭证（{count} 项）",
+      "groups": {
+        "identity": "身份",
+        "transactions": "链上交易",
+        "files": "永久文件"
+      }
+    },
+    "workSubtitle": "底曲《{title}》· {count} 个音符 · {date}",
+    "createFromTrack": "用同一首底曲弹你自己的一段 →",
+    "productionSteps": "作品制作步骤"
   },
   "record": {
     "state": {
@@ -865,9 +884,15 @@
     "openSingle": "单曲页",
     "explorer": "区块浏览器",
     "play": "播放",
-    "pause": "暂停"
-    ,"expand": "展开链上信息",
+    "pause": "暂停",
+    "expand": "展开链上信息",
     "collapse": "收起链上信息",
     "collect": "收藏"
+  },
+  "edition": {
+    "finalized": "已定稿",
+    "processing": "处理中",
+    "degraded": "降级可读",
+    "failed": "处理失败"
   }
 }
