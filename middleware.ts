@@ -48,9 +48,9 @@ try {
     const redis = new Redis({ url, token });
     ratelimit = new Ratelimit({
       redis,
-      // sliding window：每 IP 每 10 秒 20 次请求
-      limiter: Ratelimit.slidingWindow(20, "10 s"),
-      analytics: true,
+      // sliding window：每 IP 每 10 秒 60 次请求
+      limiter: Ratelimit.slidingWindow(60, "10 s"),
+      analytics: false,
     });
   }
 } catch (err) {
@@ -90,6 +90,7 @@ export async function middleware(req: NextRequest) {
         {
           status: 429,
           headers: {
+            "Retry-After": String(Math.max(1, Math.ceil((reset - Date.now()) / 1000))),
             "X-RateLimit-Limit": limit.toString(),
             "X-RateLimit-Remaining": remaining.toString(),
             "X-RateLimit-Reset": reset.toString(),

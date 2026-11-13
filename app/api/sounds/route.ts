@@ -21,7 +21,7 @@ export async function GET() {
     if (error) throw error;
 
     const res: SoundsListResponse = { sounds: sounds ?? [] };
-    return timing.response(() => NextResponse.json(res));
+    return timing.response(() => NextResponse.json(res, { headers: { 'Cache-Control': 'public, s-maxage=300' } }));
   } catch (err) {
     console.error('GET /api/sounds error:', err);
     return timing.response(() => (

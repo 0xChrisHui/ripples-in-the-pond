@@ -136,6 +136,7 @@ export async function uploadBuffer(
 /** 上传前一次性核对余额；byteCounts 应包含失败重传缓冲。 */
 export async function getTurboUploadBudget(
   byteCounts: readonly number[],
+  requireCoverage = true,
 ): Promise<TurboUploadBudget> {
   if (!byteCounts.length || byteCounts.some((value) => !Number.isInteger(value) || value <= 0)) {
     throw new Error('Turbo 预算必须提供有限正整数 bytes');
@@ -146,7 +147,7 @@ export async function getTurboUploadBudget(
     client.getUploadCosts({ bytes: [...byteCounts] }),
   ]);
   const required = costs.reduce((sum, item) => sum + BigInt(item.winc), 0n);
-  if (BigInt(balance.effectiveBalance) < required) {
+  if (requireCoverage && BigInt(balance.effectiveBalance) < required) {
     throw new Error(`Turbo credits 不足：需要 ${required} winc，可用 ${balance.effectiveBalance} winc`);
   }
   return {

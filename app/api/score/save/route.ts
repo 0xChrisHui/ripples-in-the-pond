@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 import type { SaveScoreRequest, SaveScoreResponse, KeyEvent } from '@/src/types/jam';
 import { DRAFT_TTL_MS } from '@/src/lib/constants';
+import { takeQuota } from '@/src/lib/rate-limit/quota';
 import { isSoundKey } from '@/src/lib/sound-set';
 
 /**
@@ -91,6 +92,10 @@ export async function POST(req: NextRequest) {
     if (Buffer.byteLength(serialized, 'utf8') > MAX_BODY_KB * 1024) {
       return NextResponse.json({ error: '事件数据超过 100KB 限制' }, { status: 400 });
     }
+
+    const quota = await takeQuota(`draft:${auth.userId}`, 60, 3600, true);
+    if (!quota.allowed) return NextResponse.json({ code: 'DRAFT_HOURLY_LIMIT', error: '草稿保存过于频繁，请稍后再试' },
+      { status: 429, headers: { 'Retry-After': String(quota.retryAfter) } });
 
     // 7. 验证 trackId 存在
     const { data: track } = await supabaseAdmin

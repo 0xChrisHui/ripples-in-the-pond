@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { positiveLimit, takeQuota } from '@/src/lib/rate-limit/quota';
 import { sendSemiCode } from "@/src/lib/auth/semi-client";
 
 /**
@@ -25,7 +26,7 @@ try {
     phoneLimiter = new Ratelimit({
       redis: new Redis({ url, token }),
       limiter: Ratelimit.slidingWindow(3, "10 m"),
-      analytics: true,
+      analytics: false,
       prefix: "sms-phone",
     });
   } else {
@@ -65,6 +66,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "服务暂不可用，请稍后重试" }, { status: 503 });
     }
 
+    const quota = await takeQuota('sms', positiveLimit(process.env.SMS_DAILY_BUDGET, 500), 86_400, false);
+    if (!quota.allowed) return NextResponse.json({
+      code: quota.unavailable ? 'SMS_UNAVAILABLE' : 'SMS_DAILY_LIMIT',
+      error: quota.unavailable ? '服务暂不可用，请稍后重试' : '今日验证码额度已用完，北京时间早上 8 点恢复',
+    }, { status: quota.unavailable ? 503 : 429, headers: { 'Retry-After': String(quota.retryAfter) } });
     await sendSemiCode(phone);
     return NextResponse.json({ result: "ok" });
   } catch (err) {

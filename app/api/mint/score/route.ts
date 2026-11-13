@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 import { resolveArUrl } from '@/src/lib/arweave';
+import { positiveLimit, takeQuota } from '@/src/lib/rate-limit/quota';
+import { SCORE_ACTIVE_STATUSES } from '@/src/types/jam';
 import type { MintScoreRequest, MintScoreResponse } from '@/src/types/jam';
 
 /**
@@ -39,6 +41,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const backlog = await supabaseAdmin.from('score_nft_queue').select('id', { head: true, count: 'exact' })
+      .in('status', SCORE_ACTIVE_STATUSES);
+    if (backlog.error || backlog.count === null) {
+      return NextResponse.json({ code: 'QUEUE_UNAVAILABLE', error: '队列暂时不可用，请稍后再试' }, { status: 503 });
+    }
+    if (backlog.count >= positiveLimit(process.env.SCORE_QUEUE_MAX_ACTIVE, 500)) {
+      return NextResponse.json({ code: 'QUEUE_FULL', error: '排队已满，请稍后再试' },
+        { status: 503, headers: { 'Retry-After': '60' } });
+    }
+    const quota = await takeQuota(`score:${auth.userId}`, positiveLimit(process.env.SCORE_MINT_DAILY_LIMIT, 10), 86_400, true);
+    if (!quota.allowed) return NextResponse.json({ code: 'DAILY_LIMIT', error: '今日代付额度已用完，北京时间早上 8 点恢复' },
+      { status: 429, headers: { 'Retry-After': String(quota.retryAfter) } });
+
     // 3. 调事务 RPC（封面分配 + 入队 + 草稿 expired 原子）
     const { data: rpcData, error: rpcError } = await supabaseAdmin.rpc(
       'mint_score_enqueue',
@@ -49,12 +64,14 @@ export async function POST(req: NextRequest) {
     );
 
     if (rpcError) {
+      // 仅数据库明确回滚时退额，网络结果未知保留预留。
+      if (/^[0-9A-Z]{5}$/.test(rpcError.code)) await quota.refund?.();
       const msg = rpcError.message || '';
       console.error('mint_score_enqueue RPC error:', msg);
 
       if (msg.includes('RATE_LIMITED')) {
         return NextResponse.json(
-          { error: '每小时最多铸造 5 次，请稍后再试' },
+          { code: 'HOURLY_LIMIT', error: '每小时最多铸造 5 次，请稍后再试' },
           { status: 429 },
         );
       }
@@ -79,7 +96,7 @@ export async function POST(req: NextRequest) {
       }
       if (msg.includes('COVER_POOL_EMPTY')) {
         return NextResponse.json(
-          { error: '暂时无法铸造，请稍后再试' },
+          { code: 'QUEUE_UNAVAILABLE', error: '暂时无法铸造，请稍后再试' },
           { status: 503 },
         );
       }
