@@ -33,7 +33,7 @@ function RegisterPrompt() {
 }
 
 type Phase = 'phone' | 'code';
-type ErrorKey = 'invalidPhone' | 'sendFailed' | 'network' | 'codeLength' | 'codeInvalid' | 'loginFailed' | 'noToken';
+type ErrorKey = 'invalidPhone' | 'smsDailyLimit' | 'sendFailed' | 'network' | 'codeLength' | 'codeInvalid' | 'loginFailed' | 'noToken';
 /** server：服务器或浏览器给出的原文，中文模式照旧显示；英文模式只显示 key 对应的前端文案 */
 type LoginError = { key: ErrorKey; server?: string };
 
@@ -81,7 +81,7 @@ export default function SemiLogin({ onSuccess }: { onSuccess: () => void }) {
           setNeedRegister(true);
           return;
         }
-        setError({ key: 'sendFailed', server: data.error });
+        setError({ key: data.code === 'SMS_DAILY_LIMIT' ? 'smsDailyLimit' : 'sendFailed', server: data.error });
         return;
       }
       setPhase('code');

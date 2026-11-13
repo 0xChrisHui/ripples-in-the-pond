@@ -1,6 +1,7 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
+import { MINT_RECORDED_EVENT } from '../../../lib/mint-notice';
 import { clearMintCache, loadMintStatus, type MintIdentity } from './mint-status-cache';
 
 /** 进入 /lens 等场景时调用：立即重新批量核对一次（后台进行，界面不等待）。 */
@@ -25,11 +26,17 @@ export default function MintStatusPrefetch() {
   // 回调每次渲染都会变；用 ref 取最新值，避免重复触发。
   const latest = useRef(auth);
   useEffect(() => { latest.current = auth; });
-  const [pass, setPass] = useState(0);
   useEffect(() => {
-    const again = () => setPass((value) => value + 1);
-    window.addEventListener(REFRESH_EVENT, again);
-    return () => window.removeEventListener(REFRESH_EVENT, again);
+    const refresh = (event: Event) => {
+      const identity = mintIdentityOf(latest.current);
+      if (identity) void loadMintStatus(identity, event.type === MINT_RECORDED_EVENT);
+    };
+    window.addEventListener(REFRESH_EVENT, refresh);
+    window.addEventListener(MINT_RECORDED_EVENT, refresh);
+    return () => {
+      window.removeEventListener(REFRESH_EVENT, refresh);
+      window.removeEventListener(MINT_RECORDED_EVENT, refresh);
+    };
   }, []);
   const { ready, authenticated, userId, walletCapability, selectedExternalWallet } = auth;
   const wallet = walletCapability.walletKind === 'external' ? selectedExternalWallet?.address ?? null : null;
@@ -39,8 +46,8 @@ export default function MintStatusPrefetch() {
     if (!ready) return;
     const current = mintIdentityOf(latest.current);
     if (!current) { clearMintCache(); return; }
-    void loadMintStatus(current, true);
-  }, [ready, identity, pass]);
+    void loadMintStatus(current);
+  }, [ready, identity]);
 
   return null;
 }

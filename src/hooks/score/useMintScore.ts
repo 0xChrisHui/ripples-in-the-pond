@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAuth } from '@/src/hooks/useAuth';
-import { mintScore, fetchMyScores } from '@/src/data/jam-source';
+import { ScoreMintRefusal, mintScore, fetchMyScores } from '@/src/data/jam-source';
 
 export type MintScoreState = 'idle' | 'queued' | 'success' | 'error';
 
@@ -23,6 +23,7 @@ const ROLLBACK_TIMEOUT_MS = 60_000;
 export function useMintScore() {
   const { getAccessToken } = useAuth();
   const [state, setState] = useState<MintScoreState>('idle');
+  const [refusal, setRefusal] = useState<ScoreMintRefusal | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -61,6 +62,7 @@ export function useMintScore() {
 
   const mint = useCallback(async (pendingScoreId: string) => {
     if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+    setRefusal(null);
     setState('queued');
 
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -77,14 +79,18 @@ export function useMintScore() {
       }
       await mintScore(token, pendingScoreId);
     } catch (err) {
-      // 有意不取消 timerRef：即使 API 请求失败，5s 后仍触发 setState('success') 进入乐观态，
-      // 由 startRollbackPoll 在 60s 内轮询确认草稿消失；若未消失则回滚到 error。
-      // 不在 catch 里 clearTimeout，否则破坏"乐观成功 + 轮询兜底"的设计。
+      if (err instanceof ScoreMintRefusal) {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        if (pollRef.current) clearInterval(pollRef.current);
+        setRefusal(err);
+        setState('error');
+        return;
+      }
       console.error('[mintScore] 铸造请求失败（前端乐观成功，轮询兜底）', {
         pendingScoreId, err, ts: new Date().toISOString(),
       });
     }
   }, [getAccessToken, startRollbackPoll]);
 
-  return { state, mint };
+  return { state, mint, refusal };
 }

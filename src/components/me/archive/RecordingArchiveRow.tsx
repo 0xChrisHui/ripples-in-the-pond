@@ -43,7 +43,7 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
   const serverText = useServerText();
   const auth = useAuth();
   const archiveMint = useArchiveMintContext();
-  const { state: mintState, mint } = useMintScore();
+  const { state: mintState, mint, refusal } = useMintScore();
   const { toggle, playing, currentTrack } = usePlayer();
   const [events, setEvents] = useState<KeyEvent[] | null>(recording.events ?? null);
   const [eventsLoading, setEventsLoading] = useState(false);
@@ -165,6 +165,9 @@ export default function RecordingArchiveRow({ recording, index, onQueued }: Prop
         {recording.awaitingRefresh && <small>{t('syncing')}</small>}
         {!recording.pendingScoreId && <small>{localState}</small>}
         {eventsError && <small role="alert">{t('previewFailed')}</small>}
+        {refusal && <small role="alert">{serverText(refusal.message, t(
+          refusal.code === 'QUEUE_FULL' ? 'queueFull' : refusal.code === 'DAILY_LIMIT' ? 'dailyLimit'
+            : refusal.code === 'HOURLY_LIMIT' ? 'hourlyLimit' : 'mintRejected'))}</small>}
         {selfMintError && <small role="alert">{serverText(selfMintError.server, t(selfMintError.key))}</small>}
       </div>
       {recording.pendingScoreId ? (

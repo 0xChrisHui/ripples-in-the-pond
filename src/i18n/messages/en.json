@@ -24,6 +24,7 @@
     },
     "errors": {
       "invalidPhone": "Enter a valid phone number",
+      "smsDailyLimit": "Today’s verification code budget is used up. Try again after 00:00 UTC.",
       "sendFailed": "Couldn't send the code. Please try again later.",
       "network": "Network error. Please try again later.",
       "codeLength": "Enter the 6-digit code",
@@ -173,6 +174,7 @@
       "needsReview": "Needs verification before going further",
       "open": "Open record",
       "viewDetails": "View details",
+      "earlierOrders": "{count} unfinished orders were submitted earlier. Processing order can vary.",
       "viewProgress": "View progress",
       "ethSelfPaid": "Ethereum · You pay gas",
       "orderSyncing": "Syncing order"
@@ -194,6 +196,10 @@
       "submitted": "Submitted",
       "mintLabel": "Mint {title} as a record",
       "creatingOrder": "Creating mint order…",
+      "queueFull": "The queue is full. Please try again later.",
+      "dailyLimit": "Daily sponsored mint limit reached. Try again after 00:00 UTC.",
+      "hourlyLimit": "Up to five sponsored mints per hour. Please try again later.",
+      "mintRejected": "Your mint request was declined. Please try again later.",
       "retryMint": "Retry mint",
       "mint": "Mint record",
       "uploaded": "Uploaded recording",

@@ -11,7 +11,7 @@ import { getOriginalMintDeployment } from '../../../lib/music-catalog/asset-regi
 import EthereumMaterialMint from './EthereumMaterialMint';
 import { MaterialNoticeBox } from './MaterialNoticeView';
 import PondRouteLink from '../../pond-shell/PondRouteLink';
-import { loadMintStatus, mintCacheVersion, opCache, subscribeMintCache, type MintStatus } from './mint-status-cache';
+import { loadMintStatus, mintReadFailed, mintCacheVersion, opCache, subscribeMintCache, type MintStatus } from './mint-status-cache';
 import { mintIdentityOf } from './MintStatusPrefetch';
 /** 默认目录与详情面板共享身份边界；每条链的收藏实例始终只挂载一次。 */
 export function useMintAccess(track: OriginalTrack) {
@@ -98,7 +98,7 @@ export function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: Re
   const pending = status?.needsReview || ['pending', 'minting_onchain'].includes(status?.status ?? '');
   const done = status?.status === 'success' || Boolean(status?.alreadyMinted);
   const errorText = status?.errorKey ? t(`op.errors.${status.errorKey}`)
-    : status?.error ? serverText(status.error, t('op.errors.server')) : null;
+    : status?.error ? serverText(status.error, t('op.errors.server')) : mintReadFailed(identity) ? t('op.errors.statusUnavailable') : null;
   const stateName = !opAvailable ? 'unavailable' : unknown ? 'checking' : done ? 'done' : pending ? 'pending' : 'idle';
   return <section className="material-chain-row" aria-label={t('op.label')} data-chain="OP" data-state={stateName}>
     <div className="material-chain-info"><h3>Optimism</h3>

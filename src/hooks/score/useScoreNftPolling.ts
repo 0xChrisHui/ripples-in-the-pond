@@ -4,8 +4,7 @@ import { useEffect, useRef } from 'react';
 import type { OwnedScoreNFT } from '@/src/types/jam';
 import { fetchMyScoreNFTs } from '@/src/data/jam-source';
 
-// A14 — 有待上链 ScoreNFT 时，每 2 分钟轮询一次刷新卡片状态
-const POLL_MS = 120_000;
+import { pollingDelay } from './polling-delay';
 
 export function useScoreNftPolling({
   scoreNfts,
@@ -30,16 +29,13 @@ export function useScoreNftPolling({
   const callbacksRef = useRef({ onRefresh, onError, onPollingChange });
   useEffect(() => { callbacksRef.current = { onRefresh, onError, onPollingChange }; });
 
-  const hasPending = scoreNfts.some((score) => (
-    score.status !== 'success' && score.status !== 'failed'
-  ));
-
+  const interval = pollingDelay(scoreNfts);
   useEffect(() => {
-    if (!authenticated || !userId || !hasPending) return;
+    if (!authenticated || !userId || !interval) return;
     let running = false;
     let disposed = false;
-    const id = setInterval(async () => {
-      if (running) return;
+    const refresh = async () => {
+      if (running || document.visibilityState === 'hidden') return;
       running = true;
       callbacksRef.current.onPollingChange?.(true);
       try {
@@ -58,10 +54,13 @@ export function useScoreNftPolling({
         running = false;
         if (!disposed) callbacksRef.current.onPollingChange?.(false);
       }
-    }, POLL_MS);
+    };
+    const id = setInterval(refresh, interval);
+    document.addEventListener('visibilitychange', refresh);
     return () => {
       disposed = true;
       clearInterval(id);
+      document.removeEventListener('visibilitychange', refresh);
     };
-  }, [authenticated, userId, hasPending]);
+  }, [authenticated, userId, interval]);
 }

@@ -77,6 +77,10 @@ export async function fetchMyScoreNFTs(token: string): Promise<OwnedScoreNFT[]> 
   return data.scoreNfts;
 }
 
+export class ScoreMintRefusal extends Error {
+  constructor(readonly status: number, readonly code: string, message: string) { super(message); }
+}
+
 /** Phase 6 B3：草稿铸造 ScoreNFT 的入口 — 入队后 cron 5 步状态机异步处理 */
 export async function mintScore(
   token: string,
@@ -92,6 +96,9 @@ export async function mintScore(
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: '铸造请求失败' }));
+    if ((res.status >= 400 && res.status < 500) || res.status === 503) {
+      throw new ScoreMintRefusal(res.status, err.code ?? 'MINT_REJECTED', err.error ?? '铸造申请被拒绝');
+    }
     throw new Error(err.error ?? '铸造请求失败');
   }
   return res.json();

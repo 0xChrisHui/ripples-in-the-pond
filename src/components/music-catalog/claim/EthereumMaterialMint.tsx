@@ -13,7 +13,7 @@ import { describeMaterialError, localMaterialNotice, type MaterialNotice } from 
 import MaterialNoticeView from './MaterialNoticeView';
 import MaterialOrderView from './MaterialOrderView';
 import PondRouteLink from '../../pond-shell/PondRouteLink';
-import { ethCache, isFinishedOrder, isOrderInFlight, loadMintStatus, mintCacheVersion, setMintActivity, subscribeMintCache } from './mint-status-cache';
+import { ethCache, isFinishedOrder, isOrderInFlight, loadMintStatus, mintReadFailed, mintCacheVersion, setMintActivity, subscribeMintCache } from './mint-status-cache';
 import { mintIdentityOf } from './MintStatusPrefetch';
 
 const BUSY_KEYS = { wallet: 'busyWallet', order: 'busyOrder', sign: 'busySign' } as const;
@@ -98,6 +98,7 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
         : <button className="material-collect" type="button" disabled={Boolean(busy) || unknown} onClick={() => { void collect(); }}>
           {busy ? t(`eth.${BUSY_KEYS[busy]}`) : t('eth.mint')}</button>}
     </div>
+    {!notice && mintReadFailed(identity) && <p role="status">{t('op.errors.statusUnavailable')}</p>}
     {notice && <div className="material-chain-status"><MaterialNoticeView notice={notice} /></div>}
     {order && <div className="material-chain-status"><MaterialOrderView key={`${order.orderId}:${refresh}`} orderId={order.orderId as Hex} embedded
       pollMs={5000} onOrder={(latestOrder) => { if (address) ethCache.set(address, track.trackId, latestOrder); setPicked(latestOrder); }} /></div>}

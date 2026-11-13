@@ -42,46 +42,91 @@ export const ethCache = {
 };
 
 export function clearMintCache(): void {
+  resetRequests();
   op.clear();
   eth.clear();
   bump();
 }
 
 export type MintIdentity = { userId: string; wallet: string | null; getToken: () => Promise<string | null> };
-const REFRESH_COOLDOWN_MS = 8000;
-let inflight: Promise<void> | null = null;
-let lastAttempt = 0;
+const identityKey = (id: MintIdentity) => id.userId + '|' + (id.wallet ?? '').toLowerCase();
+type Attempt = { key: string; last: number; retried: boolean; error: boolean; next: number;
+  inflight?: Promise<void>; followup?: boolean; timer?: ReturnType<typeof setTimeout> };
+let current: Attempt | undefined;
 
-/**
- * 批量加载本人全部原曲状态（一次请求）。并发时复用同一个请求；非强制调用在冷却期内不重复请求（防止失败时反复打服务端）。
- * 写入时对所有相关曲目都给出确定结果（未收藏 = null），因此写完之后不会再出现"未知"。
- */
+export function mintReadFailed(identity: MintIdentity | null) {
+  return Boolean(identity && current?.key === identityKey(identity) && current.error);
+}
+
+function resetRequests() {
+  if (current?.timer) clearTimeout(current.timer);
+  current = undefined;
+}
+
 export function loadMintStatus(identity: MintIdentity, force = false): Promise<void> {
-  if (inflight) return inflight;
-  if (!force && Date.now() - lastAttempt < REFRESH_COOLDOWN_MS) return Promise.resolve();
-  lastAttempt = Date.now();
-  inflight = (async () => {
+  const key = identityKey(identity);
+  if (current?.key !== key) {
+    resetRequests();
+    current = { key, last: 0, retried: false, error: false, next: 0 };
+  }
+  const state = current;
+  if (state.inflight) {
+    if (force) state.followup = true;
+    return state.inflight;
+  }
+  if (!force && state.retried && state.error) return Promise.resolve();
+  if (!force && (Date.now() < state.next || Date.now() - state.last < 5000)) return Promise.resolve();
+  if (state.timer) clearTimeout(state.timer);
+  state.last = Date.now();
+  const retry = (delay: number) => {
+    if (current !== state) return;
+    state.error = true;
+    state.next = Date.now() + delay;
+    bump();
+    if (state.retried) return;
+    state.retried = true;
+    state.timer = setTimeout(() => { if (current === state) void loadMintStatus(identity, true); }, delay);
+  };
+  state.inflight = (async () => {
     try {
       const token = await identity.getToken();
-      if (!token) return;
+      if (!token || current !== state) return;
       const response = await fetchWithAuth('/api/material-mint/status', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
-      if (!response.ok) return;
+      if (current !== state) return;
+      if (!response.ok) {
+        if (response.status === 429 || response.status === 503) {
+          const hint = response.headers.get('Retry-After');
+          const seconds = hint && /^\d+$/.test(hint) ? Number(hint) * 1000 : Date.parse(hint ?? '') - Date.now();
+          retry(Number.isFinite(seconds) ? Math.max(1000, seconds) : 15000);
+        } else { state.error = true; bump(); }
+        return;
+      }
       const body = await response.json() as { op: Record<string, MintStatus | null>; orders: PublicMaterialOrder[] };
+      if (current !== state) return;
+      state.error = false;
+      state.retried = false;
+      state.next = 0;
       for (const [trackId, row] of Object.entries(body.op)) opCache.set(identity.userId, trackId, row ?? { status: null });
       if (identity.wallet) {
-        const wallet = identity.wallet;
+        const wallet = identity.wallet.toLowerCase();
         for (const { track } of listReadyOriginals()) {
           const deployment = getOriginalDeployment(track.trackId, 1);
           if (deployment?.status !== 'ready' || !deployment.contractAddress || !deployment.metadataUri) continue;
-          const existing = body.orders.find((item) => item.chainId === 1 && item.tokenId === deployment.tokenId
-            && item.recipientAddress === wallet && item.status !== 'cancelled') ?? null;
+          const existing = body.orders.find(item => item.chainId === 1 && item.tokenId === deployment.tokenId
+            && item.recipientAddress.toLowerCase() === wallet && item.status !== 'cancelled') ?? null;
           ethCache.set(wallet, track.trackId, existing);
         }
       }
-    } catch { /* 网络失败：保持未知，下次进入时再查 */ }
-    finally { inflight = null; }
+    } catch { retry(15000); }
+    finally {
+      state.inflight = undefined;
+      if (current === state && state.followup) {
+        state.followup = false;
+        await loadMintStatus(identity, true);
+      }
+    }
   })();
-  return inflight;
+  return state.inflight;
 }
 
 /** 以太坊订单是否已确认完成（与面板"已收藏"判断一致）。 */

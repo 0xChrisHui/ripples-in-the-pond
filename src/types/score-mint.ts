@@ -112,6 +112,7 @@ export interface ScoreMetadata {
 
 /** 个人页的 Score 队列记录；状态直接来自数据库。 */
 export interface OwnedScoreNFT {
+  earlierActiveCount?: number;
   id: string;
   queueId: string;
   tokenId?: number;

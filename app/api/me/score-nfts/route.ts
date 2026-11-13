@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { authenticateRequest } from '@/src/lib/auth/middleware';
 import { ServerTiming } from '@/src/lib/performance/server-timing';
-import { SCORE_STATUSES, type MyScoreNFTsResponse, type OwnedScoreNFT, type ScoreMintStatus } from '@/src/types/jam';
+import { SCORE_ACTIVE_STATUSES, SCORE_STATUSES, type MyScoreNFTsResponse, type OwnedScoreNFT, type ScoreMintStatus } from '@/src/types/jam';
 import { SELF_MINT_STATUSES, type SelfMintStatus } from '@/src/types/self-mint';
 
 function readStatus(value: unknown): ScoreMintStatus {
@@ -93,6 +93,14 @@ export async function GET(req: NextRequest) {
         ...(scorePackage ? { scorePackage } : {}),
       };
     });
+
+    const oldestActive = opScores.filter(s => SCORE_ACTIVE_STATUSES.some(status => status === s.status)).at(-1);
+    if (oldestActive) {
+      const earlier = await supabaseAdmin.from('score_nft_queue').select('id', { count: 'exact', head: true })
+        .in('status', SCORE_ACTIVE_STATUSES).lt('created_at', oldestActive.submittedAt);
+      if (earlier.error) throw earlier.error;
+      oldestActive.earlierActiveCount = earlier.count ?? undefined;
+    }
 
     const ethScores: OwnedScoreNFT[] = (ethResult.data ?? []).map((r) => {
       const trackData = r.tracks as unknown as { title: string } | null;
