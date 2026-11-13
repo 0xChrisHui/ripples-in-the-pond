@@ -1,0 +1,49 @@
+{
+  "checkedAt": "2026-11-13T20:26:21.516Z",
+  "codeCommit": "f007ec84404f5c01904a86502e35b38ed09f7f20",
+  "command": "bash scripts/verify.sh",
+  "actualExitCode": 1,
+  "acceptedBaselineOnly": true,
+  "acceptedFailures": [
+    "src/lib/self-mint: 9 files",
+    "src/types: 10 files"
+  ],
+  "types": true,
+  "lint": true,
+  "productionSnapshot": true,
+  "productionBuild": true,
+  "forge": {
+    "pass": 139,
+    "fail": 0
+  },
+  "i18nKeys": 686,
+  "directed": {
+    "p24": {
+      "tests": 20,
+      "fail": 0
+    },
+    "p25": {
+      "tests": 12,
+      "fail": 0
+    },
+    "p23Eth": {
+      "tests": 4,
+      "fail": 0
+    },
+    "p23Wallet": {
+      "tests": 3,
+      "fail": 0
+    },
+    "p23Resize": {
+      "tests": 3,
+      "fail": 0
+    }
+  },
+  "defaultMediaRewrite": false,
+  "mainModel": "当前会话，工具不支持切换",
+  "phaseModels": {
+    "P23": "gpt-6.1-sol/high",
+    "P24": "gpt-6-astra/high",
+    "P25": "gpt-6.1-sol/high"
+  }
+}

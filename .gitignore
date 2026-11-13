@@ -84,3 +84,11 @@ data/covers/
 /reviews/evidence/**/edge-profile/
 # /test1 GL 沙盒背景图（测试用、2.4MB，仅本机；bgImage toggle 默认关）
 /public/test1-bg.png
+
+# P23 封面池（JPG 池与 PNG 母版体积大，可由 scripts/p23/cover-gen 按种子重生成）
+data/p23/cover-pool/
+data/p23/cover-masters/
+data/p23/review/
+# P23 全套截图留本地，已跟踪的代表图和验收 JSON 继续跟踪
+/reviews/evidence/p23-score/
+/reviews/evidence/p23-lens/

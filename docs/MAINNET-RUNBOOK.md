@@ -473,3 +473,12 @@ sounds 身份随 HTML/RSC 内嵌；浏览器只下载底曲与事件用到的音
 新作品必须经 `preparing_package` 完成 `ripples.score-package.v3` 双网关闭包后才能广播 mint，
 `setting_uri` 后还必须完成 `finalizing_snapshot` 才能进入 `success`。旧作品的 compatibility 是
 token-scoped 签名恢复层；原始 `animation_url` 不可修改，UI 必须同时保留原始档案和恢复说明。
+
+
+## P25 香港节点运维（尚未启用）
+
+部署、证书续期、密钥轮换、缓存检查、扩缩容与回滚见 `ops/hk-edge/README.md`，当前进度见 `playbook/phase-25/02-execution-log.md`。
+
+2026-11-14 夜间仅发布兼容代码与配置准备；香港购买/线路、AWS/DNS、生产变量、分流和音频镜像仍留白天。现有镜像继续直连原 Blob。当前构建未设置 MEDIA_BLOB_ORIGIN，因此尚无同源改写，**不能作为启用同源音频后的回滚基线**：须白天设置 Blob origin、重新部署并通过真实 GET/Range/hash 后另行标记基线。
+
+香港服务器不放应用、数据库或钱包密钥；只放 TLS、受限续证 IAM 和 edge 密钥。节点与真实线路验证通过后才执行已批准的故障/带宽演练；生产 TLS、DNS 故障切换、续证及大陆体验不能以本地 HTTP 合同测试替代。
