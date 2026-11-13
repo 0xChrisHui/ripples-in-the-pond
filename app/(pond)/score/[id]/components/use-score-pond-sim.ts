@@ -18,18 +18,18 @@ import type { Track } from '@/src/types/tracks';
 
 const RETURN_DURATION_MS = 1050;
 
-function pinToRecord(node: GlPhysNode, width: number, height: number): void {
-  const center = recordCenter(width, height, node);
+function pinToRecord(node: GlPhysNode, width: number, height: number, perspective: boolean): void {
+  const center = recordCenter(width, height, node, perspective);
   node.x = node.fx = center.x;
   node.y = node.fy = center.y;
 }
 
-function recordCenter(width: number, height: number, node: GlPhysNode): { x: number; y: number } {
+function recordCenter(width: number, height: number, node: GlPhysNode, perspective: boolean): { x: number; y: number } {
   const record = document.querySelector<HTMLElement>(
     '.score-pond-page__anchor .record-anchor__visual',
   );
   const bounds = record?.getBoundingClientRect();
-  const ctx = { ...getCameraFx(), ...getPointerFx(), cx: width / 2, cy: height / 2, focusZ: getEffectiveWaterLevel() };
+  const ctx = { ...getCameraFx(), ...getPointerFx(), perspective, parallax: perspective, cx: width / 2, cy: height / 2, focusZ: getEffectiveWaterLevel() };
   const depth = depthOf(node), scale = project(0, 0, depth, ctx, node).scale;
   // 日食消费世界半径，再做透视投影；不能把屏幕半径直接当成世界半径。
   node.radius = (bounds?.width ? bounds.width / 2 : 100) / scale;
@@ -61,7 +61,7 @@ function setCenterStrength(sim: Simulation<GlPhysNode, SimLink<GlPhysNode>> | nu
 export type ScorePondMotion = { glSim: GlSim | null; visualActive: boolean; returning: boolean };
 
 /** 一枚真实 Track 建一枚水面球；播放时交给首页力场，停止后缓动归位。 */
-export function useScorePondSim(track: Track | null, playing: boolean): ScorePondMotion {
+export function useScorePondSim(track: Track | null, playing: boolean, perspective = true): ScorePondMotion {
   const [nodes, setNodes] = useState<GlPhysNode[]>([]);
   const [generation, setGeneration] = useState(0);
   const [atRest, setAtRest] = useState(true);
@@ -91,13 +91,13 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
     const { sim } = setupGlSimulation(built.nodes, built.links, built.assignment, w, h);
     const node = built.nodes[0];
     if (node) {
-      pinToRecord(node, w, h);
+      pinToRecord(node, w, h, perspective);
     }
     simRef.current = sim;
     wavesRef.current = [];
     queueMicrotask(() => setNodes(built.nodes));
     return () => { sim.stop(); };
-  }, [generation, track]);
+  }, [generation, track, perspective]);
 
   useEffect(() => {
     if (!track) return;
@@ -110,7 +110,7 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
       raf = requestAnimationFrame(() => {
         const node = nodes[0];
         if (!node) return;
-        pinToRecord(node, w, h);
+        pinToRecord(node, w, h, perspective);
         simRef.current?.alpha(0.08).restart();
       });
     };
@@ -121,7 +121,7 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
       window.removeEventListener('resize', onResize);
       window.removeEventListener('orientationchange', onResize);
     };
-  }, [nodes, track]);
+  }, [nodes, track, perspective]);
 
   useEffect(() => {
     const node = nodes[0];
@@ -138,7 +138,7 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
     wasPlayingRef.current = false;
     setCenterStrength(simRef.current, 0.03);
     if (prefersReducedMotion()) {
-      pinToRecord(node, window.innerWidth, window.innerHeight);
+      pinToRecord(node, window.innerWidth, window.innerHeight, perspective);
       queueMicrotask(() => setAtRest(true));
       return;
     }
@@ -149,7 +149,7 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
     const returnHome = (now: number) => {
       const progress = Math.min(1, (now - start) / RETURN_DURATION_MS);
       const eased = easeInOutCubic(progress);
-      const center = recordCenter(window.innerWidth, window.innerHeight, node);
+      const center = recordCenter(window.innerWidth, window.innerHeight, node, perspective);
       placeOnReturnPath(node, fromX, fromY, center, eased);
       if (progress < 1) raf = requestAnimationFrame(returnHome);
       else {
@@ -159,7 +159,7 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
     };
     raf = requestAnimationFrame(returnHome);
     return () => cancelAnimationFrame(raf);
-  }, [nodes, playing]);
+  }, [nodes, playing, perspective]);
 
   useEffect(() => {
     const onWave = (event: Event) => {

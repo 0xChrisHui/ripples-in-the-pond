@@ -75,9 +75,9 @@ export default function ScorePondScene({ score, network }: Props) {
   const isPlaying = playback.state === 'playing';
   const visual = useScoreVisualTransition(isPlaying, capabilities.reduced);
   const visualTrack = useMemo(() => visualTrackOf(score), [score]);
-  const { glSim, visualActive, returning } = useScorePondSim(visualTrack, isPlaying);
-  const emptyVisitor = useRef<Track36VisitorState | null>(null);
   const interactive = capabilities.fine && !capabilities.reduced && !performanceReduced;
+  const { glSim, visualActive, returning } = useScorePondSim(visualTrack, isPlaying, interactive);
+  const emptyVisitor = useRef<Track36VisitorState | null>(null);
   const flags = useMemo(() => ({
     ...DEFAULT_GL_FLAGS,
     glSpheres: visualActive,
