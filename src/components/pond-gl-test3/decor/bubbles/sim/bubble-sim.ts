@@ -7,9 +7,10 @@
  * 控制台"立即"请求会打断当前这串、立即开新串；立即出手记时载体泡是第一个泡，不必等整串升完。
  */
 import type { Disc } from './bubble-env';
-import type { BubbleTuning } from './bubble-tuning';
-import { DEFAULT_BUBBLE_TUNING } from './bubble-tuning';
-import type { CarrierPort } from './bubble-bridge';
+import type { BubbleTuning } from '../bubble-tuning';
+import { DEFAULT_BUBBLE_TUNING } from '../bubble-tuning';
+import type { CarrierPort } from '../bubble-bridge';
+import { clamp01, discFade, pathClear, scaleAt } from './bubble-geometry';
 
 export interface BubbleView {
   x: number; y: number;  // 屏幕像素
@@ -45,11 +46,9 @@ export interface SimEnv {
 }
 
 const FADE_FIRST: [number, number] = [3, 8];
-const PATH_SAMPLES = 10;
 
 type Rng = () => number;
 const between = (r: Rng, lo: number, hi: number) => lo + (Math.max(hi, lo) - lo) * r();
-const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
 const noteEvery = (r: Rng, t: BubbleTuning) => Math.max(1, Math.round(between(r, t.noteEveryMin, t.noteEveryMax)));
 
 export function createBubbleSim(rng: Rng): BubbleSim {
@@ -58,25 +57,6 @@ export function createBubbleSim(rng: Rng): BubbleSim {
     time: 0, nextAt: between(rng, FADE_FIRST[0], FADE_FIRST[1]), chain: null,
     untilNote: noteEvery(rng, t), forced: null, result: null,
   };
-}
-
-function scaleAt(env: SimEnv, u: number): number {
-  const d0 = env.tuning.depthStart;
-  return 0.5 + d0 + (env.surfaceD - d0) * u;
-}
-
-function pathClear(env: SimEnv, ox: number, oy: number): boolean {
-  if (!env.tuning.avoidSpawn) return true;
-  const cx = env.w / 2, cy = env.h / 2;
-  for (let i = 0; i <= PATH_SAMPLES; i++) {
-    const s = scaleAt(env, i / PATH_SAMPLES);
-    const px = cx + (ox - cx) * s, py = cy + (oy - cy) * s;
-    for (let k = 0; k < env.discCount; k++) {
-      const d = env.discs[k];
-      if (Math.hypot(px - d.x, py - d.y) < d.r + env.tuning.swayMargin) return false;
-    }
-  }
-  return true;
 }
 
 /** carrierAt：载体泡的位置（'first' 立即出手记 / 'last' 自然出手记 / null 无手记）。 */
@@ -115,18 +95,6 @@ function trySpawn(rng: Rng, env: SimEnv, carrierAt: 'first' | 'last' | null, fro
     if (pathClear(env, ox, oy)) return buildChain(rng, env, ox, oy, carrierAt, fromBurst);
   }
   return null;
-}
-
-/** 到最近球边缘的距离 → 0..1 淡出系数（贴边 0，远离 1）。 */
-function discFade(env: SimEnv, x: number, y: number): number {
-  if (!env.tuning.avoidFade) return 1;
-  const band = env.tuning.edgeBand * Math.min(env.w, env.h);
-  let f = 1;
-  for (let k = 0; k < env.discCount; k++) {
-    const d = env.discs[k];
-    f = Math.min(f, clamp01((Math.hypot(x - d.x, y - d.y) - d.r) / band));
-  }
-  return f;
 }
 
 /** 推进 dt 秒，把当前可见的泡写进 out（复用数组），返回个数。 */

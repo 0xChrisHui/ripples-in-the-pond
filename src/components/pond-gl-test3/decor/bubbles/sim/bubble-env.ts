@@ -2,12 +2,12 @@
  * 气泡所在背景层永远画在球后面，所以生成与每帧都要知道"可见球"在哪。
  * 位置取与 SphereInstances.writeFrame 同一条投影链：applyFloat(project(...))，半径取保守值。
  */
-import type { GlSim } from '../../spheres/use-gl-sim';
-import { HALO_R } from '../../spheres/sphere-shader';
-import { project, applyFloat, type ProjCtx } from '../../sphere-projection';
-import { depthOf, getCameraFx, getPointerFx } from '../../pointer-fx';
-import { getEffectiveWaterLevel } from '../../water/water-level';
-import type { BubbleTuning } from './bubble-tuning';
+import type { GlSim } from '../../../spheres/use-gl-sim';
+import { HALO_R } from '../../../spheres/sphere-shader';
+import { project, applyFloat, type ProjCtx } from '../../../sphere-projection';
+import { depthOf, getCameraFx, getPointerFx } from '../../../pointer-fx';
+import { getEffectiveWaterLevel } from '../../../water/water-level';
+import type { BubbleTuning } from '../bubble-tuning';
 
 export interface Disc { x: number; y: number; r: number }
 

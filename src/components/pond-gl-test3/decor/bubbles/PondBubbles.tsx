@@ -6,8 +6,8 @@ import { AdditiveBlending, BufferAttribute, BufferGeometry, Color, Vector2, Vect
 import type { GlSim } from '../../spheres/use-gl-sim';
 import { getEffectiveWaterLevel } from '../../water/water-level';
 import { prefersReducedMotion } from '../../reduced-motion';
-import { collectDiscs, type Disc } from './bubble-env';
-import { chainFromBurst, createBubbleSim, stepBubbles, type BubbleSim, type BubbleView, type BurstKind } from './bubble-sim';
+import { collectDiscs, type Disc } from './sim/bubble-env';
+import { chainFromBurst, createBubbleSim, stepBubbles, type BubbleSim, type BubbleView, type BurstKind } from './sim/bubble-sim';
 import { getBubbleTuning, getUiState, setUiState, takeBurst } from './bubble-tuning';
 import { hasNoteHost, makeCarrierPort, setSuppressed } from './bubble-bridge';
 import { bubbleFragment, bubbleVertex } from './bubble-shaders';
