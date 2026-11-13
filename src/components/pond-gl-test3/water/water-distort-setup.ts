@@ -4,6 +4,7 @@ import {
 import { quadVert, simFrag } from './spike/ripple-spike-shaders';
 import type { RippleTuning } from './spike/ripple-tuning';
 import { compositeMaskFrag, MAX_SPHERES } from './water-distort-shaders';
+import { getLensRing } from '../focus/lens-calm';
 import { project, applyFloat, type ProjCtx } from '../sphere-projection';
 import { depthOf, displayDepthOf } from '../pointer-fx';
 import type { P9WaterUniform } from '../p9/consumers/p9-water';
@@ -99,6 +100,7 @@ export function makeCompositeScene(
     // K11 月光倒影：uMoonReflect<0.5 时 shader 跳过 → 现状；uMoonReflectStrength 克制（≤0.5、偏一侧不盖球）
     uMoonReflect: { value: 0 },
     uLensCalm: { value: 0 },
+    uLensRing: { value: new Vector4(0.5, 0.5, 1e-4, 1e-4) },
     uMoonReflectStrength: { value: 0.4 },
     // 严格分层：水上球不吃水光；这里只保留水下球增亮与波纹参数。
     uBallLightBelow: { value: 0.15 },
@@ -121,7 +123,7 @@ export function applyTuning(
   quiet: readonly { x: number; y: number; progress: number; energy: number }[],
   p9Water: P9WaterUniform,
   eclipseMix: number,
-  lensCalm: number, // /lens 光圈期间 0→1：月光静止（见 focus/lens-calm）
+  lensCalm: number, // /lens 光圈自带月光的开关 0→1（见 focus/lens-calm）
 ): void {
   sim.mat.uniforms.uDamping.value = Math.max(0.9, Math.min(0.995, t.damping + keyFx.water * 0.012));
   sim.mat.uniforms.uWaveSpeed.value = Math.max(0.05, t.waveProp * (1 + keyFx.water * 0.12));
@@ -154,6 +156,8 @@ export function applyTuning(
   // K11：moonReflect 开 → shader 叠大柔冷白月华倒影（被涟漪扭碎、随 K6 缩放）；关 → 0（跳过 = 现状）
   composite.mat.uniforms.uMoonReflect.value = moonReflect ? 1 : 0;
   composite.mat.uniforms.uLensCalm.value = lensCalm;
+  const lr = getLensRing(); // 屏幕像素 → uv（y 向上）；半径按宽高分别归一，shader 里得到正圆
+  (composite.mat.uniforms.uLensRing.value as Vector4).set(lr.x / lr.w, 1 - lr.y / lr.h, lr.r / lr.w, lr.r / lr.h);
   composite.mat.uniforms.uMoonReflectStrength.value = Math.max(0, Math.min(1, t.moonReflectStrength + keyFx.moon * 0.42));
   // 水下球环境光独立于全局强度；水上球在 shader 中固定为零。
   composite.mat.uniforms.uBallLightBelow.value = Math.min(1, t.ballLightBelow + keyFx.moon * 0.16);
