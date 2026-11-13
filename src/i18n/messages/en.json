@@ -860,5 +860,8 @@
     "explorer": "Explorer",
     "play": "Play",
     "pause": "Pause"
+    ,"expand": "Expand onchain details",
+    "collapse": "Collapse onchain details",
+    "collect": "Collect"
   }
 }

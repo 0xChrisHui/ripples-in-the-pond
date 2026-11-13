@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, type MutableRefObject, type RefObject } from 'react';
-import { easeToward, placePanel, ringAim, type Circle, type Side } from './lens-geometry';
+import { easeToward, placePanel, placeDrawer, ringAim, type Circle, type Side } from './lens-geometry';
 import { HOVER_IDLE, stepHover, type HoverState } from './hover/lens-hover';
 import type { LensPointer } from './use-lens-pointer';
 import { mintPinnedTrackId } from '@/src/components/music-catalog/claim/mint-status-cache';
@@ -111,12 +111,14 @@ export function useLensFrame(args: Args) {
         s.onPanel(reported);
       }
       if (panel && open && anchor) {
-        const placed = placePanel(anchor, { w: panel.offsetWidth, h: panel.scrollHeight + 2 },
-          { w: innerWidth, h: playerTop(), topInset: innerWidth < 768 ? 64 : 76 }, side);
-        side = placed.side; // 左右方向沿用：换球不翻面
+        const mobile = innerWidth < 768;
+        const placed = mobile ? placeDrawer(anchor, panel.scrollHeight + 2, { w: innerWidth, h: playerTop(), topInset: 64 })
+          : placePanel(anchor, { w: panel.offsetWidth, h: panel.scrollHeight + 2 }, { w: innerWidth, h: playerTop(), topInset: 76 }, side);
+        if (!mobile) side = placed.side as Side;
+        panel.dataset.dock = placed.side;
         // 订单内容会动态增长；保留同一收藏实例，用内部滚动提供完整入口。
         panel.style.maxHeight = `${placed.maxH ?? Math.max(160, playerTop() - 100)}px`;
-        if (!panelPos.seeded || s.reduced) {
+        if (!panelPos.seeded || s.reduced || mobile) {
           panelPos.x = placed.left; panelPos.y = placed.top; panelPos.seeded = true;
         } else {
           panelPos.x = easeToward(panelPos.x, placed.left, dt, PANEL_TAU_MS);

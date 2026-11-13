@@ -85,3 +85,12 @@ export function ringAim(pointer: { x: number; y: number; has: boolean } | null, 
   if (!pointer?.has) return { x: w / 2, y: h / 2 };
   return { x: Math.min(Math.max(pointer.x, 0), w), y: Math.min(Math.max(pointer.y, 0), h) };
 }
+
+/** 手机抽屉优先停底部；只有顶部能避开球时换边，两边都遮挡仍允许展开。 */
+export function placeDrawer(anchor: Circle, contentHeight: number, v: Viewport) {
+  const maxH = Math.max(1, Math.min(contentHeight, v.h * .55, v.h - v.topInset - EDGE));
+  const bottom = Math.max(v.topInset, v.h - maxH - EDGE), top = v.topInset;
+  const overlaps = (y: number) => anchor.y + anchor.r + GAP > y && anchor.y - anchor.r - GAP < y + maxH;
+  const side = overlaps(bottom) && !overlaps(top) ? 'top' as const : 'bottom' as const;
+  return { side, left: EDGE, top: side === 'top' ? top : bottom, maxH };
+}

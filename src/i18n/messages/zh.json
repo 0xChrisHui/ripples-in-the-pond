@@ -860,5 +860,8 @@
     "explorer": "区块浏览器",
     "play": "播放",
     "pause": "暂停"
+    ,"expand": "展开链上信息",
+    "collapse": "收起链上信息",
+    "collect": "收藏"
   }
 }

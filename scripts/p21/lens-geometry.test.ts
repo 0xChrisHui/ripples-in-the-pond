@@ -1,5 +1,12 @@
 import assert from 'node:assert/strict';
-import { easeToward, pickCircle, placePanel, ringAim, type Circle } from '../../src/features/lens/lens-geometry';
+import { easeToward, pickCircle, placePanel, placeDrawer, ringAim, type Circle } from '../../src/features/lens/lens-geometry';
+
+const drawerView = { w: 390, h: 844, topInset: 64 };
+assert.equal(placeDrawer({ id: 'x', x: 195, y: 780, r: 30, echo: false }, 64, drawerView).side, 'top');
+assert.equal(placeDrawer({ id: 'x', x: 195, y: 95, r: 20, echo: false }, 64, drawerView).side, 'bottom');
+assert.equal(placeDrawer({ id: 'x', x: 195, y: 700, r: 30, echo: false }, 400, drawerView).side, 'top');
+assert.equal(placeDrawer({ id: 'x', x: 195, y: 410, r: 300, echo: false }, 400, drawerView).side, 'bottom');
+assert.ok(placeDrawer({ id: 'x', x: 195, y: 410, r: 300, echo: false }, 1000, drawerView).maxH <= 844 * .55);
 
 const circles: Circle[] = [
   { id: 'a', x: 100, y: 100, r: 40, echo: false },
