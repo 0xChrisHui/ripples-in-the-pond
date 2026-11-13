@@ -5,9 +5,9 @@
  */
 export const DEFAULT_BUBBLE_TUNING = {
   // ── 生成节奏 ──
-  continuous: 0, gapMin: 10, gapMax: 30, intervalMult: 1, playingMult: 2,
+  meanGroups: 1.5, maxGroups: 4, spread: 0.85, playingGroupsMult: 0.5, keepFull: 0,
   countMin: 3, countMax: 6, popGapMin: 0.4, popGapMax: 1.5,
-  retryMin: 4, retryMax: 8, maxTries: 5, areaMin: 0.15, areaMax: 0.85,
+  candidates: 8, areaMin: 0.15, areaMax: 0.85,
   // ── 运动 ──
   riseMin: 5, riseMax: 8, speed: 1, riseEase: 0.85, driftFrac: 0.17,
   dwellMin: 0.3, dwellMax: 1.2, swayMin: 2, swayMax: 7, swayFreqMin: 0.8, swayFreqMax: 1.6,

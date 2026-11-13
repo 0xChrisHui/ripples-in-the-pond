@@ -17,7 +17,7 @@ import { bubbleFragment, bubbleVertex } from './bubble-shaders';
  * flag 关时父组件不挂载本组件（零分配、零监听）。全部数值来自调参表（bubble-tuning）。
  * 默认峰值亮度 0.4：低于微光 0.6，也低于球高光（红线：装饰不抢球）。
  */
-const MAX_BUBBLES = 8;
+const MAX_BUBBLES = 32; // 最多 4 组 × 每组最多 8 个
 // 破水：只要极小水纹，不推球——size/duration 为 0 时 use-gl-sim 的推球波下一帧就被过滤掉，不会产生 NaN。
 function popRipple(x: number, y: number): void {
   const t = getBubbleTuning();
@@ -38,8 +38,8 @@ function syncBurstUi(sim: BubbleSim, burst: BurstKind | null, reduced: boolean):
     failTimer = window.setTimeout(() => setUiState({ burst: 'idle', kind: null }), 2000);
     return;
   }
-  if (sim.chain && chainFromBurst(sim)) { if (ui.burst !== 'running') setUiState({ burst: 'running' }); return; }
-  if (!sim.chain && ui.burst === 'running') setUiState({ burst: 'idle', kind: null });
+  if (chainFromBurst(sim)) { if (ui.burst !== 'running') setUiState({ burst: 'running' }); return; }
+  if (ui.burst === 'running') setUiState({ burst: 'idle', kind: null });
 }
 
 export default function PondBubbles({ glSim }: { glSim?: GlSim }) {
@@ -80,7 +80,8 @@ export default function PondBubbles({ glSim }: { glSim?: GlSim }) {
       w, h, discs, discCount, surfaceD: getEffectiveWaterLevel(), playing, reduced, tuning,
       carrier: hasNoteHost() && tuning.notesEnabled ? port : undefined, burst, onPop: popRipple,
     }, Math.random, views));
-    syncBurstUi(sim, burst, reduced);    const pos = geometry.getAttribute('position') as BufferAttribute;
+    syncBurstUi(sim, burst, reduced);
+    const pos = geometry.getAttribute('position') as BufferAttribute;
     const size = geometry.getAttribute('aSize') as BufferAttribute;
     const alpha = geometry.getAttribute('aAlpha') as BufferAttribute;
     const depth = geometry.getAttribute('aDepth') as BufferAttribute;

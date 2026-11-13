@@ -6,20 +6,18 @@ export interface Group { title: string; open?: boolean; rows: Row[] }
 
 export const GROUPS: Group[] = [
   { title: '生成节奏', open: true, rows: [
-    { key: 'continuous', label: '持续冒泡（调试用，忽略间隔）', kind: 'bool' },
-    { key: 'gapMin', label: '串间隔·最短(秒)', min: 1, max: 60, step: 1 },
-    { key: 'gapMax', label: '串间隔·最长(秒)', min: 1, max: 90, step: 1 },
-    { key: 'intervalMult', label: '串间隔总倍率', min: 0.05, max: 3, step: 0.05 },
-    { key: 'playingMult', label: '播放时间隔倍率', min: 1, max: 6, step: 0.5 },
+    { key: 'keepFull', label: '保持满组数(调试用)', kind: 'bool' },
+    { key: 'meanGroups', label: '同时组数·均值', min: 0.2, max: 4, step: 0.1 },
+    { key: 'maxGroups', label: '同时组数·上限', min: 1, max: 4, step: 1 },
+    { key: 'spread', label: '组数离散度(越大越不均匀)', min: 0.3, max: 1.6, step: 0.05 },
+    { key: 'playingGroupsMult', label: '播放时组数倍率', min: 0, max: 1, step: 0.05 },
+    { key: 'candidates', label: '落点候选数(越多越稳)', min: 1, max: 20, step: 1 },
     { key: 'countMin', label: '每串最少个数', min: 1, max: 8, step: 1 },
     { key: 'countMax', label: '每串最多个数', min: 1, max: 8, step: 1 },
     { key: 'popGapMin', label: '泡间隔·最短(秒)', min: 0.05, max: 3, step: 0.05 },
     { key: 'popGapMax', label: '泡间隔·最长(秒)', min: 0.05, max: 4, step: 0.05 },
     { key: 'areaMin', label: '水面落点·起(占屏)', min: 0, max: 0.5, step: 0.01 },
     { key: 'areaMax', label: '水面落点·止(占屏)', min: 0.5, max: 1, step: 0.01 },
-    { key: 'retryMin', label: '避让失败重试·最短(秒)', min: 1, max: 30, step: 1 },
-    { key: 'retryMax', label: '避让失败重试·最长(秒)', min: 1, max: 40, step: 1 },
-    { key: 'maxTries', label: '避让最多尝试次数', min: 1, max: 20, step: 1 },
   ] },
   { title: '运动', rows: [
     { key: 'speed', label: '上升速度倍率', min: 0.2, max: 3, step: 0.05 },
