@@ -10,7 +10,7 @@ export async function sendAlert({ subject, body }: AlertPayload) {
 
   if (!apiKey || !to || !from) {
     console.warn('[alert] Resend env not configured, skip alert');
-    return;
+    return false;
   }
 
   try {
@@ -21,6 +21,7 @@ export async function sendAlert({ subject, body }: AlertPayload) {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
+      signal: AbortSignal.timeout(8000),
       body: JSON.stringify({
         from,
         to,
@@ -32,7 +33,9 @@ export async function sendAlert({ subject, body }: AlertPayload) {
     if (!res.ok) {
       console.error(`[alert] Resend failed: ${res.status} ${await res.text()}`);
     }
+    return res.ok;
   } catch (err) {
     console.error('[alert] Resend error:', err);
+    return false;
   }
 }
