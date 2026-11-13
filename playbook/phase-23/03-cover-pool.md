@@ -2,6 +2,8 @@
 
 > 2026-11-13～14 的工作记录 + 执行计划。状态：**图已生成并校验；Turbo 已充值（§8）；用户 2026-11-14 授权夜间任务做完 AI 目验 → 上传 → 读回 → 写生产库（§7）**。总览与夜间规则见 `00-overview.md` §3。
 
+> **最新授权覆盖旧条款：B生产替换采用明确生产ref的单事务EXCLUSIVE锁＋静态快照断言→ROLLBACK演练→COMMIT；不再采用旧B5的多次PostgREST请求。C已获准只读取证，实际调查见§6与05-night-report.md，显示仍未恢复。**
+
 ## 1. 需求
 
 - 日食版音乐圆圈（黑盘 + 白环 + 日冕光晕，与应用内播放日食同一套视觉），每张封面的差异在圆圈周边的白色波浪（线条 + 色块，比旧版更丰富）。
@@ -50,7 +52,9 @@
 - `scripts/p23` 通过全项目 `tsc --noEmit`（0 错误）。
 - **只做了数据层校验，没有逐张目验**，也没有在 Semi 或任何钱包里看过。
 
-## 6. Semi 显示（只读调查，未排查具体原因）
+## 6. Semi 显示（最新授权已允许调查，仍未恢复）
+
+2026-11-14夜间由主代理完成只读取证：Alchemy对已铸Score返回空metadata/图片字段，Semi的补全/重定向链路未恢复；永久metadata与封面可读，未发现本站可修缺陷。详见`reviews/2026-11-14-p23-semi-cover-investigation.md`与`05-night-report.md`。下述为开工前的历史调查存档。
 
 读了 Semi 公开仓库 `nantang-dao/semi-app`，事实如下，**原因仍未确认**：
 
@@ -99,32 +103,34 @@
 - 没通过的按 1、2、4、8…分钟退避重查，最长 2 小时；**超时仍有未通过的 → 不写库，停 B 线**。等待期间可以放后台，先去做 A 线，通过后再回来做 B4–B6。
 - 全部通过后写 `data/p23/cover-uris.json`：按 `order` 排序的数组，每项 `{order, file, style, n, seed, sha256, bytes, txId}`。
 
-### B4 写库前快照与演练（只读）
+### B4 写库前快照与事务演练（不提交）
 
-新脚本 `write-covers.ts`（参照 `scripts/p14-j/requeue-failed-scores.ts`：默认只演练，加 `--execute` 才写；运行方式 `npx tsx --conditions=react-server scripts/p23/cover-gen/write-covers.ts`；用 `supabaseAdmin`，来自 `src/lib/supabase.ts`）：
+脚本`write-covers.ts`默认完整演练后ROLLBACK，加`--execute`才COMMIT。运行方式`npx tsx --conditions=react-server scripts/p23/cover-gen/write-covers.ts`；使用已认证Supabase CLI Management API，并显式指定生产ref `uupobbgnhpattyxhxvmc`（CLI要求`--linked --project-ref`组合，明确ref覆盖本地linked测试项目，不修改link）。
 
 1. 导出 `score_covers` 全表到 `data/p23/score-covers-before.json`（id、ar_tx_id、usage_count、created_at）。**该文件已存在则拒绝覆盖并停下**：它是回滚的唯一依据，不能被后来的状态冲掉。
 2. 断言：正好 100 行，且全部属于 `data/cover-arweave-map.json` 的旧 txId；**不符就停**（说明表被别人动过，需要人看）。
 3. 断言 `cover-uris.json` 正好 600 项、txId 互不相同、都不在现表里。
 4. 打印演练：将插入的前 3 行与最后 1 行（txId、created_at），将删除的 100 个 id。
 
-### B5 写生产库（`--execute`）
+### B5 写生产库（最新授权：单事务）
 
-**先插后删。不用事务，所以“安全”靠的是：每一步先读回再决定下一步；进度写进 `data/p23/score-covers-after.json` 的 `phase` 字段（`inserted` → `deleted` → `verified`），脚本可重跑、不重复插入；任何请求结果未知（超时、断连）时，先读回表状态，不直接重发：**
+**本节为实际执行流程，覆盖旧版“分多次PostgREST请求、不用事务”的历史方案。不得再按旧的先插请求/再删请求操作。**
 
-1. **一次请求插入 600 行**（PostgREST 一次 insert = 一条 SQL，全成或全不成）：`ar_tx_id`、`usage_count = 0`、`created_at = T0 + order 秒`（T0 = 执行时刻取整到秒）。**必须显式写 `created_at`**：同一条 insert 里默认的 `now()` 全部相同，取图顺序会乱。
-2. 读回：600 个 txId 都在表里，且 `created_at` 与 `cover-uris.json` 的 order 一一对应（静态字段）。**`usage_count` 不要求全为 0**：从插入那一刻起任何正常铸造都会让它增长（取图函数 `058_score_token_counters.sql:111` 起就是 `usage_count + 1`），只记录、不作失败条件。
-3. 删除前先确认：快照里的 100 个 id 仍在表里，且 `ar_tx_id` 仍属旧清单。**一次请求按这 100 个 id 删除**，断言删除数 = 100。
-4. 读回全表：正好 600 行；txId 集合与 `cover-uris.json` 完全相等；按 `created_at` 升序的 txId 序列与 order 1…600 **逐项一致**（静态字段，不受铸造影响）；`usage_count` 分布（含大于 0 的新行数量）只记录进 `score-covers-after.json`，不作失败条件。把 `phase` 置为 `verified`。
+前置条件：600 JPG全部完成双网关MIME/哈希核验；账本、600唯一txId、旧100行及旧txId集合均通过。第一次运行生成不可覆盖的`score-covers-before.json`；正式执行必须已有成功演练记录。
 
-- 为什么先插后删：先删的话中间池子为空，铸造会报 `COVER_POOL_EMPTY`。先插的话，插入和删除之间的几秒里若恰好有人铸造，可能拿到一张旧封面（90 张旧封面的 usage 也是 0、且更早创建），无害。
-- **回滚**：`write-covers.ts --rollback --execute`，按 `phase` 分情形，**先读回当前表再动手**，脚本幂等、可重跑：
-  - **旧行还没删（步骤 1–2 失败，`phase` 为 `inserted`）**：旧 100 行本来都在，**不插回**（插回会撞主键和 `ar_tx_id` 唯一约束）；只删本批新行。
-  - **旧行已全部或部分删除（步骤 3 起失败）**：按快照只补回**表里缺失**的旧行（保留原 id、usage_count、created_at）；仍存在的旧行不动，保留它们最新的 `usage_count`。**确认旧 100 行全部在表里之后**，才删本批新行。
-  - **删本批新行时只删 `usage_count = 0` 的**；已经被铸造取用的新行（`usage_count > 0`）保留并在报告里列出，它们的封面已进入已铸 Score 的 metadata，不会也不该消失。
-  - 最后读回：旧 100 行全部在、没有 `usage_count = 0` 的残留新行，写入 `after.json`。
-  - **步骤 2–4 任一断言失败 → 自动回滚并停 B 线**，报告里写明失败的断言和当时的 `phase`。
-- 不改 RPC、不加 migration、不动队列表和已铸 Score。
+1. 默认命令执行完整事务演练：`BEGIN`，设置`lock_timeout='10s'`，对`public.score_covers`取`EXCLUSIVE`锁。它仍允许普通SELECT，阻止与取封面RPC的`SELECT FOR UPDATE`竞争，避免锁顺序冲突。
+2. 锁后再次断言正好100行，并逐项对比演练快照的`id/ar_tx_id/created_at`；只允许`usage_count`自然变化。任一静态差异立即抛错回滚。
+3. 在同一事务中插入600行：`usage_count=0`、`created_at=T0+order秒`，然后只按快照100个id删除旧行。不存在空池对外可见的窗口。
+4. 仍在事务内断言：正好600行，txId集合与按created_at排序的完整序列严格等于`cover-uris.json`的1–600轮转序。任何断言失败都会中止整笔事务，不留下部分替换。
+5. 演练以`ROLLBACK`结束，再读全表与演练前完全一致，保存`data/p23/review/write-dry-run.json`。默认演练拒绝覆盖已有before快照。
+6. 前置条件仍满足时，运行同一脚本加`--execute`，使用相同锁与断言，最后`COMMIT`。随后独立读回600集合、顺序与使用量，写`score-covers-after.json`的`phase=verified`。
+7. 任何响应结果未知时先读回，不能猜测事务未提交后直接重发。正式执行发现当前已600行时会拒绝按旧100方案再次替换。
+
+本夜实际结果：演练ROLLBACK后旧100完全不变；正式COMMIT后读回600、顺序完全一致、usage当时全0；无回滚。已铸Score metadata与永久资源不动。
+
+**显式恢复工具**：`write-covers.ts --rollback`先演练，加`--execute`才提交。恢复也取EXCLUSIVE锁、在一笔事务内按快照补回缺失旧行（已存在旧行保留最新usage），确认旧100都在后，只删除本批`usage_count=0`的新行；已被自然铸造取用的新行保留。恢复不是日常重跑命令，应在明确决定恢复时使用。
+
+历史说明：旧计划的两次PostgREST插入/删除是为避免空池而设计；本夜按最新授权改用整笔事务，已经不再采用。
 
 ### B6 线上只读验证
 
