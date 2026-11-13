@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { localReviewBlocks } from '@/src/lib/runtime/local-review';
 import { Redis } from "@upstash/redis";
+import { resolveClientIp } from '@/src/lib/rate-limit/client-ip';
 
 /**
  * 全局中间件 — 对成本敏感的 API 端点做 IP 限流
@@ -62,30 +63,36 @@ try {
 }
 
 export async function middleware(req: NextRequest) {
+  const client = resolveClientIp(req.headers, {
+    EDGE_PROXY_SECRET: process.env.EDGE_PROXY_SECRET,
+    EDGE_PROXY_SECRET_PREVIOUS: process.env.EDGE_PROXY_SECRET_PREVIOUS,
+  });
+  const marked = (response: NextResponse) => {
+    response.headers.set('x-pond-ip-source', client.source);
+    return response;
+  };
   const { pathname } = req.nextUrl;
   if (localReviewBlocks(pathname, req.method, process.env.LOCAL_REVIEW_ONLY === '1')) {
-    return NextResponse.json({ error: '本地只读验收：此操作需要另行授权并配置真实环境' }, { status: 503 });
+    return marked(NextResponse.json({ error: '本地只读验收：此操作需要另行授权并配置真实环境' }, { status: 503 }));
   }
 
   if (!shouldRateLimit(pathname)) {
-    return NextResponse.next();
+    return marked(NextResponse.next());
   }
 
   if (!ratelimit) {
     // Upstash 未配置 → fail open，不阻塞
-    return NextResponse.next();
+    return marked(NextResponse.next());
   }
 
   // 用 IP 作为限流 key
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-    ?? req.headers.get("x-real-ip")
-    ?? "unknown";
+  const ip = client.ip;
 
   try {
     const { success, limit, remaining, reset } = await ratelimit.limit(ip);
 
     if (!success) {
-      return NextResponse.json(
+      return marked(NextResponse.json(
         { error: "请求过于频繁，请稍后再试" },
         {
           status: 429,
@@ -96,20 +103,20 @@ export async function middleware(req: NextRequest) {
             "X-RateLimit-Reset": reset.toString(),
           },
         },
-      );
+      ));
     }
 
     const res = NextResponse.next();
     res.headers.set("X-RateLimit-Limit", limit.toString());
     res.headers.set("X-RateLimit-Remaining", remaining.toString());
-    return res;
+    return marked(res);
   } catch (err) {
     // Upstash 调用失败 → fail open，但留日志供诊断
     console.error(
       "[middleware] 限流调用失败:",
       err instanceof Error ? err.message : err,
     );
-    return NextResponse.next();
+    return marked(NextResponse.next());
   }
 }
 
