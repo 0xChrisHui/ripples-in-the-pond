@@ -1,0 +1,203 @@
+{
+  "checkedAt": "2026-11-13T19:03:57.476Z",
+  "records": [
+    {
+      "token": 1,
+      "metadataUrl": "https://arweave.net/YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo",
+      "metadataRedirect": {
+        "status": 302,
+        "location": "https://mkcgyyqctpmwoxh5vwmulfk26sct4torllz6hfilffkwzjzteffa.arweave.net/YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo"
+      },
+      "semiFetchSucceeded": false,
+      "semiFetchError": "unexpected redirect",
+      "alchemy": [
+        {
+          "refreshCache": false,
+          "status": 200,
+          "name": null,
+          "tokenUri": "",
+          "rawTokenUri": "",
+          "rawMetadata": {},
+          "image": {
+            "cachedUrl": null,
+            "thumbnailUrl": null,
+            "pngUrl": null,
+            "contentType": null,
+            "size": null,
+            "originalUrl": null
+          },
+          "updatedAt": "2026-08-23T08:14:23.006848890Z",
+          "error": null
+        },
+        {
+          "refreshCache": true,
+          "status": 200,
+          "name": null,
+          "tokenUri": "",
+          "rawTokenUri": "",
+          "rawMetadata": {},
+          "image": {
+            "cachedUrl": null,
+            "thumbnailUrl": null,
+            "pngUrl": null,
+            "contentType": null,
+            "size": null,
+            "originalUrl": null
+          },
+          "updatedAt": "2026-08-23T08:14:23.006848890Z",
+          "error": null
+        },
+        {
+          "refreshCache": false,
+          "status": 200,
+          "name": null,
+          "tokenUri": "",
+          "rawTokenUri": "",
+          "rawMetadata": {},
+          "image": {
+            "cachedUrl": null,
+            "thumbnailUrl": null,
+            "pngUrl": null,
+            "contentType": null,
+            "size": null,
+            "originalUrl": null
+          },
+          "updatedAt": "2026-08-23T08:14:23.006848890Z",
+          "error": null
+        }
+      ]
+    },
+    {
+      "token": 5,
+      "metadataUrl": "https://arweave.net/2dVQp4wvq0KCGGYF1lN6BMyxdYx0tVB5EU2_mobtMIE",
+      "metadataRedirect": {
+        "status": 302,
+        "location": "https://3hkvbj4mf6vufaqymyc5mu32atglc5mmos2va6irjw7zvbxngcaq.arweave.net/2dVQp4wvq0KCGGYF1lN6BMyxdYx0tVB5EU2_mobtMIE"
+      },
+      "semiFetchSucceeded": false,
+      "semiFetchError": "unexpected redirect",
+      "alchemy": [
+        {
+          "refreshCache": false,
+          "status": 200,
+          "name": null,
+          "tokenUri": "",
+          "rawTokenUri": "",
+          "rawMetadata": {},
+          "image": {
+            "cachedUrl": null,
+            "thumbnailUrl": null,
+            "pngUrl": null,
+            "contentType": null,
+            "size": null,
+            "originalUrl": null
+          },
+          "updatedAt": "2026-10-28T07:43:05.612422266Z",
+          "error": null
+        },
+        {
+          "refreshCache": true,
+          "status": 200,
+          "name": null,
+          "tokenUri": "",
+          "rawTokenUri": "",
+          "rawMetadata": {},
+          "image": {
+            "cachedUrl": null,
+            "thumbnailUrl": null,
+            "pngUrl": null,
+            "contentType": null,
+            "size": null,
+            "originalUrl": null
+          },
+          "updatedAt": "2026-10-28T07:43:05.612422266Z",
+          "error": null
+        },
+        {
+          "refreshCache": false,
+          "status": 200,
+          "name": null,
+          "tokenUri": "",
+          "rawTokenUri": "",
+          "rawMetadata": {},
+          "image": {
+            "cachedUrl": null,
+            "thumbnailUrl": null,
+            "pngUrl": null,
+            "contentType": null,
+            "size": null,
+            "originalUrl": null
+          },
+          "updatedAt": "2026-10-28T07:43:05.612422266Z",
+          "error": null
+        }
+      ]
+    },
+    {
+      "token": 8,
+      "metadataUrl": "https://arweave.net/iD322k9M46EaQt2AGCzGOald881xqu8n3B62mOwwL94",
+      "metadataRedirect": {
+        "status": 302,
+        "location": "https://ra67nwspjtr2cgsc3wabqlgghguv346nogvo6j64d23jr3bqf7pa.arweave.net/iD322k9M46EaQt2AGCzGOald881xqu8n3B62mOwwL94"
+      },
+      "semiFetchSucceeded": false,
+      "semiFetchError": "unexpected redirect",
+      "alchemy": [
+        {
+          "refreshCache": false,
+          "status": 200,
+          "name": null,
+          "tokenUri": "",
+          "rawTokenUri": "",
+          "rawMetadata": {},
+          "image": {
+            "cachedUrl": null,
+            "thumbnailUrl": null,
+            "pngUrl": null,
+            "contentType": null,
+            "size": null,
+            "originalUrl": null
+          },
+          "updatedAt": "2026-10-28T08:46:05.904414795Z",
+          "error": null
+        },
+        {
+          "refreshCache": true,
+          "status": 200,
+          "name": null,
+          "tokenUri": "",
+          "rawTokenUri": "",
+          "rawMetadata": {},
+          "image": {
+            "cachedUrl": null,
+            "thumbnailUrl": null,
+            "pngUrl": null,
+            "contentType": null,
+            "size": null,
+            "originalUrl": null
+          },
+          "updatedAt": "2026-10-28T08:46:05.904414795Z",
+          "error": null
+        },
+        {
+          "refreshCache": false,
+          "status": 200,
+          "name": null,
+          "tokenUri": "",
+          "rawTokenUri": "",
+          "rawMetadata": {},
+          "image": {
+            "cachedUrl": null,
+            "thumbnailUrl": null,
+            "pngUrl": null,
+            "contentType": null,
+            "size": null,
+            "originalUrl": null
+          },
+          "updatedAt": "2026-10-28T08:46:05.904414795Z",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

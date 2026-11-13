@@ -1,0 +1,71 @@
+{
+  "checkedAt": "2026-11-13T19:00:24.009Z",
+  "results": [
+    {
+      "token": 1,
+      "contract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+      "chain": 10,
+      "tokenURI": "ar://YoRsYgKb2Wdc_a2ZRZVa9IU-TdFa8-OVCylVbKczIUo",
+      "matchesSnapshot": true,
+      "error": "fetch failed"
+    },
+    {
+      "token": 5,
+      "contract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+      "chain": 10,
+      "tokenURI": "ar://2dVQp4wvq0KCGGYF1lN6BMyxdYx0tVB5EU2_mobtMIE",
+      "matchesSnapshot": true,
+      "metadataStatus": 200,
+      "metadataImage": "https://arweave.net/YrXemxbDu6KCO_Oqm3YL6asavciY-_OSgTyMyGD7n9k",
+      "image": {
+        "url": "https://arweave.net/YrXemxbDu6KCO_Oqm3YL6asavciY-_OSgTyMyGD7n9k",
+        "finalUrl": "https://mk255gywyo52far36ovjw5ql5gvrvpoitd57heubhsgmqyh3t7mq.arweave.net/YrXemxbDu6KCO_Oqm3YL6asavciY-_OSgTyMyGD7n9k",
+        "status": 200,
+        "type": "image/svg+xml",
+        "bytes": 8315,
+        "sha256": "2af8404b23654659ff55c9e2414926ab56077a2857255fd09e9c21f9327be7c7"
+      },
+      "alchemyStatus": 200,
+      "alchemyImage": {
+        "cachedUrl": null,
+        "thumbnailUrl": null,
+        "pngUrl": null,
+        "contentType": null,
+        "size": null,
+        "originalUrl": null
+      },
+      "alchemyRawError": null,
+      "selectedImage": null,
+      "alchemyImages": []
+    },
+    {
+      "token": 8,
+      "contract": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
+      "chain": 10,
+      "tokenURI": "ar://iD322k9M46EaQt2AGCzGOald881xqu8n3B62mOwwL94",
+      "matchesSnapshot": true,
+      "metadataStatus": 200,
+      "metadataImage": "https://arweave.net/5fE4_VEwQWk9YyAXRvuxsQZEAUt0GWngWEBtkCl24Gk",
+      "image": {
+        "url": "https://arweave.net/5fE4_VEwQWk9YyAXRvuxsQZEAUt0GWngWEBtkCl24Gk",
+        "finalUrl": "https://4xytr7krgbawspldealun65rwedeiakloqmwtycyibwzaklw4buq.arweave.net/5fE4_VEwQWk9YyAXRvuxsQZEAUt0GWngWEBtkCl24Gk",
+        "status": 200,
+        "type": "image/svg+xml",
+        "bytes": 8322,
+        "sha256": "1ef85baf8e00ac207a0645de746de624ba31049f03c994bbfc006845c1681d48"
+      },
+      "alchemyStatus": 200,
+      "alchemyImage": {
+        "cachedUrl": null,
+        "thumbnailUrl": null,
+        "pngUrl": null,
+        "contentType": null,
+        "size": null,
+        "originalUrl": null
+      },
+      "alchemyRawError": null,
+      "selectedImage": null,
+      "alchemyImages": []
+    }
+  ]
+}
