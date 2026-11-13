@@ -108,6 +108,19 @@ export function stepBubbles(sim: BubbleSim, dt: number, env: SimEnv, rng: Rng, o
   return count;
 }
 
+/**
+ * 空闲帧快路径：没有任何泡、没有立即请求、没到换目标 / 补组时刻 → 本帧只推进时间并返回 true，
+ * 调用方可跳过收集球、上传缓冲、解析颜色。结果与完整 stepBubbles 逐帧一致（这些帧里本来就不取随机数、不产生泡）。
+ */
+export function advanceIfIdle(sim: BubbleSim, dt: number, keepFull: boolean, burst: BurstKind | null): boolean {
+  if (burst || sim.forced || sim.chains.length > 0 || keepFull !== sim.keepFull) return false;
+  const due = sim.target > 0 ? Math.min(sim.retargetAt, sim.spawnAt) : sim.retargetAt;
+  if (sim.time + dt >= due) return false;
+  sim.time += dt;
+  sim.result = null;
+  return true;
+}
+
 /** 当前是否有由控制台"立即"触发的组在升（按钮状态用）。 */
 export function chainFromBurst(sim: BubbleSim): boolean {
   return sim.chains.some((c) => c.fromBurst);

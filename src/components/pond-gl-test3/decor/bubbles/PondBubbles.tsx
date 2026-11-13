@@ -7,7 +7,7 @@ import type { GlSim } from '../../spheres/use-gl-sim';
 import { getEffectiveWaterLevel } from '../../water/water-level';
 import { prefersReducedMotion } from '../../reduced-motion';
 import { collectDiscs, type Disc } from './sim/bubble-env';
-import { chainFromBurst, createBubbleSim, stepBubbles, type BubbleSim, type BubbleView, type BurstKind } from './sim/bubble-sim';
+import { advanceIfIdle, chainFromBurst, createBubbleSim, stepBubbles, type BubbleSim, type BubbleView, type BurstKind } from './sim/bubble-sim';
 import { getBubbleTuning, getUiState, setUiState, takeBurst } from './bubble-tuning';
 import { hasNoteHost, makeCarrierPort, setSuppressed } from './bubble-bridge';
 import { bubbleFragment, bubbleVertex } from './bubble-shaders';
@@ -71,12 +71,14 @@ export default function PondBubbles({ glSim }: { glSim?: GlSim }) {
     const w = Math.max(1, glSim?.sizeRef.current.w || window.innerWidth);
     const h = Math.max(1, glSim?.sizeRef.current.h || window.innerHeight);
     const tuning = getBubbleTuning();
-    const discCount = collectDiscs(glSim, w, h, discs, tuning);
     const playing = glSim?.playingIdRef.current != null;
     const reduced = prefersReducedMotion();
     setSuppressed((playing && tuning.suppressPlaying === 1) || reduced || tuning.notesEnabled === 0); // 日蚀 / 减弱动效期间撤下手记（D4）
     const burst = takeBurst();
-    const n = Math.min(MAX_BUBBLES, stepBubbles(sim, Math.min(delta, 0.1), {
+    const dt = Math.min(delta, 0.1);
+    if (advanceIfIdle(sim, dt, tuning.keepFull === 1, burst)) return; // K：空闲帧不收集球、不传缓冲、不解析颜色
+    const discCount = collectDiscs(glSim, w, h, discs, tuning);
+    const n = Math.min(MAX_BUBBLES, stepBubbles(sim, dt, {
       w, h, discs, discCount, surfaceD: getEffectiveWaterLevel(), playing, reduced, tuning,
       carrier: hasNoteHost() && tuning.notesEnabled ? port : undefined, burst, onPop: popRipple,
     }, Math.random, views));

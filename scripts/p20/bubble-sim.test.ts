@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createBubbleSim, stepBubbles, type BubbleView } from '../../src/components/pond-gl-test3/decor/bubbles/sim/bubble-sim';
+import { advanceIfIdle, createBubbleSim, stepBubbles, type BubbleView } from '../../src/components/pond-gl-test3/decor/bubbles/sim/bubble-sim';
 import { stayDuration, toDisplayLines } from '../../src/components/pond-gl-test3/decor/bubbles/notes/note-display';
 import * as geo from '../../src/components/pond-gl-test3/decor/bubbles/sim/bubble-geometry';
 import { DEFAULT_BUBBLE_TUNING } from '../../src/components/pond-gl-test3/decor/bubbles/bubble-tuning';
@@ -97,5 +97,37 @@ const FULL = { ...DEFAULT_BUBBLE_TUNING, keepFull: 1 };
     }
   }
   assert.equal(DEFAULT_BUBBLE_TUNING.driftFrac, 0.17);
+}
+
+// 9. K 空闲快路径：与完整 stepBubbles 逐帧一致（泡数、时间、随机数消耗），且空闲帧占比很高
+{
+  const dt = 1 / 60;
+  const rngA = seeded(31), rngB = seeded(31);
+  const a = createBubbleSim(rngA), b = createBubbleSim(rngB);
+  const outA: BubbleView[] = [], outB: BubbleView[] = [];
+  let idleFrames = 0, total = 0;
+  for (let t = 0; t < 240; t += dt) {
+    const nA = stepBubbles(a, dt, base(), rngA, outA);
+    let nB = 0;
+    if (advanceIfIdle(b, dt, false, null)) idleFrames++; else nB = stepBubbles(b, dt, base(), rngB, outB);
+    total++;
+    assert.equal(nA, nB, '快路径与完整步泡数一致');
+    assert.ok(Math.abs(a.time - b.time) < 1e-9 && a.chains.length === b.chains.length, '时间与组数一致');
+  }
+  assert.ok(idleFrames > 0, `开场 3–8 秒应有空闲帧，实际 ${idleFrames}/${total}`);
+  // 有立即请求 / 有泡 / 保持满组数切换时都不得走快路径
+  assert.equal(advanceIfIdle(createBubbleSim(seeded(1)), dt, true, null), false, 'keepFull 变化需走完整步');
+  assert.equal(advanceIfIdle(createBubbleSim(seeded(1)), dt, false, 'plain'), false, '有立即请求需走完整步');
+}
+// 10. 蛇行余量随蛇行幅度推出：幅度越大，避让球的余量越大，可用落点越少
+{
+  const clearCount = (swayMax: number) => {
+    const env = base({ discs: [{ x: 1000, y: 300, r: 60 }], discCount: 1, tuning: { ...DEFAULT_BUBBLE_TUNING, swayMax, birthSpread: 0 } });
+    let n = 0;
+    for (let x = 40; x < W; x += 20) for (let y = 40; y < H; y += 20) if (geo.pathClear(env, x, y)) n++;
+    return n;
+  };
+  const small = clearCount(2), large = clearCount(40);
+  assert.ok(small > large, `幅度 2 的可用落点（${small}）应多于幅度 40（${large}）`);
 }
 console.log('P20 气泡模拟测试通过');

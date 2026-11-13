@@ -34,7 +34,7 @@ export function pathClear(env: GeoEnv, ax: number, ay: number): boolean {
     const p = pathPoint(env, ax, ay, i / PATH_SAMPLES);
     for (let k = 0; k < env.discCount; k++) {
       const d = env.discs[k];
-      if (Math.hypot(p.x - d.x, p.y - d.y) < d.r + env.tuning.swayMargin + env.tuning.birthSpread) return false;
+      if (Math.hypot(p.x - d.x, p.y - d.y) < d.r + env.tuning.swayMax * 1.5 + env.tuning.birthSpread) return false;
     }
   }
   return true;

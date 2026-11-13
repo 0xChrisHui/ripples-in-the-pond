@@ -2,9 +2,10 @@
 
 import { useState, useSyncExternalStore } from 'react';
 import {
-  DEFAULT_BUBBLE_TUNING, getBubbleTuning, getUiState, requestBurst, resetBubbleTuning, setBubbleTuning, subscribeUi,
+  DEFAULT_BUBBLE_TUNING, enableTuningStorage, getBubbleTuning, getUiState, requestBurst, resetBubbleTuning, setBubbleTuning, subscribeUi,
   type BubbleTuning, type UiState,
 } from '../bubble-tuning';
+import { LAB_PATH } from '@/src/components/pond-shell/transition/types';
 import { GROUPS, type Row } from './tuning-meta';
 
 const BURST_TEXT: Record<UiState['burst'], string> = { idle: '空闲', queued: '排队中', running: '进行中', failed: '没有空位' };
@@ -45,7 +46,10 @@ function Field({ row, value, onChange }: { row: Row; value: string | number; onC
 const BTN = 'rounded border border-white/20 px-2 py-1';
 
 export default function BubblePanel() {
-  const [values, setValues] = useState<BubbleTuning>(() => ({ ...getBubbleTuning() }));
+  const [values, setValues] = useState<BubbleTuning>(() => {
+    if (window.location.pathname === LAB_PATH) enableTuningStorage(); // 只有 /test5 读写本地存储
+    return { ...getBubbleTuning() };
+  });
   const [copied, setCopied] = useState(false);
   const ui = useSyncExternalStore(subscribeUi, getUiState, getUiState);
   const pressed = (kind: 'plain' | 'note') => (ui.kind === kind && ui.burst !== 'idle' ? ' border-white/70 bg-white/15' : '');
@@ -68,7 +72,7 @@ export default function BubblePanel() {
   };
   return (
     <div data-pond-ui="true" className="pointer-events-auto max-h-[78vh] w-60 overflow-y-auto rounded border border-white/10 bg-black/85 p-3 text-[11px] text-white/70 backdrop-blur-sm">
-      <div className="mb-2 tracking-wide text-white/80">池塘气泡 · 手记（{Object.keys(DEFAULT_BUBBLE_TUNING).length} 项）</div>
+      <div className="mb-2 tracking-wide text-white/80">池塘气泡 · 手记（{GROUPS.reduce((n, g) => n + g.rows.length, 0)} 项）</div>
       <div className="mb-2 flex flex-wrap gap-1">
         <button type="button" className={BTN + pressed('plain')} onClick={() => requestBurst('plain')}>{burstLabel('立即冒一串', 'plain', ui)}</button>
         <button type="button" className={BTN + pressed('note')} onClick={() => requestBurst('note')}>{burstLabel('立即出手记', 'note', ui)}</button>

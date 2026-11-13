@@ -1,38 +1,44 @@
 /**
- * P20 池塘气泡 / 手记调参（程序化单例，范式同 sphere-tuning / ripple-tuning）。
+ * P20 池塘气泡 / 手记参数（程序化单例，范式同 sphere-tuning / ripple-tuning）。
+ * 分两部分：TUNABLE（约 36 项）进 /test5 控制台、可写 localStorage；FIXED 是定稿的固定值，只在代码里改。
  * 控制台写、每帧直读，不触发 React 重渲染。布尔量用 0/1；颜色用 #rrggbb。
- * 改动写入 localStorage（try/catch：隐私模式下读写失败不影响运行）。
+ * 本地存储只在 /test5 打开控制台时读写（enableTuningStorage）；正式页面永远只用这里的默认值。
  */
-export const DEFAULT_BUBBLE_TUNING = {
+const TUNABLE = {
   // ── 生成节奏 ──
-  meanGroups: 1.5, maxGroups: 4, spread: 0.85, playingGroupsMult: 0.5, keepFull: 0,
-  countMin: 3, countMax: 6, popGapMin: 0.4, popGapMax: 1.5,
-  candidates: 8, areaMin: 0.15, areaMax: 0.85,
+  meanGroups: 1.5, maxGroups: 4, spread: 0.85, playingGroupsMult: 0.5, keepFull: 0, countMin: 3, countMax: 6,
   // ── 运动 ──
-  riseMin: 5, riseMax: 8, speed: 1, riseEase: 0.85, driftFrac: 0.17,
-  dwellMin: 0.3, dwellMax: 1.2, swayMin: 2, swayMax: 7, swayFreqMin: 0.8, swayFreqMax: 1.6,
+  riseMin: 5, riseMax: 8, speed: 1, driftFrac: 0.17, swayMax: 7,
   // ── 外观 ──
-  size: 1, sizeMin: 0.67, sizeMax: 1.4, leadBig: 1, sizeSpeed: 0.8, birthSpread: 14, radiusDeep: 1.5, radiusSurface: 3.5, radiusCurve: 1.2, minSpritePx: 6,
-  opacity: 0.4, colorHex: '#cce5ff', depthDim: 0.45, fadeIn: 0.15,
+  size: 1, leadBig: 1, sizeSpeed: 0.8, birthSpread: 14, radiusDeep: 1.5, radiusSurface: 3.5,
+  opacity: 0.4, colorHex: '#cce5ff', depthDim: 0.45,
+  // ── 避让球 ──
+  avoidSpawn: 1, avoidFade: 1,
+  // ── 破水涟漪 ──
+  popEnabled: 1, popStrength: 0.04, popSwell: 0.15,
+  // ── 手记 ──
+  notesEnabled: 1, noteEveryMin: 2, noteEveryMax: 4, suppressPlaying: 1,
+  noteWidth: 360, noteFont: 15, noteOpacity: 0.78, boxOpacity: 0.72, baseStay: 3000, fadeMs: 700,
+};
+const FIXED = {
+  popGapMin: 0.4, popGapMax: 1.5, candidates: 8, areaMin: 0.15, areaMax: 0.85,
+  riseEase: 0.85, dwellMin: 0.3, dwellMax: 1.2, swayMin: 2, swayFreqMin: 0.8, swayFreqMax: 1.6,
+  sizeMin: 0.67, sizeMax: 1.4, radiusCurve: 1.2, minSpritePx: 6, fadeIn: 0.15,
   ringRadius: 0.3, ringSoftDeep: 0.16, ringSoftSurface: 0.05, ringStrength: 0.55, innerFill: 0.06,
   glintDeep: 0.25, glintSurface: 0.6, glintX: -0.13, glintY: -0.13, glintSize: 0.0016,
-  // ── 避让球 ──
-  avoidSpawn: 1, avoidFade: 1, discSafety: 1.2, refractMargin: 0.03, edgeBand: 0.06, swayMargin: 10,
-  // ── 破水涟漪 ──
-  popEnabled: 1, popStrength: 0.04, popRadius: 0.006, popSwell: 0.15, popTime: 0.15,
-  // ── 手记：出现 ──
-  notesEnabled: 1, noteEveryMin: 2, noteEveryMax: 4, suppressPlaying: 1, maxHold: 90,
-  // ── 手记：版式 ──
-  noteWidth: 360, noteFont: 15, noteLineH: 1.75, noteOpacity: 0.78, noteShadow: 1, noteGap: 18, topSafe: 150, bottomSafe: 120,
-  boxOpacity: 0.72, boxBlur: 14, boxAlways: 0,
-  // ── 手记：时间 ──
-  revealStep: 300, fadeMs: 700, baseStay: 3000, perCharZh: 80, perCharEn: 40, jitter: 0.15, resumeFloor: 3000,
+  discSafety: 1.2, refractMargin: 0.03, edgeBand: 0.06,
+  popRadius: 0.006, popTime: 0.15, maxHold: 90,
+  noteLineH: 1.75, noteShadow: 1, noteGap: 18, topSafe: 150, bottomSafe: 120, boxBlur: 14, boxAlways: 0,
+  revealStep: 300, perCharZh: 80, perCharEn: 40, jitter: 0.15, resumeFloor: 3000,
 };
+export const DEFAULT_BUBBLE_TUNING = { ...FIXED, ...TUNABLE };
 export type BubbleTuning = typeof DEFAULT_BUBBLE_TUNING;
+export type TunableKey = keyof typeof TUNABLE;
+export const TUNABLE_KEYS = Object.keys(TUNABLE) as TunableKey[];
 
 const KEY = 'pond-bubble-tuning-v1';
 let current: BubbleTuning = { ...DEFAULT_BUBBLE_TUNING };
-let loaded = false;
+let storageOn = false;
 type Burst = 'plain' | 'note' | null;
 let burst: Burst = null;
 
@@ -57,28 +63,32 @@ export function setUiState(patch: Partial<UiState>): void {
   uiListeners.forEach((l) => l());
 }
 
-function ensureLoaded(): void {
-  if (loaded || typeof window === 'undefined') return;
-  loaded = true;
+/** 只有 /test5 的控制台调用：读出已存的调参并开启写入。正式页面不调用 → 不读不写，只用默认值。 */
+export function enableTuningStorage(): void {
+  if (storageOn || typeof window === 'undefined') return;
+  storageOn = true;
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return;
     const saved = JSON.parse(raw) as Partial<BubbleTuning>;
-    for (const k of Object.keys(DEFAULT_BUBBLE_TUNING) as Array<keyof BubbleTuning>) {
-      if (typeof saved[k] === typeof DEFAULT_BUBBLE_TUNING[k]) (current as Record<string, unknown>)[k] = saved[k];
+    const next = { ...current };
+    for (const k of TUNABLE_KEYS) {
+      if (typeof saved[k] === typeof DEFAULT_BUBBLE_TUNING[k]) (next as Record<string, unknown>)[k] = saved[k];
     }
+    current = next;
   } catch { /* 存储不可用或内容损坏：沿用默认值 */ }
 }
 function persist(): void {
-  try { window.localStorage.setItem(KEY, JSON.stringify(current)); } catch { /* 隐私模式 */ }
+  if (!storageOn) return;
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(TUNABLE_KEYS.map((k) => [k, current[k]]))));
+  } catch { /* 隐私模式 */ }
 }
 
 export function getBubbleTuning(): BubbleTuning {
-  ensureLoaded();
   return current;
 }
 export function setBubbleTuning(patch: Partial<BubbleTuning>): void {
-  ensureLoaded();
   current = { ...current, ...patch };
   persist();
 }
