@@ -63,13 +63,13 @@ export default function RootLayout({
     // 在 React hydrate 前往 html/body 注入 CSS 变量或 data 属性导致的 hydration mismatch；
     // 子树的真实 hydration bug 仍会正常报警。
     // P19：lang 在服务端固定 zh-CN（页面保持静态），英文 cookie 由 <head> 内联脚本在首帧前改成 en。
-    <html lang="zh-CN" suppressHydrationWarning style={{ background: POND_NIGHT_BACKGROUND, backgroundColor: "#010303" }}>
+    <html lang="zh-CN" className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} ${azeretMono.variable} ${modak.variable}`} suppressHydrationWarning style={{ background: POND_NIGHT_BACKGROUND, backgroundColor: "#010303" }}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: LANG_BOOT_SCRIPT }} />
       </head>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} ${azeretMono.variable} ${modak.variable} antialiased`}
+        className="antialiased"
       >
         <Providers externalWalletLoginEnabled={externalWalletLoginEnabled}>{children}</Providers>
       </body>
