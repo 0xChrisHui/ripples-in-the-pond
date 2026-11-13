@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import { explorerAddressUrlFor, getChainDefinition } from '@/src/lib/chain/multichain/registry';
@@ -10,7 +10,7 @@ export function shortAddress(address: string): string {
 }
 
 /** 紧凑链上信息块：链名 · 标准、合约（缩写可复制）、Token、状态、单曲页与区块浏览器。 */
-export default function ChainBlock({ deployment }: { deployment: OriginalDeployment }) {
+export default function ChainBlock({ deployment, children }: { deployment: OriginalDeployment; children?: ReactNode }) {
   const t = useTranslations('lens');
   const tp = useTranslations('provenance');
   const [copied, setCopied] = useState(false);
@@ -27,20 +27,18 @@ export default function ChainBlock({ deployment }: { deployment: OriginalDeploym
     : deployment.status === 'undeployed' ? tp('undeployed') : tp('unverified');
   return (
     <section className="lens-chain" aria-label={`${chain} · ${standard}`} data-status={deployment.status}>
-      <h3 className="lens-chain__name">{chain} <span>· {standard}</span></h3>
-      {/* 一行：合约缩写 + 复制、Token、状态；不再逐项加小标签，省高度 */}
-      <p className="lens-chain__facts">
-        {address && <><code title={address}>{shortAddress(address)}</code>
-          <button type="button" className="lens-link" onClick={() => { void copy(); }}
-            aria-label={t('copyContract', { chain })}>{copied ? t('copied') : t('copy')}</button></>}
-        {deployment.tokenId && <span className="lens-chain__token">#{deployment.tokenId}</span>}
-        <span className="lens-chain__status">{status}</span>
-      </p>
-      <div className="lens-chain__links">
-        {deployment.publicPlaybackUrl && <PondRouteLink href={deployment.publicPlaybackUrl} className="lens-link">{t('openSingle')}</PondRouteLink>}
-        {address && <a href={explorerAddressUrlFor(deployment.chainId, address)} target="_blank" rel="noreferrer"
-          className="lens-link">{t('explorer')} ↗</a>}
+      <div className="lens-chain__heading">
+        <h3 className="lens-chain__name"><span className="lens-chain__status" role="img" aria-label={status}>●</span> {chain} <span>· {standard} · Token #{deployment.tokenId}</span></h3>
+        {deployment.publicPlaybackUrl && <PondRouteLink href={deployment.publicPlaybackUrl} className="lens-link">{t('openSingle')} →</PondRouteLink>}
       </div>
+      <p className="lens-chain__facts">
+        {address && <><a className="lens-link" href={explorerAddressUrlFor(deployment.chainId, address)} target="_blank" rel="noreferrer"><code title={address}>{shortAddress(address)}</code> ↗</a>
+          <button type="button" className="lens-link" onClick={() => { void copy(); }}
+            aria-label={t('copyContract', { chain })}>{copied ? '✓' : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V4H4v12h4" /></svg>}</button></>}
+        {deployment.status !== 'ready' && <span className="lens-chain__status-text">{status}</span>}
+      </p>
+      <span className="p11-visually-hidden" aria-live="polite">{copied ? t('copied') : ''}</span>
+      {children}
     </section>
   );
 }

@@ -1,7 +1,8 @@
 'use client';
 import { forwardRef } from 'react';
 import { useTranslations } from 'next-intl';
-import MaterialMintPanel from '@/src/components/music-catalog/claim/MaterialMintPanel';
+import { OpMaterialMint, useMintAccess } from '@/src/components/music-catalog/claim/MaterialMintPanel';
+import EthereumMaterialMint from '@/src/components/music-catalog/claim/EthereumMaterialMint';
 import type { OriginalTrack } from '@/src/lib/music-catalog/types';
 import { getLensBridge } from '../bridge/lens-bridge';
 import ChainBlock from './ChainBlock';
@@ -18,6 +19,8 @@ type Props = {
 /** 光圈落在原曲球上时的链上信息面板；根节点关闭涟漪并标记为 UI，滚轮照常放行。 */
 const LensPanel = forwardRef<HTMLElement, Props>(function LensPanel({ track, open, playing, onToggle }, ref) {
   const t = useTranslations('lens');
+  const material = useTranslations('material');
+  const { auth, authenticated, external, scope, login } = useMintAccess(track);
   const number = String(track.displayNumber).padStart(2, '0');
   const deployments = [...track.deployments].sort((a, b) => (a.chainId === 10 ? -1 : b.chainId === 10 ? 1 : a.chainId - b.chainId));
   return (
@@ -32,12 +35,15 @@ const LensPanel = forwardRef<HTMLElement, Props>(function LensPanel({ track, ope
       <header className="lens-panel__head">
         <span className="lens-panel__eyebrow">{t('eyebrow')}</span>
         <h2 className="lens-panel__title">{t('title', { number })}</h2>
+        <button type="button" className="lens-play" onClick={onToggle} aria-pressed={playing} aria-label={playing ? t('pause') : t('play')}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={playing ? 'M6 5h4v14H6zm8 0h4v14h-4z' : 'M7 4v16l14-8z'} /></svg>
+        </button>
       </header>
-      {deployments.map((deployment) => <ChainBlock key={`${deployment.chainId}/${deployment.contractAddress}`} deployment={deployment} />)}
-      <button type="button" className="lens-play" onClick={onToggle} aria-pressed={playing}>
-        {playing ? t('pause') : t('play')}
-      </button>
-      <div key={track.trackId} className="lens-collect"><MaterialMintPanel track={track} compact /></div>
+      {deployments.map((deployment) => <ChainBlock key={`${deployment.chainId}/${deployment.contractAddress}`} deployment={deployment}>
+        {authenticated && (deployment.chainId === 10 ? <OpMaterialMint key={`op:${scope}`} track={track} auth={auth} />
+          : external ? <EthereumMaterialMint key={`eth:${scope}`} track={track} /> : null)}
+      </ChainBlock>)}
+      {!authenticated && <button type="button" className="material-collect lens-login" onClick={() => { void login(); }}>{material('signInToCollect')}</button>}
     </aside>
   );
 });

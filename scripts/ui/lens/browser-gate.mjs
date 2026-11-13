@@ -130,7 +130,7 @@ try {
 } catch (error) {
   console.error('❌', error.message);
   const { data } = await send('Page.captureScreenshot', { format: 'png' }).catch(() => ({}));
-  if (data) await writeFile('reviews/evidence/lens-gate-failure.png', Buffer.from(data, 'base64'));
+  if (data) await writeFile(process.env.LENS_GATE_SHOT ?? 'reviews/evidence/lens-gate-failure.png', Buffer.from(data, 'base64'));
   console.error('页面异常：', browser.pageErrors.slice(0, 5));
   process.exitCode = 1;
 } finally { browser.close(); }

@@ -1,79 +1,40 @@
-/* 链上信息面板：紧凑小字；按钮与链接点击区 ≥44px（视觉不缩，靠 min-height / padding）。
-   显示由 data-open 控制：只淡入淡出，不重新挂载、不做入场位移，换球时内容直接替换。
-   不滚动：内容按紧凑排版设计，放不下时由 data-tight 隐藏次要链接行（见 use-lens-frame.ts）。 */
+/* 链信息与收藏同卡；所有链接和按钮保留 44px 热区。 */
 .lens-panel {
   position: fixed; left: 0; top: 0; z-index: 31; box-sizing: border-box;
-  width: min(300px, calc(100vw - 24px)); overflow: hidden;
-  padding: 12px 14px 10px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 14px;
-  background: rgb(1 7 6 / 72%); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-  color: #e6ece4; font-size: 12px; line-height: 1.5;
-  will-change: transform, opacity;
+  width: min(300px, calc(100vw - 24px)); overflow-y: auto; overscroll-behavior: contain;
+  padding: 10px 14px; border: 1px solid rgb(255 255 255 / 18%); border-radius: 14px;
+  background: rgb(1 7 6 / 84%); backdrop-filter: blur(14px); color: #e6ece4;
+  font-size: 12px; line-height: 1.5; will-change: transform, opacity;
   opacity: 0; visibility: hidden; pointer-events: none;
   transition: opacity 150ms ease, visibility 0s linear 150ms;
 }
-.lens-panel[data-open="true"][data-placed="true"] {
-  opacity: 1; visibility: visible; pointer-events: auto;
-  transition: opacity 150ms ease, visibility 0s;
-}
-.lens-panel__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
-.lens-panel__eyebrow { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: rgba(214, 226, 214, .6); }
+.lens-panel[data-open="true"][data-placed="true"] { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 150ms ease, visibility 0s; }
+.lens-panel__head { position: relative; display: grid; grid-template-columns: 1fr 44px; align-items: center; margin-bottom: 4px; }
+.lens-panel__eyebrow { grid-column: 1/-1; font-size: 11px; letter-spacing: .12em; color: rgb(214 226 214 / 78%); }
 .lens-panel__title { margin: 0; font-size: 16px; font-weight: 300; letter-spacing: .04em; white-space: nowrap; }
-.lens-chain { padding: 4px 0 6px; border-top: 1px solid rgba(255, 255, 255, .1); }
-.lens-chain__name { margin: 0; font-size: 12px; font-weight: 500; letter-spacing: .02em; }
-.lens-chain__name span { font-weight: 400; color: rgba(214, 226, 214, .62); }
-/* 合约 · Token · 状态 同一行，自动换行；不再逐项加标签 */
-.lens-chain__facts { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; min-height: 24px; color: rgba(214, 226, 214, .8); }
-.lens-chain code { font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 11.5px; letter-spacing: .01em; }
-.lens-chain__token, .lens-chain__status { font-size: 11.5px; color: rgba(214, 226, 214, .62); }
-.lens-chain__links { display: flex; flex-wrap: wrap; gap: 0 14px; }
-.lens-link {
-  display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 -4px; border: 0; background: none;
-  color: #cfe4f7; font: inherit; font-size: 12px; text-decoration: none; cursor: pointer;
-}
-.lens-link:hover, .lens-link:focus-visible { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
-.lens-chain__facts .lens-link { min-height: 44px; margin-block: -10px; }
-.lens-play {
-  display: flex; align-items: center; justify-content: center; width: 100%; min-height: 44px; margin-top: 4px;
-  border: 1px solid rgba(255, 255, 255, .22); border-radius: 999px; background: rgba(255, 255, 255, .05);
-  color: #fff; font: inherit; font-size: 12px; letter-spacing: .08em; cursor: pointer;
-}
-.lens-play:hover, .lens-play:focus-visible { background: rgba(255, 255, 255, .12); }
-.lens-collect { margin-top: 4px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, .1); }
-.lens-collect .material-mint { display: grid; gap: 8px; padding: 0; border: 0; }
-/* 每条链一行：左侧小标签（OP / ETH，取自 data-chain），右侧铸造按钮；说明文字已去掉，状态提示占满整行。 */
-.lens-collect .material-chain-row {
-  display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 4px 10px; align-items: center; padding: 0;
-}
-.lens-collect .material-chain-row::before {
-  content: attr(data-chain); display: flex; align-items: center; justify-content: center; box-sizing: border-box;
-  width: 44px; height: 44px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 12px; background: rgba(255, 255, 255, .03);
-  font: 600 10px/1 var(--font-mono, ui-monospace, monospace); letter-spacing: .08em; color: rgba(214, 226, 214, .72);
-}
-.lens-collect .material-chain-row[data-chain="ETH"]::before { color: #cfe4f7; border-color: rgba(207, 228, 247, .24); }
-.lens-collect .material-chain-info { display: none; }
-.lens-collect .material-chain-action { min-width: 0; }
-.lens-collect .material-chain-status { grid-column: 1 / -1; }
-.lens-collect :is(.material-muted, .material-mint-status, p) { margin: 2px 0; font-size: 11.5px; line-height: 1.5; color: rgba(214, 226, 214, .72); overflow-wrap: anywhere; }
-.lens-collect .material-uri { font-family: var(--font-mono, ui-monospace, monospace); font-size: 11px; word-break: break-all; }
-.lens-collect .material-collect {
-  display: flex; align-items: center; justify-content: center; width: 100%; min-height: 44px; padding: 0 14px; box-sizing: border-box;
-  border: 1px solid rgba(209, 220, 190, .42); border-radius: 12px; background: rgba(209, 220, 190, .1);
-  color: #eef4e4; font: inherit; font-size: 12.5px; font-weight: 500; letter-spacing: .02em; cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease; overflow-wrap: anywhere;
-}
-.lens-collect .material-collect:not(:disabled):hover, .lens-collect .material-collect:not(:disabled):focus-visible {
-  background: rgba(209, 220, 190, .2); border-color: rgba(209, 220, 190, .6);
-}
-/* 核对中 / 不可用 / 未部署：虚线、弱化，一眼看出不能点 */
-.lens-collect .material-collect:disabled { border-style: dashed; border-color: rgba(255, 255, 255, .2); background: transparent; color: rgba(214, 226, 214, .6); cursor: default; }
-/* 已收藏：实线、带弱绿底，与"可铸造"区分 */
-/* 已收藏：实线、弱绿底，整块是"查看收藏 →"的链接（进入单曲页的铸造区） */
-.lens-collect .material-chain-row[data-state="done"] .material-collect {
-  border-style: solid; border-color: rgba(209, 220, 190, .35); background: rgba(209, 220, 190, .06); color: rgba(233, 240, 222, .9);
-  text-decoration: none;
-}
-.lens-collect summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-size: 11.5px; }
-.lens-collect .material-notice { margin: 4px 0 0; padding: 6px 8px; border-left: 2px solid rgba(255, 255, 255, .3); background: rgba(255, 255, 255, .05); font-size: 11.5px; line-height: 1.5; }
-/* 紧凑档：空间不够时隐藏链接行（单曲页 / 区块浏览器），其余保留 */
-.lens-panel[data-tight="true"] .lens-chain__links { display: none; }
-@media (prefers-reduced-motion: reduce) { .lens-panel, .lens-panel[data-open="true"] { transition-duration: 0s; } }
+.lens-play { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgb(255 255 255 / 25%); border-radius: 50%; background: rgb(255 255 255 / 6%); color: #fff; cursor: pointer; }
+.lens-chain { position: relative; padding: 6px 0 2px; border-top: 1px solid rgb(255 255 255 / 14%); }
+.lens-chain__heading { min-height: 18px; padding-right: 70px; }
+.lens-chain__name { margin: 0; font-size: 12px; font-weight: 500; }
+.lens-chain__name > span:not(.lens-chain__status) { font-size: 11px; font-weight: 400; color: rgb(214 226 214 / 80%); font-variant-numeric: tabular-nums; }
+.lens-chain__heading > .lens-link { position: absolute; right: 0; top: 0; }
+.lens-chain__facts { display: flex; align-items: center; gap: 2px; margin: 0; min-height: 44px; }
+.lens-chain code { font-family: var(--font-mono, ui-monospace, monospace); font-size: 11px; font-variant-numeric: tabular-nums; }
+.lens-link { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #cfe4f7; font-size: 12px; text-decoration: none; cursor: pointer; }
+.lens-chain__status { color: #a3cdac; font-size: 11px; }
+.lens-chain[data-status="undeployed"] .lens-chain__status, .lens-chain[data-status="undeployed"] .lens-chain__status-text { color: #b3bdb3; }
+.lens-chain[data-status="unverified"] .lens-chain__status, .lens-chain[data-status="unverified"] .lens-chain__status-text { color: #f0cc8f; }
+.lens-chain__status-text { font-size: 11px; }
+.lens-panel .material-chain-row { display: grid; gap: 4px; padding: 0; }
+.lens-panel .material-chain-info { display: none; }
+.lens-panel .material-chain-action { min-width: 0; }
+.lens-panel .material-collect { display: flex; align-items: center; justify-content: center; box-sizing: border-box; width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid rgb(209 220 190 / 45%); border-radius: 12px; background: rgb(209 220 190 / 10%); color: #eef4e4; font: inherit; font-size: 12px; text-decoration: none; cursor: pointer; overflow-wrap: anywhere; }
+.lens-panel .material-collect:disabled { border-style: dashed; background: transparent; color: rgb(214 226 214 / 76%); cursor: default; }
+.lens-panel .material-chain-row[data-state="done"] .material-collect { background: rgb(209 220 190 / 6%); }
+.lens-panel :is(.material-muted,.material-mint-status,p,.material-notice) { font-size: 11px; line-height: 1.5; color: rgb(214 226 214 / 80%); overflow-wrap: anywhere; }
+.lens-panel .material-uri { font-family: var(--font-mono,ui-monospace,monospace); font-size: 11px; word-break: break-all; }
+.lens-panel summary { display: flex; align-items: center; min-height: 44px; font-size: 11px; cursor: pointer; }
+.lens-panel .material-notice { margin: 4px 0; padding: 6px 8px; border-left: 2px solid rgb(255 255 255 / 40%); background: rgb(255 255 255 / 5%); }
+.lens-login { margin-top: 6px; }
+.lens-panel :is(button,a):focus-visible { outline: 2px solid #dce8d7; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .lens-panel,.lens-panel[data-open="true"] { transition-duration: 0s; } }

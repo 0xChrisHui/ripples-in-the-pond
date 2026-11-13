@@ -114,9 +114,8 @@ export function useLensFrame(args: Args) {
         const placed = placePanel(anchor, { w: panel.offsetWidth, h: panel.scrollHeight + 2 },
           { w: innerWidth, h: playerTop(), topInset: innerWidth < 768 ? 64 : 76 }, side);
         side = placed.side; // 左右方向沿用：换球不翻面
-        // 放不下时不滚动：进入紧凑档（隐藏次要链接行），本次打开内保持，关闭后复位。
-        if (placed.maxH) panel.dataset.tight = 'true';
-        panel.style.maxHeight = '';
+        // 订单内容会动态增长；保留同一收藏实例，用内部滚动提供完整入口。
+        panel.style.maxHeight = `${placed.maxH ?? Math.max(160, playerTop() - 100)}px`;
         if (!panelPos.seeded || s.reduced) {
           panelPos.x = placed.left; panelPos.y = placed.top; panelPos.seeded = true;
         } else {
@@ -127,7 +126,6 @@ export function useLensFrame(args: Args) {
         if (panel.dataset.placed !== 'true') panel.dataset.placed = 'true'; // 首次落位后才允许可见，避免在 (0,0) 闪现
       } else {
         panelPos.seeded = false; // 下次打开直接落位，不从旧位置滑过来
-        if (panel) panel.dataset.tight = 'false';
       }
       frame = requestAnimationFrame(loop);
     };

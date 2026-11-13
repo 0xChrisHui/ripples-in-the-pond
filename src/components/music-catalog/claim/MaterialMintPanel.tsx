@@ -13,9 +13,8 @@ import { MaterialNoticeBox } from './MaterialNoticeView';
 import PondRouteLink from '../../pond-shell/PondRouteLink';
 import { loadMintStatus, mintCacheVersion, opCache, subscribeMintCache, type MintStatus } from './mint-status-cache';
 import { mintIdentityOf } from './MintStatusPrefetch';
-/** compact：/lens 面板内的紧凑变体——不重复 id="track-collect"，不显示标题与规则折叠。 */
-export default function MaterialMintPanel({ track, compact = false }: { track: OriginalTrack; compact?: boolean }) {
-  const t = useTranslations('material');
+/** 默认目录与详情面板共享身份边界；每条链的收藏实例始终只挂载一次。 */
+export function useMintAccess(track: OriginalTrack) {
   const auth = useAuth();
   const latest = useRef(auth);
   useEffect(() => { latest.current = auth; });
@@ -28,20 +27,25 @@ export default function MaterialMintPanel({ track, compact = false }: { track: O
     await waitUntil(() => latest.current.ready, 15000);
     if (!latest.current.authenticated) latest.current.openLoginModal();
   }
-  return <section className="material-mint" id={compact ? undefined : 'track-collect'} aria-label={t('panelTitle')}>
-    {!compact && <h2>{t('panelTitle')}</h2>}
-    {!compact && <details className="material-rules"><summary>{t('rulesSummary')}</summary><ul>
+  return { auth, authenticated: auth.authenticated, external, scope, login };
+}
+export default function MaterialMintPanel({ track }: { track: OriginalTrack }) {
+  const t = useTranslations('material');
+  const { auth, authenticated, external, scope, login } = useMintAccess(track);
+  return <section className="material-mint" id="track-collect" aria-label={t('panelTitle')}>
+    <h2>{t('panelTitle')}</h2>
+    <details className="material-rules"><summary>{t('rulesSummary')}</summary><ul>
       <li>{t('ruleHome')}</li>
       <li>{t('ruleEth')}</li>
       <li>{t('ruleOp')}</li>
-    </ul></details>}
-    {!auth.authenticated ? <button type="button" className="material-collect" onClick={() => { void login(); }}>{t('signInToCollect')}</button> : <>
+    </ul></details>
+    {!authenticated ? <button type="button" className="material-collect" onClick={() => { void login(); }}>{t('signInToCollect')}</button> : <>
       <OpMaterialMint key={`op:${scope}`} track={track} auth={auth} />
       {external && <EthereumMaterialMint key={`eth:${scope}`} track={track} />}</>}
   </section>;
 }
 
-function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnType<typeof useAuth> }) {
+export function OpMaterialMint({ track, auth }: { track: OriginalTrack; auth: ReturnType<typeof useAuth> }) {
   const t = useTranslations('material'), serverText = useServerText();
   // 状态来自批量预取的缓存；缓存更新时自动重绘。没有缓存（未知）时只禁用按钮，不显示任何过程文字。
   useSyncExternalStore(subscribeMintCache, mintCacheVersion, mintCacheVersion);
