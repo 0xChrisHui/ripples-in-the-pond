@@ -1,5 +1,5 @@
 import {
-  Scene, Mesh, PlaneGeometry, ShaderMaterial, Vector2, Vector4, type IUniform,
+  Scene, Mesh, PlaneGeometry, ShaderMaterial, Vector2, Vector3, Vector4, type IUniform,
 } from 'three';
 import { quadVert, simFrag } from './spike/ripple-spike-shaders';
 import type { RippleTuning } from './spike/ripple-tuning';
@@ -101,6 +101,7 @@ export function makeCompositeScene(
     uMoonReflect: { value: 0 },
     uLensCalm: { value: 0 },
     uLensRing: { value: new Vector4(0.5, 0.5, 1e-4, 1e-4) },
+    uLensLight: { value: new Vector3() }, uLensBall: { value: new Vector3() },
     uMoonReflectStrength: { value: 0.4 },
     // 严格分层：水上球不吃水光；这里只保留水下球增亮与波纹参数。
     uBallLightBelow: { value: 0.15 },
@@ -111,6 +112,9 @@ export function makeCompositeScene(
     uP9Caustic: { value: new Vector4(0, 0, 0, 0) },
   });
 }
+
+/** /lens 光圈内焦散占其峰值的比例（0=只取倒影峰值，1=两峰全叠）。 */
+const LENS_CAUS_SHARE = 0.5;
 
 /** 每帧写 sim/composite 的标量 uniform（参数板 + debug + 宽高比 + K3 深度调制 + K4 投影 + K5 焦散）。模块级避 immutability。 */
 export function applyTuning(
@@ -156,6 +160,13 @@ export function applyTuning(
   // K11：moonReflect 开 → shader 叠大柔冷白月华倒影（被涟漪扭碎、随 K6 缩放）；关 → 0（跳过 = 现状）
   composite.mat.uniforms.uMoonReflect.value = moonReflect ? 1 : 0;
   composite.mat.uniforms.uLensCalm.value = lensCalm;
+  // 光圈内固定的月光（不含按键起伏）= 倒影峰值 + 焦散峰值×LENS_CAUS_SHARE（两峰叠满的瞬间极少，全叠会比实际最亮处亮一大截）；水下球取两者较亮的一个（同 shader 里 ballLight 的取法）
+  const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+  const causPeak = caustics ? clamp01(t.causticsStrength) : 0, moonPeak = moonReflect ? clamp01(t.moonReflectStrength) : 0;
+  const cs = causPeak * LENS_CAUS_SHARE;
+  (composite.mat.uniforms.uLensLight.value as Vector3).set(0.55 * cs + 0.91 * moonPeak, 0.72 * cs + 0.95 * moonPeak, 0.95 * cs + moonPeak);
+  const ballPeak = causPeak * 0.72 >= moonPeak * 0.95 ? [0.55, 0.72, 0.95, causPeak] : [0.91, 0.95, 1, moonPeak];
+  (composite.mat.uniforms.uLensBall.value as Vector3).set(ballPeak[0] * ballPeak[3], ballPeak[1] * ballPeak[3], ballPeak[2] * ballPeak[3]);
   const lr = getLensRing(); // 屏幕像素 → uv（y 向上）；半径按宽高分别归一，shader 里得到正圆
   (composite.mat.uniforms.uLensRing.value as Vector4).set(lr.x / lr.w, 1 - lr.y / lr.h, lr.r / lr.w, lr.r / lr.h);
   composite.mat.uniforms.uMoonReflectStrength.value = Math.max(0, Math.min(1, t.moonReflectStrength + keyFx.moon * 0.42));
