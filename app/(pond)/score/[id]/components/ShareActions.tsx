@@ -79,11 +79,11 @@ export default function ShareActions({
           <button type="button" disabled={!available} onClick={copy}>{t(feedback)}</button>
           <button type="button" disabled={!available} onClick={() => openIntent('x')}>{t('toX')}</button>
           <button type="button" disabled={!available} onClick={() => openIntent('weibo')}>{t('toWeibo')}</button>
-          {posterPath !== null && (
-            <a href={`${posterPath ?? `/score/${slug}/poster`}${locale === 'en' ? '?lang=en' : ''}`} download={`ripples-${slug}.png`}>{t('poster')}</a>
-          )}
         </div>
       </details>
+      {posterPath !== null && (
+        <a href={`${posterPath ?? `/score/${slug}/poster`}${locale === 'en' ? '?lang=en' : ''}`} download={`ripples-${slug}.png`}>{t('poster')}</a>
+      )}
     </div>
   );
 }

@@ -68,7 +68,7 @@ async function switchTarget(edge, harness) {
   await edge.until(`document.querySelector('[data-pond-shell]')?.dataset.pondStage==='preparing'`,
     '首目标 preparing');
   await click(edge, row('j-score-2')); await harness.abortCold('superseded-target'); await score(edge, 2);
-  const target = await state(edge); await click(edge, '.score-pond-header__back');
+  const target = await state(edge); await click(edge, '.score-hero__back');
   await stable(edge, '/me', 'archive', '换目标后返回档案'); const final = await state(edge);
   return { target, final, passed: target.path === '/score/2' && target.scoreToken === '2'
     && target.current === 'score' && final.busy === null && final.anchors <= 1 };
@@ -82,7 +82,7 @@ async function fallbackRecovery(edge) {
   await stable(edge, '/score/99999999', 'score', '失败壳稳定');
   const fallback = await state(edge);
   const selector = await edge.evaluate(`document.querySelector('main.score-fallback')
-    ?'.score-fallback a[href="/me"]':'.score-pond-header__back'`);
+    ?'.score-fallback a[href="/me"]':'.score-hero__back'`);
   await click(edge, selector);
   await stable(edge, '/me', 'archive', 'fallback 返回档案'); const final = await state(edge);
   return { fallback, final, passed: fallback.current === 'score' && final.busy === null

@@ -2,12 +2,11 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { useLocaleSwitch } from '@/src/i18n/LocaleProvider';
 import { HTML_LANG } from '@/src/i18n/locale';
 import { preload } from 'react-dom';
-import EditionStamp from '@/src/components/p11/EditionStamp';
-import ScorePondHeader from '@/src/components/p11/ScorePondHeader';
+import ScoreIdentity from './hero/ScoreIdentity';
 import { useEclipseTransition } from '@/src/components/pond-gl-test3/focus/useEclipseTransition';
 import { DEFAULT_GL_FLAGS } from '@/src/components/pond-gl-test3/gl-flags';
 import GlEclipse from '@/src/components/pond-gl-test3/overlay/GlEclipse';
@@ -23,6 +22,8 @@ import { useScoreOrigin, viewTransitionName } from '@/src/components/pond-shell/
 import type { Track } from '@/src/types/tracks';
 import { buildScoreRoute } from '@/src/lib/chain/multichain/registry';
 import ScorePackPanel from '@/src/components/score-pack/ScorePackPanel';
+import { getOriginalTrack } from '@/src/lib/music-catalog/asset-registry';
+import PondRouteLink from '@/src/components/pond-shell/PondRouteLink';
 import ScoreArchive from './ScoreArchive';
 import ScoreRecordAnchor from './ScoreRecordAnchor';
 import ShareActions from './ShareActions';
@@ -61,6 +62,7 @@ export default function ScorePondScene({ score, network }: Props) {
   preloadStartupAudio(score);
   const playback = useScorePlayback(score.playbackBootstrap);
   const t = useTranslations('score');
+  const format = useFormatter();
   const { locale } = useLocaleSwitch();
   const pathname = usePathname();
   const scoreOrigin = useScoreOrigin();
@@ -112,8 +114,10 @@ export default function ScorePondScene({ score, network }: Props) {
     return () => resetDepthShift();
   }, [flags.dof, flags.parallax, flags.perspective, glSim, interactive]);
 
-  const tokenLabel = `Token #${String(score.tokenId).padStart(3, '0')}`;
   const title = `Ripples #${score.tokenId}`;
+  const created = score.confirmedAt ?? score.createdAt ?? score.mintedAt;
+  const date = created ? format.dateTime(new Date(created), { year: 'numeric', month: 'numeric', day: 'numeric' }) : '';
+  const original = score.track ? getOriginalTrack(score.track.id) : null;
   const multichain = Boolean(score.chainId && score.contractAddress);
   const canonicalPath = multichain
     ? buildScoreRoute(score.chainId!, score.contractAddress!, score.tokenId)
@@ -165,20 +169,9 @@ export default function ScorePondScene({ score, network }: Props) {
         </div>
       )}
       <section className="score-pond-page__hero">
-        <ScorePondHeader
-          backHref="/me"
-          backLabel={t('backToArchive')}
-          network={network}
-          tokenLabel={tokenLabel}
-          onBeforeLeave={() => { void playback.pause(); }}
-          shareAction={<ShareActions id={score.id} tokenId={score.tokenId} trackTitle={score.trackTitle}
-            canonicalPath={canonicalPath} posterPath={multichain ? null : undefined} creatorAddress={score.creatorAddress} />}
-        />
-        <div className="score-pond-page__identity" data-pond-ui="true">
-          <EditionStamp status={editionStatus} detail={tokenLabel} />
-          <h1>{title}</h1>
-          <p>{t('permanentEvents', { title: score.trackTitle, count: score.eventCount })}</p>
-        </div>
+        <ScoreIdentity title={title} network={network} status={editionStatus} tokenId={score.tokenId}
+          subtitle={t('workSubtitle', { title: score.trackTitle, count: score.eventCount, date })}
+          onBeforeLeave={() => playback.pause()} />
         <div className="score-pond-page__anchor" data-pond-ui="true"
           data-score-token-id={score.tokenId} data-score-anchor-ready={anchored || undefined}
           style={ownsAnchor ? { viewTransitionName: viewTransitionName() } as CSSProperties : undefined}>
@@ -189,9 +182,11 @@ export default function ScorePondScene({ score, network }: Props) {
             eclipseAvailable={Boolean(glSim?.ready && health === 'healthy' && sceneReady)}
           />
         </div>
+        <ShareActions id={score.id} tokenId={score.tokenId} trackTitle={score.trackTitle}
+          canonicalPath={canonicalPath} posterPath={multichain ? null : undefined} creatorAddress={score.creatorAddress} />
+        {original && <PondRouteLink className="score-hero__create" href={`/lens?track=${original.displayNumber}`}>{t('createFromTrack')}</PondRouteLink>}
       </section>
-      <ScoreArchive score={score} holder={holder} />
-      {packTarget && <ScorePackPanel target={packTarget} />}
+      <ScoreArchive score={score} holder={holder}>{packTarget && <ScorePackPanel target={packTarget} />}</ScoreArchive>
     </main>
   );
 }

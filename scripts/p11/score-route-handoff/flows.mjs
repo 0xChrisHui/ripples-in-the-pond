@@ -85,7 +85,7 @@ export async function meToScore(edge, cast, options) {
 export async function scoreToMe(edge, cast, options) {
   await seedScore(edge, options.noViewTransition);
   return runTrace(edge, cast, options, 'score', 'archive', async () => {
-    await click(edge, '.score-pond-header__back'); return 'score-back';
+    await click(edge, '.score-hero__back'); return 'score-back';
   });
 }
 

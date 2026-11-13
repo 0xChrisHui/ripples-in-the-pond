@@ -38,7 +38,7 @@ async function homeToScoreToHome(edge) {
   samples.push(await snapshot(edge));
   await click(edge, SCORE_ROW, '档案唱片'); await stable(edge, '/score/1', 'score', 'Score 稳定');
   samples.push(await snapshot(edge));
-  await click(edge, '.score-pond-header__back', '返回档案'); await stable(edge, '/me', 'archive', '档案返回稳定');
+  await click(edge, '.score-hero__back', '返回档案'); await stable(edge, '/me', 'archive', '档案返回稳定');
   samples.push(await snapshot(edge));
   await click(edge, '.me-archive__back', '返回水塘'); await stable(edge, '/', 'home', '首页返回稳定');
   samples.push(await snapshot(edge));

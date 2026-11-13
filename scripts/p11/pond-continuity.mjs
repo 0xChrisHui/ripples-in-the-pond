@@ -81,7 +81,7 @@ async function runMain() {
     await until(`document.querySelector('main[data-score-state]')?.dataset.scoreState==='ready'
       && document.querySelector('.me-archive')?.dataset.scoreOriginStage==='score'`, 'Score ready/source', 40_000);
     const score = await snap(`${label}-score`);
-    await click('.score-pond-header__back', '/me', 'archive');
+    await click('.score-hero__back', '/me', 'archive');
     await until(`!document.querySelector('.me-archive')?.dataset.scoreOriginStage`, 'Score 来源恢复', 30_000);
     return [score, await snap(`${label}-me`)];
   };
@@ -179,7 +179,7 @@ async function runMain() {
     await settle('/score/1', 'score', '播放 ready'); await mark();
     await evaluate(`document.querySelector('.record-anchor__visual').click();true`);
     await until(`(window.__i8AudioContexts?.size??0)>=1`, 'Score 音频上下文', 20_000);
-    result.playing = await snap('playback-started'); await click('.score-pond-header__back', '/me', 'archive'); await wait(900);
+    result.playing = await snap('playback-started'); await click('.score-hero__back', '/me', 'archive'); await wait(900);
     result.afterPlayback = await snap('after-playback'); const p9 = result.afterPlayback.p9; await wait(600);
     result.afterQuiet = await snap('after-quiet'); await click('.me-archive__back', '/', 'home');
 
