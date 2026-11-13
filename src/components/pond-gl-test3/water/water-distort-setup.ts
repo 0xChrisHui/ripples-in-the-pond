@@ -98,6 +98,7 @@ export function makeCompositeScene(
     uPondFloorStyle: { value: 0 }, // K10 花纹选择（0–4）
     // K11 月光倒影：uMoonReflect<0.5 时 shader 跳过 → 现状；uMoonReflectStrength 克制（≤0.5、偏一侧不盖球）
     uMoonReflect: { value: 0 },
+    uLensCalm: { value: 0 },
     uMoonReflectStrength: { value: 0.4 },
     // 严格分层：水上球不吃水光；这里只保留水下球增亮与波纹参数。
     uBallLightBelow: { value: 0.15 },
@@ -120,6 +121,7 @@ export function applyTuning(
   quiet: readonly { x: number; y: number; progress: number; energy: number }[],
   p9Water: P9WaterUniform,
   eclipseMix: number,
+  lensCalm: number, // /lens 光圈期间 0→1：月光静止（见 focus/lens-calm）
 ): void {
   sim.mat.uniforms.uDamping.value = Math.max(0.9, Math.min(0.995, t.damping + keyFx.water * 0.012));
   sim.mat.uniforms.uWaveSpeed.value = Math.max(0.05, t.waveProp * (1 + keyFx.water * 0.12));
@@ -151,6 +153,7 @@ export function applyTuning(
   composite.mat.uniforms.uPondFloorStyle.value = t.pondFloorStyle;
   // K11：moonReflect 开 → shader 叠大柔冷白月华倒影（被涟漪扭碎、随 K6 缩放）；关 → 0（跳过 = 现状）
   composite.mat.uniforms.uMoonReflect.value = moonReflect ? 1 : 0;
+  composite.mat.uniforms.uLensCalm.value = lensCalm;
   composite.mat.uniforms.uMoonReflectStrength.value = Math.max(0, Math.min(1, t.moonReflectStrength + keyFx.moon * 0.42));
   // 水下球环境光独立于全局强度；水上球在 shader 中固定为零。
   composite.mat.uniforms.uBallLightBelow.value = Math.min(1, t.ballLightBelow + keyFx.moon * 0.16);
