@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-11-13T20:38:51.525Z",
+  "results": [
+    {
+      "name": "ping",
+      "path": "/api/ping",
+      "status": 200,
+      "bytes": 43,
+      "contentType": "application/json",
+      "contentRange": null,
+      "ipSource": "direct",
+      "cache": "MISS"
+    },
+    {
+      "name": "media-disabled",
+      "path": "/media/PEba3c_yoWBaoc8ILomlKPojUzlf_D-LfAR6iVtL8G4",
+      "status": 404,
+      "bytes": 19870,
+      "contentType": "text/html; charset=utf-8",
+      "contentRange": null,
+      "ipSource": null,
+      "cache": "MISS"
+    },
+    {
+      "name": "original-audio",
+      "path": "/tracks/No.1.mp3",
+      "status": 206,
+      "bytes": 1,
+      "contentType": "audio/mpeg",
+      "contentRange": "bytes 0-0/2846656",
+      "ipSource": null,
+      "cache": "MISS"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "identity": {
+    "chain": 10,
+    "operatorFromProductionMatchesRunbook": true,
+    "materialMinter": true,
+    "orchestratorMinter": true,
+    "orchestratorIsScoreMinter": true,
+    "supabaseProductionUrlMatches": true,
+    "redisFromProduction": true
+  },
+  "operator": "0x306D3A445b1fc7a789639fa9115e308a34231633",
+  "observations": [
+    {
+      "heartbeat": {
+        "minute": "2026-11-13T20:38:00.000Z",
+        "updatedAt": "2026-11-13T20:38:00+00:00"
+      },
+      "alerts": {
+        "recordUpdatedAt": "2026-04-13T03:23:26.605231+00:00",
+        "noticeKinds": null,
+        "redisAlertMarkers": 0
+      },
+      "deployment": "dpl_DsxtavrZLU4QsA6DmZHGZoSLLUJm",
+      "startedUtc": "2026-11-13T20:38:52.566Z",
+      "finishedUtc": "2026-11-13T20:38:54.405Z",
+      "block": "159501777",
+      "latestNonce": 76,
+      "pendingNonce": 76,
+      "balanceEth": "0.010084912962900162",
+      "queues": {
+        "score": {
+          "rows": 9,
+          "byStatus": {
+            "success": 8,
+            "failed": 1
+          },
+          "active": 0,
+          "unknownActive": 0,
+          "unknownAll": 0,
+          "manual": 0,
+          "liveLease": 0,
+          "activeHashes": 0,
+          "unconfirmedActiveHashes": 0
+        },
+        "original": {
+          "rows": 12,
+          "byStatus": {
+            "success": 12
+          },
+          "active": 0,
+          "unknownActive": 0,
+          "unknownAll": 0,
+          "manual": 0,
+          "liveLease": 0,
+          "activeHashes": 0,
+          "unconfirmedActiveHashes": 0
+        },
+        "echo": {
+          "rows": 6,
+          "byStatus": {
+            "success": 6
+          },
+          "active": 0,
+          "unknownActive": 0,
+          "unknownAll": 0,
+          "manual": 0,
+          "liveLease": 0,
+          "activeHashes": 0,
+          "unconfirmedActiveHashes": 0
+        },
+        "pack": {
+          "rows": 2,
+          "byStatus": {
+            "opened": 2
+          },
+          "active": 0,
+          "unknownActive": 0,
+          "unknownAll": 0,
+          "manual": 0,
+          "liveLease": 0,
+          "activeHashes": 0,
+          "unconfirmedActiveHashes": 0
+        }
+      },
+      "packIntents": 0,
+      "lockPresent": false,
+      "lockTtlMs": -2,
+      "lockHolderClass": null,
+      "operatorMarkerPresent": false
+    }
+  ],
+  "assessment": {
+    "lastObservedIdle": true,
+    "caveat": "点状只读观测。定时触发和新建单仍在继续，RPC pending 仅说明此节点可见状态；不构成预留的停机窗口。原曲队列依赖 Redis 入口锁。",
+    "history": "unknownAll 包括历史终态行，人工复核按持久状态计数；报告未包含用户、哈希、锁 holder 原文或凭据。"
+  }
+}

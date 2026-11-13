@@ -1,0 +1,40 @@
+{
+  "deployment": {
+    "id": "dpl_DsxtavrZLU4QsA6DmZHGZoSLLUJm",
+    "url": "ripples-in-the-pond-mkq487sbn-0x991-thomas-projects.vercel.app",
+    "target": "production",
+    "readyState": "READY",
+    "createdAt": 1794602105581,
+    "aliases": [
+      "pond-ripple.xyz",
+      "ripples-in-the-pond.vercel.app",
+      "ripples-in-the-pond-0x991-thomas-projects.vercel.app",
+      "ripples-in-the-pond-git-main-0x991-thomas-projects.vercel.app"
+    ]
+  },
+  "publishedCommit": "22d8a29",
+  "businessCodeCommit": "f007ec8",
+  "browserCheckedAt": "2026-11-13T20:39:17.507Z",
+  "browser": {
+    "pages": 7,
+    "allStable": true,
+    "horizontalOverflow": false,
+    "pageErrors": [],
+    "consoleErrors": []
+  },
+  "audio": [
+    {
+      "path": "/score/1",
+      "ready": true,
+      "playing": true,
+      "errors": []
+    },
+    {
+      "path": "/echo/1",
+      "ready": true,
+      "playing": true,
+      "errors": []
+    }
+  ],
+  "cnAccelerationEnabled": false
+}
