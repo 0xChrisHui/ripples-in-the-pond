@@ -12,14 +12,14 @@ import EthereumMaterialMint from './EthereumMaterialMint';
 import { MaterialNoticeBox } from './MaterialNoticeView';
 import PondRouteLink from '../../pond-shell/PondRouteLink';
 import { loadMintStatus, mintReadFailed, mintCacheVersion, opCache, subscribeMintCache, type MintStatus } from './mint-status-cache';
-import { mintIdentityOf } from './MintStatusPrefetch';
+import { mintIdentityOf, mintAccessScope } from './MintStatusPrefetch';
 /** 默认目录与详情面板共享身份边界；每条链的收藏实例始终只挂载一次。 */
 export function useMintAccess(track: OriginalTrack) {
   const auth = useAuth();
   const latest = useRef(auth);
   useEffect(() => { latest.current = auth; });
   // 两链独立保留铸造状态；换身份或曲目只重建铸造内容，不重建音乐圆圈。
-  const scope = JSON.stringify([auth.authSource, auth.userId, auth.evmAddress?.toLowerCase(), track.trackId]);
+  const scope = mintAccessScope(auth, track.trackId);
   // 只有外部链上钱包登录才提供 Ethereum；邮箱/SEMI 等只见 Optimism。
   const external = auth.walletCapability.loginEntry === 'external_wallet';
   async function login() {

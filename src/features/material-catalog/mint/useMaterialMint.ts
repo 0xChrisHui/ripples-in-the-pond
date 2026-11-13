@@ -24,7 +24,7 @@ export function useMaterialMint() {
   const getOrder = useCallback((id: Hex) => client().getOrder(id), [client]);
   const listOrders = useCallback((trackId?: string) => client().listOrders(trackId), [client]);
   const prepareOrder = useCallback((trackId: string) => client().prepareOrder(trackId), [client]);
-  const sendOrder = useCallback((id: Hex) => client().sendOrder(id), [client]);
+  const sendOrder = useCallback((id: Hex, isCurrent?: () => boolean) => client().sendOrder(id, isCurrent), [client]);
   const recoverOrder = useCallback((id: Hex, hash?: Hex) => client().recoverOrder(id, hash), [client]);
   return { getOrder, listOrders, prepareOrder, sendOrder, recoverOrder };
 }

@@ -17,6 +17,12 @@ export function mintIdentityOf(auth: ReturnType<typeof useAuth>): MintIdentity |
   return { userId: auth.userId, wallet, getToken: () => auth.getAccessToken() };
 }
 
+/** Privy主地址与实际选中的付款钱包可能不同，两者都属于本次收藏意图。 */
+export function mintAccessScope(auth: ReturnType<typeof useAuth>, trackId: string): string {
+  return JSON.stringify([auth.authSource, auth.userId, auth.evmAddress?.toLowerCase(),
+    auth.selectedExternalWallet?.address.toLowerCase(), auth.walletCapability.activeWalletAddress?.toLowerCase(), trackId]);
+}
+
 /**
  * 登录后批量预取本人全部原曲的铸造状态，进入 /lens 时再核对一次；无界面，挂在全局 Providers。
  * 面板只读缓存，悬停即显示结果。

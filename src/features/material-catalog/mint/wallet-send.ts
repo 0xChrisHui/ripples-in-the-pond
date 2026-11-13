@@ -34,9 +34,13 @@ function rejected(error: unknown) {
 export async function sendMaterialVoucher(voucher: MaterialVoucher, selected: Pick<ConnectedWallet,'address'|'switchChain'|'getEthereumProvider'>, state: {
     attempt:()=>Promise<void>; outcome:(result:'rejected'|'unknown')=>Promise<void>;
     submission:(hash:Hex)=>Promise<void>; remember:(hash:Hex)=>void; forget:()=>void;
+    isCurrent?:()=>boolean;
   }) {
+  const assertCurrent = () => { if (state.isCurrent && !state.isCurrent()) throw new Error('收藏意图已失效，请重新选择曲目'); };
+  assertCurrent();
   const account = getAddress(selected.address), a = validateMaterialVoucher(voucher,account);
   await selected.switchChain(voucher.chainId);
+  assertCurrent();
   const provider = await selected.getEthereumProvider();
   if (Number(await provider.request({method:'eth_chainId'}))!==voucher.chainId) throw new Error('钱包网络未切换');
   const accounts = await provider.request({method:'eth_accounts'});
@@ -50,7 +54,12 @@ export async function sendMaterialVoucher(voucher: MaterialVoucher, selected: Pi
     functionName:'redeem',args,account}),publicClient.getGasPrice(),publicClient.getBalance({address:account})]);
   const gasLimit=gas*120n/100n; if(balance<gasLimit*gasPrice) throw new Error('ETH不足以支付保守Gas估算');
   // 钱包弹窗前原子占用attempt；无hash未知不得再次调用发送。
+  assertCurrent();
   await state.attempt(); let hash:Hex;
+  if (state.isCurrent && !state.isCurrent()) {
+    // 确认尚未调用钱包，沿既有拒绝分支释放；已发hash不会经过此分支。
+    await state.outcome('rejected'); throw new Error('收藏意图已失效，请重新选择曲目');
+  }
   try {
     const wallet=createWalletClient({account,chain,transport:custom(provider)});
     hash=await wallet.sendTransaction({account,chain,to:voucher.contractAddress,value:0n,gas:gasLimit,

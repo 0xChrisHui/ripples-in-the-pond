@@ -58,15 +58,17 @@ export function createMaterialMintClient({ userId, wallet, request, send = sendM
     if (hash) materialOrderId(hash);
     return restore(await getOrder(id), hash);
   }
-  async function sendOrder(id: Hex) {
+  async function sendOrder(id: Hex, isCurrent?: () => boolean) {
     const order = await getOrder(id), cache = identity(order);
     // 不先续签：unknown禁止authorization，但仍可以登记已经收到的hash。
     if (readMaterialHash(cache)) return restore(order);
+    if (isCurrent && !isCurrent()) throw Error('收藏意图已失效，请重新选择曲目');
     if (!canSendMaterialOrder(order)) throw Error('已有交易等待核对，不能再次发送');
     const body = await request('authorization', 'POST', { orderId: id, walletAddress: cache.recipientAddress });
     const authorized = parseMaterialOrder(body); assertSameMaterialOrder(order, authorized);
     const voucher = parseMaterialVoucher(body);
     if (authorized.status !== 'authorized' || authorized.version !== order.version + 1) throw Error('凭证与冻结订单版本不一致');
+    if (isCurrent && !isCurrent()) throw Error('收藏意图已失效，请重新选择曲目');
     let version = authorized.version;
     // 对账cron每分钟会给sending订单加版本号；用户在钱包里停留越久版本越容易过期。
     // 拒绝结果与hash登记只依赖digest且可安全重复，冲突时重读订单、确认仍是同一笔授权后用最新版本重试。
@@ -87,7 +89,7 @@ export function createMaterialMintClient({ userId, wallet, request, send = sendM
         }
       }
     }
-    return send(voucher, wallet!, { attempt: () => transition('attempt', 'POST', {}),
+    return send(voucher, wallet!, { isCurrent, attempt: () => transition('attempt', 'POST', {}),
       outcome: outcome => transition('attempt', 'PATCH', { outcome }), submission: txHash => transition('submission', 'POST', { txHash }),
       remember: hash => rememberMaterialHash(cache, hash), forget: () => forgetMaterialHash(cache) });
   }

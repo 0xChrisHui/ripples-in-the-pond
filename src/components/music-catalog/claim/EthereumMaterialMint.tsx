@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { useTranslations } from 'next-intl';
 import type { Hex } from 'viem';
 import { useAuth } from '../../../hooks/useAuth';
@@ -14,7 +14,7 @@ import MaterialNoticeView from './MaterialNoticeView';
 import MaterialOrderView from './MaterialOrderView';
 import PondRouteLink from '../../pond-shell/PondRouteLink';
 import { ethCache, isFinishedOrder, isOrderInFlight, loadMintStatus, mintReadFailed, mintCacheVersion, setMintActivity, subscribeMintCache } from './mint-status-cache';
-import { mintIdentityOf } from './MintStatusPrefetch';
+import { mintIdentityOf, mintAccessScope } from './MintStatusPrefetch';
 
 const BUSY_KEYS = { wallet: 'busyWallet', order: 'busyOrder', sign: 'busySign' } as const;
 
@@ -22,14 +22,14 @@ const BUSY_KEYS = { wallet: 'busyWallet', order: 'busyOrder', sign: 'busySign' }
 export default function EthereumMaterialMint({ track }: { track: OriginalTrack }) {
   const t = useTranslations('material');
   const auth = useAuth(), mint = useMaterialMint();
-  const latest = useRef({ auth, mint });
-  useEffect(() => { latest.current = { auth, mint }; });
+  const latest = useRef({ auth, mint, trackId: track.trackId });
+  useLayoutEffect(() => { latest.current = { auth, mint, trackId: track.trackId }; });
   const [busy, setBusy] = useState<'wallet' | 'order' | 'sign' | null>(null), [notice, setNotice] = useState<MaterialNotice | null>(null);
   // picked：本次会话里铸造得到的订单；其余状态来自批量预取的缓存（未知时只禁用按钮）。
   const [picked, setPicked] = useState<PublicMaterialOrder | null>(null), [refresh, setRefresh] = useState(0);
   useSyncExternalStore(subscribeMintCache, mintCacheVersion, mintCacheVersion);
   const active = useRef(true);
-  useEffect(() => {
+  useLayoutEffect(() => {
     active.current = true;
     return () => { active.current = false; };
   }, []);
@@ -57,28 +57,35 @@ export default function EthereumMaterialMint({ track }: { track: OriginalTrack }
   }, [track.trackId, mintingNow]);
   async function collect() {
     if (!deployed || busy) return;
+    const scope = mintAccessScope(auth, track.trackId);
+    const sameIntent = () => active.current && latest.current.auth.authenticated
+      && mintAccessScope(latest.current.auth, latest.current.trackId) === scope;
+    const isCurrent = () => sameIntent() && ready();
     setNotice(null); setBusy('wallet');
     try {
       // 本地原因只存词典键，渲染时按当前语言取词
-      if (!await waitUntil(ready, 25000)) {
-        if (active.current) setNotice(localMaterialNotice('eth.walletNotReady'));
+      if (!await waitUntil(() => !sameIntent() || ready(), 25000)) {
+        if (sameIntent()) setNotice(localMaterialNotice('eth.walletNotReady'));
         return;
       }
-      if (!active.current) return;
+      if (!isCurrent()) return;
+      const intentWallet = latest.current.auth.selectedExternalWallet!.address;
+      const client = latest.current.mint;
       setBusy('order');
-      let current = await latest.current.mint.prepareOrder(track.trackId);
-      if (address) ethCache.set(address, track.trackId, current); // 立即写缓存：面板被换走后回来仍能看到进度
-      if (active.current) setPicked(current);
+      let current = await client.prepareOrder(track.trackId);
+      ethCache.set(intentWallet, track.trackId, current); // 旧意图仍归原钱包缓存，不能带到新曲目/身份继续签名。
+      if (!isCurrent()) return;
+      setPicked(current);
       if (canSendMaterialOrder(current)) {
         setBusy('sign');
-        try { await latest.current.mint.sendOrder(current.orderId as Hex); announceMintRecorded(); }
-        finally { current = await latest.current.mint.getOrder(current.orderId as Hex).catch(() => current); }
-        if (address) ethCache.set(address, track.trackId, current);
-        if (active.current) setPicked(current);
+        try { await client.sendOrder(current.orderId as Hex, isCurrent); announceMintRecorded(); }
+        finally { current = await client.getOrder(current.orderId as Hex).catch(() => current); }
+        ethCache.set(intentWallet, track.trackId, current);
+        if (isCurrent()) setPicked(current);
       }
     } catch (caught) {
-      if (active.current) setNotice(describeMaterialError(caught, 'eth.orderUnavailable'));
-    } finally { if (active.current) { setBusy(null); setRefresh((value) => value + 1); } }
+      if (isCurrent()) setNotice(describeMaterialError(caught, 'eth.orderUnavailable'));
+    } finally { if (sameIntent()) { setBusy(null); setRefresh((value) => value + 1); } }
   }
   const finished = isFinishedOrder(order);
   const inFlight = isOrderInFlight(order);
