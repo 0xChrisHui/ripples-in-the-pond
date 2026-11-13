@@ -63,6 +63,15 @@ try {
 }
 
 export async function middleware(req: NextRequest) {
+  if (/^\/media\/[a-zA-Z0-9_-]{43}\/?$/i.test(req.nextUrl.pathname)) {
+    // 同源媒体会转到外部 Blob；仅保留读音频所需头，登录凭据不能离开本站。
+    const headers = new Headers();
+    for (const key of ['host', 'accept', 'accept-encoding', 'range', 'if-range', 'if-none-match', 'if-modified-since']) {
+      const value = req.headers.get(key);
+      if (value !== null) headers.set(key, value);
+    }
+    return NextResponse.next({ request: { headers } });
+  }
   const client = resolveClientIp(req.headers, {
     EDGE_PROXY_SECRET: process.env.EDGE_PROXY_SECRET,
     EDGE_PROXY_SECRET_PREVIOUS: process.env.EDGE_PROXY_SECRET_PREVIOUS,
@@ -121,5 +130,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: "/api/:path*",
+  matcher: ['/api/:path*', '/:media([mM][eE][dD][iI][aA])/:txid([a-zA-Z0-9_-]{43})'],
 };

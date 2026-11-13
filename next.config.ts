@@ -14,11 +14,15 @@ const nextConfig: NextConfig = {
     let origin: URL;
     try { origin = new URL(configured); }
     catch { throw new Error('MEDIA_BLOB_ORIGIN 必须是完整 HTTPS Blob origin'); }
+    const hostname = origin.hostname.toLowerCase().replace(/\.+$/, '');
     if (origin.protocol !== 'https:' || origin.username || origin.password
       || origin.pathname !== '/' || origin.search || origin.hash
-      || origin.hostname === 'pond-ripple.xyz') {
-      throw new Error('MEDIA_BLOB_ORIGIN 只允许不含路径、凭证与参数的外部 HTTPS origin');
+      || (origin.port && origin.port !== '443')
+      || ['pond-ripple.xyz', 'edge-cn.pond-ripple.xyz'].includes(hostname)
+      || !/^[a-z0-9]+\.public\.blob\.vercel-storage\.com$/.test(hostname)) {
+      throw new Error('MEDIA_BLOB_ORIGIN 只允许不含路径、凭证与参数的公开 Vercel Blob HTTPS origin');
     }
+    origin.hostname = hostname;
     // 💭 为什么不删除旧改写：切换镜像后已打开的页面仍会继续访问同源媒体地址。
     return [{ source: '/media/:txid([a-zA-Z0-9_-]{43})', destination: `${origin.origin}/media/:txid` }];
   },

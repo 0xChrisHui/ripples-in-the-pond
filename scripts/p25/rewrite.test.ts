@@ -35,7 +35,8 @@ test('错误配置拒绝构建，不能包含路径、凭证、参数或指向�
   try {
     for (const origin of ['http://blob.example', 'https://blob.example/media',
       'https://u:p@blob.example', 'https://blob.example?q=x', 'https://blob.example/#x',
-      'https://pond-ripple.xyz', 'invalid']) {
+      'https://pond-ripple.xyz', 'https://pond-ripple.xyz.', 'https://edge-cn.pond-ripple.xyz',
+      'https://edge-cn.pond-ripple.xyz.', 'https://unverified.example', 'invalid']) {
       process.env.MEDIA_BLOB_ORIGIN = origin;
       await assert.rejects(async () => config.rewrites?.(), /MEDIA_BLOB_ORIGIN/);
     }
