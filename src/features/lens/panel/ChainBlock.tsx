@@ -16,7 +16,7 @@ export default function ChainBlock({ deployment, children }: { deployment: Origi
   const [copied, setCopied] = useState(false);
   const op = deployment.chainId === 10;
   const chain = op ? 'Optimism' : getChainDefinition(deployment.chainId).displayName.replace(' Mainnet', '');
-  const standard = op ? tp('sbt') : 'ERC-1155';
+  const standard = op ? 'SBT' : 'ERC-1155';
   const address = deployment.contractAddress;
   async function copy() {
     if (!address) return;
