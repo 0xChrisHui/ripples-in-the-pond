@@ -18,15 +18,23 @@ const MAX_INTENT_AGE_MS = 3 * 24 * 3_600_000;
 
 /** 勾选意图 → OP 开包订单：Score 铸成功后自动入队。 */
 export async function promoteOpIntents(limit = 20): Promise<{ promoted: number; kept: number; dropped: number }> {
-  const { data, error } = await supabaseAdmin.from('score_pack_intents')
-    .select('pending_score_id,user_id,created_at').order('created_at').limit(Math.max(limit, 20));
-  if (error) throw error;
+  // 限额作用在已经成功的 Score 上，任意多条仍在等待的意图都不能挡住可开包订单。
+  const [ready, cleanup] = await Promise.all([
+    supabaseAdmin.from('score_pack_intents')
+      .select('pending_score_id,user_id,created_at,pending_scores!inner(score_nft_queue!inner(token_id,status))')
+      .eq('pending_scores.score_nft_queue.status', 'success').order('created_at').limit(limit),
+    supabaseAdmin.from('score_pack_intents').select('pending_score_id,user_id,created_at')
+      .order('created_at').limit(Math.max(limit, 20)),
+  ]);
+  if (ready.error || cleanup.error) throw ready.error ?? cleanup.error;
+  const candidates = new Map<string, IntentRow>();
+  for (const intent of [...ready.data ?? [], ...cleanup.data ?? []]) candidates.set(intent.pending_score_id, intent);
   let promoted = 0;
   let kept = 0;
   let dropped = 0;
   const score = getConfiguredScoreAddress(CHAIN_ID_NUM);
   const drop = (id: string) => supabaseAdmin.from('score_pack_intents').delete().eq('pending_score_id', id);
-  for (const intent of (data ?? []) as IntentRow[]) {
+  for (const intent of candidates.values()) {
     if (promoted >= limit) break;
     try {
       const { data: queue, error: queueError } = await supabaseAdmin.from('score_nft_queue')

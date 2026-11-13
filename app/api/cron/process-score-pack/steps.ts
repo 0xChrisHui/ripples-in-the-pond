@@ -71,6 +71,7 @@ export async function reconcileOrder(order: PackOrderRow, nowMs = Date.now()): P
 
   // OP 的 unsent：凭证已过期且链上仍未开 → 回到队列，按递增间隔重试。
   // 但"广播抛错"可能是已进 mempool 的超时：运营钱包还有未确认交易（pending nonce > latest nonce）时一律等待（Codex P1-3）
+  if (order.status === 'unsent' && order.failure_code === 'HASH_WRITE_UNKNOWN') return 'waiting';
   if (order.status === 'unsent' && order.mode === 'op_sponsored'
     && (order.voucher_deadline ?? 0) * 1000 < nowMs) {
     const operator = operatorWalletClient.account.address;
@@ -107,6 +108,7 @@ export async function sendSponsoredOrder(order: PackOrderRow, workerId: string, 
     trackTokenId: BigInt(order.track_token_id), trackCatalogId: '', soundIds: order.sound_ids.map(BigInt),
   });
   const signed = await signVoucher(order.chain_id, cfg.opener, voucher);
+  let broadcastHash: `0x${string}` | undefined;
   try {
     const result = await broadcastOperator(operatorWalletClient.account.address, {
       stamp: async () => Boolean(await transitionOrder(order.id, 'queued', 'unsent', {
@@ -127,6 +129,7 @@ export async function sendSponsoredOrder(order: PackOrderRow, workerId: string, 
         args: [voucher, signed.signer, signed.signature], gas: OPEN_GAS_CAP,
       }),
       save: async hash => {
+        broadcastHash = hash;
         if (!await transitionOrder(order.id, 'unsent', 'submitted_unknown', { tx_hash: hash.toLowerCase() })) {
           throw Error(`CRITICAL: 开包订单 ${order.id} 哈希未保存 ${hash}`);
         }
@@ -134,6 +137,15 @@ export async function sendSponsoredOrder(order: PackOrderRow, workerId: string, 
     }, deadline);
     return result === 'sent' ? 'sent' : 'waiting';
   } catch (error) {
+    if (broadcastHash) {
+      // 已收到真实哈希但提交状态写入失败，禁止退回普通 unsent 自动重试分支。
+      console.error('[score-pack] CRITICAL: 开包哈希待人工回填', order.id, broadcastHash);
+      const { error: persistError } = await supabaseAdmin.from('score_pack_orders')
+        .update({ failure_code: 'HASH_WRITE_UNKNOWN', tx_hash: broadcastHash.toLowerCase() })
+        .eq('id', order.id).eq('locked_by', workerId).eq('status', 'unsent');
+      if (persistError) throw Error(`CRITICAL: 开包哈希未保存 ${broadcastHash}`);
+      return 'failed';
+    }
     await transitionOrder(order.id, 'unsent', 'unsent', {
       last_error: safeMessage(error, 2000),
       failure_code: 'SEND_FAILED',
