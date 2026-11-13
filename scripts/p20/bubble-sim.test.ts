@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createBubbleSim, stepBubbles, type BubbleView, type SimEnv } from '../../src/components/pond-gl-test3/decor/bubbles/sim/bubble-sim';
 import { stayDuration, toDisplayLines } from '../../src/components/pond-gl-test3/decor/bubbles/notes/note-display';
+import * as geo from '../../src/components/pond-gl-test3/decor/bubbles/sim/bubble-geometry';
 import { DEFAULT_BUBBLE_TUNING } from '../../src/components/pond-gl-test3/decor/bubbles/bubble-tuning';
 
 function seeded(seed: number) {
@@ -203,5 +204,23 @@ function run(seed: number, seconds: number, env: SimEnv) {
   assert.ok(on.chains > off.chains * 2, `持续冒泡应明显更多：${on.chains} vs ${off.chains}`);
   assert.equal(on.gaps, 0, `持续冒泡不应有超过 0.1 秒的空档，最长 ${on.longest.toFixed(2)} 秒`);
   assert.ok(off.longest > 1, `关闭时应有明显的空档，最长 ${off.longest.toFixed(2)} 秒`);
+}
+// 17. 上升横向位移：池底起点到水面落点的距离 = 落点到画面中心距离 × driftFrac（不再是 46% 的"超广角"）
+{
+  const cx = W / 2, cy = H / 2;
+  for (const driftFrac of [0, 0.17, 0.4]) {
+    const env = base({ tuning: { ...DEFAULT_BUBBLE_TUNING, driftFrac } });
+    for (const [ax, ay] of [[1100, 300], [300, 700], [cx, cy + 200]]) {
+      const bottom = geo.pathPoint(env, ax, ay, 0), top = geo.pathPoint(env, ax, ay, 1);
+      assert.ok(Math.abs(top.x - ax) < 1e-9 && Math.abs(top.y - ay) < 1e-9, '终点就是水面落点');
+      const startDist = Math.hypot(bottom.x - cx, bottom.y - cy), endDist = Math.hypot(ax - cx, ay - cy);
+      assert.ok(Math.abs(startDist / endDist - (1 - driftFrac)) < 1e-9, `driftFrac=${driftFrac}：距离比应为 ${1 - driftFrac}`);
+      // 横向位移（起点到落点的距离）占落点到中心距离 = driftFrac
+      const travel = Math.hypot(ax - bottom.x, ay - bottom.y);
+      assert.ok(Math.abs(travel / endDist - driftFrac) < 1e-9, `位移占比应为 ${driftFrac}，实际 ${(travel / endDist).toFixed(3)}`);
+    }
+  }
+  // 默认值就是圆圈从最深层升到水面的比例
+  assert.equal(DEFAULT_BUBBLE_TUNING.driftFrac, 0.17);
 }
 console.log('P20 气泡模拟测试通过');

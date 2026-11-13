@@ -16,22 +16,25 @@ export interface GeoEnv {
 const PATH_SAMPLES = 10;
 export const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
 
-/** 上升进度 u∈[0,1] → 屏幕缩放（绕画面中心）：池底 0.5+depthStart → 水面 0.5+surfaceD。 */
-export function scaleAt(env: GeoEnv, u: number): number {
-  const d0 = env.tuning.depthStart;
-  return 0.5 + d0 + (env.surfaceD - d0) * u;
+/**
+ * 上升路径上的点：ax/ay 是水面落点，进度 u∈[0,1]（0 池底 → 1 水面）。
+ * 池底起点 = 落点向画面中心收缩 driftFrac，所以横向位移 = 落点到中心距离 × driftFrac。
+ * 之前沿用球的一点透视（缩放 0.55→1.025）位移占 46%，像超广角；圆圈从最深层升到水面只有约 17%，默认取它。
+ */
+export function pathPoint(env: GeoEnv, ax: number, ay: number, u: number): { x: number; y: number } {
+  const k = env.tuning.driftFrac * (1 - u);
+  const cx = env.w / 2, cy = env.h / 2;
+  return { x: ax - (ax - cx) * k, y: ay - (ay - cy) * k };
 }
 
-/** 整条径向上升路径是否都不碰球（含蛇行余量）。avoidSpawn 关时恒为 true。 */
-export function pathClear(env: GeoEnv, ox: number, oy: number): boolean {
+/** 整条上升路径是否都不碰球（含蛇行余量）。avoidSpawn 关时恒为 true。 */
+export function pathClear(env: GeoEnv, ax: number, ay: number): boolean {
   if (!env.tuning.avoidSpawn) return true;
-  const cx = env.w / 2, cy = env.h / 2;
   for (let i = 0; i <= PATH_SAMPLES; i++) {
-    const s = scaleAt(env, i / PATH_SAMPLES);
-    const px = cx + (ox - cx) * s, py = cy + (oy - cy) * s;
+    const p = pathPoint(env, ax, ay, i / PATH_SAMPLES);
     for (let k = 0; k < env.discCount; k++) {
       const d = env.discs[k];
-      if (Math.hypot(px - d.x, py - d.y) < d.r + env.tuning.swayMargin) return false;
+      if (Math.hypot(p.x - d.x, p.y - d.y) < d.r + env.tuning.swayMargin) return false;
     }
   }
   return true;

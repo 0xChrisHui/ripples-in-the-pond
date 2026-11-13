@@ -9,7 +9,7 @@ export const DEFAULT_BUBBLE_TUNING = {
   countMin: 3, countMax: 6, popGapMin: 0.4, popGapMax: 1.5,
   retryMin: 4, retryMax: 8, maxTries: 5, areaMin: 0.15, areaMax: 0.85,
   // ── 运动 ──
-  riseMin: 5, riseMax: 8, speed: 1, riseEase: 0.85, depthStart: 0.05,
+  riseMin: 5, riseMax: 8, speed: 1, riseEase: 0.85, driftFrac: 0.17,
   dwellMin: 0.3, dwellMax: 1.2, swayMin: 2, swayMax: 7, swayFreqMin: 0.8, swayFreqMax: 1.6,
   // ── 外观 ──
   size: 1, sizeMin: 0.67, sizeMax: 1.4, radiusDeep: 1.5, radiusSurface: 3.5, radiusCurve: 1.2, minSpritePx: 6,

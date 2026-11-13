@@ -10,7 +10,7 @@ import type { Disc } from './bubble-env';
 import type { BubbleTuning } from '../bubble-tuning';
 import { DEFAULT_BUBBLE_TUNING } from '../bubble-tuning';
 import type { CarrierPort } from '../bubble-bridge';
-import { clamp01, discFade, pathClear, scaleAt } from './bubble-geometry';
+import { clamp01, discFade, pathClear, pathPoint } from './bubble-geometry';
 
 export interface BubbleView {
   x: number; y: number;  // 屏幕像素
@@ -24,7 +24,8 @@ interface Bubble {
   popped: boolean;
   carrier: boolean; carrierId: number; held: number; // 载体泡：到水面后停住，等手记宿主放行再破
 }
-interface Chain { t: number; ox: number; oy: number; end: number; bubbles: Bubble[]; fromBurst: boolean }
+interface Chain { t: number; ax: number; ay: number; // ax/ay = 水面落点
+   end: number; bubbles: Bubble[]; fromBurst: boolean }
 export type BurstKind = 'plain' | 'note';
 /** 控制台"立即"请求的结果：本帧刚开始 / 避让找不到位置而失败；每帧读完即清空。 */
 export type BurstResult = 'started' | 'failed' | null;
@@ -60,7 +61,7 @@ export function createBubbleSim(rng: Rng): BubbleSim {
 }
 
 /** carrierAt：载体泡的位置（'first' 立即出手记 / 'last' 自然出手记 / null 无手记）。 */
-function buildChain(rng: Rng, env: SimEnv, ox: number, oy: number, carrierAt: 'first' | 'last' | null, fromBurst: boolean): Chain {
+function buildChain(rng: Rng, env: SimEnv, ax: number, ay: number, carrierAt: 'first' | 'last' | null, fromBurst: boolean): Chain {
   const t = env.tuning;
   const n = Math.max(1, Math.round(between(rng, t.countMin, t.countMax)));
   const carrierIdx = carrierAt === 'first' ? 0 : carrierAt === 'last' ? n - 1 : -1;
@@ -77,7 +78,7 @@ function buildChain(rng: Rng, env: SimEnv, ox: number, oy: number, carrierAt: 'f
     end = Math.max(end, delay + rise + dwell + 0.2); // +0.2 秒：让最后一个泡的破水在串结束前触发
     delay += between(rng, t.popGapMin, t.popGapMax);
   }
-  return { t: 0, ox, oy, end, bubbles, fromBurst };
+  return { t: 0, ax, ay, end, bubbles, fromBurst };
 }
 
 /** 立即请求用户在等，多试几个落点（球多时自然出现 5 次常常全被挡）；自然出现仍用 maxTries。 */
@@ -85,14 +86,11 @@ const BURST_TRIES = 40;
 
 function trySpawn(rng: Rng, env: SimEnv, carrierAt: 'first' | 'last' | null, fromBurst: boolean): Chain | null {
   const t = env.tuning;
-  const cx = env.w / 2, cy = env.h / 2;
-  const sEnd = scaleAt(env, 1);
   const tries = fromBurst ? BURST_TRIES : Math.max(1, Math.round(t.maxTries));
   for (let i = 0; i < tries; i++) {
-    const tx = env.w * between(rng, t.areaMin, t.areaMax);
-    const ty = env.h * between(rng, t.areaMin, t.areaMax);
-    const ox = cx + (tx - cx) / sEnd, oy = cy + (ty - cy) / sEnd; // 水面落点反推出生点
-    if (pathClear(env, ox, oy)) return buildChain(rng, env, ox, oy, carrierAt, fromBurst);
+    const ax = env.w * between(rng, t.areaMin, t.areaMax);
+    const ay = env.h * between(rng, t.areaMin, t.areaMax);
+    if (pathClear(env, ax, ay)) return buildChain(rng, env, ax, ay, carrierAt, fromBurst);
   }
   return null;
 }
@@ -140,16 +138,12 @@ export function stepBubbles(sim: BubbleSim, dt: number, env: SimEnv, rng: Rng, o
 /** 推进一个泡：写 view 并返回 true = 本帧可见。载体泡到水面后停住（计入 held，并顺延串的结束时间）。 */
 function stepOne(chain: Chain, b: Bubble, dt: number, env: SimEnv, view: BubbleView): boolean {
   const t = env.tuning;
-  const cx = env.w / 2, cy = env.h / 2;
   let tb = chain.t - b.delay - b.held;
   if (tb < 0) return false;
   const at = (time: number) => {
     const e = Math.pow(clamp01(time / b.rise), t.riseEase);
-    const s = scaleAt(env, e);
-    return {
-      e, y: cy + (chain.oy - cy) * s,
-      x: cx + (chain.ox - cx) * s + Math.sin(Math.min(time, b.rise + b.dwell) * b.freq + b.phase) * b.sway * (0.4 + e),
-    };
+    const p = pathPoint(env, chain.ax, chain.ay, e);
+    return { e, y: p.y, x: p.x + Math.sin(Math.min(time, b.rise + b.dwell) * b.freq + b.phase) * b.sway * (0.4 + e) };
   };
   if (b.carrier && !b.popped && tb >= b.rise) {
     if (b.carrierId === 0) { const p = at(b.rise); b.carrierId = env.carrier?.arrive(p.x, p.y) || -1; }

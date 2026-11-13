@@ -26,7 +26,7 @@ export const GROUPS: Group[] = [
     { key: 'riseMin', label: '上升时长·最短(秒)', min: 1, max: 20, step: 0.5 },
     { key: 'riseMax', label: '上升时长·最长(秒)', min: 1, max: 30, step: 0.5 },
     { key: 'riseEase', label: '上升曲线指数(小于1先快后慢)', min: 0.3, max: 2, step: 0.05 },
-    { key: 'depthStart', label: '起始深度(0 池底)', min: 0, max: 0.4, step: 0.01 },
+    { key: 'driftFrac', label: '上升横向位移比例(圆圈约0.17)', min: 0, max: 0.6, step: 0.01 },
     { key: 'dwellMin', label: '水面停留·最短(秒)', min: 0, max: 5, step: 0.1 },
     { key: 'dwellMax', label: '水面停留·最长(秒)', min: 0, max: 8, step: 0.1 },
     { key: 'swayMin', label: '蛇行幅度·最小(px)', min: 0, max: 30, step: 0.5 },
