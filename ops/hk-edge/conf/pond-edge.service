@@ -1,0 +1,16 @@
+[Unit]
+Description=Ripples in the Pond 香港边缘代理
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+PIDFile=/etc/nginx/pond-edge/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t -c /etc/nginx/pond-edge/nginx.conf
+ExecStart=/usr/sbin/nginx -c /etc/nginx/pond-edge/nginx.conf
+ExecReload=/bin/sh -c '/usr/sbin/nginx -t -c /etc/nginx/pond-edge/nginx.conf && /usr/sbin/nginx -c /etc/nginx/pond-edge/nginx.conf -s reload'
+ExecStop=/usr/sbin/nginx -c /etc/nginx/pond-edge/nginx.conf -s quit
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

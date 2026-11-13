@@ -1,0 +1,11 @@
+[Unit]
+Description=每分钟检查香港节点回源
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1min
+AccuracySec=1s
+Unit=pond-edge-upstream.service
+
+[Install]
+WantedBy=timers.target

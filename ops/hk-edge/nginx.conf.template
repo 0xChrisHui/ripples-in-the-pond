@@ -1,0 +1,82 @@
+# 香港节点独立 nginx 主配置；部署前用 render.py 生成，不直接编辑密钥。
+worker_processes auto;
+pid __CONFIG_DIR__/nginx.pid;
+error_log __CONFIG_DIR__/error.log warn;
+events { worker_connections 2048; }
+http {
+    include __SECRET_INCLUDE__;
+    log_format pond '$remote_addr [$time_local] "$request" $status $body_bytes_sent '
+                    '$request_time $upstream_response_time $upstream_cache_status';
+    access_log __CONFIG_DIR__/access.log pond;
+    client_body_temp_path __CACHE_DIR__/body;
+    proxy_temp_path __CACHE_DIR__/temp;
+    proxy_cache_path __CACHE_DIR__/objects levels=1:2 keys_zone=pond:20m max_size=10g inactive=30d use_temp_path=off;
+    resolver 1.1.1.1 8.8.8.8 valid=60s ipv6=off;
+    resolver_timeout 5s;
+    limit_conn_zone $binary_remote_addr zone=pond_connections:10m;
+    limit_req_zone $binary_remote_addr zone=pond_dynamic:10m rate=20r/s;
+    map $uri $pond_client_ip { default ""; ~^/api/ $remote_addr; }
+    map $uri $pond_edge_key { default ""; ~^/api/ $pond_proxy_secret; }
+    map $arg_v $pond_version { default ""; "~^[a-fA-F0-9]{64}$" ?v=$arg_v; }
+    server {
+        listen 80 default_server;
+        server_name _;
+        return 444;
+    }
+    server {
+        listen 80;
+        server_name pond-ripple.xyz;
+        return 308 https://pond-ripple.xyz$request_uri;
+    }
+    server {
+        listen 443 ssl default_server;
+        server_name _;
+        ssl_certificate __CERTIFICATE__;
+        ssl_certificate_key __CERTIFICATE_KEY__;
+        return 444;
+    }
+    server {
+        listen 443 ssl;
+        server_name pond-ripple.xyz;
+        ssl_certificate __CERTIFICATE__;
+        ssl_certificate_key __CERTIFICATE_KEY__;
+        set $pond_vercel_origin __UPSTREAM__;
+        limit_conn pond_connections 200;
+        limit_conn_status 429;
+        limit_req_status 429;
+        location = /_edge/health {
+            access_log off;
+            if (-f __STATE_DIR__/upstream.failed) { return 503; }
+            default_type text/plain;
+            return 200 'ok\n';
+        }
+        location ^~ /_next/static/ {
+            include __CONFIG_DIR__/common.conf;
+            include __CONFIG_DIR__/static.conf;
+            proxy_pass https://$pond_vercel_origin$uri;
+        }
+        location ~ ^/tracks/No\.[0-9]+\.mp3$ {
+            include __CONFIG_DIR__/common.conf;
+            include __CONFIG_DIR__/audio.conf;
+            proxy_cache_key "$uri$pond_version|$slice_range";
+            proxy_cache_valid 200 206 30d;
+            proxy_pass https://$pond_vercel_origin$uri$pond_version;
+        }
+        location ~ "^/media/[a-zA-Z0-9_-]{43}$" {
+            include __CONFIG_DIR__/common.conf;
+            include __CONFIG_DIR__/audio.conf;
+            proxy_set_header Cookie "";
+            proxy_set_header Authorization "";
+            proxy_cache_key "$uri|$slice_range";
+            proxy_cache_valid 200 206 365d;
+            proxy_pass https://$pond_vercel_origin$uri;
+        }
+        location / {
+            include __CONFIG_DIR__/common.conf;
+            limit_req zone=pond_dynamic burst=100 nodelay;
+            proxy_buffering off;
+            proxy_cache off;
+            proxy_pass https://$pond_vercel_origin$request_uri;
+        }
+    }
+}

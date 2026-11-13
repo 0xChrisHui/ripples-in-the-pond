@@ -1,0 +1,10 @@
+[Unit]
+Description=香港代理上游、磁盘与证书自检
+After=pond-edge.service
+Requires=pond-edge.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/default/pond-edge
+ExecStart=/opt/pond-edge/upstream-check.sh
+TimeoutStartSec=55

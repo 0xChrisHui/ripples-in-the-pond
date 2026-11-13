@@ -1,0 +1,28 @@
+{
+  "Comment": "仅在香港线路、证书与健康检查验收后，由账户所有者放行大陆分流",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "pond-ripple.xyz.", "Type": "A", "SetIdentifier": "default-vercel",
+        "GeoLocation": {"CountryCode": "*"}, "TTL": 300,
+        "ResourceRecords": [{"Value": "__VERCEL_IPV4__"}]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "edge-cn.pond-ripple.xyz.", "Type": "A", "SetIdentifier": "hk1", "Weight": 100,
+        "TTL": 60, "ResourceRecords": [{"Value": "__HK_IPV4__"}], "HealthCheckId": "__HEALTH_CHECK_ID__"
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "pond-ripple.xyz.", "Type": "A", "SetIdentifier": "china-edge",
+        "GeoLocation": {"CountryCode": "CN"},
+        "AliasTarget": {"HostedZoneId": "__ZONE_ID__", "DNSName": "edge-cn.pond-ripple.xyz.", "EvaluateTargetHealth": true}
+      }
+    }
+  ]
+}

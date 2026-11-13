@@ -26,6 +26,9 @@
     "p15:h7:verify-production": "tsx scripts/p15-h/release/verify-production-release.ts",
     "p15:i:measure-score": "node scripts/p15-i/measure-score.mjs",
     "p24:test": "tsx --test scripts/p24/*.test.ts",
+    "p25:test": "tsx --test scripts/p25/*.test.ts",
+    "p25:nginx": "node scripts/p25/nginx.integration.mjs",
+    "p25:media": "node scripts/p25/next-media.integration.mjs",
     "p15:i:verify": "tsx scripts/p15-i/instant-start.test.ts",
     "i18n:check": "node scripts/i18n/check-messages.mjs"
   },

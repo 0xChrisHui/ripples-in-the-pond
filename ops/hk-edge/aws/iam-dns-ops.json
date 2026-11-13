@@ -1,0 +1,23 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "OnlyPondZone",
+      "Effect": "Allow",
+      "Action": ["route53:GetHostedZone", "route53:ListResourceRecordSets", "route53:ChangeResourceRecordSets"],
+      "Resource": "arn:aws:route53:::hostedzone/__ZONE_ID__"
+    },
+    {
+      "Sid": "ReadZonesAndChanges",
+      "Effect": "Allow",
+      "Action": ["route53:ListHostedZones", "route53:ListHostedZonesByName", "route53:GetChange"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "HealthCheckLifecycle",
+      "Effect": "Allow",
+      "Action": ["route53:CreateHealthCheck", "route53:DeleteHealthCheck", "route53:GetHealthCheck", "route53:GetHealthCheckStatus", "route53:UpdateHealthCheck", "route53:ListHealthChecks"],
+      "Resource": "*"
+    }
+  ]
+}

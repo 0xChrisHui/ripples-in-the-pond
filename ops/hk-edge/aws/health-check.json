@@ -1,0 +1,16 @@
+{
+  "CallerReference": "__CALLER_REFERENCE__",
+  "HealthCheckConfig": {
+    "IPAddress": "__HK_IPV4__",
+    "Port": 443,
+    "Type": "HTTPS",
+    "ResourcePath": "/_edge/health",
+    "FullyQualifiedDomainName": "pond-ripple.xyz",
+    "RequestInterval": 30,
+    "FailureThreshold": 3,
+    "EnableSNI": true,
+    "Regions": ["us-east-1", "eu-west-1", "ap-southeast-1"],
+    "Inverted": false,
+    "Disabled": false
+  }
+}
