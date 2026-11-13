@@ -1,0 +1,1182 @@
+[
+  {
+    "route": "/score/1",
+    "lang": "zh-CN",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 1459,
+    "state": "ready",
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      },
+      {
+        "tag": "H1",
+        "text": "Ripples #1",
+        "x": 545.046875,
+        "y": 146,
+        "width": 349.890625,
+        "height": 90.15625,
+        "fontSize": "92px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [
+      {
+        "tag": "DIV",
+        "text": "已定稿FINALIZEDOP MainnetRipples #1底曲《33》· 35 个音符 · 2026/9/21",
+        "x": 545.046875,
+        "y": 110,
+        "width": 349.890625,
+        "height": 163.75,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "grid"
+      },
+      {
+        "tag": "DIV",
+        "text": "正在准备永久录音…▶0:000:00正在准备，可以先点",
+        "x": 505,
+        "y": 295.75,
+        "width": 430,
+        "height": 398,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "block"
+      },
+      {
+        "tag": "DIV",
+        "text": "分享复制链接分享到 X分享到微博下载海报",
+        "x": 634,
+        "y": 715.75,
+        "width": 172,
+        "height": 44,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      }
+    ],
+    "oldHeaders": 0,
+    "ledgerOpen": false,
+    "prefix": "score-1-desktop-zh"
+  },
+  {
+    "route": "/score/5",
+    "lang": "zh-CN",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 1437,
+    "state": "failed",
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      },
+      {
+        "tag": "H1",
+        "text": "Ripples #5",
+        "x": 541.515625,
+        "y": 146,
+        "width": 356.96875,
+        "height": 90.15625,
+        "fontSize": "92px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [
+      {
+        "tag": "DIV",
+        "text": "降级可读DEGRADEDOP MainnetRipples #5",
+        "x": 541.515625,
+        "y": 110,
+        "width": 356.96875,
+        "height": 126.15625,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "grid"
+      },
+      {
+        "tag": "DIV",
+        "text": "已验证播放快照暂时不可用这不代表铸造失败；已知的作品身份仍可在下方核验。重试",
+        "x": 505,
+        "y": 258.15625,
+        "width": 430,
+        "height": 432,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "block"
+      },
+      {
+        "tag": "DIV",
+        "text": "分享复制链接分享到 X分享到微博下载海报",
+        "x": 634,
+        "y": 712.15625,
+        "width": 172,
+        "height": 44,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      }
+    ],
+    "oldHeaders": 0,
+    "ledgerOpen": false,
+    "prefix": "score-5-desktop-zh"
+  },
+  {
+    "route": "/me",
+    "lang": "zh-CN",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 1165,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "me-desktop-zh"
+  },
+  {
+    "route": "/artist",
+    "lang": "zh-CN",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 1165,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "artist-desktop-zh"
+  },
+  {
+    "route": "/echo",
+    "lang": "zh-CN",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 900,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "这里没有这枚唱片",
+        "x": 432,
+        "y": 378,
+        "width": 576,
+        "height": 72,
+        "fontSize": "72px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "echo-desktop-zh"
+  },
+  {
+    "route": "/tracks",
+    "lang": "zh-CN",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 2994,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "原曲01",
+        "x": 376.46875,
+        "y": 213.15625,
+        "width": 435.171875,
+        "height": 164.15625,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      },
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "tracks-desktop-zh"
+  },
+  {
+    "route": "/p23-missing-page",
+    "lang": "zh-CN",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 900,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "这里没有这枚唱片",
+        "x": 432,
+        "y": 378,
+        "width": 576,
+        "height": 72,
+        "fontSize": "72px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "p23-missing-page-desktop-zh"
+  },
+  {
+    "route": "/",
+    "lang": "zh-CN",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 1165,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "home-desktop-zh"
+  },
+  {
+    "route": "/score/1",
+    "lang": "zh-CN",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 1505,
+    "state": "ready",
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      },
+      {
+        "tag": "H1",
+        "text": "Ripples #1",
+        "x": 118.921875,
+        "y": 136,
+        "width": 152.125,
+        "height": 39.1875,
+        "fontSize": "40px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [
+      {
+        "tag": "DIV",
+        "text": "已定稿FINALIZEDOP MainnetRipples #1底曲《33》· 35 个音符 · 2026/9/21",
+        "x": 68.375,
+        "y": 100,
+        "width": 253.234375,
+        "height": 112.78125,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "grid"
+      },
+      {
+        "tag": "DIV",
+        "text": "点击唱片，开始播放▶0:000:00点唱片开始播放",
+        "x": 19.5,
+        "y": 230.78125,
+        "width": 351,
+        "height": 292,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "block"
+      },
+      {
+        "tag": "DIV",
+        "text": "分享复制链接分享到 X分享到微博下载海报",
+        "x": 109,
+        "y": 540.78125,
+        "width": 172,
+        "height": 44,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      }
+    ],
+    "oldHeaders": 0,
+    "ledgerOpen": false,
+    "prefix": "score-1-mobile-zh"
+  },
+  {
+    "route": "/score/5",
+    "lang": "zh-CN",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 1483,
+    "state": "failed",
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      },
+      {
+        "tag": "H1",
+        "text": "Ripples #5",
+        "x": 117.390625,
+        "y": 136,
+        "width": 155.203125,
+        "height": 39.1875,
+        "fontSize": "40px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [
+      {
+        "tag": "DIV",
+        "text": "降级可读DEGRADEDOP MainnetRipples #5",
+        "x": 116.8125,
+        "y": 100,
+        "width": 156.375,
+        "height": 75.1875,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "grid"
+      },
+      {
+        "tag": "DIV",
+        "text": "已验证播放快照暂时不可用这不代表铸造失败；已知的作品身份仍可在下方核验。重试",
+        "x": 19.5,
+        "y": 193.1875,
+        "width": 351,
+        "height": 326,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "block"
+      },
+      {
+        "tag": "DIV",
+        "text": "分享复制链接分享到 X分享到微博下载海报",
+        "x": 109,
+        "y": 537.1875,
+        "width": 172,
+        "height": 44,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      }
+    ],
+    "oldHeaders": 0,
+    "ledgerOpen": false,
+    "prefix": "score-5-mobile-zh"
+  },
+  {
+    "route": "/me",
+    "lang": "zh-CN",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 2075,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "me-mobile-zh"
+  },
+  {
+    "route": "/artist",
+    "lang": "zh-CN",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 2075,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "artist-mobile-zh"
+  },
+  {
+    "route": "/echo",
+    "lang": "zh-CN",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 844,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "这里没有这枚唱片",
+        "x": 24,
+        "y": 338,
+        "width": 342,
+        "height": 96,
+        "fontSize": "48px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "echo-mobile-zh"
+  },
+  {
+    "route": "/tracks",
+    "lang": "zh-CN",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 3262,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "原曲01",
+        "x": 24,
+        "y": 152,
+        "width": 342,
+        "height": 93.5,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      },
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "tracks-mobile-zh"
+  },
+  {
+    "route": "/p23-missing-page",
+    "lang": "zh-CN",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 844,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "这里没有这枚唱片",
+        "x": 24,
+        "y": 338,
+        "width": 342,
+        "height": 96,
+        "fontSize": "48px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "p23-missing-page-mobile-zh"
+  },
+  {
+    "route": "/",
+    "lang": "zh-CN",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 2075,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "home-mobile-zh"
+  },
+  {
+    "route": "/score/1",
+    "lang": "en",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 1461,
+    "state": "ready",
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      },
+      {
+        "tag": "H1",
+        "text": "Ripples #1",
+        "x": 545.046875,
+        "y": 146,
+        "width": 349.890625,
+        "height": 90.15625,
+        "fontSize": "92px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [
+      {
+        "tag": "DIV",
+        "text": "FINALIZEDOP MainnetRipples #1Based on “33” · 35 notes · 9/21/2026",
+        "x": 545.046875,
+        "y": 110,
+        "width": 349.890625,
+        "height": 163.75,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "grid"
+      },
+      {
+        "tag": "DIV",
+        "text": "Tap the record to play▶0:000:00Tap the record to play",
+        "x": 505,
+        "y": 295.75,
+        "width": 430,
+        "height": 398,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "block"
+      },
+      {
+        "tag": "DIV",
+        "text": "ShareCopy linkShare on XShare on WeiboDownload poster",
+        "x": 602.78125,
+        "y": 715.75,
+        "width": 234.4375,
+        "height": 44,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      }
+    ],
+    "oldHeaders": 0,
+    "ledgerOpen": false,
+    "prefix": "score-1-desktop-en"
+  },
+  {
+    "route": "/score/5",
+    "lang": "en",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 1461,
+    "state": "failed",
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      },
+      {
+        "tag": "H1",
+        "text": "Ripples #5",
+        "x": 541.515625,
+        "y": 146,
+        "width": 356.96875,
+        "height": 90.15625,
+        "fontSize": "92px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [
+      {
+        "tag": "DIV",
+        "text": "DEGRADEDOP MainnetRipples #5",
+        "x": 541.515625,
+        "y": 110,
+        "width": 356.96875,
+        "height": 126.15625,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "grid"
+      },
+      {
+        "tag": "DIV",
+        "text": "The verified playback snapshot is temporarily unavailableThis doesn't mean the mint failed; the known identity of the wo",
+        "x": 505,
+        "y": 258.15625,
+        "width": 430,
+        "height": 496,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "block"
+      },
+      {
+        "tag": "DIV",
+        "text": "ShareCopy linkShare on XShare on WeiboDownload poster",
+        "x": 602.78125,
+        "y": 776.15625,
+        "width": 234.4375,
+        "height": 44,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      }
+    ],
+    "oldHeaders": 0,
+    "ledgerOpen": false,
+    "prefix": "score-5-desktop-en"
+  },
+  {
+    "route": "/me",
+    "lang": "en",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 1233,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "me-desktop-en"
+  },
+  {
+    "route": "/artist",
+    "lang": "en",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 1233,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "artist-desktop-en"
+  },
+  {
+    "route": "/echo",
+    "lang": "en",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 900,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "There's no record here",
+        "x": 432,
+        "y": 328,
+        "width": 576,
+        "height": 144,
+        "fontSize": "72px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "echo-desktop-en"
+  },
+  {
+    "route": "/tracks",
+    "lang": "en",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 3335,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Track01",
+        "x": 376.46875,
+        "y": 213.15625,
+        "width": 435.171875,
+        "height": 164.15625,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      },
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "tracks-desktop-en"
+  },
+  {
+    "route": "/p23-missing-page",
+    "lang": "en",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 900,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "There's no record here",
+        "x": 432,
+        "y": 328,
+        "width": 576,
+        "height": 144,
+        "fontSize": "72px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "p23-missing-page-desktop-en"
+  },
+  {
+    "route": "/",
+    "lang": "en",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "height": 1165,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "叶禹含",
+        "x": 619.59375,
+        "y": 148.796875,
+        "width": 624,
+        "height": 50.671875,
+        "fontSize": "57.6px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "home-desktop-en"
+  },
+  {
+    "route": "/score/1",
+    "lang": "en",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 1529,
+    "state": "ready",
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      },
+      {
+        "tag": "H1",
+        "text": "Ripples #1",
+        "x": 118.9375,
+        "y": 136,
+        "width": 152.125,
+        "height": 39.1875,
+        "fontSize": "40px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [
+      {
+        "tag": "DIV",
+        "text": "FINALIZEDOP MainnetRipples #1Based on “33” · 35 notes · 9/21/2026",
+        "x": 60.046875,
+        "y": 100,
+        "width": 269.90625,
+        "height": 112.78125,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "grid"
+      },
+      {
+        "tag": "DIV",
+        "text": "Tap the record to play▶0:000:00Tap the record to play",
+        "x": 19.5,
+        "y": 230.78125,
+        "width": 351,
+        "height": 292,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "block"
+      },
+      {
+        "tag": "DIV",
+        "text": "ShareCopy linkShare on XShare on WeiboDownload poster",
+        "x": 77.78125,
+        "y": 540.78125,
+        "width": 234.4375,
+        "height": 44,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      }
+    ],
+    "oldHeaders": 0,
+    "ledgerOpen": false,
+    "prefix": "score-1-mobile-en"
+  },
+  {
+    "route": "/score/5",
+    "lang": "en",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 1531,
+    "state": "failed",
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      },
+      {
+        "tag": "H1",
+        "text": "Ripples #5",
+        "x": 117.390625,
+        "y": 136,
+        "width": 155.203125,
+        "height": 39.1875,
+        "fontSize": "40px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [
+      {
+        "tag": "DIV",
+        "text": "DEGRADEDOP MainnetRipples #5",
+        "x": 111.6875,
+        "y": 100,
+        "width": 166.609375,
+        "height": 75.1875,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "grid"
+      },
+      {
+        "tag": "DIV",
+        "text": "The verified playback snapshot is temporarily unavailableThis doesn't mean the mint failed; the known identity of the wo",
+        "x": 19.5,
+        "y": 193.1875,
+        "width": 351,
+        "height": 390,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "block"
+      },
+      {
+        "tag": "DIV",
+        "text": "ShareCopy linkShare on XShare on WeiboDownload poster",
+        "x": 77.78125,
+        "y": 601.1875,
+        "width": 234.4375,
+        "height": 44,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      }
+    ],
+    "oldHeaders": 0,
+    "ledgerOpen": false,
+    "prefix": "score-5-mobile-en"
+  },
+  {
+    "route": "/me",
+    "lang": "en",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 2479,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "me-mobile-en"
+  },
+  {
+    "route": "/artist",
+    "lang": "en",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 2479,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "artist-mobile-en"
+  },
+  {
+    "route": "/echo",
+    "lang": "en",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 844,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "There's no record here",
+        "x": 24,
+        "y": 324,
+        "width": 342,
+        "height": 96,
+        "fontSize": "48px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "echo-mobile-en"
+  },
+  {
+    "route": "/tracks",
+    "lang": "en",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 3630,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Track01",
+        "x": 24,
+        "y": 152,
+        "width": 342,
+        "height": 93.5,
+        "fontSize": "16px",
+        "fontFamily": "Geist, \"Geist Fallback\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+        "display": "flex"
+      },
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "tracks-mobile-en"
+  },
+  {
+    "route": "/p23-missing-page",
+    "lang": "en",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 844,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "There's no record here",
+        "x": 24,
+        "y": 324,
+        "width": 342,
+        "height": 96,
+        "fontSize": "48px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "p23-missing-page-mobile-en"
+  },
+  {
+    "route": "/",
+    "lang": "en",
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 2479,
+    "h1": [
+      {
+        "tag": "H1",
+        "text": "Ye Yuhan",
+        "x": 20,
+        "y": 562.796875,
+        "width": 350,
+        "height": 65.1875,
+        "fontSize": "74.1px",
+        "fontFamily": "\"Cormorant Garamond\", \"Cormorant Garamond Fallback\", \"Songti SC\", STSong, serif",
+        "display": "block"
+      }
+    ],
+    "hero": [],
+    "oldHeaders": 0,
+    "ledgerOpen": null,
+    "prefix": "home-mobile-en"
+  }
+]

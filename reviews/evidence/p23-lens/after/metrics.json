@@ -1,0 +1,646 @@
+[
+  {
+    "prefix": "desktop-zh-collapsed",
+    "rect": {
+      "x": 814.7999877929688,
+      "y": 450.20001220703125,
+      "width": 340.00006103515625,
+      "height": 246
+    },
+    "width": 1440,
+    "height": 900,
+    "fonts": [
+      "11px",
+      "16px",
+      "12px"
+    ],
+    "background": "rgba(1, 7, 6, 0.84)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "",
+        "label": "播放",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "单曲页 →",
+        "label": null,
+        "width": 69.296875,
+        "height": 44
+      },
+      {
+        "text": "0xa65c…e99c ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "复制 Optimism 合约地址",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "单曲页 →",
+        "label": null,
+        "width": 69.296875,
+        "height": 44
+      },
+      {
+        "text": "0x6c73…136b ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "复制 Ethereum 合约地址",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "登录后收藏",
+        "label": null,
+        "width": 310.00006103515625,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 243,
+    "clientHeight": 243,
+    "expanded": "false",
+    "text": "链上信息原曲 04收藏● Optimism · SBT · Token #4单曲页 →0xa65c…e99c ↗● Ethereum · ERC-1155 · Token #4单曲页 →0x6c73…136b ↗登录后收藏"
+  },
+  {
+    "prefix": "mobile-zh-collapsed",
+    "rect": {
+      "x": 12,
+      "y": 770,
+      "width": 366,
+      "height": 62
+    },
+    "width": 390,
+    "height": 844,
+    "fonts": [
+      "16px",
+      "12px"
+    ],
+    "background": "rgba(1, 7, 6, 0.84)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "",
+        "label": "展开链上信息",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "播放",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "收藏",
+        "label": null,
+        "width": 44,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 60,
+    "clientHeight": 59,
+    "expanded": "false",
+    "text": "链上信息原曲 04收藏● Optimism · SBT · Token #4单曲页 →0xa65c…e99c ↗● Ethereum · ERC-1155 · Token #4单曲页 →0x6c73…136b ↗登录后收藏"
+  },
+  {
+    "prefix": "mobile-zh-expanded",
+    "rect": {
+      "x": 12,
+      "y": 64,
+      "width": 366,
+      "height": 261
+    },
+    "width": 390,
+    "height": 844,
+    "fonts": [
+      "16px",
+      "12px",
+      "11px"
+    ],
+    "background": "rgba(1, 7, 6, 0.84)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "",
+        "label": "收起链上信息",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "播放",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "收藏",
+        "label": null,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "单曲页 →",
+        "label": null,
+        "width": 69.296875,
+        "height": 44
+      },
+      {
+        "text": "0xa65c…e99c ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "复制 Optimism 合约地址",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "单曲页 →",
+        "label": null,
+        "width": 69.296875,
+        "height": 44
+      },
+      {
+        "text": "0x6c73…136b ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "复制 Ethereum 合约地址",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "登录后收藏",
+        "label": null,
+        "width": 336,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 259,
+    "clientHeight": 258,
+    "expanded": "true",
+    "text": "链上信息原曲 04收藏● Optimism · SBT · Token #4单曲页 →0xa65c…e99c ↗● Ethereum · ERC-1155 · Token #4单曲页 →0x6c73…136b ↗登录后收藏"
+  },
+  {
+    "prefix": "small-zh-collapsed",
+    "rect": {
+      "x": 12,
+      "y": 593,
+      "width": 351,
+      "height": 62
+    },
+    "width": 375,
+    "height": 667,
+    "fonts": [
+      "16px",
+      "12px"
+    ],
+    "background": "rgba(1, 7, 6, 0.84)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "",
+        "label": "展开链上信息",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "播放",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "收藏",
+        "label": null,
+        "width": 44,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 60,
+    "clientHeight": 59,
+    "expanded": "false",
+    "text": "链上信息原曲 04收藏● Optimism · SBT · Token #4单曲页 →0xa65c…e99c ↗● Ethereum · ERC-1155 · Token #4单曲页 →0x6c73…136b ↗登录后收藏"
+  },
+  {
+    "prefix": "small-zh-expanded",
+    "rect": {
+      "x": 12,
+      "y": 64,
+      "width": 351,
+      "height": 261
+    },
+    "width": 375,
+    "height": 667,
+    "fonts": [
+      "16px",
+      "12px",
+      "11px"
+    ],
+    "background": "rgba(1, 7, 6, 0.84)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "",
+        "label": "收起链上信息",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "播放",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "收藏",
+        "label": null,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "单曲页 →",
+        "label": null,
+        "width": 69.296875,
+        "height": 44
+      },
+      {
+        "text": "0xa65c…e99c ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "复制 Optimism 合约地址",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "单曲页 →",
+        "label": null,
+        "width": 69.296875,
+        "height": 44
+      },
+      {
+        "text": "0x6c73…136b ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "复制 Ethereum 合约地址",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "登录后收藏",
+        "label": null,
+        "width": 321,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 259,
+    "clientHeight": 258,
+    "expanded": "true",
+    "text": "链上信息原曲 04收藏● Optimism · SBT · Token #4单曲页 →0xa65c…e99c ↗● Ethereum · ERC-1155 · Token #4单曲页 →0x6c73…136b ↗登录后收藏"
+  },
+  {
+    "prefix": "desktop-en-collapsed",
+    "rect": {
+      "x": 819.2000122070312,
+      "y": 456.3999938964844,
+      "width": 339.99993896484375,
+      "height": 246.00003051757812
+    },
+    "width": 1440,
+    "height": 900,
+    "fonts": [
+      "11px",
+      "16px",
+      "12px"
+    ],
+    "background": "rgba(1, 7, 6, 0.84)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "",
+        "label": "Play",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Track page →",
+        "label": null,
+        "width": 111.296875,
+        "height": 44
+      },
+      {
+        "text": "0xa65c…e99c ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "Copy Optimism contract address",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Track page →",
+        "label": null,
+        "width": 111.296875,
+        "height": 44
+      },
+      {
+        "text": "0x6c73…136b ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "Copy Ethereum contract address",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Sign in to collect",
+        "label": null,
+        "width": 309.99993896484375,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 243,
+    "clientHeight": 243,
+    "expanded": "false",
+    "text": "OnchainOriginal 04Collect● Optimism · SBT · Token #4Track page →0xa65c…e99c ↗● Ethereum · ERC-1155 · Token #4Track page →0x6c73…136b ↗Sign in to collect"
+  },
+  {
+    "prefix": "mobile-en-collapsed",
+    "rect": {
+      "x": 12,
+      "y": 770,
+      "width": 366,
+      "height": 62
+    },
+    "width": 390,
+    "height": 844,
+    "fonts": [
+      "16px",
+      "12px"
+    ],
+    "background": "rgba(1, 7, 6, 0.84)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "",
+        "label": "Expand onchain details",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "Play",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Collect",
+        "label": null,
+        "width": 74.609375,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 60,
+    "clientHeight": 59,
+    "expanded": "false",
+    "text": "OnchainOriginal 04Collect● Optimism · SBT · Token #4Track page →0xa65c…e99c ↗● Ethereum · ERC-1155 · Token #4Track page →0x6c73…136b ↗Sign in to collect"
+  },
+  {
+    "prefix": "mobile-en-expanded",
+    "rect": {
+      "x": 12,
+      "y": 64,
+      "width": 366,
+      "height": 261
+    },
+    "width": 390,
+    "height": 844,
+    "fonts": [
+      "16px",
+      "12px",
+      "11px"
+    ],
+    "background": "rgba(1, 7, 6, 0.84)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "",
+        "label": "Collapse onchain details",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "Play",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Collect",
+        "label": null,
+        "width": 74.609375,
+        "height": 44
+      },
+      {
+        "text": "Track page →",
+        "label": null,
+        "width": 111.296875,
+        "height": 44
+      },
+      {
+        "text": "0xa65c…e99c ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "Copy Optimism contract address",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Track page →",
+        "label": null,
+        "width": 111.296875,
+        "height": 44
+      },
+      {
+        "text": "0x6c73…136b ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "Copy Ethereum contract address",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Sign in to collect",
+        "label": null,
+        "width": 336,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 259,
+    "clientHeight": 258,
+    "expanded": "true",
+    "text": "OnchainOriginal 04Collect● Optimism · SBT · Token #4Track page →0xa65c…e99c ↗● Ethereum · ERC-1155 · Token #4Track page →0x6c73…136b ↗Sign in to collect"
+  },
+  {
+    "prefix": "small-en-collapsed",
+    "rect": {
+      "x": 12,
+      "y": 593,
+      "width": 351,
+      "height": 62
+    },
+    "width": 375,
+    "height": 667,
+    "fonts": [
+      "16px",
+      "12px"
+    ],
+    "background": "rgba(1, 7, 6, 0.84)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "",
+        "label": "Expand onchain details",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "Play",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Collect",
+        "label": null,
+        "width": 74.609375,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 60,
+    "clientHeight": 59,
+    "expanded": "false",
+    "text": "OnchainOriginal 04Collect● Optimism · SBT · Token #4Track page →0xa65c…e99c ↗● Ethereum · ERC-1155 · Token #4Track page →0x6c73…136b ↗Sign in to collect"
+  },
+  {
+    "prefix": "small-en-expanded",
+    "rect": {
+      "x": 12,
+      "y": 64,
+      "width": 351,
+      "height": 261
+    },
+    "width": 375,
+    "height": 667,
+    "fonts": [
+      "16px",
+      "12px",
+      "11px"
+    ],
+    "background": "rgba(1, 7, 6, 0.84)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "",
+        "label": "Collapse onchain details",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "Play",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Collect",
+        "label": null,
+        "width": 74.609375,
+        "height": 44
+      },
+      {
+        "text": "Track page →",
+        "label": null,
+        "width": 111.296875,
+        "height": 44
+      },
+      {
+        "text": "0xa65c…e99c ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "Copy Optimism contract address",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Track page →",
+        "label": null,
+        "width": 111.296875,
+        "height": 44
+      },
+      {
+        "text": "0x6c73…136b ↗",
+        "label": null,
+        "width": 92.609375,
+        "height": 44
+      },
+      {
+        "text": "",
+        "label": "Copy Ethereum contract address",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "Sign in to collect",
+        "label": null,
+        "width": 321,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 259,
+    "clientHeight": 258,
+    "expanded": "true",
+    "text": "OnchainOriginal 04Collect● Optimism · SBT · Token #4Track page →0xa65c…e99c ↗● Ethereum · ERC-1155 · Token #4Track page →0x6c73…136b ↗Sign in to collect"
+  }
+]

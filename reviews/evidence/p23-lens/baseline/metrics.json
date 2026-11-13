@@ -1,0 +1,440 @@
+[
+  {
+    "prefix": "desktop-zh-collapsed",
+    "rect": {
+      "x": 815.4000244140625,
+      "y": 397.1000061035156,
+      "width": 300,
+      "height": 352.9999694824219
+    },
+    "width": 1440,
+    "height": 900,
+    "fonts": [
+      "10px",
+      "16px",
+      "12px",
+      "11.5px",
+      "12.5px"
+    ],
+    "background": "rgba(1, 7, 6, 0.72)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "复制",
+        "label": "复制 Optimism 合约地址",
+        "width": 32,
+        "height": 44
+      },
+      {
+        "text": "单曲页",
+        "label": null,
+        "width": 44,
+        "height": 43.999969482421875
+      },
+      {
+        "text": "区块浏览器 ↗",
+        "label": null,
+        "width": 87.8125,
+        "height": 43.999969482421875
+      },
+      {
+        "text": "复制",
+        "label": "复制 Ethereum 合约地址",
+        "width": 32,
+        "height": 44
+      },
+      {
+        "text": "单曲页",
+        "label": null,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "区块浏览器 ↗",
+        "label": null,
+        "width": 87.8125,
+        "height": 44
+      },
+      {
+        "text": "播放",
+        "label": null,
+        "width": 270,
+        "height": 44
+      },
+      {
+        "text": "登录后收藏",
+        "label": null,
+        "width": 270,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 351,
+    "clientHeight": 351,
+    "text": "链上信息原曲 04Optimism · 原曲 SBT0xa65c…e99c复制#4已就绪单曲页区块浏览器 ↗Ethereum · ERC-11550x6c73…136b复制#4已就绪单曲页区块浏览器 ↗播放登录后收藏"
+  },
+  {
+    "prefix": "mobile-zh-collapsed",
+    "rect": {
+      "x": 73.4000015258789,
+      "y": 178.60000610351562,
+      "width": 300,
+      "height": 352.9999694824219
+    },
+    "width": 390,
+    "height": 844,
+    "fonts": [
+      "10px",
+      "16px",
+      "12px",
+      "11.5px",
+      "12.5px"
+    ],
+    "background": "rgba(1, 7, 6, 0.72)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "复制",
+        "label": "复制 Optimism 合约地址",
+        "width": 32,
+        "height": 44
+      },
+      {
+        "text": "单曲页",
+        "label": null,
+        "width": 43.99999237060547,
+        "height": 44
+      },
+      {
+        "text": "区块浏览器 ↗",
+        "label": null,
+        "width": 87.8125,
+        "height": 44
+      },
+      {
+        "text": "复制",
+        "label": "复制 Ethereum 合约地址",
+        "width": 32,
+        "height": 44
+      },
+      {
+        "text": "单曲页",
+        "label": null,
+        "width": 43.99999237060547,
+        "height": 44
+      },
+      {
+        "text": "区块浏览器 ↗",
+        "label": null,
+        "width": 87.8125,
+        "height": 44
+      },
+      {
+        "text": "播放",
+        "label": null,
+        "width": 270,
+        "height": 44
+      },
+      {
+        "text": "登录后收藏",
+        "label": null,
+        "width": 270,
+        "height": 43.999969482421875
+      }
+    ],
+    "scrollHeight": 351,
+    "clientHeight": 351,
+    "text": "链上信息原曲 04Optimism · 原曲 SBT0xa65c…e99c复制#4已就绪单曲页区块浏览器 ↗Ethereum · ERC-11550x6c73…136b复制#4已就绪单曲页区块浏览器 ↗播放登录后收藏"
+  },
+  {
+    "prefix": "small-zh-collapsed",
+    "rect": {
+      "x": 62.29999923706055,
+      "y": 87.9000015258789,
+      "width": 300,
+      "height": 353
+    },
+    "width": 375,
+    "height": 667,
+    "fonts": [
+      "10px",
+      "16px",
+      "12px",
+      "11.5px",
+      "12.5px"
+    ],
+    "background": "rgba(1, 7, 6, 0.72)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "复制",
+        "label": "复制 Optimism 合约地址",
+        "width": 32,
+        "height": 44
+      },
+      {
+        "text": "单曲页",
+        "label": null,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "区块浏览器 ↗",
+        "label": null,
+        "width": 87.8125,
+        "height": 44
+      },
+      {
+        "text": "复制",
+        "label": "复制 Ethereum 合约地址",
+        "width": 32,
+        "height": 44
+      },
+      {
+        "text": "单曲页",
+        "label": null,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "区块浏览器 ↗",
+        "label": null,
+        "width": 87.8125,
+        "height": 44
+      },
+      {
+        "text": "播放",
+        "label": null,
+        "width": 270,
+        "height": 44
+      },
+      {
+        "text": "登录后收藏",
+        "label": null,
+        "width": 270,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 351,
+    "clientHeight": 351,
+    "text": "链上信息原曲 04Optimism · 原曲 SBT0xa65c…e99c复制#4已就绪单曲页区块浏览器 ↗Ethereum · ERC-11550x6c73…136b复制#4已就绪单曲页区块浏览器 ↗播放登录后收藏"
+  },
+  {
+    "prefix": "desktop-en-collapsed",
+    "rect": {
+      "x": 815.2999877929688,
+      "y": 396.79998779296875,
+      "width": 300.00006103515625,
+      "height": 353
+    },
+    "width": 1440,
+    "height": 900,
+    "fonts": [
+      "10px",
+      "16px",
+      "12px",
+      "11.5px",
+      "12.5px"
+    ],
+    "background": "rgba(1, 7, 6, 0.72)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "Copy",
+        "label": "Copy Optimism contract address",
+        "width": 39.203125,
+        "height": 44
+      },
+      {
+        "text": "Track page",
+        "label": null,
+        "width": 86,
+        "height": 44
+      },
+      {
+        "text": "Explorer ↗",
+        "label": null,
+        "width": 90.21875,
+        "height": 44
+      },
+      {
+        "text": "Copy",
+        "label": "Copy Ethereum contract address",
+        "width": 39.203125,
+        "height": 44
+      },
+      {
+        "text": "Track page",
+        "label": null,
+        "width": 86,
+        "height": 44
+      },
+      {
+        "text": "Explorer ↗",
+        "label": null,
+        "width": 90.21875,
+        "height": 44
+      },
+      {
+        "text": "Play",
+        "label": null,
+        "width": 270.00006103515625,
+        "height": 44
+      },
+      {
+        "text": "Sign in to collect",
+        "label": null,
+        "width": 270.00006103515625,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 351,
+    "clientHeight": 351,
+    "text": "OnchainOriginal 04Optimism · Track SBT0xa65c…e99cCopy#4ReadyTrack pageExplorer ↗Ethereum · ERC-11550x6c73…136bCopy#4ReadyTrack pageExplorer ↗PlaySign in to collect"
+  },
+  {
+    "prefix": "mobile-en-collapsed",
+    "rect": {
+      "x": 77,
+      "y": 188.39999389648438,
+      "width": 300,
+      "height": 353.0000305175781
+    },
+    "width": 390,
+    "height": 844,
+    "fonts": [
+      "10px",
+      "16px",
+      "12px",
+      "11.5px",
+      "12.5px"
+    ],
+    "background": "rgba(1, 7, 6, 0.72)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "Copy",
+        "label": "Copy Optimism contract address",
+        "width": 39.203125,
+        "height": 44
+      },
+      {
+        "text": "Track page",
+        "label": null,
+        "width": 86,
+        "height": 44
+      },
+      {
+        "text": "Explorer ↗",
+        "label": null,
+        "width": 90.21875,
+        "height": 44
+      },
+      {
+        "text": "Copy",
+        "label": "Copy Ethereum contract address",
+        "width": 39.203125,
+        "height": 44
+      },
+      {
+        "text": "Track page",
+        "label": null,
+        "width": 86,
+        "height": 44
+      },
+      {
+        "text": "Explorer ↗",
+        "label": null,
+        "width": 90.21875,
+        "height": 44
+      },
+      {
+        "text": "Play",
+        "label": null,
+        "width": 270,
+        "height": 44
+      },
+      {
+        "text": "Sign in to collect",
+        "label": null,
+        "width": 270,
+        "height": 44.000030517578125
+      }
+    ],
+    "scrollHeight": 351,
+    "clientHeight": 351,
+    "text": "OnchainOriginal 04Optimism · Track SBT0xa65c…e99cCopy#4ReadyTrack pageExplorer ↗Ethereum · ERC-11550x6c73…136bCopy#4ReadyTrack pageExplorer ↗PlaySign in to collect"
+  },
+  {
+    "prefix": "small-en-collapsed",
+    "rect": {
+      "x": 63,
+      "y": 88.69999694824219,
+      "width": 300,
+      "height": 353
+    },
+    "width": 375,
+    "height": 667,
+    "fonts": [
+      "10px",
+      "16px",
+      "12px",
+      "11.5px",
+      "12.5px"
+    ],
+    "background": "rgba(1, 7, 6, 0.72)",
+    "chainCount": 2,
+    "controls": [
+      {
+        "text": "Copy",
+        "label": "Copy Optimism contract address",
+        "width": 39.203125,
+        "height": 44
+      },
+      {
+        "text": "Track page",
+        "label": null,
+        "width": 86,
+        "height": 44
+      },
+      {
+        "text": "Explorer ↗",
+        "label": null,
+        "width": 90.21875,
+        "height": 44
+      },
+      {
+        "text": "Copy",
+        "label": "Copy Ethereum contract address",
+        "width": 39.203125,
+        "height": 44.00001525878906
+      },
+      {
+        "text": "Track page",
+        "label": null,
+        "width": 86,
+        "height": 44
+      },
+      {
+        "text": "Explorer ↗",
+        "label": null,
+        "width": 90.21875,
+        "height": 44
+      },
+      {
+        "text": "Play",
+        "label": null,
+        "width": 270,
+        "height": 44
+      },
+      {
+        "text": "Sign in to collect",
+        "label": null,
+        "width": 270,
+        "height": 44
+      }
+    ],
+    "scrollHeight": 351,
+    "clientHeight": 351,
+    "text": "OnchainOriginal 04Optimism · Track SBT0xa65c…e99cCopy#4ReadyTrack pageExplorer ↗Ethereum · ERC-11550x6c73…136bCopy#4ReadyTrack pageExplorer ↗PlaySign in to collect"
+  }
+]
