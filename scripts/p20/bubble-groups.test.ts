@@ -18,18 +18,23 @@ const FULL = { ...DEFAULT_BUBBLE_TUNING, keepFull: 1 };
   for (let r = 0; r < 1; r += 0.001) { const g = sampleGroups(d, r); assert.ok(g >= prev && g <= 4); prev = g; }
   assert.ok(groupDistribution(3, 0.85, 4).mean > 2.9 && groupDistribution(0.5, 0.85, 4).mean < 0.6);
 }
-// 2. 1 小时模拟：同时组数均值 1.5±0.15、不超过 4、各档占比接近目标分布（±5 个百分点）
+// 2. 6 个种子 × 1 小时：同时组数均值 1.5±0.15、不超过 4、各档占比接近目标分布（±5 个百分点）
+//    单个种子的 1 小时样本有 ±3–4 点的波动，所以用 6 个种子平均来验收
 {
-  const r = run(101, 3600, base(), 1 / 20, false);
   const target = groupDistribution(1.5, 0.85, 4).weights;
-  console.log('1 小时分布', r.hist.slice(0, 5).map((c) => ((c / r.steps) * 100).toFixed(1) + '%').join(' '), '均值', r.meanGroups.toFixed(3));
-  assert.ok(Math.abs(r.meanGroups - 1.5) < 0.15, `均值 ${r.meanGroups.toFixed(3)}`);
-  assert.ok(r.peakGroups <= 4, `峰值 ${r.peakGroups}`);
-  assert.equal(r.hist[5], 0);
-  for (let k = 0; k <= 4; k++) {
-    const share = r.hist[k] / r.steps;
-    assert.ok(Math.abs(share - target[k]) < 0.05, `${k} 组占比 ${(share * 100).toFixed(1)}% 应接近 ${(target[k] * 100).toFixed(1)}%`);
+  const seeds = [1, 2, 3, 4, 5, 6];
+  const share = [0, 0, 0, 0, 0];
+  let mean = 0, peak = 0, over = 0;
+  for (const seed of seeds) {
+    const r = run(seed, 3600, base(), 1 / 20, false);
+    mean += r.meanGroups / seeds.length; peak = Math.max(peak, r.peakGroups); over += r.hist[5];
+    for (let k = 0; k <= 4; k++) share[k] += r.hist[k] / r.steps / seeds.length;
   }
+  console.log('6 种子 × 1 小时分布', share.map((v) => (v * 100).toFixed(1) + '%').join(' '), '均值', mean.toFixed(3));
+  assert.ok(Math.abs(mean - 1.5) < 0.15, `均值 ${mean.toFixed(3)}`);
+  assert.ok(peak <= 4, `峰值 ${peak}`);
+  assert.equal(over, 0);
+  for (let k = 0; k <= 4; k++) assert.ok(Math.abs(share[k] - target[k]) < 0.05, `${k} 组占比 ${(share[k] * 100).toFixed(1)}% 应接近 ${(target[k] * 100).toFixed(1)}%`);
 }
 // 3. 保持满组数：很快到达上限并一直保持，同屏泡数不超过 32
 {

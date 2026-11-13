@@ -12,14 +12,14 @@ export const DEFAULT_BUBBLE_TUNING = {
   riseMin: 5, riseMax: 8, speed: 1, riseEase: 0.85, driftFrac: 0.17,
   dwellMin: 0.3, dwellMax: 1.2, swayMin: 2, swayMax: 7, swayFreqMin: 0.8, swayFreqMax: 1.6,
   // ── 外观 ──
-  size: 1, sizeMin: 0.67, sizeMax: 1.4, radiusDeep: 1.5, radiusSurface: 3.5, radiusCurve: 1.2, minSpritePx: 6,
+  size: 1, sizeMin: 0.67, sizeMax: 1.4, leadBig: 1, sizeSpeed: 0.8, birthSpread: 14, radiusDeep: 1.5, radiusSurface: 3.5, radiusCurve: 1.2, minSpritePx: 6,
   opacity: 0.4, colorHex: '#cce5ff', depthDim: 0.45, fadeIn: 0.15,
   ringRadius: 0.3, ringSoftDeep: 0.16, ringSoftSurface: 0.05, ringStrength: 0.55, innerFill: 0.06,
   glintDeep: 0.25, glintSurface: 0.6, glintX: -0.13, glintY: -0.13, glintSize: 0.0016,
   // ── 避让球 ──
   avoidSpawn: 1, avoidFade: 1, discSafety: 1.2, refractMargin: 0.03, edgeBand: 0.06, swayMargin: 10,
   // ── 破水涟漪 ──
-  popEnabled: 1, popStrength: 0.04, popRadius: 0.006,
+  popEnabled: 1, popStrength: 0.04, popRadius: 0.006, popSwell: 0.15, popTime: 0.15,
   // ── 手记：出现 ──
   notesEnabled: 1, noteEveryMin: 2, noteEveryMax: 4, suppressPlaying: 1, maxHold: 90,
   // ── 手记：版式 ──

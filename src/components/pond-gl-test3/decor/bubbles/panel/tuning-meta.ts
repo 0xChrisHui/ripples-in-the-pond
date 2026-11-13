@@ -34,6 +34,9 @@ export const GROUPS: Group[] = [
   ] },
   { title: '外观·大小与亮度', open: true, rows: [
     { key: 'size', label: '整体大小倍率', min: 0.3, max: 4, step: 0.05 },
+    { key: 'leadBig', label: '每组第一个泡最大(领头)', kind: 'bool' },
+    { key: 'sizeSpeed', label: '大泡升得更快(0=无)', min: 0, max: 2, step: 0.05 },
+    { key: 'birthSpread', label: '泡的横向出生偏移(px)', min: 0, max: 40, step: 1 },
     { key: 'sizeMin', label: '单泡大小·最小', min: 0.2, max: 2, step: 0.01 },
     { key: 'sizeMax', label: '单泡大小·最大', min: 0.2, max: 3, step: 0.01 },
     { key: 'radiusDeep', label: '深处半径(px)', min: 0.5, max: 10, step: 0.1 },
@@ -67,6 +70,8 @@ export const GROUPS: Group[] = [
   ] },
   { title: '破水涟漪', rows: [
     { key: 'popEnabled', label: '破水出涟漪', kind: 'bool' },
+    { key: 'popSwell', label: '破前放大比例', min: 0, max: 0.6, step: 0.01 },
+    { key: 'popTime', label: '破前放大时长(秒)', min: 0.05, max: 0.6, step: 0.01 },
     { key: 'popStrength', label: '涟漪强度', min: 0, max: 0.3, step: 0.005 },
     { key: 'popRadius', label: '涟漪半径(占屏)', min: 0.001, max: 0.05, step: 0.001 },
   ] },

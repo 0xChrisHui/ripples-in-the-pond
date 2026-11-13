@@ -20,10 +20,13 @@ function buildChain(rng: Rng, env: SimEnv, ax: number, ay: number, carrierAt: 'f
   const bubbles: Bubble[] = [];
   let delay = 0, end = 0;
   for (let i = 0; i < n; i++) {
-    const rise = between(rng, t.riseMin, t.riseMax) / Math.max(0.2, t.speed);
+    // 领头泡取最大尺寸，其余取偏小的；升速随大小变化（大泡快，小泡慢）
+    const size = t.leadBig === 1 && i === 0 ? t.sizeMax : between(rng, t.sizeMin, t.leadBig === 1 ? t.sizeMax * 0.8 : t.sizeMax);
+    const rise = between(rng, t.riseMin, t.riseMax) / Math.max(0.2, t.speed) / Math.pow(Math.max(0.2, size), t.sizeSpeed);
     const dwell = between(rng, t.dwellMin, t.dwellMax);
+    const angle = 6.2831853 * rng(), spread = t.birthSpread * between(rng, 0.35, 1);
     bubbles.push({
-      delay, rise, dwell, size: between(rng, t.sizeMin, t.sizeMax),
+      delay, rise, dwell, size, ox: Math.cos(angle) * spread, oy: Math.sin(angle) * spread,
       sway: between(rng, t.swayMin, t.swayMax), freq: between(rng, t.swayFreqMin, t.swayFreqMax), phase: 6.2831853 * rng(),
       popped: false, carrier: i === carrierIdx, carrierId: 0, held: 0,
     });
@@ -71,7 +74,7 @@ export function stepOne(chain: Chain, b: Bubble, dt: number, env: SimEnv, view: 
   const at = (time: number) => {
     const e = Math.pow(clamp01(time / b.rise), t.riseEase);
     const p = pathPoint(env, chain.ax, chain.ay, e);
-    return { e, y: p.y, x: p.x + Math.sin(Math.min(time, b.rise + b.dwell) * b.freq + b.phase) * b.sway * (0.4 + e) };
+    return { e, y: p.y + b.oy, x: p.x + b.ox + Math.sin(Math.min(time, b.rise + b.dwell) * b.freq + b.phase) * b.sway * (0.4 + e) };
   };
   if (b.carrier && !b.popped && tb >= b.rise) {
     if (b.carrierId === 0) { const p = at(b.rise); b.carrierId = env.carrier?.arrive(p.x, p.y) || -1; }
@@ -88,9 +91,11 @@ export function stepOne(chain: Chain, b: Bubble, dt: number, env: SimEnv, view: 
     }
     return false;
   }
-  const dwellP = b.dwell <= 0 ? (tb > b.rise ? 1 : 0) : clamp01((tb - b.rise) / b.dwell);
+  // 破水：停留的最后 popTime 秒里放大 popSwell 并快速淡出；之前保持不透明（否则放大看不见）
+  const popT = Math.min(Math.max(t.popTime, 0.01), b.dwell);
+  const pop = clamp01((tb - (b.rise + b.dwell - popT)) / popT);
   view.x = p.x; view.y = p.y; view.depth = p.e;
-  view.radius = (t.radiusDeep + t.radiusSurface * Math.pow(p.e, t.radiusCurve)) * b.size * t.size;
-  view.alpha = clamp01(tb / b.rise / t.fadeIn) * (1 - dwellP * dwellP) * discFade(env, p.x, p.y);
+  view.radius = (t.radiusDeep + t.radiusSurface * Math.pow(p.e, t.radiusCurve)) * b.size * t.size * (1 + t.popSwell * pop);
+  view.alpha = clamp01(tb / b.rise / t.fadeIn) * (1 - pop * pop) * discFade(env, p.x, p.y);
   return true;
 }

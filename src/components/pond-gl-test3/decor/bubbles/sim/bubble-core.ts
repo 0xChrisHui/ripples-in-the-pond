@@ -15,6 +15,7 @@ export interface BubbleView {
 
 export interface Bubble {
   delay: number; rise: number; dwell: number; size: number; sway: number; freq: number; phase: number;
+  ox: number; oy: number; // 横向出生偏移（像素），同一组的泡不走同一条线
   popped: boolean;
   carrier: boolean; carrierId: number; held: number; // 载体泡：到水面后停住，等手记宿主放行再破
 }
