@@ -11,16 +11,23 @@ export async function broadcastOperator(address: Address, job: BroadcastJob, dea
   if (deadline - Date.now() < 15_000) return 'blocked';
   const holder = existingHolder ?? `broadcast-${randomUUID()}`;
   if (!existingHolder && !await acquireOpLock(holder)) return 'blocked';
-  const redis = Redis.fromEnv();
-  const chainId = publicClient.chain.id;
-  const key = `op_wallet_last_broadcast:${chainId}:${address.toLowerCase()}`;
+  let lost = false;
+  const renew = async () => {
+    if (lost) return false;
+    if (!await heartbeatOpLock(holder)) lost = true;
+    return !lost;
+  };
+  const timer = setInterval(() => { void renew(); }, 30_000);
   try {
+    const redis = Redis.fromEnv();
+    const chainId = publicClient.chain.id;
+    const key = `op_wallet_last_broadcast:${chainId}:${address.toLowerCase()}`;
     return await safeBroadcast({
-      now: Date.now, renew: () => heartbeatOpLock(holder),
+      now: Date.now, renew,
       read: () => redis.get<Marker>(key),
       write: async mark => {
         const ok = await redis.eval(
-          "if redis.call('GET', KEYS[1]) ~= ARGV[1] then return 0 end redis.call('SET', KEYS[2], ARGV[2]) return 1",
+          "if redis.call('GET', KEYS[1]) ~= ARGV[1] then return 0 end if ARGV[2] == 'null' then redis.call('DEL', KEYS[2]) else redis.call('SET', KEYS[2], ARGV[2]) end return 1",
           ['op_wallet_lock', key], [holder, JSON.stringify(mark)],
         );
         if (ok !== 1) throw Error('运营钱包锁已失效');
@@ -37,6 +44,7 @@ export async function broadcastOperator(address: Address, job: BroadcastJob, dea
       alarm: mark => notifyOnce('operator', 'pending', '运营钱包交易超过 15 分钟未确认', String(mark.hash)).then(() => undefined),
     }, job, deadline);
   } finally {
+    clearInterval(timer);
     if (!existingHolder) await releaseOpLock(holder);
   }
 }

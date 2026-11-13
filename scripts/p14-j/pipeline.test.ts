@@ -15,14 +15,9 @@ async function runRoute(error: unknown, ledger: LedgerRow[] = [], options: {
   row?: Partial<typeof row>; readError?: 'return' | 'throw'; lostLease?: boolean; updateError?: boolean;
 } = {}) {
   let update: Record<string, unknown> = {};
-  let queried = 0, leaseChecks = 0, alerts = 0, released = 0;
+  let queried = 0, leaseChecks = 0, alerts = 0;
   const imports: Record<string, unknown> = {
-    'next/server': { NextResponse: { json: (body: Reply['body'], init?: { status: number }) => ({ body, status: init?.status ?? 200 }) } },
-    crypto: { randomUUID: () => 'worker' },
-    '@/src/lib/auth/cron-auth': { verifyCronSecret: () => true },
-    '@/src/lib/chain/operator-lock': { acquireOpLock: async () => true, heartbeatOpLock: async () => true,
-      releaseOpLock: async () => { released += 1; } },
-    '@/src/lib/alerts/resend': { sendAlert: () => { alerts += 1; } },
+    '@/src/lib/alerts/once': { notifyOnce: async () => { alerts += 1; } },
     '@/src/lib/permanent-core/permanent-wait': wait,
     '@/src/lib/supabase': { supabaseAdmin: {
       rpc: async (name: string) => {
@@ -71,18 +66,16 @@ async function runRoute(error: unknown, ledger: LedgerRow[] = [], options: {
       },
     } },
   };
-  for (const [file, name] of [['upload', 'UploadEvents'], ['package', 'PreparePackage'],
-    ['mint', 'MintOnchain'], ['set-uri', 'SetTokenUri'], ['finalize', 'FinalizeSnapshot']]) {
-    imports[`./steps-${file}`] = { [`step${name}`]: async () => { throw error; } };
-  }
-  const route = loadOfflineModule<{ GET: (request: object) => Promise<Reply> }>(
-    'app/api/cron/process-score-queue/route.ts', imports, {
+  const processor = loadOfflineModule<{ processOrder: (row: object, owner: string, step: () => Promise<never>) =>
+    Promise<{ result: string }> }>('app/api/cron/process-score-queue/process-order.ts', imports, {
       Date: class extends Date { static now() { return nowMs; } },
-      setInterval: () => 1, clearInterval: () => undefined,
       console: { log: () => undefined, error: () => undefined },
     });
-  const reply = await route.GET({});
-  assert.equal(released, 1);
+  let reply: Reply;
+  try {
+    const body = await processor.processOrder({ ...row, ...options.row }, 'worker', async () => { throw error; });
+    reply = { status: 200, body };
+  } catch { reply = { status: 500, body: { error: '处理失败' } }; }
   return { reply, update, queried, leaseChecks, alerts };
 }
 
@@ -153,7 +146,7 @@ async function main(): Promise<void> {
       assert.equal(result.update.failure_kind, critical ? 'manual_review' : retry_count === 2 ? 'safe_retry' : undefined);
       assert.equal(result.update.lease_expires_at, null); assert.equal(result.update.locked_by, null);
       assert.equal(result.alerts, critical ? 1 : 0); assert.equal(result.queried, 0);
-      assert.equal(result.leaseChecks, 0); assert.equal(result.reply.status, 500);
+      assert.equal(result.leaseChecks, 1); assert.equal(result.reply.status, 500);
     }
   }
   await testEth();

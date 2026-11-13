@@ -1,3 +1,5 @@
+import { guardedWallet } from '@/src/lib/chain/broadcast/guarded-wallet';
+import { broadcastOperator } from '@/src/lib/chain/broadcast/operator';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import {
   operatorWalletClient,
@@ -26,6 +28,7 @@ const RECEIPT_TIMEOUT_MS = 15 * 60 * 1000;
 export async function stepMintOnchain(
   row: ScoreMintQueueRow,
   leaseOwner: string,
+  deadline: number,
 ): Promise<ScoreMintStatus> {
   const { data: user } = await supabaseAdmin
     .from('users')
@@ -34,7 +37,7 @@ export async function stepMintOnchain(
     .single();
   if (!user) throw new Error(`user not found: ${row.user_id}`);
 
-  let txHash = row.tx_hash as `0x${string}` | null;
+  const txHash = row.tx_hash as `0x${string}` | null;
 
   if (!txHash) {
     const attemptedAt = row.mint_attempted_at
@@ -52,48 +55,37 @@ export async function stepMintOnchain(
       );
     }
 
-    const stampIso = new Date().toISOString();
-    const { data: stampOk } = await supabaseAdmin
-      .from('score_nft_queue')
-      .update({ mint_attempted_at: stampIso, updated_at: stampIso })
-      .eq('id', row.id)
-      .eq('locked_by', leaseOwner)
-      .gt('lease_expires_at', stampIso)
-      .select('id')
-      .maybeSingle();
-
-    if (!stampOk) {
-      console.warn(`[score-cron] lease lost before mint stamp for ${row.id}`);
-      return 'minting_onchain';
-    }
-
-    // CT-4：稳定 orderId = 队列 row.id 的 keccak256。合约按 orderId 幂等去重，
-    // 同一录制即便重试 / lease 竞态也不会双铸（同 orderId 二次调用合约 revert）。
-    const orderId = keccak256(stringToHex(row.id));
-    console.log(`[score-cron] sending mintScore tx → ${user.evm_address}`);
-    txHash = await operatorWalletClient.writeContract({
-      address: ORCHESTRATOR_ADDRESS,
-      abi: ORCHESTRATOR_ABI,
-      functionName: 'mintScore',
-      args: [user.evm_address as `0x${string}`, orderId],
-    });
-
-    const nowIso = new Date().toISOString();
-    const { data: dbOk } = await supabaseAdmin
-      .from('score_nft_queue')
-      .update({ tx_hash: txHash, updated_at: nowIso })
-      .eq('id', row.id)
-      .eq('locked_by', leaseOwner)
-      .gt('lease_expires_at', nowIso)
-      .select('id')
-      .maybeSingle();
-
-    if (!dbOk) {
-      throw new Error(
-        `CRITICAL: mintScore tx ${txHash} broadcast but DB write lost (lease ${leaseOwner})`,
-      );
-    }
-    console.log(`[score-cron] tx sent, hash saved: ${txHash}`);
+    let attempt = '';
+    await broadcastOperator(operatorWalletClient.account.address, {
+      stamp: async () => {
+        const stamp = new Date().toISOString();
+        attempt = stamp;
+        const { data, error } = await supabaseAdmin.from('score_nft_queue')
+          .update({ mint_attempted_at: stamp, updated_at: stamp }).eq('id', row.id)
+          .eq('locked_by', leaseOwner).is('mint_attempted_at', null).gt('lease_expires_at', stamp)
+          .select('id').maybeSingle();
+        if (error) throw error;
+        return Boolean(data);
+      },
+      unstamp: async () => {
+        const { error } = await supabaseAdmin.from('score_nft_queue').update({ mint_attempted_at: null })
+          .eq('id', row.id).eq('mint_attempted_at', attempt).eq('locked_by', leaseOwner).is('tx_hash', null);
+        if (error) throw error;
+      },
+      send: beforeRaw => guardedWallet(operatorWalletClient.account, operatorWalletClient.chain, beforeRaw).writeContract({
+        address: ORCHESTRATOR_ADDRESS,
+        abi: ORCHESTRATOR_ABI,
+        functionName: 'mintScore',
+        args: [user.evm_address as `0x${string}`, keccak256(stringToHex(row.id))],
+      }),
+      save: async hash => {
+        const now = new Date().toISOString();
+        const { data, error } = await supabaseAdmin.from('score_nft_queue')
+          .update({ tx_hash: hash, updated_at: now }).eq('id', row.id)
+          .eq('locked_by', leaseOwner).gt('lease_expires_at', now).select('id').maybeSingle();
+        if (error || !data) throw Error(`CRITICAL: 已广播 ${hash} 但订单哈希未保存`);
+      },
+    }, deadline);
     return 'minting_onchain';
   }
 

@@ -24,24 +24,23 @@ export async function GET(req: NextRequest) {
   }
 
   const holder = `mint-queue-${randomUUID()}`;
-  if (!(await acquireOpLock(holder))) {
-    return NextResponse.json({ result: 'busy', processed: 0 });
-  }
-
+  const deadline = Date.now() + 25_000;
+  let primary;
   try {
-    // 步骤 1：优先完成已发交易的 minting_onchain
-    const confirmed = await tryConfirmMinting();
-    if (confirmed) return NextResponse.json(confirmed);
-
-    // 步骤 2：抢新 pending → 发交易 → 存 tx_hash → 返回（不等确认）
-    const sent = await trySendNew();
-    if (sent) return NextResponse.json(sent);
-
-    // P22 资产包：同样复用本分钟入口，仅在 OP 空闲时处理（已持锁，每类订单最多 1 单）。失败只记日志，不影响本入口状态。
+    if (await acquireOpLock(holder)) {
+      try {
+        primary = await tryConfirmMinting() ?? await trySendNew(holder, deadline);
+      } finally {
+        await releaseOpLock(holder);
+      }
+    } else {
+      primary = { result: 'busy', processed: 0 };
+    }
+    // 附属对账获得独立机会；仅真正广播时使用新锁。
     let scorePack: Record<string, unknown> | undefined;
     if (process.env.NEXT_PUBLIC_P22_OPENER_10 || process.env.NEXT_PUBLIC_P22_OPENER_11155420) {
       try {
-        scorePack = await runScorePackCycle({ batch: 1, lockHolder: holder });
+        scorePack = await runScorePackCycle({ batch: 1, deadline });
       } catch (error) {
         console.error('[mint-queue] score-pack cycle failed:', safeMessage(error));
       }
@@ -52,19 +51,17 @@ export async function GET(req: NextRequest) {
       try {
         const material = await reconcileMaterialMints(1, 1);
         if (material.failed) return NextResponse.json({ result: 'material_reconcile_unavailable', processed: 0, material }, { status: 503 });
-        return NextResponse.json({ result: 'idle', processed: 0, material, scorePack });
+        return NextResponse.json({ ...(primary ?? { result: 'idle', processed: 0 }), material, scorePack });
       } catch {
         return NextResponse.json({ result: 'material_reconcile_unavailable', processed: 0 }, { status: 503 });
       }
     }
-    return NextResponse.json({ result: 'idle', processed: 0, scorePack });
+    return NextResponse.json({ ...(primary ?? { result: 'idle', processed: 0 }), scorePack });
   } catch (err) {
     console.error('[mint-queue] error:', err);
     return NextResponse.json(
       { error: '处理失败' },
       { status: 500 },
     );
-  } finally {
-    await releaseOpLock(holder);
   }
 }

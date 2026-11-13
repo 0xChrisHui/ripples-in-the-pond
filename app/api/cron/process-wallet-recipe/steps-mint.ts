@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto';
+import { guardedWallet } from '@/src/lib/chain/broadcast/guarded-wallet';
 import { getAddress, parseAbiItem, type Address, type Hex } from 'viem';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { operatorWalletClient, publicClient } from '@/src/lib/chain/operator-wallet';
-import { acquireOpLock, releaseOpLock } from '@/src/lib/chain/operator-lock';
+import { broadcastOperator } from '@/src/lib/chain/broadcast/operator';
 import { WALLET_RECIPE_ABI } from '@/src/lib/chain/wallet-recipe-contract';
 import {
   decideMintAction,
@@ -92,40 +92,32 @@ async function broadcastMint(
     functionName: 'mintToOrigin',
     args: [row.origin_wallet, row.token_uri as string],
   });
-  if (deadlineAt - Date.now() < 8_000) {
-    return { status: 'minting_onchain', detail: 'response_deadline', failureKind: 'transient' };
-  }
-  const stamp = new Date().toISOString();
-  const { data: stamped, error: stampError } = await supabaseAdmin.from('wallet_recipe_queue')
-    .update({ mint_attempted_at: stamp, updated_at: stamp })
-    .eq('id', row.id).eq('locked_by', leaseOwner).is('mint_attempted_at', null)
-    .gt('lease_expires_at', stamp).select('id').maybeSingle();
-  if (stampError) throw stampError;
-  if (!stamped) return { status: 'minting_onchain', detail: 'attempt_stamp_lost' };
-
-  const holder = `wallet-recipe-${randomUUID()}`;
-  if (!(await acquireOpLock(holder))) {
-    const now = new Date().toISOString();
-    await supabaseAdmin.from('wallet_recipe_queue')
-      .update({ mint_attempted_at: null, updated_at: now })
-      .eq('id', row.id).eq('locked_by', leaseOwner).eq('mint_attempted_at', stamp)
-      .is('tx_hash', null).gt('lease_expires_at', now);
-    return { status: 'minting_onchain', detail: 'operator_busy', failureKind: 'transient' };
-  }
-  let txHash: Hex;
-  try {
-    try {
-      txHash = await operatorWalletClient.writeContract(simulation.request);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      throw new PipelineStepError(`mint 广播结果待链上恢复：${message}`, 'transient');
-    }
-  } finally {
-    await releaseOpLock(holder);
-  }
-  if (!(await saveChainFacts(row, leaseOwner, { txHash }))) {
-    throw new PipelineStepError(`mint ${txHash} 已广播但 DB hash 写入失败`, 'manual_review');
-  }
+  let attempt = '';
+  const result = await broadcastOperator(operatorWalletClient.account.address, {
+    stamp: async () => {
+      const stamp = new Date().toISOString();
+      attempt = stamp;
+      const { data, error } = await supabaseAdmin.from('wallet_recipe_queue')
+        .update({ mint_attempted_at: stamp, updated_at: stamp }).eq('id', row.id)
+        .eq('locked_by', leaseOwner).is('mint_attempted_at', null).gt('lease_expires_at', stamp)
+        .select('id').maybeSingle();
+      if (error) throw error;
+      return Boolean(data);
+    },
+    unstamp: async () => {
+      const { error } = await supabaseAdmin.from('wallet_recipe_queue').update({ mint_attempted_at: null })
+        .eq('id', row.id).eq('mint_attempted_at', attempt).eq('locked_by', leaseOwner).is('tx_hash', null);
+      if (error) throw error;
+    },
+    send: beforeRaw => guardedWallet(operatorWalletClient.account, operatorWalletClient.chain, beforeRaw).writeContract(simulation.request),
+    save: async hash => {
+      try {
+        if (await saveChainFacts(row, leaseOwner, { txHash: hash })) return;
+      } catch { /* 未落库时保留 attempted 戳以及钱包哈希供人工核对。 */ }
+      throw new PipelineStepError(`mint ${hash} 已广播但 DB hash 写入失败`, 'manual_review');
+    },
+  }, deadlineAt);
+  if (result === 'blocked') return { status: 'minting_onchain', detail: 'operator_busy', failureKind: 'transient' };
   return { status: 'confirming_onchain', detail: 'mint_broadcast' };
 }
 

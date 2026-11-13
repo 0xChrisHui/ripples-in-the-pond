@@ -2,7 +2,8 @@ export type Hash = `0x${string}`;
 export type Marker = { hash: Hash | null; at: number };
 export interface BroadcastJob {
   stamp(): Promise<boolean>;
-  send(): Promise<Hash>;
+  unstamp(): Promise<void>;
+  send(beforeRaw: (hash: Hash) => Promise<void>): Promise<Hash>;
   save(hash: Hash): Promise<void>;
 }
 export interface BroadcastServices {
@@ -16,7 +17,7 @@ export interface BroadcastServices {
   alarm(mark: Marker): Promise<void>;
 }
 
-// 调用者持有全局锁。先持久化未知标记，进程即使死在广播与保存哈希之间也会挡住下一笔。
+// 调用者持有全局锁，发送前先登记签名可推导的哈希；即使进程中断仍可阻止重用 nonce。
 export async function safeBroadcast(s: BroadcastServices, job: BroadcastJob, deadline: number) {
   const ready = () => deadline - s.now() >= 15_000;
   if (!ready() || !await s.renew()) return 'blocked';
@@ -31,11 +32,36 @@ export async function safeBroadcast(s: BroadcastServices, job: BroadcastJob, dea
   if (!await s.nonceClear() || !ready() || !await s.renew()) return 'blocked';
   if (!await job.stamp()) return 'blocked';
   const at = s.now();
-  if (!ready() || !await s.renew()) return 'blocked';
-  // 写标记时原子核对 holder。失锁不能覆盖接管者的标记。
-  await s.write({ at, hash: null });
-  if (!ready() || !await s.renew()) return 'blocked';
-  const hash = await job.send();
+  let reachedWire = false;
+  let stopped = false;
+  const beforeRaw = async (signedHash: Hash) => {
+    if (!ready() || !await s.renew()) {
+      stopped = true;
+      throw Error('广播前预算或锁已失效');
+    }
+    // 本地签名已确定交易哈希；即使 RPC 响应丢失，下一轮仍能按同一哈希核对。
+    await s.write({ at: s.now(), hash: signedHash });
+    if (deadline - s.now() < 3000 || !await s.renew()) {
+      stopped = true;
+      await s.write(null);
+      throw Error('广播前预算或锁已失效');
+    }
+    reachedWire = true;
+  };
+  let hash: Hash;
+  try {
+    if (!ready() || !await s.renew()) {
+      await job.unstamp();
+      return 'blocked';
+    }
+    hash = await job.send(beforeRaw);
+  } catch (error) {
+    if (!reachedWire) {
+      await job.unstamp();
+      if (stopped) return 'blocked';
+    }
+    throw error;
+  }
   let markerError: unknown;
   try { await s.write({ at, hash }); } catch (error) { markerError = error; }
   try {

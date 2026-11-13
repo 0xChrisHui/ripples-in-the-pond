@@ -1,3 +1,5 @@
+import { guardedWallet } from '@/src/lib/chain/broadcast/guarded-wallet';
+import { broadcastOperator } from '@/src/lib/chain/broadcast/operator';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import {
   operatorWalletClient,
@@ -25,13 +27,14 @@ const RECEIPT_TIMEOUT_MS = 15 * 60 * 1000;
 export async function stepSetTokenUri(
   row: ScoreMintQueueRow,
   leaseOwner: string,
+  deadline: number,
 ): Promise<ScoreMintStatus> {
   if (!row.token_id || !row.metadata_ar_tx_id) {
     throw new Error('token_id or metadata_ar_tx_id missing before setTokenURI');
   }
 
   const tokenUri = `ar://${row.metadata_ar_tx_id}`;
-  let uriTxHash = row.uri_tx_hash as `0x${string}` | null;
+  const uriTxHash = row.uri_tx_hash as `0x${string}` | null;
 
   if (!uriTxHash) {
     const attemptedAt = row.uri_attempted_at
@@ -49,45 +52,37 @@ export async function stepSetTokenUri(
       );
     }
 
-    const stampIso = new Date().toISOString();
-    const { data: stampOk } = await supabaseAdmin
-      .from('score_nft_queue')
-      .update({ uri_attempted_at: stampIso, updated_at: stampIso })
-      .eq('id', row.id)
-      .eq('locked_by', leaseOwner)
-      .gt('lease_expires_at', stampIso)
-      .select('id')
-      .maybeSingle();
-
-    if (!stampOk) {
-      console.warn(`[score-cron] lease lost before setTokenURI stamp for ${row.id}`);
-      return 'setting_uri';
-    }
-
-    console.log(`[score-cron] sending setTokenURI tx: ${tokenUri}`);
-    uriTxHash = await operatorWalletClient.writeContract({
-      address: SCORE_NFT_ADDRESS,
-      abi: SCORE_NFT_ABI,
-      functionName: 'setTokenURI',
-      args: [BigInt(row.token_id), tokenUri],
-    });
-
-    const nowIso = new Date().toISOString();
-    const { data: dbOk } = await supabaseAdmin
-      .from('score_nft_queue')
-      .update({ uri_tx_hash: uriTxHash, updated_at: nowIso })
-      .eq('id', row.id)
-      .eq('locked_by', leaseOwner)
-      .gt('lease_expires_at', nowIso)
-      .select('id')
-      .maybeSingle();
-
-    if (!dbOk) {
-      throw new Error(
-        `CRITICAL: setTokenURI tx ${uriTxHash} broadcast but DB write lost (lease ${leaseOwner})`,
-      );
-    }
-    console.log(`[score-cron] uri tx sent, hash saved: ${uriTxHash}`);
+    let attempt = '';
+    await broadcastOperator(operatorWalletClient.account.address, {
+      stamp: async () => {
+        const stamp = new Date().toISOString();
+        attempt = stamp;
+        const { data, error } = await supabaseAdmin.from('score_nft_queue')
+          .update({ uri_attempted_at: stamp, updated_at: stamp }).eq('id', row.id)
+          .eq('locked_by', leaseOwner).is('uri_attempted_at', null).gt('lease_expires_at', stamp)
+          .select('id').maybeSingle();
+        if (error) throw error;
+        return Boolean(data);
+      },
+      unstamp: async () => {
+        const { error } = await supabaseAdmin.from('score_nft_queue').update({ uri_attempted_at: null })
+          .eq('id', row.id).eq('uri_attempted_at', attempt).eq('locked_by', leaseOwner).is('uri_tx_hash', null);
+        if (error) throw error;
+      },
+      send: beforeRaw => guardedWallet(operatorWalletClient.account, operatorWalletClient.chain, beforeRaw).writeContract({
+        address: SCORE_NFT_ADDRESS,
+        abi: SCORE_NFT_ABI,
+        functionName: 'setTokenURI',
+        args: [BigInt(row.token_id!), tokenUri],
+      }),
+      save: async hash => {
+        const now = new Date().toISOString();
+        const { data, error } = await supabaseAdmin.from('score_nft_queue')
+          .update({ uri_tx_hash: hash, updated_at: now }).eq('id', row.id)
+          .eq('locked_by', leaseOwner).gt('lease_expires_at', now).select('id').maybeSingle();
+        if (error || !data) throw Error(`CRITICAL: 已广播 ${hash} 但订单哈希未保存`);
+      },
+    }, deadline);
     return 'setting_uri';
   }
 

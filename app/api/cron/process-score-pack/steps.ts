@@ -1,3 +1,6 @@
+import { supabaseAdmin } from '@/src/lib/supabase';
+import { guardedWallet } from '@/src/lib/chain/broadcast/guarded-wallet';
+import { broadcastOperator } from '@/src/lib/chain/broadcast/operator';
 import { getAddress } from 'viem';
 import { getChainPublicClient } from '@/src/lib/chain/multichain/public-client';
 import { operatorWalletClient } from '@/src/lib/chain/operator-wallet';
@@ -87,7 +90,7 @@ export async function reconcileOrder(order: PackOrderRow, nowMs = Date.now()): P
 }
 
 /** OP 代付：先落"发送意图"再广播；广播抛错留在 unsent，由 reconcileOrder 对账后再决定重发。 */
-export async function sendSponsoredOrder(order: PackOrderRow, workerId: string): Promise<StepResult> {
+export async function sendSponsoredOrder(order: PackOrderRow, workerId: string, deadline: number): Promise<StepResult> {
   const cfg = getPackChainConfig(order.chain_id);
   if (!cfg || order.chain_id !== CHAIN_ID_NUM) return 'waiting';
   if (!order.sound_ids?.length || !order.track_token_id) {
@@ -104,20 +107,32 @@ export async function sendSponsoredOrder(order: PackOrderRow, workerId: string):
     trackTokenId: BigInt(order.track_token_id), trackCatalogId: '', soundIds: order.sound_ids.map(BigInt),
   });
   const signed = await signVoucher(order.chain_id, cfg.opener, voucher);
-  const intent = await transitionOrder(order.id, 'queued', 'unsent', {
-    attempts: order.attempts + 1, voucher_digest: signed.digest.toLowerCase(),
-    voucher_deadline: Number(voucher.deadline), signer_address: signed.signer.toLowerCase(),
-    locked_by: workerId, next_attempt_at: null,
-  });
-  if (!intent) return 'waiting'; // 别的 worker 已抢到
-
   try {
-    const hash = await operatorWalletClient.writeContract({
-      address: cfg.opener, abi: SCORE_PACK_OPENER_ABI, functionName: 'open',
-      args: [voucher, signed.signer, signed.signature], gas: OPEN_GAS_CAP,
-    });
-    await transitionOrder(order.id, 'unsent', 'submitted_unknown', { tx_hash: hash.toLowerCase() });
-    return 'sent';
+    const result = await broadcastOperator(operatorWalletClient.account.address, {
+      stamp: async () => Boolean(await transitionOrder(order.id, 'queued', 'unsent', {
+        attempts: order.attempts + 1, voucher_digest: signed.digest.toLowerCase(),
+        voucher_deadline: Number(voucher.deadline), signer_address: signed.signer.toLowerCase(),
+        locked_by: workerId, next_attempt_at: null,
+      })),
+      unstamp: async () => {
+        const { error } = await supabaseAdmin.from('score_pack_orders')
+          .update({ status: 'queued', attempts: order.attempts, locked_by: null,
+            voucher_digest: null, voucher_deadline: null, signer_address: null })
+          .eq('id', order.id).eq('locked_by', workerId).eq('status', 'unsent')
+          .eq('voucher_digest', signed.digest.toLowerCase()).is('tx_hash', null);
+        if (error) throw error;
+      },
+      send: beforeRaw => guardedWallet(operatorWalletClient.account, operatorWalletClient.chain, beforeRaw).writeContract({
+        address: cfg.opener, abi: SCORE_PACK_OPENER_ABI, functionName: 'open',
+        args: [voucher, signed.signer, signed.signature], gas: OPEN_GAS_CAP,
+      }),
+      save: async hash => {
+        if (!await transitionOrder(order.id, 'unsent', 'submitted_unknown', { tx_hash: hash.toLowerCase() })) {
+          throw Error(`CRITICAL: 开包订单 ${order.id} 哈希未保存 ${hash}`);
+        }
+      },
+    }, deadline);
+    return result === 'sent' ? 'sent' : 'waiting';
   } catch (error) {
     await transitionOrder(order.id, 'unsent', 'unsent', {
       last_error: safeMessage(error, 2000),

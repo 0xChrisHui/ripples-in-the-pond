@@ -41,7 +41,7 @@ const materialWorker = source('app/api/cron/process-mint-queue/steps.ts');
 assert.ok(materialWorker.indexOf(".eq('week', job.token_id)") >= 0, 'Material cron 缺少真实 Track 查询');
 assert.ok(
   materialWorker.indexOf(".eq('week', job.token_id)")
-    < materialWorker.indexOf('operatorWalletClient.writeContract'),
+    < materialWorker.indexOf('send: beforeRaw => guardedWallet'),
   'Material cron 必须先确认 Track，再发链上交易',
 );
 assert.ok(source('src/types/tracks.ts').includes('周数编号，1-108'), 'Track 总规划仍应保留 1–108');

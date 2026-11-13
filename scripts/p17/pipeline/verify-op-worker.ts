@@ -29,6 +29,7 @@ async function verifyCronIntegration() {
       'next/server': { NextResponse: Response }, crypto: { randomUUID: () => '隔离测试租约' },
       '@/src/lib/auth/cron-auth': { verifyCronSecret: () => mode !== 'unauthorized' },
       '@/src/lib/chain/operator-lock': { acquireOpLock: async () => mode !== 'busy', releaseOpLock: async () => { calls.push('release'); } },
+      '../process-score-pack/cycle': {}, '@/src/lib/score-pack/redact': {},
       './steps': { tryConfirmMinting: async () => mode === 'confirmed' ? { result: 'confirmed' } : null,
         trySendNew: async () => mode === 'sent' ? { result: 'sent' } : null },
       '@/src/lib/material-mint/server/reconcile/worker': { reconcileMaterialMints: async (limit: number, pages: number) => {
@@ -41,7 +42,7 @@ async function verifyCronIntegration() {
     vm.runInNewContext(route, { exports, require(name: string) { assert(name in modules, name); return modules[name]; },
       process: { env: mode === 'unconfigured' ? {} : { ETH_MATERIAL_DEPLOYMENT_BLOCK: '1' } }, console: { error() {} } });
     const response = await exports.GET!(new Request('http://localhost/api/cron/process-mint-queue'));
-    assert.equal(calls.includes('material'), ['idle','material-error','material-partial-error'].includes(mode), mode);
+    assert.equal(calls.includes('material'), !['unauthorized','unconfigured'].includes(mode), mode);
     assert.equal(calls.includes('release'), !['unauthorized','busy'].includes(mode), mode);
     assert.equal(response.status, mode === 'unauthorized' ? 401 : mode.startsWith('material-') ? 503 : 200, mode);
   }
@@ -69,9 +70,10 @@ async function execute(options: Scenario) {
       let update: Record<string, unknown> | null = null;
       const builder = {
         select(fields: string) { reads.push(`${table}:${fields}`); return builder; },
-        eq() { return builder; }, order() { return builder; }, limit() { return builder; },
+        eq() { return builder; }, is() { return builder; }, order() { return builder; }, limit() { return builder; },
         update(value: Record<string, unknown>) { update = value; return builder; },
         async maybeSingle() {
+          if (options.stampFails && update?.mint_attempted_at) return { data: null, error: Error('夹具stamp失败') };
           if (table === 'mint_queue') return { data: options.snapshotFails ? null : job, error: options.snapshotFails ? new Error('夹具读回失败') : null };
           return { data: options.trackExists === false ? null : { id: 'real-local-track' }, error: null };
         },
@@ -84,8 +86,19 @@ async function execute(options: Scenario) {
     },
   };
   const modules: Record<string, unknown> = {
+    '@/src/lib/chain/broadcast/operator': { broadcastOperator: async (_address: string, job: {
+      stamp: () => Promise<boolean>; send: () => Promise<string>; save: (hash: string) => Promise<void>;
+    }) => {
+      if (!await job.stamp()) return 'blocked';
+      await job.save(await job.send()); return 'sent';
+    } },
+    '@/src/lib/chain/broadcast/guarded-wallet': { guardedWallet: () => ({
+      writeContract: async (value: { address: string; args: unknown[] }) => {
+        writes.push(value); return `0x${'11'.repeat(32)}`;
+      },
+    }) },
     '@/src/lib/supabase': { supabaseAdmin: db },
-    '@/src/lib/chain/operator-wallet': { operatorWalletClient: { async writeContract(value: { address: string; args: unknown[] }) {
+    '@/src/lib/chain/operator-wallet': { operatorWalletClient: { account: { address: current }, async writeContract(value: { address: string; args: unknown[] }) {
       writes.push(value); return `0x${'11'.repeat(32)}`;
     } }, publicClient: { getChainId: async () => 10 } },
     '@/src/lib/chain/contracts': { MATERIAL_NFT_ADDRESS: legacy, MATERIAL_NFT_ABI: [] },
@@ -108,8 +121,7 @@ async function main() {
   assert.equal(snapshot.writes[0].address.toLowerCase(), sbt);
   assert.equal(String(snapshot.writes[0].args[0]).toLowerCase(), frozen);
   assert.ok(snapshot.reads.includes('mint_queue:*'), '旧claim投影也必须读回冻结快照');
-  const stamp = await execute({ snapshot: true, stampFails: true });
-  assert.equal(stamp.result.result, 'stamp_failed'); assert.equal(stamp.writes.length, 0);
+  await assert.rejects(execute({ snapshot: true, stampFails: true }), /夹具stamp失败/);
   const old = await execute({ snapshot: false });
   assert.equal(old.result.result, 'sent'); assert.equal(old.writes[0].address.toLowerCase(), legacy);
   assert.equal(String(old.writes[0].args[0]).toLowerCase(), current);

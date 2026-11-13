@@ -1,3 +1,5 @@
+import { guardedWallet } from '@/src/lib/chain/broadcast/guarded-wallet';
+import { broadcastOperator } from '@/src/lib/chain/broadcast/operator';
 import { resolveMaterialRecipient } from '@/src/lib/runtime/material-recipient';
 import { getMusicCatalog, getOriginalMintDeployment } from '@/src/lib/music-catalog/asset-registry';
 import { selectMaterialJobContract } from '@/src/lib/material-mint/op/target';
@@ -100,7 +102,7 @@ export async function tryConfirmMinting() {
 }
 
 /** 抢一条 pending → 发交易 → 立刻存 tx_hash → 返回 */
-export async function trySendNew() {
+export async function trySendNew(holder: string, deadline: number) {
   const { data: jobs, error } = await supabaseAdmin.rpc(process.env.MATERIAL_OP_RECIPIENT_SNAPSHOT_READY === '1' || process.env.MATERIAL_OP_SBT_QUEUE_READY === '1'
     ? 'claim_pending_material_job' : 'claim_pending_job');
   if (error || !jobs || jobs.length === 0) return null;
@@ -145,41 +147,40 @@ export async function trySendNew() {
     await markFailed(job.id, 'manual_review', '原曲接收地址或合约快照无效/新SBT未启用');
     return { result: 'invalid_recipient', jobId: job.id };
   }
-  // P1-3 双发防御：发 tx 前盖 mint_attempted_at 戳（见下方 catch）
-  const stampIso = new Date().toISOString();
-  const { error: stampError } = await supabaseAdmin
-    .from('mint_queue')
-    .update({ mint_attempted_at: stampIso, updated_at: stampIso })
-    .eq('id', job.id);
-  if (stampError) return { result: 'stamp_failed', jobId: job.id };
-
-  let txHash: `0x${string}`;
-  try {
-    txHash = await operatorWalletClient.writeContract({
-      address: mintContract,
-      abi: MATERIAL_NFT_ABI,
-      functionName: 'mint',
+  let txHash: `0x${string}` | undefined;
+  let attempt = '';
+  const result = await broadcastOperator(operatorWalletClient.account.address, {
+    stamp: async () => {
+      const stamp = new Date().toISOString();
+      attempt = stamp;
+      const { data, error } = await supabaseAdmin.from('mint_queue')
+        .update({ mint_attempted_at: stamp, updated_at: stamp }).eq('id', job.id)
+        .eq('status', 'minting_onchain').is('mint_attempted_at', null).select('id').maybeSingle();
+      if (error) throw error;
+      return Boolean(data);
+    },
+    unstamp: async () => {
+      const { error } = await supabaseAdmin.from('mint_queue').update({ mint_attempted_at: null })
+        .eq('id', job.id).eq('mint_attempted_at', attempt).eq('status', 'minting_onchain').is('tx_hash', null);
+      if (error) throw error;
+    },
+    send: beforeRaw => guardedWallet(operatorWalletClient.account, operatorWalletClient.chain, beforeRaw).writeContract({
+      address: mintContract, abi: MATERIAL_NFT_ABI, functionName: 'mint',
       args: [recipient, BigInt(job.token_id), 1n, '0x'],
-    });
-  } catch (err) {
-    // ⚠ P1-3：不 resetToPending（RPC 超时 tx 可能已广播 → 会双铸），留 minting_onchain 交时间窗
-    console.error('[mint-queue] chain send failed, left in minting_onchain:', err);
-    return { result: 'send_failed', jobId: job.id };
+    }),
+    save: async hash => {
+      txHash = hash;
+      const { data, error } = await supabaseAdmin.from('mint_queue')
+        .update({ tx_hash: hash, updated_at: new Date().toISOString() }).eq('id', job.id)
+        .eq('status', 'minting_onchain').is('tx_hash', null).select('id').maybeSingle();
+      if (error || !data) throw Error(`CRITICAL: 原曲交易 ${hash} 的哈希未写入 ${job.id}`);
+    },
+  }, deadline, holder);
+  if (result === 'blocked') {
+    // 仅退回本轮尚未盖戳的领取；未知交易仍交给原有人工复核窗口。
+    const { error } = await supabaseAdmin.from('mint_queue').update({ status: 'pending' })
+      .eq('id', job.id).eq('status', 'minting_onchain').is('mint_attempted_at', null).is('tx_hash', null);
+    if (error) throw error;
   }
-
-  // tx 已广播 — 下面任何失败都不能 resetToPending（否则重复 mint）
-  const { error: dbErr } = await supabaseAdmin
-    .from('mint_queue')
-    .update({ tx_hash: txHash, updated_at: new Date().toISOString() })
-    .eq('id', job.id);
-
-  if (dbErr) {
-    console.error(
-      `[mint-queue] CRITICAL: tx ${txHash} 已上链但 DB 写 tx_hash 失败 job=${job.id}: ${dbErr.message}. 人工核查: UPDATE mint_queue SET tx_hash='${txHash}' WHERE id='${job.id}'`,
-    );
-    // 保持 minting_onchain + tx_hash=null，STUCK_TIMEOUT_MS 后会被 markFailed(manual_review)
-    return { result: 'db_write_failed', jobId: job.id, txHash };
-  }
-
-  return { result: 'sent', jobId: job.id, txHash };
+  return { result, jobId: job.id, txHash };
 }
