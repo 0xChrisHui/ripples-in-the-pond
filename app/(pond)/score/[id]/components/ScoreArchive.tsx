@@ -1,8 +1,9 @@
-import EditionStamp, { type EditionStatus } from '@/src/components/p11/EditionStamp';
+import type { ReactNode } from 'react';
 import ProvenanceLedger, { type ProvenanceEntry } from '@/src/components/p11/ProvenanceLedger';
 import type { ScorePageData, ScoreProvenance } from '@/src/data/score-source';
 import type { ScoreHolderState } from './use-score-holder';
-import { useFormatter, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
+import WorkSummary from './archive/WorkSummary';
 
 type Translate = ReturnType<typeof useTranslations<'score.archive'>>;
 // 来源与字段标签在词典 score.archive.*；metadata.animation_url、Token ID 是技术写法，中英相同，保留字面量
@@ -36,6 +37,7 @@ function ledgerEntries(t: Translate, provenance: ScoreProvenance, holder?: Score
         id: key, label, value: holder.value, source: sourceLabel(t, 'contract'),
         href: holder.href ?? undefined, copyable: true,
         missingLabel: holder.status === 'loading' ? t('checkingHolder') : missing,
+        warning: holder.status === 'unavailable',
       };
     }
     const item = provenance[key];
@@ -51,43 +53,26 @@ function ledgerEntries(t: Translate, provenance: ScoreProvenance, holder?: Score
   });
 }
 
-function statusFor(score: ScorePageData): EditionStatus {
-  if (score.state === 'processing') return 'processing';
-  if (score.state === 'failed' && score.publicFailure === 'snapshot_unavailable') return 'degraded';
-  if (score.state === 'failed') return 'failed';
-  return score.degraded ? 'degraded' : 'finalized';
-}
-
-/** 服务端会渲染这一日期：用 provider 的固定时区格式化，服务端与浏览器结果一致（P19 N4） */
-function dateLabel(score: ScorePageData, missing: string, format: ReturnType<typeof useFormatter>): string {
-  const value = score.confirmedAt ?? score.createdAt ?? score.mintedAt;
-  if (!value) return missing;
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : format.dateTime(date, { year: 'numeric', month: 'numeric', day: 'numeric' });
-}
-
 export default function ScoreArchive({
-  score, holder,
-}: { score: ScorePageData; holder?: ScoreHolderState }) {
+  score, holder, children,
+}: { score: ScorePageData; holder?: ScoreHolderState; children?: ReactNode }) {
   const t = useTranslations('score.archive');
-  const format = useFormatter();
-  const token = score.tokenId == null ? t('inProgress') : `Token #${score.tokenId}`;
   return (
     <section className="score-archive" aria-labelledby="score-archive-title">
+      <WorkSummary score={score} holder={holder} />
+      {children}
       <div className="score-archive__intro">
-        <p className="score-archive__eyebrow">{t('eyebrow')}</p>
         <h2 id="score-archive-title">{t('title')}</h2>
-        <p>{t('intro')}</p>
-        {score.provenance.decoder.href && (
-          <a className="score-archive__decoder" href={score.provenance.decoder.href} target="_blank" rel="noopener noreferrer">
-            {t('openDecoder')} <span aria-hidden="true">↗</span>
-          </a>
-        )}
+        <p>{t('plainIntro')}</p>
       </div>
-      <ProvenanceLedger entries={ledgerEntries(t, score.provenance, holder)} />
-      <div className="score-archive__edition">
-        <EditionStamp status={statusFor(score)} detail={`${token} · ${dateLabel(score, t('dateMissing'), format)}`} />
-      </div>
+      <details className="score-archive__details"><summary>{t('expandFull', { count: 12 })}</summary>
+        <ProvenanceLedger compact entries={ledgerEntries(t, score.provenance, holder)} groups={[
+          { title: t('groups.identity'), ids: ['contract', 'token', 'creator', 'currentHolder'] },
+          { title: t('groups.transactions'), ids: ['mintTransaction', 'setUriTransaction', 'tokenUri'] },
+          { title: t('groups.files'), ids: ['metadata', 'events', 'base', 'sounds', 'decoder'] },
+        ]} />
+        {score.provenance.decoder.href && <a className="score-archive__decoder" href={score.provenance.decoder.href} target="_blank" rel="noopener noreferrer">{t('openDecoder')} ↗</a>}
+      </details>
     </section>
   );
 }

@@ -155,3 +155,11 @@
 @media (forced-colors: active) {
   .record-anchor__record, .record-anchor__action { forced-color-adjust: auto; }
 }
+/* 凭证紧凑变体只按显式参数启用，共用组件的默认版面保持。 */
+.provenance-ledger[data-compact] .provenance-ledger__row { grid-template-columns: 90px minmax(0,1fr); align-items: center; gap: 10px; padding: 10px 0; }
+.provenance-ledger[data-compact] dd { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.provenance-ledger[data-compact] .provenance-ledger__actions { flex-wrap: nowrap; gap: 0; }
+.provenance-ledger[data-compact] .provenance-ledger__actions :is(button,a) { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
+.provenance-ledger[data-compact] .provenance-ledger__value { flex: 1; }
+.provenance-ledger[data-compact] small { font-size: 11px; }
+.provenance-ledger__group-title { margin: 20px 0 0; color: var(--p11-muted); font: 500 var(--p11-text-sm)/1.5 var(--p11-font-body); }
