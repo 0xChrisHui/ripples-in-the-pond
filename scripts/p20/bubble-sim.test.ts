@@ -13,8 +13,10 @@ const FULL = { ...DEFAULT_BUBBLE_TUNING, keepFull: 1 };
   assert.ok(peakBubbles >= 3 && peakBubbles <= 32, `同屏泡数 ${peakBubbles}`);
   for (const f of frames) for (const v of f) {
     assert.ok(v.alpha >= 0 && v.alpha <= 1 && v.depth >= 0 && v.depth <= 1);
-    // 最大半径 = (深处 1.5 + 水面 3.5) × 最大尺寸 1.4 × (1 + 破前放大 0.15)
-    assert.ok(v.radius >= 1 && v.radius <= 7 * 1.15 + 0.01, `半径 ${v.radius}`);
+    // 最大半径 = (深处 + 水面额外) × 最大尺寸 × 整体倍率 × (1 + 破前放大)，全部取自默认值
+    const T = DEFAULT_BUBBLE_TUNING;
+    const maxR = (T.radiusDeep + T.radiusSurface) * T.sizeMax * T.size * (1 + T.popSwell);
+    assert.ok(v.radius >= 1 && v.radius <= maxR + 0.01, `半径 ${v.radius}（上限 ${maxR.toFixed(2)}）`);
     assert.ok(v.x > -50 && v.x < W + 50 && v.y > -50 && v.y < H + 50);
   }
 }

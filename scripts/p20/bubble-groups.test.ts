@@ -34,7 +34,8 @@ const FULL = { ...DEFAULT_BUBBLE_TUNING, keepFull: 1 };
   assert.ok(Math.abs(mean - 1.5) < 0.15, `均值 ${mean.toFixed(3)}`);
   assert.ok(peak <= 4, `峰值 ${peak}`);
   assert.equal(over, 0);
-  for (let k = 0; k <= 4; k++) assert.ok(Math.abs(share[k] - target[k]) < 0.05, `${k} 组占比 ${(share[k] * 100).toFixed(1)}% 应接近 ${(target[k] * 100).toFixed(1)}%`);
+  // 2026-11-13 目验定稿默认（每串 5–8 泡、上升速度 ×2、整体 ×1.5）后组存活更久、实际组数更滞后于目标：1 组偏少约 7 点，容差由 5 放宽到 8
+  for (let k = 0; k <= 4; k++) assert.ok(Math.abs(share[k] - target[k]) < 0.08, `${k} 组占比 ${(share[k] * 100).toFixed(1)}% 应接近 ${(target[k] * 100).toFixed(1)}%`);
 }
 // 3. 保持满组数：很快到达上限并一直保持，同屏泡数不超过 32
 {

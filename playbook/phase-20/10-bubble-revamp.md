@@ -76,3 +76,10 @@
 - K 空闲跳过：`advanceIfIdle()`（`sim/bubble-sim.ts`）——没有泡、无立即请求、未到换目标 / 补组时刻时，只推进时间，`PondBubbles` 跳过收集球、上传缓冲、解析颜色。单测验证与完整步逐帧一致。
 - 门禁：`scripts/p20/storage-gate.mjs`（正式页面不读写存档、`/test5` 读存档且只写可调项）、`scripts/p20/notes-gate.mjs`。`scripts/p20/` 现 8 个文件（已满）。
 - 未量化：空闲帧省下的实际耗时没测（只验证了行为一致与跳过路径）。
+
+## 目验定稿（2026-11-13，用户在 /test5 目验后）
+
+- 默认值改为：`countMin 5`、`countMax 8`、`speed 2`、`size 1.5`、`sizeMin 0.5`、`sizeMax 1.6`、`radiusCurve 1`、`ringStrength 0.6`、`innerFill 0.1`、`glintDeep 0.43`、`noteFont 13.5`、`noteOpacity 0.6`。其中 `sizeMin / sizeMax / radiusCurve / ringStrength / innerFill / glintDeep` 属固定值（`FIXED`），其余在可调项里。
+- 同步到 `/`：`gl-flags.ts` 的 `pondBubbles` 默认改为开（`?pondBubbles=0` 可关）。正式页面只用代码默认值（不读 localStorage），所以 `/` 与 `/test5` 的默认观感一致。
+- 单测随之调整：半径上限改为由默认值推出；组数分布各档容差由 ±5 放宽到 ±8 点（新默认下组存活更久，实际组数更滞后于目标：0/1/2/3/4 组 = 10.8/32.8/43.9/11.2/1.3%，均值 1.59，仍在 ±0.15 内）。
+- 未直接目击：`/` 上自然冒泡与手记（无头 Edge 仅约 2.8 fps，模拟每帧最多推进 0.1 秒，120 秒内没等到手记）；同一套代码在 `/test5` 已验。

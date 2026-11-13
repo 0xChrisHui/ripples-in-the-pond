@@ -6,11 +6,11 @@
  */
 const TUNABLE = {
   // ── 生成节奏 ──
-  meanGroups: 1.5, maxGroups: 4, spread: 0.85, playingGroupsMult: 0.5, keepFull: 0, countMin: 3, countMax: 6,
+  meanGroups: 1.5, maxGroups: 4, spread: 0.85, playingGroupsMult: 0.5, keepFull: 0, countMin: 5, countMax: 8,
   // ── 运动 ──
-  riseMin: 5, riseMax: 8, speed: 1, driftFrac: 0.17, swayMax: 7,
+  riseMin: 5, riseMax: 8, speed: 2, driftFrac: 0.17, swayMax: 7,
   // ── 外观 ──
-  size: 1, leadBig: 1, sizeSpeed: 0.8, birthSpread: 14, radiusDeep: 1.5, radiusSurface: 3.5,
+  size: 1.5, leadBig: 1, sizeSpeed: 0.8, birthSpread: 14, radiusDeep: 1.5, radiusSurface: 3.5,
   opacity: 0.4, colorHex: '#cce5ff', depthDim: 0.45,
   // ── 避让球 ──
   avoidSpawn: 1, avoidFade: 1,
@@ -18,14 +18,14 @@ const TUNABLE = {
   popEnabled: 1, popStrength: 0.04, popSwell: 0.15,
   // ── 手记 ──
   notesEnabled: 1, noteEveryMin: 2, noteEveryMax: 4, suppressPlaying: 1,
-  noteWidth: 360, noteFont: 15, noteOpacity: 0.78, boxOpacity: 0.72, baseStay: 3000, fadeMs: 700,
+  noteWidth: 360, noteFont: 13.5, noteOpacity: 0.6, boxOpacity: 0.72, baseStay: 3000, fadeMs: 700,
 };
 const FIXED = {
   popGapMin: 0.4, popGapMax: 1.5, candidates: 8, areaMin: 0.15, areaMax: 0.85,
   riseEase: 0.85, dwellMin: 0.3, dwellMax: 1.2, swayMin: 2, swayFreqMin: 0.8, swayFreqMax: 1.6,
-  sizeMin: 0.67, sizeMax: 1.4, radiusCurve: 1.2, minSpritePx: 6, fadeIn: 0.15,
-  ringRadius: 0.3, ringSoftDeep: 0.16, ringSoftSurface: 0.05, ringStrength: 0.55, innerFill: 0.06,
-  glintDeep: 0.25, glintSurface: 0.6, glintX: -0.13, glintY: -0.13, glintSize: 0.0016,
+  sizeMin: 0.5, sizeMax: 1.6, radiusCurve: 1, minSpritePx: 6, fadeIn: 0.15,
+  ringRadius: 0.3, ringSoftDeep: 0.16, ringSoftSurface: 0.05, ringStrength: 0.6, innerFill: 0.1,
+  glintDeep: 0.43, glintSurface: 0.6, glintX: -0.13, glintY: -0.13, glintSize: 0.0016,
   discSafety: 1.2, refractMargin: 0.03, edgeBand: 0.06,
   popRadius: 0.006, popTime: 0.15, maxHold: 90,
   noteLineH: 1.75, noteShadow: 1, noteGap: 18, topSafe: 150, bottomSafe: 120, boxBlur: 14, boxAlways: 0,

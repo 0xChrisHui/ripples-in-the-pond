@@ -1,5 +1,5 @@
 // P20 存储隔离门禁（CDP + 无头 Edge）：node scripts/p20/storage-gate.mjs [origin]
-// 正式页面（/?pondBubbles=1）不得读写气泡调参的 localStorage；/test5 才读写，且只存可调项。
+// 正式页面（/，气泡默认开）不得读写气泡调参的 localStorage；/test5 才读写，且只存可调项。
 import assert from 'node:assert/strict';
 import { openTracksBrowser } from '../ui/tracks-pond/browser.mjs';
 
@@ -27,7 +27,7 @@ try {
   await evaluate(`localStorage.setItem('${KEY}', JSON.stringify({ opacity: 1.9, popRadius: 0.05 })); true`);
 
   // 1. 正式页面（开气泡）：不读不写
-  await send('Page.navigate', { url: `${origin}/?pondBubbles=1` });
+  await send('Page.navigate', { url: `${origin}/` });
   await waitFor("document.querySelectorAll('.pond-home-surface button[data-render-node-id]').length>=35");
   await sleep(4000);
   assert.deepEqual(await evaluate('window.__tuneIO'), [], '正式页面不应读写气泡调参存档');

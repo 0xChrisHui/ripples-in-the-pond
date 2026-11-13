@@ -36,7 +36,7 @@ export interface GLFlags {
   waterZoom: boolean;     // K6 水面深度缩放
   floatMotes: boolean;    // K8 漂浮微光
   flowerPetals: boolean;  // 水面花瓣（2D overlay；出水球盖花瓣）
-  pondBubbles: boolean;   // P20 池塘气泡（默认关）
+  pondBubbles: boolean;   // P20 池塘气泡（默认开）
   waterPlants: boolean;   // K9 水生植物
   pondFloor: boolean;     // K10 可见塘底
   moonReflect: boolean;   // K11 月光倒影
@@ -86,7 +86,7 @@ export const DEFAULT_GL_FLAGS: GLFlags = {
   waterZoom: false,      // 水面自身不缩放；缩放交给相机一点透视
   floatMotes: true,      // 漂浮微光默认开（用户指定）
   flowerPetals: true,    // 水面花瓣默认开（用户指定）
-  pondBubbles: false,    // P20 池塘气泡默认关（目验批准后再定）
+  pondBubbles: true,     // P20 池塘气泡默认开（2026-11-13 用户 /test5 目验后定；?pondBubbles=0 可关）
   waterPlants: false,
   pondFloor: true,       // 可见塘底默认开
   moonReflect: true,     // 月光倒影默认开
