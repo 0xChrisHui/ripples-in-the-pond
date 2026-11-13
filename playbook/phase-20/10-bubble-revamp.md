@@ -44,7 +44,7 @@
 
 ## 施工进度
 
-- 1 拆分 ✅ `bcc581c`；2 横向位移 ✅ `8ce98cb`；3 多组调度 + 落点择优 ✅ `5aa8ddf`；4 观感（F 出生偏移、G 大泡更快 + 领头大泡、H 破前放大）✅（本次提交）。
+- 1 拆分 ✅ `bcc581c`；2 横向位移 ✅ `8ce98cb`；3 多组调度 + 落点择优 ✅ `5aa8ddf`；4 观感（F 出生偏移、G 大泡更快 + 领头大泡、H 破前放大）✅ `86e19c8`；5 手记层迁移（A+B）✅（本次提交）。下一步第 6 步（C、J、K）。
 
 ## 施工顺序
 
@@ -61,13 +61,10 @@
 - 浏览器（无头 Edge，`/test5`）：手记中心点最上层元素是手记本身；`/`、`/me` 气泡出现且 `/me` 无手记。
 - 观感（位移比例、组数、破水）只能由用户在 `/test5` 目验。
 
-## 第 5 步（A+B 手记层迁移）交接：已查清的结构，尚未改代码
+## 第 5 步（A+B 手记层迁移）已完成
 
-- 手记宿主 `decor/bubbles/notes/PondNotes.tsx` 现在挂在 `PondGL.tsx` 第 178 行附近（`flags.pondBubbles && <PondNotes />`），而 `PondGL` 的外层容器是 `pointer-events-none fixed inset-0 z-0`。
-- 首页交互层 `.pond-home-surface`（`PersistentRouteSurfaces`，`pointer-events: auto`）盖在它上面，所以手记根本收不到鼠标（已在无头浏览器验证：手记中心点最上层元素是 `MAIN.pond-home-surface`）。
-- 首页层里相关层级：`SphereOverlay`（球命中层）`z-10`；`GlEclipse` `z-[23]`；`TestJam` 容器 `z-30`；`LensSlot`（`/lens` 的遮罩 31 / 面板 31）。
-- 迁移目标：把 `<PondNotes />` 从 `PondGL` 移到 `PondExperience.tsx` 的 `home={<>...</>}` 内（与 `SphereOverlay` 同级），层级放在球命中层之下（z < 10），整层 `pointer-events-none`，只有文字块 `pointer-events-auto`。
-- B（不叠在别的页面）：只要手记只挂在 home 片段里，`/me`、`/artist`、`/score` 自然没有；原有的 `/lens` 屏蔽（`usePathname() === LENS_PATH`）保留。
-- 注意：`PondExperience.tsx` 现 159 行；`src/features/home-pond/` 目录已有 8 个文件，**不能再加文件**，新代码放子目录（如 `host/`，现 3 个）。
-- 验收：浏览器里（`/test5`）手记出现后，中心点最上层元素是手记本身；球仍可点击、悬停；`/me` 无手记（`/me` 上气泡是否出现也要看一下）。
-
+- `<PondNotes />` 从 `PondGL` 移到 `PondExperience.tsx` 的首页片段里，与 `SphereOverlay` 同级、放在它之前；挂载条件 `glOk && homeInteractive && !forceFallback && pondBubbles`。离开首页即卸载 → 宿主注销 → 不再挑载体泡，`/me`、`/artist`、`/score` 没有手记。`/lens` 屏蔽保留在 `PondNotes` 内。
+- 手记层 z 由 10 改为 9（球命中层仍是 10）；整层 `pointer-events-none`，只有文字块接收指针。
+- 门禁：`node scripts/p20/notes-gate.mjs [origin]`（需 dev 在跑，默认 `http://127.0.0.1:3123`）。已通过：手记中心点最上层元素是手记本身、手记在首页层内且 z 低于球层、悬停出半透明框、去 `/me` 后无手记。
+- 未验：手机触摸（轻点切框、点空白消失）与 `/` 正式页面（`pondBubbles` 默认关，手记只在开启时出现）——需用户在 `/test5` 目验。
+- 注：门禁脚本放 `scripts/p20/`（`scripts/ui/lens/` 已满 8 个文件）。

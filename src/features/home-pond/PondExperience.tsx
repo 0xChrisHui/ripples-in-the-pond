@@ -8,6 +8,7 @@ import type { GlHealth } from '@/src/components/pond-gl-test3/PondGL';
 import GlEclipse from '@/src/components/pond-gl-test3/overlay/GlEclipse';
 import GlLoading from '@/src/components/pond-gl-test3/overlay/GlLoading';
 import GlNav from '@/src/components/pond-gl-test3/overlay/GlNav';
+import PondNotes from '@/src/components/pond-gl-test3/decor/bubbles/notes/PondNotes';
 import PondHeader from '@/src/components/pond-gl-test3/overlay/PondHeader';
 import SphereOverlay from '@/src/components/pond-gl-test3/overlay/SphereOverlay';
 import SceneCover from '@/src/components/pond-gl-test3/presentation/SceneCover';
@@ -139,6 +140,8 @@ export default function PondExperience({ mode, persistent = false, children }: {
           {homeInitialized && <TestJam p9Enabled={p9Enabled} enabled={homeInteractive} />}
         </div>
       </div>
+      {/* P20 手记：只挂在首页层、z-9 在球命中层之下；离开首页即卸载（宿主注销 → 不再挑载体泡） */}
+      {glOk && homeInteractive && !glFlags.forceFallback && glFlags.pondBubbles && <PondNotes />}
       {glFlags.glSpheres && glSim.ready && sceneReady && (
         <div className="pond-reveal" data-ready style={{ '--pond-reveal-delay': '100ms' } as CSSProperties}>
           <SphereOverlay glSim={glSim} waterOn={glFlags.water || glFlags.waterFx}

@@ -61,7 +61,7 @@ function NoteView({ note, u, v, onDone }: { note: Active; u: number; v: number; 
   const out = phase === 'out';
   const fade = `opacity ${tn.fadeMs}ms ease, transform ${tn.fadeMs}ms ease`;
   return (
-    <div className="pointer-events-none fixed inset-0 z-10" aria-hidden={false}>
+    <div className="pointer-events-none fixed inset-0 z-[9]" aria-hidden={false}>
       <div ref={ref} role="note" aria-label={t('noteLabel')}
         className="pointer-events-auto absolute"
         style={{ top: y, transform: 'translateY(-50%)', width, minHeight: 44, [right ? 'left' : 'right']: right ? x + GAP : vw - x + GAP,
