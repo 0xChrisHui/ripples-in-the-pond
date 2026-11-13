@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import type { ResidentEchoCommand, ResidentEchoPlayback, ResidentEchoRuntime } from '../../../types/echo-resident';
 import { createResidentGesture } from './state/gesture';
+import { isPinching } from '../pointer-fx';
 
 const PLAY_PATH = 'M-4.5,-6 L7,0 L-4.5,6 Z';
 const PAUSE_PATH = 'M-5.5,-6 L-2,-6 L-2,6 L-5.5,6 Z M0.5,-6 L4,-6 L4,6 L0.5,6 Z';
@@ -21,6 +22,8 @@ export function EchoResidentHit({ runtime, getPlayback, execute }: Props) {
   useEffect(() => {
     const activeGesture = createResidentGesture(runtime, getPlayback, execute);
     gesture.current = activeGesture;
+    const cancelPinch = () => activeGesture.cancel();
+    window.addEventListener('pond-pinch-start', cancelPinch);
     const sync = () => {
       const el = button.current;
       if (!el) return;
@@ -52,7 +55,7 @@ export function EchoResidentHit({ runtime, getPlayback, execute }: Props) {
     };
     sync();
     const unsubscribe = runtime.subscribe(sync);
-    return () => { unsubscribe(); activeGesture.cancel(); gesture.current = null; };
+    return () => { window.removeEventListener('pond-pinch-start', cancelPinch); unsubscribe(); activeGesture.cancel(); gesture.current = null; };
   }, [runtime, getPlayback, execute]);
   return <>
     <button ref={button} type="button" aria-label="播放 ECHO #1（第36枚音乐圆圈）"
@@ -64,12 +67,14 @@ export function EchoResidentHit({ runtime, getPlayback, execute }: Props) {
       onFocus={(event) => runtime.setInteraction({ focused: event.currentTarget.matches(':focus-visible') })}
       onBlur={() => { gesture.current?.cancel(); runtime.setInteraction({ focused: false }); }}
       onPointerDown={(event) => {
+        if (isPinching()) return;
         if (event.button === 0 && gesture.current?.begin(event.pointerId, { x: event.clientX, y: event.clientY })) {
           event.currentTarget.setPointerCapture(event.pointerId);
         }
       }}
-      onPointerMove={(event) => gesture.current?.move(event.pointerId, { x: event.clientX, y: event.clientY })}
+      onPointerMove={(event) => { if (!isPinching()) gesture.current?.move(event.pointerId, { x: event.clientX, y: event.clientY }); }}
       onPointerUp={(event) => {
+        if (isPinching()) { gesture.current?.cancel(); return; }
         const activated = gesture.current?.end(event.pointerId);
         if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
         if (activated) event.currentTarget.blur();

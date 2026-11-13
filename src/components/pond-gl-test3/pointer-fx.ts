@@ -32,6 +32,17 @@ const D_LO = 0.35, D_SPAN = 0.30;          // base z∈[0,1] → 默认层 35-65
 let shiftTarget = 0, shift = 0, shiftVelocity = 0;
 let mxTarget = 0, myTarget = 0, mx = 0, my = 0;
 let inside = false;
+let pinching = false;
+export function isPinching(): boolean { return pinching; }
+/** 一指先抬仍抑制点播；直到最后一指的 pointerup 处理完再清除。 */
+export function updatePinchCount(count: number): void {
+  if (count >= 2 && !pinching) { pinching = true; if (typeof window !== 'undefined') window.dispatchEvent(new Event('pond-pinch-start')); }
+  if (count === 0) pinching = false;
+}
+export function pinchStep(previous: number, current: number, cap: number): number {
+  if (previous <= 0 || current <= 0) return 0;
+  return Math.max(-cap, Math.min(cap, Math.log(current / previous) * .3));
+}
 
 /** 相机三效开关（控制台按钮 → 页面 setCameraFx 写、ctx builder + project 读）。 */
 export interface CameraFx { dof: boolean; perspective: boolean; parallax: boolean }
@@ -99,6 +110,22 @@ export function usePointerFx(active: boolean, captureWheel = true): void {
       const step = Math.max(-cap, Math.min(cap, e.deltaY * SHIFT_SENS));
       shiftTarget = Math.max(SHIFT_MIN, Math.min(SHIFT_MAX, shiftTarget - step));
     };
+    let distance = 0, blocked = false;
+    const onTouch = (e: TouchEvent) => {
+      if (!captureWheel || !cam.perspective) return;
+      if (e.type === 'touchstart' && e.touches.length === 1) blocked = e.target instanceof Element && !!e.target.closest('[data-pond-ui]');
+      updatePinchCount(e.touches.length);
+      if (e.touches.length < 2 || blocked) { distance = 0; return; }
+      e.preventDefault();
+      const [a, b] = [e.touches[0], e.touches[1]], next = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      if (distance && e.type === 'touchmove') shiftTarget = Math.max(SHIFT_MIN, Math.min(SHIFT_MAX, shiftTarget + pinchStep(distance, next, getRippleTuning().scrollStep)));
+      distance = next;
+    };
+    const onGesture = (e: Event) => { if (captureWheel && cam.perspective && !blocked && isPinching()) e.preventDefault(); };
+    const touchEvents = ['touchstart', 'touchmove', 'touchend', 'touchcancel'] as const;
+    touchEvents.forEach((name) => window.addEventListener(name, onTouch, { passive: false, capture: true }));
+    window.addEventListener('gesturestart', onGesture, { passive: false });
+    window.addEventListener('gesturechange', onGesture, { passive: false });
     window.addEventListener('pointermove', onMove, { passive: true });
     window.addEventListener('pointerout', onLeave, { passive: true });
     window.addEventListener('wheel', onWheel, { passive: false });
@@ -143,6 +170,9 @@ export function usePointerFx(active: boolean, captureWheel = true): void {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerout', onLeave);
       window.removeEventListener('wheel', onWheel);
+      touchEvents.forEach((name) => window.removeEventListener(name, onTouch, true));
+      window.removeEventListener('gesturestart', onGesture); window.removeEventListener('gesturechange', onGesture);
+      updatePinchCount(0);
       cancelAnimationFrame(raf);
       shiftVelocity = 0;
     };

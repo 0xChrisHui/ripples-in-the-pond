@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { isPinching, pinchStep, updatePinchCount } from '../../../src/components/pond-gl-test3/pointer-fx';
+assert.ok(pinchStep(100, 120, .075) > 0);
+assert.ok(pinchStep(120, 100, .075) < 0);
+assert.equal(pinchStep(10, 1000, .075), .075);
+assert.equal(pinchStep(1000, 10, .075), -.075);
+assert.equal(pinchStep(0, 100, .075), 0);
+assert.equal(pinchStep(100, 0, .075), 0);
+assert.equal(pinchStep(100, 100, .075), 0);
+updatePinchCount(1); assert.equal(isPinching(), false);
+updatePinchCount(2); assert.equal(isPinching(), true);
+updatePinchCount(1); assert.equal(isPinching(), true);
+updatePinchCount(0); assert.equal(isPinching(), false);
+updatePinchCount(2); updatePinchCount(0); assert.equal(isPinching(), false);
+console.log('双指换层：方向、封顶、零距离与完整生命周期通过');

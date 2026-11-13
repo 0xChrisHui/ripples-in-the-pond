@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { endNodeDrag, setNodeDrag, type GlPhysNode } from '../spheres/gl-sim-setup';
 import type { GlSim } from '../spheres/use-gl-sim';
-import { getPointerFx, getCameraFx, depthOf } from '../pointer-fx';
+import { getPointerFx, getCameraFx, depthOf, isPinching } from '../pointer-fx';
 import { getEffectiveWaterLevel } from '../water/water-level';
 import { unproject, type ProjCtx } from '../sphere-projection';
 import { getLensBridge } from '@/src/features/lens/bridge/lens-bridge';
@@ -56,12 +56,15 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
   }, [glSim.simRef, node]);
 
   useEffect(() => () => finishDrag(), [finishDrag]);
+  useEffect(() => { window.addEventListener('pond-pinch-start', finishDrag); return () => window.removeEventListener('pond-pinch-start', finishDrag); }, [finishDrag]);
 
   const onDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (isPinching()) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     drag.current = { down: true, moved: false, x: event.clientX, y: event.clientY };
   };
   const onMove = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (isPinching()) { finishDrag(); return; }
     const state = drag.current;
     if (!state.down || lensMode) return;
     if (!state.moved) {
@@ -73,6 +76,7 @@ export default function SphereHit({ node, glSim, isPlaying, showLabels, glHealth
     setNodeDrag(node, point.x, point.y);
   };
   const onUp = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (isPinching()) { finishDrag(); return; }
     if (!drag.current.down) return;
     const shouldToggle = !drag.current.moved;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {

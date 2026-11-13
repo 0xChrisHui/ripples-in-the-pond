@@ -3,7 +3,7 @@
 import { useEffect, useRef, type RefObject } from 'react';
 import { useTranslations } from 'next-intl';
 import type { FeaturedEcho } from '@/src/types/featured-echo';
-import { getPointerFx, getCameraFx, depthOf } from '../pointer-fx';
+import { getPointerFx, getCameraFx, depthOf, isPinching } from '../pointer-fx';
 import { project, type ProjCtx } from '../sphere-projection';
 import { getEffectiveWaterLevel } from '../water/water-level';
 import { getPlaybackFocus } from '../focus/playback-focus';
@@ -22,6 +22,12 @@ interface Props {
 
 export default function Track36HitTarget({ echo, visitor, playbackState, fallback = false, toggle }: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const suppressClick = useRef(false);
+  useEffect(() => {
+    const suppress = () => { suppressClick.current = true; };
+    window.addEventListener('pond-pinch-start', suppress);
+    return () => window.removeEventListener('pond-pinch-start', suppress);
+  }, []);
   const t = useTranslations('player');
   useEffect(() => {
     let raf = 0;
@@ -63,11 +69,13 @@ export default function Track36HitTarget({ echo, visitor, playbackState, fallbac
       aria-label={t('track36Label', { state: playbackState, title: echo.title })}
       aria-pressed={playbackState === 'playing'} data-featured-echo-hit="true"
       data-echo-render-mode={fallback ? 'css-fallback' : 'webgl'}
+      onPointerDown={() => { if (!isPinching()) suppressClick.current = false; }}
       onPointerEnter={() => { if (visitor.current) setTrack36InteractionSlow(visitor.current, true); }}
       onPointerLeave={() => { if (visitor.current) setTrack36InteractionSlow(visitor.current, false); }}
       onFocus={() => { if (visitor.current) setTrack36InteractionSlow(visitor.current, true); }}
       onBlur={() => { if (visitor.current) setTrack36InteractionSlow(visitor.current, false); }}
       onClick={(event) => {
+        if (isPinching() || suppressClick.current) return;
         const state = visitor.current;
         if (state) freezeTrack36Visitor(state);
         void toggle();
