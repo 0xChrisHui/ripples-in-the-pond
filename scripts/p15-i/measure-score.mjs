@@ -65,7 +65,7 @@ async function sample(cdp, tokenId, classification, index) {
     const shellAt = await waitFor(cdp,
       `location.pathname==='/score/${tokenId}'&&document.querySelector('.record-anchor')?performance.now():0`,
       30_000, `Score #${tokenId} 页面主体`);
-    await clickWhenHandled(cdp, '.record-anchor__action', 5_000);
+    await clickWhenHandled(cdp, '.record-anchor__visual', 5_000);
     await waitFor(cdp, `performance.getEntriesByName('p15:first-sound-scheduled').length>0
       ||document.querySelector('main')?.dataset.playbackState==='error'`, 45_000, `Score #${tokenId} 首声排程`);
     const beforeClick = await cdp.evaluate(`(() => { const main=document.querySelector('main');

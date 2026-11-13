@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ForceCenter, Simulation } from 'd3-force';
 import type { GroupId, SimLink } from '@/src/components/archipelago/sphere-config';
-import { resetDepthShift } from '@/src/components/pond-gl-test3/pointer-fx';
+import { resetDepthShift, getCameraFx, getPointerFx, depthOf } from '@/src/components/pond-gl-test3/pointer-fx';
+import { project, unproject } from '@/src/components/pond-gl-test3/sphere-projection';
+import { getEffectiveWaterLevel } from '@/src/components/pond-gl-test3/water/water-level';
 import type { GlSim } from '@/src/components/pond-gl-test3/spheres/use-gl-sim';
 import {
   buildGlNodes,
@@ -17,25 +19,22 @@ import type { Track } from '@/src/types/tracks';
 const RETURN_DURATION_MS = 1050;
 
 function pinToRecord(node: GlPhysNode, width: number, height: number): void {
-  const record = document.querySelector<HTMLElement>(
-    '.score-pond-page__anchor .record-anchor__visual',
-  );
-  const bounds = record?.getBoundingClientRect();
-  const x = bounds?.width ? bounds.left + bounds.width / 2 : width / 2;
-  const y = bounds?.height ? bounds.top + bounds.height / 2 : height / 2;
-  node.x = node.fx = x;
-  node.y = node.fy = y;
+  const center = recordCenter(width, height, node);
+  node.x = node.fx = center.x;
+  node.y = node.fy = center.y;
 }
 
-function recordCenter(width: number, height: number): { x: number; y: number } {
+function recordCenter(width: number, height: number, node: GlPhysNode): { x: number; y: number } {
   const record = document.querySelector<HTMLElement>(
     '.score-pond-page__anchor .record-anchor__visual',
   );
   const bounds = record?.getBoundingClientRect();
-  return {
-    x: bounds?.width ? bounds.left + bounds.width / 2 : width / 2,
-    y: bounds?.height ? bounds.top + bounds.height / 2 : height / 2,
-  };
+  const ctx = { ...getCameraFx(), ...getPointerFx(), cx: width / 2, cy: height / 2, focusZ: getEffectiveWaterLevel() };
+  const depth = depthOf(node), scale = project(0, 0, depth, ctx, node).scale;
+  // 日食消费世界半径，再做透视投影；不能把屏幕半径直接当成世界半径。
+  node.radius = (bounds?.width ? bounds.width / 2 : 100) / scale;
+  return unproject(bounds?.width ? bounds.left + bounds.width / 2 : width / 2,
+    bounds?.height ? bounds.top + bounds.height / 2 : height / 2, depth, ctx, node);
 }
 
 function easeInOutCubic(value: number): number {
@@ -93,7 +92,6 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
     const node = built.nodes[0];
     if (node) {
       pinToRecord(node, w, h);
-      node.radius = 70;
     }
     simRef.current = sim;
     wavesRef.current = [];
@@ -151,7 +149,7 @@ export function useScorePondSim(track: Track | null, playing: boolean): ScorePon
     const returnHome = (now: number) => {
       const progress = Math.min(1, (now - start) / RETURN_DURATION_MS);
       const eased = easeInOutCubic(progress);
-      const center = recordCenter(window.innerWidth, window.innerHeight);
+      const center = recordCenter(window.innerWidth, window.innerHeight, node);
       placeOnReturnPath(node, fromX, fromY, center, eased);
       if (progress < 1) raf = requestAnimationFrame(returnHome);
       else {

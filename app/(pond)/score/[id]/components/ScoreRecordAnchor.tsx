@@ -1,8 +1,9 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import RecordAnchor, { type RecordAnchorState } from '@/src/components/p11/RecordAnchor';
-import { useServerText } from '@/src/i18n/use-server-text';
+import { playbackStatusKey } from './hero/playback-status';
 import PlaybackSeekBar from '@/src/components/common/PlaybackSeekBar';
 import type { UseScorePlaybackResult } from '@/src/features/score-playback/types';
 
@@ -25,29 +26,17 @@ function timeLabel(ms: number): string {
 
 export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAvailable }: Props) {
   const t = useTranslations('score.playback');
-  const serverText = useServerText();
+  const router = useRouter();
   const state = anchorState(playback);
   const perform = () => {
     if (playback.state === 'error') {
-      window.location.reload();
+      router.refresh();
       return;
     }
     if (playback.state === 'ended') void playback.replay();
     else void playback.toggle();
   };
-  const detail = playback.state === 'error'
-    ? t('errorDetail', { error: serverText(playback.errorMessage, t('errorDefault')) })
-    : playback.state === 'paused'
-      ? t('pausedAt', { time: timeLabel(playback.positionMs) })
-      : playback.state === 'ended'
-        ? t('playedFull', { time: timeLabel(playback.durationMs) })
-        : playback.state === 'playing'
-          ? t('playingDetail')
-          : playback.state === 'loading'
-            ? playback.playRequested
-              ? t('queued')
-              : t('preparing')
-            : t('idle');
+  const hintKey = playbackStatusKey(playback.state, playback.playRequested);
   const eclipse = eclipseAvailable
     ? <span className="score-eclipse-viewport-anchor" />
     : <span className="score-eclipse-fallback" />;
@@ -62,9 +51,15 @@ export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAv
         eclipseVisual={eclipse}
         playingActionLabel={t('pause')}
         allowBusyAction
+        compact
         loadingActionLabel={playback.playRequested ? t('cancelWait') : t('playWhenReady')}
-        detailText={detail}
       />
+      <div className="score-record-anchor__bar">
+      <button type="button" className="score-record-anchor__toggle" onClick={perform}
+        aria-label={playback.state === 'playing' ? t('pause') : playback.playRequested ? t('cancelWait') : t('playWhenReady')} aria-pressed={playback.state === 'playing'}>
+        {playback.state === 'playing' ? 'Ⅱ' : '▶'}
+      </button>
+      <span>{timeLabel(playback.positionMs)}</span>
       <PlaybackSeekBar
         className="score-record-anchor__progress"
         value={playback.positionMs}
@@ -73,6 +68,9 @@ export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAv
         formatValue={timeLabel}
         disabled={playback.state === 'loading' || playback.state === 'error'}
       />
+      <span>{timeLabel(playback.durationMs)}</span>
+      </div>
+      <p className="score-record-anchor__hint" aria-live="polite">{hintKey ? t(hintKey) : '\u00a0'}</p>
     </div>
   );
 }

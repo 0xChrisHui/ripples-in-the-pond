@@ -23,6 +23,7 @@ type Props = {
   playingActionLabel?: string;
   allowBusyAction?: boolean;
   loadingActionLabel?: string;
+  compact?: boolean;
 };
 
 // 各状态的动作与说明文案在词典 record.state.<state>
@@ -40,6 +41,7 @@ export default function RecordAnchor({
   playingActionLabel,
   allowBusyAction = false,
   loadingActionLabel,
+  compact = false,
 }: Props) {
   const t = useTranslations('record');
   const statusId = useId();
@@ -81,12 +83,12 @@ export default function RecordAnchor({
         </span>
       </button>
 
-      <div className="record-anchor__caption" id={statusId} aria-live="polite">
+      <div className={compact ? 'p11-visually-hidden' : 'record-anchor__caption'} id={statusId} aria-live="polite">
         <p>{statusText ?? copy.status}</p>
         {detailText && <small>{detailText}</small>}
       </div>
 
-      <button
+      {!compact && <button
         className="record-anchor__action"
         type="button"
         onClick={onAction}
@@ -96,7 +98,7 @@ export default function RecordAnchor({
         aria-busy={isBusy}
       >
         {actionLabel}
-      </button>
+      </button>}
     </section>
   );
 }
