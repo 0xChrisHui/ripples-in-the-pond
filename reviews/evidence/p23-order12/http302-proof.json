@@ -1,0 +1,48 @@
+{
+  "at": "2026-11-14T06:51:44.054Z",
+  "status": 200,
+  "body": {
+    "result": "ok",
+    "processed": 1,
+    "issuance": {
+      "protocol": "atomic-v1",
+      "issuer": "0x7cb59E953d59563EeF66314a583CEa18f703E714"
+    },
+    "orders": [
+      {
+        "result": "waiting",
+        "queueId": "b04f071e-112d-47f3-852a-d8741ddb73ac",
+        "status": "minting_onchain",
+        "steps": 1
+      }
+    ]
+  },
+  "before": {
+    "id": "b04f071e-112d-47f3-852a-d8741ddb73ac",
+    "status": "minting_onchain",
+    "expected_token_id": 12,
+    "atomic_ready_at": null,
+    "token_id": null,
+    "tx_hash": null,
+    "uri_tx_hash": null,
+    "mint_attempted_at": null,
+    "last_error": "等待永久资源传播，531 秒后重试：发行前 arweave.net 尚不能完整读取资源",
+    "lease_expires_at": "2026-11-14T06:51:55.438+00:00",
+    "locked_by": null,
+    "updated_at": "2026-11-14T06:43:04.911+00:00"
+  },
+  "after": {
+    "id": "b04f071e-112d-47f3-852a-d8741ddb73ac",
+    "status": "minting_onchain",
+    "expected_token_id": 12,
+    "atomic_ready_at": null,
+    "token_id": null,
+    "tx_hash": null,
+    "uri_tx_hash": null,
+    "mint_attempted_at": null,
+    "last_error": "等待永久资源传播，789 秒后重试：发行前 arweave.net 尚不能完整读取资源 KvzBpXTEMGkFrDnfUyejXmYc_2mHJKvVnGAr-r-Lpfk：Error: HTTP 302",
+    "lease_expires_at": "2026-11-14T07:04:51.796+00:00",
+    "locked_by": null,
+    "updated_at": "2026-11-14T06:51:42.483+00:00"
+  }
+}

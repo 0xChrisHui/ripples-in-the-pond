@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-14T07:20:23.665Z",
+  "order": {
+    "id": "b04f071e-112d-47f3-852a-d8741ddb73ac",
+    "status": "success",
+    "issuance_mode": "atomic",
+    "atomic_issuer": "0x7cb59E953d59563EeF66314a583CEa18f703E714",
+    "expected_token_id": 12,
+    "atomic_ready_at": "2026-11-14T07:20:12.079+00:00",
+    "token_id": 12,
+    "token_uri": "ar://KvzBpXTEMGkFrDnfUyejXmYc_2mHJKvVnGAr-r-Lpfk",
+    "tx_hash": "0xd4b07e457241809b6c08a33418969bcfaa009418b342bf6e5e43b5a6f633721d",
+    "uri_tx_hash": "0xd4b07e457241809b6c08a33418969bcfaa009418b342bf6e5e43b5a6f633721d",
+    "mint_attempted_at": "2026-11-14T07:20:13.251+00:00",
+    "last_error": null,
+    "lease_expires_at": null,
+    "locked_by": null,
+    "updated_at": "2026-11-14T07:20:20.845+00:00",
+    "metadata_ar_tx_id": "KvzBpXTEMGkFrDnfUyejXmYc_2mHJKvVnGAr-r-Lpfk"
+  },
+  "snapshot": {
+    "environment": "production",
+    "chain_id": 10,
+    "contract": "0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa",
+    "token_id": 12,
+    "revision": 1,
+    "activated_at": "2026-11-14T07:20:20.714259+00:00"
+  },
+  "chain": {
+    "status": "success",
+    "tx": "0xd4b07e457241809b6c08a33418969bcfaa009418b342bf6e5e43b5a6f633721d",
+    "to": "0x7cb59e953d59563eef66314a583cea18f703e714",
+    "block": "159521019",
+    "mapped": "12",
+    "uri": "ar://KvzBpXTEMGkFrDnfUyejXmYc_2mHJKvVnGAr-r-Lpfk",
+    "events": [
+      {
+        "address": "0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa",
+        "topic": "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+      },
+      {
+        "address": "0x406519962cdd1673d30fecc13c4b6f7af87ba1da",
+        "topic": "0x8b126a596fd5075f3fbd231b01a6ae9b4902a77f854f72d29c277315dce99ebb"
+      },
+      {
+        "address": "0xac3f7471a4e1f5952b4c8f56521af46d6c20a4aa",
+        "topic": "0xf8e1a15aba9398e019f0b49df1a4fde98ee17ae345cb5f6b5e2c27f5033e8ce7"
+      },
+      {
+        "address": "0x7cb59e953d59563eef66314a583cea18f703e714",
+        "topic": "0x75f11d2f911723506b6b7bb5a1a15763055dce73ae5b4551ff48c02957c20b1d"
+      }
+    ]
+  },
+  "alchemy": {
+    "status": 200,
+    "name": "Ripples #12",
+    "tokenUri": "ar://KvzBpXTEMGkFrDnfUyejXmYc_2mHJKvVnGAr-r-Lpfk",
+    "image": {
+      "cachedUrl": "https://nft2-cdn.alchemy.com/opt-mainnet/560cad58049000e7fb0dd64c6bbdc2f4_a9361ab0",
+      "thumbnailUrl": "https://res.cloudinary.com/alchemyapi/image/upload/thumbnailv2/opt-mainnet/560cad58049000e7fb0dd64c6bbdc2f4_a9361ab0",
+      "pngUrl": "https://res.cloudinary.com/alchemyapi/image/upload/convert-png/opt-mainnet/560cad58049000e7fb0dd64c6bbdc2f4_a9361ab0",
+      "contentType": "image/jpeg",
+      "size": 127904,
+      "originalUrl": "https://arweave.net/ZXcbn768xvGnolueIbmSTHEdflSkna82jQbqvXNoHuo"
+    },
+    "raw": {
+      "tokenUri": "ar://KvzBpXTEMGkFrDnfUyejXmYc_2mHJKvVnGAr-r-Lpfk",
+      "metadata": {
+        "name": "Ripples #12",
+        "description": "A live jam on \"3\" recorded and minted as an on-chain Score NFT. All audio permanently stored on Arweave.",
+        "image": "https://arweave.net/ZXcbn768xvGnolueIbmSTHEdflSkna82jQbqvXNoHuo",
+        "external_url": "https://pond-ripple.xyz/score/12",
+        "animation_url": "https://arweave.net/Yu9fOcdc8fzBnPzFWabCyeh3TRcXYTowN5cpv68dOO0?package=ar://enOV47dA_MAS5usH3YlzwSd6_b9IiR0HvDwfJKwXf-A",
+        "attributes": [
+          {
+            "trait_type": "Track",
+            "value": "3"
+          },
+          {
+            "trait_type": "Week",
+            "value": 3
+          },
+          {
+            "trait_type": "Minted At",
+            "value": "2026-11-14"
+          }
+        ],
+        "properties": {
+          "playback": {
+            "schema": "ripples.score-package.v3",
+            "package": "ar://enOV47dA_MAS5usH3YlzwSd6_b9IiR0HvDwfJKwXf-A",
+            "sha256": "028aa99d15d91525a072299c40762edf937df442674e99642c42eaa96b70fd70",
+            "bytes": 867,
+            "mime": "application/json"
+          }
+        }
+      },
+      "error": null
+    },
+    "timeLastUpdated": "2026-11-14T07:20:17.719831436Z"
+  }
+}

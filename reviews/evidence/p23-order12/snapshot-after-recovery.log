@@ -1,0 +1,5 @@
+
+> ripples-in-the-pond@0.1.0 p15:h7:verify-production
+> tsx scripts/p15-h/release/verify-production-release.ts
+
+H7 readback：33 键 Core、35 首 base、三环境各 4 枚 snapshot 全部通过
