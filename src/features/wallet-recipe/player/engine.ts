@@ -46,11 +46,12 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
     this.listeners.forEach((listener) => listener());
   }
 
-  async load(input: WalletRecipePlayerInput): Promise<void> {
+  async load(input: WalletRecipePlayerInput, deferAudio = false): Promise<void> {
     const loadStartedAt = performance.now();
     const generation = ++this.generation;
     this.abortController?.abort();
     await this.releaseAudio();
+    if (generation !== this.generation) return;
     this.abortController = new AbortController();
     this.input = null;
     this.timeline = null;
@@ -68,15 +69,14 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
       const resources = new ProgressiveRecipeResources(
         input, timeline, this.fetcher, this.abortController.signal,
       );
+      this.resources = resources; this.input = input; this.timeline = timeline;
+      if (deferAudio) { this.update({ state: 'ready' }); return; }
       await resources.loadInitial(
         (loadedUniqueCount) => {
           if (generation === this.generation) this.update({ loadedUniqueCount });
         },
       );
       if (generation !== this.generation) return;
-      this.resources = resources;
-      this.input = input;
-      this.timeline = timeline;
       this.update({
         state: 'ready', errorKind: null, errorMessage: null,
         initialLoadMs: Math.round(performance.now() - loadStartedAt),
@@ -123,16 +123,21 @@ export class WalletRecipePlayerEngine implements WalletRecipePlayerController {
     if (!this.timeline || !this.input || !['ready', 'paused', 'ended', 'error'].includes(this.snapshot.state)) return;
     const positionMs = this.snapshot.state === 'ended' ? 0 : this.snapshot.positionMs;
     const generation = this.generation;
+    const resources = this.resources!;
     const intentAt = performance.now();
     performance.mark('p15:recipe-audio-intent');
     this.update({ state: 'loading', errorKind: null, errorMessage: null });
     try {
       const context = this.context ?? this.createContext();
       this.context = context;
-      const resume = context.state === 'running' ? Promise.resolve() : context.resume();
+      if (context.state !== 'running') await context.resume();
+      await resources.loadInitial(loadedUniqueCount => {
+        if (generation === this.generation) this.update({ loadedUniqueCount });
+      });
+      if (generation !== this.generation) return;
+      void this.loadRemaining(resources, generation);
       await new Promise<void>((resolve) => globalThis.setTimeout(resolve, 0));
-      const decodeMs = await this.resources!.decodeInitial(context);
-      await resume;
+      const decodeMs = await resources.decodeInitial(context);
       if (generation !== this.generation) return;
       if (decodeMs > 0) this.update({ decodeMs: (this.snapshot.decodeMs ?? 0) + decodeMs });
       this.clock ??= new RecipePlaybackClock(

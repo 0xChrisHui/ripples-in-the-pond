@@ -14,7 +14,7 @@ export function useWalletRecipePlayer(input: WalletRecipePlayerInput | null) {
   );
 
   useEffect(() => {
-    if (input) void engine.load(input);
+    if (input) void engine.load(input, true);
     else void engine.destroy();
     return () => { void engine.destroy(); };
   }, [engine, input]);

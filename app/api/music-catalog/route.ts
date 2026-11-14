@@ -1,5 +1,5 @@
 import { getMusicCatalog } from '@/src/lib/music-catalog/asset-registry';
 export function GET() {
   const catalog = getMusicCatalog();
-  return Response.json(catalog, { headers: { ETag: `"${catalog.revision}"`, 'Cache-Control': 'public, max-age=300' } });
+  return Response.json(catalog, { headers: { ETag: `"${catalog.revision}"`, 'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=60' } });
 }

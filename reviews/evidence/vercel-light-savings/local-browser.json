@@ -1,0 +1,70 @@
+{
+  "checkedAt": "2026-11-14T09:01:54.734Z",
+  "base": "http://127.0.0.1:3049",
+  "results": [
+    {
+      "kind": "score",
+      "width": 1440,
+      "path": "/score/12",
+      "ready": true,
+      "beforeAudioRequests": 0,
+      "playing": true,
+      "paused": "paused",
+      "resumed": true,
+      "afterAudioRequests": 25,
+      "overflow": false
+    },
+    {
+      "kind": "echo",
+      "width": 1440,
+      "path": "/echo/1",
+      "ready": true,
+      "beforeAudioRequests": 0,
+      "playing": true,
+      "paused": "paused",
+      "resumed": true,
+      "afterAudioRequests": 4,
+      "overflow": false
+    },
+    {
+      "kind": "score",
+      "width": 390,
+      "path": "/score/12",
+      "ready": true,
+      "beforeAudioRequests": 0,
+      "playing": true,
+      "paused": "paused",
+      "resumed": true,
+      "afterAudioRequests": 0,
+      "overflow": false
+    },
+    {
+      "kind": "echo",
+      "width": 390,
+      "path": "/echo/1",
+      "ready": true,
+      "beforeAudioRequests": 0,
+      "playing": true,
+      "paused": "paused",
+      "resumed": true,
+      "afterAudioRequests": 4,
+      "overflow": false
+    }
+  ],
+  "checks": {
+    "catalog": {
+      "status": 200,
+      "cache": "public, max-age=300, s-maxage=300, stale-while-revalidate=60",
+      "vercelCache": null
+    },
+    "poster": {
+      "status": 200,
+      "png": true,
+      "bytes": 332213,
+      "cache": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
+      "vercelCache": null
+    }
+  },
+  "pageErrors": [],
+  "consoleErrors": []
+}

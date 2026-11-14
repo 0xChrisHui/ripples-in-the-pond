@@ -15,6 +15,8 @@ export class ProgressiveRecipeResources {
   private compressed = new Map<string, ArrayBuffer>();
   private decoded = new Map<string, AudioBuffer>();
   private decodeFlight: Promise<unknown> | null = null;
+  private initialFlight: Promise<void> | null = null;
+  private remainingFlight: Promise<void> | null = null;
 
   constructor(
     private readonly input: WalletRecipePlayerInput,
@@ -27,13 +29,17 @@ export class ProgressiveRecipeResources {
     this.remainingKeys = windows.remaining;
   }
 
-  async loadInitial(onLoaded: (count: number) => void): Promise<void> {
-    this.compressed = await loadWalletRecipeAudio(
+  loadInitial(onLoaded: (count: number) => void): Promise<void> {
+    return this.initialFlight ??= loadWalletRecipeAudio(
       this.input, this.initialKeys, this.fetcher, this.signal, onLoaded,
-    );
+    ).then(bytes => { this.compressed = bytes; });
   }
 
-  async loadRemaining(
+  loadRemaining(onLoaded: (count: number) => void, onBatch: () => Promise<void>): Promise<void> {
+    return this.remainingFlight ??= this.loadRemainingBatches(onLoaded, onBatch);
+  }
+
+  private async loadRemainingBatches(
     onLoaded: (count: number) => void,
     onBatch: () => Promise<void>,
   ): Promise<void> {

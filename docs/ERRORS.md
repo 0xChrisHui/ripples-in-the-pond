@@ -906,3 +906,9 @@
 - 证据：生产首先报告HTTP302；显式跟随后发现metadata响应缺少Location。本地正常follow读取不能覆盖生产出口差异。
 - 修复：有界官方域名跳转；主域无Location时由交易ID推导官方Base32子域，仍严格验证MIME、长度和SHA-256。39项专项通过；生产同一订单恢复，用户确认Semi和/score正常。
 - 验证例外：完整verify的旧队列空断言被这张待修订单触发，用户批准临时例外；恢复后原检查重跑通过。完整日志 reviews/evidence/p23-order12/。
+
+### 2026-11-14 轻量节省：异步关闭与音频授权边界
+- 定向Lint发现Score hook在渲染中读取ref；改用requested state描述是否有播放意图，ref仅保留事件内去重。源码定向及完整Lint通过。
+- 单轮只读审查用真实Echo引擎复现：旧AudioContext.close迟到后，旧load可覆盖新输入或复活卸载状态。增加await后的generation检查，延迟close切输入/销毁回归先失败后通过。
+- 新增网络等待会使resume拒绝被延迟处理；在手势内调用后立即await，授权被拒时不发音频请求。新增回归失败后修复通过。
+- 浏览器采集器遇到Next资源计时中空name，URL解析报错；定位为空计时项，采集时过滤并保留真实音频断言。此为验收脚本问题，非产品异常。

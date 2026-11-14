@@ -115,7 +115,9 @@ export async function GET(request: Request, { params }: Props) {
       ...SIZE,
       headers: {
         'Content-Disposition': `inline; filename="ripples-${slug}.png"`,
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': score.state === 'ready'
+          ? 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800'
+          : 'private, no-store',
       },
     },
   );

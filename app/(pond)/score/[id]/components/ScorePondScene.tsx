@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useLocaleSwitch } from '@/src/i18n/LocaleProvider';
 import { HTML_LANG } from '@/src/i18n/locale';
-import { preload } from 'react-dom';
 import ScoreIdentity from './hero/ScoreIdentity';
 import { useEclipseTransition } from '@/src/components/pond-gl-test3/focus/useEclipseTransition';
 import { DEFAULT_GL_FLAGS } from '@/src/components/pond-gl-test3/gl-flags';
@@ -13,8 +12,6 @@ import GlEclipse from '@/src/components/pond-gl-test3/overlay/GlEclipse';
 import { resetDepthShift, setCameraFx, usePointerFx } from '@/src/components/pond-gl-test3/pointer-fx';
 import type { Track36VisitorState } from '@/src/components/pond-gl-test3/visitor/track36-state';
 import type { ScoreReadyData } from '@/src/data/score-source';
-import { permanentMediaCandidates } from '@/src/features/permanent-media';
-import { startupSoundKeys } from '@/src/features/score-playback/resource-loader';
 import { useScorePlayback } from '@/src/features/score-playback/use-score-playback';
 import { useRegisterPondScene, type PondSceneDescriptor } from '@/src/components/pond-shell/scene-slot';
 import { usePondTransition } from '@/src/components/pond-shell/pond-transition';
@@ -35,19 +32,6 @@ import './experience/score-visual-transition.css';
 
 type Props = { score: ScoreReadyData; network: string };
 
-function preloadStartupAudio(score: ScoreReadyData): void {
-  const bootstrap = score.playbackBootstrap;
-  const identities = startupSoundKeys(bootstrap.events)
-    .map((key) => bootstrap.sounds[key]).filter(Boolean);
-  [bootstrap.base, ...identities].forEach((identity, index) => {
-    const mirror = permanentMediaCandidates(identity.ref)
-      .find((candidate) => candidate.source === 'mirror');
-    if (!mirror) return;
-    preload(mirror.url, { as: index === 0 ? 'audio' : 'fetch',
-      crossOrigin: 'anonymous', fetchPriority: index === 0 ? 'high' : 'auto' });
-  });
-}
-
 /** 链上降级时仅给渲染器补形状契约；所有值仍来自该 Token，不替换永久播放输入。 */
 function visualTrackOf(score: ScoreReadyData): Track {
   return score.track ?? {
@@ -59,7 +43,6 @@ function visualTrackOf(score: ScoreReadyData): Track {
 }
 
 export default function ScorePondScene({ score, network }: Props) {
-  preloadStartupAudio(score);
   const playback = useScorePlayback(score.playbackBootstrap);
   const t = useTranslations('score');
   const format = useFormatter();

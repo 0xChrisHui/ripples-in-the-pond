@@ -1,22 +1,23 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useRef, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { startVisiblePolling } from '@/src/lib/performance/visible-poll';
 
 /** 页面隐藏时撤销计时器；离开作品页时连同监听一起清理。 */
-export function startLifecyclePolling(refresh: () => void, visibility: EventTarget & { hidden: boolean }) {
-  let timer: ReturnType<typeof setInterval> | undefined;
-  const sync = () => {
-    if (timer !== undefined) clearInterval(timer);
-    timer = visibility.hidden ? undefined : setInterval(refresh, 10_000);
-  };
-  visibility.addEventListener('visibilitychange', sync);
-  sync();
-  return () => { if (timer !== undefined) clearInterval(timer); visibility.removeEventListener('visibilitychange', sync); };
+export function startLifecyclePolling(refresh: () => void | Promise<void>, visibility: EventTarget & { hidden: boolean }) {
+  return startVisiblePolling(refresh, visibility);
 }
 
 export function useScoreLifecyclePolling(processing: boolean) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const pending = useRef(false);
+  useEffect(() => { pending.current = isPending; }, [isPending]);
   useEffect(() => {
-    if (processing) return startLifecyclePolling(() => router.refresh(), document);
-  }, [processing, router]);
+    if (processing) return startLifecyclePolling(() => {
+      if (pending.current) return;
+      pending.current = true;
+      startTransition(() => router.refresh());
+    }, document);
+  }, [processing, router, startTransition]);
 }

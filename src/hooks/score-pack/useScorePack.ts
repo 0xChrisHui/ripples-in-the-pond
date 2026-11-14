@@ -5,6 +5,7 @@ import { createWalletClient, custom, getAddress, type Address, type Hex } from '
 import { mainnet, sepolia } from 'viem/chains';
 import { SCORE_PACK_OPENER_ABI } from '@/src/lib/score-pack/contract';
 import { useAuth } from '../useAuth';
+import { startVisiblePolling } from '@/src/lib/performance/visible-poll';
 
 export type PackTarget = { chainId: number; contract: string; tokenId: number };
 
@@ -42,17 +43,28 @@ export function useScorePack(target: PackTarget) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<PackErrorCode | null>(null);
   const aliveRef = useRef(true);
+  const scope = `${target.chainId}:${target.contract.toLowerCase()}:${target.tokenId}`;
+  const scopeRef = useRef(scope); scopeRef.current = scope;
+  const requestRef = useRef<{ scope: string; promise: Promise<void> } | null>(null);
   const isEth = target.chainId === 1 || target.chainId === 11155111;
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(() => {
+    if (requestRef.current?.scope === scope) return requestRef.current.promise;
     const query = new URLSearchParams({
       chainId: String(target.chainId), contract: target.contract, tokenId: String(target.tokenId),
     });
-    try {
-      const response = await fetch(`/api/score-pack/status?${query}`, { cache: 'no-store' });
-      if (response.ok && aliveRef.current) setStatus(await response.json() as PackStatus);
-    } catch { /* 读链失败时保留上一次状态 */ }
-  }, [target.chainId, target.contract, target.tokenId]);
+    const promise = (async () => {
+      try {
+        const response = await fetch(`/api/score-pack/status?${query}`, { cache: 'no-store' });
+        if (!response.ok) return;
+        const next = await response.json() as PackStatus;
+        if (aliveRef.current && scopeRef.current === scope) setStatus(next);
+      } catch { /* 读链失败时保留上一次状态 */ }
+    })();
+    requestRef.current = { scope, promise };
+    void promise.finally(() => { if (requestRef.current?.promise === promise) requestRef.current = null; });
+    return promise;
+  }, [scope, target.chainId, target.contract, target.tokenId]);
 
   useEffect(() => {
     aliveRef.current = true;
@@ -63,8 +75,7 @@ export function useScorePack(target: PackTarget) {
   const active = Boolean(status?.order && ACTIVE.has(status.order.status));
   useEffect(() => {
     if (!active) return;
-    const timer = setInterval(() => { void refresh(); }, 8_000);
-    return () => clearInterval(timer);
+    return startVisiblePolling(refresh, document, [8_000, 15_000, 30_000]);
   }, [active, refresh]);
 
   const viewerAddress = isEth ? selectedExternalWallet?.address : evmAddress;
