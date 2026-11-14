@@ -55,6 +55,11 @@ export interface ScoreMintQueueRow {
   locked_by: string | null;
   lease_expires_at: string | null;
   mint_attempted_at: string | null;
+  issuance_mode?: 'legacy' | 'atomic';
+  atomic_issuer?: string | null;
+  atomic_recipient?: string | null;
+  expected_token_id?: number | null;
+  atomic_ready_at?: string | null;
   uri_attempted_at: string | null;
   sound_set_id: string | null;
   sounds_map_ar_tx_id: string | null;

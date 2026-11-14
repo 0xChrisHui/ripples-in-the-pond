@@ -87,7 +87,8 @@ export async function stepUploadMetadata(
   row: ScoreMintQueueRow,
   leaseOwner: string,
 ): Promise<ScoreMintStatus> {
-  if (!row.token_id || !row.package_ar_tx_id || !row.decoder_ar_tx_id) {
+  const tokenId = row.issuance_mode === 'atomic' ? row.expected_token_id : row.token_id;
+  if (!tokenId || !row.package_ar_tx_id || !row.decoder_ar_tx_id) {
     throw new Error('metadata 前缺少 token、package 或 decoder identity');
   }
   const { data: track } = await supabaseAdmin.from('tracks')
@@ -96,10 +97,10 @@ export async function stepUploadMetadata(
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
   if (!appUrl) throw new Error('NEXT_PUBLIC_APP_URL not configured');
   const metadata: ScoreMetadata = {
-    name: `Ripples #${row.token_id}`,
+    name: `Ripples #${tokenId}`,
     description: `A live jam on "${track.title}" recorded and minted as an on-chain Score NFT. All audio permanently stored on Arweave.`,
     image: resolveArUrl(row.cover_ar_tx_id),
-    external_url: `${appUrl}/score/${row.token_id}`,
+    external_url: `${appUrl}/score/${tokenId}`,
     animation_url: `https://arweave.net/${row.decoder_ar_tx_id}?package=ar://${row.package_ar_tx_id}`,
     attributes: [
       { trait_type: 'Track', value: track.title },
@@ -116,5 +117,5 @@ export async function stepUploadMetadata(
   const verified = await uploadAndVerifyJson(
     row, leaseOwner, 'metadata', Buffer.from(JSON.stringify(metadata), 'utf-8'),
   );
-  return verified ? 'setting_uri' : 'uploading_metadata';
+  return verified ? (row.issuance_mode === 'atomic' ? 'minting_onchain' : 'setting_uri') : 'uploading_metadata';
 }

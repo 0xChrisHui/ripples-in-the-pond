@@ -35,6 +35,10 @@ export async function stepSetTokenUri(
 
   const tokenUri = `ar://${row.metadata_ar_tx_id}`;
   const uriTxHash = row.uri_tx_hash as `0x${string}` | null;
+  // 原子单只能复用同一笔已确认交易，绝不能掉回补 URI 的旧发送分支。
+  if (row.issuance_mode === 'atomic' && (!uriTxHash || uriTxHash !== row.tx_hash)) {
+    throw new Error('CRITICAL: 原子发行缺少一致的交易哈希');
+  }
 
   if (!uriTxHash) {
     const attemptedAt = row.uri_attempted_at

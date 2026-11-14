@@ -30,6 +30,9 @@ export async function stepMintOnchain(
   leaseOwner: string,
   deadline: number,
 ): Promise<ScoreMintStatus> {
+  if (row.issuance_mode === 'atomic') {
+    return (await import('./atomic/step')).stepAtomicIssue(row, leaseOwner, deadline);
+  }
   const { data: user } = await supabaseAdmin
     .from('users')
     .select('evm_address')

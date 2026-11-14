@@ -16,7 +16,8 @@ type Options = {
 function progress(row: ScoreMintQueueRow) {
   return JSON.stringify([row.status, row.events_upload_state, row.package_upload_state,
     row.metadata_upload_state, row.events_ar_tx_id, row.package_ar_tx_id,
-    row.metadata_ar_tx_id, row.tx_hash, row.uri_tx_hash, row.token_id, row.token_uri]);
+    row.metadata_ar_tx_id, row.tx_hash, row.uri_tx_hash, row.token_id, row.token_uri,
+    row.expected_token_id, row.atomic_ready_at]);
 }
 
 /** 同一订单始终持租约，完成一步后排到本批队尾；等待不在本轮反复轮询。 */

@@ -78,6 +78,7 @@ export async function GET(req: NextRequest) {
   });
   const failed = claimFailed || results.some(item => item.status === 'rejected');
   return NextResponse.json({ result: failed ? 'error' : 'ok', processed: results.length,
+    issuance: { protocol: 'atomic-v1', issuer: process.env.ATOMIC_SCORE_ISSUER_ADDRESS ?? null },
     orders: results.map(item => item.status === 'fulfilled' ? item.value : { result: 'error' }),
   }, { status: failed ? 500 : 200 });
 }
