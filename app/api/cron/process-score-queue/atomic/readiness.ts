@@ -9,12 +9,30 @@ export async function verifyGatewayResource(identity: PermanentResourceIdentity,
   let response: Response;
   let bytes: Uint8Array;
   try {
-    response = await request(`https://arweave.net/${identity.arTxId}`, {
-      cache: 'no-store', signal: AbortSignal.timeout(8_000), headers: { Accept: identity.mime },
-    });
+    let url = `https://arweave.net/${identity.arTxId}`;
+    const signal = AbortSignal.timeout(8_000);
+    for (let redirects = 0; ; redirects++) {
+      response = await request(url, {
+        cache: 'no-store', redirect: 'manual', signal, headers: { Accept: identity.mime },
+      });
+      if (![301, 302, 303, 307, 308].includes(response.status)) break;
+      const location = response.headers.get('location');
+      await response.body?.cancel();
+      if (!location) throw Error('网关跳转缺少目标地址');
+      if (redirects === 3) throw Error('网关跳转超过三次');
+      const target = new URL(location, url);
+      // 网关会跳转到资源专属子域；只允许同一资源在官方域名内跳转。
+      if (target.protocol !== 'https:' || target.username || target.password || target.port
+        || (target.hostname !== 'arweave.net' && !/^[a-z2-7]{52}\.arweave\.net$/.test(target.hostname))
+        || target.pathname !== `/${identity.arTxId}` || target.search || target.hash) {
+        throw Error(`CRITICAL: arweave.net 跳转目标不符合资源身份 ${identity.arTxId}`);
+      }
+      url = target.href;
+    }
     if (!response.ok || response.status === 202) throw Error(`HTTP ${response.status}`);
     bytes = new Uint8Array(await response.arrayBuffer());
   } catch (error) {
+    if (error instanceof Error && error.message.startsWith('CRITICAL:')) throw error;
     const detail = error instanceof Error
       ? `${error.name}: ${error.message}${error.cause instanceof Error ? `; ${error.cause.message}` : ''}`
       : '未知连接错误';
