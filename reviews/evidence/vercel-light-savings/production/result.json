@@ -1,0 +1,70 @@
+{
+  "checkedAt": "2026-11-14T09:11:23.997Z",
+  "base": "https://pond-ripple.xyz",
+  "results": [
+    {
+      "kind": "score",
+      "width": 1440,
+      "path": "/score/12",
+      "ready": true,
+      "beforeAudioRequests": 0,
+      "playing": true,
+      "paused": "paused",
+      "resumed": true,
+      "afterAudioRequests": 25,
+      "overflow": false
+    },
+    {
+      "kind": "echo",
+      "width": 1440,
+      "path": "/echo/1",
+      "ready": true,
+      "beforeAudioRequests": 0,
+      "playing": true,
+      "paused": "paused",
+      "resumed": true,
+      "afterAudioRequests": 12,
+      "overflow": false
+    },
+    {
+      "kind": "score",
+      "width": 390,
+      "path": "/score/12",
+      "ready": true,
+      "beforeAudioRequests": 0,
+      "playing": true,
+      "paused": "paused",
+      "resumed": true,
+      "afterAudioRequests": 1,
+      "overflow": false
+    },
+    {
+      "kind": "echo",
+      "width": 390,
+      "path": "/echo/1",
+      "ready": true,
+      "beforeAudioRequests": 0,
+      "playing": true,
+      "paused": "paused",
+      "resumed": true,
+      "afterAudioRequests": 0,
+      "overflow": false
+    }
+  ],
+  "checks": {
+    "catalog": {
+      "status": 200,
+      "cache": "public, max-age=300",
+      "vercelCache": "MISS"
+    },
+    "poster": {
+      "status": 200,
+      "png": true,
+      "bytes": 332691,
+      "cache": "public, max-age=3600",
+      "vercelCache": "MISS"
+    }
+  },
+  "pageErrors": [],
+  "consoleErrors": []
+}

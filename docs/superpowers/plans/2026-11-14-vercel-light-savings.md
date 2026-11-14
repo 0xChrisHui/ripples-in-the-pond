@@ -41,5 +41,5 @@
 
 - [x] 主代理执行定向回归、完整 bash scripts/verify.sh；全部新代码≤220行，现有满目录不加文件。
 - [x] 真实浏览器确认 Score/Echo 点击前无 Blob 音频请求，点击后 playing；缓存头及海报 PNG 正确；只验证公开读取，不发钱包交易。
-- [ ] 自审实际差异，更新 STATUS/TASKS/LEARNING/JOURNAL 与交付记录，精确暂存并推送 main。
-- [ ] 确认 Vercel Ready、正式域名页面和播放正常后交付，说明省量证据与 CPU 仍需真实周期观测。
+- [x] 自审实际差异，更新 STATUS/TASKS/LEARNING/JOURNAL 与交付记录，精确暂存并推送 main（功能提交cfe0422）。
+- [x] 确认 Vercel Ready、正式域名页面和播放正常后交付，说明省量证据与 CPU 仍需真实周期观测。官网四组播放及公开目录/海报CDN HIT通过，证据见reviews/evidence/vercel-light-savings/production/。

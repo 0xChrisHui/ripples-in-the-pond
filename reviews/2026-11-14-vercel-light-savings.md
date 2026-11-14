@@ -20,7 +20,11 @@
 
 ## 发布状态
 
-本记录先归档验证结果；提交后由主代理按授权推送main、等待正式部署Ready并重复官网公开页面/播放/缓存检查，结果补记在下方。没有支付套餐、改生产变量、动数据库/合约或触发处理cron。
+功能提交 [cfe0422](https://github.com/0xChrisHui/ripples-in-the-pond/commit/cfe0422) 已推送main；Vercel生产部署 `dpl_EDq1zxaTAeYDah5bamncGr8rzoVW` Ready、绑定正式域名且GitHub检查成功。没有支付套餐、改生产变量、动数据库/合约或触发处理cron。
+
+官网 [Score #12](https://pond-ripple.xyz/score/12) 与 [Echo #1](https://pond-ripple.xyz/echo/1) 各以1440桌面/390手机尺寸打开，四组点击前均0音频请求，点击后播放、暂停、恢复通过，无横向溢出或页面/控制台错误。此为浏览器手机尺寸模拟，未执行真机钱包或操作系统音频权限测试；手机样本复用同一浏览器资源缓存，播放后网络次数不代表首次冷缓存下载量。
+
+正式目录200、`public,max-age=300`；正式海报200、332,691字节、PNG正确、`public,max-age=3600`。Vercel向客户端移除s-maxage符合预期，独立再次读取两者均返回 `x-vercel-cache:HIT`，证实共享缓存生效。结构化结果、读回、部署摘要与代表截图见 `evidence/vercel-light-savings/production/`。实际CPU节省比例仍未测得。
 
 ## 节省量如何理解
 
