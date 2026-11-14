@@ -14,8 +14,14 @@ export async function verifyGatewayResource(identity: PermanentResourceIdentity,
     });
     if (!response.ok || response.status === 202) throw Error(`HTTP ${response.status}`);
     bytes = new Uint8Array(await response.arrayBuffer());
-  } catch {
-    throw new PermanentResourcePendingError('发行前 arweave.net 尚不能完整读取资源', [identity.arTxId]);
+  } catch (error) {
+    const detail = error instanceof Error
+      ? `${error.name}: ${error.message}${error.cause instanceof Error ? `; ${error.cause.message}` : ''}`
+      : '未知连接错误';
+    throw new PermanentResourcePendingError(
+      `发行前 arweave.net 尚不能完整读取资源 ${identity.arTxId}：${detail.replace(/[\r\n]+/g, ' ').slice(0, 180)}`,
+      [identity.arTxId],
+    );
   }
   const mime = response.headers.get('content-type')?.split(';')[0].trim().toLowerCase();
   if (mime !== identity.mime || bytes.length !== identity.bytes || await sha256Hex(bytes) !== identity.sha256) {
