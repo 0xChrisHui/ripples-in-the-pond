@@ -4,6 +4,21 @@ import type { PermanentResourceIdentity } from '@/src/lib/permanent-core/attesta
 import type { ScoreMintQueueRow } from '@/src/types/score-mint';
 import covers from '@/data/p23/cover-uris.json';
 
+/** 官方资源子域：交易 ID 的原始 32 字节转无填充、小写 Base32。 */
+function sandboxUrl(id: string) {
+  if (!/^[a-zA-Z0-9_-]{43}$/.test(id)) throw Error('CRITICAL: 永久资源交易 ID 非法');
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz234567';
+  let bits = 0, value = 0, label = '';
+  for (const byte of Buffer.from(id, 'base64url')) {
+    value = (value << 8) | byte;
+    bits += 8;
+    while (bits >= 5) { bits -= 5; label += alphabet[(value >>> bits) & 31]; }
+    value &= (1 << bits) - 1;
+  }
+  if (bits) label += alphabet[(value << (5 - bits)) & 31];
+  return `https://${label}.arweave.net/${id}`;
+}
+
 /** 双网关通过不代表第三方使用的 arweave.net 已可读，发行前单独完整验收。 */
 export async function verifyGatewayResource(identity: PermanentResourceIdentity, request: typeof fetch = fetch) {
   let response: Response;
@@ -16,9 +31,11 @@ export async function verifyGatewayResource(identity: PermanentResourceIdentity,
         cache: 'no-store', redirect: 'manual', signal, headers: { Accept: identity.mime },
       });
       if (![301, 302, 303, 307, 308].includes(response.status)) break;
-      const location = response.headers.get('location');
+      // 部分生产节点返回无 Location 的 302；官方子域可由同一交易 ID 确定。
+      const location = response.headers.get('location')
+        || (new URL(url).hostname === 'arweave.net' ? sandboxUrl(identity.arTxId) : null);
       await response.body?.cancel();
-      if (!location) throw Error('网关跳转缺少目标地址');
+      if (!location) throw Error(`网关跳转缺少目标地址（${new URL(url).hostname}）`);
       if (redirects === 3) throw Error('网关跳转超过三次');
       const target = new URL(location, url);
       // 网关会跳转到资源专属子域；只允许同一资源在官方域名内跳转。
