@@ -57,7 +57,7 @@ export default function ScoreRecordAnchor({ title, coverUrl, playback, eclipseAv
       <div className="score-record-anchor__bar">
       <button type="button" className="score-record-anchor__toggle" onClick={perform}
         aria-label={playback.state === 'playing' ? t('pause') : playback.playRequested ? t('cancelWait') : t('playWhenReady')} aria-pressed={playback.state === 'playing'}>
-        {playback.state === 'playing' ? 'Ⅱ' : '▶'}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={playback.state === 'playing' ? 'M6 5h4v14H6zm8 0h4v14h-4z' : 'M8 4.5v15l12-7.5z'} /></svg>
       </button>
       <span>{timeLabel(playback.positionMs)}</span>
       <PlaybackSeekBar

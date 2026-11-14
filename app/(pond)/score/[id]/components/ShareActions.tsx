@@ -73,7 +73,7 @@ export default function ShareActions({
   return (
     <div className="score-share-actions" data-pond-ui="true">
       <details ref={detailsRef}>
-        <summary aria-label={t('expand')}>{t('share')}</summary>
+        <summary aria-label={t('expand')}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" /></svg>{t('share')}</summary>
         <div className="score-share-actions__menu">
           {!available && <p>{t('unavailable')}</p>}
           <button type="button" disabled={!available} onClick={copy}>{t(feedback)}</button>
@@ -82,7 +82,7 @@ export default function ShareActions({
         </div>
       </details>
       {posterPath !== null && (
-        <a href={`${posterPath ?? `/score/${slug}/poster`}${locale === 'en' ? '?lang=en' : ''}`} download={`ripples-${slug}.png`}>{t('poster')}</a>
+        <a href={`${posterPath ?? `/score/${slug}/poster`}${locale === 'en' ? '?lang=en' : ''}`} download={`ripples-${slug}.png`}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11M8 11l4 4 4-4M5 19h14" /></svg>{t('poster')}</a>
       )}
     </div>
   );

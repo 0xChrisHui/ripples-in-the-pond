@@ -183,9 +183,11 @@ export default function ScorePondScene({ score, network }: Props) {
             eclipseAvailable={Boolean(glSim?.ready && health === 'healthy' && sceneReady)}
           />
         </div>
+        <div className="score-hero__actions">
         <ShareActions id={score.id} tokenId={score.tokenId} trackTitle={score.trackTitle}
           canonicalPath={canonicalPath} posterPath={multichain ? null : undefined} creatorAddress={score.creatorAddress} />
         {original && <PondRouteLink className="score-hero__create" href={`/lens?track=${original.displayNumber}`}>{t('createFromTrack')}</PondRouteLink>}
+        </div>
       </section>
       <ScoreArchive score={score} holder={holder}>{packTarget && <ScorePackPanel target={packTarget} />}</ScoreArchive>
     </main>

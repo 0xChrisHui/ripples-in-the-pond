@@ -1,16 +1,30 @@
-.score-archive { position: relative; z-index: 50; display: grid; justify-items: center; gap: 28px; padding: 40px var(--p11-page-inset) 64px; border-top: 1px solid var(--p11-line-strong); background: linear-gradient(rgb(7 7 6 / 80%),rgb(7 7 6 / 94%)); color: var(--p11-bone); }
+/* 作品信息区：顶部与水面柔和过渡；摘要四项做成方块卡片；完整凭证收在可展开卡片里。 */
+.score-archive { position: relative; z-index: 50; display: grid; justify-items: center; gap: 40px; padding: 8px var(--p11-page-inset) 72px; background: linear-gradient(rgb(7 7 6 / 80%),rgb(7 7 6 / 95%) 420px,rgb(7 7 6 / 96%)); color: var(--p11-bone); }
+.score-archive::before { content: ''; position: absolute; left: 0; right: 0; top: -72px; height: 72px; background: linear-gradient(transparent,rgb(7 7 6 / 80%)); pointer-events: none; }
 .score-work-summary,.score-archive__intro,.score-archive__details,.score-archive > .score-pack { width: min(100%,var(--p11-ledger-max)); }
-.score-work-summary h2,.score-archive__intro h2 { margin: 0 0 12px; font: 300 clamp(1.75rem,4vw,2.5rem)/1.2 var(--p11-font-display); }
+.score-work-summary h2,.score-archive__intro h2 { display: flex; align-items: center; gap: 16px; margin: 0 0 16px; font: 300 clamp(1.5rem,3vw,1.875rem)/1.2 var(--p11-font-display); letter-spacing: .03em; }
+.score-work-summary h2::after,.score-archive__intro h2::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg,var(--p11-line-strong),transparent); }
 .score-archive__intro p { max-width: 62ch; margin: 0; color: var(--p11-muted); font: var(--p11-text-sm)/1.8 var(--p11-font-body); }
-.score-archive__details { padding: 0 16px; border: 1px solid var(--p11-line-strong); border-radius: 14px; background: var(--p11-surface); }
-.score-archive__details > summary { display: flex; align-items: center; min-height: 52px; color: var(--p11-bone); font: var(--p11-text-sm)/1.5 var(--p11-font-body); cursor: pointer; }
-.score-archive__details > summary::after { content: '⌄'; margin-left: auto; }
-.score-archive__details[open] > summary::after { content: '⌃'; }
+.score-archive__details { padding: 0 18px; border: 1px solid var(--p11-line-strong); border-radius: 16px; background: var(--p11-surface); }
+.score-archive__details > summary { display: flex; align-items: center; min-height: 56px; color: var(--p11-bone); font: 500 var(--p11-text-sm)/1.5 var(--p11-font-body); cursor: pointer; list-style: none; }
+.score-archive__details > summary::-webkit-details-marker { display: none; }
+.score-archive__details > summary::after { content: ''; flex: none; width: 8px; height: 8px; margin: -4px 4px 0 auto; border: solid var(--p11-muted); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); transition: transform 200ms ease; }
+.score-archive__details[open] > summary::after { margin-top: 4px; transform: rotate(225deg); }
+.score-archive__details[open] > summary { border-bottom: 1px solid var(--p11-line); }
 .score-archive__decoder { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 12px; color: var(--p11-brass-strong); font-size: var(--p11-text-sm); }
 .score-archive .provenance-ledger { padding: 10px 16px; border-radius: 14px; background: var(--p11-surface); }
 .score-archive__details .provenance-ledger { border: 0; padding: 0; background: transparent; }
 .score-archive .provenance-ledger code { overflow-wrap: anywhere; white-space: normal; text-overflow: clip; }
 .score-archive [data-compact] .provenance-ledger__missing { color: var(--p11-faint); }
 .score-archive [data-compact] .provenance-ledger__row[data-warning="true"] .provenance-ledger__missing { color: var(--p11-status-degraded); }
-.score-archive .score-pack { width: min(100%,var(--p11-ledger-max)); margin: 0; padding: 20px; border: 1px solid var(--p11-line-strong); border-radius: 14px; background: var(--p11-surface); }
-@media(min-width:768px) { .score-archive { padding-block: 48px 80px; } .score-work-summary .provenance-ledger__list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 28px; } }
+.score-archive .provenance-ledger__group-title { margin: 22px 0 2px; color: var(--p11-brass); font: 500 11px/1.5 var(--p11-font-mono); letter-spacing: var(--p11-tracking-label); text-transform: uppercase; }
+.score-archive .score-pack { width: min(100%,var(--p11-ledger-max)); margin: 0; padding: 20px; border: 1px solid var(--p11-line-strong); border-radius: 16px; background: var(--p11-surface); }
+/* 摘要：每项一张方块卡，标签在上、数值在下、操作靠右 */
+.score-archive .score-work-summary .provenance-ledger { padding: 0; border: 0; background: transparent; }
+.score-work-summary .provenance-ledger__list { display: grid; grid-template-columns: minmax(0,1fr); gap: 10px; }
+.score-work-summary .provenance-ledger[data-compact] .provenance-ledger__row { display: grid; grid-template-columns: minmax(0,1fr); align-items: start; gap: 4px; padding: 14px 6px 10px 18px; border: 1px solid var(--p11-line); border-radius: 14px; background: rgb(255 255 255 / 3.5%); }
+.score-work-summary .provenance-ledger dt { color: var(--p11-faint); font: 11px/1.4 var(--p11-font-mono); letter-spacing: .06em; text-transform: uppercase; }
+.score-work-summary .provenance-ledger[data-compact] dd { gap: 8px; }
+.score-work-summary .provenance-ledger code { font-size: 14px; line-height: 1.5; }
+.score-work-summary .provenance-ledger[data-compact] small { margin-top: 2px; }
+@media(min-width:768px) { .score-archive { padding-block: 8px 96px; } .score-work-summary .provenance-ledger__list { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; } }
