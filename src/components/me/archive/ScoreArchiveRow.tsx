@@ -93,7 +93,6 @@ export default function ScoreArchiveRow({ score, index, ownerKey }: Props) {
       </div>
       <div className="me-archive-row__state">
         <span>{t(`scoreStatus.${score.status}`)}</span>
-        {score.earlierActiveCount != null && <small>{t('score.earlierOrders', { count: score.earlierActiveCount })}</small>}
         {detail && <small>{t(`score.${detail}`)}</small>}
       </div>
       {isEthereum && !isPermanent ? (

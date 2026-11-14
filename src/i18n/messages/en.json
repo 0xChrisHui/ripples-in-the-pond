@@ -153,7 +153,7 @@
       "next": "Next →"
     },
     "scoreStatus": {
-      "pending": "Waiting to be made",
+      "pending": "Minting",
       "uploading_events": "Saving the performance",
       "preparing_package": "Verifying permanent resources",
       "minting_onchain": "Writing onchain",
@@ -174,7 +174,6 @@
       "needsReview": "Needs verification before going further",
       "open": "Open record",
       "viewDetails": "View details",
-      "earlierOrders": "{count} unfinished orders were submitted earlier. Processing order can vary.",
       "viewProgress": "View progress",
       "ethSelfPaid": "Ethereum · You pay gas",
       "orderSyncing": "Syncing order"

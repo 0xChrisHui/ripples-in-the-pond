@@ -153,7 +153,7 @@
       "next": "下一页 →"
     },
     "scoreStatus": {
-      "pending": "等待制作",
+      "pending": "正在铸造中",
       "uploading_events": "保存演奏中",
       "preparing_package": "核验永久资源",
       "minting_onchain": "写入链上",
@@ -174,7 +174,6 @@
       "needsReview": "需要核验后再处理",
       "open": "打开唱片",
       "viewDetails": "查看详情",
-      "earlierOrders": "提前提交的未完成订单有 {count} 单，实际处理顺序可能调整",
       "viewProgress": "查看进度",
       "ethSelfPaid": "Ethereum · 自付 Gas",
       "orderSyncing": "订单同步中"
