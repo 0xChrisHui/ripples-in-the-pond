@@ -877,6 +877,7 @@
     "panelLabel": "原曲 {number} 的链上信息",
     "ready": "已就绪",
     "copied": "已复制",
+    "openExplorer": "在区块浏览器查看 {chain} 合约",
     "copyContract": "复制 {chain} 合约地址",
     "openSingle": "单曲页",
     "play": "播放",

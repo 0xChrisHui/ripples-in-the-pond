@@ -877,6 +877,7 @@
     "panelLabel": "Onchain details for original {number}",
     "ready": "Ready",
     "copied": "Copied",
+    "openExplorer": "View {chain} contract on explorer",
     "copyContract": "Copy {chain} contract address",
     "openSingle": "Track page",
     "play": "Play",

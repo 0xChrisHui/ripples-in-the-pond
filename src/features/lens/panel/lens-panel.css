@@ -1,60 +1,110 @@
-/* 链信息与收藏同卡；所有链接和按钮保留 44px 热区。 */
+/* /lens 链上信息面板：夜池里的一块磨砂玻璃；顶角带球色微光，每条链一张卡。
+   字号只用 11 / 12 / 16 / 20 四档；所有按钮与链接的盒子 ≥44px，视觉上的小胶囊画在盒子内部。 */
 .lens-panel {
+  --lens-accent: color-mix(in srgb, var(--lens-color) 62%, white);
+  --lens-ink: #eef3ea;
+  --lens-ink-2: rgb(218 229 217 / 80%);
+  --lens-line: rgb(255 255 255 / 11%);
   position: fixed; left: 0; top: 0; z-index: 31; box-sizing: border-box;
-  width: min(340px, calc(100vw - 24px)); overflow-y: auto; overscroll-behavior: contain;
-  padding: 9px 14px; border: 1px solid rgb(255 255 255 / 18%); border-radius: 14px;
-  background: rgb(1 7 6 / 84%); backdrop-filter: blur(14px); color: #e6ece4;
-  font-size: 12px; line-height: 1.5; will-change: transform, opacity;
+  width: min(344px, calc(100vw - 24px)); overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / 28%) transparent;
+  padding: 14px 14px 14px; border: 1px solid rgb(255 255 255 / 15%); border-radius: 20px;
+  background:
+    radial-gradient(130% 90% at 0% 0%, color-mix(in srgb, var(--lens-color) 24%, transparent), transparent 62%),
+    rgb(6 11 10 / 88%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%), 0 22px 56px rgb(0 0 0 / 46%);
+  backdrop-filter: blur(20px) saturate(1.15); color: var(--lens-ink);
+  font-family: var(--p11-font-body, inherit); font-size: 12px; line-height: 1.5; will-change: transform, opacity;
   opacity: 0; visibility: hidden; pointer-events: none;
   transition: opacity 150ms ease, visibility 0s linear 150ms;
 }
 .lens-panel[data-open="true"][data-placed="true"] { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 150ms ease, visibility 0s; }
-.lens-panel__head { position: relative; display: grid; grid-template-columns: 1fr 44px; align-items: center; }
-.lens-panel__eyebrow { grid-column: 1; grid-row: 1; font-size: 11px; letter-spacing: .12em; color: rgb(214 226 214 / 78%); }
+
+/* 标题区：小标签 + 编号（衬线大字）+ 圆形播放键 */
+.lens-panel__head { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 44px auto; align-items: center; column-gap: 8px; }
+.lens-panel__eyebrow { grid-column: 1; grid-row: 1; display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--lens-ink-2); }
+.lens-panel__eyebrow::before { content: ''; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--lens-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--lens-color) 26%, transparent), 0 0 12px var(--lens-accent); }
 .lens-panel__head > .lens-panel__title { grid-column: 1; grid-row: 2; }
-.lens-panel__head > .lens-play { grid-column: 2; grid-row: 1/3; }
-.lens-panel__title { margin: 0; font-size: 16px; font-weight: 300; letter-spacing: .04em; white-space: nowrap; }
-.lens-play { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgb(255 255 255 / 25%); border-radius: 50%; background: rgb(255 255 255 / 6%); color: #fff; cursor: pointer; }
-.lens-chain { position: relative; padding: 0 0 2px; border-top: 1px solid rgb(255 255 255 / 14%); }
-.lens-chain__heading { min-height: 18px; padding-right: 70px; }
-.lens-chain__name { margin: 0; font-size: 12px; font-weight: 500; }
-.lens-chain__name > span:not(.lens-chain__status) { font-size: 11px; font-weight: 400; color: rgb(214 226 214 / 80%); font-variant-numeric: tabular-nums; }
-.lens-chain__heading > .lens-link { position: absolute; right: 0; top: 0; }
-.lens-chain__facts { display: flex; align-items: center; gap: 2px; margin: 0; min-height: 44px; }
-.lens-chain code { font-family: var(--font-mono, ui-monospace, monospace); font-size: 11px; font-variant-numeric: tabular-nums; }
-.lens-link { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #cfe4f7; font-size: 12px; text-decoration: none; cursor: pointer; }
-.lens-chain__status { color: #a3cdac; font-size: 11px; }
-.lens-chain[data-status="undeployed"] .lens-chain__status, .lens-chain[data-status="undeployed"] .lens-chain__status-text { color: #b3bdb3; }
-.lens-chain[data-status="unverified"] .lens-chain__status, .lens-chain[data-status="unverified"] .lens-chain__status-text { color: #f0cc8f; }
-.lens-chain__status-text { font-size: 11px; }
-.lens-panel .material-chain-row { display: grid; gap: 4px; padding: 0; }
-.lens-panel .material-chain-info { display: none; }
-.lens-panel .material-chain-action { min-width: 0; }
-.lens-panel .material-collect { display: flex; align-items: center; justify-content: center; box-sizing: border-box; width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid rgb(209 220 190 / 45%); border-radius: 12px; background: rgb(209 220 190 / 10%); color: #eef4e4; font: inherit; font-size: 12px; text-decoration: none; cursor: pointer; overflow-wrap: anywhere; }
-.lens-panel .material-collect:disabled { border-style: dashed; background: transparent; color: rgb(214 226 214 / 76%); cursor: default; }
-.lens-panel .material-chain-row[data-state="done"] .material-collect { background: rgb(209 220 190 / 6%); }
-.lens-panel :is(.material-muted,.material-mint-status,p,.material-notice) { font-size: 11px; line-height: 1.5; color: rgb(214 226 214 / 80%); overflow-wrap: anywhere; }
-.lens-panel .material-uri { font-family: var(--font-mono,ui-monospace,monospace); font-size: 11px; word-break: break-all; }
-.lens-panel summary { display: flex; align-items: center; min-height: 44px; font-size: 11px; cursor: pointer; }
-.lens-panel .material-notice { margin: 4px 0; padding: 6px 8px; border-left: 2px solid rgb(255 255 255 / 40%); background: rgb(255 255 255 / 5%); }
-.lens-login { margin-top: 6px; }
-.lens-panel :is(button,a):focus-visible { outline: 2px solid #dce8d7; outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { .lens-panel,.lens-panel[data-open="true"] { transition-duration: 0s; } }
-.lens-panel { border-top: 2px solid color-mix(in srgb,var(--lens-color) 65%,white); }
-.lens-panel__eyebrow::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 7px; border-radius: 50%; background: color-mix(in srgb,var(--lens-color) 65%,white); }
+.lens-panel__head > .lens-play { grid-column: 2; grid-row: 1 / 3; }
+.lens-panel__title { margin: 0; font-family: var(--p11-font-display, serif); font-size: 20px; font-weight: 400; letter-spacing: .05em; line-height: 1.25; white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; }
 .lens-panel__title > span { display: inline-block; animation: lens-number 120ms ease-out; }
 @keyframes lens-number { from { opacity: .3; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .lens-panel__title > span { animation: none; } }
-.lens-drawer__handle,.lens-drawer__collect { display: none; }
+.lens-play {
+  display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; width: 44px; height: 44px; padding: 0;
+  border: 1px solid color-mix(in srgb, var(--lens-color) 52%, rgb(255 255 255 / 34%)); border-radius: 50%;
+  background: color-mix(in srgb, var(--lens-color) 26%, rgb(255 255 255 / 5%)); color: #fff; cursor: pointer;
+  transition: background 140ms ease, transform 140ms ease;
+}
+.lens-play:hover { background: color-mix(in srgb, var(--lens-color) 42%, rgb(255 255 255 / 8%)); }
+.lens-play:active { transform: scale(.94); }
+.lens-play[aria-pressed="true"] { background: color-mix(in srgb, var(--lens-color) 56%, rgb(255 255 255 / 10%)); }
+.lens-panel__body { display: grid; gap: 8px; margin-top: 12px; }
+
+/* 链卡 */
+.lens-chain { display: grid; gap: 0; padding: 12px 12px 12px; border: 1px solid var(--lens-line); border-radius: 14px; background: rgb(255 255 255 / 5%); }
+.lens-chain__name { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; margin: 0; min-height: 20px; font-size: 12px; font-weight: 400; }
+.lens-chain__chain { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: var(--lens-ink); }
+.lens-chain__tag { padding: 0 7px; border: 1px solid rgb(255 255 255 / 20%); border-radius: 6px; font-size: 11px; line-height: 18px; letter-spacing: .04em; color: var(--lens-ink-2); }
+.lens-chain__token { font-size: 11px; color: var(--lens-ink-2); font-variant-numeric: tabular-nums; }
+.lens-chain__dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: #86d9a4; box-shadow: 0 0 0 3px rgb(134 217 164 / 18%); }
+.lens-chain[data-status="undeployed"] .lens-chain__dot { background: transparent; border: 1.5px solid #aab5aa; box-shadow: none; box-sizing: border-box; }
+.lens-chain[data-status="unverified"] .lens-chain__dot { background: #f0cc8f; box-shadow: 0 0 0 3px rgb(240 204 143 / 18%); }
+.lens-chain__status-text { font-size: 11px; color: #b6c0b6; }
+.lens-chain[data-status="unverified"] .lens-chain__status-text { color: #f0cc8f; }
+.lens-chain__facts { display: flex; align-items: center; margin: 0 0 0 -2px; }
+.lens-chain code { font-family: var(--p11-font-mono, ui-monospace, monospace); font-size: 11px; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+
+/* 链接与图标键：盒子 44px，里面的胶囊 30px */
+.lens-link { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 44px; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--lens-ink); font: inherit; font-size: 12px; text-decoration: none; cursor: pointer; }
+.lens-chip { display: inline-flex; align-items: center; gap: 6px; box-sizing: border-box; height: 30px; padding: 0 10px; border: 1px solid rgb(255 255 255 / 12%); border-radius: 10px; background: rgb(255 255 255 / 6%); transition: background 140ms ease, border-color 140ms ease; }
+.lens-chip--icon { justify-content: center; width: 30px; padding: 0; }
+.lens-link:hover .lens-chip { background: rgb(255 255 255 / 12%); border-color: rgb(255 255 255 / 24%); }
+.lens-link[data-copied] .lens-chip { border-color: rgb(134 217 164 / 60%); color: #a8e6bf; }
+.lens-link--page { min-width: 0; margin-left: auto; padding: 0 2px 0 10px; color: var(--lens-accent); white-space: nowrap; }
+.lens-link--page:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* 收藏区：覆盖共享组件的默认外观，只在面板内生效；.material-chain-info 的链标题与上面重复，隐藏 */
+.lens-panel .material-chain-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 0; margin: 0; border: 0; background: none; }
+.lens-panel .material-chain-info { display: none; }
+.lens-panel .material-chain-action { min-width: 0; justify-self: stretch; }
+.lens-panel .material-chain-status:empty { display: none; }
+.lens-panel .material-collect {
+  display: flex; align-items: center; justify-content: center; box-sizing: border-box; width: 100%; min-height: 44px; margin: 0; padding: 0 14px;
+  border: 1px solid transparent; border-radius: 12px; background: #e4edd6; color: #0c120d;
+  font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .03em; text-decoration: none; cursor: pointer; overflow-wrap: anywhere;
+  transition: background 140ms ease, transform 140ms ease;
+}
+.lens-panel .material-collect:hover:not(:disabled) { background: #f1f7e6; }
+.lens-panel .material-collect:active:not(:disabled) { transform: scale(.985); }
+.lens-panel .material-collect:disabled { border: 1px dashed rgb(255 255 255 / 26%); background: transparent; color: var(--lens-ink-2); font-weight: 400; cursor: default; }
+.lens-panel a.material-collect { border-color: rgb(255 255 255 / 30%); background: rgb(255 255 255 / 8%); color: var(--lens-ink); font-weight: 500; }
+.lens-panel a.material-collect:hover { background: rgb(255 255 255 / 14%); }
+.lens-panel :is(.material-muted, .material-mint-status, p, .material-notice) { margin: 0; font-size: 11px; line-height: 1.5; color: var(--lens-ink-2); overflow-wrap: anywhere; }
+.lens-panel .material-uri { font-family: var(--p11-font-mono, ui-monospace, monospace); font-size: 11px; word-break: break-all; }
+.lens-panel summary { display: flex; align-items: center; min-height: 44px; font-size: 11px; cursor: pointer; }
+.lens-panel .material-notice { margin: 4px 0; padding: 7px 10px; border-left: 2px solid rgb(255 255 255 / 40%); border-radius: 0 8px 8px 0; background: rgb(255 255 255 / 5%); }
+.lens-login { margin-top: 0; }
+.lens-panel :is(button, a):focus-visible { outline: 2px solid #dce8d7; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .lens-panel, .lens-panel[data-open="true"] { transition-duration: 0s; }
+  .lens-panel__title > span { animation: none; }
+  .lens-play, .lens-chip, .lens-panel .material-collect { transition: none; }
+}
+
+/* 手机：底部抽屉。收起时只剩一行：编号 · 播放 · 收藏 */
+.lens-drawer__handle, .lens-drawer__collect { display: none; }
 @media (max-width: 767px) {
-  .lens-panel { width: calc(100vw - 24px); padding: 0 14px max(0px,env(safe-area-inset-bottom)); }
-  .lens-panel__head { padding-top: 16px; grid-template-columns: minmax(0,1fr) 44px auto; gap: 6px; }
+  .lens-panel { width: calc(100vw - 24px); padding: 0 14px max(10px, env(safe-area-inset-bottom)); border-radius: 22px; }
+  .lens-panel__head { padding-top: 20px; column-gap: 8px; }
   .lens-panel__eyebrow { display: none; }
   .lens-panel__title { overflow: hidden; text-overflow: ellipsis; }
-  .lens-panel__head > .lens-panel__title,.lens-panel__head > .lens-play { grid-row: 1; }
+  .lens-panel__head > .lens-panel__title, .lens-panel__head > .lens-play { grid-row: 1; }
   .lens-panel[data-expanded="false"] .lens-panel__body { display: none; }
-  .lens-drawer__handle { position: absolute; z-index: 1; top: 0; left: calc(50% - 22px); display: grid; place-items: center; width: 44px; height: 44px; border: 0; background: transparent; touch-action: none; cursor: pointer; }
-  .lens-drawer__handle > span { width: 32px; height: 3px; margin-top: -12px; border-radius: 4px; background: rgb(214 226 214 / 75%); }
-  .lens-drawer__collect { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 10px; border: 0; border-radius: 12px; background: rgb(209 220 190 / 12%); color: #eef4e4; font: inherit; font-size: 12px; cursor: pointer; }
-  .lens-panel__body { padding-block: 8px 10px; }
+  .lens-drawer__handle { position: absolute; z-index: 1; top: 0; left: calc(50% - 22px); display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; touch-action: none; cursor: pointer; }
+  .lens-drawer__handle > span { width: 36px; height: 4px; margin-top: -14px; border-radius: 4px; background: rgb(218 229 217 / 55%); }
+  .lens-drawer__collect { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 44px; min-height: 44px; padding: 0 20px; border: 0; border-radius: 22px; background: #e4edd6; color: #0c120d; font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .03em; cursor: pointer; }
+  .lens-panel[data-expanded="true"] .lens-drawer__collect { display: none; }
+  .lens-panel[data-expanded="true"] .lens-panel__head { grid-template-columns: minmax(0, 1fr) 44px; }
+  .lens-panel__body { margin-top: 10px; }
 }
+.lens-link--page > span { margin-left: 3px; }

@@ -9,7 +9,7 @@ export function shortAddress(address: string): string {
   return address.length > 14 ? `${address.slice(0, 6)}…${address.slice(-4)}` : address;
 }
 
-/** 紧凑链上信息块：链名 · 标准、合约（缩写可复制）、Token、状态、单曲页与区块浏览器。 */
+/** 每条链一张卡：链名与标准 → 合约地址（可跳浏览器、可复制）+ 单曲页 → 这条链自己的收藏按钮（children）。 */
 export default function ChainBlock({ deployment, children }: { deployment: OriginalDeployment; children?: ReactNode }) {
   const t = useTranslations('lens');
   const tp = useTranslations('provenance');
@@ -27,16 +27,28 @@ export default function ChainBlock({ deployment, children }: { deployment: Origi
     : deployment.status === 'undeployed' ? tp('undeployed') : tp('unverified');
   return (
     <section className="lens-chain" aria-label={`${chain} · ${standard}`} data-status={deployment.status}>
-      <div className="lens-chain__heading">
-        <h3 className="lens-chain__name"><span className="lens-chain__status" role="img" aria-label={status}>●</span> {chain} <span>· {standard} · Token #{deployment.tokenId}</span></h3>
-        {deployment.publicPlaybackUrl && <PondRouteLink href={deployment.publicPlaybackUrl} className="lens-link">{t('openSingle')} →</PondRouteLink>}
-      </div>
-      <p className="lens-chain__facts">
-        {address && <><a className="lens-link" href={explorerAddressUrlFor(deployment.chainId, address)} target="_blank" rel="noreferrer"><code title={address}>{shortAddress(address)}</code> ↗</a>
-          <button type="button" className="lens-link" onClick={() => { void copy(); }}
-            aria-label={t('copyContract', { chain })}>{copied ? '✓' : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V4H4v12h4" /></svg>}</button></>}
+      <h3 className="lens-chain__name">
+        <span className="lens-chain__dot" role="img" aria-label={status} />
+        <span className="lens-chain__chain">{chain}</span>
+        <span className="lens-chain__tag">{standard}</span>
+        <span className="lens-chain__token">Token #{deployment.tokenId}</span>
         {deployment.status !== 'ready' && <span className="lens-chain__status-text">{status}</span>}
-      </p>
+      </h3>
+      <div className="lens-chain__facts">
+        {address && <>
+          <a className="lens-link lens-link--addr" href={explorerAddressUrlFor(deployment.chainId, address)} target="_blank" rel="noreferrer"
+            aria-label={t('openExplorer', { chain })} title={address}>
+            <span className="lens-chip"><code title={address}>{shortAddress(address)}</code>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></span>
+          </a>
+          <button type="button" className="lens-link lens-link--icon" data-copied={copied || undefined} onClick={() => { void copy(); }}
+            aria-label={t('copyContract', { chain })}>
+            <span className="lens-chip lens-chip--icon">{copied
+              ? <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>
+              : <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2.5" /><path d="M15.5 8.5V5.5a1.5 1.5 0 0 0-1.5-1.5H5.5A1.5 1.5 0 0 0 4 5.5V14a1.5 1.5 0 0 0 1.5 1.5h3" /></svg>}</span>
+          </button></>}
+        {deployment.publicPlaybackUrl && <PondRouteLink href={deployment.publicPlaybackUrl} className="lens-link lens-link--page">{t('openSingle')}<span aria-hidden="true"> →</span></PondRouteLink>}
+      </div>
       <span className="p11-visually-hidden" aria-live="polite">{copied ? t('copied') : ''}</span>
       {children}
     </section>
