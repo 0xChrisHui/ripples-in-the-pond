@@ -19,5 +19,12 @@
     "to": "0xAc3F7471A4e1f5952b4c8f56521af46d6c20A4AA",
     "confirmed": true,
     "block": "159518361"
+  },
+  "revoke-legacy": {
+    "hash": "0x3235ad7c99de7b78ad84ca790a2ad9e76e09282c1f6ddc7d35a8206f0e7fe044",
+    "nonce": 7,
+    "to": "0x406519962cDD1673D30fEcC13c4B6f7Af87Ba1dA",
+    "confirmed": true,
+    "block": "159518793"
   }
 }

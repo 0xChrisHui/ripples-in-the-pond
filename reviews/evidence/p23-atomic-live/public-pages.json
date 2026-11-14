@@ -1,0 +1,20 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "html": true,
+    "title": "Ripples in the Pond"
+  },
+  {
+    "path": "/lens",
+    "status": 200,
+    "html": true,
+    "title": "详情 — Ripples in the Pond"
+  },
+  {
+    "path": "/score/11",
+    "status": 200,
+    "html": true,
+    "title": "Ripples #11 — 22"
+  }
+]

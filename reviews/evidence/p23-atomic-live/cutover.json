@@ -1,0 +1,36 @@
+{
+  "codeCommit": "22bd846",
+  "deployment": {
+    "id": "dpl_4cVTZ5MpQj9osSy1A6ozdRuq8SWK",
+    "url": "ripples-in-the-pond-l4w2q72u1-0x991-thomas-projects.vercel.app",
+    "readyState": "READY",
+    "aliases": [
+      "pond-ripple.xyz",
+      "ripples-in-the-pond.vercel.app",
+      "ripples-in-the-pond-0x991-thomas-projects.vercel.app",
+      "ripples-in-the-pond-git-main-0x991-thomas-projects.vercel.app"
+    ]
+  },
+  "activation": {
+    "changedAt": "2026-11-14T06:06:59.835912+00:00",
+    "default": "'atomic'::text",
+    "flag": "true"
+  },
+  "precutover": {
+    "at": "2026-11-14T06:05:16.648Z",
+    "runtime": {
+      "result": "ok",
+      "processed": 0,
+      "issuance": {
+        "protocol": "atomic-v1",
+        "issuer": "0x7cb59E953d59563EeF66314a583CEa18f703E714"
+      },
+      "orders": []
+    },
+    "operatorNonce": {
+      "latest": 81,
+      "pending": 81
+    },
+    "rpc": "chain-default"
+  }
+}
