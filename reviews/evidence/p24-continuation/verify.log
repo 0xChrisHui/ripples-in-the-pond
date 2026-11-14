@@ -1,0 +1,444 @@
+================================================
+  代码验证 — verify.sh
+================================================
+
+── 1. TypeScript 类型检查 ──
+✅ 类型检查通过
+
+── 2. ESLint ──
+
+> ripples-in-the-pond@0.1.0 lint
+> eslint
+
+
+E:\Projects\nft-music\.local-archive\p19-i18n\tools\review-table.mjs
+  5:79  warning  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+
+E:\Projects\nft-music\src\components\archipelago\effects\motion\comet\comet-system.tsx
+    5:33  warning  'TRAIL_HISTORY' is defined but never used  @typescript-eslint/no-unused-vars
+  104:13  warning  'vp' is assigned a value but never used    @typescript-eslint/no-unused-vars
+
+E:\Projects\nft-music\src\components\archipelago\hooks\use-layer-wave.ts
+  75:14  warning  The ref value 'mapRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'mapRef.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+✖ 4 problems (0 errors, 4 warnings)
+
+✅ Lint 通过
+
+── 2b. 33 键 SoundSet Gate ──
+
+> ripples-in-the-pond@0.1.0 p15:h1:verify
+> tsx scripts/p15-h/sound-set-ledger.test.ts && tsx scripts/p15-h/verify-current-sound-set.ts
+
+✅ H1 单元 Gate：重复键、缺文件、hash 漂移、无法解码、P9 缺口均被拒绝
+✅ H1 Gate：33 个键、33 个 MP3、33 个 P9 identity 严格一一对应；旧 26 键档案未变
+✅ SoundSet Gate 通过
+
+── 2c. Permanent Core 合同 Gate ──
+
+> ripples-in-the-pond@0.1.0 p15:h2:verify
+> tsx scripts/p15-h/score-package-v3.test.ts && tsx scripts/p15-h/queue-contract.test.ts
+
+P15-H2 score-package.v3 定向测试通过
+P15-H2 队列、migration 与故障语义合同通过
+
+> ripples-in-the-pond@0.1.0 p15:h3:audit
+> tsx scripts/arweave/p15-h/upload-sound-set.ts sounds --audit && tsx scripts/arweave/p15-h/verify-upload-tool.ts
+
+✅ sounds 本地审计通过：33 个对象 / 2375977 bytes；未连接钱包
+✅ H3 工具 Gate：33 键、64KB manifest、完整 GET quorum 与 unknown 熔断通过
+
+> ripples-in-the-pond@0.1.0 p15:h3:verify
+> tsx scripts/p15-h/decoder/score-decoder-v3.test.ts && tsx scripts/p15-h/compat/compat.test.ts
+
+P15-H3 永久 decoder v3 定向测试通过
+P15-H3 compatibility 生成、签名与 durable ledger 测试通过
+✅ Permanent Core 合同 Gate 通过
+
+── 2d. Verified Edge 工具 Gate ──
+
+> ripples-in-the-pond@0.1.0 p15:h4:verify
+> tsx scripts/p15-h/edge/mirror-edge.test.ts
+
+H4 Edge 镜像 Gate 测试通过
+✅ Verified Edge 工具 Gate 通过
+
+── 2e. Score verified snapshot Gate ──
+
+> ripples-in-the-pond@0.1.0 p15:h5:verify
+> tsx scripts/p15-h/snapshot/score-snapshot.test.ts && tsx scripts/p15-h/snapshot/legacy-identity.test.ts
+
+P15-H5 verified snapshot/bootstrap 定向测试通过
+旧数字 Score 主网身份与正式部署配置门禁通过
+✅ Score snapshot Gate 通过
+
+── 2f. 播放回退与 Production snapshot Gate ──
+
+> ripples-in-the-pond@0.1.0 p15:h6:verify
+> tsx scripts/p15/verify-permanent-media.ts
+
+永久媒体 resolver 验证通过
+
+> ripples-in-the-pond@0.1.0 p15:h7:verify-snapshots
+> tsx scripts/p15-h/release/verify-snapshot-plan.ts
+
+H7 四枚历史 snapshot 运行时解析通过
+
+> ripples-in-the-pond@0.1.0 p15:h7:verify-production
+> tsx scripts/p15-h/release/verify-production-release.ts
+
+H7 readback：33 键 Core、35 首 base、三环境各 4 枚 snapshot 全部通过
+✅ 播放回退与 Production snapshot Gate 通过
+
+── 2g. Score Instant Start Gate ──
+
+> ripples-in-the-pond@0.1.0 p15:i:verify
+> tsx scripts/p15-i/instant-start.test.ts
+
+P15-I 启动闭包与排队播放测试通过
+✅ Instant Start Gate 通过
+
+── 2h. 中英词典一致性 ──
+✅ 词典检查通过：687 个 key，0 个提示（src/i18n/messages）
+✅ 词典一致性通过
+
+── 2i. /lens 几何与别名事务 ──
+lens-geometry ✅
+lens-hover ✅
+lens-hover 13 ✅
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 535.4099
+✅ /lens 单测通过
+
+── 3. 代码文件大小（≤220 行 / API route ≤270 行）──
+✅ 没有超过行数硬线的代码文件
+
+── 4. 目录文件数（≤8）──
+❌ 以下目录超过 8 个文件：
+  src/lib/self-mint: 9 文件
+  src/types: 10 文件
+
+── 5. 危险代码扫描 ──
+✅ 没有发现危险代码
+
+── 6. 生产构建（npm run build）──
+
+> ripples-in-the-pond@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 24.3s
+  Running TypeScript ...
+  Collecting page data using 19 workers ...
+  Generating static pages using 19 workers (0/69) ...
+  Generating static pages using 19 workers (17/69) 
+  Generating static pages using 19 workers (34/69) 
+  Generating static pages using 19 workers (51/69) 
+✓ Generating static pages using 19 workers (69/69) in 2.8s
+  Finalizing page optimization ...
+
+Route (app)                                                  Revalidate  Expire
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/airdrop/trigger
+├ ○ /api/artist/stats                                                5m      1y
+├ ƒ /api/auth/community
+├ ƒ /api/auth/community/send-code
+├ ƒ /api/auth/wallet-capability
+├ ƒ /api/cron/check-balance
+├ ƒ /api/cron/process-airdrop
+├ ƒ /api/cron/process-mint-queue
+├ ƒ /api/cron/process-score-pack
+├ ƒ /api/cron/process-score-queue
+├ ƒ /api/cron/process-wallet-recipe
+├ ƒ /api/cron/queue-status
+├ ƒ /api/cron/reconcile-material-mints
+├ ƒ /api/cron/self-mint/assets
+├ ƒ /api/cron/self-mint/reconcile
+├ ƒ /api/cron/sync-chain-events
+├ ƒ /api/health
+├ ƒ /api/market/eth-usd
+├ ƒ /api/material-mint/attempt
+├ ƒ /api/material-mint/authorization
+├ ƒ /api/material-mint/op
+├ ƒ /api/material-mint/op/status
+├ ƒ /api/material-mint/orders
+├ ƒ /api/material-mint/orders/[orderId]
+├ ƒ /api/material-mint/prepare
+├ ƒ /api/material-mint/status
+├ ƒ /api/material-mint/submission
+├ ƒ /api/me/nfts
+├ ƒ /api/me/pond-echo/home
+├ ƒ /api/me/pond-echoes
+├ ƒ /api/me/score-nfts
+├ ƒ /api/me/scores
+├ ƒ /api/me/scores/[id]/events
+├ ƒ /api/mint/material
+├ ƒ /api/mint/score
+├ ƒ /api/music-catalog
+├ ƒ /api/ping
+├ ƒ /api/score-pack/intent
+├ ƒ /api/score-pack/request
+├ ƒ /api/score-pack/status
+├ ƒ /api/score-pack/submission
+├ ƒ /api/score-pack/voucher
+├ ƒ /api/score/save
+├ ƒ /api/scores/[id]/events
+├ ƒ /api/scores/[id]/owner
+├ ƒ /api/scores/[id]/preview
+├ ƒ /api/self-mint/attempt
+├ ƒ /api/self-mint/authorization
+├ ƒ /api/self-mint/order/[orderId]
+├ ƒ /api/self-mint/order/[orderId]/advance
+├ ƒ /api/self-mint/prepare
+├ ƒ /api/self-mint/release
+├ ƒ /api/self-mint/submission
+├ ƒ /api/sounds
+├ ○ /api/tracks                                                      5m      1y
+├ ƒ /api/tracks/[id]
+├ ○ /artist
+├ ƒ /echo/[id]
+├ ƒ /echo/origin/[address]
+├ ○ /lens
+├ ○ /me
+├ ○ /me/material
+├ ƒ /me/material/[orderId]
+├ ƒ /me/mint/[orderId]
+├ ○ /me/test
+├ ○ /score
+├ ○ /score-lab/1
+├ ƒ /score/[id]
+├ ƒ /score/[id]/[contract]/[tokenId]
+├ ƒ /score/[id]/[contract]/[tokenId]/opengraph-image-14tiof
+├ ƒ /score/[id]/[contract]/[tokenId]/pack
+├ ƒ /score/[id]/opengraph-image-x7dn1x
+├ ƒ /score/[id]/poster
+├ ƒ /score/material/[chainId]/[contract]/[tokenId]
+├ ƒ /star
+├ ○ /test
+├ ○ /test1
+├ ○ /test2
+├ ○ /test3
+├ ○ /test4
+├ ○ /test5
+├ ○ /tracks
+├ ƒ /tracks/archive
+├ ○ /tracks/pond
+└ ƒ /v1
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+✅ 生产构建通过
+
+── 7. 合约测试（forge test）──
+No files changed, compilation skipped
+
+Ran 7 tests for test/AirdropNFT.t.sol:AirdropNFTTest
+[PASS] testMintIncrements() (gas: 167491)
+[PASS] testMintRevertsForNonMinter() (gas: 43877)
+[PASS] testMintStartsFromOne() (gas: 88310)
+[PASS] testNameAndSymbol() (gas: 21276)
+[PASS] testSetTokenURI() (gas: 138759)
+[PASS] testSetTokenURIOnlyOnce() (gas: 145266)
+[PASS] testSetTokenURIRevertsForNonMinter() (gas: 121917)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 1.63ms (2.32ms CPU time)
+
+Ran 6 tests for test/DeployBase.t.sol:DeployBaseTest
+[PASS] testAcceptsDistinctRoles() (gas: 12443)
+[PASS] testRejectsAdminEqualsDeployer() (gas: 13159)
+[PASS] testRejectsAdminEqualsMinter() (gas: 13276)
+[PASS] testRejectsMinterEqualsDeployer() (gas: 13201)
+[PASS] testRejectsZeroAdmin() (gas: 13009)
+[PASS] testRejectsZeroMinter() (gas: 13083)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 2.07ms (2.12ms CPU time)
+
+Ran 10 tests for test/MaterialNFT.t.sol:MaterialNFTTest
+[PASS] testConstructorGrantsRoles() (gas: 21042)
+[PASS] testFreezeURICannotDoubleFreeze() (gas: 41830)
+[PASS] testFreezeURILocksSetURI() (gas: 55949)
+[PASS] testFreezeURIRevertsForNonAdmin() (gas: 41763)
+[PASS] testMintByMinter() (gas: 44994)
+[PASS] testMintRevertsForAdminWithoutMinterRole() (gas: 44495)
+[PASS] testMintRevertsForNonMinter() (gas: 44528)
+[PASS] testSetURIByAdmin() (gas: 27551)
+[PASS] testSetURIRevertsForNonAdmin() (gas: 42272)
+[PASS] testSupportsInterface() (gas: 9669)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 3.29ms (1.12ms CPU time)
+
+Ran 1 test for test/p17/MaterialVector.t.sol:MaterialVectorTest
+[PASS] testIndependentViemDigestVector() (gas: 16797)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.61ms (121.00µs CPU time)
+
+Ran 7 tests for test/p22/AccountIntegration.t.sol:AccountIntegrationTest
+[PASS] test_holderOverrideReentryCannotSucceedEvenIfSwallowed() (gas: 1441281)
+[PASS] test_holderOverrideReentryReverts() (gas: 1231723)
+[PASS] test_holderRejectingReceiptOnlyHurtsOwnPack() (gas: 735505)
+[PASS] test_oldOwnerPermissionsDoNotCarryOver() (gas: 161278)
+[PASS] test_positiveControl_ownerCanExecuteBenignCall() (gas: 90760)
+[PASS] test_tbaDirectTransferHitsSoulboundHook() (gas: 58670)
+[PASS] test_tbaIsNotUpgradeableInDirectBinding() (gas: 16511)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 12.65ms (5.31ms CPU time)
+
+Ran 6 tests for test/p17/MaterialIssuance.t.sol:MaterialIssuanceTest
+[PASS] testDifferentOrderCannotClaimSameWalletTokenTwice() (gas: 131095)
+[PASS] testDifferentWalletsNotRestrictedByOldFixtureSupplyCap() (gas: 904325)
+[PASS] testRejectedReceiverDoesNotConsumeWalletClaim() (gas: 660084)
+[PASS] testSameWalletMayClaimEachOfThirtyFiveTokens() (gas: 3313075)
+[PASS] testTransferDoesNotRestoreClaimAndBatchTransferRemainsAllowed() (gas: 143056)
+[PASS] testTransferredHolderCanUseOwnClaim() (gas: 184827)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 14.36ms (16.36ms CPU time)
+
+Ran 2 tests for test/p22/VoucherVector.t.sol:VoucherVectorTest
+[PASS] test_eip712DomainFields() (gas: 12935)
+[PASS] test_typehashAndStructHashVector() (gas: 14745)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 14.82ms (711.70µs CPU time)
+
+Ran 10 tests for test/p22/SoulboundAsset.t.sol:SoulboundAssetTest
+[PASS] test_afterScoreSaleNewHolderStillCannotTransferOut() (gas: 107024)
+[PASS] test_assetConstructorRoleChecks() (gas: 276634)
+[PASS] test_batchTransferAndApprovalViaTbaRejected() (gas: 143654)
+[PASS] test_defineIsAppendOnly() (gas: 62616)
+[PASS] test_noBurnPath() (gas: 15424)
+[PASS] test_onlyOpenerMintsAndAdminCannotMint() (gas: 69217)
+[PASS] test_ownerCannotTransferOutViaTba() (gas: 59962)
+[PASS] test_tbaReceivesErc1155AndScoreIntoTbaDoesNotCorrupt() (gas: 98126)
+[PASS] test_thirdPartyAndDirectCallsRejected() (gas: 23839)
+[PASS] test_uriAndMetadata() (gas: 29772)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 12.71ms (5.47ms CPU time)
+
+Ran 18 tests for test/p22/ScorePackOpener.t.sol:ScorePackOpenerTest
+[PASS] test_anyoneCanSubmitButAssetsGoToScoreAccount() (gas: 269968)
+[PASS] test_badSignerOrSignatureRejected() (gas: 50267)
+[PASS] test_badSoundListsRejected() (gas: 161118)
+[PASS] test_constructorRejectsMisboundAssets() (gas: 2993230)
+[PASS] test_constructorRoleChecks() (gas: 297863)
+[PASS] test_crossChainVoucherRejected() (gas: 39256)
+[PASS] test_expiredAndTooFarRejected() (gas: 44123)
+[PASS] test_fixturesMatchMainnetHashes() (gas: 5502)
+[PASS] test_maxListGas() (gas: 1932488)
+[PASS] test_oldVoucherRevivesAfterRoundTrip() (gas: 281029)
+[PASS] test_openMintsPackIntoTba() (gas: 366574)
+[PASS] test_pausedOpenerOrAssetBlocksOpen() (gas: 474145)
+[PASS] test_preDeployedAccountDoesNotBlockOpen() (gas: 270521)
+[PASS] test_rejectsAfterScoreTransferredAway() (gas: 78224)
+[PASS] test_secondOpenRejected() (gas: 278850)
+[PASS] test_signerRevokeAndRotate() (gas: 312210)
+[PASS] test_tamperedSoundListRejected() (gas: 39497)
+[PASS] test_unknownSoundRollsBackEverything() (gas: 225163)
+Suite result: ok. 18 passed; 0 failed; 0 skipped; finished in 15.61ms (14.97ms CPU time)
+
+Ran 9 tests for test/p22/DeployScorePack.t.sol:DeployScorePackTest
+[PASS] test_deployOnBothMainnetsAndTestnets() (gas: 73374097)
+[PASS] test_mainnetNeedsFreshDeployerAndSeparateOperator() (gas: 10562246)
+[PASS] test_rejectsAdminAsSignerOnEthereumMainnet() (gas: 10531803)
+[PASS] test_rejectsDeployerHoldingRole() (gas: 10532159)
+[PASS] test_rejectsDeployerKeyMismatch() (gas: 10529680)
+[PASS] test_rejectsShortDelayOnMainnetsOnly() (gas: 18407884)
+[PASS] test_rejectsUnsupportedChain() (gas: 10524413)
+[PASS] test_rejectsWrongRegistryCode() (gas: 10533645)
+[PASS] test_rejectsWrongScoreAddressOnMainnets() (gas: 10541479)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 17.88ms (22.37ms CPU time)
+
+Ran 7 tests for test/p17/OptimismSBT.t.sol:OptimismSBTTest
+[PASS] testFixedMetadataAndInvalidAmountIdRecipient() (gas: 376903)
+[PASS] testFuzzNoTransferIncludingSelfAndZeroAmount(address,uint256) (runs: 256, μ: 14934, ~: 15021)
+[PASS] testLegacyContractStillTransfersAndNoUnapprovedWalletLifetimeCap() (gas: 1736089)
+[PASS] testOnlyMinterCanMintAndPauseStopsMinting() (gas: 164944)
+[PASS] testRejectedReceiverAndReentryRollback() (gas: 722376)
+[PASS] testSbtCannotBatchTransferOrGrantApproval() (gas: 13404)
+[PASS] testSbtCannotTransfer() (gas: 13496)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 20.68ms (16.65ms CPU time)
+
+Ran 3 tests for test/DeployWalletRecipe.t.sol:DeployWalletRecipeTest
+[PASS] testDeploysFrozenIdentityAndRoles() (gas: 2271000)
+[PASS] testDirectConstructorRejectsEmptyNameAndSymbol() (gas: 285128)
+[PASS] testRejectsEmptyAndUnsafeConstructorInputs() (gas: 490513)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 44.33ms (1.27ms CPU time)
+
+Ran 11 tests for test/ScoreNFT.t.sol:ScoreNFTTest
+[PASS] testMintByMinterStartsFromOne() (gas: 88432)
+[PASS] testMintIncrementsTokenId() (gas: 170141)
+[PASS] testMintRevertsForAdminWithoutMinterRole() (gas: 43856)
+[PASS] testMintRevertsForNonMinter() (gas: 43889)
+[PASS] testNameAndSymbol() (gas: 21296)
+[PASS] testSetTokenURIByMinter() (gas: 183564)
+[PASS] testSetTokenURICannotOverwrite() (gas: 142039)
+[PASS] testSetTokenURIRejectsEmpty() (gas: 144059)
+[PASS] testSetTokenURIRevertsForNonMinter() (gas: 121917)
+[PASS] testSetTokenURIRevertsForNonexistentToken() (gas: 16099)
+[PASS] testSupportsInterface() (gas: 9816)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 43.68ms (4.26ms CPU time)
+
+Ran 9 tests for test/p17/MaterialSecurity.t.sol:MaterialSecurityTest
+[PASS] testChainAndContractReplayRejected() (gas: 5795292)
+[PASS] testEverySignedFieldTamper() (gas: 179804)
+[PASS] testFrontRunExpiredAndInvalidInputs() (gas: 104454)
+[PASS] testFuzzWrongAmount(uint256) (runs: 256, μ: 23337, ~: 23337)
+[PASS] testMetadataAndRoleValidation() (gas: 6784916)
+[PASS] testPauseKeepsTransfersAndAdminDelay() (gas: 212456)
+[PASS] testReceiverRollbackAndReentry() (gas: 954925)
+[PASS] testRedeemAndOrderReplay() (gas: 120903)
+[PASS] testRoleRevocationAnd1271() (gas: 315070)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 46.20ms (60.15ms CPU time)
+
+Ran 8 tests for test/MintOrchestrator.t.sol:MintOrchestratorTest
+[PASS] testConstructorRejectsZeroAddress() (gas: 36328)
+[PASS] testMintScoreEmitsEvent() (gas: 118454)
+[PASS] testMintScoreEndToEnd() (gas: 121013)
+[PASS] testMintScoreIncrementing() (gas: 251619)
+[PASS] testMintScoreRejectsDuplicateOrderId() (gas: 124075)
+[PASS] testMintScoreRevertsForNonMinter() (gas: 43908)
+[PASS] testMintScoreRevertsIfOrchestratorNotAuthorizedOnNFT() (gas: 2247988)
+[PASS] testScoreNftAddressBoundOnConstruction() (gas: 7717)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 53.75ms (4.91ms CPU time)
+
+Ran 11 tests for test/WalletRecipeNFT.t.sol:WalletRecipeNFTTest
+[PASS] testAddressCasingCannotCreateAnotherOrigin() (gas: 302469)
+[PASS] testAdminCanGrantAndRevokeMinterImmediately() (gas: 334373)
+[PASS] testConstructorFreezesIdentityAndSeparatesRoles() (gas: 51555)
+[PASS] testDifferentOriginsReceiveDifferentTokens() (gas: 539067)
+[PASS] testFuzzOriginUniqueAfterArbitraryTransfers(address,address,address) (runs: 256, μ: 337102, ~: 337408)
+[PASS] testInterfacesAndOmittedCapabilities() (gas: 300602)
+[PASS] testMintStartsAtOneAndWritesPermanentOriginAndUri() (gas: 300468)
+[PASS] testNonReceiverRevertsAndRollsBackOriginState() (gas: 540778)
+[PASS] testRejectsUnauthorizedZeroOriginAndEmptyUri() (gas: 65098)
+[PASS] testSameOriginCannotMintAgainWithSameOrDifferentUri() (gas: 322826)
+[PASS] testTransfersKeepOriginAndBlockRemint() (gas: 439008)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 54.07ms (58.50ms CPU time)
+
+Ran 8 tests for test/p16/EthereumScoreNFT.t.sol:EthereumScoreNFTTest
+[PASS] testAuthorizerCanRotateWithoutChangingAdmin() (gas: 241138)
+[PASS] testConstructorFreezesIdentityUriAndRoles() (gas: 46674)
+[PASS] testConstructorRejectsInvalidUriAndOverlappingRoles() (gas: 328526)
+[PASS] testInterfacesAndOmittedCapabilities() (gas: 193051)
+[PASS] testRedeemWritesOwnerUriMappingAndEvent() (gas: 187533)
+[PASS] testReplayAndDuplicateTokenAreRejected() (gas: 195414)
+[PASS] testSupportsEOAAndERC1271Authorizers() (gas: 565291)
+[PASS] testViemAndSolidityDigestFixedVector() (gas: 17295)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 70.50ms (5.04ms CPU time)
+
+Ran 6 tests for test/p16/EthereumScoreSecurity.t.sol:EthereumScoreSecurityTest
+[PASS] testEverySignedFieldAndDomainAreBound() (gas: 3329560)
+[PASS] testFrontrunExpiryBadSignerAndMalformedSignatureFail() (gas: 81724)
+[PASS] testFuzzAnyTokenIdChangeInvalidatesSignature(uint256) (runs: 256, μ: 47169, ~: 47169)
+[PASS] testPauseBlocksMintButNeverTransfer() (gas: 238609)
+[PASS] testReceiverFailureRollsBackOrderAndToken() (gas: 225431)
+[PASS] testRejectsInvalidIdsUrisAndUriHash() (gas: 126141)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 69.88ms (70.46ms CPU time)
+
+Ran 18 test suites in 84.07ms (501.73ms CPU time): 139 tests passed, 0 failed, 0 skipped (139 total tests)
+✅ forge test 通过
+
+================================================
+  ❌ 验证失败 — 请修复后重试
+================================================

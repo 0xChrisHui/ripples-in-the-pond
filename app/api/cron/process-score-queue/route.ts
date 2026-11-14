@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { verifyCronSecret } from '@/src/lib/auth/cron-auth';
-import { boundedInt, runBatch, serialSender } from '@/src/lib/cron/batch';
+import { boundedInt, serialSender } from '@/src/lib/cron/batch';
+import { runScoreCycle } from '@/src/lib/cron/score-cycle';
 import { supabaseAdmin } from '@/src/lib/supabase';
 import { processOrder } from './process-order';
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
@@ -25,10 +26,11 @@ export async function GET(req: NextRequest) {
     if (seed.error) console.error('[score-cron] 心跳未写入', seed.error.message);
   } else if (heartbeat.error) console.error('[score-cron] 心跳失败', heartbeat.error.message);
   const send = serialSender();
-  const { results, claimFailed } = await runBatch({
+  const { results, claimFailed } = await runScoreCycle({
     limit: boundedInt(process.env.SCORE_QUEUE_BATCH, 5, 10),
     concurrency: boundedInt(process.env.SCORE_QUEUE_CONCURRENCY, 3, 10),
     claimUntil: start + 20_000,
+    deadline,
     claim: async () => {
       const leaseOwner = randomUUID();
       const { data, error } = await supabaseAdmin.rpc('claim_score_queue_job', {
@@ -37,7 +39,7 @@ export async function GET(req: NextRequest) {
       if (error) throw error;
       return data?.length ? { row: data[0] as ScoreMintQueueRow, leaseOwner } : null;
     },
-    process: ({ row, leaseOwner }) => processOrder(row, leaseOwner, async (): Promise<ScoreMintStatus> => {
+    step: ({ row, leaseOwner }) => processOrder(row, leaseOwner, async (): Promise<ScoreMintStatus> => {
       // 路由到对应 step（所有 step 内部 update 都带 owner CAS）
       switch (row.status) {
         case 'pending':
@@ -57,7 +59,22 @@ export async function GET(req: NextRequest) {
           throw new Error(`unexpected status: ${row.status}`);
       }
   
-    }),
+    }, true),
+    reload: async ({ row, leaseOwner }) => {
+      const { data, error } = await supabaseAdmin.from('score_nft_queue').select('*')
+        .eq('id', row.id).eq('locked_by', leaseOwner)
+        .gt('lease_expires_at', new Date().toISOString()).maybeSingle();
+      if (error) throw error;
+      return data as ScoreMintQueueRow | null;
+    },
+    release: async ({ row, leaseOwner }) => {
+      // 等待传播已清除 owner 并设置退避，不能覆盖它，也不能释放新领取者的锁。
+      const { error } = await supabaseAdmin.from('score_nft_queue')
+        .update({ locked_by: null, lease_expires_at: null })
+        .eq('id', row.id).eq('locked_by', leaseOwner)
+        .gt('lease_expires_at', new Date().toISOString());
+      if (error) throw error;
+    },
   });
   const failed = claimFailed || results.some(item => item.status === 'rejected');
   return NextResponse.json({ result: failed ? 'error' : 'ok', processed: results.length,

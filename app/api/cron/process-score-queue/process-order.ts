@@ -4,7 +4,7 @@ import { PermanentResourcePendingError, scoreQueueErrorDecision } from '@/src/li
 import type { ScoreMintQueueRow, ScoreMintStatus } from '@/src/types/jam';
 
 export async function processOrder(claimedRow: ScoreMintQueueRow, leaseOwner: string,
-  step: () => Promise<ScoreMintStatus>) {
+  step: () => Promise<ScoreMintStatus>, keepLease = false) {
   const claimedId = claimedRow.id;
   let newStatus: ScoreMintStatus;
   try {
@@ -46,7 +46,7 @@ export async function processOrder(claimedRow: ScoreMintQueueRow, leaseOwner: st
     }
     throw Error(msg);
   }
-  // 只有已完成步骤的有效领取者能推进并释放订单。
+  // 连续模式持有原租约直到调度器暂停；错误与传播等待仍由上方逻辑保存。
   const nowIso = new Date().toISOString();
   const { data: updated, error: updateError } = await supabaseAdmin
     .from('score_nft_queue')
@@ -54,8 +54,7 @@ export async function processOrder(claimedRow: ScoreMintQueueRow, leaseOwner: st
       status: newStatus,
       updated_at: nowIso,
       last_error: null,
-      locked_by: null,
-      lease_expires_at: null,
+      ...(keepLease ? {} : { locked_by: null, lease_expires_at: null }),
     })
     .eq('id', claimedId)
     .eq('locked_by', leaseOwner)
