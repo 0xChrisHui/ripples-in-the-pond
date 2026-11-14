@@ -1,0 +1,79 @@
+{
+  "capturedAt": "2026-11-13T18:57:32.962Z",
+  "results": [
+    {
+      "name": "home-desktop",
+      "width": 1440,
+      "height": 900,
+      "path": "/",
+      "ready": "complete",
+      "url": "https://pond-ripple.xyz/",
+      "stage": "stable",
+      "balls": 35,
+      "panel": false,
+      "title": "Ripples in the Pond",
+      "text": "Ripples in the Pond\n艺术家\n详情\nCN\n/\nEN\n1\n35\n2\n35\n3\n35\n\n音效加载中...",
+      "overflow": false
+    },
+    {
+      "name": "score-desktop",
+      "width": 1440,
+      "height": 900,
+      "path": "/score/1",
+      "ready": "complete",
+      "url": "https://pond-ripple.xyz/score/1",
+      "stage": "stable",
+      "score": "ready",
+      "balls": 0,
+      "panel": false,
+      "title": "Ripples #1 — 33",
+      "text": "← 返回水塘\n艺术家\n详情\nCN\n/\nEN\n←\n返回档案\n回到水塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n已定稿\nFINALIZED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n正在准备永久录音…\n\n正在优先准备底曲与开场音效，现在点击即可排队播放。\n准备好后播放\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xAc3F7471…6c20A4AA\n来源：链上合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：链上合约\n创作者\n永久来源未提供创作者地址\n来源：作品数据库\n当前持有者\n正在核对当前持有者\n来源：链上合约\n铸造交易\n当前来源未记录铸造交易\n来源：作品数据库\n定稿交易\n当前来源未记录定稿交易\n来源：作品数据库\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：链上合约\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久底曲\nar://M-NM7…weToIqIQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久音效表\nar://NQsgc…X7Eu_kl8\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久播放器\nhttps://ar…5fAtinlw\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n\n已定稿\nFINALIZED\nToken #1 · 2026/9/21",
+      "overflow": false
+    },
+    {
+      "name": "score-mobile",
+      "width": 390,
+      "height": 844,
+      "path": "/score/1",
+      "ready": "complete",
+      "url": "https://pond-ripple.xyz/score/1",
+      "stage": "stable",
+      "score": "ready",
+      "balls": 0,
+      "panel": false,
+      "title": "Ripples #1 — 33",
+      "text": "← 返回水塘\n←\n返回档案\n回到水塘\n\nOP MAINNET\n·\nTOKEN #001\n\n分享\n已定稿\nFINALIZED\nToken #001\nRipples #1\n\n33 · 35 个永久事件\n\n点击唱片，开始播放\n\n永久音频只会在你主动点击后建立播放会话。\n开始播放\n\nPERMANENT RECORD · 永久档案\n\n作品凭证\n\n播放输入逐字来自这枚作品钉住的永久资源。短值用于阅读，复制会保留完整哈希； 创作者与当前持有者始终分开记录。\n\n在新标签打开永久播放器\n↗\n\n永久凭证\n\n12 项记录\nScoreNFT 合约\n0xAc3F7471…6c20A4AA\n来源：链上合约\n复制完整值\n查看外部记录 ↗\nToken ID\n1\n来源：链上合约\n创作者\n永久来源未提供创作者地址\n来源：作品数据库\n当前持有者\n0x19da4b17…E2E6bA54\n来源：链上合约\n复制完整值\n查看外部记录 ↗\n铸造交易\n当前来源未记录铸造交易\n来源：作品数据库\n定稿交易\n当前来源未记录定稿交易\n来源：作品数据库\n链上 Token URI\nar://YoRsY…VbKczIUo\n来源：链上合约\n复制完整值\n查看外部记录 ↗\n永久 Metadata\nar://YoRsY…VbKczIUo\n来源：永久 metadata\n复制完整值\n查看外部记录 ↗\n永久事件\nar://7wkFL…fUccTGZQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久底曲\nar://M-NM7…weToIqIQ\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久音效表\nar://NQsgc…X7Eu_kl8\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n永久播放器\nhttps://ar…5fAtinlw\n来源：metadata.animation_url\n复制完整值\n查看外部记录 ↗\n\n已定稿\nFINALIZED\nToken #1 · 2026/9/21",
+      "overflow": false
+    },
+    {
+      "name": "lens-desktop",
+      "width": 1440,
+      "height": 900,
+      "path": "/lens?track=4",
+      "ready": "complete",
+      "url": "https://pond-ripple.xyz/lens?track=4",
+      "stage": "stable",
+      "balls": 35,
+      "panel": true,
+      "title": "详情 — Ripples in the Pond",
+      "text": "Ripples in the Pond\n艺术家\n详情\nCN\n/\nEN\n登录\n1\n35\n2\n35\n3\n35\n\n按 A–Z、3–8 或空格演奏 33 个声音动画\n\n链上信息\n原曲 04\nOptimism · 原曲 SBT\n\n0xa65c…e99c\n复制\n#4\n已就绪\n\n单曲页\n区块浏览器 ↗\nEthereum · ERC-1155\n\n0x6c73…136b\n复制\n#4\n已就绪\n\n单曲页\n区块浏览器 ↗\n播放\n登录后收藏",
+      "overflow": false
+    },
+    {
+      "name": "lens-mobile",
+      "width": 390,
+      "height": 844,
+      "path": "/lens?track=4",
+      "ready": "complete",
+      "url": "https://pond-ripple.xyz/lens?track=4",
+      "stage": "stable",
+      "balls": 35,
+      "panel": true,
+      "title": "详情 — Ripples in the Pond",
+      "text": "Ripples in the Pond\n1\n35\n2\n35\n3\n35\n\n合奏需要电脑键盘体验\n请在电脑上打开本页\n\n链上信息\n原曲 04\nOptimism · 原曲 SBT\n\n0xa65c…e99c\n复制\n#4\n已就绪\n\n单曲页\n区块浏览器 ↗\nEthereum · ERC-1155\n\n0x6c73…136b\n复制\n#4\n已就绪\n\n单曲页\n区块浏览器 ↗\n暂停\n登录后收藏\n\n4\n\n0:00 / 0:43\n收藏\n停止",
+      "overflow": false
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": []
+}

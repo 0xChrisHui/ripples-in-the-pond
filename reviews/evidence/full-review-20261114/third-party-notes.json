@@ -1,0 +1,26 @@
+[
+  {
+    "priority": 3,
+    "title": "第三方工具附录：ERC721 自转辅助会凭空增加持有数量",
+    "file": "contracts/lib/forge-std/src/StdCheats.sol",
+    "start": 796,
+    "end": 798,
+    "trigger": "测试调用 dealERC721(token, currentOwner, id)。当前项目 contracts/src、test、script 未找到调用。",
+    "impact": "同一地址先写 oldBalance-1，再用预先读取的 oldBalance 写 oldBalance+1；测试状态不再满足 balanceOf 与实际 token 数一致，可能误导未来使用此辅助的测试。",
+    "evidence": "782–799 行先分别读取 fromPrevBal/toPrevBal，再顺序 checked_write(--fromPrevBal)/checked_write(++toPrevBal)，未处理两者地址相等。静态代入 owner余额1，最终为2；未运行Foundry复现。",
+    "suggestion": "在来源与目标相同的情况下提前返回，或按顺序重新读取目标余额；优先跟踪上游修复。",
+    "shard": "vendor_forge_1"
+  },
+  {
+    "priority": 3,
+    "title": "第三方工具附录：TOML 字符串回写未进行 JSON 转义",
+    "file": "contracts/lib/forge-std/src/StdConfig.sol",
+    "start": 286,
+    "end": 288,
+    "trigger": "脚本开启 writeToFile，并 set 字符串/字符串数组包含引号、换行或反斜杠。当前业务及部署脚本未引用此工具。",
+    "impact": "_quote 仅添加双引号；引号/换行使 writeToml 收到非法JSON并失败，反斜杠可能被JSON解释成不同字符，配置回写内容与缓存值不一致。",
+    "evidence": "_quote 返回 string.concat('\"', s, '\"')；string setter 447–451与string数组setter均直接使用它传给 vm.writeToml。没有 JSON escaping；该结论来自静态路径核对，未写入任何配置。",
+    "suggestion": "用正确的 JSON 字符串序列化后传给 writeToml，覆盖引号、反斜杠、换行及数组测试；优先跟踪上游。",
+    "shard": "vendor_forge_1"
+  }
+]

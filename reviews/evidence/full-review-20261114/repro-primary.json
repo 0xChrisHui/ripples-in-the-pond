@@ -1,0 +1,27 @@
+{
+  "failedUnrelatedReceipt": {
+    "result": {
+      "state": "reverted",
+      "txHash": "0xabababababababababababababababababababababababababababababababab"
+    },
+    "voucherStillValid": true
+  },
+  "transferAfterMint": "链上 owner 或 tokenURI 与冻结订单不一致",
+  "packQueueThreeCycles": [
+    "old",
+    "old",
+    "old"
+  ],
+  "eventsAt100ms": [],
+  "eventsAt1000ms": [
+    {
+      "key": "B",
+      "at": 1
+    },
+    {
+      "key": "A",
+      "at": 1
+    }
+  ],
+  "scope": "真实源码转译，React/RPC/数据库边界为离线替身；没有真实交易或数据库写入。队列重复选择验证与真实steps无限waiting分支静态核对配套。"
+}

@@ -12,7 +12,7 @@
 → `STATUS.md`（"下一步"字段是真理来源）+ `TASKS.md`（看板）
 
 ### 我想跟着做下一步
-→ `playbook/phase-0-minimal.md`（当前 Phase）
+→ 先看 `STATUS.md` 的当前步骤；P26 小问题维修入口：[`playbook/phase-26/00-overview.md`](../playbook/phase-26/00-overview.md)，逐项任务见 [`01-review-backlog.md`](../playbook/phase-26/01-review-backlog.md)。
 
 ### 我看不懂某个概念
 → `docs/LEARNING.md`（按出现顺序的概念词典）

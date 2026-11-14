@@ -1,0 +1,33 @@
+{
+  "capturedAt": "2026-11-14T03:42:08.392Z",
+  "root": "E:/Projects/nft-music",
+  "head": "8d9fd727af14b74bd733c605450b862e7792470b",
+  "baselineTargets": 1906,
+  "totalTargets": 1915,
+  "reviewedCurrent": 1915,
+  "completedShards": 45,
+  "totalShards": 45,
+  "missingShards": [],
+  "coverageIssues": [],
+  "findings": 42,
+  "priorities": {
+    "P1": 3,
+    "P2": 37,
+    "P3": 2
+  },
+  "merged": [
+    {
+      "priority": 2,
+      "title": "resize 后未刷新 d3 缓存的聚类目标",
+      "file": "src/components/pond-gl/spheres/gl-sim-setup.ts",
+      "start": 182,
+      "end": 184,
+      "trigger": "/test1 或 /test2 调整窗口/转屏。",
+      "impact": "节点虽立即按新窗口缩放，之后聚类力继续拉回旧屏幕锚点，收窄时易聚集在边界，布局不再适配新视口。",
+      "evidence": "setup 的 forceX/forceY accessor 读取 anchorMap，但本地 node_modules/d3-force/src/x.js initialize 把目标存入 xz，tick 只读该缓存。resize 仅修改 Map 和 center，没有调用 x()/y()/initialize 刷新目标。",
+      "suggestion": "缩放锚点后重新设置两个聚类力 accessor，或重新初始化force节点/目标。",
+      "shard": "pond_gl",
+      "mergedInto": "src/components/pond-gl-test3/spheres/gl-sim-setup.ts"
+    }
+  ]
+}
